@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="62">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="SourceFiles" displayName="ソースファイル" projectFiles="true">
+      <logicalFolder name="f3" displayName="ニワン語" projectFiles="true">
+        <logicalFolder name="f2" displayName="node" projectFiles="true">
+          <itemPath>niwango/node/accessor_node.c</itemPath>
+          <itemPath>niwango/node/accessor_node.h</itemPath>
+          <itemPath>niwango/node/args_node.c</itemPath>
+          <itemPath>niwango/node/args_node.h</itemPath>
+          <itemPath>niwango/node/array_node.c</itemPath>
+          <itemPath>niwango/node/array_node.h</itemPath>
+          <itemPath>niwango/node/assign_node.c</itemPath>
+          <itemPath>niwango/node/assign_node.h</itemPath>
+          <itemPath>niwango/node/binary_op_node.c</itemPath>
+          <itemPath>niwango/node/binary_op_node.h</itemPath>
+          <itemPath>niwango/node/calling_node.c</itemPath>
+          <itemPath>niwango/node/calling_node.h</itemPath>
+          <itemPath>niwango/node/label_node.c</itemPath>
+          <itemPath>niwango/node/label_node.h</itemPath>
+          <itemPath>niwango/node/literal_node.c</itemPath>
+          <itemPath>niwango/node/literal_node.h</itemPath>
+          <itemPath>niwango/node/node.c</itemPath>
+          <itemPath>niwango/node/node.h</itemPath>
+          <itemPath>niwango/node/op_assign_node.c</itemPath>
+          <itemPath>niwango/node/op_assign_node.h</itemPath>
+          <itemPath>niwango/node/prefix_op_node.c</itemPath>
+          <itemPath>niwango/node/prefix_op_node.h</itemPath>
+          <itemPath>niwango/node/suffix_op_node.c</itemPath>
+          <itemPath>niwango/node/suffix_op_node.h</itemPath>
+          <itemPath>niwango/node/top_level_node.c</itemPath>
+          <itemPath>niwango/node/top_level_node.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="f1" displayName="parser" projectFiles="true">
+          <itemPath>niwango/parser/Niwango.g</itemPath>
+          <itemPath>niwango/parser/NiwangoLexer.c</itemPath>
+          <itemPath>niwango/parser/NiwangoLexer.h</itemPath>
+          <itemPath>niwango/parser/NiwangoParser.c</itemPath>
+          <itemPath>niwango/parser/NiwangoParser.h</itemPath>
+        </logicalFolder>
+        <itemPath>niwango/niwango.h</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="HeaderFiles" displayName="ヘッダーファイル" projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles" displayName="リソースファイル" projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles" displayName="重要なファイル" projectFiles="false">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>MinGW_TDM_1|MinGW_TDM</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <incDir>
+            <pElem>X:/bin/msys/app/core/include</pElem>
+            <pElem>X:/bin/msys/app/core/include/glib-2.0</pElem>
+            <pElem>X:/bin/msys/app/core/lib/glib-2.0/include</pElem>
+          </incDir>
+        </cTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/nicovideo.dll</output>
+          <linkerAddLib>
+            <pElem>X:/bin/msys/app/core/lib</pElem>
+          </linkerAddLib>
+          <linkerLibItems>
+            <linkerOptionItem>-static</linkerOptionItem>
+            <linkerOptionItem>-lmingw32</linkerOptionItem>
+            <linkerOptionItem>-lm</linkerOptionItem>
+            <linkerOptionItem>-lglib-2.0</linkerOptionItem>
+            <linkerOptionItem>-lintl</linkerOptionItem>
+            <linkerOptionItem>-lole32</linkerOptionItem>
+            <linkerOptionItem>-lpthread</linkerOptionItem>
+            <linkerOptionItem>-liconv</linkerOptionItem>
+            <linkerOptionItem>-lantlr3c</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>MinGW_TDM_1|MinGW_TDM</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>X:/bin/msys/app/core/include</pElem>
+            <pElem>X:/bin/msys/app/core/include/glib-2.0</pElem>
+            <pElem>X:/bin/msys/app/core/lib/glib-2.0/include</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <linkerAddLib>
+            <pElem>X:/bin/msys/app/core/lib</pElem>
+          </linkerAddLib>
+          <stripSymbols>true</stripSymbols>
+          <linkerLibItems>
+            <linkerOptionItem>-static</linkerOptionItem>
+            <linkerOptionItem>-lmingw32</linkerOptionItem>
+            <linkerOptionItem>-lm</linkerOptionItem>
+            <linkerOptionItem>-lglib-2.0</linkerOptionItem>
+            <linkerOptionItem>-lintl</linkerOptionItem>
+            <linkerOptionItem>-lole32</linkerOptionItem>
+            <linkerOptionItem>-lpthread</linkerOptionItem>
+            <linkerOptionItem>-liconv</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>
