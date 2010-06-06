@@ -1,0 +1,213 @@
+TLauncher
+v7
+r0
+t294141410.144961
+cCheck dependencies
+cProcessInfoPlistFile /home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/Info.plist Launcher-Info.plist
+cCopyStringsFile /home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/Resources/English.lproj/InfoPlist.strings English.lproj/InfoPlist.strings
+cCompileXIB /home05/g050267/Documents/Launcher/English.lproj/MainMenu.xib
+cProcessPCH /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Launcher_Prefix-cnvatsfxouhsfhegkrdmszrvybuw/Launcher_Prefix.pch.gch Launcher_Prefix.pch normal x86_64 objective-c com.apple.compilers.gcc.4_2
+cCompileC build/Launcher.build/Debug/Launcher.build/Objects-normal/x86_64/main.o /home05/g050267/Documents/Launcher/main.m normal x86_64 objective-c com.apple.compilers.gcc.4_2
+cCompileC build/Launcher.build/Debug/Launcher.build/Objects-normal/x86_64/LauncherAppDelegate.o /home05/g050267/Documents/Launcher/LauncherAppDelegate.m normal x86_64 objective-c com.apple.compilers.gcc.4_2
+cLd /home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/MacOS/Launcher normal x86_64
+cTouch /home05/g050267/Documents/Launcher/build/Debug/Launcher.app
+
+N/Developer/SDKs/MacOSX10.6.sdk
+c000000004ABBF0FD00000000000000EE
+t1253830909
+s238
+
+N/Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h
+c0000000040C4AA6800000000000001E5
+t1086630504
+s485
+
+N/System/Library/Frameworks/Cocoa.framework/Cocoa
+c000000004A1F2D63000000000000A5E0
+t1243557219
+s42464
+
+N/home05/g050267/Documents/Launcher/English.lproj/InfoPlist.strings
+c000000004BD7F403000000000000002D
+t1272443907
+s45
+
+N/home05/g050267/Documents/Launcher/English.lproj/MainMenu.xib
+c000000004BD802EC000000000002BB7A
+t1272447724
+s179066
+
+N/home05/g050267/Documents/Launcher/LauncherAppDelegate.h
+c000000004BD7F403000000000000013A
+t1272443907
+s314
+i<Cocoa/Cocoa.h>
+
+N/home05/g050267/Documents/Launcher/LauncherAppDelegate.m
+c000000004BD806610000000000000339
+t1272448609
+s825
+i"LauncherAppDelegate.h"
+
+N/home05/g050267/Documents/Launcher/Launcher_Prefix.pch
+c000000004BD7F4030000000000000093
+t1272443907
+s147
+i<Cocoa/Cocoa.h>
+
+N/home05/g050267/Documents/Launcher/build/Debug/Launcher.app
+t1272448610
+s21
+
+N/home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/Info.plist
+t1272443916
+s889
+
+N/home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/MacOS/Launcher
+t1272448610
+s15104
+
+N/home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/PkgInfo
+t1272443916
+s8
+
+N/home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/Resources/English.lproj/InfoPlist.strings
+t1272443917
+s92
+
+N/home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/Resources/English.lproj/MainMenu.nib
+t1272447753
+s34391
+
+N/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Objects-normal/x86_64/Launcher.LinkFileList
+c000000004BD7F40C00000000000000E3
+t1272443916
+s227
+
+N/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Objects-normal/x86_64/LauncherAppDelegate.o
+t1272448610
+s25020
+
+N/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Objects-normal/x86_64/main.o
+t1272448400
+s4992
+
+N/home05/g050267/Documents/Launcher/main.m
+c000000004BD8004C0000000000000115
+t1272447052
+s277
+i<Cocoa/Cocoa.h>
+
+N/var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Launcher_Prefix-cnvatsfxouhsfhegkrdmszrvybuw/Launcher_Prefix.pch.gch
+t1272448400
+s54224656
+
+N/var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Launcher_Prefix-exnahizcjeleylbpodiadjtjntnw/Launcher_Prefix.pch.gch
+t1272446401
+s54212368
+
+NLauncher-Info.plist
+c000000004BD7F40300000000000003EA
+t1272443907
+s1002
+
+CCheck dependencies
+r0
+lSLF07#2@18"Check dependencies294141409#294141409#0(0"0(0#1#0"4300885448#0"0#
+
+CCompileC build/Launcher.build/Debug/Launcher.build/Objects-normal/x86_64/LauncherAppDelegate.o /home05/g050267/Documents/Launcher/LauncherAppDelegate.m normal x86_64 objective-c com.apple.compilers.gcc.4_2
+s294141409.672894
+e294141410.088593
+r1
+xCompileC
+xbuild/Launcher.build/Debug/Launcher.build/Objects-normal/x86_64/LauncherAppDelegate.o
+x/home05/g050267/Documents/Launcher/LauncherAppDelegate.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@64"Compile /home05/g050267/Documents/Launcher/LauncherAppDelegate.m294141409#294141410#0(0"0(0#0#56"/home05/g050267/Documents/Launcher/LauncherAppDelegate.m4300885448#1473"    cd /home05/g050267/Documents/Launcher    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x objective-c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -fobjc-gc-only -mmacosx-version-min=10.6 -gdwarf-2 -iquote /home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-generated-files.hmap -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-own-target-headers.hmap -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-all-target-headers.hmap -iquote /home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-project-headers.hmap -F/home05/g050267/Documents/Launcher/build/Debug -I/home05/g050267/Documents/Launcher/build/Debug/include -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/DerivedSources/x86_64 -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/DerivedSources -include /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Launcher_Prefix-cnvatsfxouhsfhegkrdmszrvybuw/Launcher_Prefix.pch -c /home05/g050267/Documents/Launcher/LauncherAppDelegate.m -o /home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Objects-normal/x86_64/LauncherAppDelegate.o0#
+
+CCompileC build/Launcher.build/Debug/Launcher.build/Objects-normal/x86_64/main.o /home05/g050267/Documents/Launcher/main.m normal x86_64 objective-c com.apple.compilers.gcc.4_2
+s294141200.509446
+e294141201.110772
+r1
+xCompileC
+xbuild/Launcher.build/Debug/Launcher.build/Objects-normal/x86_64/main.o
+x/home05/g050267/Documents/Launcher/main.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@49"Compile /home05/g050267/Documents/Launcher/main.m294141200#294141201#0(0"0(0#0#41"/home05/g050267/Documents/Launcher/main.m4300885448#1443"    cd /home05/g050267/Documents/Launcher    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x objective-c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -fobjc-gc-only -mmacosx-version-min=10.6 -gdwarf-2 -iquote /home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-generated-files.hmap -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-own-target-headers.hmap -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-all-target-headers.hmap -iquote /home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-project-headers.hmap -F/home05/g050267/Documents/Launcher/build/Debug -I/home05/g050267/Documents/Launcher/build/Debug/include -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/DerivedSources/x86_64 -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/DerivedSources -include /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Launcher_Prefix-cnvatsfxouhsfhegkrdmszrvybuw/Launcher_Prefix.pch -c /home05/g050267/Documents/Launcher/main.m -o /home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Objects-normal/x86_64/main.o0#
+
+CCompileXIB /home05/g050267/Documents/Launcher/English.lproj/MainMenu.xib
+s294140553.321688
+e294140553.877339
+r1
+xCompileXIB
+x/home05/g050267/Documents/Launcher/English.lproj/MainMenu.xib
+lSLF07#2@37"CompileXIB English.lproj/MainMenu.xib294140553#294140553#0(0"0(0#0#61"/home05/g050267/Documents/Launcher/English.lproj/MainMenu.xib4300885448#316"    cd /home05/g050267/Documents/Launcher    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/Resources/English.lproj/MainMenu.nib /home05/g050267/Documents/Launcher/English.lproj/MainMenu.xib0#
+
+CCopyStringsFile /home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/Resources/English.lproj/InfoPlist.strings English.lproj/InfoPlist.strings
+s294136716.367648
+e294136717.119287
+r1
+xCopyStringsFile
+x/home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/Resources/English.lproj/InfoPlist.strings
+xEnglish.lproj/InfoPlist.strings
+lSLF07#2@36"Copy English.lproj/InfoPlist.strings294136716#294136717#0(0"0(0#0#66"/home05/g050267/Documents/Launcher/English.lproj/InfoPlist.strings4300885448#358"    cd /home05/g050267/Documents/Launcher    setenv ICONV /usr/bin/iconv    /Developer/Library/Xcode/Plug-ins/CoreBuildTasks.xcplugin/Contents/Resources/copystrings --validate --inputencoding utf-8 --outputencoding UTF-16 English.lproj/InfoPlist.strings --outdir /home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/Resources/English.lproj0#
+
+CLd /home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/MacOS/Launcher normal x86_64
+s294141410.088869
+e294141410.140888
+r1
+xLd
+x/home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/MacOS/Launcher
+xnormal
+xx86_64
+lSLF07#2@88"Link /home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/MacOS/Launcher294141410#294141410#0(0"0(0#0#0"4300885448#527"    cd /home05/g050267/Documents/Launcher    setenv MACOSX_DEPLOYMENT_TARGET 10.6    /Developer/usr/bin/gcc-4.2 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.6.sdk -L/home05/g050267/Documents/Launcher/build/Debug -F/home05/g050267/Documents/Launcher/build/Debug -filelist /home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Objects-normal/x86_64/Launcher.LinkFileList -mmacosx-version-min=10.6 -framework Cocoa -o /home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/MacOS/Launcher0#
+
+CProcessInfoPlistFile /home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/Info.plist Launcher-Info.plist
+s294136716.327695
+e294136716.367492
+r1
+xProcessInfoPlistFile
+x/home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/Info.plist
+xLauncher-Info.plist
+lSLF07#2@27"Process Launcher-Info.plist294136716#294136716#0(0"0(0#0#54"/home05/g050267/Documents/Launcher/Launcher-Info.plist4300885448#301"    cd /home05/g050267/Documents/Launcher    builtin-infoPlistUtility Launcher-Info.plist -genpkginfo /home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/PkgInfo -expandbuildsettings -platform macosx -o /home05/g050267/Documents/Launcher/build/Debug/Launcher.app/Contents/Info.plist0#
+
+CProcessPCH /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Launcher_Prefix-cnvatsfxouhsfhegkrdmszrvybuw/Launcher_Prefix.pch.gch Launcher_Prefix.pch normal x86_64 objective-c com.apple.compilers.gcc.4_2
+s294141194.238897
+e294141200.509216
+r1
+xProcessPCH
+x/var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Launcher_Prefix-cnvatsfxouhsfhegkrdmszrvybuw/Launcher_Prefix.pch.gch
+xLauncher_Prefix.pch
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@30"Precompile Launcher_Prefix.pch294141194#294141200#0(0"0(0#0#54"/home05/g050267/Documents/Launcher/Launcher_Prefix.pch4300885448#1352"    cd /home05/g050267/Documents/Launcher    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x objective-c-header -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -fobjc-gc-only -mmacosx-version-min=10.6 -gdwarf-2 -iquote /home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-generated-files.hmap -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-own-target-headers.hmap -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-all-target-headers.hmap -iquote /home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-project-headers.hmap -F/home05/g050267/Documents/Launcher/build/Debug -I/home05/g050267/Documents/Launcher/build/Debug/include -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/DerivedSources/x86_64 -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/DerivedSources -c /home05/g050267/Documents/Launcher/Launcher_Prefix.pch -o /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Launcher_Prefix-cnvatsfxouhsfhegkrdmszrvybuw/Launcher_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Launcher_Prefix-exnahizcjeleylbpodiadjtjntnw/Launcher_Prefix.pch.gch Launcher_Prefix.pch normal x86_64 objective-c com.apple.compilers.gcc.4_2
+s294139186.744310
+e294139201.816975
+r1
+xProcessPCH
+x/var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Launcher_Prefix-exnahizcjeleylbpodiadjtjntnw/Launcher_Prefix.pch.gch
+xLauncher_Prefix.pch
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@30"Precompile Launcher_Prefix.pch294139186#294139201#0(0"0(0#0#54"/home05/g050267/Documents/Launcher/Launcher_Prefix.pch3419202321905706496#1337"    cd /home05/g050267/Documents/Launcher    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x objective-c-header -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-generated-files.hmap -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-own-target-headers.hmap -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-all-target-headers.hmap -iquote /home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/Launcher-project-headers.hmap -F/home05/g050267/Documents/Launcher/build/Debug -I/home05/g050267/Documents/Launcher/build/Debug/include -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/DerivedSources/x86_64 -I/home05/g050267/Documents/Launcher/build/Launcher.build/Debug/Launcher.build/DerivedSources -c /home05/g050267/Documents/Launcher/Launcher_Prefix.pch -o /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Launcher_Prefix-exnahizcjeleylbpodiadjtjntnw/Launcher_Prefix.pch.gch0#
+
+CTouch /home05/g050267/Documents/Launcher/build/Debug/Launcher.app
+s294141410.141028
+e294141410.144914
+r1
+xTouch
+x/home05/g050267/Documents/Launcher/build/Debug/Launcher.app
+lSLF07#2@65"Touch /home05/g050267/Documents/Launcher/build/Debug/Launcher.app294141410#294141410#0(0"0(0#0#0"4300885448#124"    cd /home05/g050267/Documents/Launcher    /usr/bin/touch -c /home05/g050267/Documents/Launcher/build/Debug/Launcher.app0#
+

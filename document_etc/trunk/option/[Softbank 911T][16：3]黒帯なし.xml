@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	東芝製SoftBank携帯911Tで再生できる3gpファイルに変換
+-->
+<properties>
+	<entry key="EXT">3gp</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-s 640x360 -acodec libfaac -ac 2 -ar 48000 -ab 96 -vcodec libxvid -s 640x480 -r 29.97 -b 1536 -muxrate 256 -f 3gp</entry>
+</properties>

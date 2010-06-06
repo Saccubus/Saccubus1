@@ -1,0 +1,206 @@
+TCookie
+v7
+r0
+t294043001.650459
+cCheck dependencies
+cProcessPCH /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-cncuepcqqnbzlugyjxptwjnccpyi/Cookie_Prefix.pch.gch Cookie_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+cCompileC build/Cookie.build/Debug/Cookie.build/Objects-normal/i386/Cookie.o /home05/g050267/Documents/Cookie/Cookie.m normal i386 objective-c com.apple.compilers.gcc.4_2
+cLd /home05/g050267/Documents/Cookie/build/Debug/Cookie normal i386
+
+N/Developer/SDKs/MacOSX10.6.sdk
+c000000004ABBF0FD00000000000000EE
+t1253830909
+s238
+
+N/Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h
+c0000000040C4AA6800000000000001E5
+t1086630504
+s485
+
+N/Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h
+c000000004AB9AA2700000000000013E6
+t1253681703
+s5094
+
+N/System/Library/Frameworks/Foundation.framework/Foundation
+c000000004B73AA190000000000B37440
+t1265871385
+s11760704
+
+N/home05/g050267/Documents/Cookie/Cookie.m
+c000000004BD685DB0000000000000ED0
+t1272350171
+s3792
+
+N/home05/g050267/Documents/Cookie/Cookie_Prefix.pch
+c000000004BD507B0000000000000009A
+t1272252336
+s154
+i<Foundation/Foundation.h>
+
+N/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/i386/Cookie
+t2
+s0
+
+N/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/i386/Cookie.LinkFileList
+c000000004BD685DE0000000000000064
+t1272350174
+s100
+
+N/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/i386/Cookie.o
+t1272350201
+s16456
+
+N/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/ppc/Cookie
+t2
+s0
+
+N/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/ppc/Cookie.LinkFileList
+c00000000000000000000000000000000
+t2
+s0
+
+N/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/ppc/Cookie.o
+t2
+s0
+
+N/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/x86_64/Cookie
+t2
+s0
+
+N/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/x86_64/Cookie.LinkFileList
+c000000004BD507DD0000000000000066
+t1272252381
+s102
+
+N/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/x86_64/Cookie.o
+t1272350146
+s18844
+
+N/home05/g050267/Documents/Cookie/build/Debug/Cookie
+t1272350201
+s18436
+
+N/var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-cncuepcqqnbzlugyjxptwjnccpyi/Cookie_Prefix.pch.gch
+t1272350200
+s43916080
+
+N/var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-dhgrwilnczeoduegxoahpwtgqnnr/Cookie_Prefix.pch.gch
+t2
+s0
+
+N/var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-fvkyyhrnizbidlaoazlygejuziet/Cookie_Prefix.pch.gch
+t1272345226
+s41405200
+
+N/var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-hkkqvkqwlrcldvafoqysispgehas/Cookie_Prefix.pch.gch
+t1272341921
+s41405200
+
+CCheck dependencies
+r0
+lSLF07#2@18"Check dependencies294042974#294042974#0(0"0(0#1#0"4300885448#0"0#
+
+CCompileC build/Cookie.build/Debug/Cookie.build/Objects-normal/i386/Cookie.o /home05/g050267/Documents/Cookie/Cookie.m normal i386 objective-c com.apple.compilers.gcc.4_2
+s294043000.436884
+e294043001.455978
+r1
+xCompileC
+xbuild/Cookie.build/Debug/Cookie.build/Objects-normal/i386/Cookie.o
+x/home05/g050267/Documents/Cookie/Cookie.m
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@49"Compile /home05/g050267/Documents/Cookie/Cookie.m294043000#294043001#0(0"0(0#0#41"/home05/g050267/Documents/Cookie/Cookie.m4300885448#1379"    cd /home05/g050267/Documents/Cookie    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -fobjc-gc-only -mmacosx-version-min=10.6 -gdwarf-2 -iquote /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-generated-files.hmap -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-own-target-headers.hmap -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-all-target-headers.hmap -iquote /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-project-headers.hmap -F/home05/g050267/Documents/Cookie/build/Debug -I/home05/g050267/Documents/Cookie/build/Debug/include -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/DerivedSources/i386 -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/DerivedSources -include /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-cncuepcqqnbzlugyjxptwjnccpyi/Cookie_Prefix.pch -c /home05/g050267/Documents/Cookie/Cookie.m -o /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/i386/Cookie.o0#
+
+CCompileC build/Cookie.build/Debug/Cookie.build/Objects-normal/ppc/Cookie.o /home05/g050267/Documents/Cookie/Cookie.m normal ppc objective-c com.apple.compilers.gcc.4_2
+r0
+
+CCompileC build/Cookie.build/Debug/Cookie.build/Objects-normal/x86_64/Cookie.o /home05/g050267/Documents/Cookie/Cookie.m normal x86_64 objective-c com.apple.compilers.gcc.4_2
+s294042945.838885
+e294042946.246722
+r1
+xCompileC
+xbuild/Cookie.build/Debug/Cookie.build/Objects-normal/x86_64/Cookie.o
+x/home05/g050267/Documents/Cookie/Cookie.m
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@49"Compile /home05/g050267/Documents/Cookie/Cookie.m294042945#294042946#0(0"0(0#0#41"/home05/g050267/Documents/Cookie/Cookie.m4300885448#1385"    cd /home05/g050267/Documents/Cookie    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x objective-c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -fobjc-gc-only -mmacosx-version-min=10.6 -gdwarf-2 -iquote /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-generated-files.hmap -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-own-target-headers.hmap -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-all-target-headers.hmap -iquote /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-project-headers.hmap -F/home05/g050267/Documents/Cookie/build/Debug -I/home05/g050267/Documents/Cookie/build/Debug/include -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/DerivedSources/x86_64 -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/DerivedSources -include /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-fvkyyhrnizbidlaoazlygejuziet/Cookie_Prefix.pch -c /home05/g050267/Documents/Cookie/Cookie.m -o /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/x86_64/Cookie.o0#
+
+CCreateUniversalBinary /home05/g050267/Documents/Cookie/build/Debug/Cookie normal "x86_64 i386 ppc"
+r0
+
+CLd /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/i386/Cookie normal i386
+r0
+
+CLd /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/ppc/Cookie normal ppc
+r0
+
+CLd /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/x86_64/Cookie normal x86_64
+r0
+
+CLd /home05/g050267/Documents/Cookie/build/Debug/Cookie normal i386
+s294043001.456101
+e294043001.650394
+r1
+xLd
+x/home05/g050267/Documents/Cookie/build/Debug/Cookie
+xnormal
+xi386
+lSLF07#2@56"Link /home05/g050267/Documents/Cookie/build/Debug/Cookie294043001#294043001#0(0"0(0#0#0"4300885448#482"    cd /home05/g050267/Documents/Cookie    setenv MACOSX_DEPLOYMENT_TARGET 10.6    /Developer/usr/bin/gcc-4.2 -arch i386 -isysroot /Developer/SDKs/MacOSX10.6.sdk -L/home05/g050267/Documents/Cookie/build/Debug -F/home05/g050267/Documents/Cookie/build/Debug -filelist /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/i386/Cookie.LinkFileList -mmacosx-version-min=10.6 -framework Foundation -o /home05/g050267/Documents/Cookie/build/Debug/Cookie0#
+
+CLd /home05/g050267/Documents/Cookie/build/Debug/Cookie normal x86_64
+s294042946.247098
+e294042946.281822
+r1
+xLd
+x/home05/g050267/Documents/Cookie/build/Debug/Cookie
+xnormal
+xx86_64
+lSLF07#2@56"Link /home05/g050267/Documents/Cookie/build/Debug/Cookie294042946#294042946#0(0"0(0#0#0"4300885448#486"    cd /home05/g050267/Documents/Cookie    setenv MACOSX_DEPLOYMENT_TARGET 10.6    /Developer/usr/bin/gcc-4.2 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.6.sdk -L/home05/g050267/Documents/Cookie/build/Debug -F/home05/g050267/Documents/Cookie/build/Debug -filelist /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Objects-normal/x86_64/Cookie.LinkFileList -mmacosx-version-min=10.6 -framework Foundation -o /home05/g050267/Documents/Cookie/build/Debug/Cookie0#
+
+CProcessPCH /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-cncuepcqqnbzlugyjxptwjnccpyi/Cookie_Prefix.pch.gch Cookie_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+s294042974.301182
+e294043000.436703
+r1
+xProcessPCH
+x/var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-cncuepcqqnbzlugyjxptwjnccpyi/Cookie_Prefix.pch.gch
+xCookie_Prefix.pch
+xnormal
+xi386
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@28"Precompile Cookie_Prefix.pch294042974#294043000#0(0"0(0#0#50"/home05/g050267/Documents/Cookie/Cookie_Prefix.pch4300885448#1290"    cd /home05/g050267/Documents/Cookie    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x objective-c-header -arch i386 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -fobjc-gc-only -mmacosx-version-min=10.6 -gdwarf-2 -iquote /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-generated-files.hmap -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-own-target-headers.hmap -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-all-target-headers.hmap -iquote /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-project-headers.hmap -F/home05/g050267/Documents/Cookie/build/Debug -I/home05/g050267/Documents/Cookie/build/Debug/include -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/DerivedSources/i386 -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/DerivedSources -c /home05/g050267/Documents/Cookie/Cookie_Prefix.pch -o /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-cncuepcqqnbzlugyjxptwjnccpyi/Cookie_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-dhgrwilnczeoduegxoahpwtgqnnr/Cookie_Prefix.pch.gch Cookie_Prefix.pch normal ppc objective-c com.apple.compilers.gcc.4_2
+r0
+
+CProcessPCH /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-fvkyyhrnizbidlaoazlygejuziet/Cookie_Prefix.pch.gch Cookie_Prefix.pch normal x86_64 objective-c com.apple.compilers.gcc.4_2
+s294038013.205381
+e294038026.612480
+r1
+xProcessPCH
+x/var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-fvkyyhrnizbidlaoazlygejuziet/Cookie_Prefix.pch.gch
+xCookie_Prefix.pch
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@28"Precompile Cookie_Prefix.pch294038013#294038026#0(0"0(0#0#50"/home05/g050267/Documents/Cookie/Cookie_Prefix.pch4300885448#1294"    cd /home05/g050267/Documents/Cookie    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x objective-c-header -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -fobjc-gc-only -mmacosx-version-min=10.6 -gdwarf-2 -iquote /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-generated-files.hmap -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-own-target-headers.hmap -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-all-target-headers.hmap -iquote /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-project-headers.hmap -F/home05/g050267/Documents/Cookie/build/Debug -I/home05/g050267/Documents/Cookie/build/Debug/include -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/DerivedSources/x86_64 -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/DerivedSources -c /home05/g050267/Documents/Cookie/Cookie_Prefix.pch -o /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-fvkyyhrnizbidlaoazlygejuziet/Cookie_Prefix.pch.gch0#
+
+CProcessPCH /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-hkkqvkqwlrcldvafoqysispgehas/Cookie_Prefix.pch.gch Cookie_Prefix.pch normal x86_64 objective-c com.apple.compilers.gcc.4_2
+s294034708.088960
+e294034721.993490
+r1
+xProcessPCH
+x/var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-hkkqvkqwlrcldvafoqysispgehas/Cookie_Prefix.pch.gch
+xCookie_Prefix.pch
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@28"Precompile Cookie_Prefix.pch294034708#294034721#0(0"0(0#0#50"/home05/g050267/Documents/Cookie/Cookie_Prefix.pch3419202321905706496#1279"    cd /home05/g050267/Documents/Cookie    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x objective-c-header -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-generated-files.hmap -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-own-target-headers.hmap -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-all-target-headers.hmap -iquote /home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/Cookie-project-headers.hmap -F/home05/g050267/Documents/Cookie/build/Debug -I/home05/g050267/Documents/Cookie/build/Debug/include -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/DerivedSources/x86_64 -I/home05/g050267/Documents/Cookie/build/Cookie.build/Debug/Cookie.build/DerivedSources -c /home05/g050267/Documents/Cookie/Cookie_Prefix.pch -o /var/folders/zz/zzzivhrRnAmviuee++1UhU++s9M/-Caches-/com.apple.Xcode.57526/SharedPrecompiledHeaders/Cookie_Prefix-hkkqvkqwlrcldvafoqysispgehas/Cookie_Prefix.pch.gch0#
+

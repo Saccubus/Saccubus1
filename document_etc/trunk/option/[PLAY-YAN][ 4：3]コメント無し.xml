@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	画面全部入るように352x240の大きさ。
+　　　　PCデフォルト設定に-r 29.97を追加して-acodecをaacに、-sを352x240にしただけ。
+　　　　コメント無しエンコはこの設定で。
+　　　　作った人：春蝶
+-->
+<properties>
+	<entry key="EXT">mp4</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-r 29.97 -s 352x240 -acodec libfaac -vcodec libxvid -qscale 3 -f mp4</entry>
+</properties>
