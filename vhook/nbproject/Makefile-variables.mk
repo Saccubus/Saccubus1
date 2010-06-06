@@ -22,3 +22,11 @@ CND_ARTIFACT_PATH_Release=dist/Release/MinGW_TDM_1-Windows/libvhook.dll
 CND_PACKAGE_DIR_Release=dist/Release/MinGW_TDM_1-Windows/package
 CND_PACKAGE_NAME_Release=libvhook.dll.tar
 CND_PACKAGE_PATH_Release=dist/Release/MinGW_TDM_1-Windows/package/libvhook.dll.tar
+# NiwangoTest configuration
+CND_PLATFORM_NiwangoTest=MinGW_TDM_1-Windows
+CND_ARTIFACT_DIR_NiwangoTest=dist/NiwangoTest/MinGW_TDM_1-Windows
+CND_ARTIFACT_NAME_NiwangoTest=nicovideo.exe
+CND_ARTIFACT_PATH_NiwangoTest=dist/NiwangoTest/MinGW_TDM_1-Windows/nicovideo.exe
+CND_PACKAGE_DIR_NiwangoTest=dist/NiwangoTest/MinGW_TDM_1-Windows/package
+CND_PACKAGE_NAME_NiwangoTest=vhook.tar
+CND_PACKAGE_PATH_NiwangoTest=dist/NiwangoTest/MinGW_TDM_1-Windows/package/vhook.tar

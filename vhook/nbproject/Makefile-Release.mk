@@ -36,6 +36,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/niwango/node/op_assign_node.o \
 	${OBJECTDIR}/niwango/node/array_node.o \
 	${OBJECTDIR}/niwango/node/suffix_op_node.o \
+	${OBJECTDIR}/niwango_test.o \
 	${OBJECTDIR}/niwango/node/literal_node.o \
 	${OBJECTDIR}/niwango/node/node.o \
 	${OBJECTDIR}/niwango/node/assign_node.o \
@@ -95,6 +96,11 @@ ${OBJECTDIR}/niwango/node/suffix_op_node.o: nbproject/Makefile-${CND_CONF}.mk ni
 	${MKDIR} -p ${OBJECTDIR}/niwango/node
 	${RM} $@.d
 	$(COMPILE.c) -O2 -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/suffix_op_node.o niwango/node/suffix_op_node.c
+
+${OBJECTDIR}/niwango_test.o: nbproject/Makefile-${CND_CONF}.mk niwango_test.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.c) -O2 -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango_test.o niwango_test.c
 
 ${OBJECTDIR}/niwango/node/literal_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/literal_node.c 
 	${MKDIR} -p ${OBJECTDIR}/niwango/node

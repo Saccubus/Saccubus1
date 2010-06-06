@@ -40,6 +40,7 @@
           <itemPath>niwango/parser/NiwangoParser.h</itemPath>
         </logicalFolder>
         <itemPath>niwango/niwango.h</itemPath>
+        <itemPath>niwango_test.c</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="HeaderFiles" displayName="ヘッダーファイル" projectFiles="true">
@@ -123,6 +124,42 @@
             <linkerOptionItem>-lole32</linkerOptionItem>
             <linkerOptionItem>-lpthread</linkerOptionItem>
             <linkerOptionItem>-liconv</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="NiwangoTest" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>MinGW_TDM_1|MinGW_TDM</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <incDir>
+            <pElem>X:/bin/msys/app/core/include</pElem>
+            <pElem>X:/bin/msys/app/core/include/glib-2.0</pElem>
+            <pElem>X:/bin/msys/app/core/lib/glib-2.0/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>NIWANGO_TEST</Elem>
+          </preprocessorList>
+        </cTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/nicovideo.exe</output>
+          <linkerAddLib>
+            <pElem>X:/bin/msys/app/core/lib</pElem>
+          </linkerAddLib>
+          <linkerLibItems>
+            <linkerOptionItem>-static</linkerOptionItem>
+            <linkerOptionItem>-lmingw32</linkerOptionItem>
+            <linkerOptionItem>-lm</linkerOptionItem>
+            <linkerOptionItem>-lglib-2.0</linkerOptionItem>
+            <linkerOptionItem>-lintl</linkerOptionItem>
+            <linkerOptionItem>-lole32</linkerOptionItem>
+            <linkerOptionItem>-lpthread</linkerOptionItem>
+            <linkerOptionItem>-liconv</linkerOptionItem>
+            <linkerOptionItem>-lantlr3c</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
