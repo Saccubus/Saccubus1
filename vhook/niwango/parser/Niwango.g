@@ -7,10 +7,10 @@ options {
 }
 
 @parser::header {
-#include "../node/node.h"
+#include "../node/node_set.h"
 }
 @lexer::header {
-#include "../node/node.h"
+#include "../node/node_set.h"
 }
 
 script returns [Node* node]

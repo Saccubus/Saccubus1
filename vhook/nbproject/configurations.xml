@@ -22,6 +22,7 @@
           <itemPath>niwango/node/literal_node.h</itemPath>
           <itemPath>niwango/node/node.c</itemPath>
           <itemPath>niwango/node/node.h</itemPath>
+          <itemPath>niwango/node/node_set.h</itemPath>
           <itemPath>niwango/node/op_assign_node.c</itemPath>
           <itemPath>niwango/node/op_assign_node.h</itemPath>
           <itemPath>niwango/node/prefix_op_node.c</itemPath>

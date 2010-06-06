@@ -30,7 +30,22 @@ include Makefile
 OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
-OBJECTFILES=
+OBJECTFILES= \
+	${OBJECTDIR}/niwango/node/prefix_op_node.o \
+	${OBJECTDIR}/niwango/node/args_node.o \
+	${OBJECTDIR}/niwango/node/op_assign_node.o \
+	${OBJECTDIR}/niwango/node/array_node.o \
+	${OBJECTDIR}/niwango/node/suffix_op_node.o \
+	${OBJECTDIR}/niwango/node/literal_node.o \
+	${OBJECTDIR}/niwango/node/node.o \
+	${OBJECTDIR}/niwango/node/assign_node.o \
+	${OBJECTDIR}/niwango/node/label_node.o \
+	${OBJECTDIR}/niwango/node/calling_node.o \
+	${OBJECTDIR}/niwango/node/accessor_node.o \
+	${OBJECTDIR}/niwango/parser/NiwangoLexer.o \
+	${OBJECTDIR}/niwango/parser/NiwangoParser.o \
+	${OBJECTDIR}/niwango/node/top_level_node.o \
+	${OBJECTDIR}/niwango/node/binary_op_node.o
 
 # C Compiler Flags
 CFLAGS=
@@ -55,6 +70,81 @@ LDLIBSOPTIONS=-L/X/bin/msys/app/core/lib -static -lmingw32 -lm -lglib-2.0 -lintl
 dist/Debug/MinGW_TDM_1-Windows/nicovideo.dll: ${OBJECTFILES}
 	${MKDIR} -p dist/Debug/MinGW_TDM_1-Windows
 	${LINK.c} -shared -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/nicovideo.dll ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/niwango/node/prefix_op_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/prefix_op_node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/prefix_op_node.o niwango/node/prefix_op_node.c
+
+${OBJECTDIR}/niwango/node/args_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/args_node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/args_node.o niwango/node/args_node.c
+
+${OBJECTDIR}/niwango/node/op_assign_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/op_assign_node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/op_assign_node.o niwango/node/op_assign_node.c
+
+${OBJECTDIR}/niwango/node/array_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/array_node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/array_node.o niwango/node/array_node.c
+
+${OBJECTDIR}/niwango/node/suffix_op_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/suffix_op_node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/suffix_op_node.o niwango/node/suffix_op_node.c
+
+${OBJECTDIR}/niwango/node/literal_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/literal_node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/literal_node.o niwango/node/literal_node.c
+
+${OBJECTDIR}/niwango/node/node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/node.o niwango/node/node.c
+
+${OBJECTDIR}/niwango/node/assign_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/assign_node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/assign_node.o niwango/node/assign_node.c
+
+${OBJECTDIR}/niwango/node/label_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/label_node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/label_node.o niwango/node/label_node.c
+
+${OBJECTDIR}/niwango/node/calling_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/calling_node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/calling_node.o niwango/node/calling_node.c
+
+${OBJECTDIR}/niwango/node/accessor_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/accessor_node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/accessor_node.o niwango/node/accessor_node.c
+
+${OBJECTDIR}/niwango/parser/NiwangoLexer.o: nbproject/Makefile-${CND_CONF}.mk niwango/parser/NiwangoLexer.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/parser
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/parser/NiwangoLexer.o niwango/parser/NiwangoLexer.c
+
+${OBJECTDIR}/niwango/parser/NiwangoParser.o: nbproject/Makefile-${CND_CONF}.mk niwango/parser/NiwangoParser.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/parser
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/parser/NiwangoParser.o niwango/parser/NiwangoParser.c
+
+${OBJECTDIR}/niwango/node/top_level_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/top_level_node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/top_level_node.o niwango/node/top_level_node.c
+
+${OBJECTDIR}/niwango/node/binary_op_node.o: nbproject/Makefile-${CND_CONF}.mk niwango/node/binary_op_node.c 
+	${MKDIR} -p ${OBJECTDIR}/niwango/node
+	${RM} $@.d
+	$(COMPILE.c) -g -I/X/bin/msys/app/core/include -I/X/bin/msys/app/core/include/glib-2.0 -I/X/bin/msys/app/core/lib/glib-2.0/include  -MMD -MP -MF $@.d -o ${OBJECTDIR}/niwango/node/binary_op_node.o niwango/node/binary_op_node.c
 
 # Subprojects
 .build-subprojects:
