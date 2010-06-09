@@ -17,6 +17,14 @@ extern "C" {
     typedef struct Env Env;
     typedef struct Obj Obj;
 //
+	typedef struct NiwangoScript NiwangoScript;
+	typedef struct Niwango Niwango;
+//外側から見えるインターフェース
+	Niwango* Niwango_new();
+	void Niwango_free(Niwango* self);
+	void Niwango_addScript(Niwango* self, glong timestamp, const gchar* script_txt);
+	void Niwango_seek(Niwango* self, glong timestamp);
+	void Niwango_play(Niwango* self, glong timestamp);
 
 #ifdef	__cplusplus
 }
