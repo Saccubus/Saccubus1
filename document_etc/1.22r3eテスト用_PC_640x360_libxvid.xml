@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	テスト用　mp4 libxvid 4 スレッド 640x360
+
+	ここに説明や作者コメントなどなど。
+	下の指定したところに各オプションを書き、optionフォルダに入れると
+	「さきゅばす」から認識されるようになります。
+-->
+<properties>
+	<entry key="EXT">mp4</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -aspect 16:9 -threads 4 -qscale 20 -async 1</entry>
+</properties>
