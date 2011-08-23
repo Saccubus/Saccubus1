@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--そのままウォークマンの動画に変換します。
+NW-A910シリーズスレ171氏（通称／(^o^)＼）の携帯動画変換君のスクリプトを流用していますので、感謝はそちらにお願いします
+-->
+<properties>
+	<entry key="EXT">mp4</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-vcodec libx264 -coder 0 -level 13 -bufsize 128kb -s 320x240 -r 30000/1001 -b 768k -g 300 -aspect 4:3 -flags mv4+loop+part+naq+alt+trell+bitexact+aic+umv+cbp+qprd -partitions all -mbd rd -subq 7 -acodec libfaac -ac 2 -ar 48000 -ab 128k -f 3gp -qcomp 0.7 -qmin 10 -qmax 51 -qdiff 4 -me_range 16 -i_qfactor 0.714286</entry>
+</properties>
