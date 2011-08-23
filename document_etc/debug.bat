@@ -1,0 +1,1 @@
+java -jar Saccubus.jar > log.txt 2>&1
