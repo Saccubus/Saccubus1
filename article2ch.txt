@@ -1,0 +1,13 @@
+2ch　PC等　ソフトウェア板
+【ニコニコ】コメント付動画作成ツール さきゅばす
+http://hibari.2ch.net/test/read.cgi/software/1235626069/
+（参考URL：http://desktop2ch.jp/software/1235626069/）
+
+341
+名無しさん＠お腹いっぱい。[sage]投稿日：2010/05/15 18:59:38 ID:hsW0n4oG0
+>243の1.22r2を元にダウンロードできるように修正しました。 
+
+http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip 
+
+1ファイルだけしか試していないのと 
+javaなんて使わないから他の環境で動くかどうかわかりません
