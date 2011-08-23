@@ -1,0 +1,10 @@
+IE仕様変更対応　1.22r3e6
+ttp://www1.axfc.net/uploader/File/so/67535.zip
+
+修正・改変点
+　セッション共有で８月のWindowsUpdateのIEのクッキー仕様変更に対応
+　対応ブラウザOpera追加、ログインチェック改善
+
+問題があれば報告お願いします
+
+（IEの変更でSmileDownloaderとかもDLできなくなってるみたいですね。）
