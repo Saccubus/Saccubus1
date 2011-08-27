@@ -8,5 +8,5 @@
 	<entry key="EXT">mp4</entry>
 	<entry key="MAIN"></entry>
 	<entry key="IN"></entry>
-	<entry key="OUT">-vcodec libxvid -b 350k  -bufsize 4096 -g 300 -acodec libfaac -ab 128k -ar 44100 -ac 2 -s 480x270 -aspect 16:9</entry>
+	<entry key="OUT">-threads 8 -vcodec libxvid -b 350k  -bufsize 4096 -g 300 -acodec libfaac -ab 128k -ar 44100 -ac 2 -s 480x320 -aspect 4:3</entry>
 </properties>

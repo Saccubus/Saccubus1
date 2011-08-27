@@ -2,10 +2,11 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <!--
 	kuji-raさん提供
+	■orz
 -->
 <properties>
 	<entry key="EXT">mp4</entry>
 	<entry key="MAIN"></entry>
 	<entry key="IN"></entry>
-	<entry key="OUT">-vcodec libxvid -b 350 -qmax 10 -bufsize 4096 -g 300 -acodec libfaac -ab 128k -ar 44100 -ac 2 -s 320x180 -aspect 16:9</entry>
+	<entry key="OUT">-vcodec libxvid -b 350k -qmax 10 -bufsize 4096 -g 300 -acodec libfaac -ab 128k -ar 44100 -ac 2 -s 320x180 -aspect 16:9</entry>
 </properties>
