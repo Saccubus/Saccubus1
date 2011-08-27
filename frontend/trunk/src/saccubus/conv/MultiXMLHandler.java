@@ -14,8 +14,6 @@ public class MultiXMLHandler extends DefaultHandler {
 	private final ChatArray chatArray;
 	private ChatSave chat;
 	private boolean chat_kicked;
-	@SuppressWarnings("unused")
-	private String forkStr;
 
 	public MultiXMLHandler(ChatArray chatArray) {
 		this.chatArray = chatArray;

@@ -40,28 +40,28 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 	 */
 	private static final long serialVersionUID = -4256413309312729840L;
 
-	String version = "ver1.22r(2008/04/27)";
+//	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.22r3e8";
-	private static final String modefied = "(2011/08/18)";
+	public static final String rev = "1.23";
+	private static final String modefied = " (2011/08/27)";
 
 	String productHTML =
 		"<html><p>本プログラムは<br/>" +
-		"  <a href=\'http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip\'>" +
-		"「さきゅばす 1.22r3」</a><br/>" +
-		"  <a href=\'http://sourceforge.jp/projects/coroid/downloads/48371/saccubus_nibr1.4.4.zip/\'>" +
-		"「さきゅばすNicoBrowser拡張1.4.4」</a><br/>" +
-		"を改造したものです。<br/>" +
+	//	"  <a href=\'http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip\'>" +
+	//	"「さきゅばす 1.22r3」</a><br/>" +
+	//	"  <a href=\'http://sourceforge.jp/projects/coroid/downloads/48371/saccubus_nibr1.4.4.zip/\'>" +
+	//	"さきゅばすNicoBrowser拡張1.4.4</a><br/>" +
+	//	"を改造したものです。<br/>" +
 		" <a href=\'http://sourceforge.jp/projects/coroid/downloads/52940/inqubus1.7.0.zip/\'>"	+
-		"「いんきゅばす1.7.0」</a>　も参考にしています。<br/>" +
-		" orz " + rev + " " + modefied + "<br/>"+
-		"上記および本プログラムのオリジナルは以下の通りです。<br/><br/>"+
-		"<a href=\'http://sourceforge.jp/projects/saccubus/downloads/30757/Saccubus-1.22r.zip/\'>" +
-		"さきゅばす<br/>"+
-		version + "</a><br/><br/>"+
+		"いんきゅばす1.7.0</a><br/>を参考にしています。</p>" +
+	//	" orz " + rev + " " + modefied + "<br/>"+
+	//	"本プログラムのオリジナルは以下の通りです。<br/><br/>"+
+		"<p><a href=\'http://sourceforge.jp/projects/saccubus/downloads/????/Saccubus-1.23.zip/\'>" +
+		"さきゅばす　"+ rev + modefied + "</a><br/><br/>"+
 		"<table border=0>" +
 		"<tr><td>Copyright (C) <td>2008 Saccubus Developers Team"+
 		"<tr><td><td>2007-2008 PSI"+
+		"<tr><td><td>2011-2011 orz"+
 		"</table><br/>" +
 		"ニコニコ動画の動画をコメントつきで保存</p>" +
 		"<p>関連リンク<br/>" +

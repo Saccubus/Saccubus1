@@ -33,7 +33,7 @@ public class NicoXMLReader extends DefaultHandler {
 
 	private boolean item_kicked;
 
-	Object waitObject = new Object();
+	//Object waitObject = new Object();
 
 	private final Pattern NG_Word;
 
@@ -57,25 +57,25 @@ public class NicoXMLReader extends DefaultHandler {
 		int index;
 		for (index = 0; index < tmp.length && tmp_index < tmp.length; index++) {
 			if (tmp[tmp_index].startsWith("/")) {
-				String str = tmp[tmp_index];
+				StringBuffer str = new StringBuffer(tmp[tmp_index]);
 				for (tmp_index++; tmp_index < tmp.length; tmp_index++) {
-					str += " " + tmp[tmp_index];
+					str.append(" " + tmp[tmp_index]);
 					if (tmp[tmp_index].endsWith("/")) {
 						tmp_index++;
 						break;
 					}
 				}
-				tmp2[index] = str;
+				tmp2[index] = str.substring(0);
 			} else if (tmp[tmp_index].startsWith("\"")) {
-				String str = tmp[tmp_index];
+				StringBuffer str = new StringBuffer(tmp[tmp_index]);
 				for (tmp_index++; tmp_index < tmp.length; tmp_index++) {
-					str += " " + tmp[tmp_index];
+					str.append(" " + tmp[tmp_index]);
 					if (tmp[tmp_index].endsWith("\"")) {
 						tmp_index++;
 						break;
 					}
 				}
-				tmp2[index] = str;
+				tmp2[index] = str.substring(0);
 			} else {
 				tmp2[index] = tmp[tmp_index];
 				tmp_index++;
@@ -85,23 +85,24 @@ public class NicoXMLReader extends DefaultHandler {
 		for (int i = 0; i < index; i++) {
 			elt[i] = tmp2[i];
 		}
-		String reg = "";
+		StringBuffer regb = new StringBuffer();
 		for (int i = 0; i < elt.length; i++) {
 			String e = elt[i];
 			System.out.println(e);
 			if (i > 0) {
-				reg += "|";
+				regb.append("|");
 			}
 			if (e.length() > 1 && e.indexOf("/") == 0 && e.lastIndexOf("/") == e.length() - 1) {
-				reg += "(" + e.substring(1, e.length() - 1) + ")";
+				regb.append("(" + e.substring(1, e.length() - 1) + ")");
 			} else if (e.length() > 1 && e.indexOf("\"") == 0
 					&& e.lastIndexOf("\"") == e.length() - 1) {
-				reg += "(" + Pattern.quote(e.substring(1, e.length() - 1))
-						+ ")";
+				regb.append("(" + Pattern.quote(e.substring(1, e.length() - 1))
+						+ ")");
 			} else {
-				reg += "(.*(" + Pattern.quote(e) + ")+.*)";
+				regb.append("(.*(" + Pattern.quote(e) + ")+.*)");
 			}
 		}
+		String reg = regb.substring(0);
 		System.out.println("reg:" + reg);
 		Pattern pat;
 		try{
@@ -151,7 +152,7 @@ public class NicoXMLReader extends DefaultHandler {
 				item_kicked = true;
 				return;
 			}
-			item.setDate(attributes.getValue("date"));
+			// item.setDate(attributes.getValue("date"));
 			String mail = attributes.getValue("mail");
 			if (match(NG_Word, mail)) {
 				item_kicked = true;
@@ -168,7 +169,7 @@ public class NicoXMLReader extends DefaultHandler {
 			if (forkval != null && forkval.equals("1")) {
 				item_fork = true;
 			}
-			item.setUserID(user_id);
+			// item.setUserID(user_id);
 			item.setVpos(attributes.getValue("vpos"));
 
 		}

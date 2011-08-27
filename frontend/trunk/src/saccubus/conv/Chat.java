@@ -8,19 +8,19 @@ import saccubus.util.Util;
  * <p>
  * タイトル: さきゅばす
  * </p>
- * 
+ *
  * <p>
  * 説明: ニコニコ動画の動画をコメントつきで保存
  * </p>
- * 
+ *
  * <p>
  * 著作権: Copyright (c) 2007 PSI
  * </p>
- * 
+ *
  * <p>
  * 会社名:
  * </p>
- * 
+ *
  * @author 未入力
  * @version 1.0
  */
@@ -79,11 +79,11 @@ public class Chat {
 	private static final int CMD_COLOR_TRUERED = 15;
 
 	private static final int CMD_COLOR_BLACK = 16;
-
+/*
 	// "date"
 	@SuppressWarnings("unused")
 	private int Date = 0;
-
+*/
 	// "mail"
 	private int Color = 0;
 
@@ -93,11 +93,11 @@ public class Chat {
 
 	// "No"
 	private int No = 0;
-
+/*
 	// "user_id"
 	@SuppressWarnings("unused")
 	private int UserID = 0;
-
+*/
 	// "vpos"
 	private int Vpos = 0;
 
@@ -105,12 +105,12 @@ public class Chat {
 
 	public Chat() {
 	}
-
+/*
 	public void setDate(String date_str) {
 		Date = Integer.parseInt(date_str);
 		// System.out.println("date:" + date_str);
 	}
-
+*/
 	public void setMail(String mail_str) {
 		// System.out.println("mail:" + mail_str);
 		Color = CMD_COLOR_DEF;
@@ -163,12 +163,11 @@ public class Chat {
 				Color = CMD_COLOR_TRUERED;
 			} else if (str.equals("black")) {
 				Color = CMD_COLOR_BLACK;
-			} else if (str.startsWith("#")){
-				// TODO
-				/*
-				Color = simulateColor16(str.substr(1));	
-				*/
-			} else {
+		//	} else if (str.startsWith("#")){
+		//	TODO
+		//		Color = simulateColor16(str.substr(1));
+		//
+		//	} else {
 				// System.out.println("Unknown command:" + str);
 			}
 		}
@@ -182,7 +181,7 @@ public class Chat {
 		}
 		// System.out.println("no:" + no_str);
 	}
-
+/*
 	public void setUserID(String user_id_str) {
 		// System.out.println("user_id:" + user_id_str);
 		try {
@@ -191,7 +190,7 @@ public class Chat {
 			UserID = -1;
 		}
 	}
-
+*/
 	public void setVpos(String vpos_str) {
 		// System.out.println("vpos:" + vpos_str);
 		try {

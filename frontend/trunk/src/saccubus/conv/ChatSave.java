@@ -2,8 +2,6 @@ package saccubus.conv;
 
 import java.io.*;
 
-import org.xml.sax.Attributes;
-
 /**
  * <p>
  * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
@@ -62,9 +60,10 @@ public class ChatSave {
 */
 	// all attributes and its values
 	private String attributesStr = "";
+/*
 	@SuppressWarnings("unused")
 	private Attributes attr = null;
-/*
+
 	// "date"
 	@SuppressWarnings("unused")
 	private int Date = 0;
@@ -95,11 +94,11 @@ public class ChatSave {
 
 	public ChatSave() {
 	}
-
+/*
 	public void setAttributes(Attributes attr){
 		this.attr = attr;
 	}
-
+*/
 	public void setAttributeString(String attributes){
 		attributesStr = attributes;
 	}

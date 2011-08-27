@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package saccubus;
 
@@ -10,11 +10,11 @@ import javax.swing.DefaultComboBoxModel;
 
 /**
  * @author Account01
- * 
+ *
  */
 public class FFmpegComboBoxModel extends DefaultComboBoxModel {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -8948187216195366156L;
 
@@ -163,7 +163,7 @@ class FFmpegSelectedItem {
 
 	/**
 	 * Ž¯•Ê‚ÉŽg‚¤
-	 * 
+	 *
 	 * @return
 	 */
 	protected int getIndex() {

@@ -2,11 +2,11 @@ package saccubus;
 
 import javax.swing.JLabel;
 
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
-
 import saccubus.net.BrowserInfo;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.net.NicoClient;
+import saccubus.net.Path;
+
 import java.io.*;
 
 import saccubus.conv.CombineXML;
@@ -40,11 +40,11 @@ public class Converter extends Thread {
 	private String Time;
 	private JLabel Status;
 	private final ConvertStopFlag StopFlag;
-	private static final String TMP_COMMENT = "./vhook.tmp";
-	private static final String TMP_OWNERCOMMENT = "./vhookowner.tmp";
+	private static final String TMP_COMMENT = "_vhook.tmp";
+	private static final String TMP_OWNERCOMMENT = "_vhookowner.tmp";
 	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
 	public static final String OWNER_EXT = "[Owner].xml";	// 投稿者コメントサフィックス
-	private static final String TMP_COMBINED_XML = "./tmp_comment.xml";
+	private static final String TMP_COMBINED_XML = "_tmp_comment.xml";
 	private String OtherVideo;
 	private final String WatchInfo;
 	private final JLabel MovieInfo;
@@ -52,6 +52,9 @@ public class Converter extends Thread {
 	private final BrowserInfo BrowserInfo = new BrowserInfo();
 	private String UserSession = "";	//ブラウザから取得したユーザーセッション
 	private final Stopwatch Stopwatch;
+	private File selectedVhook;
+	private Aspect videoAspect;
+	private File fwsFile = null;
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -91,6 +94,7 @@ public class Converter extends Thread {
 	private File VhookNormal = null;
 	private File VhookWide = null;
 	private int wayOfVhook = 0;
+	private ArrayList<File> listOfCommentFile = null;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -201,10 +205,10 @@ public class Converter extends Thread {
 				sendtext("フォントが見つかりません。");
 				return false;
 			}
-			if (!detectOption()) {
-				sendtext("変換オプションファイルの読み込みに失敗しました。");
-				return false;
-			}
+//			if (!detectOption()) {
+//				sendtext("変換オプションファイルの読み込みに失敗しました。");
+//				return false;
+//			}
 		} else {
 			if (isDeleteVideoAfterConverting()) {
 				sendtext("変換しないのに、動画削除しちゃって良いんですか？");
@@ -243,8 +247,8 @@ public class Converter extends Thread {
 				UserSession = BrowserInfo.getUserSessionOther(Setting.getBrowserCookiePath());
 			}
 			if (BrowserKind != BrowserCookieKind.NONE && UserSession.isEmpty()){
-				sendtext("ブラウザ(" + BrowserKind.toString()
-						+ ")のセッション取得に失敗");
+				sendtext("ブラウザ　" + BrowserKind.toString()
+						+ "　のセッション取得に失敗");
 				return false;
 			}
 			if (BrowserKind == BrowserCookieKind.NONE
@@ -299,7 +303,9 @@ public class Converter extends Thread {
 		/*動画の保存*/
 		if (isSaveVideo()) {
 			if (isVideoFixFileName()) {
-				folder.mkdir();
+				if (folder.mkdir()) {
+					System.out.println("Folder created: " + folder.getPath());
+				}
 				if (!folder.isDirectory()) {
 					sendtext("動画の保存先フォルダが作成できません。");
 					return false;
@@ -357,7 +363,9 @@ public class Converter extends Thread {
 		File folder = Setting.getCommentFixFileNameFolder();
 		if (isSaveComment()) {
 			if (isCommentFixFileName()) {
-				folder.mkdir();
+				if (folder.mkdir()) {
+					System.out.println("Folder created: " + folder.getPath());
+				}
 				if (!folder.isDirectory()) {
 					sendtext("コメントの保存先フォルダが作成できません。");
 					return false;
@@ -376,7 +384,7 @@ public class Converter extends Thread {
 						}
 					}
 				}
-				CommentFile = new File(folder,VideoID + VideoTitle + ext);
+				CommentFile = new File(folder, VideoID + VideoTitle + ext);
 			} else {
 				CommentFile = Setting.getCommentFile();
 			}
@@ -390,8 +398,7 @@ public class Converter extends Thread {
 						.getBackCommentFromLength(back_comment);
 			}
 			sendtext("コメントのダウンロード開始中");
-			CommentFile = client.getComment(CommentFile, Status, back_comment,
-					Time, StopFlag);
+			CommentFile = client.getComment(CommentFile, Status, back_comment, Time, StopFlag);
 			if (stopFlagReturn()) {
 				return false;
 			}
@@ -409,13 +416,14 @@ public class Converter extends Thread {
 		File folder = Setting.getCommentFixFileNameFolder();
 		if (isSaveOwnerComment()) {
 			if (isCommentFixFileName()) {
-				folder.mkdir();
+				if (folder.mkdir()) {
+					System.out.println("Folder created: " + folder.getPath());
+				}
 				if (!folder.isDirectory()) {
 					sendtext("投稿者コメントの保存先フォルダが作成できません。");
 					return false;
 				}
-				OwnerCommentFile = new File(folder,
-					VideoID + VideoTitle + OWNER_EXT);
+				OwnerCommentFile = new File(folder, VideoID + VideoTitle + OWNER_EXT);
 			} else {
 				OwnerCommentFile = Setting.getOwnerCommentFile();
 			}
@@ -438,6 +446,10 @@ public class Converter extends Thread {
 		return true;
 	}
 
+	private Path mkTemp(String uniq){
+		return Path.mkTemp(Tag + uniq);
+	}
+
 	private boolean convertComment(){
 		sendtext("コメントの中間ファイルへの変換中");
 		File folder = Setting.getCommentFixFileNameFolder();
@@ -455,24 +467,26 @@ public class Converter extends Thread {
 					for (String path: pathlist){
 						filelist.add(new File(folder, path));
 					}
-					CommentFile = new File(TMP_COMBINED_XML);
+					CommentFile = mkTemp(TMP_COMBINED_XML);
 					sendtext("コメントファイル結合中");
 					if (!CombineXML.combineXML(filelist, CommentFile)){
 						sendtext("コメントファイルが結合出来ませんでした（バグ？）");
 						return false;
 					}
+					listOfCommentFile = filelist;
 				} else {
-					// コメントファイルはひとつだけ見つかった
+					// コメントファイルはひとつだけ見つかった	ここには来ない 1.22r3e8, for NP4 comment ver 2009
 					File comfile = new File(folder,pathlist.get(0));
 					if (isSaveComment()){			// for NP4 comment ver 2009
 						ArrayList<File> filelist = new ArrayList<File>();
 						filelist.add(comfile);
-						CommentFile = new File(TMP_COMBINED_XML);
+						CommentFile = mkTemp(TMP_COMBINED_XML);
 						sendtext("コメントファイル統一中(新コメント表示)");
 						if (!CombineXML.combineXML(filelist, CommentFile)){
 							sendtext("コメントファイルが統一出来ませんでした（バグ？）");
 							return false;
 						}
+						listOfCommentFile = filelist;
 					} else {
 						CommentFile = comfile;
 					}
@@ -504,8 +518,7 @@ public class Converter extends Thread {
 					}
 				}
 			}
-			CommentMiddleFile = convertToCommentMiddle(
-					CommentFile, TMP_COMMENT);
+			CommentMiddleFile = convertToCommentMiddle(CommentFile, mkTemp(TMP_COMMENT));
 			if (CommentMiddleFile == null){
 				sendtext("コメント変換に失敗。おそらく正規表現の間違い？");
 				return false;
@@ -539,8 +552,7 @@ public class Converter extends Thread {
 					}
 				}
 			}
-			OwnerMiddleFile = convertToCommentMiddle(
-					OwnerCommentFile, TMP_OWNERCOMMENT);
+			OwnerMiddleFile = convertToCommentMiddle(OwnerCommentFile, mkTemp(TMP_OWNERCOMMENT));
 			if (OwnerMiddleFile == null){
 				sendtext("投稿者コメント変換に失敗。おそらく正規表現の間違い？");
 				return false;
@@ -550,15 +562,15 @@ public class Converter extends Thread {
 	}
 
 	private void deleteCommentFile(){
-		CommentFile.delete();
+		if (CommentFile.delete()) {
+			System.out.println("Deleted: " + CommentFile.getPath());
+		}
 	}
 
-	private File convertToCommentMiddle(File commentfile,
-			String outpath) {
-		File middlefile = new File(outpath);
-		if (!ConvertToVideoHook.convert
-			(commentfile, middlefile,
-			Setting.getNG_ID(), Setting.getNG_Word())){
+	private File convertToCommentMiddle(File commentfile, File middlefile) {
+		if (!ConvertToVideoHook.convert(
+				commentfile, middlefile,
+				Setting.getNG_ID(), Setting.getNG_Word())){
 			return null;
 		}
 		return middlefile;
@@ -570,7 +582,9 @@ public class Converter extends Thread {
 		/*ビデオ名の確定*/
 		File folder = Setting.getConvFixFileNameFolder();
 		if (Setting.isConvFixFileName()) {
-			folder.mkdir();
+			if (folder.mkdir()) {
+				System.out.println("Created folder: " + folder.getPath());
+			}
 			if (!folder.isDirectory()) {
 				sendtext("変換後の保存先フォルダが作成できません。");
 				return false;
@@ -586,6 +600,7 @@ public class Converter extends Thread {
 				sendtext("変換後のビデオファイル名が確定できません。");
 				return false;
 			}
+
 			if (Setting.isAddOption_ConvVideoFile()){
 				byte[] dirName = new File(folder, conv_name)
 					.getAbsolutePath().getBytes("Shift_JIS");
@@ -595,9 +610,14 @@ public class Converter extends Thread {
 				}
 				conv_name = conv_name.trim();	// In Windows API, cant make dir as " ABC" nor "ABC "
 				folder = new File(folder, conv_name);
-				folder.mkdir();
+				if (folder.mkdir()) {
+					System.out.println("Created folder: " + folder.getPath());
+				}
 				if (!folder.isDirectory()) {
 					sendtext("動画(FFmpeg設定名)ファイルの保存先フォルダが作成できません。");
+					return false;
+				}
+				if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
 					return false;
 				}
 				conv_name = MainOption + InOption + OutOption;
@@ -627,12 +647,15 @@ public class Converter extends Thread {
 			} else {
 				ConvertedVideoFile = Setting.getConvertedVideoFile();
 			}
+			if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
+				return false;
+			}
 		}
 		if (ConvertedVideoFile.getAbsolutePath().equals(VideoFile.getAbsolutePath())){
 			sendtext("変換後のファイル名が変換前と同じです");
 			return false;
 		}
-		int code = converting_video(TMP_COMMENT,TMP_OWNERCOMMENT);
+		int code = converting_video(CommentMiddleFile, OwnerMiddleFile);
 		Stopwatch.stop();
 		if (code == 0) {
 			sendtext("変換が正常に終了しました。");
@@ -725,11 +748,14 @@ public class Converter extends Thread {
 				if (isDeleteCommentAfterConverting()
 					&& CommentFile != null) {
 					deleteCommentFile();
+					deleteList(listOfCommentFile);
 					// OwnerCommentFile.delete();
 				}
 				if (isDeleteVideoAfterConverting()
 					&& VideoFile != null) {
-					VideoFile.delete();
+					if (VideoFile.delete()) {
+						System.out.println("Deleted: " + VideoFile.getPath());
+					}
 				}
 			}
 		} catch (IOException ex) {
@@ -737,55 +763,94 @@ public class Converter extends Thread {
 		} finally {
 			StopFlag.finished();
 			if (CommentMiddleFile != null) {
-				//  デバッグのためコメントファイルを残しておく
-				// CommentMiddleFile.delete();
+				if (CommentMiddleFile.delete()) {
+					System.out.println("Deleted: " + CommentMiddleFile.getPath());
+				}
 			}
 			if (OwnerMiddleFile != null){
-				//	投稿者コメントは削除しない。
-				// OwnerMiddleFile.delete();
+				if (OwnerMiddleFile.delete()) {
+					System.out.println("Deleted: " + OwnerMiddleFile.getPath());
+				}
 			}
 			Stopwatch.show();
 			Stopwatch.stop();
 			System.out.println("変換時間　" + Stopwatch.formatLatency());
+			System.out.println("LastStatus: " + Status.getText());
+			System.out.println("VideoInfo: " + MovieInfo.getText());
+		}
+	}
+
+	private void deleteList(ArrayList<File> list){
+		boolean b = true;
+		for (File file : list){
+			b = file.delete() && b;
+		}
+		if (!b){
+			System.out.println("Can't delete list of all Comment.");
 		}
 	}
 
 	private static final int CODE_CONVERTING_ABORTED = 100;
 
-	private int converting_video(String vhook_path, String vhookowner_path) {
-		int code = -1;
-		File fwsFile = null;
+	/**
+	 * @param video : File
+	 * @param way : int  1 or 2
+	 * Output videoAspect : Aspect
+	 * Output VideoFile : File
+	 * Output selectedVhook : File  vhook.exe
+	 * OUTPUT ExtOption, MainOption, InOption, OutOption
+	 */
+	private boolean chekAspectVhookOption(File video, int way){
+		fwsFile = null;
 		try {
-			fwsFile = Cws2Fws.createFws(VideoFile);
+			fwsFile = Cws2Fws.createFws(video);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return code;
 		}
 		if (fwsFile != null){
 			VideoFile = fwsFile;
+			video = fwsFile;
 		}
-		File selectVhook = VhookNormal;
-		StringBuffer sb = new StringBuffer();
-		sb.append(" ");
-		String s = "N/A  ";
-		Aspect a = null;
-		if (wayOfVhook == 2){
-			a = ffmpeg.getAspect(VideoFile, sb);	// ref sb
-			s = sb.toString() + "  ";
+		videoAspect = ffmpeg.getAspect(video);
+		String str;
+		if (videoAspect == null){
+			str = "Analize Error   ";
+			videoAspect = Aspect.NORMAL;
 		} else {
+			str = videoAspect.explain() + "  ";
+		}
+		if (way == 1){
 			if (VhookNormal == null){
-				a = Aspect.WIDE;
+				if (!videoAspect.isWide()){
+					str = "≠" + str;
+				}
+				videoAspect = Aspect.WIDE;
 			} else {
-				a = Aspect.NORMAL;
+				if (videoAspect.isWide()){
+					str = "≠" + str;
+				}
+				videoAspect = Aspect.NORMAL;
 			}
 		}
-		if (a == Aspect.WIDE ){
-			selectVhook = VhookWide;
-			MovieInfo.setText("拡張Vhook ワイド " + s);
+		if (videoAspect.isWide()){
+			selectedVhook = VhookWide;
+			MovieInfo.setText("拡張Vhook ワイド " + str);
 		} else {
-			selectVhook = VhookNormal;
-			MovieInfo.setText("拡張Vhook 従来 " + s);
+			selectedVhook = VhookNormal;
+			MovieInfo.setText("拡張Vhook 従来 " + str);
 		}
+		if (!detectOption(videoAspect.isWide())){
+			sendtext("変換オプションファイルの読み込みに失敗しました。");
+			return false;
+		}
+		return true;
+	}
+
+	private int converting_video(File comment, File owner_comment) {
+		int code = -1;
+//		if (!chekAspectVhookOption(VideoFile, wayOfVhook)) {
+//			return code;
+//		}
 		/*
 		 * ffmpeg.exe -y mainoption inoption -i infile outoptiont [vhookOption] outfile
 		 */
@@ -798,8 +863,7 @@ public class Converter extends Thread {
 		ffmpeg.addCmd(" ");
 		ffmpeg.addCmd(OutOption);
 		if (!Setting.isVhookDisabled()) {
-			if(!addVhookSetting(ffmpeg, selectVhook, (a == Aspect.WIDE),
-					vhook_path, vhookowner_path)){
+			if(!addVhookSetting(ffmpeg, selectedVhook, videoAspect.isWide())){
 				return -1;
 			}
 		} else if (!getFFmpegVfOption().isEmpty()){
@@ -894,8 +958,7 @@ public class Converter extends Thread {
 		return avi;
 	}
 */
-	private boolean addVhookSetting(FFmpeg ffmpeg, File vhookExe,
-			boolean isWide, String vhook_path, String vhookowner_path) {
+	private boolean addVhookSetting(FFmpeg ffmpeg, File vhookExe, boolean isWide) {
 		try {
 			ffmpeg.addCmd(" -vfilters \"");
 			if (!getFFmpegVfOption().isEmpty()){
@@ -908,19 +971,19 @@ public class Converter extends Thread {
 			if(CommentMiddleFile!=null){
 				ffmpeg.addCmd("--data-user:");
 				ffmpeg.addCmd(URLEncoder.encode(
-					vhook_path.replace("\\","/"),"Shift_JIS"));
+					Path.toUnixPath(CommentMiddleFile), "Shift_JIS"));
 				ffmpeg.addCmd("|");
 			}
 			if(OwnerMiddleFile!=null){
 				ffmpeg.addCmd("--data-owner:");
 				ffmpeg.addCmd(URLEncoder.encode(
-						vhookowner_path.replace("\\","/"),"Shift_JIS"));
+					Path.toUnixPath(OwnerMiddleFile), "Shift_JIS"));
 				ffmpeg.addCmd("|");
-				ffmpeg.addCmd("--show-owner:1000|");
+				ffmpeg.addCmd("--show-owner:" + NicoClient.STR_OWNER_COMMENT + "|");
 			}
 			ffmpeg.addCmd("--font:");
 			ffmpeg.addCmd(URLEncoder.encode(
-					Setting.getFontPath().replace("\\","/"), "Shift_JIS"));
+				Path.toUnixPath(Setting.getFontPath()), "Shift_JIS"));
 			ffmpeg.addCmd("|--font-index:");
 			ffmpeg.addCmd(Setting.getFontIndex());
 			ffmpeg.addCmd("|--show-user:");
@@ -1014,44 +1077,51 @@ public class Converter extends Thread {
 
 	private String ffmpegVfOption = "";
 
-	boolean detectOption() {
-		boolean ret;
-		if (Setting.getOptionFile() != null) {
+	boolean detectOption(boolean isWide) {
+		File option_file = null;
+		if (!isWide) {
+			option_file = Setting.getOptionFile();
+		} else {
+			option_file = Setting.getWideOptionFile();
+		}
+		if (option_file != null) {
 			try {
 				Properties prop = new Properties();
-				prop.loadFromXML(new FileInputStream(Setting.getOptionFile()));
+				prop.loadFromXML(new FileInputStream(option_file));
 				ExtOption = prop.getProperty("EXT");
 				InOption = prop.getProperty("IN");
 				OutOption = prop.getProperty("OUT");
 				MainOption = prop.getProperty("MAIN");
-				if (ExtOption != null && InOption != null && OutOption != null
-						&& MainOption != null) {
-					ret = true;
-					ffmpegOptionName = Setting.getOptionFile()
-						.getName().replace(".xml", "");
-				} else {
-					ret = false;
+				if (ExtOption == null || InOption == null || OutOption == null
+						|| MainOption == null) {
 					return false;
 				}
+				ffmpegOptionName = option_file.getName().replace(".xml", "");
 			} catch (IOException ex) {
 				ex.printStackTrace();
-				ret = false;
 				return false;
 			}
 		} else {
-			ExtOption = Setting.getCmdLineOptionExt();
-			InOption = Setting.getCmdLineOptionIn();
-			OutOption = Setting.getCmdLineOptionOut();
-			MainOption = Setting.getCmdLineOptionMain();
-			ret = true;
+			if (!isWide){
+				ExtOption = Setting.getCmdLineOptionExt();
+				InOption = Setting.getCmdLineOptionIn();
+				OutOption = Setting.getCmdLineOptionOut();
+				MainOption = Setting.getCmdLineOptionMain();
+			} else {
+				ExtOption = Setting.getWideCmdLineOptionExt();
+				InOption = Setting.getWideCmdLineOptionIn();
+				OutOption = Setting.getWideCmdLineOptionOut();
+				MainOption = Setting.getWideCmdLineOptionMain();
+			}
 		}
 		//オプションに拡張子を含んでしまった場合にも対応☆
 		if(ExtOption != null && !ExtOption.startsWith(".")){
 			ExtOption = "."+ExtOption;
 		}
 		ffmpegVfOption = getvfOption();
-		return ret;
+		return true;
 	}
+
 	private String getvfOption() {
 		String vfIn, vfOut, vfMain;
 		vfIn = getvfOption(InOption);
@@ -1243,7 +1313,7 @@ public class Converter extends Thread {
 			path = path.replace(videoID, "");	// videoIDの位置は無関係に削除
 		}
 		// 拡張子があればその前まで
-		if (path.lastIndexOf(".") > path.lastIndexOf("\\")){
+		if (path.lastIndexOf(".") > path.lastIndexOf(File.separator)){
 			path = path.substring(0, path.lastIndexOf("."));
 		}
 		return path;

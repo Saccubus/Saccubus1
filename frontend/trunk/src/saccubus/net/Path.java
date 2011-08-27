@@ -55,7 +55,7 @@ public class Path extends File{
 	 * @param fullname : full path name of file : String
 	 * @return last name of file : String
 	 */
-	public static String GetFileName(String fullname){
+	public static String sGetFileName(String fullname){
 		return getName(fullname);
 	}
 	public String getFullName(){
@@ -64,10 +64,10 @@ public class Path extends File{
 	/**
 	 * @return Full Path Name of Parent : String
 	 */
-	@Override
-	public String getParent(){
-		return super.getParent();
-	}
+//	@Override
+//	public String getParent(){
+//		return super.getParent();
+//	}
 	/**
 	 *
 	 * @return Full Path of Parent : Path
@@ -92,7 +92,7 @@ public class Path extends File{
 	 * @param dir : Name of directory : String
 	 * @return Full filenames of child dirs or child files : Array of String
 	 */
-	public static String[] GetFiles(String dir){
+	public static String[] sGetFiles(String dir){
 		Path path = new Path(dir);
 		String[] lists = path.list();
 		int l = lists.length;
@@ -105,7 +105,7 @@ public class Path extends File{
 	/**
 	 * static exists(String)
 	 */
-	public static boolean Exists(String name){
+	public static boolean sExists(String name){
 		Path path = new Path(name);
 		return path.exists();
 	}
@@ -288,7 +288,7 @@ public class Path extends File{
 	/**
 	 * Read all text from file and return String with Encoding
 	 */
-	public static String ReadAllText(String file, String encoding) {
+	public static String readAllText(String file, String encoding) {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new InputStreamReader(
@@ -316,7 +316,34 @@ public class Path extends File{
 	 * @return String : fullname of found file,<br/>
 	 *  "" empty string if not found
 	 */
-	public static String SearchFile(String string, String app_dir) {
+	public static String sSearchFile(String string, String app_dir) {
 		return search(app_dir, string);
+	}
+
+	public String getRelativePath(){
+		return getAbsolutePath().replace(new Path("").getAbsolutePath(), ".");
+	}
+	public String replace(String old, String rep){
+		return getRelativePath().replace(old, rep);
+	}
+	public String getUnixPath(){
+		return replace(File.separator, "/");
+	}
+	public static String toUnixPath(String path){
+		return new Path(path).getUnixPath();
+	}
+	public static String toUnixPath(File file){
+		return new Path(file).getUnixPath();
+	}
+	public static Path mkTemp(String string) {
+		File dir = new File("temp");
+		if (dir.mkdir()){
+			System.out.println("Created directory: temp");
+		}
+		if (!dir.isDirectory()){
+			System.out.println("Can't make directory: temp");
+			dir = new File("");
+		}
+		return new Path(dir, string);
 	}
 }

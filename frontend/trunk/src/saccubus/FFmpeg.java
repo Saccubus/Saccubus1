@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-
 import javax.swing.JLabel;
 
 import saccubus.util.BitReader;
@@ -19,9 +17,6 @@ public class FFmpeg {
 	private StringBuffer sb;
 	private String LastFrame = "";
 	private String LastError = "ƒGƒ‰[î•ñ‚ª‚ ‚è‚Ü‚¹‚ñ";
-	public enum Aspect {
-		NORMAL, WIDE,
-	}
 
 	public FFmpeg(String path) {
 		exePath = path.replace("\\", "/");
@@ -53,13 +48,7 @@ public class FFmpeg {
 	public String getCmd() {
 		return sb.substring(0);
 	}
-/*
-	public interface CallbackInterface {
-		public void doEveryLoop(String text);
-		public boolean checkStop();
-		public void doAbort(String text);
-	}
-*/
+
 	public interface CallbackInterface extends Callback {
 		public boolean checkStop();
 		public void doAbort(String text);
@@ -187,10 +176,10 @@ public class FFmpeg {
 		}
 	}
 
-	public Aspect getAspect(File videoFile, StringBuffer sb) {
+	public Aspect getAspect(File videoFile) {
 		final StringBuffer output = new StringBuffer();
 
-		class GetAspectCallback implements CallbackInterface {
+		class GetAspectCallback implements Callback {
 			@Override
 			public void doEveryLoop(String e) {
 				if (e.indexOf("Video:") >= 0) {
@@ -198,19 +187,10 @@ public class FFmpeg {
 					output.append(e.trim() + "\n");
 				}
 			}
-			@Override
-			public boolean checkStop() {
-				return false;
-			}
-			@Override
-			public void doAbort(String e) {
-			// nothig
-			}
 		}
 
 		long width;
 		long height;
-		final double aspect;
 		if (Cws2Fws.isFws(videoFile)){	// swf, maybe NMM
 			FileInputStream fis = null;
 			try {
@@ -241,10 +221,7 @@ public class FFmpeg {
 			setCmd("-y -i ");
 			addFile(videoFile);
 			System.out.println("get aspect: " + getCmd());
-			int code = exec(-9, new GetAspectCallback());
-			if (code != 0){
-				// don't care, because error must have occurred
-			}
+			exec(new GetAspectCallback());
 			String src = output.toString();
 			src = src.replaceAll("[^0-9x]", "_");
 			String[] list = src.split("_+");
@@ -260,18 +237,44 @@ public class FFmpeg {
 				width = Long.parseLong(list[0]);
 				height = Long.parseLong(list[1]);
 			} catch(NumberFormatException e){
+				e.printStackTrace();
 				return null;
 			}
 		}
-		sb.append("(" + width + "x" + height + ")");
-		aspect = (double)width / (double)height;
-		sb.append(String.format("%.3f", aspect));
-		System.out.println("width hight:" + width + "x" + height
-				+ ", aspect: " + String.format("%.3f", aspect));
-		if (aspect > 1.7){				// 1.33 or 1.77
-			return Aspect.WIDE;
-		} else {
-			return Aspect.NORMAL;
+		Aspect asp = new Aspect((int)width, (int)height);
+		System.out.println(asp.explain());
+		return asp;
+	}
+//	public enum Aspect {
+//		NORMAL, WIDE,
+//	}
+	public static class Aspect {
+		private final int width;
+		private final int height;
+		private final double aspect;
+		public int getWidth() { return width; }
+		public int getHeight() { return height; }
+		public double getValue() { return aspect; }
+		public Aspect(int x, int y){
+			width = x;
+			height = y;
+			if ( y != 0){
+				aspect = (double)x / (double)y;
+			} else {
+				aspect = 0.0;
+			}
 		}
+		public boolean isWide(){
+			if (aspect >= 1.700) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		public String explain(){
+			return "(" + width + "x" + height + ")" + String.format("%.3f", aspect);
+		}
+		public static final Aspect NORMAL = new Aspect(4, 3);
+		public static final Aspect WIDE = new Aspect(16, 9);
 	}
 }

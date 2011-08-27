@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.InflaterInputStream;
 
-//import saccubus.Converter;
+import saccubus.net.Path;
+
+// import saccubus.net.Path;
 
 
 /**
@@ -21,7 +23,7 @@ public class Cws2Fws {
 
 	private static final String CWS = "CWS";
 	private static final String FWS = "FWS";
-	private static final String TMP_FWS = "fws_tmp.swf";
+	private static final String TMP_FWS = "_fws.swf";
 
 	public Cws2Fws(){
 	}
@@ -35,8 +37,8 @@ public class Cws2Fws {
 		try {
 			bis = new BufferedInputStream(new FileInputStream(file));
 			byte header[] = new byte[CWS.length()];
-			bis.read(header, 0, header.length);
-			if (CWS.equals(new String(header))) {
+			int l = bis.read(header, 0, header.length);
+			if (l == header.length && CWS.equals(new String(header))) {
 				return true;
 			}
 			/**
@@ -52,9 +54,7 @@ public class Cws2Fws {
 			if (bis != null) {
 				try {
 					bis.close();
-				} catch (IOException ex) {
-					log("Cws2Fws:" + ex.getMessage());
-				}
+				} catch (IOException ex) { }
 			}
 		}
 		return false;
@@ -70,7 +70,7 @@ public class Cws2Fws {
 		if (!isCws(in)) {
 			return null;
 		}
-		File out = new File(TMP_FWS);
+		File out = Path.mkTemp(in.getName().replace(".flv", "") + TMP_FWS);
 		InputStream is = null;
 		InputStream iis = null;
 		OutputStream os = null;
@@ -114,23 +114,18 @@ public class Cws2Fws {
 			if (is != null) {
 				try {
 					is.close();
-				} catch (IOException ex) {
-					log("Cws2Fws:" + ex.getMessage());
-				}
+				} catch (IOException ex) { }
 			}
 			if (iis != null) {
 				try {
 					iis.close();
-				} catch (IOException ex) {
-					log("Cws2Fws:" + ex.getMessage());
-				}
+				} catch (IOException ex) { }
 			}
 			if (os != null) {
 				try {
+					os.flush();
 					os.close();
-				} catch (IOException ex) {
-					log("Cws2Fws:" + ex.getMessage());
-				}
+				} catch (IOException ex) { }
 			}
 		}
 		return null;
@@ -153,8 +148,8 @@ public class Cws2Fws {
 		try {
 			fis = new FileInputStream(file);
 			byte header[] = new byte[FWS.length()];
-			fis.read(header, 0, header.length);
-			if (FWS.equals(new String(header))) {
+			int l = fis.read(header, 0, header.length);
+			if (l == header.length && FWS.equals(new String(header))) {
 				return true;
 			}
 		} catch (IOException ex) {
@@ -163,9 +158,7 @@ public class Cws2Fws {
 			if (fis != null) {
 				try {
 					fis.close();
-				} catch (IOException ex) {
-					log("Cws2Fws:" + ex.getMessage());
-				}
+				} catch (IOException ex) { }
 			}
 		}
 		return false;

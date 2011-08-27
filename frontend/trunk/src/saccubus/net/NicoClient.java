@@ -525,7 +525,9 @@ public class NicoClient {
 				return null;
 			}
 			if (file.canRead()) { // ファイルがすでに存在するなら削除する。
-				file.delete();
+				if(file.delete()) {
+					System.out.print("");
+				}
 			}
 			HttpURLConnection con = urlConnect(VideoUrl, "GET", Cookie, true, false, null);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -566,6 +568,7 @@ public class NicoClient {
 					return null;
 				}
 			}
+			debugsOut("■read+write statistics(bytes) ");
 			System.out.println("ok.");
 			is.close();
 			os.flush();
@@ -577,8 +580,8 @@ public class NicoClient {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally{
-			debug("■read+write statistics(bytes) ");
-			debugsOut();
+		//	debug("■read+write statistics(bytes) ");
+		//	debugsOut();
 		}
 		return null;
 	}
@@ -586,7 +589,7 @@ public class NicoClient {
 	private String UserID = null;
 	private String ThreadID = null;
 	private String MsgUrl = null;
-	private final static String STR_OWNER_COMMENT = "500";
+	public  final static String STR_OWNER_COMMENT = "1000";
 
 	public File getComment(final File file, final JLabel status, final String back_comment,
 			final String time, final ConvertStopFlag flag) {
@@ -668,7 +671,9 @@ public class NicoClient {
 		FileOutputStream fos = null;
 		try {
 			if (file.canRead()) {	//	ファイルがすでに存在するなら削除する。
-				file.delete();
+				if (file.delete()) {
+					System.out.print("");
+				}
 			}
 			fos = new FileOutputStream(file);
 			HttpURLConnection con = urlConnect(MsgUrl, "POST", Cookie, true, true, "close");
@@ -712,6 +717,7 @@ public class NicoClient {
 					return null;
 				}
 			}
+			debugsOut("■read+write statistics(bytes) ");
 			System.out.println("ok.");
 			is.close();
 			fos.flush();
@@ -722,8 +728,8 @@ public class NicoClient {
 			ex.printStackTrace();
 		}
 		finally{
-			debug("■read+write statistics(bytes) ");
-			debugsOut();
+		//	debug("■read+write statistics(bytes) ");
+		//	debugsOut();
 			if (fos != null){
 				try { fos.close(); } catch (IOException e) {}
 			}
@@ -858,7 +864,7 @@ public class NicoClient {
 			boolean found = false;
 			while ((ret = br.readLine()) != null) {
 				Stopwatch.show();
-				//debug("■readLine(" + encoding + "):" + ret + "\n");
+				// debug("■readLine(" + encoding + "):" + ret + "\n");
 				// NO_LOGIN_TAG = "var User = { id: false";
 				if (ret.indexOf("var User = { id: false") >= 0) {
 					System.out.println("ng. Not logged in.");
@@ -874,7 +880,7 @@ public class NicoClient {
 			}
 			con.disconnect();
 			if (!found){
-				System.out.println("ng. Can't found UserID Key. Is Niconico Toppage format CHANGED?");
+				System.out.println("ng. Can't found UserID Key. Is Niconico Toppage format ◆CHANGED?◆");
 				return false;
 			}
 			if (new_cookie != null && !new_cookie.isEmpty()) {
@@ -928,8 +934,9 @@ public class NicoClient {
 		dsMax = Math.max(dsMax, data);
 		dsMin = Math.min(dsMin, data);
 	}
-	private void debugsOut(){
+	private void debugsOut(String header){
 		if(!Debug) return;
+		System.out.print(header);
 		if(dsCount==0){
 			System.out.println("Count 0");
 		} else {

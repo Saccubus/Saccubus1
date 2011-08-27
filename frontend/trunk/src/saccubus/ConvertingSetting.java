@@ -71,7 +71,7 @@ public class ConvertingSetting {
 	private boolean FixCommentNum;
 	private boolean OpaqueComment;
 	private boolean NotAddVideoID_Conv;
-	private boolean UseOptionFile;
+//	private boolean UseOptionFile;
 	private File OptionFile;
 	private boolean DisableVhook;
 	private int ShadowIndex;
@@ -91,6 +91,12 @@ public class ConvertingSetting {
 	private boolean BrowserOpera;
 	private boolean BrowserOther;
 	private String BrowserCookiePath;
+	private String optionFolder;
+	private File wideOptionFile;
+	private String wideCmdLineOptionExt;
+	private String wideCmdLineOptionIn;
+	private String wideCmdLineOptionOut;
+	private String wideCmdLineOptionMain;
 
 	private ConvertingSetting(
 			String mailaddress,
@@ -136,17 +142,17 @@ public class ConvertingSetting {
 		MailAddress = mailaddress;
 		Password = password;
 		SaveVideo = savevideo;
-		if (videofile.lastIndexOf(".") <= videofile.lastIndexOf("\\")) {
+		if (videofile.lastIndexOf(".") <= videofile.lastIndexOf(File.separator)) {
 			videofile += ".flv";
 		}
 		VideoFile = new File(videofile);
 		SaveComment = savecomment;
-		if (commentfile.lastIndexOf(".") <= commentfile.lastIndexOf("\\")) {
+		if (commentfile.lastIndexOf(".") <= commentfile.lastIndexOf(File.separator)) {
 			commentfile += ".xml";
 		}
 		CommentFile = new File(commentfile);
 		SaveConverted = saveconverted;
-		if (convvideofile.lastIndexOf(".") <= convvideofile.lastIndexOf("\\")) {
+		if (convvideofile.lastIndexOf(".") <= convvideofile.lastIndexOf(File.separator)) {
 			convvideofile += ".avi";
 		}
 		ConvertedVideoFile = new File(convvideofile);
@@ -246,7 +252,13 @@ public class ConvertingSetting {
 			boolean browserChromium,
 			boolean browserOpera,
 			boolean browserOther,
-			String browserCookiePath
+			String browserCookiePath,
+			String option_folder,
+			File wide_option_file,
+			String wide_cmdlineoption_ext,
+			String wide_cmdlineoption_main,
+			String wide_cmdlineoption_in,
+			String wide_cmdlineoption_out
 		)
 	{
 		this(	mailaddress,
@@ -308,6 +320,12 @@ public class ConvertingSetting {
 		BrowserOpera = browserOpera;
 		BrowserOther = browserOther;
 		BrowserCookiePath = browserCookiePath;
+		optionFolder = option_folder;
+		wideOptionFile = wide_option_file;
+		wideCmdLineOptionExt = wide_cmdlineoption_ext;
+		wideCmdLineOptionMain = wide_cmdlineoption_main;
+		wideCmdLineOptionIn = wide_cmdlineoption_in;
+		wideCmdLineOptionOut = wide_cmdlineoption_out;
 	}
 
 
@@ -434,9 +452,9 @@ public class ConvertingSetting {
 	public boolean isOpaqueComment() {
 		return OpaqueComment;
 	}
-	public boolean useOptionFile() {
-		return UseOptionFile;
-	}
+//	public boolean useOptionFile() {
+//		return UseOptionFile;
+//	}
 	public File getOptionFile() {
 		return OptionFile;
 	}
@@ -481,6 +499,24 @@ public class ConvertingSetting {
 	}
 	public String getBrowserCookiePath(){
 		return BrowserCookiePath;
+	}
+	public String getOptionFolder() {
+		return optionFolder;
+	}
+	public File getWideOptionFile() {
+		return wideOptionFile;
+	}
+	public String getWideCmdLineOptionIn() {
+		return wideCmdLineOptionIn;
+	}
+	public String getWideCmdLineOptionOut() {
+		return wideCmdLineOptionOut;
+	}
+	public String getWideCmdLineOptionExt() {
+		return wideCmdLineOptionExt;
+	}
+	public String getWideCmdLineOptionMain() {
+		return wideCmdLineOptionMain;
 	}
 
 	private static final String PROP_FILE = "./saccubus.xml";
@@ -556,6 +592,12 @@ public class ConvertingSetting {
 	private static final String PROP_OPERA = "ShareOpera";
 	private static final String PROP_USE_COOKIE_PATH = "UseCookiePath";
 	private static final String PROP_BROWSER_COOKIE_PATH = "BrowserCookiePath";
+	private static final String PROP_OPTION_FOLDER = "OptionFolder";
+	private static final String PROP_WIDE_OPTION_FILE = "WideOptionFile";
+	private static final String PROP_WIDE_CMDLINE_EXT = "WideCMD_EXT";
+	private static final String PROP_WIDE_CMDLINE_MAIN = "WideCMD_MAIN";
+	private static final String PROP_WIDE_CMDLINE_IN = "WideCMD_IN";
+	private static final String PROP_WIDE_CMDLINE_OUT = "WideCMD_OUT";
 
 	/*
 	 * ‚±‚±‚Ü‚ÅŠg’£Ý’è 1.22r3 ‚É‘Î‚·‚é
@@ -565,15 +607,15 @@ public class ConvertingSetting {
 		Properties prop = new Properties();
 		prop.setProperty(PROP_MAILADDR, setting.getMailAddress());
 		prop.setProperty(PROP_PASSWORD, setting.getPassword());
-		prop.setProperty(PROP_SAVE_VIDEO, new Boolean(setting
-			.isSaveVideo()).toString());
+		prop.setProperty(PROP_SAVE_VIDEO, Boolean.toString(setting
+			.isSaveVideo()));
 		prop.setProperty(PROP_VIDEO_FILE, setting.getVideoFile().getPath());
-		prop.setProperty(PROP_SAVE_COMMENT, Boolean.valueOf(setting
-			.isSaveComment()).toString());
+		prop.setProperty(PROP_SAVE_COMMENT, Boolean.toString(setting
+			.isSaveComment()));
 		prop.setProperty(PROP_COMMENT_FILE, setting.getCommentFile()
 			.getPath());
-		prop.setProperty(PROP_SAVE_CONVERTED, new Boolean(setting
-			.isSaveConverted()).toString());
+		prop.setProperty(PROP_SAVE_CONVERTED, Boolean.toString(setting
+			.isSaveConverted()));
 		prop.setProperty(PROP_SHOW_COMMENT, setting.getVideoShowNum());
 		prop.setProperty(PROP_CONVERTED_FILE, setting.getConvertedVideoFile()
 			.getPath());
@@ -586,61 +628,61 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_CMDLINE_IN, setting.getCmdLineOptionIn());
 		prop.setProperty(PROP_CMDLINE_OUT, setting.getCmdLineOptionOut());
 		prop.setProperty(PROP_BACK_COMMENT, setting.getBackComment());
-		prop.setProperty(PROP_SHOW_VIDEO, new Boolean(setting
-			.isVhook_ShowConvertingVideo()).toString());
-		prop.setProperty(PROP_DEL_VIDEO_AFTER_CONV, new Boolean(setting
-			.isDeleteVideoAfterConverting()).toString());
-		prop.setProperty(PROP_VIDEO_FIX_FILE_NAME, new Boolean(setting
-			.isVideoFixFileName()).toString());
+		prop.setProperty(PROP_SHOW_VIDEO, Boolean.toString(setting
+			.isVhook_ShowConvertingVideo()));
+		prop.setProperty(PROP_DEL_VIDEO_AFTER_CONV, Boolean.toString(setting
+			.isDeleteVideoAfterConverting()));
+		prop.setProperty(PROP_VIDEO_FIX_FILE_NAME, Boolean.toString(setting
+			.isVideoFixFileName()));
 		prop.setProperty(PROP_VIDEO_FIX_FILE_NAME_FOLDER, setting
 			.getVideoFixFileNameFolder().getPath());
-		prop.setProperty(PROP_DEL_COMMENT_AFTER_CONV, new Boolean(setting
-			.isDeleteCommentAfterConverting()).toString());
-		prop.setProperty(PROP_COMMENT_FIX_FILE_NAME, new Boolean(setting
-			.isCommentFixFileName()).toString());
+		prop.setProperty(PROP_DEL_COMMENT_AFTER_CONV, Boolean.toString(setting
+			.isDeleteCommentAfterConverting()));
+		prop.setProperty(PROP_COMMENT_FIX_FILE_NAME, Boolean.toString(setting
+			.isCommentFixFileName()));
 		prop.setProperty(PROP_COMMENT_FIX_FILE_NAME_FOLDER, setting
 			.getCommentFixFileNameFolder().getPath());
-		prop.setProperty(PROP_NOT_ADD_VIDEOID_CONV, new Boolean(setting
-			.isNotAddVideoID_Conv()).toString());
-		prop.setProperty(PROP_CONV_FIX_FILE_NAME, new Boolean(setting
-			.isConvFixFileName()).toString());
+		prop.setProperty(PROP_NOT_ADD_VIDEOID_CONV, Boolean.toString(setting
+			.isNotAddVideoID_Conv()));
+		prop.setProperty(PROP_CONV_FIX_FILE_NAME, Boolean.toString(setting
+			.isConvFixFileName()));
 		prop.setProperty(PROP_CONV_FIX_FILE_NAME_FOLDER, setting
 			.getConvFixFileNameFolder().getPath());
 		prop.setProperty(PROP_NG_WORD, setting.getNG_Word());
 		prop.setProperty(PROP_NG_ID, setting.getNG_ID());
-		prop.setProperty(PROP_USE_PROXY, new Boolean(setting
-			.useProxy()).toString());
+		prop.setProperty(PROP_USE_PROXY, Boolean.toString(setting
+			.useProxy()));
 		prop.setProperty(PROP_PROXY, setting.getProxy());
 		prop.setProperty(PROP_PROXY_PORT, Integer.toString(setting
 			.getProxyPort()));
-		prop.setProperty(PROP_FIX_FONT_SIZE, new Boolean(setting
-			.isFixFontSize()).toString());
-		prop.setProperty(PROP_FIX_COMMENT_NUM, new Boolean(setting
-			.isFixCommentNum()).toString());
-		prop.setProperty(PROP_OPAQUE_COMMENT, new Boolean(setting
-			.isOpaqueComment()).toString());
+		prop.setProperty(PROP_FIX_FONT_SIZE, Boolean.toString(setting
+			.isFixFontSize()));
+		prop.setProperty(PROP_FIX_COMMENT_NUM, Boolean.toString(setting
+			.isFixCommentNum()));
+		prop.setProperty(PROP_OPAQUE_COMMENT, Boolean.toString(setting
+			.isOpaqueComment()));
 		if (setting.getOptionFile() != null) {
 			prop.setProperty(PROP_OPTION_FILE, setting.getOptionFile()
 				.getPath());
 		}
-		prop.setProperty(PROP_DISABLE_VHOOK, new Boolean(setting
-			.isVhookDisabled()).toString());
+		prop.setProperty(PROP_DISABLE_VHOOK, Boolean.toString(setting
+			.isVhookDisabled()));
 		prop.setProperty(PROP_SHADOW_INDEX, Integer.toString(setting.getShadowIndex()));
 		/*
 		 * ‚±‚±‚©‚çŠg’£Ý’è•Û‘¶ 1.22r3 ‚É‘Î‚·‚é
 		 */
-		prop.setProperty(PROP_CONV_WITH_COMMENT, new Boolean(setting
-				.isConvertWithComment()).toString());
-		prop.setProperty(PROP_SAVE_OWNERCOMMENT, new Boolean(setting
-			.isSaveOwnerComment()).toString());
+		prop.setProperty(PROP_CONV_WITH_COMMENT, Boolean.toString(setting
+				.isConvertWithComment()));
+		prop.setProperty(PROP_SAVE_OWNERCOMMENT, Boolean.toString(setting
+			.isSaveOwnerComment()));
 		prop.setProperty(PROP_OWNERCOMMENT_FILE, setting
 			.getOwnerCommentFile().getPath());
-		prop.setProperty(PROP_CONV_WITH_OWNERCOMMENT, new Boolean(setting
-			.isConvertWithOwnerComment()).toString());
+		prop.setProperty(PROP_CONV_WITH_OWNERCOMMENT, Boolean.toString(setting
+			.isConvertWithOwnerComment()));
 		prop.setProperty(PROP_ADD_TIMESTAMP, Boolean.valueOf(setting
 			.isAddTimeStamp()).toString());
-		prop.setProperty(PROP_ADD_OPTION_CONV_VIDEO, new Boolean(
-			setting.isAddOption_ConvVideoFile()).toString());
+		prop.setProperty(PROP_ADD_OPTION_CONV_VIDEO,  Boolean.toString(
+			setting.isAddOption_ConvVideoFile()));
 		prop.setProperty(PROP_HISTORY1, setting.getHistory1());
 		prop.setProperty(PROP_VHOOK_WIDE_PATH, setting.getVhookWidePath());
 		prop.setProperty(PROP_USE_VHOOK,
@@ -660,6 +702,16 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_USE_COOKIE_PATH,
 				Boolean.toString(setting.isBrowserOther()));
 		prop.setProperty(PROP_BROWSER_COOKIE_PATH, setting.getBrowserCookiePath());
+		prop.setProperty(PROP_OPTION_FOLDER,
+				setting.getOptionFolder());
+		if (setting.getWideOptionFile() != null) {
+			prop.setProperty(PROP_WIDE_OPTION_FILE, setting.getWideOptionFile()
+				.getPath());
+		}
+		prop.setProperty(PROP_WIDE_CMDLINE_EXT, setting.getWideCmdLineOptionExt());
+		prop.setProperty(PROP_WIDE_CMDLINE_MAIN, setting.getWideCmdLineOptionMain());
+		prop.setProperty(PROP_WIDE_CMDLINE_IN, setting.getWideCmdLineOptionIn());
+		prop.setProperty(PROP_WIDE_CMDLINE_OUT, setting.getWideCmdLineOptionOut());
 		/*
 		 * ‚±‚±‚Ü‚ÅŠg’£Ý’è•Û‘¶ 1.22r3 ‚É‘Î‚·‚é
 		 */
@@ -688,6 +740,11 @@ public class ConvertingSetting {
 		if (option_file_name != null) {
 			option_file = new File(option_file_name);
 		}
+		option_file_name = prop.getProperty(PROP_WIDE_OPTION_FILE, null);
+		File wide_option_file = null;
+		if (option_file_name != null) {
+			wide_option_file = new File(option_file_name);
+		}
 		String win_dir = System.getenv("windir");
 		if(!win_dir.endsWith("\\")){
 			win_dir = win_dir+"\\";
@@ -708,7 +765,7 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_CONVERTED_FILE, ".\\video.avi"),
 			prop.getProperty(PROP_SHOW_COMMENT, "40"),
 			prop.getProperty(PROP_FFMPEG_PATH,".\\bin\\ffmpeg.exe"),
-			prop.getProperty(PROP_VHOOK_PATH,".\\bin\\nicovideo.dll"),
+			prop.getProperty(PROP_VHOOK_PATH,".\\bin\\nicovideoE.dll"),
 			prop.getProperty(PROP_CMDLINE_EXT, "avi"),
 			prop.getProperty(PROP_CMDLINE_MAIN,""),
 			prop.getProperty(PROP_CMDLINE_IN, ""),
@@ -741,14 +798,20 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_HISTORY1, "http://www.nicovideo.jp/watch/"),
 			prop.getProperty(PROP_VHOOK_WIDE_PATH,".\\bin\\nicovideoE.dll"),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_VHOOK,"true")),
-			Boolean.parseBoolean(prop.getProperty(PROP_USE_VHOOK_WIDE,"false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_USE_VHOOK_WIDE,"true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_BROWSER_IE, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_FIREFOX, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_CHROME, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_CHROMIUM, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_OPERA, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_COOKIE_PATH, "false")),
-			prop.getProperty(PROP_BROWSER_COOKIE_PATH,"|êŠ‚ÍŽ©•ª‚Å‘{‚µ‚Ä‰º‚³‚¢|")
+			prop.getProperty(PROP_BROWSER_COOKIE_PATH,"|êŠ‚ÍŽ©•ª‚Å‘{‚µ‚Ä‰º‚³‚¢|"),
+			prop.getProperty(PROP_OPTION_FOLDER, ".\\option"),
+			wide_option_file,
+			prop.getProperty(PROP_WIDE_CMDLINE_EXT, "mp4"),
+			prop.getProperty(PROP_WIDE_CMDLINE_MAIN,""),
+			prop.getProperty(PROP_WIDE_CMDLINE_IN, ""),
+			prop.getProperty(PROP_WIDE_CMDLINE_OUT,"-threads 4 -s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9")
 		);
 	}
 

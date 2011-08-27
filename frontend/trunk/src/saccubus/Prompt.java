@@ -48,8 +48,8 @@ public class Prompt {
 		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		System.out.println("Version " + MainFrame_AboutBox.rev );
 		conv.run();
-		System.out.println("LastStatus: " + status.getText());
-		System.out.println("VideoInfo: " + info.getText());
+		// System.out.println("LastStatus: " + status.getText());
+		// System.out.println("VideoInfo: " + info.getText());
 		// System.out.println("ElapsedTime: " + watch.getText());
 		System.out.println("Finished.");
 	}

@@ -25,8 +25,10 @@ public class BitReader {
 			throw new IOException("bits must be positive: " + bits);
 		}
 		int n = (bits + 7 - rembits) / 8;
-		if (n > 0)
-			is.read(buf, 0, n);
+		if (n > 0) {
+			int r = 0;
+			for (int j = 0; j < n && (r = is.read(buf, j, n - j)) > 0; j += r) { }
+		}
 		long ret = remval;
 		int i = 0;
 		while(rembits < bits){

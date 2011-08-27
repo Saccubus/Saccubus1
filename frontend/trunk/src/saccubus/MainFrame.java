@@ -56,7 +56,9 @@ public class MainFrame extends JFrame {
 	JLabel infoBar = new JLabel();
 	JTabbedPane MainTabbedPane = new JTabbedPane();
 	JPanel SavingInfoTabPanel = new JPanel();
+	JPanel FFMpegInfoTabPanel = new JPanel();
 	JPanel FFMpegTabPanel = new JPanel();
+	JPanel FFMpegTab2Panel = new JPanel();
 	JPanel VideoInfoPanel = new JPanel();
 	JPanel StatusPanel = new JPanel();
 	JTextField VideoID_TextField = new JTextField();
@@ -111,7 +113,13 @@ public class MainFrame extends JFrame {
 	JCheckBox BrowserOtherCheckBox = new JCheckBox();
 	JButton BrowserCookieDialogButton = new JButton();
 	JTextField BrowserCookieField = new JTextField();
-
+//                                                   (up left down right)
+	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
+	private static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
+	private static final Insets INSETS_0_0_5_5 = new Insets(0, 0, 5, 5);
+	private static final Insets INSETS_0_0_0_5 = new Insets(0, 0, 0, 5);
+	private static final Insets INSETS_0_0_0_0 = new Insets(0, 0, 0, 0);
+	private static final Insets INSETS_5_5_5_5 = new Insets(5, 5, 5, 5);
 
 	public MainFrame() {
 		try {
@@ -138,19 +146,19 @@ public class MainFrame extends JFrame {
 		grid8_x1_y6_73.gridy = 6;
 		grid8_x1_y6_73.weightx = 1.0;
 		grid8_x1_y6_73.gridwidth = 4;
-		grid8_x1_y6_73.insets = new Insets(0, 0, 0, 5);
+		grid8_x1_y6_73.insets = INSETS_0_0_0_5;
 		grid8_x1_y6_73.gridx = 1;
 		GridBagConstraints grid8_x0_y6_72 = new GridBagConstraints();
 		grid8_x0_y6_72.gridx = 0;
 		grid8_x0_y6_72.anchor = GridBagConstraints.WEST;
-		grid8_x0_y6_72.insets = new Insets(0, 5, 0, 5);
+		grid8_x0_y6_72.insets = INSETS_0_5_0_5;
 		grid8_x0_y6_72.fill = GridBagConstraints.NONE;
 		grid8_x0_y6_72.gridwidth = 1;
 		grid8_x0_y6_72.gridy = 6;
 		ShadowKindLabel = new JLabel();
 		ShadowKindLabel.setText("影の種類");
 		ShadowKindLabel.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
-		GridBagConstraints grid1_x1_y0_71 = new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 6);
+		GridBagConstraints grid1_x1_y0_71 = new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 6);
 		grid1_x1_y0_71.fill = GridBagConstraints.BOTH;
 		grid1_x1_y0_71.ipady = 0;
 		GridBagConstraints grid10_x1_y1_70 = new GridBagConstraints();
@@ -159,13 +167,13 @@ public class MainFrame extends JFrame {
 		grid10_x1_y1_70.ipadx = 0;
 		grid10_x1_y1_70.ipady = 0;
 		grid10_x1_y1_70.weightx = 1.0;
-		grid10_x1_y1_70.insets = new Insets(0, 0, 0, 0);
+		grid10_x1_y1_70.insets = INSETS_0_0_0_0;
 		grid10_x1_y1_70.gridx = 1;
 		GridBagConstraints grid10_x0_y1_69 = new GridBagConstraints();
 		grid10_x0_y1_69.gridx = 0;
 		grid10_x0_y1_69.ipadx = 0;
 		grid10_x0_y1_69.ipady = 0;
-		grid10_x0_y1_69.insets = new Insets(0, 5, 0, 5);
+		grid10_x0_y1_69.insets = INSETS_0_5_0_5;
 		grid10_x0_y1_69.anchor = GridBagConstraints.WEST;
 		grid10_x0_y1_69.gridy = 1;
 		GridBagConstraints grid10_x1_y0_68 = new GridBagConstraints();
@@ -173,18 +181,18 @@ public class MainFrame extends JFrame {
 		grid10_x1_y0_68.gridy = 0;
 		grid10_x1_y0_68.ipady = 0;
 		grid10_x1_y0_68.weightx = 1.0;
-		grid10_x1_y0_68.insets = new Insets(0, 0, 0, 0);
+		grid10_x1_y0_68.insets = INSETS_0_0_0_0;
 		grid10_x1_y0_68.gridx = 1;
 		GridBagConstraints grid10_x0_y0_67 = new GridBagConstraints();
 		grid10_x0_y0_67.gridx = 0;
 		grid10_x0_y0_67.ipadx = 0;
 		grid10_x0_y0_67.ipady = 0;
-		grid10_x0_y0_67.insets = new Insets(0, 5, 0, 5);
+		grid10_x0_y0_67.insets = INSETS_0_5_0_5;
 		grid10_x0_y0_67.anchor = GridBagConstraints.WEST;
 		grid10_x0_y0_67.gridy = 0;
 		GridBagConstraints grid8_x0_y1_66 = new GridBagConstraints();
 		grid8_x0_y1_66.gridx = 0;
-		grid8_x0_y1_66.insets = new Insets(0, 5, 5, 5);
+		grid8_x0_y1_66.insets = INSETS_0_5_5_5;
 		grid8_x0_y1_66.anchor = GridBagConstraints.WEST;
 		grid8_x0_y1_66.gridwidth = 2;
 		grid8_x0_y1_66.gridy = 1;
@@ -195,31 +203,31 @@ public class MainFrame extends JFrame {
 		grid8_x3_y1_65.gridy = 1;
 		grid8_x3_y1_65.weightx = 1.0;
 		grid8_x3_y1_65.gridwidth = 6;
-		grid8_x3_y1_65.insets = new Insets(0, 5, 5, 5);
+		grid8_x3_y1_65.insets = INSETS_0_5_5_5;
 		grid8_x3_y1_65.gridx = 3;
 		GridBagConstraints grid8_x4_y3_64 = new GridBagConstraints(1, 1,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 0, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_0_0_5, 0, 0);
 		grid8_x4_y3_64.gridy = 3;
 		grid8_x4_y3_64.fill = GridBagConstraints.HORIZONTAL;
 		grid8_x4_y3_64.gridx = 4;
 		GridBagConstraints grid8_x0_y7_63 = new GridBagConstraints(0, 4,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0);
+				GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0);
 		grid8_x0_y7_63.gridy = 7;
 		grid8_x0_y7_63.gridx = 0;
 		grid8_x0_y7_63.gridwidth = 5;
 		GridBagConstraints grid8_x1_y5_62 = new GridBagConstraints(0, 3,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_5_5_5, 0, 0);
 		grid8_x1_y5_62.gridy = 5;
 		grid8_x1_y5_62.gridx = 1;
 		grid8_x1_y5_62.fill = GridBagConstraints.HORIZONTAL;
-		grid8_x1_y5_62.insets = new Insets(0, 0, 5, 5);
+		grid8_x1_y5_62.insets = INSETS_0_0_5_5;
 		grid8_x1_y5_62.gridwidth = 4;
 		GridBagConstraints grid8_x0_y5_61 = new GridBagConstraints(0, 2,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_5_5_5_5, 0, 0);
 		grid8_x0_y5_61.gridy = 5;
 		grid8_x0_y5_61.gridx = 0;
 		grid8_x0_y5_61.fill = GridBagConstraints.VERTICAL;
@@ -227,17 +235,17 @@ public class MainFrame extends JFrame {
 		grid8_x0_y5_61.gridwidth = 1;
 		GridBagConstraints grid8_x1_y3_60 = new GridBagConstraints(0, 1,
 				1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0);
 		grid8_x1_y3_60.gridy = 3;
 		grid8_x1_y3_60.gridx = 1;
 		grid8_x1_y3_60.fill = GridBagConstraints.HORIZONTAL;
-		grid8_x1_y3_60.insets = new Insets(0, 0, 0, 5);
+		grid8_x1_y3_60.insets = INSETS_0_0_0_5;
 		grid8_x1_y3_60.gridwidth = 3;
 		GridBagConstraints grid8_x0_y3_59 = new GridBagConstraints(0, 0,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0);
+				GridBagConstraints.HORIZONTAL, INSETS_0_5_5_5, 0, 0);
 		grid8_x0_y3_59.gridy = 3;
-		grid8_x0_y3_59.insets = new Insets(5, 5, 5, 5);
+		grid8_x0_y3_59.insets = INSETS_5_5_5_5;
 		grid8_x0_y3_59.gridx = 0;
 		grid8_x0_y3_59.fill = GridBagConstraints.NONE;
 		grid8_x0_y3_59.anchor = GridBagConstraints.WEST;
@@ -246,7 +254,7 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid8_x0_y0_58 = new GridBagConstraints();
 		grid8_x0_y0_58.gridx = 0;
 		grid8_x0_y0_58.anchor = GridBagConstraints.WEST;
-		grid8_x0_y0_58.insets = new Insets(0, 5, 5, 5);
+		grid8_x0_y0_58.insets = INSETS_0_5_5_5;
 		grid8_x0_y0_58.gridwidth = 5;
 		grid8_x0_y0_58.weightx = 1.0;
 		grid8_x0_y0_58.fill = GridBagConstraints.HORIZONTAL;
@@ -255,11 +263,11 @@ public class MainFrame extends JFrame {
 		grid9_x1_y2_57.fill = GridBagConstraints.BOTH;
 		grid9_x1_y2_57.gridy = 2;
 		grid9_x1_y2_57.weightx = 1.0;
-		grid9_x1_y2_57.insets = new Insets(0, 0, 5, 5);
+		grid9_x1_y2_57.insets = INSETS_0_0_5_5;
 		grid9_x1_y2_57.gridx = 1;
 		GridBagConstraints grid9_x0_y2_56 = new GridBagConstraints();
 		grid9_x0_y2_56.gridx = 0;
-		grid9_x0_y2_56.insets = new Insets(0, 5, 5, 5);
+		grid9_x0_y2_56.insets = INSETS_0_5_5_5;
 		grid9_x0_y2_56.anchor = GridBagConstraints.WEST;
 		grid9_x0_y2_56.gridy = 2;
 		ExtOptionLabel = new JLabel();
@@ -272,45 +280,45 @@ public class MainFrame extends JFrame {
 		grid9_x0_y1_55.gridy = 1;
 		GridBagConstraints grid9_x1_y5_53 = new GridBagConstraints(1, 3,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_0_5_5, 0, 0);
 		grid9_x1_y5_53.gridy = 5;
 		grid9_x1_y5_53.gridheight = 1;
 		grid9_x1_y5_53.weightx = 1.0;
 		grid9_x1_y5_53.gridwidth = 1;
 		GridBagConstraints grid9_x1_y4_52 = new GridBagConstraints(2, 2,
 				1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_0_5_5, 0, 0);
 		grid9_x1_y4_52.gridy = 4;
 		grid9_x1_y4_52.gridwidth = 1;
 		grid9_x1_y4_52.weightx = 1.0;
 		grid9_x1_y4_52.gridx = 1;
 		GridBagConstraints grid9_x1_y3_51 = new GridBagConstraints(2, 1,
 				1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_0_5_5, 0, 0);
 		grid9_x1_y3_51.gridy = 3;
 		grid9_x1_y3_51.gridwidth = 1;
 		grid9_x1_y3_51.weightx = 1.0;
 		grid9_x1_y3_51.gridx = 1;
 		GridBagConstraints grid9_x0_y5_50 = new GridBagConstraints(0, 3,
 				1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_5_5_5, 0, 0);
 		grid9_x0_y5_50.gridy = 5;
 		GridBagConstraints grid9_x0_y4_49 = new GridBagConstraints(0, 2,
 				2, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_5_5_5, 0, 0);
 		grid9_x0_y4_49.gridy = 4;
 		grid9_x0_y4_49.gridwidth = 1;
 		GridBagConstraints grid9_x0_y3_48 = new GridBagConstraints(0, 1,
 				1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_5_5_5, 0, 0);
 		grid9_x0_y3_48.gridy = 3;
 		GridBagConstraints grid5_x3_y8_45 = new GridBagConstraints(3, 5,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(0, 0, 5, 5), 0, 0);
+				GridBagConstraints.NONE, INSETS_0_0_5_5, 0, 0);
 		grid5_x3_y8_45.gridy = 8;
 		GridBagConstraints grid5_x3_y6_44 = new GridBagConstraints(3, 3,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
+				GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
 		grid5_x3_y6_44.gridy = 6;
 		GridBagConstraints grid5_x0_y8_43 = new GridBagConstraints(0, 5,
 				3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
@@ -347,8 +355,6 @@ public class MainFrame extends JFrame {
 		grid5_x0_y2_81.gridy = 2;
 		grid5_x0_y2_81.gridwidth = 3;
 		grid5_x0_y2_81.gridheight = 1;
-//		grid5_x0_y2_81.weightx = 1.0;
-//		grid5_x0_y2_81.weighty = 0.0;
 		grid5_x0_y2_81.anchor = GridBagConstraints.CENTER;
 		grid5_x0_y2_81.fill = GridBagConstraints.BOTH;
 		grid5_x0_y2_81.insets = new Insets(0, 25, 0, 5);
@@ -357,8 +363,6 @@ public class MainFrame extends JFrame {
 		grid5_x0_y1_78.gridy = 1;
 		grid5_x0_y1_78.gridwidth = 3;
 		grid5_x0_y1_78.gridheight = 1;
-//		grid5_x0_y1_78.weightx = 1.0;
-//		grid5_x0_y1_78.weighty = 0.0;
 		grid5_x0_y1_78.anchor = GridBagConstraints.CENTER;
 		grid5_x0_y1_78.fill = GridBagConstraints.BOTH;
 		grid5_x0_y1_78.insets = new Insets(0, 25, 0, 5);
@@ -370,7 +374,7 @@ public class MainFrame extends JFrame {
 		grid8_x0_y9_33.gridx = 0;
 		grid8_x0_y9_33.fill = GridBagConstraints.HORIZONTAL;
 		grid8_x0_y9_33.weightx = 1.0;
-		grid8_x0_y9_33.insets = new Insets(0, 5, 5, 5);
+		grid8_x0_y9_33.insets = INSETS_0_5_5_5;
 		grid8_x0_y9_33.gridwidth = 5;
 		grid8_x0_y9_33.gridy = 9;
 		GridBagConstraints grid4_x0_y9_26 = new GridBagConstraints();
@@ -389,15 +393,15 @@ public class MainFrame extends JFrame {
 		grid4_x0_y8_25.gridy = 8;
 		GridBagConstraints grid4_x3_y14_24 = new GridBagConstraints(3, 10,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(0, 0, 5, 5), 0, 0);
+				GridBagConstraints.NONE, INSETS_0_0_5_5, 0, 0);
 		grid4_x3_y14_24.gridy = 14;
 		GridBagConstraints grid4_x3_y12_23 = new GridBagConstraints(3, 8,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
+				GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
 		grid4_x3_y12_23.gridy = 12;
 		GridBagConstraints grid4_x1_y10_22 = new GridBagConstraints(1, 6,
 				4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 0, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_0_0_5, 0, 0);
 		grid4_x1_y10_22.gridy = 10;
 		GridBagConstraints grid4_x0_y14_21 = new GridBagConstraints(0, 10,
 				3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
@@ -417,12 +421,12 @@ public class MainFrame extends JFrame {
 		grid4_x0_y11_18.gridy = 11;
 		GridBagConstraints grid4_x0_y10_17 = new GridBagConstraints(0, 6,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0);
 		grid4_x0_y10_17.gridy = 10;
 		grid4_x0_y10_17.insets = new Insets(0, 50, 0, 5);
 		GridBagConstraints grid4_x0_y6_16 = new GridBagConstraints(0, 5,
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_5_5_5_5, 0, 0);
 		grid4_x0_y6_16.gridy = 6;
 		GridBagConstraints grid4_x0_y7_86 = new GridBagConstraints();
 		grid4_x0_y7_86.gridx = 0;
@@ -440,7 +444,7 @@ public class MainFrame extends JFrame {
 		grid11_x0_y0_75.weighty = 0.0;
 		grid11_x0_y0_75.anchor = GridBagConstraints.NORTHWEST;
 		grid11_x0_y0_75.fill = GridBagConstraints.HORIZONTAL;
-		grid11_x0_y0_75.insets = new Insets(0, 5, 5, 5);
+		grid11_x0_y0_75.insets = INSETS_0_5_5_5;
 		GridBagConstraints grid11_x0_y1_76 = new GridBagConstraints();
 		grid11_x0_y1_76.gridx = 0;
 		grid11_x0_y1_76.gridy = 1;
@@ -451,25 +455,23 @@ public class MainFrame extends JFrame {
 		grid11_x0_y1_76.anchor = GridBagConstraints.NORTHWEST;
 		grid11_x0_y1_76.fill = GridBagConstraints.HORIZONTAL;
 		grid11_x0_y1_76.insets = new Insets(0, 25, 5, 5);
-//		GridBagConstraints grid11_x0_y2_77 = new GridBagConstraints();
-//		GridBagConstraints grid11_x0_y3_80 = new GridBagConstraints();
 		GridBagConstraints grid8_x0_y8_14 = new GridBagConstraints();
 		grid8_x0_y8_14.gridx = 0;
 		grid8_x0_y8_14.anchor = GridBagConstraints.WEST;
 		grid8_x0_y8_14.fill = GridBagConstraints.HORIZONTAL;
 		grid8_x0_y8_14.weightx = 1.0;
 		grid8_x0_y8_14.gridwidth = 5;
-		grid8_x0_y8_14.insets = new Insets(0, 5, 0, 5);
+		grid8_x0_y8_14.insets = INSETS_0_5_0_5;
 		grid8_x0_y8_14.gridy = 8;
 		GridBagConstraints grid12_x0_y0_7 = new GridBagConstraints(0, 0,
 				1, 1, 1.0, 1.0, GridBagConstraints.NORTH,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0);
+				GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0);
 		grid12_x0_y0_7.weighty = 0.0;
 		GridBagConstraints grid12_x0_y1_6 = new GridBagConstraints();
 		grid12_x0_y1_6.gridx = 0;
 		grid12_x0_y1_6.weighty = 0.0;
 		grid12_x0_y1_6.weightx = 1.0;
-		grid12_x0_y1_6.insets = new Insets(0, 5, 0, 5);
+		grid12_x0_y1_6.insets = INSETS_0_5_0_5;
 		grid12_x0_y1_6.fill = GridBagConstraints.HORIZONTAL;
 		grid12_x0_y1_6.anchor = GridBagConstraints.NORTH;
 		grid12_x0_y1_6.gridy = 1;
@@ -481,12 +483,6 @@ public class MainFrame extends JFrame {
 		grid12_x0_y2_95.insets = new Insets(5, 5, 0, 5);
 		grid12_x0_y2_95.fill = GridBagConstraints.HORIZONTAL;
 		grid12_x0_y2_95.anchor = GridBagConstraints.NORTH;
-		GridBagConstraints grid6_x0_y1_1 = new GridBagConstraints(0, 1,
-				1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0);
-		grid6_x0_y1_1.fill = GridBagConstraints.HORIZONTAL;
-		grid6_x0_y1_1.anchor = GridBagConstraints.NORTH;
-		grid6_x0_y1_1.weighty = 0.0;
 		this.setIconImage(WinIcon);
 		contentPane = (JPanel) this.getContentPane();
 		contentPane.setLayout(borderLayout1);
@@ -536,7 +532,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y0_96.weightx = 1.0;
 		grid13_x0_y0_96.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y0_96.fill = GridBagConstraints.HORIZONTAL;
-		grid13_x0_y0_96.insets = new Insets(0, 5, 0, 5);
+		grid13_x0_y0_96.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserInfoLabel, grid13_x0_y0_96);
 		BrowserIECheckBox.setText("Interner Eplorer (IE7/IE8/IE9)");
 		BrowserIECheckBox.setForeground(Color.blue);
@@ -547,7 +543,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y1_97.weightx = 1.0;
 		grid13_x0_y1_97.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y1_97.fill = GridBagConstraints.HORIZONTAL;
-		grid13_x0_y1_97.insets = new Insets(0, 5, 0, 5);
+		grid13_x0_y1_97.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserIECheckBox, grid13_x0_y1_97);
 		BrowserFFCheckBox.setText("Firefox (FF3/FF4/FF5)");
 		BrowserFFCheckBox.setForeground(Color.blue);
@@ -558,7 +554,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y2_98.weightx = 1.0;
 		grid13_x0_y2_98.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y2_98.fill = GridBagConstraints.HORIZONTAL;
-		grid13_x0_y2_98.insets = new Insets(0, 5, 0, 5);
+		grid13_x0_y2_98.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserFFCheckBox, grid13_x0_y2_98);
 		BrowserChromeCheckBox.setText("Google Chrome");
 		BrowserChromeCheckBox.setForeground(Color.blue);
@@ -569,7 +565,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y3_99.weightx = 1.0;
 		grid13_x0_y3_99.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y3_99.fill = GridBagConstraints.HORIZONTAL;
-		grid13_x0_y3_99.insets = new Insets(0, 5, 0, 5);
+		grid13_x0_y3_99.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserChromeCheckBox, grid13_x0_y3_99);
 		BrowserOperaCheckBox.setText("Opera");
 		BrowserOperaCheckBox.setForeground(Color.blue);
@@ -580,7 +576,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y4_100.weightx = 1.0;
 		grid13_x0_y4_100.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y4_100.fill = GridBagConstraints.HORIZONTAL;
-		grid13_x0_y4_100.insets = new Insets(0, 5, 0, 5);
+		grid13_x0_y4_100.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserOperaCheckBox, grid13_x0_y4_100);
 		BrowserChromiumCheckBox.setText("Chromium派生 (SRware Ironなど)");
 		BrowserChromiumCheckBox.setForeground(Color.blue);
@@ -591,7 +587,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y5_101.weightx = 1.0;
 		grid13_x0_y5_101.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y5_101.fill = GridBagConstraints.HORIZONTAL;
-		grid13_x0_y5_101.insets = new Insets(0, 5, 0, 5);
+		grid13_x0_y5_101.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserChromiumCheckBox, grid13_x0_y5_101);
 		BrowserOtherCheckBox.setText("上記以外のブラウザのCookieのファイル又はフォルダを指定");
 		BrowserOtherCheckBox.setForeground(Color.blue);
@@ -602,7 +598,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y6_102.weightx = 1.0;
 		grid13_x0_y6_102.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y6_102.fill = GridBagConstraints.HORIZONTAL;
-		grid13_x0_y6_102.insets = new Insets(0, 5, 0, 5);
+		grid13_x0_y6_102.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserOtherCheckBox, grid13_x0_y6_102);
 		BrowserCookieField.setText("－場所は自分で捜して下さい－");
 		BrowserCookieField.setForeground(Color.blue);
@@ -630,7 +626,7 @@ public class MainFrame extends JFrame {
 		grid13_x1_y7_104.weightx = 0.0;
 		grid13_x1_y7_104.anchor = GridBagConstraints.SOUTH;
 		grid13_x1_y7_104.fill = GridBagConstraints.NONE;
-		grid13_x1_y7_104.insets = new Insets(0, 0, 0, 5);
+		grid13_x1_y7_104.insets = INSETS_0_0_0_5;
 		BrowserInfoPanel.add(BrowserCookieDialogButton, grid13_x1_y7_104);
 
 		SavingVideoCheckBox.setText("動画をダウンロードする");
@@ -646,8 +642,10 @@ public class MainFrame extends JFrame {
 		Video_SaveFileRadioButton.setText("保存するファイル名を指定する");
 		CommentSaveInfoPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"コメント保存設定", TitledBorder.LEADING, TitledBorder.TOP, new Font(
-						"MS UI Gothic", Font.PLAIN, 12), Color.black));
+				"コメント保存設定"
+			));
+			//	,TitledBorder.LEADING, TitledBorder.TOP,
+			//	new Font("MS UI Gothic", Font.PLAIN, 12), Color.black));
 		CommentSaveInfoPanel.setLayout(gridBagLayout4);
 		SavingCommentCheckBox.setText("コメントをダウンロードする");
 		AddTimeStampToCommentCheckBox.setText("コメントファイル名に日時を付加する（フォルダを指定した時のみ）");
@@ -665,11 +663,12 @@ public class MainFrame extends JFrame {
 		Comment_SaveFileRadioButton.setText("保存するファイル名を指定する");
 		OwnerCommentInfoPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"投稿者コメント保存設定", TitledBorder.LEADING, TitledBorder.TOP, new Font(
-						"MS UI Gothic", Font.PLAIN, 12), Color.blue));
+				"投稿者コメント保存設定", TitledBorder.LEADING, TitledBorder.TOP,
+			//	new Font("MS UI Gothic", Font.PLAIN, 12),
+				getFont(), Color.blue));
 		OwnerCommentInfoPanel.setLayout(gridBagLayout11);
 		SavingOwnerCommentCheckBox.setForeground(Color.blue);
-		SavingOwnerCommentCheckBox.setText("投稿者コメントをダウンロードする　（取得数＝５００ 固定）");
+		SavingOwnerCommentCheckBox.setText("投稿者コメントをダウンロードする　（取得数＝１０００ 固定）");
 		OwnerCommentNoticeLabel1.setText("（フォルダ指定は通常コメントの設定通り・変換後に削除しない）");
 		OwnerCommentNoticeLabel1.setForeground(Color.blue);
 		OwnerCommentNoticeLabel1.setToolTipText("ファイル名は、タイトル＋［Ｏｗｎｅｒ］．ｘｍｌ");
@@ -689,9 +688,18 @@ public class MainFrame extends JFrame {
 				.addActionListener(new MainFrame_ShowSavingConvertedVideoDialogButton_actionAdapter(
 						this));
 		FFMpegTabPanel.setLayout(gridBagLayout6);
+		FFMpegTab2Panel.setLayout(new GridBagLayout());
 		PathSettingPanel.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(), "プログラムの位置の設定"));
+				BorderFactory.createEtchedBorder(), "オプションフォルダの位置の設定",
+				TitledBorder.LEADING, TitledBorder.TOP,
+				getFont(), Color.blue));
 		PathSettingPanel.setLayout(gridBagLayout7);
+		VhookPathSettingPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(), "拡張Vhookライブラリの設定"));
+		VhookPathSettingPanel.setLayout(new GridBagLayout());
+		FFmpegPathSettingPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(), "FFmpegの位置の設定"));
+		FFmpegPathSettingPanel.setLayout(new GridBagLayout());
 		FFmpegPathLabel.setText("FFmpeg");
 		CheckFFmpegVersionLabel.setText("バージョンを表示する⇒ ");
 		CheckFFmpegVersionLabel.setForeground(Color.blue);
@@ -700,41 +708,52 @@ public class MainFrame extends JFrame {
 		CheckFFmpegVersionButton.setForeground(Color.blue);
 		CheckFFmpegVersionButton.addActionListener(
 				new ActionListener(){
-					public void actionPerformed(ActionEvent e){
-						FFVersionButton_actionPerformed(e);
-					}
+					public void actionPerformed(ActionEvent e){ FFVersionButton_actionPerformed(e); }
 				});
 		SettingFFmpegPathButton.setText("参照");
 		SettingFFmpegPathButton
-				.addActionListener(new MainFrame_SettingFFmpegPathButton_actionAdapter(
-						this));
+				.addActionListener(new MainFrame_SettingFFmpegPathButton_actionAdapter(this));
+		SettingOptionPathButton.setText("参照");
+		SettingOptionPathButton.setForeground(Color.blue);
+		SettingOptionPathButton
+			.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) { SettingOptionPathButton_actionPerformed(e); }
+			});
+		VhookSettingLabel.setText("拡張Vhookの位置の設定と自動判定の選択をする");
+		VhookSettingLabel.setForeground(Color.blue);
+		VhookSettingLabel.setToolTipText("従来4:3とワイド16:9を両方チェックすると自動判定を行う");
 		VhookPathLabel.setText("拡張vhook 従来 ");
-		UseVhookCheckBox.setText("使用する（デフォルト）");
+		UseVhookCheckBox.setText("使用する（デフォルト 及び 4:3用）");
 		UseVhookCheckBox.setForeground(Color.blue);
+		UseVhookCheckBox.setToolTipText("FFmpegの設定１を参照する");
 		SettingVhookPathButton.setText("参照");
 		SettingVhookPathButton
-				.addActionListener(new MainFrame_SettingVhookPathButton_actionAdapter(
-						this));
+				.addActionListener(new MainFrame_SettingVhookPathButton_actionAdapter(this));
 		VhookWidePathLabel.setText("拡張vhook ワイド ");
 		VhookWidePathLabel.setForeground(Color.blue);
-		UseVhookWideCheckBox.setText("使用する（オプション）");
+		UseVhookWideCheckBox.setText("使用する（16:9用）");
 		UseVhookWideCheckBox.setForeground(Color.blue);
+		UseVhookWideCheckBox.setToolTipText("FFmpegの設定２を参照する");
 		SettingVhookWidePathButton.setText("参照");
 		SettingVhookWidePathButton
 				.addActionListener(new ActionListener() {
 					@Override
-					public void actionPerformed(ActionEvent e) {
-						SettingVhookWidePathButton_actionPerformed(e);
-					}
+					public void actionPerformed(ActionEvent e) { SettingVhookWidePathButton_actionPerformed(e); }
 				});
 		FFmpegSettingPanel.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(), "FFmpegの設定"));
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"FFmpegの設定１ （拡張Vhook 従来を選択した時）"));
 		FFmpegSettingPanel.setLayout(gridBagLayout9);
+		WideFFmpegSettingPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"FFmpegの設定２ （拡張Vhook ワイドを選択した時）",
+				TitledBorder.LEADING, TitledBorder.TOP, getFont(), Color.blue));
+		WideFFmpegSettingPanel.setLayout(new GridBagLayout());
 		FontPathLabel.setText("フォントパス");
 		SettingFontPathButton.setText("参照");
 		SettingFontPathButton
-				.addActionListener(new MainFrame_SettingFontPathButton_actionAdapter(
-						this));
+				.addActionListener(new MainFrame_SettingFontPathButton_actionAdapter(this));
 		ShowConvVideoCheckBox.setText("変換中の画像を表示する");
 		InLabel.setText("入力オプション");
 		OutLabel.setText("出力オプション");
@@ -775,100 +794,101 @@ public class MainFrame extends JFrame {
 		contentPane.add(VideoInfoPanel, BorderLayout.NORTH);
 		UserInfoPanel.add(PasswordField, new GridBagConstraints(1, 1, 1, 1,
 				1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets(0, 5, 5, 5), 0, 0));
+				INSETS_0_5_5_5, 0, 0));
 		UserInfoPanel.add(MailAddrField, new GridBagConstraints(1, 0, 1, 1,
 				1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets(0, 5, 5, 5), 0, 0));
+				INSETS_0_5_5_5, 0, 0));
 		UserInfoPanel.add(PasswordLabel, new GridBagConstraints(0, 1, 1, 1,
 				0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
 				new Insets(0, 5, 5, 0), 0, 0));
 		UserInfoPanel.add(MailAddrLabel, new GridBagConstraints(0, 0, 1, 1,
 				0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
 				new Insets(0, 5, 5, 0), 0, 0));
-		PathSettingPanel.add(FFmpegPathLabel, new GridBagConstraints(0, 0, 1,
-				1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
-				new Insets(0, 5, 0, 5), 0, 0));
-		GridBagConstraints grid7_x1_y0_84 = new GridBagConstraints();
-		grid7_x1_y0_84.gridx = 1;
-		grid7_x1_y0_84.gridy = 0;
-		grid7_x1_y0_84.weightx = 1.0;
-		grid7_x1_y0_84.anchor = GridBagConstraints.EAST;
-		grid7_x1_y0_84.insets = new Insets(0, 0, 0, 0);
-		PathSettingPanel.add(CheckFFmpegVersionLabel, grid7_x1_y0_84);
-		GridBagConstraints grid7_x2_y0_83 = new GridBagConstraints();
-		grid7_x2_y0_83.gridx = 2;
-		grid7_x2_y0_83.gridy = 0;
-		grid7_x2_y0_83.weightx = 0.0;
-		grid7_x2_y0_83.anchor = GridBagConstraints.WEST;
-		grid7_x2_y0_83.fill = GridBagConstraints.HORIZONTAL;
-		grid7_x2_y0_83.insets = new Insets(0, 5, 5, 5);
-		PathSettingPanel.add(CheckFFmpegVersionButton, grid7_x2_y0_83);
-		PathSettingPanel.add(FFmpegPathField, new GridBagConstraints(0, 1, 2,
-				1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 5, 0, 0), 0, 0));
-		GridBagConstraints grid7_x2_y1_74 = new GridBagConstraints(2, 1,
-				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0);
-		PathSettingPanel.add(SettingFFmpegPathButton, grid7_x2_y1_74);
-		GridBagConstraints grid7_x0_y2_54 = new GridBagConstraints(0, 2,
-				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0);
-		grid7_x0_y2_54.gridwidth = 1;
+		PathSettingPanel.add(OptionPathField, new GridBagConstraints(0, 1, 2, 1,
+				1.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0));
+		GridBagConstraints grid7_x2_y1_74 = new GridBagConstraints(2, 1, 1, 1,
+				0.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0);
+		PathSettingPanel.add(SettingOptionPathButton, grid7_x2_y1_74);
+		GridBagConstraints grid7_x0_y0_ = new GridBagConstraints();
+		grid7_x0_y0_.gridx = 0;
+		grid7_x0_y0_.gridy = 0;
+		grid7_x0_y0_.gridwidth = 2;
+		grid7_x0_y0_.weightx = 1.0;
+		grid7_x0_y0_.anchor = GridBagConstraints.CENTER;
+		grid7_x0_y0_.fill = GridBagConstraints.HORIZONTAL;
+		grid7_x0_y0_.insets = INSETS_0_5_0_5;
+		VhookPathSettingPanel.add(VhookSettingLabel, grid7_x0_y0_);
+		GridBagConstraints grid7_x0_y2_54 = new GridBagConstraints();
+		grid7_x0_y2_54.gridx = 0;
+		grid7_x0_y2_54.gridy = 2;
 		grid7_x0_y2_54.weightx = 0.0;
-		PathSettingPanel.add(VhookPathLabel, grid7_x0_y2_54);
+		grid7_x0_y2_54.weighty = 0.0;
+		grid7_x0_y2_54.anchor = GridBagConstraints.CENTER;
+		grid7_x0_y2_54.fill = GridBagConstraints.HORIZONTAL;
+		grid7_x0_y2_54.insets = INSETS_0_5_0_5;
+		VhookPathSettingPanel.add(VhookPathLabel, grid7_x0_y2_54);
 		GridBagConstraints grid7_x1_y2_90 = new GridBagConstraints();
 		grid7_x1_y2_90.gridx = 1;
 		grid7_x1_y2_90.gridy = 2;
 		grid7_x1_y2_90.gridwidth = 2;
 		grid7_x1_y2_90.weightx = 1.0;
-		grid7_x1_y2_90.anchor = GridBagConstraints.NORTHWEST;
+		grid7_x1_y2_90.anchor = GridBagConstraints.WEST;
 		grid7_x1_y2_90.fill = GridBagConstraints.HORIZONTAL;
-		grid7_x1_y2_90.insets = new Insets(0, 5, 0, 5);
-		PathSettingPanel.add(UseVhookCheckBox, grid7_x1_y2_90);
-		PathSettingPanel.add(VhookPathField, new GridBagConstraints(0, 3, 2, 1,
-				1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets(0, 5, 0, 0), 0, 0));
-		PathSettingPanel.add(SettingVhookPathButton, new GridBagConstraints(2,
-				3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
+		grid7_x1_y2_90.insets = INSETS_0_5_0_5;
+		VhookPathSettingPanel.add(UseVhookCheckBox, grid7_x1_y2_90);
+		GridBagConstraints grid7_x0_y3_ = new GridBagConstraints();
+		grid7_x0_y3_.gridx = 0;
+		grid7_x0_y3_.gridy = 3;
+		grid7_x0_y3_.gridwidth = 2;
+		grid7_x0_y3_.weightx = 1.0;
+		grid7_x0_y3_.anchor = GridBagConstraints.WEST;
+		grid7_x0_y3_.fill = GridBagConstraints.HORIZONTAL;
+		grid7_x0_y3_.insets = INSETS_0_5_0_5;
+		VhookPathSettingPanel.add(VhookPathField, grid7_x0_y3_);
+		GridBagConstraints grid7_x2_y3_ = new GridBagConstraints();
+		grid7_x2_y3_.gridx = 2;
+		grid7_x2_y3_.gridy = 3;
+		grid7_x2_y3_.gridwidth = 1;
+		grid7_x2_y3_.weightx = 0.0;
+		grid7_x2_y3_.insets = INSETS_0_5_5_5;
+		VhookPathSettingPanel.add(SettingVhookPathButton, grid7_x2_y3_);
 		GridBagConstraints grid7_x0_y4_91 = new GridBagConstraints();
 		grid7_x0_y4_91.gridx = 0;
 		grid7_x0_y4_91.gridy = 4;
 		grid7_x0_y4_91.gridwidth = 1;
-		grid7_x0_y4_91.gridheight = 1;
 		grid7_x0_y4_91.weightx = 0.0;
-		grid7_x0_y4_91.weighty = 0.0;
-		grid7_x0_y4_91.anchor = GridBagConstraints.NORTHWEST;
+		grid7_x0_y4_91.anchor = GridBagConstraints.CENTER;
 		grid7_x0_y4_91.fill = GridBagConstraints.HORIZONTAL;
-		grid7_x0_y4_91.insets = new Insets(5, 5, 0, 5);
-		PathSettingPanel.add(VhookWidePathLabel, grid7_x0_y4_91);
+		grid7_x0_y4_91.insets = INSETS_0_5_0_5;
+		VhookPathSettingPanel.add(VhookWidePathLabel, grid7_x0_y4_91);
 		GridBagConstraints grid7_x1_y4_92 = new GridBagConstraints();
 		grid7_x1_y4_92.gridx = 1;
 		grid7_x1_y4_92.gridy = 4;
-		grid7_x1_y4_92.gridwidth = 2;
+		grid7_x1_y4_92.gridwidth = 1;
 		grid7_x1_y4_92.weightx = 1.0;
-		grid7_x1_y4_92.anchor = GridBagConstraints.NORTHWEST;
+		grid7_x1_y4_92.anchor = GridBagConstraints.WEST;
 		grid7_x1_y4_92.fill = GridBagConstraints.HORIZONTAL;
-		grid7_x1_y4_92.insets = new Insets(0, 5, 0, 5);
-		PathSettingPanel.add(UseVhookWideCheckBox, grid7_x1_y4_92);
+		grid7_x1_y4_92.insets = INSETS_0_5_0_5;
+		VhookPathSettingPanel.add(UseVhookWideCheckBox, grid7_x1_y4_92);
 		GridBagConstraints grid7_x0_y5_93 = new GridBagConstraints();
 		grid7_x0_y5_93.gridx = 0;
 		grid7_x0_y5_93.gridy = 5;
 		grid7_x0_y5_93.gridwidth = 2;
-		grid7_x0_y5_93.gridheight = 1;
 		grid7_x0_y5_93.weightx = 1.0;
-		grid7_x0_y5_93.weighty = 0.0;
-		grid7_x0_y5_93.anchor = GridBagConstraints.NORTHWEST;
+		grid7_x0_y5_93.anchor = GridBagConstraints.WEST;
 		grid7_x0_y5_93.fill = GridBagConstraints.HORIZONTAL;
-		grid7_x0_y5_93.insets = new Insets(0, 5, 0, 0);
-		PathSettingPanel.add(VhookWidePathField, grid7_x0_y5_93);
+		grid7_x0_y5_93.insets = INSETS_0_5_0_5;
+		VhookPathSettingPanel.add(VhookWidePathField, grid7_x0_y5_93);
 		GridBagConstraints grid7_x2_y5_94 = new GridBagConstraints();
 		grid7_x2_y5_94.gridx = 2;
 		grid7_x2_y5_94.gridy = 5;
-		grid7_x2_y5_94.anchor = GridBagConstraints.NORTHWEST;
-		grid7_x2_y5_94.fill = GridBagConstraints.HORIZONTAL;
-		grid7_x2_y5_94.insets = new Insets(0, 5, 0, 5);
-		PathSettingPanel.add(SettingVhookWidePathButton, grid7_x2_y5_94);
+		grid7_x2_y5_94.gridwidth = 1;
+		grid7_x2_y5_94.weightx = 0.0;
+		grid7_x2_y5_94.insets = INSETS_0_5_0_5;
+		VhookPathSettingPanel.add(SettingVhookWidePathButton, grid7_x2_y5_94);
+// option default OR normal(4:3)
 		FFmpegSettingPanel.add(getFFmpegOptionComboBoxPanel(),grid9_x0_y1_55);
 		FFmpegSettingPanel.add(ExtOptionLabel, grid9_x0_y2_56);
 		FFmpegSettingPanel.add(getExtOptionField(), grid9_x1_y2_57);
@@ -878,9 +898,47 @@ public class MainFrame extends JFrame {
 		FFmpegSettingPanel.add(CommandLineInOptionField, grid9_x1_y4_52);
 		FFmpegSettingPanel.add(OutLabel, grid9_x0_y5_50);
 		FFmpegSettingPanel.add(CommandLineOutOptionField, grid9_x1_y5_53);
+// option wide(16:9)
+		WideFFmpegSettingPanel.add(getWideFFmpegOptionComboBoxPanel(),grid9_x0_y1_55);
+		WideFFmpegSettingPanel.add(new JLabel(ExtOptionLabel.getText()), grid9_x0_y2_56);
+		WideFFmpegSettingPanel.add(wideExtOptionField, grid9_x1_y2_57);
+		WideFFmpegSettingPanel.add(new JLabel(MainOptionLabel.getText()), grid9_x0_y3_48);
+		WideFFmpegSettingPanel.add(wideMainOptionField, grid9_x1_y3_51);
+		WideFFmpegSettingPanel.add(new JLabel(InLabel.getText()), grid9_x0_y4_49);
+		WideFFmpegSettingPanel.add(wideCommandLineInOptionField, grid9_x1_y4_52);
+		WideFFmpegSettingPanel.add(new JLabel(OutLabel.getText()), grid9_x0_y5_50);
+		WideFFmpegSettingPanel.add(wideCommandLineOutOptionField, grid9_x1_y5_53);
+		WideFFmpegSettingPanel.setForeground(Color.blue);
+// Added FFmpegPathSettingPanel form here
+		FFmpegPathSettingPanel.add(FFmpegPathLabel, new GridBagConstraints(0, 0, 1,
+				1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+				INSETS_0_5_0_5, 0, 0));
+		GridBagConstraints grid__x1_y0_106 = new GridBagConstraints();
+		grid__x1_y0_106.gridx = 1;
+		grid__x1_y0_106.gridy = 0;
+		grid__x1_y0_106.weightx = 1.0;
+		grid__x1_y0_106.anchor = GridBagConstraints.EAST;
+		grid__x1_y0_106.insets = INSETS_0_0_0_0;
+		FFmpegPathSettingPanel.add(CheckFFmpegVersionLabel, grid__x1_y0_106);
+		GridBagConstraints grid__x2_y0_107 = new GridBagConstraints();
+		grid__x2_y0_107.gridx = 2;
+		grid__x2_y0_107.gridy = 0;
+		grid__x2_y0_107.weightx = 0.0;
+		grid__x2_y0_107.anchor = GridBagConstraints.WEST;
+		grid__x2_y0_107.fill = GridBagConstraints.HORIZONTAL;
+		grid__x2_y0_107.insets = INSETS_0_5_5_5;
+		FFmpegPathSettingPanel.add(CheckFFmpegVersionButton, grid__x2_y0_107);
+		FFmpegPathSettingPanel.add(FFmpegPathField, new GridBagConstraints(0, 1, 2,
+				1, 1.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(0, 5, 0, 0), 0, 0));
+		GridBagConstraints grid__x2_y1_108 = new GridBagConstraints(2, 1,
+				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0);
+		FFmpegPathSettingPanel.add(SettingFFmpegPathButton, grid__x2_y1_108);
+// end FFmpegPathSettingPanel
 		VideoInfoPanel.add(OpPanel, new GridBagConstraints(0, 0, 1, 1, 1.0,
 				0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets(0, 0, 0, 0), 0, 0));
+				INSETS_0_0_0_0, 0, 0));
 		VideoInfoPanel.add(DoButton, grid1_x1_y0_71);
 		OpPanel.add(VideoID_Label, grid10_x0_y0_67);
 		OpPanel.add(VideoID_TextField, grid10_x1_y0_68);
@@ -888,9 +946,17 @@ public class MainFrame extends JFrame {
 		OpPanel.add(WayBackField, grid10_x1_y1_70);
 		MainTabbedPane.add(BasicInfoTabPanel, "基本設定");
 		MainTabbedPane.add(SavingInfoTabPanel, "保存設定");
-		MainTabbedPane.add(FFMpegTabPanel, "動画設定");
+		MainTabbedPane.add(FFMpegInfoTabPanel, "動画設定");
 		MainTabbedPane.addTab("変換設定", null, getConvertingSettingPanel(), null);
 		SavingInfoTabPanel.add(getSaveInfoTabPaneEach(), grid2_x__y__35);
+		FFmpegInfoTabPaneEach.addTab("変換オプション設定", null, FFMpegTabPanel, null);
+		FFmpegInfoTabPaneEach.addTab("FFMpegの位置と機能", null, FFMpegTab2Panel, null);
+		FFMpegInfoTabPanel.setLayout(new GridBagLayout());
+		GridBagConstraints grid__x__y__105 = new GridBagConstraints();
+		grid__x__y__105.fill = GridBagConstraints.BOTH;
+		grid__x__y__105.weightx = 1.0;
+		grid__x__y__105.weighty = 1.0;
+		FFMpegInfoTabPanel.add(FFmpegInfoTabPaneEach, grid__x__y__105);
 		BasicInfoTabPanel.add(UserInfoPanel, grid12_x0_y0_7);
 		BasicInfoTabPanel.add(getProxyInfoPanel(), grid12_x0_y1_6);
 		BasicInfoTabPanel.add(BrowserInfoPanel, grid12_x0_y2_95);
@@ -927,7 +993,7 @@ public class MainFrame extends JFrame {
 		ConvertedVideoSavingInfoPanel.add(SavingConvertedVideoCheckBox,
 				new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 5, 0, 5), 0, 0));
+					INSETS_0_5_0_5, 0, 0));
 		ConvertedVideoSavingInfoPanel.add(ConvertWithCommentCheckBox,				grid5_x0_y1_78);
 		ConvertedVideoSavingInfoPanel.add(ConvertWithOwnerCommentCheckBox,			grid5_x0_y2_81);
 		ConvertedVideoSavingInfoPanel.add(Conv_SaveFolderRadioButton,				grid5_x0_y3_40);
@@ -938,19 +1004,52 @@ public class MainFrame extends JFrame {
 		ConvertedVideoSavingInfoPanel.add(Conv_SaveFileRadioButton,					grid5_x0_y7_42);
 		ConvertedVideoSavingInfoPanel.add(ConvertedVideoSavedFileField,				grid5_x0_y8_43);
 		ConvertedVideoSavingInfoPanel.add(ShowSavingConvertedVideoFileDialogButton,	grid5_x3_y8_45);
-		FFMpegTabPanel.add(PathSettingPanel, new GridBagConstraints(0, 0, 1, 1,
-				1.0, 0.0, GridBagConstraints.NORTHEAST,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+		GridBagConstraints grid6_x0_y0_110 = new GridBagConstraints();
+		grid6_x0_y0_110.gridx = 0;
+		grid6_x0_y0_110.gridy = 1;
+		grid6_x0_y0_110.weightx = 1.0;
+		grid6_x0_y0_110.weighty = 0.0;
+		grid6_x0_y0_110.anchor = GridBagConstraints.NORTH;
+		grid6_x0_y0_110.fill = GridBagConstraints.HORIZONTAL;
+		grid6_x0_y0_110.insets = INSETS_5_5_5_5;
+		FFMpegTabPanel.add(VhookPathSettingPanel, grid6_x0_y0_110);
+		GridBagConstraints grid6_x0_y1_1 = new GridBagConstraints(0, 1, 1, 1,
+				1.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0);
+		grid6_x0_y1_1.gridy = 2;
+		grid6_x0_y1_1.anchor = GridBagConstraints.NORTH;
 		FFMpegTabPanel.add(FFmpegSettingPanel, grid6_x0_y1_1);
+		GridBagConstraints grid6_x0_y3_111 = new GridBagConstraints();
+		grid6_x0_y3_111.gridx = 0;
+		grid6_x0_y3_111.gridy = 3;
+		grid6_x0_y3_111.weightx = 1.0;
+		grid6_x0_y3_111.weighty = 1.0;
+		grid6_x0_y3_111.anchor = GridBagConstraints.NORTH;
+		grid6_x0_y3_111.fill = GridBagConstraints.HORIZONTAL;
+		grid6_x0_y3_111.insets = INSETS_0_5_0_5;
+		FFMpegTabPanel.add(WideFFmpegSettingPanel, grid6_x0_y3_111);
+//		FFMpegTab2Panel.add(PathSettingPanel, new GridBagConstraints(0, 0, 1, 1,
+//				1.0, 0.0, GridBagConstraints.NORTHEAST,
+//				GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0));
+		GridBagConstraints grid__x0_y0_109 = new GridBagConstraints();
+		grid__x0_y0_109.gridx = 0;
+		grid__x0_y0_109.gridy = 1;
+		grid__x0_y0_109.weightx = 1.0;
+		grid__x0_y0_109.weighty = 0.0;
+		grid__x0_y0_109.anchor = GridBagConstraints.NORTH;
+		grid__x0_y0_109.fill = GridBagConstraints.BOTH;
+		grid__x0_y0_109.insets = INSETS_0_5_0_5;
+		FFMpegTab2Panel.add(FFmpegPathSettingPanel, grid__x0_y0_109);
 		CheckFFmpegFunctionPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(), "FFmpeg機能チェック",
 				TitledBorder.LEADING, TitledBorder.TOP,
-				new Font("MS UI Gothic", Font.PLAIN, 12), Color.blue));
+			//	new Font("MS UI Gothic", Font.PLAIN, 12),
+				getFont(), Color.blue));
 		CheckFFmpegFunctionPanel.setForeground(Color.blue);
 		CheckFFmpegFunctionPanel.setLayout(new GridBagLayout());
 		CheckDownloadVideoButton.setText("DL動画");
 		CheckDownloadVideoButton.setToolTipText(
-			"ダウンロードした動画をチェックする：幅　高さ　fps　映像codec　音声codec");
+			"ダウンロード動画をチェック：幅x高さ　fps　映像codec　音声codec");
 		CheckDownloadVideoButton.setForeground(Color.blue);
 		CheckDownloadVideoButton.addActionListener(
 				new ActionListener(){
@@ -964,7 +1063,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y1_85.weightx = 0.0;
 		grid_x0_y1_85.anchor = GridBagConstraints.WEST;
 		grid_x0_y1_85.fill = GridBagConstraints.HORIZONTAL;
-		grid_x0_y1_85.insets = new Insets(0, 5, 5, 5);
+		grid_x0_y1_85.insets = INSETS_0_0_5_5;
 		CheckFFmpegFunctionPanel.add(CheckDownloadVideoButton, grid_x0_y1_85);
 		CheckDownloadVideoLabel.setText("ダウンロードした動画をチェックする");
 		CheckDownloadVideoLabel.setForeground(Color.blue);
@@ -975,7 +1074,7 @@ public class MainFrame extends JFrame {
 		grid_x1_y1_88.weighty = 0.0;
 		grid_x1_y1_88.anchor = GridBagConstraints.WEST;
 		grid_x1_y1_88.fill = GridBagConstraints.HORIZONTAL;
-		grid_x1_y1_88.insets = new Insets(0, 5, 5, 5);
+		grid_x1_y1_88.insets = INSETS_0_5_5_5;
 		CheckFFmpegFunctionPanel.add(CheckDownloadVideoLabel,grid_x1_y1_88);
 		GridBagConstraints grid_x0_y2_87 = new GridBagConstraints();
 		grid_x0_y2_87.gridx = 0;
@@ -986,7 +1085,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_87.weighty = 1.0;
 		grid_x0_y2_87.anchor = GridBagConstraints.NORTHEAST;
 		grid_x0_y2_87.fill = GridBagConstraints.BOTH;
-		grid_x0_y2_87.insets = new Insets(0, 5, 5, 5);
+		grid_x0_y2_87.insets = INSETS_0_5_5_5;
 		TextFFmpegOutput.setLineWrap(true);
 		TextFFmpegOutput.setForeground(Color.blue);
 		TextFFmpegOutput.setOpaque(false);
@@ -994,15 +1093,13 @@ public class MainFrame extends JFrame {
 				new JScrollPane(TextFFmpegOutput), grid_x0_y2_87);
 		GridBagConstraints grid6_x0_y2_82 = new GridBagConstraints();
 		grid6_x0_y2_82.gridx = 0;
-		grid6_x0_y2_82.gridy = 2;
-		grid6_x0_y2_82.gridwidth = 4;
-		grid6_x0_y2_82.gridheight = 4;
+		grid6_x0_y2_82.gridy = 3;
 		grid6_x0_y2_82.weightx = 1.0;
 		grid6_x0_y2_82.weighty = 1.0;
 		grid6_x0_y2_82.anchor = GridBagConstraints.NORTHWEST;
 		grid6_x0_y2_82.fill = GridBagConstraints.BOTH;
-		grid6_x0_y2_82.insets = new Insets(0, 5, 5, 5);
-		FFMpegTabPanel.add(CheckFFmpegFunctionPanel, grid6_x0_y2_82);
+		grid6_x0_y2_82.insets = INSETS_0_5_5_5;
+		FFMpegTab2Panel.add(CheckFFmpegFunctionPanel, grid6_x0_y2_82);
 	}
 
 	private void setPopup() {
@@ -1032,6 +1129,7 @@ public class MainFrame extends JFrame {
 
 		FFmpegPathField.addMouseListener(new PopupRightClick(
 				this.FFmpegPathField));
+		OptionPathField.addMouseListener(new PopupRightClick(this.OptionPathField));
 		VhookPathField
 				.addMouseListener(new PopupRightClick(this.VhookPathField));
 		VhookWidePathField
@@ -1074,6 +1172,7 @@ public class MainFrame extends JFrame {
 		addTarget(ConvertedVideoSavedFolderField, true);
 
 		addTarget(FFmpegPathField, false);
+		addTarget(OptionPathField, false);
 		addTarget(VhookPathField, false);
 		addTarget(VhookWidePathField, false);
 		addTarget(FontPathField, false);
@@ -1089,10 +1188,16 @@ public class MainFrame extends JFrame {
 	private File CurrentDir = new File(".");
 
 	JPanel PathSettingPanel = new JPanel();
+	JPanel VhookPathSettingPanel = new JPanel();
+	JPanel FFmpegPathSettingPanel = new JPanel();
 	JLabel FFmpegPathLabel = new JLabel();
+	JLabel OptionPathLabel = new JLabel();
 	GridBagLayout gridBagLayout7 = new GridBagLayout();
 	JTextField FFmpegPathField = new JTextField();
+	JTextField OptionPathField = new JTextField();
 	JButton SettingFFmpegPathButton = new JButton();
+	JButton SettingOptionPathButton = new JButton();
+	JLabel VhookSettingLabel = new JLabel();
 	JLabel VhookPathLabel = new JLabel();
 	JLabel VhookWidePathLabel = new JLabel();
 	JCheckBox UseVhookCheckBox = new JCheckBox();
@@ -1104,6 +1209,7 @@ public class MainFrame extends JFrame {
 	JPanel VhookSettingPanel = new JPanel();
 	GridBagLayout gridBagLayout8 = new GridBagLayout();
 	JPanel FFmpegSettingPanel = new JPanel();
+	JPanel WideFFmpegSettingPanel = new JPanel();
 	GridBagLayout gridBagLayout9 = new GridBagLayout();
 	JLabel FontPathLabel = new JLabel();
 	JTextField FontPathField = new JTextField();
@@ -1113,7 +1219,13 @@ public class MainFrame extends JFrame {
 
 	private void showSaveDialog(String title, JTextField field, boolean isSave,
 			boolean isDir) {
-		JFileChooser chooser = new JFileChooser(CurrentDir);
+		File file = new File(field.getText());
+		if (file == null || !file.exists()){
+			file = CurrentDir;
+		} else if (file.isFile() || isDir){	// field is file OR want for Dir
+			file = file.getParentFile();
+		}
+		JFileChooser chooser = new JFileChooser(file);
 		chooser.setDialogTitle(title);
 		int code = 0;
 		if (isDir) {
@@ -1134,11 +1246,11 @@ public class MainFrame extends JFrame {
 				new File("").getAbsolutePath(), ".");
 	}
 	private void showSaveDialog(String title, JTextField field) {
-		File dir = new File(field.getText());
-		if (!dir.exists()){
-			dir = new File("");
+		File file = new File(field.getText());
+		if (!file.exists()){
+			file = new File("");
 		}
-		JFileChooser chooser = new JFileChooser(dir);
+		JFileChooser chooser = new JFileChooser(file);
 		chooser.setDialogTitle(title);
 		int code = 0;
 		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -1165,7 +1277,7 @@ public class MainFrame extends JFrame {
 		String comment = CommentSavedFileField.getText();
 		String ownercomment = comment;
 		int index = comment.lastIndexOf('.');
-		if (index > comment.lastIndexOf('\\')){
+		if (index > comment.lastIndexOf(File.separatorChar)){
 			ownercomment = comment.substring(0, index);
 		}
 		ownercomment += saccubus.Converter.OWNER_EXT;
@@ -1225,8 +1337,14 @@ public class MainFrame extends JFrame {
 			BrowserChromiumCheckBox.isSelected(),
 			BrowserOperaCheckBox.isSelected(),
 			BrowserOtherCheckBox.isSelected(),
-			BrowserCookieField.getText()
-			);
+			BrowserCookieField.getText(),
+			OptionPathField.getText(),
+			WideFFmpegOptionModel.getSelectedFile(),
+			wideExtOptionField.getText(),
+			wideMainOptionField.getText(),
+			wideCommandLineInOptionField.getText(),
+			wideCommandLineOutOptionField.getText()
+		);
 	}
 
 	private void setSetting(ConvertingSetting setting) {
@@ -1309,6 +1427,12 @@ public class MainFrame extends JFrame {
 		BrowserOperaCheckBox.setSelected(setting.isBrowserOpera());
 		BrowserOtherCheckBox.setSelected(setting.isBrowserOther());
 		BrowserCookieField.setText(setting.getBrowserCookiePath());
+		OptionPathField.setText(setting.getOptionFolder());
+		WideFFmpegOptionModel.reload(setting.getWideOptionFile());
+		wideExtOptionField.setText(setting.getWideCmdLineOptionExt());
+		wideMainOptionField.setText(setting.getWideCmdLineOptionMain());
+		wideCommandLineOutOptionField.setText(setting.getWideCmdLineOptionOut());
+		wideCommandLineInOptionField.setText(setting.getWideCmdLineOptionIn());
 	}
 
 	/**
@@ -1370,6 +1494,10 @@ public class MainFrame extends JFrame {
 	JRadioButton Comment_SaveFolderRadioButton = new JRadioButton();
 	JPanel BasicInfoTabPanel = new JPanel();
 	GridBagLayout gridBagLayout12 = new GridBagLayout();
+	JTextField wideExtOptionField = new JTextField();
+	JTextField wideMainOptionField = new JTextField();
+	JTextField wideCommandLineInOptionField = new JTextField();
+	JTextField wideCommandLineOutOptionField = new JTextField();
 	private JPanel ConvertingSettingPanel = null;
 	private JPanel NGWordSettingPanel = null;
 	private JLabel NGWordLavel = null;
@@ -1389,12 +1517,16 @@ public class MainFrame extends JFrame {
 	private JCheckBox OpaqueCommentCheckBox = null;
 	private JPanel VideoSaveInfoPanel = null;
 	private JTabbedPane SaveInfoTabPaneEach = null;
+	private JTabbedPane FFmpegInfoTabPaneEach = new JTabbedPane();
 	private JPanel VideoSavingTabbedPanel = null;
 	private JPanel ConvertedVideoSavingTabbedPanel = null;
 	private JCheckBox NotAddVideoID_ConvVideoCheckBox = null;
 	private JComboBox FFmpegOptionComboBox = null;
+	private JComboBox WideFFmpegOptionComboBox = null;
 	private JButton FFmpegOptionReloadButton = null;
+	private JButton WideFFmpegOptionReloadButton = null;
 	private JPanel FFmpegOptionComboBoxPanel = null;
+	private JPanel WideFFmpegOptionComboBoxPanel = null;
 
 	public void DoButton_actionPerformed(ActionEvent e) {
 		if (converter == null || converter.isConverted()) {
@@ -1533,6 +1665,10 @@ public class MainFrame extends JFrame {
 		showSaveDialog("FFmpegへのパス", FFmpegPathField, false, false);
 	}
 
+	public void SettingOptionPathButton_actionPerformed(ActionEvent e) {
+		showSaveDialog("オプションフォルダ", OptionPathField, true, true);
+	}
+
 	public void SettingVhookPathButton_actionPerformed(ActionEvent e) {
 		showSaveDialog("拡張vhookライブラリへのパス", VhookPathField, false, false);
 	}
@@ -1575,14 +1711,14 @@ public class MainFrame extends JFrame {
 			GridBagConstraints grid_x0_y1_11 = new GridBagConstraints();
 			grid_x0_y1_11.weighty = 1.0;
 			grid_x0_y1_11.weightx = 1.0;
-			grid_x0_y1_11.insets = new Insets(0, 5, 0, 5);
+			grid_x0_y1_11.insets = INSETS_0_5_0_5;
 			grid_x0_y1_11.gridy = 1;
 			grid_x0_y1_11.gridx = 0;
 			grid_x0_y1_11.anchor = GridBagConstraints.NORTH;
 			grid_x0_y1_11.fill = GridBagConstraints.HORIZONTAL;
 			GridBagConstraints grid_x0_y0_0 = new GridBagConstraints(0,
 					2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH,
-					GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0);
+					GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0);
 			grid_x0_y0_0.gridx = 0;
 			grid_x0_y0_0.anchor = GridBagConstraints.CENTER;
 			grid_x0_y0_0.weighty = 0.0;
@@ -1599,7 +1735,7 @@ public class MainFrame extends JFrame {
 	/**
 	 * This method initializes NGWordSettingPanel
 	 *
-	 * @return javax.swing.JPanel
+s	 * @return javax.swing.JPanel
 	 */
 	private JPanel getNGWordSettingPanel() {
 		if (NGWordSettingPanel == null) {
@@ -1607,7 +1743,7 @@ public class MainFrame extends JFrame {
 			grid_x1_y1_5.fill = GridBagConstraints.HORIZONTAL;
 			grid_x1_y1_5.gridy = 1;
 			grid_x1_y1_5.weightx = 1.0;
-			grid_x1_y1_5.insets = new Insets(0, 5, 5, 5);
+			grid_x1_y1_5.insets = INSETS_0_5_5_5;
 			grid_x1_y1_5.gridx = 1;
 			GridBagConstraints grid_x0_y1_4 = new GridBagConstraints();
 			grid_x0_y1_4.gridx = 0;
@@ -1620,7 +1756,7 @@ public class MainFrame extends JFrame {
 			grid_x1_y0_3.fill = GridBagConstraints.HORIZONTAL;
 			grid_x1_y0_3.gridy = 0;
 			grid_x1_y0_3.weightx = 1.0;
-			grid_x1_y0_3.insets = new Insets(0, 5, 5, 5);
+			grid_x1_y0_3.insets = INSETS_0_5_5_5;
 			grid_x1_y0_3.gridx = 1;
 			GridBagConstraints grid_x0_y0_2 = new GridBagConstraints();
 			grid_x0_y0_2.gridx = 0;
@@ -1677,7 +1813,7 @@ public class MainFrame extends JFrame {
 			grid_x0_y0_13.gridwidth = 2;
 			grid_x0_y0_13.weightx = 1.0;
 			grid_x0_y0_13.fill = GridBagConstraints.HORIZONTAL;
-			grid_x0_y0_13.insets = new Insets(0, 5, 0, 5);
+			grid_x0_y0_13.insets = INSETS_0_5_0_5;
 			grid_x0_y0_13.gridy = 0;
 			GridBagConstraints grid_x1_y2_12 = new GridBagConstraints();
 			grid_x1_y2_12.fill = GridBagConstraints.HORIZONTAL;
@@ -1687,7 +1823,7 @@ public class MainFrame extends JFrame {
 			grid_x1_y2_12.gridx = 1;
 			GridBagConstraints grid_x0_y2_10 = new GridBagConstraints();
 			grid_x0_y2_10.gridx = 0;
-			grid_x0_y2_10.insets = new Insets(5, 5, 5, 5);
+			grid_x0_y2_10.insets = INSETS_5_5_5_5;
 			grid_x0_y2_10.gridy = 2;
 			ProxyPortLabel = new JLabel();
 			ProxyPortLabel.setText("ポート番号");
@@ -1695,11 +1831,11 @@ public class MainFrame extends JFrame {
 			grid_x1_y1_9.fill = GridBagConstraints.BOTH;
 			grid_x1_y1_9.gridy = 1;
 			grid_x1_y1_9.weightx = 1.0;
-			grid_x1_y1_9.insets = new Insets(0, 0, 0, 5);
+			grid_x1_y1_9.insets = INSETS_0_0_0_5;
 			grid_x1_y1_9.gridx = 1;
 			GridBagConstraints grid_x0_y1_8 = new GridBagConstraints();
 			grid_x0_y1_8.gridx = 0;
-			grid_x0_y1_8.insets = new Insets(0, 5, 0, 5);
+			grid_x0_y1_8.insets = INSETS_0_5_0_5;
 			grid_x0_y1_8.fill = GridBagConstraints.NONE;
 			grid_x0_y1_8.anchor = GridBagConstraints.EAST;
 			grid_x0_y1_8.gridy = 1;
@@ -1836,9 +1972,9 @@ public class MainFrame extends JFrame {
 			grid_x0_y1_15.insets = new Insets(0, 25, 0, 5);
 			GridBagConstraints grid_x3_y5_32 = new GridBagConstraints(3,
 					4, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH,
-					GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
+					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
 			grid_x3_y5_32.gridx = 3;
-			grid_x3_y5_32.insets = new Insets(0, 0, 5, 5);
+			grid_x3_y5_32.insets = INSETS_0_0_5_5;
 			grid_x3_y5_32.gridy = 5;
 			GridBagConstraints grid_x0_y5_30 = new GridBagConstraints(0,
 					4, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
@@ -1863,23 +1999,24 @@ public class MainFrame extends JFrame {
 			grid_x0_y2_27.gridx = 0;
 			grid_x0_y2_27.gridy = 2;
 			GridBagConstraints grid_x0_y0_34 = new GridBagConstraints();
-			grid_x0_y0_34.insets = new Insets(0, 5, 0, 5);
+			grid_x0_y0_34.insets = INSETS_0_5_0_5;
 			grid_x0_y0_34.gridy = 0;
 			grid_x0_y0_34.weightx = 1.0;
 			grid_x0_y0_34.fill = GridBagConstraints.HORIZONTAL;
 			grid_x0_y0_34.gridx = 0;
 			GridBagConstraints grid_x3_y3_31 = new GridBagConstraints(3,
 					2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
+					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
 			grid_x3_y3_31.gridy = 3;
 			grid_x3_y3_31.gridx = 3;
 			VideoSaveInfoPanel = new JPanel();
 			VideoSaveInfoPanel.setLayout(new GridBagLayout());
 			VideoSaveInfoPanel.setBorder(BorderFactory.createTitledBorder(
 					BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-					"動画保存設定", TitledBorder.LEADING,
-					TitledBorder.TOP, new Font("MS UI Gothic",
-							Font.PLAIN, 12), Color.black));
+					"動画保存設定"
+				));
+				//	, TitledBorder.LEADING, TitledBorder.TOP,
+				//	new Font("MS UI Gothic", Font.PLAIN, 12), Color.black));
 			VideoSaveInfoPanel.add(SavingVideoCheckBox, grid_x0_y0_34);
 			VideoSaveInfoPanel.add(getDelVideoCheckBox(), grid_x0_y1_15);
 			VideoSaveInfoPanel.add(Video_SaveFolderRadioButton,
@@ -1923,7 +2060,7 @@ public class MainFrame extends JFrame {
 			grid_x_y_36.weighty = 0.0;
 			grid_x_y_36.weightx = 1.0;
 			grid_x_y_36.fill = GridBagConstraints.HORIZONTAL;
-			grid_x_y_36.insets = new Insets(0, 5, 0, 5);
+			grid_x_y_36.insets = INSETS_0_5_0_5;
 			grid_x_y_36.anchor = GridBagConstraints.NORTH;
 			grid_x_y_36.gridx = 0;
 			grid_x_y_36.gridy = 0;
@@ -1934,7 +2071,7 @@ public class MainFrame extends JFrame {
 			grid_x0_y1_37.weighty = 0.0;
 			grid_x0_y1_37.fill = GridBagConstraints.HORIZONTAL;
 			grid_x0_y1_37.gridheight = 1;
-			grid_x0_y1_37.insets = new Insets(0, 5, 0, 5);
+			grid_x0_y1_37.insets = INSETS_0_5_0_5;
 			GridBagConstraints grid_x0_y2_79 = new GridBagConstraints();
 			grid_x0_y2_79.gridx = 0;
 			grid_x0_y2_79.gridy = 2;
@@ -1943,7 +2080,7 @@ public class MainFrame extends JFrame {
 			grid_x0_y2_79.weighty = 1.0;
 			grid_x0_y2_79.anchor = GridBagConstraints.NORTH;
 			grid_x0_y2_79.fill = GridBagConstraints.HORIZONTAL;
-			grid_x0_y2_79.insets = new Insets(0, 5, 0, 5);
+			grid_x0_y2_79.insets = INSETS_0_5_0_5;
 			VideoSavingTabbedPanel = new JPanel();
 			VideoSavingTabbedPanel.setLayout(new GridBagLayout());
 			VideoSavingTabbedPanel.add(getVideoSaveInfoPanel(),
@@ -1965,7 +2102,7 @@ public class MainFrame extends JFrame {
 		if (ConvertedVideoSavingTabbedPanel == null) {
 			GridBagConstraints grid_x_y_38 = new GridBagConstraints(0,
 					2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH,
-					GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0);
+					GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0);
 			grid_x_y_38.gridx = -1;
 			grid_x_y_38.fill = GridBagConstraints.HORIZONTAL;
 			grid_x_y_38.gridy = -1;
@@ -1996,6 +2133,7 @@ public class MainFrame extends JFrame {
 	 * @return javax.swing.JComboBox
 	 */
 	private final FFmpegComboBoxModel FFmpegOptionModel = new FFmpegComboBoxModel();
+	private final FFmpegComboBoxModel WideFFmpegOptionModel = new FFmpegComboBoxModel();
 
 	private JLabel ExtOptionLabel = null;
 	private JTextField ExtOptionField = null;
@@ -2005,12 +2143,16 @@ public class MainFrame extends JFrame {
 	private JLabel ShadowKindLabel = null;
 	private JComboBox ShadowComboBox = null;
 
+	/**
+	 * Initialize FFmpegOptionComboBox
+	 * @return
+	 */
 	private JComboBox getFFmpegOptionComboBox() {
 		if (FFmpegOptionComboBox == null) {
 			FFmpegOptionComboBox = new JComboBox(FFmpegOptionModel);
 			FFmpegOptionComboBox
-					.addActionListener(new java.awt.event.ActionListener() {
-						public void actionPerformed(java.awt.event.ActionEvent e) {
+					.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
 							if (FFmpegOptionModel.isFile()) {// ファイル
 								ExtOptionField.setEnabled(false);
 								MainOptionField.setEnabled(false);
@@ -2027,6 +2169,32 @@ public class MainFrame extends JFrame {
 		}
 		return FFmpegOptionComboBox;
 	}
+	/**
+	 * Initialize WideFFmpegOptionComboBox
+	 * @return
+	 */
+	private JComboBox getWideFFmpegOptionComboBox() {
+		if (WideFFmpegOptionComboBox == null) {
+			WideFFmpegOptionComboBox = new JComboBox(WideFFmpegOptionModel);
+			WideFFmpegOptionComboBox
+					.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							if (WideFFmpegOptionModel.isFile()) {// ファイル
+								wideExtOptionField.setEnabled(false);
+								wideMainOptionField.setEnabled(false);
+								wideCommandLineInOptionField.setEnabled(false);
+								wideCommandLineOutOptionField.setEnabled(false);
+							} else {// ファイルでない
+								wideExtOptionField.setEnabled(true);
+								wideMainOptionField.setEnabled(true);
+								wideCommandLineInOptionField.setEnabled(true);
+								wideCommandLineOutOptionField.setEnabled(true);
+							}
+						}
+					});
+		}
+		return WideFFmpegOptionComboBox;
+	}
 
 	/**
 	 * This method initializes FFmpegOptionReloadButton
@@ -2038,13 +2206,32 @@ public class MainFrame extends JFrame {
 			FFmpegOptionReloadButton = new JButton();
 			FFmpegOptionReloadButton.setText("更新");
 			FFmpegOptionReloadButton
-					.addActionListener(new java.awt.event.ActionListener() {
-						public void actionPerformed(java.awt.event.ActionEvent e) {
+					.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
 							FFmpegOptionModel.reload();
 						}
 					});
 		}
 		return FFmpegOptionReloadButton;
+	}
+	/**
+	 * This method initializes WideFFmpegOptionReloadButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getWideFFmpegOptionReloadButton() {
+		if (WideFFmpegOptionReloadButton == null) {
+			WideFFmpegOptionReloadButton = new JButton();
+			WideFFmpegOptionReloadButton.setText("更新");
+			WideFFmpegOptionReloadButton.setForeground(Color.blue);
+			WideFFmpegOptionReloadButton
+					.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							WideFFmpegOptionModel.reload();
+						}
+					});
+		}
+		return WideFFmpegOptionReloadButton;
 	}
 
 	/**
@@ -2058,14 +2245,14 @@ public class MainFrame extends JFrame {
 			grid_x_y_47.fill = GridBagConstraints.BOTH;
 			grid_x_y_47.gridx = -1;
 			grid_x_y_47.gridy = -1;
-			grid_x_y_47.insets = new Insets(0, 0, 5, 5);
+			grid_x_y_47.insets = INSETS_0_0_5_5;
 			GridBagConstraints grid_x_y_46 = new GridBagConstraints();
 			grid_x_y_46.fill = GridBagConstraints.HORIZONTAL;
 			grid_x_y_46.gridwidth = 3;
 			grid_x_y_46.gridx = -1;
 			grid_x_y_46.gridy = -1;
 			grid_x_y_46.weightx = 1.0;
-			grid_x_y_46.insets = new Insets(0, 5, 5, 5);
+			grid_x_y_46.insets = INSETS_0_5_5_5;
 			FFmpegOptionComboBoxPanel = new JPanel();
 			FFmpegOptionComboBoxPanel.setLayout(new GridBagLayout());
 			FFmpegOptionComboBoxPanel.add(getFFmpegOptionComboBox(),
@@ -2074,6 +2261,31 @@ public class MainFrame extends JFrame {
 					grid_x_y_47);
 		}
 		return FFmpegOptionComboBoxPanel;
+	}
+
+	/**
+	 * This method initializes FFmpegOptionComboBoxPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getWideFFmpegOptionComboBoxPanel() {
+		if (WideFFmpegOptionComboBoxPanel == null) {
+			GridBagConstraints grid_x_y_1_ = new GridBagConstraints();
+			grid_x_y_1_.fill = GridBagConstraints.BOTH;
+			grid_x_y_1_.insets = INSETS_0_0_5_5;
+			GridBagConstraints grid_x_y_2_ = new GridBagConstraints();
+			grid_x_y_2_.fill = GridBagConstraints.HORIZONTAL;
+			grid_x_y_2_.gridwidth = 3;
+			grid_x_y_2_.weightx = 1.0;
+			grid_x_y_2_.insets = INSETS_0_5_5_5;
+			WideFFmpegOptionComboBoxPanel = new JPanel();
+			WideFFmpegOptionComboBoxPanel.setLayout(new GridBagLayout());
+			WideFFmpegOptionComboBoxPanel.add(getWideFFmpegOptionComboBox(),
+					grid_x_y_2_);
+			WideFFmpegOptionComboBoxPanel.add(getWideFFmpegOptionReloadButton(),
+					grid_x_y_1_);
+		}
+		return WideFFmpegOptionComboBoxPanel;
 	}
 
 	/**

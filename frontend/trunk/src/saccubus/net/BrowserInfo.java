@@ -54,27 +54,27 @@ public class BrowserInfo {
         switch (browserKind)
         {
             case IE6:
-                user_session = GetUserSessionFromIE6(NICOVIDEO_URL);
+                user_session = getUserSessionFromIE6(NICOVIDEO_URL);
                 break;
             case MSIE:
-                user_session = GetUserSessionFromMSIE();
+                user_session = getUserSessionFromMSIE();
                 break;
             case Firefox:
-                user_session = GetUserSessionFromFilefox4();
+                user_session = getUserSessionFromFilefox4();
                 if (!user_session.isEmpty()){
                 	break;
                 }
             case Firefox3:
-                user_session = GetUserSessionFromFilefox3();
+                user_session = getUserSessionFromFilefox3();
                 break;
             case Chrome:
-            	user_session = GetUserSesionChrome();
+            	user_session = getUserSesionChrome();
             	break;
             case Chromium:
-            	user_session = GetUserSesionChromium();
+            	user_session = getUserSesionChromium();
             	break;
             case Opera:
-            	user_session = GetUserSessionOpera();
+            	user_session = getUserSessionOpera();
             	break;
         }
         if (!user_session.isEmpty()){
@@ -94,13 +94,13 @@ public class BrowserInfo {
 	    try {
 	    	if (Path.isDirectory(fileOrDir)){
 	    		// Directory Type like MSIE
-	            user_session = GetUserSessionFromDirectory(fileOrDir);
+	            user_session = getUserSessionFromDirectory(fileOrDir);
 	        	return user_session;
 	    	}
 	    	if (Path.isFile(fileOrDir)){
 	    		// File Type like Firefox3
-	            String dataStr = Path.ReadAllText(fileOrDir, "UTF-8");
-	            user_session = CutUserSession(dataStr, fileOrDir);
+	            String dataStr = Path.readAllText(fileOrDir, "UTF-8");
+	            user_session = cutUserSession(dataStr, fileOrDir);
 	            return user_session;
 	    	}
 	        return "";
@@ -118,7 +118,7 @@ public class BrowserInfo {
     /// Firefox3 から user_session を取得。エラーが起こった場合、例外を投げずに空文字を返す
     /// </summary>
     /// <returns>user_session</returns>
-    private String GetUserSessionFromFilefox3()
+    private String getUserSessionFromFilefox3()
     {
         String user_session = "";
         try
@@ -132,8 +132,8 @@ public class BrowserInfo {
             {
                 return "";
             }
-            String dataStr = Path.ReadAllText(sqlist_filename, "US-ASCII");
-            user_session = CutUserSession(dataStr, sqlist_filename);
+            String dataStr = Path.readAllText(sqlist_filename, "US-ASCII");
+            user_session = cutUserSession(dataStr, sqlist_filename);
         	return user_session;
         }
         catch (Exception e) {
@@ -146,7 +146,7 @@ public class BrowserInfo {
     /// Firefox4, 5 から user_session を取得。エラーが起こった場合、例外を投げずに空文字を返す
     /// </summary>
     /// <returns>user_session</returns>
-    private String GetUserSessionFromFilefox4()
+    private String getUserSessionFromFilefox4()
     {
         String user_session = "";
         try
@@ -155,13 +155,13 @@ public class BrowserInfo {
             if (app_dir == null || app_dir.isEmpty()){
             	return "";
             }
-            String[] userLists = Path.GetFiles(app_dir + "\\Mozilla\\Firefox\\Profiles\\");
+            String[] userLists = Path.sGetFiles(app_dir + "\\Mozilla\\Firefox\\Profiles\\");
             for (String user_dir : userLists){
             	String sqlist_filename = user_dir + "\\cookies.sqlite";
                 if (Path.isFile(sqlist_filename))
                 {
-                    String dataStr = Path.ReadAllText(sqlist_filename, "US-ASCII");
-                    user_session = CutUserSession(dataStr, sqlist_filename);
+                    String dataStr = Path.readAllText(sqlist_filename, "US-ASCII");
+                    user_session = cutUserSession(dataStr, sqlist_filename);
                     if (!user_session.isEmpty()){
                     	return user_session;
                     }
@@ -181,9 +181,9 @@ public class BrowserInfo {
     /// </summary>
     /// <param name="url">サイト（ニコニコ動画）のURL</param>
     /// <returns>user_session</returns>
-    private String GetUserSessionFromIE6(String url)
+    private String getUserSessionFromIE6(String url)
     {
-        return CutUserSession(GetCookieFromIE6(url), "");
+        return cutUserSession(getCookieFromIE6(url), "");
     }
 
     /// <summary>
@@ -191,7 +191,7 @@ public class BrowserInfo {
     /// </summary>
     /// <param name="url">取得するクッキーに関連づけられたURL</param>
     /// <returns>クッキー文字列</returns>
-    private String GetCookieFromIE6(String url)
+    private String getCookieFromIE6(String url)
     {
         int size = 4096;
         byte[] dummy = new byte[size];
@@ -215,7 +215,7 @@ public class BrowserInfo {
      *  </p>
      *  @return user_session
      */
-    private String GetUserSessionFromMSIE()
+    private String getUserSessionFromMSIE()
     {
         String user_session = "";
 
@@ -224,16 +224,16 @@ public class BrowserInfo {
         	return "";
         }
         String search_dir = profile_dir + "\\AppData\\Roaming\\Microsoft\\Windows\\Cookies\\Low\\";
-        user_session = GetUserSessionFromDirectory(search_dir);
+        user_session = getUserSessionFromDirectory(search_dir);
         if (user_session.isEmpty())
         {
         	search_dir = profile_dir + "\\AppData\\Roaming\\Microsoft\\Windows\\Cookies\\";
-            user_session = GetUserSessionFromDirectory(search_dir);
+            user_session = getUserSessionFromDirectory(search_dir);
         }
         if (user_session.isEmpty())
         {
         	search_dir = profile_dir + "\\Cookies\\";
-            user_session = GetUserSessionFromDirectory(search_dir);
+            user_session = getUserSessionFromDirectory(search_dir);
         }
         return user_session;
     }
@@ -243,16 +243,16 @@ public class BrowserInfo {
      * @param dir_name
      * @return
      */
-    private String GetUserSessionFromDirectory(String dir_name)
+    private String getUserSessionFromDirectory(String dir_name)
     {
         String user_session = "";
         try {
 	        if (Path.isDirectory(dir_name))
 	        {
-                String[] files = Path.GetFiles(dir_name);
+                String[] files = Path.sGetFiles(dir_name);
                 for (String fullname : files)
                 {
-                    user_session = CutUserSession(Path.ReadAllText(fullname, "MS932"), fullname);
+                    user_session = cutUserSession(Path.readAllText(fullname, "MS932"), fullname);
                     if (!user_session.isEmpty()){
                     	return user_session;
                     }
@@ -283,7 +283,7 @@ public class BrowserInfo {
      *  </p>
      *  @return user_session
      */
-	private String GetUserSesionChrome()
+	private String getUserSesionChrome()
 	{
 		String user_session = "";
 		String cookie_file = "";
@@ -294,8 +294,8 @@ public class BrowserInfo {
 				// Win7 32bit
 				cookie_file = local_Appdir + googleChrome;
 				if (Path.isFile(cookie_file)){
-					String dataStr = Path.ReadAllText(cookie_file, "UTF-8");
-					user_session = CutUserSession(dataStr, cookie_file);
+					String dataStr = Path.readAllText(cookie_file, "UTF-8");
+					user_session = cutUserSession(dataStr, cookie_file);
 					if (!user_session.isEmpty()){
 						return user_session;
 					}
@@ -307,8 +307,8 @@ public class BrowserInfo {
 				cookie_file = profile_dir
 					+ "\\Local Settings\\Application Data" + googleChrome;
 				if (Path.isFile(cookie_file)){
-					String dataStr = Path.ReadAllText(cookie_file, "UTF-8");
-					user_session = CutUserSession(dataStr, cookie_file);
+					String dataStr = Path.readAllText(cookie_file, "UTF-8");
+					user_session = cutUserSession(dataStr, cookie_file);
 					return user_session;
 				}
 			}
@@ -317,8 +317,8 @@ public class BrowserInfo {
 				// ??? just try
 				cookie_file = app_dir + googleChrome;
 				if (Path.isFile(cookie_file)){
-					String dataStr = Path.ReadAllText(cookie_file, "UTF-8");
-					user_session = CutUserSession(dataStr, cookie_file);
+					String dataStr = Path.readAllText(cookie_file, "UTF-8");
+					user_session = cutUserSession(dataStr, cookie_file);
 					return user_session;
 				}
 			}
@@ -334,7 +334,7 @@ public class BrowserInfo {
      *  </p>
      *  @return user_session
      */
-    private String GetUserSesionChromium()
+    private String getUserSesionChromium()
     {
     	String user_session = "";
     	String cookie_file = "";
@@ -345,8 +345,8 @@ public class BrowserInfo {
 	        	// Win7 32bit
 	        	cookie_file = local_Appdir + chromium;
 	        	if (Path.isFile(cookie_file)){
-		            String dataStr = Path.ReadAllText(cookie_file, "UTF-8");
-		            user_session = CutUserSession(dataStr, cookie_file);
+		            String dataStr = Path.readAllText(cookie_file, "UTF-8");
+		            user_session = cutUserSession(dataStr, cookie_file);
 		            return user_session;
 	        	}
 	        }
@@ -356,8 +356,8 @@ public class BrowserInfo {
 	        	cookie_file = profile_dir
 	        		+ "\\Local Settings\\Application Data" + chromium;
 	        	if (Path.isFile(cookie_file)){
-		            String dataStr = Path.ReadAllText(cookie_file, "UTF-8");
-		            user_session = CutUserSession(dataStr, cookie_file);
+		            String dataStr = Path.readAllText(cookie_file, "UTF-8");
+		            user_session = cutUserSession(dataStr, cookie_file);
 		            return user_session;
 	        	}
 	        }
@@ -373,7 +373,7 @@ public class BrowserInfo {
      *  </p>
      *  @return user_session
      */
-    private String GetUserSessionOpera()
+    private String getUserSessionOpera()
     {
     	String user_session = "";
     	String cookie_file = "";
@@ -383,8 +383,8 @@ public class BrowserInfo {
 	        	// Win7/XP 32bit
 	        	cookie_file = app_dir + "\\Opera\\Opera\\cookies4.dat";
 	        	if (Path.isFile(cookie_file)){
-		            String dataStr = Path.ReadAllText(cookie_file, "UTF-8");
-		            user_session = CutUserSession(dataStr, cookie_file);
+		            String dataStr = Path.readAllText(cookie_file, "UTF-8");
+		            user_session = cutUserSession(dataStr, cookie_file);
 	    	        return user_session;
 	        	}
 	        }
@@ -400,7 +400,7 @@ public class BrowserInfo {
     /// </summary>
     /// <param name="str">切り出す対象文字列</param>
     /// <returns>user_session 文字列。見つからなければ空文字を返す</returns>
-    private String CutUserSession(String str, String filename)
+    private String cutUserSession(String str, String filename)
     {
     	String ret = "";
         int start = str.indexOf("user_session_");
