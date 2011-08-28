@@ -565,6 +565,11 @@ public class Converter extends Thread {
 		if (CommentFile.delete()) {
 			System.out.println("Deleted: " + CommentFile.getPath());
 		}
+		deleteList(listOfCommentFile);
+		// OwnerCommentFile.delete();
+		if (OwnerCommentFile != null && OwnerCommentFile.delete()) {
+			System.out.println("Deleted: " + OwnerCommentFile.getPath());
+		}
 	}
 
 	private File convertToCommentMiddle(File commentfile, File middlefile) {
@@ -581,6 +586,9 @@ public class Converter extends Thread {
 		Stopwatch.start();
 		/*ビデオ名の確定*/
 		File folder = Setting.getConvFixFileNameFolder();
+		if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
+			return false;
+		}
 		if (Setting.isConvFixFileName()) {
 			if (folder.mkdir()) {
 				System.out.println("Created folder: " + folder.getPath());
@@ -617,9 +625,9 @@ public class Converter extends Thread {
 					sendtext("動画(FFmpeg設定名)ファイルの保存先フォルダが作成できません。");
 					return false;
 				}
-				if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
-					return false;
-				}
+//				if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
+//					return false;
+//				}
 				conv_name = MainOption + InOption + OutOption;
 				if (!getFFmpegVfOption().isEmpty()){
 					conv_name = VFILTER_FLAG + " " + getFFmpegVfOption() + conv_name;
@@ -636,10 +644,6 @@ public class Converter extends Thread {
 					conv_name = conv_name.substring(0, len);
 				}
 				conv_name = conv_name.trim();
-			} else {
-				if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
-					return false;
-				}
 			}
 			ConvertedVideoFile = new File(folder, conv_name + ExtOption);
 		} else {
@@ -651,9 +655,9 @@ public class Converter extends Thread {
 			} else {
 				ConvertedVideoFile = Setting.getConvertedVideoFile();
 			}
-			if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
-				return false;
-			}
+//			if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
+//				return false;
+//			}
 		}
 		if (ConvertedVideoFile.getAbsolutePath().equals(VideoFile.getAbsolutePath())){
 			sendtext("変換後のファイル名が変換前と同じです");
@@ -752,7 +756,7 @@ public class Converter extends Thread {
 				if (isDeleteCommentAfterConverting()
 					&& CommentFile != null) {
 					deleteCommentFile();
-					deleteList(listOfCommentFile);
+					// deleteList(listOfCommentFile);
 					// OwnerCommentFile.delete();
 				}
 				if (isDeleteVideoAfterConverting()
@@ -785,6 +789,9 @@ public class Converter extends Thread {
 	}
 
 	private void deleteList(ArrayList<File> list){
+		if (list== null)	{
+			return;
+		}
 		boolean b = true;
 		for (File file : list){
 			b = file.delete() && b;
@@ -794,9 +801,9 @@ public class Converter extends Thread {
 		}
 	}
 
-	private static final int CODE_CONVERTING_ABORTED = 100;
-
 	/**
+	 * CWSならFWSに変換する<br/>
+	 * その後、アスペクト比を判定しVhookを選択、オプションを読み込み設定する
 	 * @param video : File
 	 * @param way : int  1 or 2
 	 * Output videoAspect : Aspect
@@ -849,6 +856,8 @@ public class Converter extends Thread {
 		}
 		return true;
 	}
+
+	private static final int CODE_CONVERTING_ABORTED = 100;
 
 	private int converting_video(File comment, File owner_comment) {
 		int code = -1;

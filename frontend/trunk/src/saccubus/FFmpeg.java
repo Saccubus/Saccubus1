@@ -11,6 +11,9 @@ import saccubus.util.BitReader;
 import saccubus.util.Cws2Fws;
 import saccubus.util.Stopwatch;
 
+/**
+ * @author orz
+ */
 public class FFmpeg {
 
 	private final String exePath;
@@ -19,7 +22,7 @@ public class FFmpeg {
 	private String LastError = "ƒGƒ‰[î•ñ‚ª‚ ‚è‚Ü‚¹‚ñ";
 
 	public FFmpeg(String path) {
-		exePath = path.replace("\\", "/");
+		exePath = path.replace(File.separator, "/");
 	}
 
 	public void setCmd(String string) {
@@ -35,7 +38,7 @@ public class FFmpeg {
 	}
 
 	public void addFile(File file) {
-		String path = file.getPath().replace("\\", "/");
+		String path = file.getPath().replace(File.separator, "/");
 		if (path.indexOf(' ') >= 0 || path.indexOf("@") >= 0){
 			sb.append(" \"");
 			sb.append(path);
@@ -193,6 +196,7 @@ public class FFmpeg {
 		long height;
 		if (Cws2Fws.isFws(videoFile)){	// swf, maybe NMM
 			FileInputStream fis = null;
+			System.out.println("get aspect from FWS(swf)");
 			try {
 				fis = new FileInputStream(videoFile);
 				BitReader br = new BitReader(fis);
