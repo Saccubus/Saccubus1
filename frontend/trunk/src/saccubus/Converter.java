@@ -636,6 +636,10 @@ public class Converter extends Thread {
 					conv_name = conv_name.substring(0, len);
 				}
 				conv_name = conv_name.trim();
+			} else {
+				if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
+					return false;
+				}
 			}
 			ConvertedVideoFile = new File(folder, conv_name + ExtOption);
 		} else {
