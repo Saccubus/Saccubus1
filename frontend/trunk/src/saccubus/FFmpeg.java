@@ -269,7 +269,7 @@ public class FFmpeg {
 			}
 		}
 		public boolean isWide(){
-			if (aspect >= 1.700) {
+			if (aspect >= 1.523) {	// 640x420
 				return true;
 			} else {
 				return false;
