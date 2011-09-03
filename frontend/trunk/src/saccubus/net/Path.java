@@ -22,18 +22,18 @@ import java.io.InputStreamReader;
 public class Path extends File{
 	static final long serialVersionUID = 1L;
 
-	public Path(String path){
+	Path(String path){
 		super(path);
 		// 注意　pathが相対パス名でも絶対パス名でもない時は
 		// カレントディレクトリにあるファイルを意味する
 	}
-	public Path(File file){
+	Path(File file){
 		super(file.getAbsolutePath());
 	}
-	public Path(File dir, String name){
+	Path(File dir, String name){
 		super(dir, name);
 	}
-	public Path(Path dirPath, String name){
+	Path(Path dirPath, String name){
 		super(dirPath, name);
 	}
 
@@ -46,19 +46,23 @@ public class Path extends File{
 	 * @param name : full path name of file : String
 	 * @return last name of file : String
 	 */
-	public static String getName(String name){
-		Path path = new Path(name);
-		return path.getName();
-	}
+//	public static String getName(String name){
+//		File path = new File(name);
+//		return path.getName();
+//	}
 	/**
 	 * alias of static getName(String)
 	 * @param fullname : full path name of file : String
 	 * @return last name of file : String
 	 */
-	public static String sGetFileName(String fullname){
-		return getName(fullname);
-	}
-	public String getFullName(){
+//	public static String getFileName(String fullname){
+//		return getName(fullname);
+//	}
+	/**
+	 * alias of getAbsolutePath()
+	 * @return
+	 */
+	private String getFullName(){
 		return getAbsolutePath();
 	}
 	/**
@@ -72,9 +76,9 @@ public class Path extends File{
 	 *
 	 * @return Full Path of Parent : Path
 	 */
-	public Path getParentPath(){
-		return new Path(getParent());
-	}
+//	public Path getParentPath(){
+//		return new Path(getParent());
+//	}
 //	@Override
 //	public boolean isDirectory(){
 //		return file.isDirectory();
@@ -92,23 +96,23 @@ public class Path extends File{
 	 * @param dir : Name of directory : String
 	 * @return Full filenames of child dirs or child files : Array of String
 	 */
-	public static String[] sGetFiles(String dir){
-		Path path = new Path(dir);
+	public static String[] getFiullnameList(String dir){
+		File path = new File(dir);
 		String[] lists = path.list();
 		int l = lists.length;
 		String[] fulls = new String[l];
 		for (int i = 0; i < l; i++){
-			fulls[i] = new Path(path, lists[i]).getFullName();
+			fulls[i] = new File(path, lists[i]).getAbsolutePath();
 		}
 		return fulls;
 	}
 	/**
 	 * static exists(String)
 	 */
-	public static boolean sExists(String name){
-		Path path = new Path(name);
-		return path.exists();
-	}
+//	public static boolean exists(String name){
+//		Path path = new Path(name);
+//		return path.exists();
+//	}
 //	/**
 //	 * @return Child directorys or child files : Array of File
 //	 */

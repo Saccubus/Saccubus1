@@ -33,7 +33,7 @@ import saccubus.FFmpeg.Aspect;
  * @version 1.0
  */
 public class Converter extends Thread {
-	private ConvertingSetting Setting;
+	private final ConvertingSetting Setting;
 	private String Tag;
 	private String VideoID;
 	private String VideoTitle;
@@ -42,9 +42,12 @@ public class Converter extends Thread {
 	private final ConvertStopFlag StopFlag;
 	private static final String TMP_COMMENT = "_vhook.tmp";
 	private static final String TMP_OWNERCOMMENT = "_vhookowner.tmp";
+	private static final String TMP_OPTIONALTHREAD = "_vhookoptional.tmp";
 	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
 	public static final String OWNER_EXT = "[Owner].xml";	// 投稿者コメントサフィックス
+	public static final String OPTIONAL_EXT = "{Optional}.xml";	// オプショナルスレッドサフィックス
 	private static final String TMP_COMBINED_XML = "_tmp_comment.xml";
+	private static final String TMP_COMBINED_XML2 = "_tmp_optional.xml";
 	private String OtherVideo;
 	private final String WatchInfo;
 	private final JLabel MovieInfo;
@@ -55,6 +58,7 @@ public class Converter extends Thread {
 	private File selectedVhook;
 	private Aspect videoAspect;
 	private File fwsFile = null;
+	private VideoIDFilter DefaultVideoIDFilter;
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -71,6 +75,7 @@ public class Converter extends Thread {
 			WatchInfo = "";
 		}
 		VideoID = "[" + Tag + "]";
+		DefaultVideoIDFilter = new VideoIDFilter(VideoID);
 		if (time.equals("000000") || time.equals("0")){		// for auto.bat
 			Time = "";
 		} else {
@@ -87,14 +92,17 @@ public class Converter extends Thread {
 	private File VideoFile = null;
 	private File CommentFile = null;
 	private File OwnerCommentFile = null;
+	private File OptionalThreadFile = null;
 	private File ConvertedVideoFile = null;
 	private File CommentMiddleFile = null;
 	private File OwnerMiddleFile = null;
+	private File OptionalMiddleFile = null;
 	private FFmpeg ffmpeg = null;
 	private File VhookNormal = null;
 	private File VhookWide = null;
 	private int wayOfVhook = 0;
-	private ArrayList<File> listOfCommentFile = null;
+	private ArrayList<File> listOfCommentFile = new ArrayList<File>();
+	private String optionalThreadID = "";	// set in 
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -205,10 +213,6 @@ public class Converter extends Thread {
 				sendtext("フォントが見つかりません。");
 				return false;
 			}
-//			if (!detectOption()) {
-//				sendtext("変換オプションファイルの読み込みに失敗しました。");
-//				return false;
-//			}
 		} else {
 			if (isDeleteVideoAfterConverting()) {
 				sendtext("変換しないのに、動画削除しちゃって良いんですか？");
@@ -328,6 +332,9 @@ public class Converter extends Thread {
 				sendtext("動画のダウンロードに失敗");
 				return false;
 			}
+			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
+				optionalThreadID = client.getOptionalThreadID();
+			}
 		} else {
 			if (isSaveConverted()) {
 				if (isVideoFixFileName()) {
@@ -361,6 +368,9 @@ public class Converter extends Thread {
 	private boolean saveComment(NicoClient client) {
 		sendtext("コメントの保存");
 		File folder = Setting.getCommentFixFileNameFolder();
+		String commentTitle = "";
+		String prefix = "";
+		String back_comment = Setting.getBackComment();
 		if (isSaveComment()) {
 			if (isCommentFixFileName()) {
 				if (folder.mkdir()) {
@@ -370,21 +380,21 @@ public class Converter extends Thread {
 					sendtext("コメントの保存先フォルダが作成できません。");
 					return false;
 				}
-				String ext = ".xml";
-				if (Setting.isAddTimeStamp()) {
-					if(Time == null || Time.isEmpty()
-						|| Time.equals("Owner")){
-						ext = "[" + WayBackDate.formatNow() + "]" + ext;
+				if (Setting.isAddTimeStamp()) {	// prefix set
+					if(Time == null || Time.isEmpty() || Time.equals("0")
+						|| Time.equals("Owner") || Time.equals("Optional")){
+						prefix = "[" + WayBackDate.formatNow() + "]";
 					} else {
 						WayBackDate wbDate = new WayBackDate(Time);
 						if (wbDate.isValid()){
-							ext = "[" + wbDate.format() + "]" + ext;
+							prefix = "[" + wbDate.format() + "]";
 						} else {
-							ext = "[" + Time + "]" + ext;
+							prefix = "[" + Time + "]";
 						}
 					}
 				}
-				CommentFile = new File(folder, VideoID + VideoTitle + ext);
+				commentTitle = VideoID + VideoTitle + prefix;
+				CommentFile = new File(folder, commentTitle + ".xml");
 			} else {
 				CommentFile = Setting.getCommentFile();
 			}
@@ -392,7 +402,7 @@ public class Converter extends Thread {
 				sendtext("ログインしてないのにコメントの保存になりました");
 				return false;
 			}
-			String back_comment = Setting.getBackComment();
+		//	String back_comment = Setting.getBackComment();
 			if (Setting.isFixCommentNum()) {
 				back_comment = client
 						.getBackCommentFromLength(back_comment);
@@ -406,9 +416,41 @@ public class Converter extends Thread {
 				sendtext("コメントのダウンロードに失敗 " + client.getExtraError());
 				return false;
 			}
+			sendtext("コメントのダウンロード終了");
+			optionalThreadID = client.getOptionalThreadID();
+			sendtext("オプショナルスレッドの保存");
+			if (optionalThreadID != null && !optionalThreadID.isEmpty() ){
+				if (isCommentFixFileName()) {
+					OptionalThreadFile = new File(folder, VideoID + VideoTitle + prefix + OPTIONAL_EXT);
+				} else {
+					OptionalThreadFile = getOptionalThreadFile(Setting.getCommentFile());
+				}
+				sendtext("オプショナルスレッドのダウンロード開始中");
+				OptionalThreadFile = client.getOptionalThread(
+					OptionalThreadFile, Status, optionalThreadID, back_comment, Time, StopFlag);
+				if (stopFlagReturn()) {
+					return false;
+				}
+				if (OptionalThreadFile == null) {
+					sendtext("オプショナルスレッドのダウンロードに失敗 " + client.getExtraError());
+					return false;
+				}
+				sendtext("オプショナルスレッドの保存終了");
+			}
 		}
 		sendtext("コメントの保存終了");
 		return true;
+	}
+	private File getOptionalThreadFile(File file) {
+		String path = file.getPath();
+		if (path == null) {
+			return mkTemp(OPTIONAL_EXT);
+		}
+		int index = path.lastIndexOf(".");
+		if (index > path.lastIndexOf(File.separator)) {
+			path = path.substring(0, index);		// 拡張子を削除
+		}
+		return new File(path + OPTIONAL_EXT);
 	}
 
 	private boolean saveOwnerComment(NicoClient client){
@@ -440,6 +482,9 @@ public class Converter extends Thread {
 			if (OwnerCommentFile == null) {
 				sendtext("投稿者コメントのダウンロードに失敗");
 				return false;
+			}
+			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
+				optionalThreadID = client.getOptionalThreadID();
 			}
 		}
 		sendtext("投稿者コメントの保存終了");
@@ -479,13 +524,13 @@ public class Converter extends Thread {
 					File comfile = new File(folder,pathlist.get(0));
 					if (isSaveComment()){			// for NP4 comment ver 2009
 						ArrayList<File> filelist = new ArrayList<File>();
-						filelist.add(comfile);
-						CommentFile = mkTemp(TMP_COMBINED_XML);
-						sendtext("コメントファイル統一中(新コメント表示)");
-						if (!CombineXML.combineXML(filelist, CommentFile)){
-							sendtext("コメントファイルが統一出来ませんでした（バグ？）");
-							return false;
-						}
+//						filelist.add(comfile);
+//						CommentFile = mkTemp(TMP_COMBINED_XML);
+//						sendtext("コメントファイル統一中(新コメント表示)");
+//						if (!CombineXML.combineXML(filelist, CommentFile)){
+//							sendtext("コメントファイルが統一出来ませんでした（バグ？）");
+//							return false;
+//						}
 						listOfCommentFile = filelist;
 					} else {
 						CommentFile = comfile;
@@ -521,6 +566,71 @@ public class Converter extends Thread {
 			CommentMiddleFile = convertToCommentMiddle(CommentFile, mkTemp(TMP_COMMENT));
 			if (CommentMiddleFile == null){
 				sendtext("コメント変換に失敗。おそらく正規表現の間違い？");
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean convertOprionalThread(){
+		sendtext("オプショナルスレッドの中間ファイルへの変換中");
+		File folder = Setting.getCommentFixFileNameFolder();
+		if (isConvertWithComment()) {
+			if (Setting.isAddTimeStamp() && isCommentFixFileName()) {
+				// 複数のコメントファイル（過去ログ）があるかも
+				ArrayList<String> pathlist = detectFilelistFromOptionalThread(folder);
+				if (pathlist == null || pathlist.isEmpty()){
+					sendtext(Tag + ": オプショナルスレッド・過去ログが存在しません。");
+					OptionalThreadFile = null;
+					return true;
+				}
+				// VideoTitle は見つかった。
+				if (pathlist.size() > 0) {			// 0 1.25, for NP4 comment ver 2009
+					ArrayList<File> filelist = new ArrayList<File>();
+					for (String path: pathlist){
+						filelist.add(new File(folder, path));
+					}
+					OptionalThreadFile = mkTemp(TMP_COMBINED_XML2);
+					sendtext("オプショナルスレッド結合中");
+					if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
+						sendtext("オプショナルスレッドが結合出来ませんでした（バグ？）");
+						return false;
+					}
+					//listOfCommentFile = filelist;
+					listOfCommentFile.addAll(filelist);
+				}
+			}
+			if (!isSaveComment()) {
+				if (isCommentFixFileName()) {
+					if (!Setting.isAddTimeStamp()){
+						// オプショナルスレッドはひとつ
+						String commentfilename = detectTitleFromOptionalThread(folder);
+						if(commentfilename == null){
+							sendtext("オプショナルスレッドがフォルダに存在しません。");
+							OptionalThreadFile = null;
+							return true;
+						}
+						// VideoTitle は見つかった。
+						OptionalThreadFile = new File(folder, commentfilename);
+						if (!OptionalThreadFile.canRead()) {
+							sendtext("オプショナルスレッドが読み込めません。");
+							return false;
+						}
+					} else {
+						// 処理済み
+					}
+				} else {
+					OptionalThreadFile = getOptionalThreadFile(Setting.getCommentFile());
+					if (!OptionalThreadFile.exists()) {
+						sendtext("オプショナルスレッドが存在しません。");
+						OptionalThreadFile = null;
+						return true;
+					}
+				}
+			}
+			OptionalMiddleFile = convertToCommentMiddle(OptionalThreadFile, mkTemp(TMP_OPTIONALTHREAD));
+			if (OptionalMiddleFile == null){
+				sendtext("オプショナルスレッド変換に失敗。おそらく正規表現の間違い？");
 				return false;
 			}
 		}
@@ -564,6 +674,9 @@ public class Converter extends Thread {
 	private void deleteCommentFile(){
 		if (CommentFile.delete()) {
 			System.out.println("Deleted: " + CommentFile.getPath());
+		}
+		if (OptionalThreadFile != null && OptionalThreadFile.delete()){
+			System.out.println("Deleted: " + OptionalThreadFile.getPath());
 		}
 		deleteList(listOfCommentFile);
 		// OwnerCommentFile.delete();
@@ -625,9 +738,6 @@ public class Converter extends Thread {
 					sendtext("動画(FFmpeg設定名)ファイルの保存先フォルダが作成できません。");
 					return false;
 				}
-//				if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
-//					return false;
-//				}
 				conv_name = MainOption + InOption + OutOption;
 				if (!getFFmpegVfOption().isEmpty()){
 					conv_name = VFILTER_FLAG + " " + getFFmpegVfOption() + conv_name;
@@ -655,15 +765,12 @@ public class Converter extends Thread {
 			} else {
 				ConvertedVideoFile = Setting.getConvertedVideoFile();
 			}
-//			if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
-//				return false;
-//			}
 		}
 		if (ConvertedVideoFile.getAbsolutePath().equals(VideoFile.getAbsolutePath())){
 			sendtext("変換後のファイル名が変換前と同じです");
 			return false;
 		}
-		int code = converting_video(CommentMiddleFile, OwnerMiddleFile);
+		int code = converting_video();
 		Stopwatch.stop();
 		if (code == 0) {
 			sendtext("変換が正常に終了しました。");
@@ -752,12 +859,15 @@ public class Converter extends Thread {
 			}
 
 			Stopwatch.show();
+			if (!convertOprionalThread() || stopFlagReturn()) {
+				return;
+			}
+
+			Stopwatch.show();
 			if (convertVideo()) {
 				if (isDeleteCommentAfterConverting()
 					&& CommentFile != null) {
 					deleteCommentFile();
-					// deleteList(listOfCommentFile);
-					// OwnerCommentFile.delete();
 				}
 				if (isDeleteVideoAfterConverting()
 					&& VideoFile != null) {
@@ -780,6 +890,13 @@ public class Converter extends Thread {
 					System.out.println("Deleted: " + OwnerMiddleFile.getPath());
 				}
 			}
+			/*
+			if (OptionalMiddleFile != null) {
+				if (OptionalMiddleFile.delete()) {
+					System.out.println("Deleted: " + OptionalMiddleFile.getPath());
+				}
+			}
+			*/
 			Stopwatch.show();
 			Stopwatch.stop();
 			System.out.println("変換時間　" + Stopwatch.formatLatency());
@@ -859,11 +976,8 @@ public class Converter extends Thread {
 
 	private static final int CODE_CONVERTING_ABORTED = 100;
 
-	private int converting_video(File comment, File owner_comment) {
+	private int converting_video() {
 		int code = -1;
-//		if (!chekAspectVhookOption(VideoFile, wayOfVhook)) {
-//			return code;
-//		}
 		/*
 		 * ffmpeg.exe -y mainoption inoption -i infile outoptiont [vhookOption] outfile
 		 */
@@ -994,6 +1108,12 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|");
 				ffmpeg.addCmd("--show-owner:" + NicoClient.STR_OWNER_COMMENT + "|");
 			}
+			if (OptionalMiddleFile!=null){
+				ffmpeg.addCmd("--data-optional:");
+				ffmpeg.addCmd(URLEncoder.encode(
+					Path.toUnixPath(OptionalMiddleFile), "Shift_JIS"));
+				ffmpeg.addCmd("|");
+			}
 			ffmpeg.addCmd("--font:");
 			ffmpeg.addCmd(URLEncoder.encode(
 				Path.toUnixPath(Setting.getFontPath()), "Shift_JIS"));
@@ -1001,21 +1121,25 @@ public class Converter extends Thread {
 			ffmpeg.addCmd(Setting.getFontIndex());
 			ffmpeg.addCmd("|--show-user:");
 			ffmpeg.addCmd(Setting.getVideoShowNum());
+			ffmpeg.addCmd("|--show-optional:");
+			ffmpeg.addCmd(Setting.getVideoShowNum());
+			if (Setting.isOptionalTranslucent()) {
+				ffmpeg.addCmd("|--optional-translucent");
+			}
 			ffmpeg.addCmd("|--shadow:" + Setting.getShadowIndex());
-			ffmpeg.addCmd("|");
 			if (Setting.isVhook_ShowConvertingVideo()) {
-				ffmpeg.addCmd("--enable-show-video|");
+				ffmpeg.addCmd("|--enable-show-video");
 			}
 			if (Setting.isFixFontSize()) {
-				ffmpeg.addCmd("--enable-fix-font-size|");
+				ffmpeg.addCmd("|--enable-fix-font-size");
 			}
 			if (Setting.isOpaqueComment()) {
-				ffmpeg.addCmd("--enable-opaque-comment|");
+				ffmpeg.addCmd("|--enable-opaque-comment");
 			}
 			if (isWide){
-				ffmpeg.addCmd("--nico-width-wide|");
+				ffmpeg.addCmd("|--nico-width-wide");
 			}
-			ffmpeg.addCmd("\"");
+			ffmpeg.addCmd("|\"");
 			return true;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -1207,14 +1331,21 @@ public class Converter extends Thread {
 		}
 	}
 
+	private void setVideoTitleIfNull(String path) {
+		if (VideoTitle == null){
+			VideoTitle = getTitleFromPath(path, VideoID);
+			int index = VideoTitle.lastIndexOf("[");
+				//過去ログは[YYYY/MM/DD_HH:MM:SS]が最後に付く
+			if (index >= 0){
+				VideoTitle = VideoTitle.substring(0, index);
+			}
+		}
+	}
+
 	String detectTitleFromVideo(File dir){
-		if (dir == null){
-			return null;
-		}
-		String list[] = dir.list(new VideoIDFilter(VideoID));
-		if(list == null){
-			return null;
-		}
+		if (dir == null){ return null; }
+		String list[] = dir.list(DefaultVideoIDFilter);
+		if(list == null){ return null; }
 		for (int i = 0; i < list.length; i++) {
 			if (list[i].startsWith(VideoID)) {
 				String path = list[i];
@@ -1222,10 +1353,7 @@ public class Converter extends Thread {
 					OtherVideo = path;
 					continue;
 				}
-				if (VideoTitle != null){
-					return path;
-				}
-				VideoTitle = getTitleFromPath(path, VideoID);
+				setVideoTitleIfNull(path);
 				return path;
 			}
 		}
@@ -1233,21 +1361,15 @@ public class Converter extends Thread {
 	}
 
 	private String detectTitleFromComment(File dir){
-		String list[] = dir.list(new VideoIDFilter(VideoID));
+		String list[] = dir.list(DefaultVideoIDFilter);
 		if(list == null){ return null; }
 		for (int i = 0; i < list.length; i++) {
 			String path = list[i];
-			if (!path.endsWith(".xml") || path.endsWith(OWNER_EXT)){
+			if (!path.endsWith(".xml") || path.endsWith(OWNER_EXT)
+					|| path.endsWith(OPTIONAL_EXT)){
 				continue;
 			}
-			if (VideoTitle == null){
-				VideoTitle = getTitleFromPath(path, VideoID);
-				int index = VideoTitle.lastIndexOf("[");
-					//過去ログは[YYYY/MM/DD_HH:MM:SS]が最後に付く
-				if (index >= 0){
-					VideoTitle = VideoTitle.substring(0, index);
-				}
-			}
+			setVideoTitleIfNull(path);
 			return path;
 		}
 		return null;
@@ -1255,7 +1377,7 @@ public class Converter extends Thread {
 
 	private static final String TCOMMENT_EXT =".txml";
 	private String detectTitleFromOwnerComment(File dir){
-		String list[] = dir.list(new VideoIDFilter(VideoID));
+		String list[] = dir.list(DefaultVideoIDFilter);
 		if(list == null){ return null; }
 		for (int i = 0; i < list.length; i++) {
 			String path = list[i];
@@ -1267,31 +1389,50 @@ public class Converter extends Thread {
 			} else {
 				continue;
 			}
-			if (VideoTitle == null){
-				VideoTitle = getTitleFromPath(path, VideoID)
-					.substring(0, VideoTitle.lastIndexOf(ext));
+			setVideoTitleIfNull(path.replace(ext,""));
+			return path;
+		}
+		return null;
+	}
+
+	private String detectTitleFromOptionalThread(File dir){
+		String list[] = dir.list(DefaultVideoIDFilter);
+		if(list == null){ return null; }
+		for (int i = 0; i < list.length; i++) {
+			String path = list[i];
+			if (!path.endsWith(OPTIONAL_EXT)){
+				continue;
 			}
+			setVideoTitleIfNull(path.replace(OPTIONAL_EXT, ""));
 			return path;
 		}
 		return null;
 	}
 
 	private ArrayList<String> detectFilelistFromComment(File dir){
-		String list[] = dir.list(new VideoIDFilter(VideoID));
+		String list[] = dir.list(DefaultVideoIDFilter);
 		if (list == null) { return null; }
 		ArrayList<String> filelist = new ArrayList<String>();
 		for (String path : list){
-			if (!path.endsWith(".xml") || path.endsWith(OWNER_EXT)){
+			if (!path.endsWith(".xml") || path.endsWith(OWNER_EXT)
+					|| path.endsWith(OPTIONAL_EXT)){
 				continue;
 			}
-			if (VideoTitle == null){
-				VideoTitle = getTitleFromPath(path, VideoID);
-				int index = VideoTitle.lastIndexOf("[");
-					//過去ログは[YYYY/MM/DD_HH:MM:SS]が最後に付く
-				if (index >= 0){
-					VideoTitle = VideoTitle.substring(0, index);
-				}
+			setVideoTitleIfNull(path);
+			filelist.add(path);
+		}
+		return filelist;
+	}
+
+	private ArrayList<String> detectFilelistFromOptionalThread(File dir){
+		String list[] = dir.list(DefaultVideoIDFilter);
+		if (list == null) { return null; }
+		ArrayList<String> filelist = new ArrayList<String>();
+		for (String path : list){
+			if (!path.endsWith(OPTIONAL_EXT)){
+				continue;
 			}
+			setVideoTitleIfNull(path.replace(OPTIONAL_EXT, ""));
 			filelist.add(path);
 		}
 		return filelist;
@@ -1299,16 +1440,19 @@ public class Converter extends Thread {
 
 	/*
 	 * 	投稿者コメントに関するファイル名タグと拡張子を扱う
-	 * 		① NicoBrowser拡張1.4.4の場合
-	 * 			ユーザコメント = VideiID + VideoTitle + ".xml"
-	 * 			投稿者コメント = VideoID + VideoTitle + ".txml"
+	 * 　　	①Ver.1.25以降のさきゅばす ②に以下を追加
+	 * 			オプショナルスレッド＝ VideoID + VideoTitile + "{Optional}.xml"
+	 * 			↑の過去ログ＝ VideoID + VideoTitile + "[YYYY／MM／DD_HH：mm：ss]{Optional}.xml"
 	 * 		②今回のさきゅばす
 	 * 			ユーザコメント = VideoID + VideoTitle + ".xml"
 	 * 			過去ログ       = VideoID + VideoTitle + "[YYYY／MM／DD_HH：mm：ss].xml"
-	 * 			投稿者コメント = VideoID + VideoTitle + "{Owner].xml"
-	 * 		③NNDDなど
+	 * 			投稿者コメント = VideoID + VideoTitle + "[Owner].xml"
+	 * 		③ NicoBrowser拡張1.4.4の場合
+	 * 			ユーザコメント = VideiID + VideoTitle + ".xml"
+	 * 			投稿者コメント = VideoID + VideoTitle + ".txml"
+	 * 		④NNDDなど
 	 * 			ユーザコメント = VideoTitle + VideoID + ".xml"
-	 * 			投稿者コメント = VideoTitle + VideoID + "{Owner].xml"
+	 * 			投稿者コメント = VideoTitle + VideoID + "[Owner].xml"
 	 * 		④NicoPlayerなど
 	 * 			ユーザコメント = VideoTitle + "(" + Tag + ")" + ".xml"
 	 * 			過去ログ       = VideoTitie + "(" + Tag + ")[" + YYYY年MM月DD日HH時MM分SS秒 + "}.xml"

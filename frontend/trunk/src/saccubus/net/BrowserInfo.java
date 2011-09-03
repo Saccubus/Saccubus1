@@ -143,7 +143,7 @@ public class BrowserInfo {
     }
 
     /// <summary>
-    /// Firefox4, 5 から user_session を取得。エラーが起こった場合、例外を投げずに空文字を返す
+    /// Firefox4, 5, 6 から user_session を取得。エラーが起こった場合、例外を投げずに空文字を返す
     /// </summary>
     /// <returns>user_session</returns>
     private String getUserSessionFromFilefox4()
@@ -155,7 +155,7 @@ public class BrowserInfo {
             if (app_dir == null || app_dir.isEmpty()){
             	return "";
             }
-            String[] userLists = Path.sGetFiles(app_dir + "\\Mozilla\\Firefox\\Profiles\\");
+            String[] userLists = Path.getFiullnameList(app_dir + "\\Mozilla\\Firefox\\Profiles\\");
             for (String user_dir : userLists){
             	String sqlist_filename = user_dir + "\\cookies.sqlite";
                 if (Path.isFile(sqlist_filename))
@@ -249,7 +249,7 @@ public class BrowserInfo {
         try {
 	        if (Path.isDirectory(dir_name))
 	        {
-                String[] files = Path.sGetFiles(dir_name);
+                String[] files = Path.getFiullnameList(dir_name);
                 for (String fullname : files)
                 {
                     user_session = cutUserSession(Path.readAllText(fullname, "MS932"), fullname);
@@ -257,7 +257,7 @@ public class BrowserInfo {
                     	return user_session;
                     }
 
-                    /*	obsolate after WindowsUpdate Aug 2011
+                    /*	Obsolete after WindowsUpdate Aug 2011
                     String name = Path.GetFileName(fullname);
                     if (name.indexOf("nicovideo") >= 0 && name.indexOf("www") < 0)
                     {

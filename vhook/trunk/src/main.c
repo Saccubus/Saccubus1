@@ -36,10 +36,12 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	int i;
 	data->enable_user_comment = setting->enable_user_comment;
 	data->enable_owner_comment = setting->enable_owner_comment;
+	data->enable_optional_comment = setting->enable_optional_comment;
 	data->log = log;
 	data->fontsize_fix = setting->fontsize_fix;
 	data->show_video = setting->show_video;
 	data->opaque_comment = setting->opaque_comment;
+	data->optional_trunslucent = setting->optional_trunslucent;
 	data->shadow_kind = setting->shadow_kind;
 	data->process_first_called=FALSE;
 	data->video_length = setting->video_length;
@@ -110,6 +112,26 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 			return FALSE;
 		}
 	}
+	/*
+	 * オプショナルコメント
+	 */
+	if(data->enable_optional_comment){
+		fputs("[main/init]Optional Comment is enabled.\n",log);
+		//コメントデータ
+		if(initChat(log,&data->optionalchat,setting->data_optional_path,&data->optionalslot,data->video_length)){
+			fputs("[main/init]initialized optional comment.\n",log);
+		}else{
+			fputs("[main/init]failed to initialize optional comment.",log);
+			return FALSE;
+		}
+		//コメントスロット	owner_slot_max must be infinite
+		if(initChatSlot(log,&data->optionalslot, setting->optional_slot_max,&data->optionalchat)){
+			fputs("[main/init]initialized optional comment slot.\n",log);
+		}else{
+			fputs("[main/init]failed to initialize optional comment slot.",log);
+			return FALSE;
+		}
+	}
 
 	//終わり。
 	fputs("[main/init]initialized context.\n",log);
@@ -163,6 +185,11 @@ int closeData(DATA* data){
 	if(data->enable_owner_comment){
 		closeChat(&data->ownerchat);
 		closeChatSlot(&data->ownerslot);
+	}
+	//オプショナルコメントが有効なら開放
+	if(data->enable_optional_comment){
+		closeChat(&data->optionalchat);
+		closeChatSlot(&data->optionalslot);
 	}
 		//フォント開放
 	for(i=0;i<CMD_FONT_MAX;i++){

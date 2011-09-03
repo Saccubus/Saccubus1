@@ -1,6 +1,6 @@
 @echo off
 echo -----------------------------------------------------------------
-echo ２プロセス用「さきゅばす」自動変換バッチファイル    Ver.1.0
+echo ２プロセス用「さきゅばす」自動変換バッチファイル    Ver.1.1
 echo 　ガイダンス付き
 echo 　マルチコアCPU、ブラウザ共有設定が必須です（多分）
 echo -----------------------------------------------------------------
@@ -51,13 +51,13 @@ set PASSWORD=steeki_tabetai
 set CMD=java -jar Saccubus.jar %MAILADDR% %PASSWORD%
 IF "%~1"=="" (
 start %~nx0 1
-java -jar sleep.jar 5
+java -cp Bin.jar Sleep 5
 start %~nx0 2
 EXIT
 )
 IF "%1"=="0" (
 start AUTO2PROCDEBUG.BAT %~nx0 1
-java -jar sleep.jar 5
+java -cp Bin.jar Sleep 5
 start AUTO2PROCDEBUG.BAT %~nx0 2
 EXIT
 )

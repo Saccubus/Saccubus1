@@ -97,6 +97,7 @@ public class ConvertingSetting {
 	private String wideCmdLineOptionIn;
 	private String wideCmdLineOptionOut;
 	private String wideCmdLineOptionMain;
+	private boolean optionalTranslucent;
 
 	private ConvertingSetting(
 			String mailaddress,
@@ -258,7 +259,8 @@ public class ConvertingSetting {
 			String wide_cmdlineoption_ext,
 			String wide_cmdlineoption_main,
 			String wide_cmdlineoption_in,
-			String wide_cmdlineoption_out
+			String wide_cmdlineoption_out,
+			boolean optional_translucent
 		)
 	{
 		this(	mailaddress,
@@ -326,6 +328,7 @@ public class ConvertingSetting {
 		wideCmdLineOptionMain = wide_cmdlineoption_main;
 		wideCmdLineOptionIn = wide_cmdlineoption_in;
 		wideCmdLineOptionOut = wide_cmdlineoption_out;
+		optionalTranslucent = optional_translucent;
 	}
 
 
@@ -518,6 +521,9 @@ public class ConvertingSetting {
 	public String getWideCmdLineOptionMain() {
 		return wideCmdLineOptionMain;
 	}
+	public boolean isOptionalTranslucent() {
+		return optionalTranslucent;
+	}
 
 	private static final String PROP_FILE = "./saccubus.xml";
 	private static final String PROP_MAILADDR = "MailAddress";
@@ -598,6 +604,7 @@ public class ConvertingSetting {
 	private static final String PROP_WIDE_CMDLINE_MAIN = "WideCMD_MAIN";
 	private static final String PROP_WIDE_CMDLINE_IN = "WideCMD_IN";
 	private static final String PROP_WIDE_CMDLINE_OUT = "WideCMD_OUT";
+	private static final String PROP_OPTIONAL_TRANSLUCENT = "OptionalTranslucent";	// Optional_threadÇîºìßñæÇ…Ç∑ÇÈ
 
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -712,6 +719,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_WIDE_CMDLINE_MAIN, setting.getWideCmdLineOptionMain());
 		prop.setProperty(PROP_WIDE_CMDLINE_IN, setting.getWideCmdLineOptionIn());
 		prop.setProperty(PROP_WIDE_CMDLINE_OUT, setting.getWideCmdLineOptionOut());
+		prop.setProperty(PROP_OPTIONAL_TRANSLUCENT, Boolean.toString(setting.isOptionalTranslucent()));
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -811,7 +819,8 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_WIDE_CMDLINE_EXT, "mp4"),
 			prop.getProperty(PROP_WIDE_CMDLINE_MAIN,""),
 			prop.getProperty(PROP_WIDE_CMDLINE_IN, ""),
-			prop.getProperty(PROP_WIDE_CMDLINE_OUT,"-threads 4 -s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9")
+			prop.getProperty(PROP_WIDE_CMDLINE_OUT,"-threads 4 -s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9"),
+			Boolean.parseBoolean(prop.getProperty(PROP_OPTIONAL_TRANSLUCENT, "true"))
 		);
 	}
 

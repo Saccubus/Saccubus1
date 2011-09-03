@@ -17,6 +17,6 @@ int myfflush(FILE *file){
 #ifndef DEBUG
 	return 0;	// not flush when RELEASE
 #else
-	retrun fflush(file);
+	return fflush(file);
 #endif
 }

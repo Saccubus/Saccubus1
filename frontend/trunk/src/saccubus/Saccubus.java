@@ -59,6 +59,7 @@ public class Saccubus {
 			Prompt.main(args);
 			return;
 		}
+		System.out.println("Version " + MainFrame_AboutBox.rev);
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {

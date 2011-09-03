@@ -109,18 +109,22 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	//コメントを見せるか否か？
 	setting->enable_user_comment = FALSE;
 	setting->enable_owner_comment = FALSE;
+	setting->enable_optional_comment = FALSE;
 	setting->data_user_path = NULL;
 	setting->data_owner_path = NULL;
+	setting->data_optional_path = NULL;
 	//一般的な設定
 	setting->font_path = NULL;
 	setting->font_index = 0;
 	setting->user_slot_max = 30;	// 40 ?
+	setting->optional_slot_max = 30;
 	setting->owner_slot_max = 30;	// infinite ?
 	setting->shadow_kind = 1;//デフォルトはニコニコ動画風
 	setting->show_video = FALSE;
 	setting->fontsize_fix=FALSE;
 	setting->opaque_comment=FALSE;
 	setting->nico_width_now=NICO_WIDTH;	//デフォルトは旧プレイヤー幅
+	setting->optional_trunslucent=FALSE;	//デフォルトは半透明にしない
 	int i;
 	char* arg;
 	for(i=0;i<argc;i++){
@@ -136,6 +140,12 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			setting->data_owner_path = data_owner;
 			setting->enable_owner_comment = TRUE;
 			fprintf(log,"[framehook/init]Owner Comment data path:%s\n",setting->data_owner_path);
+			fflush(log);
+		} else if(!setting->data_optional_path && strncmp(FRAMEHOOK_OPT_DATA_OPTIONAL,arg,FRAMEHOOK_OPT_DATA_OPTIONAL_LEN) == 0){
+			char* data_optional = arg+FRAMEHOOK_OPT_DATA_OPTIONAL_LEN;
+			setting->data_optional_path = data_optional;
+			setting->enable_optional_comment = TRUE;
+			fprintf(log,"[framehook/init]Optional Comment data path:%s\n",setting->data_optional_path);
 			fflush(log);
 		}else if(!setting->font_path && strncmp(FRAMEHOOK_OPT_FONT,arg,FRAMEHOOK_OPT_FONT_LEN) == 0){
 			char* font = arg+FRAMEHOOK_OPT_FONT_LEN;
@@ -158,7 +168,11 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			setting->owner_slot_max = MAX(0,atoi(arg+FRAMEHOOK_OPT_SHOW_OWNER_LEN));
 			fprintf(log,"[framehook/init]Owner Comments on screen:%d\n",setting->owner_slot_max);
 			fflush(log);
-		}else if(!setting->show_video && strcmp(arg,"--enable-show-video") == 0){
+		}else if(strncmp(FRAMEHOOK_OPT_SHOW_OPTIONAL,arg,FRAMEHOOK_OPT_SHOW_OPTIONAL_LEN) == 0) {
+			setting->optional_slot_max = MAX(0,atoi(arg+FRAMEHOOK_OPT_SHOW_OPTIONAL_LEN));
+			fprintf(log,"[framehook/init]Optional Comment on screen: %d\n", setting->optional_slot_max);
+			fflush(log);
+		} else if(!setting->show_video && strcmp(arg,"--enable-show-video") == 0){
 			fputs("[framehook/init]show video while converting.\n",log);
 			fflush(log);
 			setting->show_video=TRUE;
@@ -170,6 +184,10 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			fputs("[framehook/init]enable opaque comment.\n",log);
 			fflush(log);
 			setting->opaque_comment=TRUE;
+		}else if (!setting->optional_trunslucent && strcmp(arg,"--optional-translucent")==0) {
+			fputs("[framehook/init]optonal comment translucent.\n", log);
+			fflush(log);
+			setting->optional_trunslucent=TRUE;
 		}else if(strcmp(arg,"--nico-width-wide")==0){
 			fputs("[framehook/init]use wide player.\n",log);
 			fflush(log);

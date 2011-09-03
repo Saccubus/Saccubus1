@@ -113,6 +113,9 @@ public class MainFrame extends JFrame {
 	JCheckBox BrowserOtherCheckBox = new JCheckBox();
 	JButton BrowserCookieDialogButton = new JButton();
 	JTextField BrowserCookieField = new JTextField();
+	JPanel OptionalThreadInfoPanel = new JPanel();
+	JLabel OptionalthreadLabel = new JLabel();
+	JCheckBox OptionalTranslucentCheckBox = new JCheckBox();
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
 	private static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
@@ -545,7 +548,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y1_97.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y1_97.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserIECheckBox, grid13_x0_y1_97);
-		BrowserFFCheckBox.setText("Firefox (FF3/FF4/FF5)");
+		BrowserFFCheckBox.setText("Firefox (FF3/FF4/FF5/FF6)");
 		BrowserFFCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y2_98 = new GridBagConstraints();
 		grid13_x0_y2_98.gridx = 0;
@@ -687,6 +690,15 @@ public class MainFrame extends JFrame {
 		ShowSavingConvertedVideoFileDialogButton
 				.addActionListener(new MainFrame_ShowSavingConvertedVideoDialogButton_actionAdapter(
 						this));
+		OptionalThreadInfoPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"オプショナルスレッド設定", TitledBorder.LEADING, TitledBorder.TOP,
+				getFont(), Color.blue));
+		OptionalThreadInfoPanel.setLayout(new GridBagLayout());
+		OptionalthreadLabel.setText("コミュニティ動画で通常コメントをオプショナルスレッドで読み込みます");
+		OptionalthreadLabel.setForeground(Color.blue);
+		OptionalTranslucentCheckBox.setText("通常コメントを半透明にする");
+		OptionalTranslucentCheckBox.setForeground(Color.blue);
 		FFMpegTabPanel.setLayout(gridBagLayout6);
 		FFMpegTab2Panel.setLayout(new GridBagLayout());
 		PathSettingPanel.setBorder(BorderFactory.createTitledBorder(
@@ -1004,6 +1016,28 @@ public class MainFrame extends JFrame {
 		ConvertedVideoSavingInfoPanel.add(Conv_SaveFileRadioButton,					grid5_x0_y7_42);
 		ConvertedVideoSavingInfoPanel.add(ConvertedVideoSavedFileField,				grid5_x0_y8_43);
 		ConvertedVideoSavingInfoPanel.add(ShowSavingConvertedVideoFileDialogButton,	grid5_x3_y8_45);
+		GridBagConstraints grid__x_y_000_ = new GridBagConstraints();
+		grid__x_y_000_.gridx = 0;
+		grid__x_y_000_.gridy = 0;
+		grid__x_y_000_.gridwidth = 1;
+		grid__x_y_000_.gridheight = 1;
+		grid__x_y_000_.weightx = 1.0;
+		grid__x_y_000_.weighty = 0.0;
+		grid__x_y_000_.anchor = GridBagConstraints.CENTER;
+		grid__x_y_000_.fill = GridBagConstraints.HORIZONTAL;
+		grid__x_y_000_.insets = INSETS_0_5_0_5;
+		OptionalThreadInfoPanel.add(OptionalthreadLabel, grid__x_y_000_);
+		grid__x_y_000_ = new GridBagConstraints();
+		grid__x_y_000_.gridx = 0;
+		grid__x_y_000_.gridy = 1;
+		grid__x_y_000_.gridwidth = 1;
+		grid__x_y_000_.gridheight = 1;
+		grid__x_y_000_.weightx = 1.0;
+		grid__x_y_000_.weighty = 1.0;
+		grid__x_y_000_.anchor = GridBagConstraints.CENTER;
+		grid__x_y_000_.fill = GridBagConstraints.HORIZONTAL;
+		grid__x_y_000_.insets = INSETS_0_5_0_5;
+		OptionalThreadInfoPanel.add(OptionalTranslucentCheckBox, grid__x_y_000_);
 		GridBagConstraints grid6_x0_y0_110 = new GridBagConstraints();
 		grid6_x0_y0_110.gridx = 0;
 		grid6_x0_y0_110.gridy = 1;
@@ -1343,7 +1377,8 @@ public class MainFrame extends JFrame {
 			wideExtOptionField.getText(),
 			wideMainOptionField.getText(),
 			wideCommandLineInOptionField.getText(),
-			wideCommandLineOutOptionField.getText()
+			wideCommandLineOutOptionField.getText(),
+			OptionalTranslucentCheckBox.isSelected()
 		);
 	}
 
@@ -1433,6 +1468,7 @@ public class MainFrame extends JFrame {
 		wideMainOptionField.setText(setting.getWideCmdLineOptionMain());
 		wideCommandLineOutOptionField.setText(setting.getWideCmdLineOptionOut());
 		wideCommandLineInOptionField.setText(setting.getWideCmdLineOptionIn());
+		OptionalTranslucentCheckBox.setSelected(setting.isOptionalTranslucent());
 	}
 
 	/**
@@ -2103,13 +2139,25 @@ s	 * @return javax.swing.JPanel
 			GridBagConstraints grid_x_y_38 = new GridBagConstraints(0,
 					2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH,
 					GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0);
-			grid_x_y_38.gridx = -1;
+			grid_x_y_38.gridx = 0;
 			grid_x_y_38.fill = GridBagConstraints.HORIZONTAL;
-			grid_x_y_38.gridy = -1;
+			grid_x_y_38.gridy = 0;
+			grid_x_y_38.weighty = 0.0;
 			ConvertedVideoSavingTabbedPanel = new JPanel();
 			ConvertedVideoSavingTabbedPanel.setLayout(new GridBagLayout());
 			ConvertedVideoSavingTabbedPanel.add(ConvertedVideoSavingInfoPanel,
 					grid_x_y_38);
+			GridBagConstraints grid_x_y__ = new GridBagConstraints();
+			grid_x_y__.gridx = 0;
+			grid_x_y__.gridy = 1;
+			grid_x_y__.gridwidth = 1;
+			grid_x_y__.gridheight = 1;
+			grid_x_y__.anchor = GridBagConstraints.NORTH;
+			grid_x_y__.fill = GridBagConstraints.HORIZONTAL;
+			grid_x_y__.insets = INSETS_0_5_0_5;
+			grid_x_y__.weightx = 1.0;
+			grid_x_y__.weighty = 1.0;
+			ConvertedVideoSavingTabbedPanel.add(OptionalThreadInfoPanel, grid_x_y__);
 		}
 		return ConvertedVideoSavingTabbedPanel;
 	}

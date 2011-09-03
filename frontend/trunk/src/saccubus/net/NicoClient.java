@@ -162,10 +162,13 @@ public class NicoClient {
 				return con;
 			}
 			int code = con.getResponseCode();
-			debug("■Response:" + Integer.toString(code) + " " + con.getResponseMessage() + "\n");
 			if (code >= HttpURLConnection.HTTP_OK
 					&& code < HttpURLConnection.HTTP_BAD_REQUEST) {
+				debug("■Response:" + Integer.toString(code) + " " + con.getResponseMessage() + "\n");
 				return con;
+			} else {
+				System.out.print("Error Response:" + Integer.toString(code) + " " + con.getResponseMessage());
+				return null;
 			}
 		} catch(IOException ex){
 			ex.printStackTrace();
@@ -444,6 +447,7 @@ public class NicoClient {
 
 	private boolean NeedsKey = false;
 	private String Premium = "";
+	private String OptionalThraedID = "";	// normal Comment ID when Community DOUGA
 	public boolean getVideoInfo(String tag, String watchInfo, String time) {
 		if (!getVideoHistoryAndTitle(tag, watchInfo)) {
 			return false;
@@ -476,6 +480,9 @@ public class NicoClient {
 			VideoUrl = nicomap.get("url");
 			MsgUrl = nicomap.get("ms");
 			UserID = nicomap.get("user_id");
+			if (OptionalThraedID.isEmpty() && nicomap.containsKey("optional_thread_id")){
+				OptionalThraedID = nicomap.get("optional_thread_id");
+			}
 			if (nicomap.containsKey("needs_key")) {
 				NeedsKey = true;
 			}
@@ -496,6 +503,9 @@ public class NicoClient {
 			System.out.println("Video time length: " + VideoLength + "sec");
 			System.out.println("ThreadID:<" + ThreadID + "> Maybe uploaded on "
 					+ WayBackDate.format(ThreadID));
+			if (OptionalThraedID!=null && !OptionalThraedID.isEmpty()){
+				System.out.println("OptionalThreadID:<" + OptionalThraedID + ">");
+			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			return false;
@@ -546,6 +556,10 @@ public class NicoClient {
 			int max_size = con.getContentLength();	// -1 when invalid
 			System.out.print("size="+(max_size/1000)+"Kbytes");
 			System.out.println(", type=" + ContentType + ", " + ContentDisp);
+			String temp =  con.getHeaderField("optional_thread_id");
+			if (temp!=null && !temp.isEmpty() && !temp.equals(OptionalThraedID)){
+				System.out.println("Again OptionalThreadID:<" + temp + "> NOT CHANGED");
+			}
 			System.out.print("Downloading video...");
 			int size = 0;
 			int read = 0;
@@ -591,6 +605,10 @@ public class NicoClient {
 	private String MsgUrl = null;
 	public  final static String STR_OWNER_COMMENT = "1000";
 
+	private  enum CommentType {
+		MAIN, OWNER, OPTIONAL,
+	}
+
 	public File getComment(final File file, final JLabel status, final String back_comment,
 			final String time, final ConvertStopFlag flag) {
 		if (time != null && !time.isEmpty() && WayBackKey.equals("0")){
@@ -599,11 +617,20 @@ public class NicoClient {
 				return null;
 			}
 		}
-		return downloadComment(file, status, back_comment, false, flag);
+		return downloadComment(file, status, back_comment, CommentType.MAIN, flag);
 	}
 
 	public File getOwnerComment(final File file, final JLabel status, final ConvertStopFlag flag) {
-		return downloadComment(file, status, STR_OWNER_COMMENT, true, flag);
+		return downloadComment(file, status, STR_OWNER_COMMENT, CommentType.OWNER, flag);
+	}
+
+	public File getOptionalThread(final File file, final JLabel status, final String optionalThreadID,
+			final String back_comment, final String time, final ConvertStopFlag flag) {
+		ThreadID = optionalThreadID;
+		OptionalThraedID = "";
+		NeedsKey = false;
+		Official = "";
+		return downloadComment(file, status, back_comment, CommentType.OPTIONAL, flag);
 	}
 
 	private String Official = "";
@@ -628,7 +655,7 @@ public class NicoClient {
 
 	private String commentCommand2009(boolean isOwnerComment, String back_comment){
 		// 投稿者コメントは2006versionを使用するらしい。「いんきゅばす1.7.0」
-		if (isOwnerComment || !Official.isEmpty() || !WayBackKey.equals("0")) {
+		if (isOwnerComment || NeedsKey || !WayBackKey.equals("0")) {
 			return commentCommand2006(isOwnerComment, back_comment);
 		}
 		String req;
@@ -656,9 +683,9 @@ public class NicoClient {
 	}
 
 	private File downloadComment(final File file, final JLabel status,
-			String back_comment, boolean isOwnerComment, final ConvertStopFlag flag) {
-		System.out.print("Downloading " + (isOwnerComment ? "owner " : "")
-				+"comment size:" + back_comment + "...");
+			String back_comment, CommentType commentType, final ConvertStopFlag flag) {
+		System.out.print("Downloading " + commentType.toString().toLowerCase()
+				+" comment, size:" + back_comment + "...");
 		//String official = "";	/* 公式動画用のkey追加 */
 		if(NeedsKey && Official.isEmpty()){
 			if((force184 == null || threadKey == null)
@@ -678,14 +705,14 @@ public class NicoClient {
 			fos = new FileOutputStream(file);
 			HttpURLConnection con = urlConnect(MsgUrl, "POST", Cookie, true, true, "close");
 			OutputStream os = con.getOutputStream();
-			String req = commentCommand2009(isOwnerComment, back_comment);
+			String req = commentCommand2009(commentType==CommentType.OWNER, back_comment);
 			debug("■write:" + req + "\n");
 			os.write(req.getBytes());
 			os.flush();
 			os.close();
 			debug("■Response:" + Integer.toString(con.getResponseCode()) + " " + con.getResponseMessage() + "\n");
 			if (con.getResponseCode() != HttpURLConnection.HTTP_OK) {
-				System.out.println("ng.\nCan't download comment:" + MsgUrl);
+				System.out.println("ng.\nCan't download " + commentType.toString().toLowerCase() + " comment:" + MsgUrl);
 				return null;
 			}
 			InputStream is = con.getInputStream();
@@ -696,7 +723,12 @@ public class NicoClient {
 				max_size = Integer.parseInt(content_length_str);
 			}
 			int size = 0;
-			String dlmsg = (isOwnerComment ? "投稿者" : "") + "コメント";
+			String dlmsg="";
+			switch(commentType){
+			case MAIN:			dlmsg = "コメント";	break;
+			case OWNER: 		dlmsg = "投稿者コメント";break;
+			case OPTIONAL:	dlmsg = "オプショナルスレッド";	break;
+			}
 			debugsInit();
 			while ((read = is.read(buf, 0, buf.length)) > 0) {
 				debugsAdd(read);
@@ -712,7 +744,7 @@ public class NicoClient {
 					con.disconnect();
 					fos.close();
 					if (file.delete()){
-						System.out.println("comment deleted.");
+						System.out.println(commentType.toString().toLowerCase() + " comment deleted.");
 					}
 					return null;
 				}
@@ -728,8 +760,6 @@ public class NicoClient {
 			ex.printStackTrace();
 		}
 		finally{
-		//	debug("■read+write statistics(bytes) ");
-		//	debugsOut();
 			if (fos != null){
 				try { fos.close(); } catch (IOException e) {}
 			}
@@ -832,8 +862,6 @@ public class NicoClient {
 		return false;
 	}
 
-	//private static final String NO_LOGIN_TAG = "var User = { id: false";
-
 	private boolean loginCheck() {
 		String url = "http://www.nicovideo.jp";
 		System.out.print("Checking login...");
@@ -843,14 +871,13 @@ public class NicoClient {
 			HttpURLConnection con = urlConnectGET(url);
 			// response 200, 302 is OK
 			if (con == null){
-				System.out.println("ng.\nCan't read toppage at loginCheck:" + url);
+				System.out.println("ng.\nCan't read TopPage at loginCheck:" + url);
 				return false;
 			}
 			String new_cookie = detectCookie(con);
 			if (new_cookie == null || new_cookie.isEmpty()) {
 				System.out.print(" new_cookie isEmpty.");
-			//	con.disconnect();
-			//	return false;
+				// but continue
 			}
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
@@ -858,7 +885,7 @@ public class NicoClient {
 			}
 			br = new BufferedReader(new InputStreamReader(con
 					.getInputStream(), encoding));
-			System.out.print("  Cheking toppage...");
+			System.out.print("  Cheking TopPage...");
 			// debug("\n");
 			String ret;
 			boolean found = false;
@@ -874,13 +901,13 @@ public class NicoClient {
 				if (ret.indexOf("var User = { id:") >= 0){
 					// UserID is valid
 					found = true;
-					debug("\n■readLine(" + encoding + "):" + ret + "\n");
+					debug("\n■readLine(" + encoding + "):" + ret);
 					break;
 				}
 			}
 			con.disconnect();
 			if (!found){
-				System.out.println("ng. Can't found UserID Key. Is Niconico Toppage format ◆CHANGED?◆");
+				System.out.println("ng. Can't found UserID Key. Is Niconico TopPage format ◆CHANGED?◆");
 				return false;
 			}
 			if (new_cookie != null && !new_cookie.isEmpty()) {
@@ -968,6 +995,10 @@ public class NicoClient {
 
 	public String getExtraError() {
 		return ExtraError;
+	}
+
+	public String getOptionalThreadID() {
+		return OptionalThraedID;
 	}
 
 	/**
