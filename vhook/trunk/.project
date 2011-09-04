@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>trunk</name>
+	<name>Saccubus_vhext</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -9,10 +9,6 @@
 			<name>org.eclipse.cdt.managedbuilder.core.genmakebuilder</name>
 			<triggers>clean,full,incremental,</triggers>
 			<arguments>
-				<dictionary>
-					<key>?children?</key>
-					<value>?name?=outputEntries\|?children?=?name?=entry\\\\\\\|\\\|?name?=entry\\\\\\\|\\\|?name?=entry\\\\\\\|\\\|?name?=entry\\\\\\\|\\\|?name?=entry\\\\\\\|\\\|\||</value>
-				</dictionary>
 				<dictionary>
 					<key>?name?</key>
 					<value></value>
