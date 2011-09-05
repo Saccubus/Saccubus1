@@ -103,12 +103,16 @@ public class Converter extends Thread {
 	private int wayOfVhook = 0;
 	private ArrayList<File> listOfCommentFile = new ArrayList<File>();
 	private String optionalThreadID = "";	// set in 
+	private String errorLog = "";
 
 	public File getVideoFile() {
 		return VideoFile;
 	}
 	public ConvertingSetting getSetting(){
 		return Setting;
+	}
+	public String getErrorLog() {
+		return errorLog;
 	}
 
 	private void sendtext(String text){
@@ -442,10 +446,10 @@ public class Converter extends Thread {
 		return true;
 	}
 	private File getOptionalThreadFile(File file) {
-		String path = file.getPath();
-		if (path == null) {
+		if (file == null || !file.isFile() || file.getPath() == null) {
 			return mkTemp(OPTIONAL_EXT);
 		}
+		String path = file.getPath();
 		int index = path.lastIndexOf(".");
 		if (index > path.lastIndexOf(File.separator)) {
 			path = path.substring(0, index);		// 拡張子を削除
@@ -520,21 +524,15 @@ public class Converter extends Thread {
 					}
 					listOfCommentFile = filelist;
 				} else {
-					// コメントファイルはひとつだけ見つかった	ここには来ない 1.22r3e8, for NP4 comment ver 2009
-					File comfile = new File(folder,pathlist.get(0));
-					if (isSaveComment()){			// for NP4 comment ver 2009
-						ArrayList<File> filelist = new ArrayList<File>();
-//						filelist.add(comfile);
-//						CommentFile = mkTemp(TMP_COMBINED_XML);
-//						sendtext("コメントファイル統一中(新コメント表示)");
-//						if (!CombineXML.combineXML(filelist, CommentFile)){
-//							sendtext("コメントファイルが統一出来ませんでした（バグ？）");
-//							return false;
+					// コメントファイルはひとつだけ見つかった
+					// ここには来ない 1.22r3e8, for NP4 comment ver 2009
+//					File comfile = new File(folder,pathlist.get(0));
+//					if (isSaveComment()){			// for NP4 comment ver 2009
+//						ArrayList<File> filelist = new ArrayList<File>();
+//						listOfCommentFile = filelist;
+//					} else {
+//						CommentFile = comfile;
 //						}
-						listOfCommentFile = filelist;
-					} else {
-						CommentFile = comfile;
-					}
 				}
 			}
 			if (!isSaveComment()) {
@@ -576,56 +574,35 @@ public class Converter extends Thread {
 		sendtext("オプショナルスレッドの中間ファイルへの変換中");
 		File folder = Setting.getCommentFixFileNameFolder();
 		if (isConvertWithComment()) {
-			if (Setting.isAddTimeStamp() && isCommentFixFileName()) {
-				// 複数のコメントファイル（過去ログ）があるかも
+			if (isCommentFixFileName()) {
+				// フォルダ指定時、複数のオプショナルスレッド（過去ログ）があるかも
 				ArrayList<String> pathlist = detectFilelistFromOptionalThread(folder);
 				if (pathlist == null || pathlist.isEmpty()){
 					sendtext(Tag + ": オプショナルスレッド・過去ログが存在しません。");
+					System.out.println("No optional thread.");
 					OptionalThreadFile = null;
 					return true;
 				}
 				// VideoTitle は見つかった。
-				if (pathlist.size() > 0) {			// 0 1.25, for NP4 comment ver 2009
-					ArrayList<File> filelist = new ArrayList<File>();
-					for (String path: pathlist){
-						filelist.add(new File(folder, path));
-					}
-					OptionalThreadFile = mkTemp(TMP_COMBINED_XML2);
-					sendtext("オプショナルスレッド結合中");
-					if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
-						sendtext("オプショナルスレッドが結合出来ませんでした（バグ？）");
-						return false;
-					}
-					//listOfCommentFile = filelist;
-					listOfCommentFile.addAll(filelist);
+				ArrayList<File> filelist = new ArrayList<File>();
+				for (String path: pathlist){
+					filelist.add(new File(folder, path));
 				}
-			}
-			if (!isSaveComment()) {
-				if (isCommentFixFileName()) {
-					if (!Setting.isAddTimeStamp()){
-						// オプショナルスレッドはひとつ
-						String commentfilename = detectTitleFromOptionalThread(folder);
-						if(commentfilename == null){
-							sendtext("オプショナルスレッドがフォルダに存在しません。");
-							OptionalThreadFile = null;
-							return true;
-						}
-						// VideoTitle は見つかった。
-						OptionalThreadFile = new File(folder, commentfilename);
-						if (!OptionalThreadFile.canRead()) {
-							sendtext("オプショナルスレッドが読み込めません。");
-							return false;
-						}
-					} else {
-						// 処理済み
-					}
-				} else {
-					OptionalThreadFile = getOptionalThreadFile(Setting.getCommentFile());
-					if (!OptionalThreadFile.exists()) {
-						sendtext("オプショナルスレッドが存在しません。");
-						OptionalThreadFile = null;
-						return true;
-					}
+				OptionalThreadFile = mkTemp(TMP_COMBINED_XML2);
+				sendtext("オプショナルスレッド結合中");
+				if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
+					sendtext("オプショナルスレッドが結合出来ませんでした（バグ？）");
+					return false;
+				}
+				listOfCommentFile.addAll(filelist);
+			} else {
+				// ファイル指定の時
+				OptionalThreadFile = getOptionalThreadFile(Setting.getCommentFile());
+				if (!OptionalThreadFile.exists()){
+					sendtext("オプショナルスレッドが存在しません。");
+					System.out.println("No optional thread.");
+					OptionalThreadFile = null;
+					return true;
 				}
 			}
 			OptionalMiddleFile = convertToCommentMiddle(OptionalThreadFile, mkTemp(TMP_OPTIONALTHREAD));
@@ -865,6 +842,7 @@ public class Converter extends Thread {
 
 			Stopwatch.show();
 			if (convertVideo()) {
+				// 変換成功
 				if (isDeleteCommentAfterConverting()
 					&& CommentFile != null) {
 					deleteCommentFile();
@@ -875,28 +853,28 @@ public class Converter extends Thread {
 						System.out.println("Deleted: " + VideoFile.getPath());
 					}
 				}
+				if (CommentMiddleFile != null) {
+					if (CommentMiddleFile.delete()) {
+						System.out.println("Deleted: " + CommentMiddleFile.getPath());
+					}
+				}
+				if (OwnerMiddleFile != null){
+					if (OwnerMiddleFile.delete()) {
+						System.out.println("Deleted: " + OwnerMiddleFile.getPath());
+					}
+				}
+				/*
+				if (OptionalMiddleFile != null) {
+					if (OptionalMiddleFile.delete()) {
+						System.out.println("Deleted: " + OptionalMiddleFile.getPath());
+					}
+				}
+				*/
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
 			StopFlag.finished();
-			if (CommentMiddleFile != null) {
-				if (CommentMiddleFile.delete()) {
-					System.out.println("Deleted: " + CommentMiddleFile.getPath());
-				}
-			}
-			if (OwnerMiddleFile != null){
-				if (OwnerMiddleFile.delete()) {
-					System.out.println("Deleted: " + OwnerMiddleFile.getPath());
-				}
-			}
-			/*
-			if (OptionalMiddleFile != null) {
-				if (OptionalMiddleFile.delete()) {
-					System.out.println("Deleted: " + OptionalMiddleFile.getPath());
-				}
-			}
-			*/
 			Stopwatch.show();
 			Stopwatch.stop();
 			System.out.println("変換時間　" + Stopwatch.formatLatency());
@@ -960,12 +938,16 @@ public class Converter extends Thread {
 				videoAspect = Aspect.NORMAL;
 			}
 		}
+		String auto = "";
+		if (way==2) {
+			auto = "自動選択 ";
+		}
 		if (videoAspect.isWide()){
 			selectedVhook = VhookWide;
-			MovieInfo.setText("拡張Vhook ワイド " + str);
+			MovieInfo.setText(auto + "拡張Vhook ワイド " + str);
 		} else {
 			selectedVhook = VhookNormal;
-			MovieInfo.setText("拡張Vhook 従来 " + str);
+			MovieInfo.setText(auto + "拡張Vhook 従来 " + str);
 		}
 		if (!detectOption(videoAspect.isWide())){
 			sendtext("変換オプションファイルの読み込みに失敗しました。");
@@ -1002,6 +984,7 @@ public class Converter extends Thread {
 
 		System.out.println("arg:" + ffmpeg.getCmd());
 		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
+		errorLog = ffmpeg.getErrotLog().toString();
 		if (fwsFile != null) {
 			// fwsFile.delete();	// For DEBUG
 		}
@@ -1094,38 +1077,34 @@ public class Converter extends Thread {
 			}
 			ffmpeg.addCmd("vhext=");
 			ffmpeg.addFile(vhookExe);
-			ffmpeg.addCmd("|");
 			if(CommentMiddleFile!=null){
-				ffmpeg.addCmd("--data-user:");
+				ffmpeg.addCmd("|--data-user:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(CommentMiddleFile), "Shift_JIS"));
-				ffmpeg.addCmd("|");
+				ffmpeg.addCmd("|--show-user:");
+				ffmpeg.addCmd(Setting.getVideoShowNum());
 			}
 			if(OwnerMiddleFile!=null){
-				ffmpeg.addCmd("--data-owner:");
+				ffmpeg.addCmd("|--data-owner:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(OwnerMiddleFile), "Shift_JIS"));
-				ffmpeg.addCmd("|");
-				ffmpeg.addCmd("--show-owner:" + NicoClient.STR_OWNER_COMMENT + "|");
+				ffmpeg.addCmd("|--show-owner:" + NicoClient.STR_OWNER_COMMENT + "|");
 			}
 			if (OptionalMiddleFile!=null){
-				ffmpeg.addCmd("--data-optional:");
+				ffmpeg.addCmd("|--data-optional:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(OptionalMiddleFile), "Shift_JIS"));
-				ffmpeg.addCmd("|");
+				ffmpeg.addCmd("|--show-optional:");
+				ffmpeg.addCmd(Setting.getVideoShowNum());
+				if (Setting.isOptionalTranslucent()) {
+					ffmpeg.addCmd("|--optional-translucent");
 			}
-			ffmpeg.addCmd("--font:");
+			}
+			ffmpeg.addCmd("|--font:");
 			ffmpeg.addCmd(URLEncoder.encode(
 				Path.toUnixPath(Setting.getFontPath()), "Shift_JIS"));
 			ffmpeg.addCmd("|--font-index:");
 			ffmpeg.addCmd(Setting.getFontIndex());
-			ffmpeg.addCmd("|--show-user:");
-			ffmpeg.addCmd(Setting.getVideoShowNum());
-			ffmpeg.addCmd("|--show-optional:");
-			ffmpeg.addCmd(Setting.getVideoShowNum());
-			if (Setting.isOptionalTranslucent()) {
-				ffmpeg.addCmd("|--optional-translucent");
-			}
 			ffmpeg.addCmd("|--shadow:" + Setting.getShadowIndex());
 			if (Setting.isVhook_ShowConvertingVideo()) {
 				ffmpeg.addCmd("|--enable-show-video");
@@ -1394,7 +1373,7 @@ public class Converter extends Thread {
 		}
 		return null;
 	}
-
+/*
 	private String detectTitleFromOptionalThread(File dir){
 		String list[] = dir.list(DefaultVideoIDFilter);
 		if(list == null){ return null; }
@@ -1408,7 +1387,7 @@ public class Converter extends Thread {
 		}
 		return null;
 	}
-
+*/
 	private ArrayList<String> detectFilelistFromComment(File dir){
 		String list[] = dir.list(DefaultVideoIDFilter);
 		if (list == null) { return null; }

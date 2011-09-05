@@ -4,11 +4,13 @@
 いんきゅばす1.7.0（作者：雪羽氏）の一部機能を借用して改造しました。
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 
-　・1.25 (2011/9/3)　コミュニティ動画での通常コメントを別レイヤーで
-　　　　　　　　　　 半透明表示する機能追加
+　・1.25r (2011/9/5)　1.25のバグ修正版、nicovideoE.dllの潜在バグ修正
 
 修正・改変点
-　1.25
+　1.25r
+　・1.25のバグ修正版、nicovideoE.dllの潜在バグ修正
+
+　1.25以降
 　・コミュニティ動画での通常コメントを、別レイヤーで半透明表示する
 　　半透明化オン・オフ可能
 
@@ -164,7 +166,7 @@
 　・nicovideoE.dllで変換エラーが発生する動画の報告がありました。
 　　（ニコ生の録画とコメントをローカルで変換した場合）
 　　が、その後の確認で状況が変わったため元に戻しました。
-　　問題は対処済みですが万一エラー時はnicovideo.dllに変更して下さい。
+　　問題は1.25rで対処済みです。
 
 
 　初めてさきゅばすを使う方
@@ -345,16 +347,16 @@
 ・gpl.ja.txt 　　　　　　　 GPLライセンスの非公式日本語訳
 ・LGPL_LICENSE　　　　　　　LGPLライセンス
 ・agpl-3.0.txt　　　　　　　AGPLv3ライセンス
-・Saccubus.jar　　　　　　　本体　1.25
+・Saccubus.jar　　　　　　　本体　1.25r
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
 ・bin フォルダ配下
-　　nicovideoE.dll(2011.9.3版)統合版拡張Vhookライブラリ　従来＋ワイド(16x9用)
+　　nicovideoE.dll(2011.9.5版)統合版拡張Vhookライブラリ　従来＋ワイド(16x9用)
 　　libSDL_gfx-13.dll、SDL.dll、SDL_ttf.dll
 　　　グラフィックライブラリ、ライセンスはLGPL、nicovideoE.dllに必要
 ・option フォルダ配下　　　 変換オプションファイル
 ・saccubus_src.zip
 　　Saccubus.jar　のjavaソースファイル、eclipseプロジェクトファイル
-　　nicovideoE.dll(2011.9.3版)　のソースファイル、eclipseプロジェクトファイル
+　　nicovideoE.dll　のソースファイル、eclipseプロジェクトファイル
 　　Bin.jar　のjavaソースファイル、eclipseプロジェクトファイル
 ・readmeNew.txt、readme.txt(1.22r)、readme+.txt(1.22r3)
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
@@ -394,7 +396,13 @@
 　　http://www.daily-vocaran.info/nicorank/
 
 変更履歴
+1.25r (2011/9/5)
+　1.25のバグ修正版、nicovideoE.dllの潜在バグ修正
+　コミュニティ動画での通常コメントを、別レイヤーで半透明表示する
+　半透明化オン・オフ可能
+
 1.25（2011/9/3）
+　配布中止。
 　コミュニティ動画での通常コメントを、別レイヤーで半透明表示する
 　半透明化オン・オフ可能
 

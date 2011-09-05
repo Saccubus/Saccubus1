@@ -64,15 +64,9 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	 if(!data->opaque_comment){
 		alpha_t = (((float)(item->no)/(item->chat->max_no)) * 0.4) + 0.6;
 	 }
-#if DEBUG
-	if(data->optional_trunslucent && alpha_t>0.3) {
-		alpha_t = 0.3;			// これでいいのかな？適当なんだが。
-	}
-#else
 	if(&item->chat->max_no == &data->optionalchat.max_no && data->optional_trunslucent){
 		if(alpha_t>0.3) alpha_t = 0.3;			// これでいいのかな？適当なんだが。
 	}
-#endif
 	if(alpha_t<1.0){
 		fprintf(data->log,"[comsurface/make]comment %04d set alpha:%5.2f%% FLAG=%d.\n",item->no,alpha_t*100,data->optional_trunslucent);
 		setAlpha(ret,alpha_t);

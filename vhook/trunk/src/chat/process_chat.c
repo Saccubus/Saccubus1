@@ -12,7 +12,6 @@ void drawComment(SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos);
  * コメントを描画する。
  */
 int chat_process(DATA* data,SDL_Surface* surf,const int now_vpos){
-	/*見せないものを削除 user*/
 	CHAT* chat = &data->chat;
 	CHAT_SLOT* slot = &data->slot;
 	CHAT* opt_chat = &data->optionalchat;
@@ -23,15 +22,17 @@ int chat_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 	CHAT_SLOT_ITEM* slot_item;
 	CHAT_ITEM* chat_item;
 	/*見せないものを削除 */
-	resetChatSlotIterator(slot);
-	while((slot_item = getChatSlotErased(slot,now_vpos)) != NULL){
-		chat_item = slot_item->chat_item;
-		fprintf(log,"[process-chat/process]<vpos:%6d>com%4d<color:%2d loc:%2d size:%2d %6d-%6d(%6d)> erased. \n",now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->vstart,chat_item->vend,chat_item->vpos);
-		fflush(log);
-		deleteChatSlot(slot,slot_item);
+	if (data->enable_user_comment){
+		resetChatSlotIterator(slot);
+		while((slot_item = getChatSlotErased(slot,now_vpos)) != NULL){
+			chat_item = slot_item->chat_item;
+			fprintf(log,"[process-chat/process]<vpos:%6d>com%4d<color:%2d loc:%2d size:%2d %6d-%6d(%6d)> erased. \n",now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->vstart,chat_item->vend,chat_item->vpos);
+			fflush(log);
+			deleteChatSlot(slot,slot_item);
+		}
 	}
 	/*見せないものを削除 owner*/
-	if (ochat && oslot){
+	if (data->enable_owner_comment && ochat && oslot){
 		resetChatSlotIterator(oslot);
 		while((slot_item = getChatSlotErased(oslot,now_vpos)) != NULL){
 			chat_item = slot_item->chat_item;
@@ -41,7 +42,7 @@ int chat_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 		}
 	}
 	/*見せないものを削除 optional*/
-	if (opt_chat && opt_slot){
+	if (data->enable_optional_comment && opt_chat && opt_slot){
 		resetChatSlotIterator(opt_slot);
 		while((slot_item = getChatSlotErased(opt_slot,now_vpos)) != NULL){
 			chat_item = slot_item->chat_item;
@@ -51,15 +52,17 @@ int chat_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 		}
 	}
 	/*見せるものをセット*/
-	resetChatIterator(chat);
-	while((chat_item = getChatShowed(chat,now_vpos)) != NULL){
-		fprintf(log,"[process-chat/process]<vpos:%6d>com%4d<color:%2d loc:%2d size:%2d %6d-%6d(%6d)> added. \n",now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->vstart,chat_item->vend,chat_item->vpos);
-		fflush(log);
-		addChatSlot(data,slot,chat_item,surf->w,surf->h);
+	if (data->enable_user_comment){
+		resetChatIterator(chat);
+		while((chat_item = getChatShowed(chat,now_vpos)) != NULL){
+			fprintf(log,"[process-chat/process]<vpos:%6d>com%4d<color:%2d loc:%2d size:%2d %6d-%6d(%6d)> added. \n",now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->vstart,chat_item->vend,chat_item->vpos);
+			fflush(log);
+			addChatSlot(data,slot,chat_item,surf->w,surf->h);
+		}
+		drawComment(surf,slot,now_vpos);
 	}
-	drawComment(surf,slot,now_vpos);
 	/*見せるものをセット owner*/
-	if (ochat && oslot){
+	if (data->enable_owner_comment && ochat && oslot){
 		resetChatIterator(ochat);
 		while((chat_item = getChatShowed(ochat,now_vpos)) != NULL){
 			fprintf(log,"[process-chat/process]<vpos:%6d:owner>com%4d<color:%2d loc:%2d size:%2d %6d-%6d(%6d)> added. \n",now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->vstart,chat_item->vend,chat_item->vpos);
@@ -68,8 +71,8 @@ int chat_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 		}
 		drawComment(surf,oslot,now_vpos);
 	}
-	/*見せるものをセット owner*/
-	if (opt_chat && opt_slot){
+	/*見せるものをセット optional*/
+	if (data->enable_optional_comment && opt_chat && opt_slot){
 		resetChatIterator(opt_chat);
 		while((chat_item = getChatShowed(opt_chat,now_vpos)) != NULL){
 			fprintf(log,"[process-chat/process]<vpos:%6d:optional>com%4d<color:%2d loc:%2d size:%2d %6d-%6d(%6d)> added. \n",now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->vstart,chat_item->vend,chat_item->vpos);

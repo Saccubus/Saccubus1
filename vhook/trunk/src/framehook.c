@@ -63,8 +63,9 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	/*コンテキストの設定*/
 	*ctxp = malloc(sizeof(ContextInfo));
 	if(*ctxp == NULL){
-		fputs("[framehook/init]initialized to malloc for context.\n",log);
+		fputs("[framehook/init]failed to malloc for context.\n",log);
 		fflush(log);
+		return -5;
 	}
 	ContextInfo* ci = (ContextInfo*)*ctxp;
 	ci->log = log;
@@ -102,8 +103,19 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 */
 
 int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[]){
+	/* TOOLBOXのバージョンチェック */
+	if (tbox->version != TOOLBOX_VERSION){
+		fprintf(log,"[framehook/init]TOOLBOX version(%d) is not %d.\n", tbox->version, TOOLBOX_VERSION);
+		fflush(log);
+		return FALSE;
+	}
 	/*videoの長さ*/
 	setting->video_length = (tbox->video_length * VPOS_FACTOR);
+	if (setting->video_length==0){
+		fprintf(log,"[framehook/init]video_length is 0.\n");
+		fflush(log);
+		return FALSE;
+	}
 	/*以降オプション*/
 
 	//コメントを見せるか否か？

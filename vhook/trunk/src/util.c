@@ -13,10 +13,3 @@ int rnd(){
 	return result;
 }
 
-int myfflush(FILE *file){
-#ifndef DEBUG
-	return 0;	// not flush when RELEASE
-#else
-	return fflush(file);
-#endif
-}

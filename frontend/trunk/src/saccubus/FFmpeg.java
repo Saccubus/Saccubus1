@@ -19,7 +19,7 @@ public class FFmpeg {
 	private final String exePath;
 	private StringBuffer sb;
 	private String LastFrame = "";
-	private String LastError = "エラー情報がありません";
+	private String LastError = "";
 
 	public FFmpeg(String path) {
 		exePath = path.replace(File.separator, "/");
@@ -92,6 +92,7 @@ public class FFmpeg {
 		}
 	}
 
+	private StringBuffer errorLogging = null;
 	public int exec(JLabel status, int abortedCode, ConvertStopFlag flag, Stopwatch watch) {
 
 		class FFmpegCallback implements CallbackInterface {
@@ -120,6 +121,7 @@ public class FFmpeg {
 					status.setText(e);
 				} else {
 					LastError = e;
+					errorLogging.append(LastError + "\n");
 					if(!e.endsWith("No accelerated colorspace conversion found")){
 						System.out.println(e);
 					}
@@ -129,6 +131,7 @@ public class FFmpeg {
 
 		LastError = "エラー情報がありません";
 		LastFrame = "";
+		errorLogging = new StringBuffer();
 		System.out.println("\n\n----\nProcessing FFmpeg...\n----\n\n");
 		return exec(abortedCode, new FFmpegCallback(status, flag, watch));
 	}
@@ -139,6 +142,10 @@ public class FFmpeg {
 
 	public String getLastError() {
 		return LastError;
+	}
+
+	public StringBuffer getErrotLog() {
+		return errorLogging;
 	}
 
 	public interface Callback {
