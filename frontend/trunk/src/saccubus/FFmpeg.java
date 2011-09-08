@@ -238,7 +238,7 @@ public class FFmpeg {
 			String[] list = src.split("_+");
 			src = "1x1";	// prevent Exception
 			for (String s : list){
-				if (s.indexOf('x') > 0){
+				if (!s.startsWith("0x") && s.indexOf('x') > 0){
 					src = s;
 					break;
 				}

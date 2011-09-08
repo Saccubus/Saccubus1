@@ -47,7 +47,16 @@ public class Prompt {
 		System.out.println("WaybackTime: " + time);
 		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		System.out.println("Version " + MainFrame_AboutBox.rev );
-		conv.run();
+		//do {
+			conv.start();
+			try {
+				conv.join();
+		//		break;
+			} catch (InterruptedException e) {
+				//e.printStackTrace();
+		//		continue;
+			}
+		//} while(true);
 		// System.out.println("LastStatus: " + status.getText());
 		// System.out.println("VideoInfo: " + info.getText());
 		// System.out.println("ElapsedTime: " + watch.getText());

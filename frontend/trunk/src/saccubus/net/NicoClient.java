@@ -1001,6 +1001,10 @@ public class NicoClient {
 		return OptionalThraedID;
 	}
 
+	public int getVideoLength() {
+		return VideoLength;
+	}
+
 	/**
 	 * Map<String Key, String Value><br/>
 	 * Key ‚Í lowercase ‚Ì‰p”š
