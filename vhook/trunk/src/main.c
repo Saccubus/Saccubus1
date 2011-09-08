@@ -143,8 +143,8 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 	FILE* log = data->log;
 	if(!data->process_first_called){
-		data->aspect100 = surf->w * 100 /surf->h;
-		fprintf(log,"[main/process]screen size is %dx%d, aspect is %d/100.\n",surf->w,surf->h, data->aspect100);
+		int aspect100 = surf->w * 100 /surf->h;
+		fprintf(log,"[main/process]screen size is %dx%d, aspect is %d/100.\n",surf->w,surf->h, aspect100);
 		fflush(log);
 	}
 	/*ƒtƒBƒ‹ƒ^‚ð‚©‚¯‚é*/

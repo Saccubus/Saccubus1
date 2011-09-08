@@ -32,7 +32,7 @@ struct DATA{
 	int optional_trunslucent;
 	int process_first_called;
 	int video_length;
-	int aspect100;		// アスペクト比*100
+//	int aspect100;		// アスペクト比*100	Not used now
 	int nico_width_now;	// 元動画の横幅
 };
 
@@ -42,6 +42,9 @@ typedef struct SETTING{
 	const char* data_optional_path;
 	const char* font_path;
 	int video_length;
+	// 新しいffmpegからvideoの時間を貰うInterfaceが分かるまで代わりに
+	// さきゅばすから渡す（但し不明の場合は　0　or　-1）
+	// コメント表示の最後の調整だけなのでなくても我慢するように変更。
 	int font_index;
 	int user_slot_max;
 	int owner_slot_max;

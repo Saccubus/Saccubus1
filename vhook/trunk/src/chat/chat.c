@@ -34,6 +34,9 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		fputs("[chat/init]failed to malloc for comment.\n",log);
 		return FALSE;
 	}
+	if (video_length == 0){
+		fprintf(log,"[chat/fix]cannot adjust end time since video_length UNKOWN\n");
+	}
 	/*ŒÂ•Ê—v‘f‚Ì‰Šú‰»*/
 	CHAT_ITEM* item;
 	int no;
@@ -110,12 +113,14 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			item->vstart = vpos - TEXT_AHEAD_SEC;
 			item->vend = item->vstart + TEXT_SHOW_SEC;
 		}
-		int fix = item->vend - video_length;
-		if(fix > 0){
-			item->vend -= fix;
-			item->vpos -= fix;
-			item->vstart -= fix;
-			fprintf(log,"[chat/fix]comment %d time adjusted.\n",i);
+		if (video_length != 0){
+			int fix = item->vend - video_length;
+			if(fix > 0){
+				item->vend -= fix;
+				item->vpos -= fix;
+				item->vstart -= fix;
+				fprintf(log,"[chat/fix]comment %d time adjusted : %d units.\n",i, fix);
+			}
 		}
 		/*“à•”ˆ—‚æ‚è@‚¨‚í‚è*/
 	}
