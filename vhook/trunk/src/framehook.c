@@ -111,10 +111,10 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	}
 	/*videoの長さ*/
 	setting->video_length = (tbox->video_length * VPOS_FACTOR);
-	if (setting->video_length==0){
-		fprintf(log,"[framehook/init]video_length is 0.\n");
+	if (setting->video_length<=0){
+		fprintf(log,"[framehook/init]video_length is less or equals 0.\n");
 		fflush(log);
-		return FALSE;
+//		return FALSE;
 	}
 	/*以降オプション*/
 
@@ -204,6 +204,10 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			fputs("[framehook/init]use wide player.\n",log);
 			fflush(log);
 			setting->nico_width_now = NICO_WIDTH_WIDE;
+		}else if(setting->video_length <= 0 && strncmp(FRAMEHOOK_OPT_VIDEO_LENGTH,arg,FRAMEHOOK_OPT_VIDEO_LENGTH_LEN) == 0){
+			setting->video_length = MAX(0,atoi(arg+FRAMEHOOK_OPT_VIDEO_LENGTH_LEN)) * VPOS_FACTOR;
+			fprintf(log,"[framehook/init]video length (to assist ffmpeg):%d\n",setting->video_length);
+			fflush(log);
 		}
 	}
 	//引数を正しく入力したか否かのチェック

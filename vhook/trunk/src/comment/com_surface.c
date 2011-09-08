@@ -41,36 +41,36 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	}else{/*改行あり*/
 		ret = connectSurface(ret,drawText(data,size,color,last));
 	}
-	
+
 	if(ret->w == 0 || ret->h == 0){
 		fprintf(data->log,"[comsurface/make]comment %04d has no char.\n",item->no);
 		fflush(data->log);
 		return ret;
 	}
-	
-	 /*
-	  * 影処理
-	  */
-	  int shadow = data->shadow_kind;
-	  if(shadow >= SHADOW_MAX){
-	  	shadow = SHADOW_DEFAULT;
-	  }
-	  ret = (*ShadowFunc[shadow])(ret,item->color == CMD_COLOR_BLACK,data->fontsize_fix);
+
+	/*
+	 * 影処理
+	 */
+	int shadow = data->shadow_kind;
+	if(shadow >= SHADOW_MAX){
+		shadow = SHADOW_DEFAULT;
+	}
+	ret = (*ShadowFunc[shadow])(ret,item->color == CMD_COLOR_BLACK,data->fontsize_fix);
 
 	/*
 	 * アルファ値の設定
 	 */
-	  float alpha_t = 1.0;
-	 if(!data->opaque_comment){
+	float alpha_t = 1.0;
+	if(!data->opaque_comment){
 		alpha_t = (((float)(item->no)/(item->chat->max_no)) * 0.4) + 0.6;
-	 }
+	}
 	if(&item->chat->max_no == &data->optionalchat.max_no && data->optional_trunslucent){
 		if(alpha_t>0.3) alpha_t = 0.3;			// これでいいのかな？適当なんだが。
 	}
 	if(alpha_t<1.0){
 		fprintf(data->log,"[comsurface/make]comment %04d set alpha:%5.2f%% FLAG=%d.\n",item->no,alpha_t*100,data->optional_trunslucent);
 		setAlpha(ret,alpha_t);
-	 }
+	}
 
 	/*
 	 * スケール設定
@@ -79,7 +79,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	double zoomx = 1.0f;
 	//double zoomy = 1.0f;
 	//縮小
-	
+
 	if(data->fontsize_fix){
 		zoomx = (0.5f * (double)video_width) / (double)data->nico_width_now;
 		//zoomx = (0.5f * (double)video_width) / (double)NICO_WIDTH;
@@ -119,15 +119,15 @@ SDL_Surface* drawText(DATA* data,int size,int color,Uint16* str){
 		return SDL_CreateRGBSurface(	SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
 										0,COMMENT_FONT_SIZE[size],32,
 											#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-											    0xff000000,
-											    0x00ff0000,
-											    0x0000ff00,
-											    0x000000ff
+													0xff000000,
+													0x00ff0000,
+													0x0000ff00,
+													0x000000ff
 											#else
-											    0x000000ff,
-											    0x0000ff00,
-											    0x00ff0000,
-											    0xff000000
+													0x000000ff,
+													0x0000ff00,
+													0x00ff0000,
+													0xff000000
 											#endif
 									);
 	}
@@ -137,15 +137,15 @@ SDL_Surface* drawText(DATA* data,int size,int color,Uint16* str){
 												0,
 												32,
 												#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-												    0xff000000,
-												    0x00ff0000,
-												    0x0000ff00,
-												    0x000000ff
+														0xff000000,
+														0x00ff0000,
+														0x0000ff00,
+														0x000000ff
 												#else
-												    0x000000ff,
-												    0x0000ff00,
-												    0x00ff0000,
-												    0xff000000
+														0x000000ff,
+														0x0000ff00,
+														0x00ff0000,
+														0xff000000
 												#endif
 											);
 
