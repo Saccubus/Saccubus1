@@ -102,8 +102,9 @@ public class Converter extends Thread {
 	private File VhookWide = null;
 	private int wayOfVhook = 0;
 	private ArrayList<File> listOfCommentFile = new ArrayList<File>();
-	private String optionalThreadID = "";	// set in 
+	private String optionalThreadID = "";	// set in
 	private String errorLog = "";
+	private int videoLength = 0;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -339,6 +340,7 @@ public class Converter extends Thread {
 			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
 				optionalThreadID = client.getOptionalThreadID();
 			}
+			videoLength = client.getVideoLength();
 		} else {
 			if (isSaveConverted()) {
 				if (isVideoFixFileName()) {
@@ -1098,7 +1100,7 @@ public class Converter extends Thread {
 				ffmpeg.addCmd(Setting.getVideoShowNum());
 				if (Setting.isOptionalTranslucent()) {
 					ffmpeg.addCmd("|--optional-translucent");
-			}
+				}
 			}
 			ffmpeg.addCmd("|--font:");
 			ffmpeg.addCmd(URLEncoder.encode(
@@ -1117,6 +1119,10 @@ public class Converter extends Thread {
 			}
 			if (isWide){
 				ffmpeg.addCmd("|--nico-width-wide");
+			}
+			if (videoLength > 0){
+				ffmpeg.addCmd("|--video-length:");
+				ffmpeg.addCmd(Integer.toString(videoLength));
 			}
 			ffmpeg.addCmd("|\"");
 			return true;
