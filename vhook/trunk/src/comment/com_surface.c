@@ -64,7 +64,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	if(!data->opaque_comment){
 		alpha_t = (((float)(item->no)/(item->chat->max_no)) * 0.4) + 0.6;
 	}
-	if(&item->chat->max_no == &data->optionalchat.max_no && data->optional_trunslucent){
+	if(&item->chat->max_no == &data->optional.chat.max_no && data->optional_trunslucent){
 		if(alpha_t>0.3) alpha_t = 0.3;			// これでいいのかな？適当なんだが。
 	}
 	if(alpha_t<1.0){
@@ -74,37 +74,50 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 
 	/*
 	 * スケール設定
+	 * 横幅 zoomx
+	 * 高さ zoomy	実験的にratio(%)を指定する
 	 */
 
-	double zoomx = 1.0f;
-	//double zoomy = 1.0f;
+	double zoomx = 1.0;
+	double zoomy = (double)data->font_h_fix_r;
 	//縮小
 
 	if(data->fontsize_fix){
-		zoomx = (0.5f * (double)video_width) / (double)data->nico_width_now;
+		zoomx = (0.5 * (double)video_width) / (double)data->nico_width_now;
 		//zoomx = (0.5f * (double)video_width) / (double)NICO_WIDTH;
 		//zoomy = (0.5f * (double)video_height) / (double)NICO_HEIGHT;
 	}
 
 	/*スケールの調整*/
 	//if(((double)ret->h * zoomy) > ((double)video_height/3.0f)){
-	if(((double)ret->h * zoomx) > ((double)video_height/3.0f)){
-		zoomx *= 0.5f;
-		//zoomy *= 0.5f;
+	if (data->original_resize){		// 実験的に無効に出来るようにした
+		if(((double)ret->h * zoomx) > ((double)video_height/3.0f)){
+			zoomx *= 0.5f;
+			//zoomy *= 0.5f;
+			// 	コメントの画像の高さが動画の高さの１／３より大きいと倍率を１／２にする
+			//  さきゅばす独自リサイズ？　↑の根拠は　？
+			//  もしかして　改行リサイズ？
+		}
 	}
 	if(item->location != CMD_LOC_DEF && (ret->w * zoomx) > (double)video_width){
 		double scale = ((double)video_width) / (ret->w * zoomx);
 		zoomx *= scale;
 		//zoomy *= scale;
+		//  コメントの幅が動画の幅に収まるように倍率を調整　＝　臨界幅リサイズ
 	}
+	//  改行リサイズ　未実装
+	//  ダブルリサイズ　未実装
+
+	zoomy *= zoomx;
+
 	//画面サイズに合わせて変更
-	//if(zoomx != 1.0f || zoomy != 1.0f){
-	if(zoomx != 1.0f){
-		//fprintf(data->log,"[comsurface/make]comment %04d resized.(%5.2f%%,%5.2f%%)\n",item->no,zoomx*100,zoomy*100);
-		fprintf(data->log,"[comsurface/make]comment %04d resized.(%5.2f%%)\n",item->no,zoomx*100);
+	if(zoomx != 1.0f || zoomy != 1.0f){
+	//if(zoomx != 1.0f){
+		fprintf(data->log,"[comsurface/make]comment %04d resized.(%5.2f%%,%5.2f%%)\n",item->no,zoomx*100,zoomy*100);
+		//fprintf(data->log,"[comsurface/make]comment %04d resized.(%5.2f%%)\n",item->no,zoomx*100);
 		fflush(data->log);
 		SDL_Surface* tmp = ret;
-		ret = zoomSurface(tmp,zoomx,zoomx,SMOOTHING_ON);
+		ret = zoomSurface(tmp,zoomx,zoomy,SMOOTHING_ON);
 		SDL_FreeSurface(tmp);
 	}
 

@@ -100,6 +100,8 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	--enable-show-video：描画中に動画を見せる。
 	--enable-fontsize-fix：フォントサイズを自動で調整する。
 	--nico-width-wide : ワイドプレーヤー16:9対応
+	--font-height-fix-ratio:%d ： フォント高さ自動変更の倍率（％）+ int
+	--diable-original-resize : さきゅばす独自リサイズを無効にする（実験的）
 */
 
 int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[]){
@@ -137,6 +139,8 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->opaque_comment=FALSE;
 	setting->nico_width_now=NICO_WIDTH;	//デフォルトは旧プレイヤー幅
 	setting->optional_trunslucent=FALSE;	//デフォルトは半透明にしない
+	setting->font_h_fix_r = 1.0f;	//デフォルトは従来通り（最終調整で合わせること）
+	setting->original_resize = TRUE;	//デフォルトは有効（実験的に無効にする選択を行う）
 	int i;
 	char* arg;
 	for(i=0;i<argc;i++){
@@ -207,6 +211,35 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		}else if(setting->video_length <= 0 && strncmp(FRAMEHOOK_OPT_VIDEO_LENGTH,arg,FRAMEHOOK_OPT_VIDEO_LENGTH_LEN) == 0){
 			setting->video_length = MAX(0,atoi(arg+FRAMEHOOK_OPT_VIDEO_LENGTH_LEN)) * VPOS_FACTOR;
 			fprintf(log,"[framehook/init]video length (to assist ffmpeg):%d\n",setting->video_length);
+			fflush(log);
+		} else if (strncmp(FRAMEHOOK_OPT_FONT_HEIGHT_FIX,arg,FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN) == 0){
+			int font_h_fix_ratio = MAX(0,atoi(arg+FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN));
+			if (font_h_fix_ratio > 0){
+				setting->font_h_fix_r = (float)font_h_fix_ratio / 100.0f;
+				fprintf(log,"[framehook/init]font height fix: %4d%%\n",font_h_fix_ratio);
+				fflush(log);
+			}
+		} else if (strncmp(FRAMEHOOK_OPT_ASPECT_MODE, arg, FRAMEHOOK_OPT_ASPECT_MODE_LEN) == 0) {
+			int aspect_mode = MAX(0, atoi(arg + FRAMEHOOK_OPT_ASPECT_MODE_LEN));
+			/**
+			 * アスペクト比の指定. コメントのフォントサイズや速度に影響する.（いんきゅばす互換）
+			 * 0 -  4:3  → 512
+			 * 1 - 16:9  → 640
+			 */
+			fprintf(log, "[framehook/init]aspect mode:%d\n", aspect_mode);
+			fflush(log);
+			if (aspect_mode){
+				fputs("[framehook/init]use wide player.\n",log);
+				fflush(log);
+				setting->nico_width_now = NICO_WIDTH_WIDE;
+						} else {
+							fputs("[framehook/init]use normal player.\n",log);
+				fflush(log);
+				setting->nico_width_now = NICO_WIDTH;
+			}
+		} else if (strcmp("--disable-original-resize",arg) == 0){
+			setting->original_resize = FALSE;
+			fprintf(log,"[framehook/init]disble original resize (experimental)");
 			fflush(log);
 		}
 	}

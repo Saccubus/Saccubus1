@@ -17,6 +17,9 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel {
 	 *
 	 */
 	private static final long serialVersionUID = -8948187216195366156L;
+	private static final File FILE_DEFAULT_FOLDER = new File(".\\option\\");
+
+	private File optionFoler = FILE_DEFAULT_FOLDER;
 
 	private final ArrayList<FFmpegSelectedItem> List = new ArrayList<FFmpegSelectedItem>(
 			20);
@@ -29,11 +32,16 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel {
 		reload();
 	}
 
+	public void setOptionFolder(String folderPath) {
+		File folder = new File(folderPath);
+		if (folder.isDirectory()){
+			optionFoler = folder;
+		}
+	}
+
 	/**
 	 * ファイル読み込みその他を行う
 	 */
-	private static final File OPTION_FOLDER = new File(".\\option\\");
-
 	private static final FFmpegSelectedItem DEFAULT_ITEM = new FFmpegSelectedItem(
 			0, null, "外部ファイルを用いず、下に直接入力する。");
 
@@ -48,7 +56,7 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel {
 		// リストクリア
 		List.clear();
 		// ファイルリスト更新
-		File[] file_array = OPTION_FOLDER.listFiles();
+		File[] file_array = optionFoler.listFiles();
 		if(file_array != null){
 			for (int i = 0; i < file_array.length; i++) {
 				File file = file_array[i];

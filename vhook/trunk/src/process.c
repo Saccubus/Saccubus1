@@ -6,17 +6,22 @@
 
 //プロセス
 int process(DATA* data,SDL_Surface* surf,const int now_vpos){
-	//ユーザコメント＋オーナーコメント＋オプショナルコメント
-	if(data->enable_user_comment || data->enable_owner_comment
-			||data->enable_optional_comment){
-		if(!chat_process(data,surf,now_vpos)){
-			fputs("[process/process]failed to process comment.\n",data->log);
-			return FALSE;
-		}
+	FILE* log = data->log;
+	//ユーザコメント
+	if(!process_chat(data,&data->user, "usr", surf,now_vpos)){
+		fprintf(log,"[process/process]failed to process %s comment.\n", "User");
+		return FALSE;
 	}
 	//オーナコメント
-//	if(data->enable_owner_comment){
-//	}
+	if(!process_chat(data,&data->owner, "own", surf,now_vpos)){
+		fprintf(log,"[process/process]failed to process %s comment.\n", "Owner");
+		return FALSE;
+	}
+	//オプショナルコメント
+	if(!process_chat(data, &data->optional, "opt", surf, now_vpos)){
+		fprintf(log,"[process/process]failed to process %s comment.\n", "Optional");
+		return FALSE;
+	}
 	return TRUE;
 }
 

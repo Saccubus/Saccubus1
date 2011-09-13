@@ -98,6 +98,9 @@ public class ConvertingSetting {
 	private String wideCmdLineOptionOut;
 	private String wideCmdLineOptionMain;
 	private boolean optionalTranslucent;
+	private boolean fontHeightFix;
+	private String fontHeightFixRatio;
+	private boolean disableOriginalResize;
 
 	private ConvertingSetting(
 			String mailaddress,
@@ -260,7 +263,10 @@ public class ConvertingSetting {
 			String wide_cmdlineoption_main,
 			String wide_cmdlineoption_in,
 			String wide_cmdlineoption_out,
-			boolean optional_translucent
+			boolean optional_translucent,
+			boolean font_height_fix,
+			String font_height_fix_raito,
+			boolean disable_original_resize
 		)
 	{
 		this(	mailaddress,
@@ -329,6 +335,9 @@ public class ConvertingSetting {
 		wideCmdLineOptionIn = wide_cmdlineoption_in;
 		wideCmdLineOptionOut = wide_cmdlineoption_out;
 		optionalTranslucent = optional_translucent;
+		fontHeightFix = font_height_fix;
+		fontHeightFixRatio = font_height_fix_raito;
+		disableOriginalResize = disable_original_resize;
 	}
 
 
@@ -524,6 +533,15 @@ public class ConvertingSetting {
 	public boolean isOptionalTranslucent() {
 		return optionalTranslucent;
 	}
+	public boolean isFontHeightFix() {
+		return fontHeightFix;
+	}
+	public String getFontHeightFixRaito() {
+		return fontHeightFixRatio;
+	}
+	public boolean isDisableOriginalResize() {
+		return disableOriginalResize;
+	}
 
 	private static final String PROP_FILE = "./saccubus.xml";
 	private static final String PROP_MAILADDR = "MailAddress";
@@ -605,6 +623,9 @@ public class ConvertingSetting {
 	private static final String PROP_WIDE_CMDLINE_IN = "WideCMD_IN";
 	private static final String PROP_WIDE_CMDLINE_OUT = "WideCMD_OUT";
 	private static final String PROP_OPTIONAL_TRANSLUCENT = "OptionalTranslucent";	// Optional_threadÇîºìßñæÇ…Ç∑ÇÈ
+	private static final String PROP_FONT_HEIGHT_FIX = "FontHeightFix";
+	private static final String PROP_FONT_HEIGHT_FIX_RAITO = "FontHeightFixRaito";
+	private static final String PROP_DISABLE_ORIGINAL_RESIZE = "DisableOriginalResize";
 
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -720,6 +741,10 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_WIDE_CMDLINE_IN, setting.getWideCmdLineOptionIn());
 		prop.setProperty(PROP_WIDE_CMDLINE_OUT, setting.getWideCmdLineOptionOut());
 		prop.setProperty(PROP_OPTIONAL_TRANSLUCENT, Boolean.toString(setting.isOptionalTranslucent()));
+		prop.setProperty(PROP_FONT_HEIGHT_FIX, Boolean.toString(setting.isFontHeightFix()));
+		prop.setProperty(PROP_FONT_HEIGHT_FIX_RAITO,setting.getFontHeightFixRaito());
+		prop.setProperty(PROP_DISABLE_ORIGINAL_RESIZE, Boolean.toString(setting.isDisableOriginalResize()));
+
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -820,7 +845,10 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_WIDE_CMDLINE_MAIN,""),
 			prop.getProperty(PROP_WIDE_CMDLINE_IN, ""),
 			prop.getProperty(PROP_WIDE_CMDLINE_OUT,"-threads 4 -s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9"),
-			Boolean.parseBoolean(prop.getProperty(PROP_OPTIONAL_TRANSLUCENT, "true"))
+			Boolean.parseBoolean(prop.getProperty(PROP_OPTIONAL_TRANSLUCENT, "true")),
+			Boolean.parseBoolean(prop.getProperty(PROP_FONT_HEIGHT_FIX,"true")),
+			prop.getProperty(PROP_FONT_HEIGHT_FIX_RAITO,"116"),
+			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ORIGINAL_RESIZE, "true"))
 		);
 	}
 

@@ -1124,6 +1124,13 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--video-length:");
 				ffmpeg.addCmd(Integer.toString(videoLength));
 			}
+			if (Setting.isFontHeightFix()){
+				ffmpeg.addCmd("|--font-height-fix-ratio:"
+						+ Setting.getFontHeightFixRaito());
+			}
+			if (Setting.isDisableOriginalResize()){
+				ffmpeg.addCmd("|--disble-original-resize");
+			}
 			ffmpeg.addCmd("|\"");
 			return true;
 		} catch (UnsupportedEncodingException e) {

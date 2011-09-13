@@ -116,6 +116,16 @@ public class MainFrame extends JFrame {
 	JPanel OptionalThreadInfoPanel = new JPanel();
 	JLabel OptionalthreadLabel = new JLabel();
 	JCheckBox OptionalTranslucentCheckBox = new JCheckBox();
+	JPanel experimentPanel = new JPanel();
+	JCheckBox fontHeightFixCheckBox = new JCheckBox();
+	JTextField fontHeightRatioTextField = new JTextField();
+	JLabel fontHeightRatioLabel = new JLabel();
+	JCheckBox disableLimitWidthResizeCheckBox = new JCheckBox();
+	JLabel limitWidthResizeLabel = new JLabel();
+	JTextField limitWidthTextField = new JTextField();
+	JCheckBox disableLinefeedResizeCheckBox = new JCheckBox();
+	JCheckBox disableDoubleResizeCheckBox = new JCheckBox();
+	JCheckBox disableOriginalResizeCheckBox = new JCheckBox();
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
 	private static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
@@ -718,20 +728,18 @@ public class MainFrame extends JFrame {
 		CheckFFmpegVersionButton.setText("表示");
 		CheckFFmpegVersionButton.setToolTipText("指定されたFFmpegのバージョンを表示する");
 		CheckFFmpegVersionButton.setForeground(Color.blue);
-		CheckFFmpegVersionButton.addActionListener(
-				new ActionListener(){
-					public void actionPerformed(ActionEvent e){ FFVersionButton_actionPerformed(e); }
-				});
+		CheckFFmpegVersionButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){ FFVersionButton_actionPerformed(e); }
+		});
 		SettingFFmpegPathButton.setText("参照");
 		SettingFFmpegPathButton
 				.addActionListener(new MainFrame_SettingFFmpegPathButton_actionAdapter(this));
 		SettingOptionPathButton.setText("参照");
 		SettingOptionPathButton.setForeground(Color.blue);
-		SettingOptionPathButton
-			.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) { SettingOptionPathButton_actionPerformed(e); }
-			});
+		SettingOptionPathButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) { SettingOptionPathButton_actionPerformed(e); }
+		});
 		VhookSettingLabel.setText("拡張Vhookの位置の設定と自動判定の選択をする");
 		VhookSettingLabel.setForeground(Color.blue);
 		VhookSettingLabel.setToolTipText("従来4:3とワイド16:9を両方チェックすると自動判定を行う");
@@ -748,24 +756,24 @@ public class MainFrame extends JFrame {
 		UseVhookWideCheckBox.setForeground(Color.blue);
 		UseVhookWideCheckBox.setToolTipText("FFmpegの設定２を参照する");
 		SettingVhookWidePathButton.setText("参照");
-		SettingVhookWidePathButton
-				.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) { SettingVhookWidePathButton_actionPerformed(e); }
-				});
+		SettingVhookWidePathButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SettingVhookWidePathButton_actionPerformed(e); }
+		});
 		FFmpegSettingPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"FFmpegの設定１ （拡張Vhook 従来を選択した時）"));
 		FFmpegSettingPanel.setLayout(gridBagLayout9);
 		WideFFmpegSettingPanel.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"FFmpegの設定２ （拡張Vhook ワイドを選択した時）",
-				TitledBorder.LEADING, TitledBorder.TOP, getFont(), Color.blue));
+			BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+			"FFmpegの設定２ （拡張Vhook ワイドを選択した時）",
+			TitledBorder.LEADING, TitledBorder.TOP, getFont(), Color.blue));
 		WideFFmpegSettingPanel.setLayout(new GridBagLayout());
 		FontPathLabel.setText("フォントパス");
 		SettingFontPathButton.setText("参照");
 		SettingFontPathButton
-				.addActionListener(new MainFrame_SettingFontPathButton_actionAdapter(this));
+			.addActionListener(new MainFrame_SettingFontPathButton_actionAdapter(this));
 		ShowConvVideoCheckBox.setText("変換中の画像を表示する");
 		InLabel.setText("入力オプション");
 		OutLabel.setText("出力オプション");
@@ -1006,16 +1014,26 @@ public class MainFrame extends JFrame {
 				new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					INSETS_0_5_0_5, 0, 0));
-		ConvertedVideoSavingInfoPanel.add(ConvertWithCommentCheckBox,				grid5_x0_y1_78);
-		ConvertedVideoSavingInfoPanel.add(ConvertWithOwnerCommentCheckBox,			grid5_x0_y2_81);
-		ConvertedVideoSavingInfoPanel.add(Conv_SaveFolderRadioButton,				grid5_x0_y3_40);
-		ConvertedVideoSavingInfoPanel.add(getNotAddVideoID_ConvVideoCheckBox(),		grid5_x0_y4_39);
-		ConvertedVideoSavingInfoPanel.add(AddOption_ConvVideoFileCheckBox,			gird5_x0_y5_89);
-		ConvertedVideoSavingInfoPanel.add(ConvertedVideoSavedFolderField,			grid5_x0_y6_41);
-		ConvertedVideoSavingInfoPanel.add(ShowSavingConvertedVideoFolderDialogButton,grid5_x3_y6_44);
-		ConvertedVideoSavingInfoPanel.add(Conv_SaveFileRadioButton,					grid5_x0_y7_42);
-		ConvertedVideoSavingInfoPanel.add(ConvertedVideoSavedFileField,				grid5_x0_y8_43);
-		ConvertedVideoSavingInfoPanel.add(ShowSavingConvertedVideoFileDialogButton,	grid5_x3_y8_45);
+		ConvertedVideoSavingInfoPanel.add(ConvertWithCommentCheckBox,
+				grid5_x0_y1_78);
+		ConvertedVideoSavingInfoPanel.add(ConvertWithOwnerCommentCheckBox,
+				grid5_x0_y2_81);
+		ConvertedVideoSavingInfoPanel.add(Conv_SaveFolderRadioButton,
+				grid5_x0_y3_40);
+		ConvertedVideoSavingInfoPanel.add(getNotAddVideoID_ConvVideoCheckBox(),
+				grid5_x0_y4_39);
+		ConvertedVideoSavingInfoPanel.add(AddOption_ConvVideoFileCheckBox,
+				gird5_x0_y5_89);
+		ConvertedVideoSavingInfoPanel.add(ConvertedVideoSavedFolderField,
+				grid5_x0_y6_41);
+		ConvertedVideoSavingInfoPanel.add(ShowSavingConvertedVideoFolderDialogButton,
+				grid5_x3_y6_44);
+		ConvertedVideoSavingInfoPanel.add(Conv_SaveFileRadioButton,
+				grid5_x0_y7_42);
+		ConvertedVideoSavingInfoPanel.add(ConvertedVideoSavedFileField,
+				grid5_x0_y8_43);
+		ConvertedVideoSavingInfoPanel.add(
+				ShowSavingConvertedVideoFileDialogButton,	grid5_x3_y8_45);
 		GridBagConstraints grid__x_y_000_ = new GridBagConstraints();
 		grid__x_y_000_.gridx = 0;
 		grid__x_y_000_.gridy = 0;
@@ -1062,9 +1080,9 @@ public class MainFrame extends JFrame {
 		grid6_x0_y3_111.fill = GridBagConstraints.HORIZONTAL;
 		grid6_x0_y3_111.insets = INSETS_0_5_0_5;
 		FFMpegTabPanel.add(WideFFmpegSettingPanel, grid6_x0_y3_111);
-//		FFMpegTab2Panel.add(PathSettingPanel, new GridBagConstraints(0, 0, 1, 1,
-//				1.0, 0.0, GridBagConstraints.NORTHEAST,
-//				GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0));
+		FFMpegTab2Panel.add(PathSettingPanel, new GridBagConstraints(0, 0, 1, 1,
+				1.0, 0.0, GridBagConstraints.NORTHEAST,
+				GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0));
 		GridBagConstraints grid__x0_y0_109 = new GridBagConstraints();
 		grid__x0_y0_109.gridx = 0;
 		grid__x0_y0_109.gridy = 1;
@@ -1134,6 +1152,109 @@ public class MainFrame extends JFrame {
 		grid6_x0_y2_82.fill = GridBagConstraints.BOTH;
 		grid6_x0_y2_82.insets = INSETS_0_5_5_5;
 		FFMpegTab2Panel.add(CheckFFmpegFunctionPanel, grid6_x0_y2_82);
+
+		experimentPanel.setLayout(new GridBagLayout());
+		experimentPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"実験的設定", TitledBorder.LEADING, TitledBorder.TOP,
+				getFont(), Color.blue));
+		fontHeightFixCheckBox.setText("フォントの高さを調整する");
+		fontHeightFixCheckBox.setForeground(Color.blue);
+		GridBagConstraints grid20_x0_y0 = new GridBagConstraints();
+		grid20_x0_y0.gridx = 0;
+		grid20_x0_y0.gridy = 0;
+		grid20_x0_y0.gridwidth = 2;
+		grid20_x0_y0.gridheight = 1;
+		grid20_x0_y0.weightx = 1.0;
+		grid20_x0_y0.weighty = 0.0;
+		grid20_x0_y0.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y0.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y0.insets = INSETS_0_5_0_5;
+		experimentPanel.add(fontHeightFixCheckBox, grid20_x0_y0);
+		fontHeightRatioLabel.setText("倍率（％）");
+		fontHeightRatioLabel.setForeground(Color.blue);
+		GridBagConstraints grid20_x0_y1 = new GridBagConstraints();
+		grid20_x0_y1.gridx = 0;
+		grid20_x0_y1.gridy = 1;
+		grid20_x0_y1.weightx = 0.0;
+		grid20_x0_y1.weighty = 0.0;
+		grid20_x0_y1.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y1.fill = GridBagConstraints.NONE;
+		grid20_x0_y1.insets = INSETS_0_5_0_5;
+		experimentPanel.add(fontHeightRatioLabel, grid20_x0_y1);
+		fontHeightRatioTextField.setText("116");
+		fontHeightRatioTextField.setForeground(Color.blue);
+		GridBagConstraints grid20_x1_y1 = new GridBagConstraints();
+		grid20_x1_y1.gridx = 1;
+		grid20_x1_y1.gridy = 1;
+		grid20_x1_y1.anchor = GridBagConstraints.NORTHWEST;
+		grid20_x1_y1.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x1_y1.weightx = 1.0;
+		grid20_x1_y1.weighty = 0.0;
+		grid20_x1_y1.insets = INSETS_0_5_0_5;
+		experimentPanel.add(fontHeightRatioTextField,grid20_x1_y1);
+		disableLimitWidthResizeCheckBox.setText("臨界幅リサイズを無効にする");
+		disableLimitWidthResizeCheckBox.setForeground(Color.red);
+		disableLimitWidthResizeCheckBox.setSelected(false);
+		disableLimitWidthResizeCheckBox.setEnabled(false);
+		disableLimitWidthResizeCheckBox.setToolTipText("現rev.では有効・変更不可");
+		GridBagConstraints grid20_x0_y2 = new GridBagConstraints();
+		grid20_x0_y2.gridx = 0;
+		grid20_x0_y2.gridy = 2;
+		grid20_x0_y2.gridwidth = 2;
+		grid20_x0_y2.gridheight = 1;
+		grid20_x0_y2.weightx = 1.0;
+		grid20_x0_y2.weighty = 0.0;
+		grid20_x0_y2.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y2.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y2.insets = INSETS_0_5_0_5;
+		experimentPanel.add(disableLimitWidthResizeCheckBox, grid20_x0_y2);
+		disableLinefeedResizeCheckBox.setText("改行リサイズを無効にする");
+		disableLinefeedResizeCheckBox.setForeground(Color.red);
+		disableLinefeedResizeCheckBox.setSelected(true);
+		disableLinefeedResizeCheckBox.setEnabled(false);
+		disableLinefeedResizeCheckBox.setToolTipText("現rev.では無効・変更不可");
+		GridBagConstraints grid20_x0_y5 = new GridBagConstraints();
+		grid20_x0_y5.gridx = 0;
+		grid20_x0_y5.gridy = 5;
+		grid20_x0_y5.gridwidth = 2;
+		grid20_x0_y5.gridheight = 1;
+		grid20_x0_y5.weightx = 1.0;
+		grid20_x0_y5.weighty = 0.0;
+		grid20_x0_y5.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y5.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y5.insets = INSETS_0_5_0_5;
+		experimentPanel.add(disableLinefeedResizeCheckBox, grid20_x0_y5);
+		disableDoubleResizeCheckBox.setText("ダブルリサイズを無効にする");
+		disableDoubleResizeCheckBox.setForeground(Color.red);
+		disableDoubleResizeCheckBox.setSelected(true);
+		disableDoubleResizeCheckBox.setEnabled(false);
+		disableDoubleResizeCheckBox.setToolTipText("現rev.では無効・変更不可");
+		GridBagConstraints grid20_x0_y6 = new GridBagConstraints();
+		grid20_x0_y6.gridx = 0;
+		grid20_x0_y6.gridy = 6;
+		grid20_x0_y6.gridwidth = 2;
+		grid20_x0_y6.gridheight = 1;
+		grid20_x0_y6.weightx = 1.0;
+		grid20_x0_y6.weighty = 0.0;
+		grid20_x0_y6.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y6.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y6.insets = INSETS_0_5_0_5;
+		experimentPanel.add(disableDoubleResizeCheckBox, grid20_x0_y6);
+		disableOriginalResizeCheckBox.setText("さきゅばす独自リサイズを無効にする");
+		disableOriginalResizeCheckBox.setForeground(Color.blue);
+		disableOriginalResizeCheckBox.setToolTipText("リサイズ後のコメントの高さを動画の高さの１／３以下にする");
+		GridBagConstraints grid20_x0_y7 = new GridBagConstraints();
+		grid20_x0_y7.gridx = 0;
+		grid20_x0_y7.gridy = 7;
+		grid20_x0_y7.gridwidth = 2;
+		grid20_x0_y7.gridheight = 1;
+		grid20_x0_y7.weightx = 1.0;
+		grid20_x0_y7.weighty = 0.0;
+		grid20_x0_y7.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y7.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y7.insets = INSETS_0_5_0_5;
+		experimentPanel.add(disableOriginalResizeCheckBox, grid20_x0_y7);
 	}
 
 	private void setPopup() {
@@ -1378,7 +1499,10 @@ public class MainFrame extends JFrame {
 			wideMainOptionField.getText(),
 			wideCommandLineInOptionField.getText(),
 			wideCommandLineOutOptionField.getText(),
-			OptionalTranslucentCheckBox.isSelected()
+			OptionalTranslucentCheckBox.isSelected(),
+			fontHeightFixCheckBox.isSelected(),
+			fontHeightRatioTextField.getText(),
+			disableOriginalResizeCheckBox.isSelected()
 		);
 	}
 
@@ -1447,6 +1571,8 @@ public class MainFrame extends JFrame {
 		FixFontSizeCheckBox.setSelected(setting.isFixFontSize());
 		FixCommentNumCheckBox.setSelected(setting.isFixCommentNum());
 		OpaqueCommentCheckBox.setSelected(setting.isOpaqueComment());
+		OptionPathField.setText(setting.getOptionFolder());
+		FFmpegOptionModel.setOptionFolder(setting.getOptionFolder());
 		FFmpegOptionModel.reload(setting.getOptionFile());
 		NotUseVhookCheckBox.setSelected(setting.isVhookDisabled());
 		ShadowComboBox.setSelectedIndex(setting.getShadowIndex());
@@ -1462,13 +1588,16 @@ public class MainFrame extends JFrame {
 		BrowserOperaCheckBox.setSelected(setting.isBrowserOpera());
 		BrowserOtherCheckBox.setSelected(setting.isBrowserOther());
 		BrowserCookieField.setText(setting.getBrowserCookiePath());
-		OptionPathField.setText(setting.getOptionFolder());
+		WideFFmpegOptionModel.setOptionFolder(setting.getOptionFolder());
 		WideFFmpegOptionModel.reload(setting.getWideOptionFile());
 		wideExtOptionField.setText(setting.getWideCmdLineOptionExt());
 		wideMainOptionField.setText(setting.getWideCmdLineOptionMain());
 		wideCommandLineOutOptionField.setText(setting.getWideCmdLineOptionOut());
 		wideCommandLineInOptionField.setText(setting.getWideCmdLineOptionIn());
 		OptionalTranslucentCheckBox.setSelected(setting.isOptionalTranslucent());
+		fontHeightFixCheckBox.setSelected(setting.isFontHeightFix());
+		fontHeightRatioTextField.setText(setting.getFontHeightFixRaito());
+		disableOriginalResizeCheckBox.setSelected(setting.isDisableOriginalResize());
 	}
 
 	/**
@@ -1703,6 +1832,8 @@ public class MainFrame extends JFrame {
 
 	public void SettingOptionPathButton_actionPerformed(ActionEvent e) {
 		showSaveDialog("オプションフォルダ", OptionPathField, true, true);
+		FFmpegOptionModel.setOptionFolder(OptionPathField.getText());
+		WideFFmpegOptionModel.setOptionFolder(OptionPathField.getText());
 	}
 
 	public void SettingVhookPathButton_actionPerformed(ActionEvent e) {
@@ -1744,16 +1875,27 @@ public class MainFrame extends JFrame {
 	 */
 	private JPanel getConvertingSettingPanel() {
 		if (ConvertingSettingPanel == null) {
+
+			GridBagConstraints grid_x0_y2_0 = new GridBagConstraints();
+			grid_x0_y2_0.gridx = 0;
+			grid_x0_y2_0.gridy = 2;
+			grid_x0_y2_0.gridwidth = 1;
+			grid_x0_y2_0.gridheight = 1;
+			grid_x0_y2_0.weightx = 1.0;
+			grid_x0_y2_0.weighty = 1.0;
+			grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+			grid_x0_y2_0.fill = GridBagConstraints.HORIZONTAL;
+			grid_x0_y2_0.insets = INSETS_0_5_0_5;
 			GridBagConstraints grid_x0_y1_11 = new GridBagConstraints();
-			grid_x0_y1_11.weighty = 1.0;
+			grid_x0_y1_11.weighty = 0.0;
 			grid_x0_y1_11.weightx = 1.0;
-			grid_x0_y1_11.insets = INSETS_0_5_0_5;
 			grid_x0_y1_11.gridy = 1;
 			grid_x0_y1_11.gridx = 0;
 			grid_x0_y1_11.anchor = GridBagConstraints.NORTH;
 			grid_x0_y1_11.fill = GridBagConstraints.HORIZONTAL;
-			GridBagConstraints grid_x0_y0_0 = new GridBagConstraints(0,
-					2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH,
+			grid_x0_y1_11.insets = INSETS_0_5_0_5;
+			GridBagConstraints grid_x0_y0_0 = new GridBagConstraints(0, 2,
+					1, 1, 1.0, 1.0, GridBagConstraints.NORTH,
 					GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0);
 			grid_x0_y0_0.gridx = 0;
 			grid_x0_y0_0.anchor = GridBagConstraints.CENTER;
@@ -1761,8 +1903,8 @@ public class MainFrame extends JFrame {
 			grid_x0_y0_0.gridy = 0;
 			ConvertingSettingPanel = new JPanel();
 			ConvertingSettingPanel.setLayout(new GridBagLayout());
-			ConvertingSettingPanel.add(getNGWordSettingPanel(),
-					grid_x0_y1_11);
+			ConvertingSettingPanel.add(experimentPanel, grid_x0_y2_0);
+			ConvertingSettingPanel.add(getNGWordSettingPanel(), grid_x0_y1_11);
 			ConvertingSettingPanel.add(VhookSettingPanel, grid_x0_y0_0);
 		}
 		return ConvertingSettingPanel;

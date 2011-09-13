@@ -25,7 +25,7 @@ import javax.swing.JLabel;
 public class Prompt {
 	public static void main(String[] args) {
 		if (args.length < 3){
-			System.out.println("Error. Mailaddr,Password,VideoID must be specified.");
+			System.out.println("Error. MailAddress, Password, VideoID must be specified.");
 			return;
 		}
 		String mail = args[0];
@@ -47,16 +47,13 @@ public class Prompt {
 		System.out.println("WaybackTime: " + time);
 		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		System.out.println("Version " + MainFrame_AboutBox.rev );
-		//do {
-			conv.start();
-			try {
-				conv.join();
-		//		break;
-			} catch (InterruptedException e) {
-				//e.printStackTrace();
-		//		continue;
-			}
-		//} while(true);
+		conv.start();
+		try {
+			conv.join();
+		} catch (InterruptedException e) {
+			// e.printStackTrace();
+			// continue;
+		}
 		// System.out.println("LastStatus: " + status.getText());
 		// System.out.println("VideoInfo: " + info.getText());
 		// System.out.println("ElapsedTime: " + watch.getText());
