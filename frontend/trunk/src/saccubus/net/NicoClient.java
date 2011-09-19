@@ -606,7 +606,7 @@ public class NicoClient {
 	public  final static String STR_OWNER_COMMENT = "1000";
 
 	private  enum CommentType {
-		MAIN, OWNER, OPTIONAL,
+		USER, OWNER, OPTIONAL,
 	}
 
 	public File getComment(final File file, final JLabel status, final String back_comment,
@@ -617,7 +617,7 @@ public class NicoClient {
 				return null;
 			}
 		}
-		return downloadComment(file, status, back_comment, CommentType.MAIN, flag);
+		return downloadComment(file, status, back_comment, CommentType.USER, flag);
 	}
 
 	public File getOwnerComment(final File file, final JLabel status, final ConvertStopFlag flag) {
@@ -725,7 +725,7 @@ public class NicoClient {
 			int size = 0;
 			String dlmsg="";
 			switch(commentType){
-			case MAIN:			dlmsg = "コメント";	break;
+			case USER:			dlmsg = "コメント";	break;
 			case OWNER: 		dlmsg = "投稿者コメント";break;
 			case OPTIONAL:	dlmsg = "オプショナルスレッド";	break;
 			}

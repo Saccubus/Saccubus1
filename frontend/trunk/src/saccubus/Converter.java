@@ -105,6 +105,7 @@ public class Converter extends Thread {
 	private String optionalThreadID = "";	// set in
 	private String errorLog = "";
 	private int videoLength = 0;
+	private int targetWidth = 0;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -721,7 +722,7 @@ public class Converter extends Thread {
 				if (!getFFmpegVfOption().isEmpty()){
 					conv_name = VFILTER_FLAG + " " + getFFmpegVfOption() + conv_name;
 				}
-				conv_name = getFFmpegOptionName() + safeAsciiFileName(conv_name);
+				conv_name = getFFmpegOptionName() + safeAsciiFileName(WayBackDate.formatNow() + conv_name);
 				dirName = new File(folder, conv_name).getAbsolutePath().getBytes("Shift_JIS");
 				// ファイル名が長すぎる場合
 				if (dirName.length > (255 - 3)){
@@ -955,6 +956,21 @@ public class Converter extends Thread {
 			sendtext("変換オプションファイルの読み込みに失敗しました。");
 			return false;
 		}
+		// ターゲット動画の横幅を得る
+		if(OutOption.indexOf("-s") > 0){
+			String[] outOptList = OutOption.split(" +");
+			for(int i=0;i<outOptList.length-1;i++){
+				if(outOptList[i].equals("-s")){
+					String[] wxh = outOptList[i+1].split("x");
+					if(wxh.length==2){
+						try{
+							targetWidth = Integer.parseInt(wxh[0]);
+						} catch(NumberFormatException e){}
+						break;
+					}
+				}
+			}
+		}
 		return true;
 	}
 
@@ -1120,16 +1136,43 @@ public class Converter extends Thread {
 			if (isWide){
 				ffmpeg.addCmd("|--nico-width-wide");
 			}
+			// The following param is unnecessory now
 			if (videoLength > 0){
 				ffmpeg.addCmd("|--video-length:");
 				ffmpeg.addCmd(Integer.toString(videoLength));
 			}
 			if (Setting.isFontHeightFix()){
 				ffmpeg.addCmd("|--font-height-fix-ratio:"
-						+ Setting.getFontHeightFixRaito());
+					+ URLEncoder.encode(Setting.getFontHeightFixRaito(),"UTF-8"));
 			}
 			if (Setting.isDisableOriginalResize()){
-				ffmpeg.addCmd("|--disble-original-resize");
+				ffmpeg.addCmd("|--disable-original-resize");
+
+				if (Setting.isDisableLimitWidthResize()){
+					ffmpeg.addCmd("|--disable-limitwidth-resize");
+				} else {
+					ffmpeg.addCmd("|--limit-width:"
+						+ URLEncoder.encode(Setting.getLimitWidth(),"UTF-8"));
+				}
+				ffmpeg.addCmd("|--limit-height:"
+					+ URLEncoder.encode(Setting.getLimitHeght(),"UTF-8"));
+				if(Setting.isDisableLinefeedResize()){
+					ffmpeg.addCmd("|--disable-linefeed-resize");
+				}
+				if (Setting.isDisableDoubleResize()){
+					ffmpeg.addCmd("|--disable-double-resize");
+				}
+				if(Setting.isDisableFontDoublescale()){
+					ffmpeg.addCmd("|--disable-font-doublescale-fix");
+				}
+			}
+			if (Setting.isEnableFixedFontSizeUse()){
+				ffmpeg.addCmd("|--fixed-font-size:"
+						+ URLEncoder.encode(Setting.getFixedFontSize(), "UTF-8"));
+			}
+			if (targetWidth>0 && targetWidth<10240){
+				ffmpeg.addCmd("|--target-size:"
+					+ Integer.toString(targetWidth));
 			}
 			ffmpeg.addCmd("|\"");
 			return true;

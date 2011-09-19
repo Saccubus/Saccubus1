@@ -1,10 +1,13 @@
 package saccubus;
 
+import java.util.Date;
 import java.util.Properties;
 import java.io.IOException;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.File;
+
+import saccubus.experiment.ExperimentalSetting;
 
 /**
  * <p>
@@ -98,9 +101,7 @@ public class ConvertingSetting {
 	private String wideCmdLineOptionOut;
 	private String wideCmdLineOptionMain;
 	private boolean optionalTranslucent;
-	private boolean fontHeightFix;
-	private String fontHeightFixRatio;
-	private boolean disableOriginalResize;
+	private ExperimentalSetting expSetting;
 
 	private ConvertingSetting(
 			String mailaddress,
@@ -264,9 +265,7 @@ public class ConvertingSetting {
 			String wide_cmdlineoption_in,
 			String wide_cmdlineoption_out,
 			boolean optional_translucent,
-			boolean font_height_fix,
-			String font_height_fix_raito,
-			boolean disable_original_resize
+			ExperimentalSetting exp_setting
 		)
 	{
 		this(	mailaddress,
@@ -335,9 +334,7 @@ public class ConvertingSetting {
 		wideCmdLineOptionIn = wide_cmdlineoption_in;
 		wideCmdLineOptionOut = wide_cmdlineoption_out;
 		optionalTranslucent = optional_translucent;
-		fontHeightFix = font_height_fix;
-		fontHeightFixRatio = font_height_fix_raito;
-		disableOriginalResize = disable_original_resize;
+		expSetting = exp_setting;
 	}
 
 
@@ -533,14 +530,41 @@ public class ConvertingSetting {
 	public boolean isOptionalTranslucent() {
 		return optionalTranslucent;
 	}
-	public boolean isFontHeightFix() {
-		return fontHeightFix;
+	public ExperimentalSetting getExpSetting(){
+		return expSetting;
 	}
-	public String getFontHeightFixRaito() {
-		return fontHeightFixRatio;
+	public boolean isFontHeightFix(){
+		return getExpSetting().isFontHeightFix();
 	}
-	public boolean isDisableOriginalResize() {
-		return disableOriginalResize;
+	public String getFontHeightFixRaito(){
+		return getExpSetting().getFontHeightFixRaito();
+	}
+	public boolean isDisableOriginalResize(){
+		return getExpSetting().isDisableOriginalResize();
+	}
+	public boolean isDisableLimitWidthResize(){
+		return getExpSetting().isDisableLimitWidthResize();
+	}
+	public boolean isDisableLinefeedResize(){
+		return getExpSetting().isDisableLinefeedResize();
+	}
+	public boolean isDisableDoubleResize(){
+		return getExpSetting().isDisableDoubleResize();
+	}
+	public boolean isDisableFontDoublescale(){
+		return getExpSetting().isDisableFontDoublescale();
+	}
+	public String getLimitWidth(){
+		return getExpSetting().getLimitWidth();
+	}
+	public String getLimitHeght(){
+		return getExpSetting().getLimitHeight();
+	}
+	public boolean isEnableFixedFontSizeUse(){
+		return getExpSetting().isEnableFixedFontSizeUse();
+	}
+	public String getFixedFontSize(){
+		return getExpSetting().getFixedFontSize();
 	}
 
 	private static final String PROP_FILE = "./saccubus.xml";
@@ -623,9 +647,16 @@ public class ConvertingSetting {
 	private static final String PROP_WIDE_CMDLINE_IN = "WideCMD_IN";
 	private static final String PROP_WIDE_CMDLINE_OUT = "WideCMD_OUT";
 	private static final String PROP_OPTIONAL_TRANSLUCENT = "OptionalTranslucent";	// Optional_threadÇîºìßñæÇ…Ç∑ÇÈ
+/*
 	private static final String PROP_FONT_HEIGHT_FIX = "FontHeightFix";
 	private static final String PROP_FONT_HEIGHT_FIX_RAITO = "FontHeightFixRaito";
 	private static final String PROP_DISABLE_ORIGINAL_RESIZE = "DisableOriginalResize";
+	private static final String PROP_RESIZE_FLAG = "ResizeFlag";
+	private static final String PROP_LIMIT_WIDTH = "LimitWidth";
+	private static final String PROP_Limit_HEIGHT = "LimitHeight";
+	private static final String PROP_FIXED_FONT_SIZE = "FixedFontSize";
+*/
+	private static final String PROP_EXPERIMENTAL = "Experimental";
 
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -741,15 +772,22 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_WIDE_CMDLINE_IN, setting.getWideCmdLineOptionIn());
 		prop.setProperty(PROP_WIDE_CMDLINE_OUT, setting.getWideCmdLineOptionOut());
 		prop.setProperty(PROP_OPTIONAL_TRANSLUCENT, Boolean.toString(setting.isOptionalTranslucent()));
+/*
 		prop.setProperty(PROP_FONT_HEIGHT_FIX, Boolean.toString(setting.isFontHeightFix()));
 		prop.setProperty(PROP_FONT_HEIGHT_FIX_RAITO,setting.getFontHeightFixRaito());
 		prop.setProperty(PROP_DISABLE_ORIGINAL_RESIZE, Boolean.toString(setting.isDisableOriginalResize()));
+		prop.setProperty(PROP_RESIZE_FLAG, Integer.toBinaryString(setting.getResizeFlag()));
+		prop.setProperty(PROP_LIMIT_WIDTH, setting.getLimitWidth());
+		prop.setProperty(PROP_Limit_HEIGHT, setting.getLimitHeight());
+		prop.setProperty(PROP_FIXED_FONT_SIZE, setting.getFixedFontSize());
+*/
+		prop.setProperty(PROP_EXPERIMENTAL,setting.getExpSetting().makeString());
 
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
 		try {
-			prop.storeToXML(new FileOutputStream(PROP_FILE), "settings");
+			prop.storeToXML(new FileOutputStream(PROP_FILE), "settings-" + new Date().toString());
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -846,9 +884,7 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_WIDE_CMDLINE_IN, ""),
 			prop.getProperty(PROP_WIDE_CMDLINE_OUT,"-threads 4 -s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9"),
 			Boolean.parseBoolean(prop.getProperty(PROP_OPTIONAL_TRANSLUCENT, "true")),
-			Boolean.parseBoolean(prop.getProperty(PROP_FONT_HEIGHT_FIX,"true")),
-			prop.getProperty(PROP_FONT_HEIGHT_FIX_RAITO,"116"),
-			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ORIGINAL_RESIZE, "true"))
+			ExperimentalSetting.getSetting(prop.getProperty(PROP_EXPERIMENTAL,"0"))
 		);
 	}
 

@@ -30,6 +30,19 @@ public class Chat {
 	private static final int CMD_LOC_TOP = 1;
 
 	private static final int CMD_LOC_BOTTOM = 2;
+	/**
+	 * Location bit 15-8 追加
+	 * 0: 従来、1～255: ＠秒数
+	 */
+	//private static final int CMD_LOC_MAX = 256;
+	private static final int CMD_LOC_SECONDS_MASK = 0x0000ff00;
+
+	/**
+	 * 臨界幅リサイズの値をワイドプレイヤー基準にする
+	 * 4:3動画でも同じ
+	 * Location bit 16
+	 */
+	private static final int CMD_FULL = 0x10000;
 
 	@SuppressWarnings("unused")
 	private static final int CMD_SIZE_MAX = 3;
@@ -86,10 +99,13 @@ public class Chat {
 */
 	// "mail"
 	private int Color = 0;
+	private boolean isColorAssigned = false;
 
 	private int Size = 0;
+	private boolean isSizeAssigned = false;
 
 	private int Location = 0;
+	private boolean isLocationAssigned = false;
 
 	// "No"
 	private int No = 0;
@@ -109,8 +125,10 @@ public class Chat {
 	public void setDate(String date_str) {
 		Date = Integer.parseInt(date_str);
 		// System.out.println("date:" + date_str);
-	}
++	}
 */
+	String strsec = "";
+	int sec = 0;
 	public void setMail(String mail_str) {
 		// System.out.println("mail:" + mail_str);
 		Color = CMD_COLOR_DEF;
@@ -123,51 +141,92 @@ public class Chat {
 		for (int i = 0; i < element.length; i++) {
 			String str = element[i].toLowerCase();
 			/* ロケーション */
-			if (str.equals("ue")) {
-				Location = CMD_LOC_TOP;
-			} else if (str.equals("shita")) {
-				Location = CMD_LOC_BOTTOM;
-			} else if (str.equals("big")) {
+			if (str.equals("ue") && !isLocationAssigned) {
+				Location |= CMD_LOC_TOP;
+				isLocationAssigned = true;
+			} else if (str.equals("shita") && !isLocationAssigned) {
+				Location |= CMD_LOC_BOTTOM;
+				isLocationAssigned = true;
+			}
+			// ＠秒数
+			else if (str.startsWith("@") && strsec.isEmpty()) {
+				strsec = str.substring(1);
+				if (strsec != null && !strsec.isEmpty()){
+					try {
+						sec = Integer.parseInt(strsec);
+						Location |= ((sec & 255) << 8) & CMD_LOC_SECONDS_MASK;
+					} catch(NumberFormatException e){
+						e.printStackTrace();
+					}
+				}
+			}
+			// フルコマンド
+			else if (str.equals("full")){
+				Location |= CMD_FULL;
+			}
+			// サイズ
+			else if (str.equals("big") && !isSizeAssigned) {
 				Size = CMD_SIZE_BIG;
-			} else if (str.equals("small")) {
+				isSizeAssigned = true;
+			} else if (str.equals("small") && !isSizeAssigned) {
 				Size = CMD_SIZE_SMALL;
-			} else if (str.equals("red")) {
+				isSizeAssigned = true;
+			}
+			// 色
+			else if (str.equals("red") && !isColorAssigned) {
 				Color = CMD_COLOR_RED;
-			} else if (str.equals("orange")) {
+				isColorAssigned = true;
+			} else if (str.equals("orange") && !isColorAssigned) {
 				Color = CMD_COLOR_ORANGE;
-			} else if (str.equals("yellow")) {
+				isColorAssigned = true;
+			} else if (str.equals("yellow") && !isColorAssigned) {
 				Color = CMD_COLOR_YELLOW;
-			} else if (str.equals("pink")) {
+				isColorAssigned = true;
+			} else if (str.equals("pink") && !isColorAssigned) {
 				Color = CMD_COLOR_PINK;
-			} else if (str.equals("blue")) {
+				isColorAssigned = true;
+			} else if (str.equals("blue") && !isColorAssigned) {
 				Color = CMD_COLOR_BLUE;
-			} else if (str.equals("purple")) {
+				isColorAssigned = true;
+			} else if (str.equals("purple") && !isColorAssigned) {
 				Color = CMD_COLOR_PURPLE;
-			} else if (str.equals("cyan")) {
+				isColorAssigned = true;
+			} else if (str.equals("cyan") && !isColorAssigned) {
 				Color = CMD_COLOR_CYAN;
-			} else if (str.equals("green")) {
+				isColorAssigned = true;
+			} else if (str.equals("green") && !isColorAssigned) {
 				Color = CMD_COLOR_GREEN;
-			} else if (str.equals("niconicowhite") || str.equals("white2")) {
+				isColorAssigned = true;
+			} else if ((str.equals("niconicowhite") || str.equals("white2")) && !isColorAssigned) {
 				Color = CMD_COLOR_NICOWHITE;
-			} else if (str.equals("arineblue") || str.equals("blue2")) {
+				isColorAssigned = true;
+			} else if ((str.equals("arineblue") || str.equals("blue2")) && !isColorAssigned) {
 				Color = CMD_COLOR_MARINEBLUE;
-			} else if (str.equals("madyellow") || str.equals("yellow2")) {
+				isColorAssigned = true;
+			} else if ((str.equals("madyellow") || str.equals("yellow2")) && !isColorAssigned) {
 				Color = CMD_COLOR_MADYELLOW;
-			} else if (str.equals("passionorange") || str.equals("orange2")) {
+				isColorAssigned = true;
+			} else if ((str.equals("passionorange") || str.equals("orange2")) && !isColorAssigned) {
 				Color = CMD_COLOR_PASSIONORANGE;
-			} else if (str.equals("nobleviolet") || str.equals("purple2")) {
+				isColorAssigned = true;
+			} else if ((str.equals("nobleviolet") || str.equals("purple2")) && !isColorAssigned) {
 				Color = CMD_COLOR_NOBLEVIOLET;
-			} else if (str.equals("elementalgreen") || str.equals("green2")) {
+				isColorAssigned = true;
+			} else if ((str.equals("elementalgreen") || str.equals("green2")) && !isColorAssigned) {
 				Color = CMD_COLOR_ELEMENTALGREEN;
-			} else if (str.equals("truered") || str.equals("red2")) {
+				isColorAssigned = true;
+			} else if ((str.equals("truered") || str.equals("red2")) && !isColorAssigned) {
 				Color = CMD_COLOR_TRUERED;
-			} else if (str.equals("black")) {
+				isColorAssigned = true;
+			} else if (str.equals("black") && !isColorAssigned) {
 				Color = CMD_COLOR_BLACK;
-		//	} else if (str.startsWith("#")){
+				isColorAssigned = true;
+			} else if (str.startsWith("#")){
+				isColorAssigned = true;
 		//	TODO
 		//		Color = simulateColor16(str.substr(1));
 		//
-		//	} else {
+			} else {
 				// System.out.println("Unknown command:" + str);
 			}
 		}
