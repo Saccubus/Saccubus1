@@ -19,14 +19,17 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	SDL_Surface* ret = NULL;
 	int color = item->color;
 	SDL_Color sdl_color;
+	int is_black;
 	if(item->color24 == 0){
 		sdl_color = COMMENT_COLOR[color];
+		is_black = (color == CMD_COLOR_BLACK);
 	} else {
 		// color should be 24bit RGB
 		sdl_color.r = (color >> 16) & 0xff;
 		sdl_color.g = (color >> 8) & 0xff;
 		sdl_color.b = (color) & 0xff;
 		sdl_color.unused = 0;
+		is_black = (color == 0x00000000);
 	}
 	// now, sdl_color is 32bit RGBA
 	int size = item->size;
@@ -70,7 +73,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		shadow = SHADOW_DEFAULT;
 	}
 	int is_fix_size = data->font_scaling != 1;
-	int is_black = color == 0x00000000;
+	//int is_black = color == 0x00000000;
 	ret = (*ShadowFunc[shadow])(ret,is_black,is_fix_size);
 
 	/*
