@@ -39,12 +39,15 @@ public class NicoXMLReader extends DefaultHandler {
 
 	private final Pattern NG_ID;
 
+	private final String NG_Fonts;
+
 	private boolean item_fork;
 
-	public NicoXMLReader(Packet packet, String ng_id, String ng_word) {
+	public NicoXMLReader(Packet packet, String ng_id, String ng_word, String ng_fonts) {
 		this.packet = packet;
 		NG_Word = makePattern(ng_word);
 		NG_ID = makePattern(ng_id);
+		NG_Fonts = ng_fonts;
 	}
 
 	private static final Pattern makePattern(String word) {
@@ -119,6 +122,17 @@ public class NicoXMLReader extends DefaultHandler {
 			return false;
 		}
 		return pat.matcher(word).matches();
+	}
+
+	private static final String replace(String src, String replace){
+		if(replace == null || replace.isEmpty()){
+			return src;
+		}
+		char[] list = replace.toCharArray();
+		for(char c : list){
+			src = src.replace(c, '\u3000');	//全角スペースに置換
+		}
+		return src;
 	}
 
 	/**
@@ -202,7 +216,7 @@ public class NicoXMLReader extends DefaultHandler {
 				item_kicked = true;
 				return;
 			}
-			item.setComment(com);
+			item.setComment(replace(com, NG_Fonts));
 		}
 	}
 

@@ -18,13 +18,16 @@ int process_chat(DATA* data,CDATA* cdata,const char* com_type,SDL_Surface* surf,
 	CHAT_SLOT_ITEM* slot_item;
 	FILE* log = data->log;
 	if (cdata->enable_comment){
+#if DEBUG == 1
+		fprintf(log,"[process-chat/DEBUG]%s<vpos:%6d> w:%d, h:%d\n",com_type,now_vpos,surf->w,surf->h);
+#endif
 		/*Œ©‚¹‚È‚¢‚à‚Ì‚ðíœ */
 		slot = &cdata->slot;
 		resetChatSlotIterator(slot);
 		while((slot_item = getChatSlotErased(slot,now_vpos)) != NULL){
 			chat_item = slot_item->chat_item;
-			fprintf(log,"[process-chat/process]%s<vpos:%6d>com%4d<color:%2d loc:%2d size:%2d %6d-%6d(%6d)> erased. \n",
-				com_type,now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->vstart,chat_item->vend,chat_item->vpos);
+			fprintf(log,"[process-chat/process]%s<vpos:%6d>com %4d<color:%2x loc:%2d size:%d full:%d color24:%d %d..%d(vpos:%d)> erased. \n",
+				com_type,now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->full,chat_item->color24,chat_item->vstart,chat_item->vend,chat_item->vpos);
 			fflush(log);
 			deleteChatSlot(slot,slot_item);
 		}
@@ -32,8 +35,8 @@ int process_chat(DATA* data,CDATA* cdata,const char* com_type,SDL_Surface* surf,
 		chat = &cdata->chat;
 		resetChatIterator(chat);
 		while((chat_item = getChatShowed(chat,now_vpos)) != NULL){
-			fprintf(log,"[process-chat/process]%s<vpos:%6d>com%4d<color:%2d loc:%2d size:%2d %6d-%6d(%6d)> added. \n",
-				com_type,now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->vstart,chat_item->vend,chat_item->vpos);
+			fprintf(log,"[process-chat/process]%s<vpos:%6d>com %4d<color:%2x loc:%2d size:%d full:%d color24:%d %d..%d(vpos:%d)> added. \n",
+				com_type,now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->full,chat_item->color24,chat_item->vstart,chat_item->vend,chat_item->vpos);
 			fflush(log);
 			addChatSlot(data,slot,chat_item,surf->w,surf->h);
 		}
@@ -45,7 +48,7 @@ int process_chat(DATA* data,CDATA* cdata,const char* com_type,SDL_Surface* surf,
 /*
  * ƒŒƒCƒ„‡‚É‚»‚Á‚Ä•`‰æ‚·‚é
  */
-
+// slot->max_item‰ñ‚ÌSDL_Surface‘‚«ž‚Ý‚ªs‚í‚ê‚é
 void drawComment(SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos){
 	int i;
 	SDL_Rect rect;
@@ -67,11 +70,12 @@ void drawComment(SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos){
 int getX(int now_vpos,const CHAT_SLOT_ITEM* item,int video_width){
 	int text_width = item->surf->w;
 	int width = video_width;
-	if(item->chat_item->location != CMD_LOC_DEF){
+	CHAT_ITEM* chat_item = item->chat_item;
+	if(chat_item->location != CMD_LOC_DEF){
 		return (width - text_width) >>1;
 	}else{
-		int tmp = now_vpos - item->chat_item->vpos + TEXT_AHEAD_SEC;
-		return width - ((tmp * (width + text_width)) / TEXT_SHOW_SEC);
+		int tmp = now_vpos - chat_item->vstart;
+		return width - ((tmp * (width + text_width)) / chat_item->duration);
 	}
 	return -1;
 }

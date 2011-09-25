@@ -21,9 +21,15 @@ public class ExperimentalSetting {
 	boolean fontHeightFix;
 	String fontHeightFixRatio;
 	String limitWidth;
+	boolean enableLimitHeight;
 	String limitHeight;
 	boolean enableFixedFontSizeUse;
 	String fixedFontSize;	// original is 24 39 15 pt
+	String ngFontCode;
+	String ngFonts;
+	boolean enableLimitWidthUse;
+	boolean enableDoubleLimitWidthUse;
+	String doubleLimitWidth;
 
 	/**
 	 * コンストラクタ
@@ -39,7 +45,12 @@ public class ExperimentalSetting {
 		String nico_limit_width,
 		String nico_limit_height,
 		boolean enable_fixed_font_size_use,
-		String fixed_font_size
+		String fixed_font_size,
+		boolean enable_limit_height,
+		String ng_font_code,
+		boolean enable_limit_width,
+		boolean enable_double_limit,
+		String double_limit_width
 	  )
 	{
 		disableOriginalResize = disable_original_resize;
@@ -53,6 +64,12 @@ public class ExperimentalSetting {
 		limitHeight = nico_limit_height;
 		enableFixedFontSizeUse = enable_fixed_font_size_use;
 		fixedFontSize = fixed_font_size;
+		enableLimitHeight = enable_limit_height;
+		ngFontCode = ng_font_code;
+		ngFonts = Ucode.decodeList(ng_font_code);
+		enableLimitWidthUse = enable_limit_width;
+		enableDoubleLimitWidthUse = enable_double_limit;
+		doubleLimitWidth = double_limit_width;
 	}
 
 	public boolean isFontHeightFix() {
@@ -79,6 +96,9 @@ public class ExperimentalSetting {
 	public String getLimitWidth(){
 		return limitWidth;
 	}
+	public boolean isEnableLimitHeight(){
+		return enableLimitHeight;
+	}
 	public String getLimitHeight(){
 		return limitHeight;
 	}
@@ -88,8 +108,23 @@ public class ExperimentalSetting {
 	public boolean isEnableFixedFontSizeUse(){
 		return enableFixedFontSizeUse;
 	}
+	public String getNGFontCode(){
+		return ngFontCode;
+	}
+	public String getNGFonts(){
+		return ngFonts;
+	}
+	public boolean isEnableDoubleLimitWidth(){
+		return enableDoubleLimitWidthUse;
+	}
+	public boolean isEnableLimitWidth(){
+		return enableLimitWidthUse;
+	}
+	public String getDoubleLimitWidth(){
+		return doubleLimitWidth;
+	}
 
-	private String convBooleanToString(boolean var){
+	private static String convBooleanToString(boolean var){
 		return var ? "1" : "0";
 	}
 	public String makeString() {
@@ -101,58 +136,59 @@ public class ExperimentalSetting {
 		+ convBooleanToString(disableFontFDoublescale)
 		+ convBooleanToString(fontHeightFix)
 		+ convBooleanToString(enableFixedFontSizeUse)
+		+ convBooleanToString(enableLimitHeight)
+		+ convBooleanToString(enableLimitWidthUse)
+		+ convBooleanToString(enableDoubleLimitWidthUse)
 		+ ":" + fontHeightFixRatio
 		+ ":" + limitWidth
 		+ ":" + limitHeight
-		+ ":" + fixedFontSize;
+		+ ":" + fixedFontSize
+		+ ":" + ngFontCode
+		+ ":" + doubleLimitWidth;
 		return ret;
 	}
 
-	static final int NB_BOOLEAN_ITEM = 7;
+	static final int NB_BOOLEAN_ITEM = 10;
 	public static ExperimentalSetting getSetting(String string){
 		String[] list = string.split(":");
-		char[] boolc = getElement(list,0,"0").toCharArray();
+		String boolstr = getElement(list,0);
 		boolean[] boola = new boolean[NB_BOOLEAN_ITEM];
-		for(int i=0;i<boola.length;i++){
-			char c = getElement(boolc, i, '0');
-			boola[i] = c == '1';
+		for(int i=0;i<NB_BOOLEAN_ITEM;i++){
+			if(boolstr == null || boolstr.length() <= i){
+				boola[i] = false;
+			} else {
+				boola[i] = boolstr.charAt(i) == '1';
+			}
 		}
-		return new ExperimentalSetting(				// Default
-			boola[0],	//disableOriginalResize		// false
-			boola[1],	//disableLimitWidthResize	// false
-			boola[2],	//disableLinefeedResize		// false
-			boola[3],	//disableDoubleResize		// false
-			boola[4],	//disableFontDoublescale	// false
-			boola[5],	//fontHeightFix				// false
-			getElement(list,1,"116 94 5"),	//fontHeightFix
-			getElement(list,2,"524 1048"),	//limitWidth
-			getElement(list,3,"384 384"),	//limitHeight
-			boola[6],	//enableFixedFontSizeUse	// false
-			getElement(list,4,"24 39 15")	//fixedFontSize
+		return new ExperimentalSetting(	// Default
+			boola[0]	//disableOriginalResize	false
+			,boola[1]	//disableLimitWidthResize	false
+			,boola[2]	//disableLinefeedResize	false
+			,boola[3]	//disableDoubleResize	false
+			,boola[4]	//disableFontDoublescale	false
+			,boola[5]	//fontHeightFix	false
+			,getElement(list,1)	//fontHeightFix
+			,getElement(list,2)	//limitWidth
+			,getElement(list,3)	//limitHeight
+			,boola[6]	//enableFixedFontSizeUse	false
+			,getElement(list,4)	//fixedFontSize
+			,boola[7]	//enableLimitHeight	false
+			,getElement(list,5)	// NGFontCode
+			,boola[8]
+			,boola[9]
+			,getElement(list,6)
 		);
 	}
-	public static ExperimentalSetting getSetting(){
-		return ExperimentalSetting.getSetting("1000000:116 94 6:524 1048:384 384:24 39 15");
-	}
+//	public static ExperimentalSetting getSetting(){
+//		return ExperimentalSetting.getSetting("10000000:116 94 6 6:512 672:384 384:24 39 15:U#02CB");
+//	}
 
-	private static String getElement(String[] prop, int index, String def){
-		if(prop == null){
-			return def;
+	// default = ""
+	private static String getElement(String[] str, int index){
+		if(str == null || str.length <= index){
+			return "";
 		}
-		if (prop.length <= index ){
-			return def;
-		}
-		return prop[index];
-	}
-
-	private static char getElement(char[] prop, int index, char def){
-		if(prop == null){
-			return def;
-		}
-		if (prop.length <= index ){
-			return def;
-		}
-		return prop[index];
+		return str[index];
 	}
 
 }

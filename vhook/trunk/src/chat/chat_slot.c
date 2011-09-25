@@ -34,12 +34,16 @@ int initChatSlot(FILE* log,CHAT_SLOT* slot,int max_slot,CHAT* chat){
 void closeChatSlot(CHAT_SLOT* slot){
 	int i;
 	CHAT_SLOT_ITEM* item;
-	for(i=0;i<slot->max_item;i++){
-		item = &slot->item[i];
-		SDL_FreeSurface(item->surf);
+	if(slot->item!=NULL){
+		for(i=0;i<slot->max_item;i++){
+			item = &slot->item[i];
+			if (item->surf != NULL){
+				SDL_FreeSurface(item->surf);
+			}
+		}
+		//アイテムを消去。
+		free(slot->item);
 	}
-	//アイテムを消去。
-	free(slot->item);
 }
 
 void deleteChatSlot(CHAT_SLOT* slot,CHAT_SLOT_ITEM* item){
@@ -63,7 +67,15 @@ void addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int 
 	if(slot->max_item <= 0){
 		return;
 	}
-	SDL_Surface* surf = makeCommentSurface(data,item,video_width,video_height);
+	int next_y_diff = 1;
+	if(!data->original_resize){
+		// next_y_ratioは%(int)
+		next_y_diff = item->font_pixel_size * video_width * data->next_h_rate / (data->nico_width_now * 100);
+		if(next_y_diff < 1){
+			next_y_diff = 1;
+		}
+	}
+	SDL_Surface* surf = makeCommentSurface(data,item,video_width,video_height,next_y_diff);
 	/*開きスロットル検索*/
 	int i;
 	int cnt = -1;
@@ -85,12 +97,22 @@ void addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int 
 	//この時点で追加
 	slot_item->chat_item = item;
 	slot_item->surf = surf;
+	/*
+	 * 弾幕モードの高さの設定
+	 * 16:9でue,shitaコマンドの場合は上下に見切れる設定も可能
+	 */
+	int limit_height = video_height;
+//	if(item->location != CMD_LOC_DEF && !data->original_resize){
+//		limit_height = (int)(data->nico_limit_height * video_width * data->next_y_ratio / (data->nico_width_now * 100));
+//	}
+	int y_min = (video_height - limit_height) >> 1;
+	int y_max = y_min + limit_height;
 	/*ロケーションで分岐*/
 	int y;
 	if(item->location == CMD_LOC_BOTTOM){
-		y = video_height - surf->h;
-	}else{
-		y = 0;
+		y = y_max - surf->h;
+	}else {
+		y = y_min;
 	}
 	int running;
 	do{
@@ -120,11 +142,11 @@ void addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int 
 			int o_x_t2 = getX(end,other_slot,video_width);
 			//当たり判定
 			if ((obj_x_t1 <= o_x_t1 + other_slot->surf->w && o_x_t1 <= obj_x_t1 + surf->w)
-								|| (obj_x_t2 <= o_x_t2 + other_slot->surf->w && o_x_t2 <= obj_x_t2 + surf->w)){
+					|| (obj_x_t2 <= o_x_t2 + other_slot->surf->w && o_x_t2 <= obj_x_t2 + surf->w)){
 				if(item->location == CMD_LOC_BOTTOM){
-					y = other_y - surf->h - 1;
+					y = other_y - surf->h - next_y_diff;
 				}else{
-					y = other_y + other_slot->surf->h + 1;
+					y = other_y + other_slot->surf->h + next_y_diff;
 				}
 				running = TRUE;
 				break;
@@ -132,8 +154,10 @@ void addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int 
 		}
 	}while(running);
 	/*そもそも画面内に無ければ無意味。*/
-	if(y < 0 || y+surf->h > video_height){//範囲を超えてるので、ランダムに配置。
-		y = ((rnd() & 0xffff) * (video_height - surf->h)) / 0xffff;
+	// 	但し見切れた場合はOK
+	if(y < y_min || y+surf->h > y_max){
+		//範囲を超えてるので、ランダムに配置。(弾幕モード)
+		y = y_min + ((rnd() & 0xffff) * (limit_height - surf->h)) / 0xffff;
 	}
 	//追加
 	slot_item->used = TRUE;
@@ -149,20 +173,22 @@ void resetChatSlotIterator(CHAT_SLOT* slot){
  * イテレータを得る
  */
 CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos){
-	int *i = &slot->iterator_index;
+	int i = slot->iterator_index;
 	int max_item = slot->max_item;
 	CHAT_ITEM* item;
 	CHAT_SLOT_ITEM* slot_item;
-	for(;*i<max_item;(*i)++){
-		slot_item = &slot->item[*i];
+	for(; i<max_item; i++){
+		slot_item = &slot->item[i];
 		if(!slot_item->used){
 			continue;
 		}
 		item = slot_item->chat_item;
 		if(item==NULL)continue;
 		if(now_vpos < item->vstart || now_vpos > item->vend){
+			slot->iterator_index =i;
 			return slot_item;
 		}
 	}
+	slot->iterator_index =i;
 	return NULL;
 }

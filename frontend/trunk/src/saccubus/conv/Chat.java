@@ -1,6 +1,8 @@
 package saccubus.conv;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 import saccubus.util.Util;
 
@@ -30,6 +32,13 @@ public class Chat {
 	private static final int CMD_LOC_TOP = 1;
 
 	private static final int CMD_LOC_BOTTOM = 2;
+
+	/**
+	 * Location bit 7 追加
+	 * 0: 従来、1: Color 24bit
+	 */
+	private static final int CMD_LOC_COLOR24BIT_MODE_MASK = 0x00000080;
+
 	/**
 	 * Location bit 15-8 追加
 	 * 0: 従来、1～255: ＠秒数
@@ -40,9 +49,9 @@ public class Chat {
 	/**
 	 * 臨界幅リサイズの値をワイドプレイヤー基準にする
 	 * 4:3動画でも同じ
-	 * Location bit 16
+	 * Location bit 6
 	 */
-	private static final int CMD_FULL = 0x10000;
+	private static final int CMD_FULL = 0x00000040;
 
 	@SuppressWarnings("unused")
 	private static final int CMD_SIZE_MAX = 3;
@@ -221,11 +230,22 @@ public class Chat {
 			} else if (str.equals("black") && !isColorAssigned) {
 				Color = CMD_COLOR_BLACK;
 				isColorAssigned = true;
-			} else if (str.startsWith("#")){
+			} else if (str.startsWith("#") && !isColorAssigned){
+				// color 24bit1
+				try{
+					Color = Integer.decode(str);
+					// for White commpatibility, 
+					// compliment Color (~Color) to white(0xffffff) to white(0)
+					Color = 0x00ffffff & ~Color;
+				} catch(NumberFormatException e){
+					System.out.println("[Chat.java]error com=" + No + ",str=" + str + ",mail=" + mail_str);
+					//e.printStackTrace();
+					Color = 0;	// white
+				}
 				isColorAssigned = true;
-		//	TODO
-		//		Color = simulateColor16(str.substr(1));
-		//
+				Location |= CMD_LOC_COLOR24BIT_MODE_MASK;
+				// Color = simulateColor16(str.substr(1));
+				// No need for nicovideoE.dll ver1.26.gamma
 			} else {
 				// System.out.println("Unknown command:" + str);
 			}
@@ -263,6 +283,7 @@ public class Chat {
 	public void setComment(String com_str) {
 		// System.out.println("Comment[" + com_str.length() + "]:" + com_str);
 		Comment += com_str;
+		Comment = Comment.replace("\t", "      ");
 	}
 
 	public void write(OutputStream os) throws IOException {

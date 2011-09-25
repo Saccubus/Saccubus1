@@ -9,7 +9,7 @@
  * 出力 CHAT chat 領域確保、項目設定
  * 出力 CHAT_SLOT chat->slot ← slot ポインタ設定のみ
  */
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length){
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,DATA* data){
 	int i;
 	int max_no = INTEGER_MIN;
 	int min_no = INTEGER_MAX;
@@ -38,7 +38,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		fputs("[chat/init]failed to malloc for comment.\n",log);
 		return FALSE;
 	}
-	if (video_length == 0){
+	if (video_length <= 0){
 		fprintf(log,"[chat/fix]cannot adjust end time since video_length UNKOWN\n");
 	}
 	/*個別要素の初期化*/
@@ -49,6 +49,10 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	int size;
 	int color;
 	int str_length;
+	int duration;
+	int full;
+	int font_pixel_size;
+	int color24;
 	Uint16* str;
 	for(i=0;i<max_item;i++){
 		item = &chat->item[i];
@@ -102,6 +106,35 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			fputs("[chat/init]failed to read comment text.\n",log);
 			return FALSE;
 		}
+		// full コマンド？
+		if(GET_CMD_FULL(location)!= 0){
+			full = 1;
+		} else {
+			full = 0;
+		}
+		// color24bit ?
+		if(GET_CMD_COLOR24(location)!=0){
+			color24 = 1;
+		} else {
+			color24 = 0;
+		}
+		if(color24 != 0){
+			color = ~color & 0x00ffffff;
+		}
+		// bit 15-8 を＠秒数とみなす　saccubus1.26α1以降
+		duration = GET_CMD_DURATION(location);
+		location = GET_CMD_LOC(location);
+		if (duration == 0){	// 通常コメント
+			if (location != CMD_LOC_DEF){
+				duration = TEXT_SHOW_SEC - TEXT_AHEAD_SEC;
+			} else {
+				duration = TEXT_SHOW_SEC;
+			}
+		} else {	// @秒数
+			duration *= VPOS_FACTOR;
+		}
+		// font pixel
+		font_pixel_size = data->font_pixel_size[size];
 		//変数セット
 		item->no = no;
 		item->vpos = vpos;
@@ -112,11 +145,15 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		/*内部処理より*/
 		if(location != CMD_LOC_DEF){
 			item->vstart = vpos;
-			item->vend = vpos + TEXT_SHOW_SEC - TEXT_AHEAD_SEC;
+			item->vend = vpos + duration;
 		}else{
-			item->vstart = vpos - TEXT_AHEAD_SEC;
-			item->vend = item->vstart + TEXT_SHOW_SEC;
+			item->vstart = vpos - TEXT_AHEAD_SEC;	//16:9の場合はーαが必要だが？
+			item->vend = item->vstart + duration;	//16:9の場合は＋αが必要だが？
 		}
+		item->full = full;
+		item->duration = duration;
+		item->color24 = color24;
+		item->font_pixel_size = font_pixel_size;
 		if (video_length > 0){
 			int fix = item->vend - video_length;
 			if(fix > 0){
@@ -135,6 +172,9 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 }
 
 void closeChat(CHAT* chat){
+	if(chat->item==NULL){
+		return;
+	}
 	int i;
 	int max_item = chat->max_item;
 	for(i=0;i<max_item;i++){
@@ -153,14 +193,16 @@ void resetChatIterator(CHAT* chat){
  * イテレータを得る
  */
 CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos){
-	int *i = &chat->iterator_index;
+	int i = chat->iterator_index;
 	int max_item = chat->max_item;
 	CHAT_ITEM* item;
-	for(;*i<max_item;(*i)++){
-		item = &chat->item[*i];
+	for(; i<max_item; i++){
+		item = &chat->item[i];
 		if(now_vpos >= item->vstart && now_vpos <= item->vend && !item->showed){
+			chat->iterator_index = i;
 			return item;
 		}
 	}
+	chat->iterator_index = i;
 	return NULL;
 }

@@ -118,7 +118,7 @@ public class MainFrame extends JFrame {
 	JLabel OptionalthreadLabel = new JLabel();
 	JCheckBox OptionalTranslucentCheckBox = new JCheckBox();
 	ExperimentalPanel experimentPanel = new ExperimentalPanel();
-//                                                   (up left down right)
+//                                                 (up left down right)
 	public static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
 	static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
 	static final Insets INSETS_0_0_5_5 = new Insets(0, 0, 5, 5);
@@ -960,7 +960,8 @@ public class MainFrame extends JFrame {
 		MainTabbedPane.add(BasicInfoTabPanel, "基本設定");
 		MainTabbedPane.add(SavingInfoTabPanel, "保存設定");
 		MainTabbedPane.add(FFMpegInfoTabPanel, "動画設定");
-		MainTabbedPane.addTab("変換設定", null, getConvertingSettingPanel(), null);
+		MainTabbedPane.add(getConvertingSettingPanel(), "変換設定");
+		MainTabbedPane.addTab("実験的設定", null, experimentPanel, null);
 		SavingInfoTabPanel.add(getSaveInfoTabPaneEach(), grid2_x__y__35);
 		FFmpegInfoTabPaneEach.addTab("変換オプション設定", null, FFMpegTabPanel, null);
 		FFmpegInfoTabPaneEach.addTab("FFMpegの位置と機能", null, FFMpegTab2Panel, null);
@@ -1762,18 +1763,8 @@ public class MainFrame extends JFrame {
 	private JPanel getConvertingSettingPanel() {
 		if (ConvertingSettingPanel == null) {
 
-			GridBagConstraints grid_x0_y2_0 = new GridBagConstraints();
-			grid_x0_y2_0.gridx = 0;
-			grid_x0_y2_0.gridy = 2;
-			grid_x0_y2_0.gridwidth = 1;
-			grid_x0_y2_0.gridheight = 1;
-			grid_x0_y2_0.weightx = 1.0;
-			grid_x0_y2_0.weighty = 1.0;
-			grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
-			grid_x0_y2_0.fill = GridBagConstraints.HORIZONTAL;
-			grid_x0_y2_0.insets = INSETS_0_5_0_5;
 			GridBagConstraints grid_x0_y1_11 = new GridBagConstraints();
-			grid_x0_y1_11.weighty = 0.0;
+			grid_x0_y1_11.weighty = 1.0;
 			grid_x0_y1_11.weightx = 1.0;
 			grid_x0_y1_11.gridy = 1;
 			grid_x0_y1_11.gridx = 0;
@@ -1789,7 +1780,6 @@ public class MainFrame extends JFrame {
 			grid_x0_y0_0.gridy = 0;
 			ConvertingSettingPanel = new JPanel();
 			ConvertingSettingPanel.setLayout(new GridBagLayout());
-			ConvertingSettingPanel.add(experimentPanel, grid_x0_y2_0);
 			ConvertingSettingPanel.add(getNGWordSettingPanel(), grid_x0_y1_11);
 			ConvertingSettingPanel.add(VhookSettingPanel, grid_x0_y0_0);
 		}
