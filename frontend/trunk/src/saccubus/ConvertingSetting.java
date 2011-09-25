@@ -883,7 +883,7 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_WIDE_CMDLINE_OUT,"-threads 4 -s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9"),
 			Boolean.parseBoolean(prop.getProperty(PROP_OPTIONAL_TRANSLUCENT, "true")),
 			ExperimentalSetting.getSetting(prop.getProperty(PROP_EXPERIMENTAL,
-				"1000000000:100 100 6 1:544 672 500 600:384 384:24 39 15:1088 1344:U#02CB"))
+				"1000000000:100 100 10 10:544 672 500 600:384 384:24 39 15:U#02CB:1088 1344"))
 		);
 	}
 

@@ -43,7 +43,7 @@ public class Ucode {
 		try{
 			u = Integer.decode(ucode);
 			if (0 < u && u <= 0xffff && Character.isDefined((char)u)){
-				return new Character((char)u);
+				return Character.valueOf((char)u);
 			}
 		} catch(NumberFormatException e){
 			// e.printStackTrace();
