@@ -6,6 +6,7 @@
 #include "struct_define.h"
 #include "chat/chat.h"
 #include "chat/chat_slot.h"
+#include "debugkey.h"
 
 struct CDATA{
 	int enable_comment;
@@ -49,6 +50,7 @@ struct DATA{
 	// 実験的設定↓
 	short font_height_rate;	// フォントの高さをニコ動に合わせる倍率（元動画アスペクト比による）
 	short next_h_rate;	// コメントの高さの次の高さとの差（%）（元動画アスペクト比による）
+	short next_h_pixel;	// コメントの高さの次の高さとの差（px）(4:3,16:9)
 	short limit_width[2];	// 臨界幅リサイズ幅（ノーマル、フル）
 	short double_resize_width[2];	// ダブルリサイズ開始幅（ノーマル、フル）
 	short limit_height;	// 弾幕モード開始の高さ（元動画アスペクト比による）
@@ -56,6 +58,7 @@ struct DATA{
 	short double_limit_width[2];	// ダブルリサイズ臨界幅（ノーマル、フル）
 	short font_pixel_size[CMD_FONT_MAX];
 	short fixed_font_size[CMD_FONT_MAX];	// 修正フォント指定(ポイント指定)
+	short debug_key;	// デバッグキー
 	short target_width;	// 変換後の横幅、指定がなければ元動画の横幅
 	//  ↑ニコ動に対し２倍や１／２倍のスケールの時にフォントをzoomさせないため
 	//  TRUE OR FALSE
@@ -97,8 +100,10 @@ typedef struct SETTING{
 	short double_resize_width[2];	// ダブルリサイズ開始幅（ノーマル、フル）
 	short nico_limit_height[2];	// 弾幕モード開始の高さ（4:3,16:9）
 	short next_h_rate[2];	// コメントの高さの次の高さとの差（%）（4:3,16:9）
+	short next_h_pixel[2];	// コメントの高さの次の高さとの差（px）(4:3,16:9)
 	short double_limit_width[2];	// ダブルリサイズ臨界幅（ノーマル、フル）
 	short fixed_font_size[CMD_FONT_MAX];	// 修正フォント指定(ポイント指定)
+	short debug_key;	// デバッグキー
 	short target_width;	// オプションから変換後の横幅をスクレイピング、指定がなければ元動画の横幅
 	//  ニコ動に対し２倍や１／２倍のスケールの時にフォントをzoomさせないため
 	//  TRUE OR FALSE
@@ -106,7 +111,8 @@ typedef struct SETTING{
 	short limitwidth_resize;	// 臨界幅リサイズが有効（デフォルト有効）
 	short linefeed_resize;	// 改行リサイズが有効（デフォルト有効）
 	short double_resize;		// ダブルリサイズが有効（デフォルト有効）
-	short font_double_scale;		// フォントサイズ自動修正が有効（デフォルト2倍サイズが有効）
+	// obsolate
+	//short font_double_scale;		// フォントサイズ自動修正が有効（デフォルト2倍サイズが有効）
 }SETTING;
 
 int init(FILE* log);

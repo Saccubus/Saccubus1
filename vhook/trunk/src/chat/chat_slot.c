@@ -61,21 +61,14 @@ void deleteChatSlotFromIndex(CHAT_SLOT* slot,int index){
 /*
  * スロットに追加する。
  */
-void addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int video_height){
+CHAT_SLOT_ITEM* addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int video_height){
 	//もう見せられた。
 	item->showed = TRUE;
 	if(slot->max_item <= 0){
-		return;
+		return (CHAT_SLOT_ITEM*)NULL;
 	}
-	int next_y_diff = 1;
-	if(!data->original_resize){
-		// next_y_ratioは%(int)
-		next_y_diff = item->font_pixel_size * video_width * data->next_h_rate / (data->nico_width_now * 100);
-		if(next_y_diff < 1){
-			next_y_diff = 1;
-		}
-	}
-	SDL_Surface* surf = makeCommentSurface(data,item,video_width,video_height,next_y_diff);
+	// 複数行の場合にはnext_y_diffは使用しない→font_h_ratio or fix_font_size で調整
+	SDL_Surface* surf = makeCommentSurface(data,item,video_width,video_height);
 	/*開きスロットル検索*/
 	int i;
 	int cnt = -1;
@@ -98,13 +91,18 @@ void addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int 
 	slot_item->chat_item = item;
 	slot_item->surf = surf;
 	/*
+	 * 動画幅のスケール 計算
+	 */
+	double width_scale = video_width / data->nico_width_now;
+	/*
 	 * 弾幕モードの高さの設定
 	 * 16:9でue,shitaコマンドの場合は上下に見切れる設定も可能
 	 */
 	int limit_height = video_height;
-//	if(item->location != CMD_LOC_DEF && !data->original_resize){
-//		limit_height = (int)(data->nico_limit_height * video_width * data->next_y_ratio / (data->nico_width_now * 100));
-//	}
+	if(item->location != CMD_LOC_DEF && !data->original_resize){
+		limit_height = data->limit_height * width_scale;
+		// data->limit_height = 384 or 385?
+	}
 	int y_min = (video_height - limit_height) >> 1;
 	int y_max = y_min + limit_height;
 	/*ロケーションで分岐*/
@@ -113,6 +111,16 @@ void addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int 
 		y = y_max - surf->h;
 	}else {
 		y = y_min;
+	}
+	// 次の高さとの差分を設定
+	int next_y_diff = 1;
+	if(!data->original_resize){
+		// next_h_ratioとnext_h_ptxcelを加算する
+		next_y_diff = data->next_h_pixel
+					+ data->font_pixel_size[item->size] * width_scale * data->next_h_rate / 100;
+		if(next_y_diff < 1){
+			next_y_diff = 1;
+		}
 	}
 	int running;
 	do{
@@ -153,8 +161,10 @@ void addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int 
 			}
 		}
 	}while(running);
-	/*そもそも画面内に無ければ無意味。*/
-	// 	但し見切れた場合はOK
+	/*
+	 * そもそも画面内に無ければ無意味。
+	 * 	但し見切れた場合はOK
+	 */
 	if(y < y_min || y+surf->h > y_max){
 		//範囲を超えてるので、ランダムに配置。(弾幕モード)
 		y = y_min + ((rnd() & 0xffff) * (limit_height - surf->h)) / 0xffff;
@@ -162,6 +172,7 @@ void addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int 
 	//追加
 	slot_item->used = TRUE;
 	slot_item->y = y;
+	return slot_item;
 }
 /*
  * イテレータをリセットする。

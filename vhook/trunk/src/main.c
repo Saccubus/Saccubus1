@@ -58,16 +58,17 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	data->limitwidth_resize = setting->limitwidth_resize;
 	data->linefeed_resize = setting->linefeed_resize;
 	data->double_resize = setting->double_resize;
-	data->font_double_scale = setting->font_double_scale;
+	//data->font_double_scale = setting->font_double_scale;
+	int is_wide;
 	if (data->nico_width_now == NICO_WIDTH){
-		data->font_height_rate = setting->font_height_rate[0];
-		data->limit_height = setting->nico_limit_height[0];
-		data->next_h_rate = setting->next_h_rate[0];
+		is_wide = 0;
 	} else {
-		data->font_height_rate = setting->font_height_rate[1];
-		data->limit_height = setting->nico_limit_height[1];
-		data->next_h_rate = setting->next_h_rate[1];
+		is_wide = 1;
 	}
+		data->font_height_rate = setting->font_height_rate[is_wide];
+		data->limit_height = setting->nico_limit_height[is_wide];
+		data->next_h_rate = setting->next_h_rate[is_wide];
+		data->next_h_pixel = setting->next_h_pixel[is_wide];
 	data->limit_width[0] = setting->nico_limit_width[0];
 	data->limit_width[1] = setting->nico_limit_width[1];
 	data->double_resize_width[0] = setting->double_resize_width[0];
@@ -83,6 +84,9 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	}
 	fprintf(log,"[main/debug]video scaling:%d%%.\n",scale100);
 	data->font_scaling = 1;
+	// フォントを2倍化するのはリサイズ計算を狂わせるので中止
+	//  ターゲットを拡大した時にフォントが滑らかにするのは今後別手段で行う
+/*
 	if(setting->fontsize_fix && setting->font_double_scale){
 		if(setting->original_resize){
 			data->font_scaling = 2;
@@ -91,6 +95,7 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 			data->font_scaling = 2;
 		}
 	}
+*/
 	fprintf(log,"[main/debug]font pre-scaling:%d%%.\n",data->font_scaling*100);
 
 	fputs("[main/init]initializing context...\n",log);
@@ -100,9 +105,13 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	const int font_index = setting->font_index;
 	for(i=0;i<CMD_FONT_MAX;i++){
 		int fontsize = setting->fixed_font_size[i];
+		/*
+		 * フォントを2倍化するのはリサイズ計算を狂わせるので中止
+		 *  ターゲットを拡大した時にフォントが滑らかにするのは今後別手段で行う
 		if(data->font_scaling == 2){
 			fontsize <<= 1;
 		}
+		 */
 		font[i] = TTF_OpenFontIndex(font_path,fontsize,font_index);
 		if(font[i] == NULL){
 			fprintf(log,"[main/init]failed to load font:%s index:[%d].\n",font_path,font_index);
@@ -119,10 +128,16 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 		TTF_SetFontStyle(font[i],TTF_STYLE_BOLD);
 		data->fixed_font_size[i] = TTF_FontHeight(font[i]);
 		// TTF_FontHeight()が正しいかどうかは疑問？
-		//  実験では設定値と違うpt数になった
+		// 実験では設定値と違うpt数になった
+		data->font_pixel_size[i] = TTF_FontLineSkip(font[i]);
+		//これもpt数だった。
+		/*
 		// 参考 1 pt = 1/72 inch, 1 px = 1 dot
 		// Win-PCでは 96 dot per inch だから 4/3倍
-		data->font_pixel_size[i] = data->fixed_font_size[i] * 4 / 3;
+		data->font_pixel_size[i] = data->font_pixel_size[i] * 4 / 3;
+		*/
+		data->font_pixel_size[i] = FONT_PIXEL_SIZE[i];
+		// SDL_Surface に描画後の高さは文字(列)毎に異なるのでこの値で修正する。
 	}
 	fprintf(log,"[main/init]initialized font, height is DEF=%dpt(%dpx), BIG=%dpt(%dpx), SMALL=%dpt(%dpx)\n",
 		data->fixed_font_size[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_DEF],
@@ -130,17 +145,14 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 		data->fixed_font_size[CMD_FONT_SMALL],data->font_pixel_size[CMD_FONT_SMALL]
 		);
 
-#if DEBUG == 1
-	fprintf(log, "[main/DEBUG]font height fix ratio:%d%%, y_diff:%d%% (experimental)\n",
-		data->font_height_rate,data->next_h_rate);
+	fprintf(log, "[main/DEBUG]font height fix ratio:%d%%, y_diff:%d%% %dpx (experimental)\n",
+		data->font_height_rate,data->next_h_rate,data->next_h_pixel);
 	fprintf(log, "[main/DEBUG]limit width:%d %d, double_resize:%d %d (experimental)\n",
 		data->limit_width[0], data->limit_width[1],
 		data->double_resize_width[0],data->double_resize_width[1]);
-	fprintf(log, "[main/DEBUG]limit height:%d %d (experimental)\n",
-		data->limit_height);
+	fprintf(log, "[main/DEBUG]limit height:%d (experimental)\n",data->limit_height);
 	fprintf(log, "[main/DEBUG]target width: %d (experimaental)\n",
 		data->target_width);
-#endif
 	fflush(log);
 	/*
 	 * ユーザコメント
@@ -216,6 +228,11 @@ int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 		double aspect = (double)surf->w  /(double)surf->h;
 		fprintf(log,"[main/process]screen size:%dx%d, aspect:%5.3f, scale:%5.3f.\n",surf->w,surf->h, aspect,scale);
 		fflush(log);
+		if(surf->w != (int)data->target_width){
+			fprintf(log,"[main/process]screen size differs from target_width:%d.\n",data->target_width);
+			fflush(log);
+			return FALSE;
+		}
 	}
 	/*フィルタをかける*/
 	if(process(data,surf,now_vpos)){

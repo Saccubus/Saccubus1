@@ -26,7 +26,7 @@ struct CHAT_SLOT{
 int initChatSlot(FILE* log,CHAT_SLOT* slot,int max_slot,CHAT* chat);
 void closeChatSlot(CHAT_SLOT* slot);
 //í«â¡ÅAçÌèú
-void addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int video_height);
+CHAT_SLOT_ITEM* addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int video_height);
 void deleteChatSlot(CHAT_SLOT* slot,CHAT_SLOT_ITEM* item);
 void deleteChatSlotFromIndex(CHAT_SLOT* slot,int index);
 

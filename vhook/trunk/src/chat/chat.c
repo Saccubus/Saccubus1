@@ -51,7 +51,6 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	int str_length;
 	int duration;
 	int full;
-	int font_pixel_size;
 	int color24;
 	Uint16* str;
 	for(i=0;i<max_item;i++){
@@ -118,7 +117,8 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		} else {
 			color24 = 0;
 		}
-		if(color24 != 0){
+		if(color24){
+			// color ‚Í24bit color ‚Å”½“]‚µ‚Ä‚¢‚é@saccubus1.26ƒÁ1ˆÈ~
 			color = ~color & 0x00ffffff;
 		}
 		// bit 15-8 ‚ð—•b”‚Æ‚Ý‚È‚·@saccubus1.26ƒ¿1ˆÈ~
@@ -133,8 +133,6 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		} else {	// @•b”
 			duration *= VPOS_FACTOR;
 		}
-		// font pixel
-		font_pixel_size = data->font_pixel_size[size];
 		//•Ï”ƒZƒbƒg
 		item->no = no;
 		item->vpos = vpos;
@@ -153,7 +151,6 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		item->full = full;
 		item->duration = duration;
 		item->color24 = color24;
-		item->font_pixel_size = font_pixel_size;
 		if (video_length > 0){
 			int fix = item->vend - video_length;
 			if(fix > 0){

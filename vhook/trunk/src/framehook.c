@@ -146,7 +146,8 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->limitwidth_resize = TRUE;
 	setting->linefeed_resize = TRUE;
 	setting->double_resize = TRUE;
-	setting->font_double_scale = TRUE;	// フォント字形の自動修正が有効（デフォルト2倍の字形）
+	// obsolate
+	//setting->font_double_scale = TRUE;	// フォント字形の自動修正が有効（デフォルト2倍の字形）
 
 	// 臨界幅は同倍率の動画で512～600px 動画が、4:3 or 16:9に無関係
 	// 但し、fullコマンドでは640～680px
@@ -157,15 +158,19 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->nico_limit_height[1] = NICO_HEIGHT;
 	setting->double_resize_width[0] = NICO_WIDTH;
 	setting->double_resize_width[1] = NICO_WIDTH_WIDE;
-	setting->double_limit_width[0] = NICO_WIDTH;
-	setting->double_limit_width[1] = NICO_WIDTH_WIDE;
+	setting->double_limit_width[0] = NICO_WIDTH<<1;
+	setting->double_limit_width[1] = NICO_WIDTH_WIDE<<1;
 	setting->font_height_rate[0] = 100;	//デフォルト4:3は従来通り（最終調整で合わせること）
 	setting->font_height_rate[1] = 100;	//デフォルト16:9は従来通り（最終調整で合わせること）
+	// next_h_ 両方指定すると加算される
 	setting->next_h_rate[0] = 1;	//デフォルト4:3 1%
 	setting->next_h_rate[1] = 1;	//デフォルト16:9 1%
+	setting->next_h_pixel[0] = 0;	//デフォルト4:3 1px
+	setting->next_h_pixel[1] = 0;	//デフォルト16:9 1px
 	setting->fixed_font_size[CMD_FONT_DEF] = COMMENT_FONT_SIZE[CMD_FONT_DEF];
 	setting->fixed_font_size[CMD_FONT_BIG] = COMMENT_FONT_SIZE[CMD_FONT_BIG];
 	setting->fixed_font_size[CMD_FONT_SMALL] = COMMENT_FONT_SIZE[CMD_FONT_SMALL];
+	setting->debug_key = NO_DEBUG_KEY;
 	setting->target_width = 0;
 	int i;
 	char* arg;
@@ -262,8 +267,15 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 
 		// ↓は実験的設定
 		else if (strncmp(FRAMEHOOK_OPT_FONT_HEIGHT_FIX,arg,FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN) == 0){
-			int font_h_fix[4];
-			int n_font = sscanf(arg+FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN,"%d%d%d%d",font_h_fix,font_h_fix+1,font_h_fix+2,font_h_fix+3);
+			int font_h_fix[6];
+			int n_font = sscanf(arg+FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN,"%d%d%d%d%d%d",
+				font_h_fix,font_h_fix+1,font_h_fix+2,font_h_fix+3,font_h_fix+4,font_h_fix+5);
+			if(n_font > 5){
+				setting->next_h_pixel[1] = (short)font_h_fix[5];
+			}
+			if(n_font > 4){
+				setting->next_h_pixel[0] = (short)font_h_fix[4];
+			}
 			if(n_font > 3){
 				setting->next_h_rate[1] = (short)font_h_fix[3];
 			}
@@ -276,7 +288,8 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			if(n_font > 0){
 				setting->font_height_rate[0] = (short)font_h_fix[0];
 			}
-			fprintf(log, "[framehook/init]font height fix ratio:%d%% %d%%, y_diff:%d%% %d%% (experimental)\n",setting->font_height_rate[0],setting->font_height_rate[1],setting->next_h_rate[0],setting->next_h_rate[1]);
+			fprintf(log, "[framehook/init]font height fix ratio:%d%% %d%%, y_diff:%d%% %d%% %dpx %dpx (experimental)\n",
+				setting->font_height_rate[0],setting->font_height_rate[1],setting->next_h_rate[0],setting->next_h_rate[1],setting->next_h_pixel[0],setting->next_h_pixel[1]);
 			fflush(log);
 		} else if (strcmp("--disable-original-resize",arg) == 0){
 			setting->original_resize = FALSE;
@@ -289,18 +302,16 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		} else if (strncmp(FRAMEHOOK_OPT_LIMIT_WIDTH, arg, FRAMEHOOK_OPT_LIMIT_WIDTH_LEN) == 0) {
 			int limit_width[4];
 			int n_limit = sscanf(arg + FRAMEHOOK_OPT_LIMIT_WIDTH_LEN,"%d%d%d%d",limit_width,limit_width+1,limit_width+2,limit_width+3);
-			if (n_limit > 3){
+			if(n_limit > 3){
 				setting->double_resize_width[1] = (short)limit_width[3];
-				setting->double_resize_width[0] = (short)limit_width[2];
-			} else if(n_limit > 2){
-				setting->double_resize_width[1] =
+			}
+			if(n_limit > 2){
 				setting->double_resize_width[0] = (short)limit_width[2];
 			}
-			if (n_limit > 1){
+			if(n_limit > 1){
 				setting->nico_limit_width[1] = (short)limit_width[1];
-				setting->nico_limit_width[0] = (short)limit_width[0];
-			} else if (n_limit > 0){
-				setting->nico_limit_width[1] =
+			}
+			if(n_limit > 0){
 				setting->nico_limit_width[0] = (short)limit_width[0];
 			}
 			fprintf(log, "[framehook/init]limit width:%d %d, double_resize start:%d %d (experimental)\n",
@@ -310,11 +321,10 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		} else if (strncmp(FRAMEHOOK_OPT_LIMIT_HEIGHT, arg, FRAMEHOOK_OPT_LIMIT_HEIGHT_LEN) == 0) {
 			int limit_height[2];
 			int n_limith = sscanf(arg + FRAMEHOOK_OPT_LIMIT_HEIGHT_LEN,"%d%d", limit_height, limit_height + 1);
-			if (n_limith > 1){
+			if(n_limith > 1){
 				setting->nico_limit_height[1] = (short)limit_height[1];
-				setting->nico_limit_height[0] = (short)limit_height[0];
-			} else if (n_limith > 0){
-				setting->nico_limit_height[1] =
+			}
+			if(n_limith > 0){
 				setting->nico_limit_height[0] = (short)limit_height[0];
 			}
 			fprintf(log, "[framehook/init]limit height:%d %d (experimental)\n",setting->nico_limit_height[0],setting->nico_limit_height[1]);
@@ -327,10 +337,10 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			setting->double_resize = FALSE;
 			fprintf(log,"[framehook/init]disable double resize (experimental)\n");
 			fflush(log);
-		} else if (strcmp("--disable-font-doublescale-fix",arg) == 0){
-			setting->font_double_scale = FALSE;
-			fprintf(log,"[framehook/init]disable font doublescaled (experimental)\n");
-			fflush(log);
+		//} else if (strcmp("--disable-font-doublescale-fix",arg) == 0){
+		//	setting->font_double_scale = FALSE;
+		//	fprintf(log,"[framehook/init]disable font doublescaled (experimental)\n");
+		//	fflush(log);
 		} else if (strncmp(FRAMEHOOK_OPT_FIXED_FONT_SIZE, arg, FRAMEHOOK_OPT_FIXED_FONT_SIZE_LEN) == 0) {
 			int fixed_font[CMD_FONT_MAX];
 			int n_font = sscanf(arg + FRAMEHOOK_OPT_FIXED_FONT_SIZE_LEN,"%d%d%d",fixed_font,fixed_font+1,fixed_font+2);
@@ -353,9 +363,8 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			int n_double = sscanf(arg+FRAMEHOOK_OPT_DOUBLE_RESIZE_WIDTH_LEN,"%d%d",double_limit,double_limit+1);
 			if(n_double > 1){
 				setting->double_limit_width[1] = (short)double_limit[1];
-				setting->double_limit_width[0] = (short)double_limit[0];
-			} else if(n_double > 0){
-				setting->double_limit_width[1] =
+			}
+			if(n_double > 0){
 				setting->double_limit_width[0] = (short)double_limit[0];
 			}
 			fprintf(log, "[framehook/init]double_resize limit width:%d %d (experimental)\n",
@@ -364,6 +373,10 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		} else if (strncmp(FRAMEHOOK_OPT_TARGET_SIZE, arg, FRAMEHOOK_OPT_TARGET_SIZE_LEN) == 0) {
 			setting->target_width = MAX(0,atoi(arg + FRAMEHOOK_OPT_TARGET_SIZE_LEN));
 			fprintf(log, "[framehook/init]target width: %d (experimaental)\n",setting->target_width);
+			fflush(log);
+		} else if (strncmp(FRAMEHOOK_OPT_DEBUG_KEY, arg, FRAMEHOOK_OPT_DEBUG_KEY_LEN) == 0) {
+			setting->debug_key = MAX(0,atoi(arg + FRAMEHOOK_OPT_DEBUG_KEY_LEN));
+			fprintf(log, "[framehook/init]debug key: %d (experimaental)\n",setting->debug_key);
 			fflush(log);
 		}
 	}
@@ -374,8 +387,9 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		fflush(log);
 		return FALSE;
 	}
-#if DEBUG == 1
-	fprintf(log, "[framehook/DEBUG]font height fix ratio:%d%% %d%%, y_diff:%d%% %d%% (experimental)\n",setting->font_height_rate[0],setting->font_height_rate[1],setting->next_h_rate[0],setting->next_h_rate[1]);
+//#if DEBUG == 1
+	fprintf(log, "[framehook/DEBUG]font height fix ratio:%d%% %d%%, y_diff:%d%% %d%%  %dpx %dpx(experimental)\n",
+		setting->font_height_rate[0],setting->font_height_rate[1],setting->next_h_rate[0],setting->next_h_rate[1],setting->next_h_pixel[0],setting->next_h_pixel[1]);
 	fprintf(log, "[framehook/DEBUG]limit width:%d %d, double_resize:%d %d (experimental)\n",
 		setting->nico_limit_width[0], setting->nico_limit_width[1],
 		setting->double_resize_width[0], setting->double_resize_width[1]);
@@ -383,7 +397,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		setting->double_limit_width[0],setting->double_limit_width[1]);
 	fprintf(log, "[framehook/DEBUG]limit height:%d %d (experimental)\n",setting->nico_limit_height[0],setting->nico_limit_height[1]);
 	fprintf(log, "[framehook/DEBUG]target width: %d (experimaental)\n",setting->target_width);
-#endif
+//#endif
 	return TRUE;
 }
 

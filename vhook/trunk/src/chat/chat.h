@@ -14,7 +14,8 @@ struct CHAT_ITEM{
 	//•¶š‚ÌCü
 	int size;
 	int color;
-	int font_pixel_size;	// resize‘O
+	// obsolate
+	//int font_pixel_size;	// resize‘O
 	Uint16* str;
 	//“à•”ˆ—‚Åg‚¤
 	int vstart;

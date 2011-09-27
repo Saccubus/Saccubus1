@@ -26,7 +26,7 @@ int process_chat(DATA* data,CDATA* cdata,const char* com_type,SDL_Surface* surf,
 		resetChatSlotIterator(slot);
 		while((slot_item = getChatSlotErased(slot,now_vpos)) != NULL){
 			chat_item = slot_item->chat_item;
-			fprintf(log,"[process-chat/process]%s<vpos:%6d>com %4d<color:%2x loc:%2d size:%d full:%d color24:%d %d..%d(vpos:%d)> erased. \n",
+			fprintf(log,"[process-chat/process]%s<vpos:%6d>com %-4d<color:%-8x loc:%2d size:%d full:%d color24:%d %d..%d(vpos:%d)> erased. \n",
 				com_type,now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->full,chat_item->color24,chat_item->vstart,chat_item->vend,chat_item->vpos);
 			fflush(log);
 			deleteChatSlot(slot,slot_item);
@@ -35,10 +35,12 @@ int process_chat(DATA* data,CDATA* cdata,const char* com_type,SDL_Surface* surf,
 		chat = &cdata->chat;
 		resetChatIterator(chat);
 		while((chat_item = getChatShowed(chat,now_vpos)) != NULL){
-			fprintf(log,"[process-chat/process]%s<vpos:%6d>com %4d<color:%2x loc:%2d size:%d full:%d color24:%d %d..%d(vpos:%d)> added. \n",
-				com_type,now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->full,chat_item->color24,chat_item->vstart,chat_item->vend,chat_item->vpos);
+			slot_item = addChatSlot(data,slot,chat_item,surf->w,surf->h);
+			if(slot_item != NULL){
+				fprintf(log,"[process-chat/process]%s<vpos:%6d>com %-4d<color:%-8x loc:%2d size:%d full:%d color24:%d y<%3d> %d..%d(vpos:%d)> added. \n",
+					com_type,now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->full,chat_item->color24,slot_item->y,chat_item->vstart,chat_item->vend,chat_item->vpos);
+			}
 			fflush(log);
-			addChatSlot(data,slot,chat_item,surf->w,surf->h);
 		}
 		drawComment(surf,slot,now_vpos);
 	}
@@ -47,8 +49,8 @@ int process_chat(DATA* data,CDATA* cdata,const char* com_type,SDL_Surface* surf,
 
 /*
  * ƒŒƒCƒ„‡‚É‚»‚Á‚Ä•`‰æ‚·‚é
+ *  slot->max_item‰ñ‚ÌSDL_Surface‘‚«‚İ‚ªs‚í‚ê‚é
  */
-// slot->max_item‰ñ‚ÌSDL_Surface‘‚«‚İ‚ªs‚í‚ê‚é
 void drawComment(SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos){
 	int i;
 	SDL_Rect rect;

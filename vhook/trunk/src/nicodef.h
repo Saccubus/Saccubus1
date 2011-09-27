@@ -32,25 +32,52 @@ static const int LINEFEED_RESIZE_LIMIT[CMD_FONT_MAX] = {
 	5,//DEF
 	3,//BIG
 	7,//SMALL
-//!!THIS LIMIT IS OF WINDOWS!!, MAC/LINUX DIFFERS!?
-//The Comments made to be viewed as ART only on Mac/Linux Browsers should differ.
-//  Lines	Default 	%384	%360
-//  5,DEF	160 px		42%		44%
-//  if 4	128 px		33.3%?	35,5%NG	
-//  3,BIG	156 px		41%		43%
-//  if 2	104 px		27%		28,9%
-//  7,SMALL	140 px		36.5%	39%
-//  if 6	120 px		31.3%	33.3%?
-//  Rules of Height * 1/3 isn't very risky?
-//	(And SDL height seems to be taller than default calculas.)
-//  It should be 36% Height or 129px ?
-//  or just use Number of Lines of each OS (Win or Mac/Linux?).
 };
+/*
+!THIS LIMIT IS OF WINDOWS!!, MAC/LINUX DIFFERS!?
+The Comments made to be viewed as ART only on Mac/Linux Browsers should differ.
+  Lines	  Default  %384    %360
+  5,DEF   160 px   42%    44%
+  if 4    128 px   33.3%? 35,5%NG	
+  3,BIG   156 px   41%    43%
+  if 2    104 px   27%    28,9%
+  7,SMALL 140 px   36.5%  39%
+  if 6    120 px   31.3%  33.3%?
+Rules of Height * 1/3 isn't very risky?
+What if that's the same implementation as NICOPLAYER.SWF.
+(And SDL height seems to be taller than default calculas.)
+It should be 36% Height or 129px ?
+or just use Number of Lines of each OS (Win or Mac/Linux?).
+
+The REAL is as followwing. THANKS for Comment Artist!!
+( http://www37.atwiki.jp/commentart/pages/26.html
+  http://www37.atwiki.jp/commentart?cmd=upload&act=open&pageid=21&file=%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88%E9%AB%98%E3%81%95%E4%B8%80%E8%A6%A7.jpg
+ )
+  size        n    Windows Mac   Linux?
+  DEF(medium) 1-4  29n+5   27n+5
+  (resized)   > 5  15n+3   14n+3
+  BIG         1-2  45n+5   43n+5
+  (resized)   > 3  24n+3   14n+3
+  SMALL       1-6  18n+5   17n+5
+  (resized?)  7    10n+3   17n+5    -> threthold is 125-130px
+  (resized)   > 8  10n+3    9n+3
+BUT, this is too complicated, Futhermore SDL differs from Flashplayer,
+So let me do something else.
+*/
+
+//Linefeed Resize scale 51.7%,53.3%,55.6%
+#define LINEFEED_RESIZE_SCALE	(0.52f)
 
 static const int COMMENT_FONT_SIZE[CMD_FONT_MAX] = {
 	24,//DEF
 	39,//BIG
 	15,//SMALL
+};
+//Not resized in Windows (96dpi)
+static const int FONT_PIXEL_SIZE[CMD_FONT_MAX] = {
+	29,//DEF
+	45,//BIG
+	18,//SMALL
 };
 
 #define CMD_COLOR_MAX	17

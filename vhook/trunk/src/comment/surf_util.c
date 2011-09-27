@@ -2,10 +2,10 @@
 #include "surf_util.h"
 #include "../mydef.h"
 
-SDL_Surface* connectSurface(SDL_Surface* top,SDL_Surface* bottom,int next_y_diff){
+SDL_Surface* connectSurface(SDL_Surface* top,SDL_Surface* bottom){
 	SDL_Surface* ret = SDL_CreateRGBSurface( SDL_SRCALPHA,
 											MAX(top->w,bottom->w),
-											(top->h)+(bottom->h)+(next_y_diff-1),
+											top->h+bottom->h,
 											32,
 											#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 											    0xff000000,
@@ -22,15 +22,12 @@ SDL_Surface* connectSurface(SDL_Surface* top,SDL_Surface* bottom,int next_y_diff
 	SDL_SetAlpha(top,SDL_SRCALPHA | SDL_RLEACCEL,0xff);
 	SDL_SetAlpha(bottom,SDL_SRCALPHA | SDL_RLEACCEL,0xff);
 
-	SDL_Rect rect;
-	rect.x = 0;
-	rect.y = 0;
-	SDL_BlitSurface(top,NULL,ret,&rect);
+	SDL_BlitSurface(top,NULL,ret,NULL);
 
 //	SDL_Rect rect2 = {0,top->h};
 	SDL_Rect rect2;
 	rect2.x = 0;
-	rect2.y = top->h + next_y_diff - 1;
+	rect2.y = top->h;
 	SDL_BlitSurface(bottom,NULL,ret,&rect2);
 	SDL_FreeSurface(top);
 	SDL_FreeSurface(bottom);
