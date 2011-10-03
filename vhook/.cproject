@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?>
+
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055" moduleId="org.eclipse.cdt.core.settings" name="Release">
+				<externalSettings>
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/Saccubus_vhext"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Saccubus_vhext/Release"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="nicovideo"/>
+					</externalSetting>
+				</externalSettings>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.Cygwin_PE" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="dll" artifactName="nicovideo" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055" name="Release" parent="cdt.managedbuild.config.gnu.cygwin.so.release">
+					<folderInfo id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1614062507" name="/" resourcePath="">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.so.release.679189617" name="GCC ツール・チェイン" superClass="cdt.managedbuild.toolchain.gnu.cygwin.so.release">
+							<targetPlatform id="cdt.managedbuild.target.gnu.platform.cygwin.so.release.599306898" name="デバッグ・プラットフォーム" superClass="cdt.managedbuild.target.gnu.platform.cygwin.so.release"/>
+							<builder arguments="-k" buildPath="${workspace_loc:/Saccubus_vhext/Release}" id="cdt.managedbuild.target.gnu.builder.cygwin.so.release.495954941" name="Gnu Make.Release" superClass="cdt.managedbuild.target.gnu.builder.cygwin.so.release"/>
+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.so.release.470621780" name="GCC C コンパイラー" superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.so.release">
+								<option id="gnu.c.compiler.option.include.paths.304830296" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/ff/include"/>
+									<listOptionValue builtIn="false" value="/ff/include/SDL"/>
+								</option>
+								<option id="gnu.c.compiler.option.optimization.flags.217698571" superClass="gnu.c.compiler.option.optimization.flags" value="" valueType="string"/>
+								<option id="gnu.c.compiler.option.misc.other.2032859624" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0" valueType="string"/>
+								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.cygwin.so.release.option.optimization.level.191839669" superClass="gnu.c.compiler.cygwin.so.release.option.optimization.level" valueType="enumerated"/>
+								<option id="gnu.c.compiler.cygwin.so.release.option.debugging.level.928997694" superClass="gnu.c.compiler.cygwin.so.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin.19888185" superClass="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.so.release.61165949" name="GCC C++ コンパイラー" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.so.release">
+								<option id="gnu.cpp.compiler.cygwin.so.release.option.optimization.level.1974245860" superClass="gnu.cpp.compiler.cygwin.so.release.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.cygwin.so.release.option.debugging.level.1403249008" superClass="gnu.cpp.compiler.cygwin.so.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.release.28575903" name="GCC C リンカー" superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.release">
+								<option id="gnu.c.link.option.libs.1125386646" superClass="gnu.c.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="SDL_gfx"/>
+									<listOptionValue builtIn="false" value="SDLmain"/>
+									<listOptionValue builtIn="false" value="SDL"/>
+									<listOptionValue builtIn="false" value="SDL_ttf"/>
+								</option>
+								<option id="gnu.c.link.option.paths.1131338387" superClass="gnu.c.link.option.paths" valueType="stringList">
+									<listOptionValue builtIn="false" value="/ff/lib"/>
+								</option>
+								<option id="gnu.c.link.option.strip.1062013681" superClass="gnu.c.link.option.strip" value="true" valueType="boolean"/>
+								<option id="gnu.c.link.option.ldflags.1176935439" superClass="gnu.c.link.option.ldflags" value="" valueType="string"/>
+								<option defaultValue="true" id="gnu.c.link.cygwin.so.release.option.shared.1623121889" superClass="gnu.c.link.cygwin.so.release.option.shared" valueType="boolean"/>
+								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.197339633" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.release.55240270" name="GCC C++ リンカー" superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.release">
+								<option defaultValue="true" id="gnu.cpp.link.cygwin.so.release.option.shared.562215753" superClass="gnu.cpp.link.cygwin.so.release.option.shared" valueType="boolean"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.assembler.cygwin.so.release.729804344" name="GCC アセンブラー" superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.so.release">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.982507540" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.archiver.cygwin.base.11713809" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.cygwin.base"/>
+						</toolChain>
+					</folderInfo>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="scannerConfiguration"/>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="Saccubus.cdt.managedbuild.target.gnu.cygwin.so.102180245" name="共有ライブラリー (Gnu on Windows)" projectType="cdt.managedbuild.target.gnu.cygwin.so"/>
+	</storageModule>
+</cproject>
