@@ -334,7 +334,7 @@ public class Converter extends Thread {
 				return false;
 			}
 			if (VideoFile == null) {
-				sendtext("動画のダウンロードに失敗");
+				sendtext("動画のダウンロードに失敗" + client.getExtraError());
 				return false;
 			}
 			if (optionalThreadID == null || optionalThreadID.isEmpty()) {

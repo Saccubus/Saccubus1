@@ -167,7 +167,8 @@ public class NicoClient {
 				debug("■Response:" + Integer.toString(code) + " " + con.getResponseMessage() + "\n");
 				return con;
 			} else {
-				System.out.print("Error Response:" + Integer.toString(code) + " " + con.getResponseMessage());
+				System.out.println("Error Response:" + Integer.toString(code) + " " + con.getResponseMessage());
+				setExtraError("" + code);
 				return null;
 			}
 		} catch(IOException ex){
@@ -542,6 +543,9 @@ public class NicoClient {
 			HttpURLConnection con = urlConnect(VideoUrl, "GET", Cookie, true, false, null);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK) {
 				System.out.println("Can't get video:" + VideoUrl);
+				if("403".equals(getExtraError())){
+					setExtraError("=不適切な動画の可能性。readmeNew.txt参照");
+				}
 				return null;
 			}
 			InputStream is = con.getInputStream();
