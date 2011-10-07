@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	(H.263+MP3).FLV  FLV1
+-->
+<properties>
+	<entry key="EXT">flv</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-vcodec flv -b 536k -s 320x240 -pass 1 -acodec libmp3lame -ab 64k -ar 44100 -ac 2 -aspect 4:3</entry>
+</properties>

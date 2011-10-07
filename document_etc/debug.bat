@@ -1,0 +1,1 @@
+java -jar Saccubus.jar 2>&1 | java -cp Bin.jar Tee log.txt

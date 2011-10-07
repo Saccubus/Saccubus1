@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	Outputフォルダに「[sm0]***.flv」と「[sm0]***.xml」ファイルを置いて
+	動画IDをsm0にして、動画・コメントをダウンロードしないで変換する
+-->
+<properties>
+	<entry key="EXT">flv</entry>
+	<entry key="MAIN" />
+	<entry key="IN" />
+	<entry key="OUT">-sameq -aspect 4:3</entry>
+</properties>
