@@ -130,7 +130,7 @@ public class Converter extends Thread {
 		return Setting.isSaveComment();
 	}
 	private boolean isSaveOwnerComment(){
-		return Setting.isSaveOwnerComment();
+		return Setting.isSaveOwnerComment() && isSaveComment();
 	}
 	private boolean isConvertWithComment(){
 		return Setting.isConvertWithComment();
@@ -408,13 +408,12 @@ public class Converter extends Thread {
 				sendtext("ログインしてないのにコメントの保存になりました");
 				return false;
 			}
-		//	String back_comment = Setting.getBackComment();
 			if (Setting.isFixCommentNum()) {
 				back_comment = client
 						.getBackCommentFromLength(back_comment);
 			}
 			sendtext("コメントのダウンロード開始中");
-			CommentFile = client.getComment(CommentFile, Status, back_comment, Time, StopFlag);
+			CommentFile = client.getComment(CommentFile, Status, back_comment, Time, StopFlag, Setting.getCommentIndex());
 			if (stopFlagReturn()) {
 				return false;
 			}
@@ -433,7 +432,7 @@ public class Converter extends Thread {
 				}
 				sendtext("オプショナルスレッドのダウンロード開始中");
 				OptionalThreadFile = client.getOptionalThread(
-					OptionalThreadFile, Status, optionalThreadID, back_comment, Time, StopFlag);
+					OptionalThreadFile, Status, optionalThreadID, back_comment, Time, StopFlag, Setting.getCommentIndex());
 				if (stopFlagReturn()) {
 					return false;
 				}
@@ -487,7 +486,8 @@ public class Converter extends Thread {
 			}
 			if (OwnerCommentFile == null) {
 				sendtext("投稿者コメントのダウンロードに失敗");
-				return false;
+				System.out.println("投稿者コメントのダウンロードに失敗");
+				return true;
 			}
 			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
 				optionalThreadID = client.getOptionalThreadID();
@@ -528,13 +528,6 @@ public class Converter extends Thread {
 				} else {
 					// コメントファイルはひとつだけ見つかった
 					// ここには来ない 1.22r3e8, for NP4 comment ver 2009
-//					File comfile = new File(folder,pathlist.get(0));
-//					if (isSaveComment()){			// for NP4 comment ver 2009
-//						ArrayList<File> filelist = new ArrayList<File>();
-//						listOfCommentFile = filelist;
-//					} else {
-//						CommentFile = comfile;
-//						}
 				}
 			}
 			if (!isSaveComment()) {
@@ -577,26 +570,38 @@ public class Converter extends Thread {
 		File folder = Setting.getCommentFixFileNameFolder();
 		if (isConvertWithComment()) {
 			if (isCommentFixFileName()) {
-				// フォルダ指定時、複数のオプショナルスレッド（過去ログ）があるかも
-				ArrayList<String> pathlist = detectFilelistFromOptionalThread(folder);
-				if (pathlist == null || pathlist.isEmpty()){
-					sendtext(Tag + ": オプショナルスレッド・過去ログが存在しません。");
-					System.out.println("No optional thread.");
-					OptionalThreadFile = null;
-					return true;
+				if (Setting.isAddTimeStamp()) {
+					// フォルダ指定時、複数のオプショナルスレッド（過去ログ）があるかも
+					ArrayList<String> pathlist = detectFilelistFromOptionalThread(folder);
+					if (pathlist == null || pathlist.isEmpty()){
+						sendtext(Tag + ": オプショナルスレッド・過去ログが存在しません。");
+						System.out.println("No optional thread.");
+						OptionalThreadFile = null;
+						return true;
+					}
+					// VideoTitle は見つかった。
+					ArrayList<File> filelist = new ArrayList<File>();
+					for (String path: pathlist){
+						filelist.add(new File(folder, path));
+					}
+					OptionalThreadFile = mkTemp(TMP_COMBINED_XML2);
+					sendtext("オプショナルスレッド結合中");
+					if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
+						sendtext("オプショナルスレッドが結合出来ませんでした（バグ？）");
+						return false;
+					}
+					listOfCommentFile.addAll(filelist);
+				} else {
+					// フォルダ指定時、オプショナルスレッドは１つ
+					String filename = detectTitleFromOptionalThread(folder);
+					if (filename == null || filename.isEmpty()){
+						sendtext(Tag + ": オプショナルスレッドがフォルダに存在しません。");
+						System.out.println("No optional thread.");
+						OptionalThreadFile = null;
+						return true;
+					}
+					OptionalThreadFile = new File(folder, filename);
 				}
-				// VideoTitle は見つかった。
-				ArrayList<File> filelist = new ArrayList<File>();
-				for (String path: pathlist){
-					filelist.add(new File(folder, path));
-				}
-				OptionalThreadFile = mkTemp(TMP_COMBINED_XML2);
-				sendtext("オプショナルスレッド結合中");
-				if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
-					sendtext("オプショナルスレッドが結合出来ませんでした（バグ？）");
-					return false;
-				}
-				listOfCommentFile.addAll(filelist);
 			} else {
 				// ファイル指定の時
 				OptionalThreadFile = getOptionalThreadFile(Setting.getCommentFile());
@@ -625,7 +630,10 @@ public class Converter extends Thread {
 					String ownerfilename = detectTitleFromOwnerComment(folder);
 					if(ownerfilename == null){
 						sendtext("投稿者コメントファイルがフォルダに存在しません。");
-						return false;
+					//	return false;
+						System.out.println("投稿者コメントファイルがフォルダに存在しません。");
+						OwnerCommentFile = null;
+						return true;
 					}
 					// VideoTitle は見つかった。
 					OwnerCommentFile = new File(folder, ownerfilename);
@@ -637,7 +645,10 @@ public class Converter extends Thread {
 					OwnerCommentFile = Setting.getOwnerCommentFile();
 					if (!OwnerCommentFile.exists()) {
 						sendtext("投稿者コメントファイルが存在しません。");
-						return false;
+					//	return false;
+						System.out.println("投稿者コメントファイルが存在しません。");
+						OwnerCommentFile = null;
+						return true;
 					}
 				}
 			}
@@ -651,7 +662,7 @@ public class Converter extends Thread {
 	}
 
 	private void deleteCommentFile(){
-		if (CommentFile.delete()) {
+		if (CommentFile != null && CommentFile.delete()) {
 			System.out.println("Deleted: " + CommentFile.getPath());
 		}
 		if (OptionalThreadFile != null && OptionalThreadFile.delete()){
@@ -992,84 +1003,21 @@ public class Converter extends Thread {
 		}
 		return code;
 	}
-/*
-	public File nmm2avi(File fwstmp) throws IOException {
-		int code = -1;
-		File tmpdir = new File("tmpdir");
-		tmpdir.mkdir();
-		if (!tmpdir.isDirectory()){
-			sendtext("一時ファイルの保存先フォルダが作成できません。");
-			throw new IOException("");
-		}
-		File [] list = tmpdir.listFiles();
-		for (File file: list){
-			file.delete();
-		}
-		File videoavi = new File("fws_tmp.avi");
-		if(videoavi.exists()){
-			videoavi.delete();
-		}
-		File avi = new File("fws_out.avi");
-		if(avi.exists()){
-			avi.delete();
-		}
-*/		/*
+
+		/*
+		 * SWFファイルをJPEG形式に合成
 		 * ffmpeg.exe -r 25 -y -i fws_tmp.swf -an -vcodec copy -f image2 %03d.jpg
 		 */
-/*		ffmpeg.setCmd("-xerror -y -i ");
-		ffmpeg.addFile(fwstmp);
-//		ffmpeg.addCmd(" -an -vcodec copy -f image2 -vbsf mjpeg2jpeg ");
-		ffmpeg.addCmd(" -an -f image2 ");
-		ffmpeg.addFile(new File(tmpdir, "%08d.jpg"));
-		System.out.println("nmm2avi:" + ffmpeg.getCmd());
-		sendtext("NMM動画から一時ファイルを抽出中");
-		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag);
-		if (code != 0){
-			if (code != CODE_CONVERTING_ABORTED) { // 中断
-				sendtext("変換エラー：" + ffmpeg.getLastError());
-			}
-			throw new IOException("");
-		}
-*/		/*
+		/*
 		 * JPEGファイルをAVI形式に合成
 		 * ffmpeg.exe -r 1/4 -y -i %03d.jpg -an -vcodec huffyuv -f avi huffjpg.avi
 		 */
-/*		ffmpeg.setCmd("-xerror -r 1/4 -y -i ");
-		ffmpeg.addFile(new File(tmpdir, "%08d.jpg"));
-		ffmpeg.addCmd(" -an -vcodec huffyuv -f avi ");
-		ffmpeg.addFile(videoavi);
-		System.out.println("nmm2avi:" + ffmpeg.getCmd());
-		sendtext("NMM動画をAVI形式に変換中");
-		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag);
-		if (code != 0){
-			if (code != CODE_CONVERTING_ABORTED) {
-				sendtext("変換エラー：" + ffmpeg.getLastError());
-			}
-			throw new IOException("");
-		}
-*/		/*
+		/*
 		 * 音声を合成
 		 * ffmpeg.exe -y -i fws_tmp.swf -itsoffset 1.0 -i avi4.avi
 		 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 		 */
-/*		ffmpeg.setCmd("-xerror -y -i ");
-		ffmpeg.addFile(fwstmp);
-		ffmpeg.addCmd(" -i ");
-		ffmpeg.addFile(videoavi);
-		ffmpeg.addCmd(" -acodec copy -vcodec copy ");
-		ffmpeg.addFile(avi);
-		System.out.println("nmm2avi:" + ffmpeg.getCmd());
-		sendtext("AVI動画に音声を結合中");
-		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag);
-		if (code != 0){
-			if (code != CODE_CONVERTING_ABORTED) {
-				sendtext("変換エラー：" + ffmpeg.getLastError());
-			}
-			throw new IOException("");
-		}
-		return avi;
-	}
-*/
+
 	private boolean addVhookSetting(FFmpeg ffmpeg, File vhookExe, boolean isWide) {
 		try {
 			ffmpeg.addCmd(" -vfilters \"");
@@ -1090,7 +1038,7 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--data-owner:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(OwnerMiddleFile), "Shift_JIS"));
-				ffmpeg.addCmd("|--show-owner:" + NicoClient.STR_OWNER_COMMENT + "|");
+				ffmpeg.addCmd("|--show-owner:" + NicoClient.STR_OWNER_COMMENT);
 			}
 			if (OptionalMiddleFile!=null){
 				ffmpeg.addCmd("|--data-optional:");
@@ -1331,6 +1279,7 @@ public class Converter extends Thread {
 			if (index >= 0){
 				VideoTitle = VideoTitle.substring(0, index);
 			}
+			System.out.println("Title<" + VideoTitle + ">");
 		}
 	}
 
@@ -1386,7 +1335,7 @@ public class Converter extends Thread {
 		}
 		return null;
 	}
-/*
+
 	private String detectTitleFromOptionalThread(File dir){
 		String list[] = dir.list(DefaultVideoIDFilter);
 		if(list == null){ return null; }
@@ -1400,7 +1349,7 @@ public class Converter extends Thread {
 		}
 		return null;
 	}
-*/
+
 	private ArrayList<String> detectFilelistFromComment(File dir){
 		String list[] = dir.list(DefaultVideoIDFilter);
 		if (list == null) { return null; }

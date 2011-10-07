@@ -20,11 +20,4 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>edu.umd.cs.findbugs.plugin.eclipse.findbugsNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>option</name>
-			<type>2</type>
-			<location>C:/Users/orz/workspace/document_etc/option</location>
-		</link>
-	</linkedResources>
 </projectDescription>

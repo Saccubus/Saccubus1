@@ -74,7 +74,8 @@ public class MainFrame extends JFrame {
 	JLabel PasswordLabel = new JLabel();
 	JPasswordField PasswordField = new JPasswordField();
 	JPanel CommentSaveInfoPanel = new JPanel();
-	JPanel OwnerCommentInfoPanel = new JPanel();
+//	JPanel OwnerCommentInfoPanel = new JPanel();
+	JPanel OldCommentModePanel = new JPanel();
 	GridBagLayout gridBagLayout4 = new GridBagLayout();
 	JCheckBox SavingVideoCheckBox = new JCheckBox();
 	JTextField VideoSavedFileField = new JTextField();
@@ -82,7 +83,9 @@ public class MainFrame extends JFrame {
 	JCheckBox SavingCommentCheckBox = new JCheckBox();
 	JTextField CommentSavedFileField = new JTextField();
 	JCheckBox AddTimeStampToCommentCheckBox = new JCheckBox();
-	JCheckBox SavingOwnerCommentCheckBox = new JCheckBox();
+//	JCheckBox SavingOwnerCommentCheckBox = new JCheckBox();
+	JCheckBox oldCommentModeEnableCheckBox = new JCheckBox();
+	JCheckBox newCommentModeEnableCheckBox = new JCheckBox();
 	JLabel OwnerCommentNoticeLabel1 = new JLabel();
 	JButton ShowSavingCommentFileDialogButton = new JButton();
 	JPanel ConvertedVideoSavingInfoPanel = new JPanel();
@@ -126,6 +129,7 @@ public class MainFrame extends JFrame {
 	JCheckBox disableLinefeedResizeCheckBox = new JCheckBox();
 	JCheckBox disableDoubleResizeCheckBox = new JCheckBox();
 	JCheckBox disableOriginalResizeCheckBox = new JCheckBox();
+	JComboBox commentModeComboBox = new JComboBox(commentModeArray);
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
 	private static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
@@ -133,6 +137,12 @@ public class MainFrame extends JFrame {
 	private static final Insets INSETS_0_0_0_5 = new Insets(0, 0, 0, 5);
 	private static final Insets INSETS_0_0_0_0 = new Insets(0, 0, 0, 0);
 	private static final Insets INSETS_5_5_5_5 = new Insets(5, 5, 5, 5);
+	private static final Insets INSETS_0_25_0_5 = new Insets(0, 25, 0, 5);
+	private static final String[] commentModeArray = {
+		"0：コメント表示自動選択（2010年12月22日以後は新表示）",
+		"1：新コメント表示（毎分最新100コメント＋旧表示）",
+		"2：旧コメント表示（最大10分以上で1000コメント表示）",
+	};
 
 	public MainFrame() {
 		try {
@@ -339,7 +349,7 @@ public class MainFrame extends JFrame {
 		grid5_x0_y8_43.gridy = 8;
 		GridBagConstraints grid5_x0_y7_42 = new GridBagConstraints(0, 4,
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(0, 25, 0, 5), 0, 0);
+				GridBagConstraints.NONE, INSETS_0_25_0_5, 0, 0);
 		grid5_x0_y7_42.gridy = 7;
 		GridBagConstraints grid5_x0_y6_41 = new GridBagConstraints(0, 3,
 				3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
@@ -361,7 +371,7 @@ public class MainFrame extends JFrame {
 		grid5_x0_y4_39.gridy = 4;
 		GridBagConstraints grid5_x0_y3_40 = new GridBagConstraints(0, 2,
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(0, 25, 0, 5), 0, 0);
+				GridBagConstraints.NONE, INSETS_0_25_0_5, 0, 0);
 		grid5_x0_y3_40.gridy = 3;
 		GridBagConstraints grid5_x0_y2_81 = new GridBagConstraints();
 		grid5_x0_y2_81.gridx = 0;
@@ -370,7 +380,7 @@ public class MainFrame extends JFrame {
 		grid5_x0_y2_81.gridheight = 1;
 		grid5_x0_y2_81.anchor = GridBagConstraints.CENTER;
 		grid5_x0_y2_81.fill = GridBagConstraints.BOTH;
-		grid5_x0_y2_81.insets = new Insets(0, 25, 0, 5);
+		grid5_x0_y2_81.insets = INSETS_0_25_0_5;
 		GridBagConstraints grid5_x0_y1_78 = new GridBagConstraints();
 		grid5_x0_y1_78.gridx = 0;
 		grid5_x0_y1_78.gridy = 1;
@@ -378,7 +388,7 @@ public class MainFrame extends JFrame {
 		grid5_x0_y1_78.gridheight = 1;
 		grid5_x0_y1_78.anchor = GridBagConstraints.CENTER;
 		grid5_x0_y1_78.fill = GridBagConstraints.BOTH;
-		grid5_x0_y1_78.insets = new Insets(0, 25, 0, 5);
+		grid5_x0_y1_78.insets = INSETS_0_25_0_5;
 		GridBagConstraints grid2_x__y__35 = new GridBagConstraints();
 		grid2_x__y__35.fill = GridBagConstraints.BOTH;
 		grid2_x__y__35.weighty = 1.0;
@@ -393,7 +403,7 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid4_x0_y9_26 = new GridBagConstraints();
 		grid4_x0_y9_26.gridx = 0;
 		grid4_x0_y9_26.gridwidth = 4;
-		grid4_x0_y9_26.insets = new Insets(0, 25, 0, 5);
+		grid4_x0_y9_26.insets = INSETS_0_25_0_5;
 		grid4_x0_y9_26.weightx = 1.0;
 		grid4_x0_y9_26.fill = GridBagConstraints.HORIZONTAL;
 		grid4_x0_y9_26.gridy = 9;
@@ -401,7 +411,7 @@ public class MainFrame extends JFrame {
 		grid4_x0_y8_25.gridx = 0;
 		grid4_x0_y8_25.gridwidth = 4;
 		grid4_x0_y8_25.fill = GridBagConstraints.HORIZONTAL;
-		grid4_x0_y8_25.insets = new Insets(0, 25, 0, 5);
+		grid4_x0_y8_25.insets = INSETS_0_25_0_5;
 		grid4_x0_y8_25.weightx = 1.0;
 		grid4_x0_y8_25.gridy = 8;
 		GridBagConstraints grid4_x3_y14_24 = new GridBagConstraints(3, 10,
@@ -422,7 +432,7 @@ public class MainFrame extends JFrame {
 		grid4_x0_y14_21.gridy = 14;
 		GridBagConstraints grid4_x0_y13_20 = new GridBagConstraints(0, 9,
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 25, 0, 5), 0, 0);
+				GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0, 0);
 		grid4_x0_y13_20.gridy = 13;
 		GridBagConstraints grid4_x0_y12_19 = new GridBagConstraints(0, 8,
 				3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
@@ -430,7 +440,7 @@ public class MainFrame extends JFrame {
 		grid4_x0_y12_19.gridy = 12;
 		GridBagConstraints grid4_x0_y11_18 = new GridBagConstraints(0, 7,
 				4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 25, 0, 5), 0, 0);
+				GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0, 0);
 		grid4_x0_y11_18.gridy = 11;
 		GridBagConstraints grid4_x0_y10_17 = new GridBagConstraints(0, 6,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
@@ -447,27 +457,21 @@ public class MainFrame extends JFrame {
 		grid4_x0_y7_86.gridwidth = 4;
 		grid4_x0_y7_86.anchor = GridBagConstraints.WEST;
 		grid4_x0_y7_86.fill = GridBagConstraints.HORIZONTAL;
-		grid4_x0_y7_86.insets = new Insets(0, 25, 0, 5);
+		grid4_x0_y7_86.insets = INSETS_0_25_0_5;
 		GridBagConstraints grid11_x0_y0_75 = new GridBagConstraints();
 		grid11_x0_y0_75.gridx = 0;
 		grid11_x0_y0_75.gridy = 0;
-		grid11_x0_y0_75.gridwidth = 4;
-		grid11_x0_y0_75.gridheight = 1;
 		grid11_x0_y0_75.weightx = 1.0;
-		grid11_x0_y0_75.weighty = 0.0;
-		grid11_x0_y0_75.anchor = GridBagConstraints.NORTHWEST;
+		grid11_x0_y0_75.anchor = GridBagConstraints.CENTER;
 		grid11_x0_y0_75.fill = GridBagConstraints.HORIZONTAL;
 		grid11_x0_y0_75.insets = INSETS_0_5_5_5;
 		GridBagConstraints grid11_x0_y1_76 = new GridBagConstraints();
 		grid11_x0_y1_76.gridx = 0;
 		grid11_x0_y1_76.gridy = 1;
-		grid11_x0_y1_76.gridwidth = 4;
-		grid11_x0_y1_76.gridheight = 1;
 		grid11_x0_y1_76.weightx = 1.0;
-		grid11_x0_y1_76.weighty = 0.0;
-		grid11_x0_y1_76.anchor = GridBagConstraints.NORTHWEST;
+		grid11_x0_y1_76.anchor = GridBagConstraints.WEST;
 		grid11_x0_y1_76.fill = GridBagConstraints.HORIZONTAL;
-		grid11_x0_y1_76.insets = new Insets(0, 25, 5, 5);
+		grid11_x0_y1_76.insets = INSETS_0_5_5_5;
 		GridBagConstraints grid8_x0_y8_14 = new GridBagConstraints();
 		grid8_x0_y8_14.gridx = 0;
 		grid8_x0_y8_14.anchor = GridBagConstraints.WEST;
@@ -622,7 +626,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y7_103.weightx = 1.0;
 		grid13_x0_y7_103.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y7_103.fill = GridBagConstraints.HORIZONTAL;
-		grid13_x0_y7_103.insets = new Insets(0, 25, 0, 5);
+		grid13_x0_y7_103.insets = INSETS_0_25_0_5;
 		BrowserInfoPanel.add(BrowserCookieField, grid13_x0_y7_103);
 		BrowserCookieDialogButton.setText("参照");
 		BrowserCookieDialogButton.setForeground(Color.blue);
@@ -674,17 +678,16 @@ public class MainFrame extends JFrame {
 				.addActionListener(new MainFrame_ShowSavingCommentFolderDialogButton_actionAdapter(
 						this));
 		Comment_SaveFileRadioButton.setText("保存するファイル名を指定する");
-		OwnerCommentInfoPanel.setBorder(BorderFactory.createTitledBorder(
+ 		OldCommentModePanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"投稿者コメント保存設定", TitledBorder.LEADING, TitledBorder.TOP,
-			//	new Font("MS UI Gothic", Font.PLAIN, 12),
+				"投稿者コメント保存説明・コメント表示モード設定", TitledBorder.LEADING, TitledBorder.TOP,
 				getFont(), Color.blue));
-		OwnerCommentInfoPanel.setLayout(gridBagLayout11);
-		SavingOwnerCommentCheckBox.setForeground(Color.blue);
-		SavingOwnerCommentCheckBox.setText("投稿者コメントをダウンロードする　（取得数＝１０００ 固定）");
-		OwnerCommentNoticeLabel1.setText("（フォルダ指定は通常コメントの設定通り・変換後に削除しない）");
+ 		OldCommentModePanel.setLayout(gridBagLayout11);
+ 		commentModeComboBox.setForeground(Color.blue);
+		OwnerCommentNoticeLabel1.setText("投稿者コメント保存　取得数１０００ 　フォルダ指定は通常コメントの設定通り・変換後に削除しない");
 		OwnerCommentNoticeLabel1.setForeground(Color.blue);
 		OwnerCommentNoticeLabel1.setToolTipText("ファイル名は、タイトル＋［Ｏｗｎｅｒ］．ｘｍｌ");
+
 		ConvertedVideoSavingInfoPanel.setBorder(BorderFactory
 				.createTitledBorder(BorderFactory.createEtchedBorder(),
 						"コメント付き動画保存設定"));
@@ -1008,8 +1011,8 @@ public class MainFrame extends JFrame {
 		CommentSaveInfoPanel.add(Comment_SaveFileRadioButton,grid4_x0_y13_20);
 		CommentSaveInfoPanel.add(CommentSavedFileField, grid4_x0_y14_21);
 		CommentSaveInfoPanel.add(ShowSavingCommentFileDialogButton,grid4_x3_y14_24);
-		OwnerCommentInfoPanel.add(SavingOwnerCommentCheckBox, grid11_x0_y0_75);
-		OwnerCommentInfoPanel.add(OwnerCommentNoticeLabel1, grid11_x0_y1_76);
+		OldCommentModePanel.add(commentModeComboBox, grid11_x0_y0_75);
+		OldCommentModePanel.add(OwnerCommentNoticeLabel1, grid11_x0_y1_76);
 		ConvertedVideoSavingInfoPanel.add(SavingConvertedVideoCheckBox,
 				new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -1444,7 +1447,8 @@ public class MainFrame extends JFrame {
 			SavingCommentCheckBox.isSelected(),
 			AddTimeStampToCommentCheckBox.isSelected(),
 			CommentSavedFileField.getText(),
-			SavingOwnerCommentCheckBox.isSelected(),
+//			SavingOwnerCommentCheckBox.isSelected(),
+			true,
 			ownercomment,
 			SavingConvertedVideoCheckBox.isSelected(),
 			ConvertWithCommentCheckBox.isSelected(),
@@ -1502,7 +1506,8 @@ public class MainFrame extends JFrame {
 			OptionalTranslucentCheckBox.isSelected(),
 			fontHeightFixCheckBox.isSelected(),
 			fontHeightRatioTextField.getText(),
-			disableOriginalResizeCheckBox.isSelected()
+			disableOriginalResizeCheckBox.isSelected(),
+			commentModeComboBox.getSelectedIndex()
 		);
 	}
 
@@ -1514,7 +1519,8 @@ public class MainFrame extends JFrame {
 		SavingCommentCheckBox.setSelected(setting.isSaveComment());
 		AddTimeStampToCommentCheckBox.setSelected(setting.isAddTimeStamp());
 		CommentSavedFileField.setText(setting.getCommentFile().getPath());
-		SavingOwnerCommentCheckBox.setSelected(setting.isSaveOwnerComment());
+//		SavingOwnerCommentCheckBox.setSelected(setting.isSaveOwnerComment());
+		commentModeComboBox.setSelectedIndex(setting.getCommentIndex());
 		SavingConvertedVideoCheckBox.setSelected(setting.isSaveConverted());
 		ConvertWithCommentCheckBox.setSelected(setting.isConvertWithComment());
 		ConvertWithOwnerCommentCheckBox.setSelected(setting.isConvertWithOwnerComment());
@@ -2147,7 +2153,7 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y1_15.gridx = 0;
 			grid_x0_y1_15.gridy = 1;
 			grid_x0_y1_15.weightx = 1.0;
-			grid_x0_y1_15.insets = new Insets(0, 25, 0, 5);
+			grid_x0_y1_15.insets = INSETS_0_25_0_5;
 			GridBagConstraints grid_x3_y5_32 = new GridBagConstraints(3,
 					4, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH,
 					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
@@ -2162,7 +2168,7 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y5_30.gridy = 5;
 			GridBagConstraints grid_x0_y4_29 = new GridBagConstraints(0,
 					3, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-					GridBagConstraints.BOTH, new Insets(0, 25, 0, 5), 0, 0);
+					GridBagConstraints.BOTH, INSETS_0_25_0_5, 0, 0);
 			grid_x0_y4_29.gridx = 0;
 			grid_x0_y4_29.gridy = 4;
 			GridBagConstraints grid_x0_y3_28 = new GridBagConstraints(0,
@@ -2172,7 +2178,7 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y3_28.gridy = 3;
 			GridBagConstraints grid_x0_y2_27 = new GridBagConstraints(0,
 					1, 4, 1, 1.0, 0.0, GridBagConstraints.WEST,
-					GridBagConstraints.HORIZONTAL, new Insets(0, 25, 0, 5), 0,
+					GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0,
 					0);
 			grid_x0_y2_27.gridx = 0;
 			grid_x0_y2_27.gridy = 2;
@@ -2265,7 +2271,7 @@ s	 * @return javax.swing.JPanel
 					grid_x_y_36);
 			VideoSavingTabbedPanel.add(CommentSaveInfoPanel,
 					grid_x0_y1_37);
-			VideoSavingTabbedPanel.add(OwnerCommentInfoPanel,
+			VideoSavingTabbedPanel.add(OldCommentModePanel,
 					grid_x0_y2_79);
 		}
 		return VideoSavingTabbedPanel;

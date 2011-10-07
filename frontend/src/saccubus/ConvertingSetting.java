@@ -101,6 +101,7 @@ public class ConvertingSetting {
 	private boolean fontHeightFix;
 	private String fontHeightFixRatio;
 	private boolean disableOriginalResize;
+	private int commentIndex;
 
 	private ConvertingSetting(
 			String mailaddress,
@@ -266,7 +267,8 @@ public class ConvertingSetting {
 			boolean optional_translucent,
 			boolean font_height_fix,
 			String font_height_fix_raito,
-			boolean disable_original_resize
+			boolean disable_original_resize,
+			int comment_index
 		)
 	{
 		this(	mailaddress,
@@ -310,7 +312,7 @@ public class ConvertingSetting {
 				shadow_index);
 		ConvertWithComment = convertwithcomment;
 		SaveOwnerComment = saveownercomment;
-		if (ownercommentfile.lastIndexOf(".") <= ownercommentfile.lastIndexOf("\\")) {
+		if (ownercommentfile.lastIndexOf(".") <= ownercommentfile.lastIndexOf(File.separator)) {
 			ownercommentfile += ".xml";
 		}
 		OwnerCommentFile = new File(ownercommentfile);
@@ -338,6 +340,7 @@ public class ConvertingSetting {
 		fontHeightFix = font_height_fix;
 		fontHeightFixRatio = font_height_fix_raito;
 		disableOriginalResize = disable_original_resize;
+		commentIndex = comment_index;
 	}
 
 
@@ -542,6 +545,9 @@ public class ConvertingSetting {
 	public boolean isDisableOriginalResize() {
 		return disableOriginalResize;
 	}
+	public int getCommentIndex() {
+		return commentIndex;
+	}
 
 	private static final String PROP_FILE = "./saccubus.xml";
 	private static final String PROP_MAILADDR = "MailAddress";
@@ -626,6 +632,7 @@ public class ConvertingSetting {
 	private static final String PROP_FONT_HEIGHT_FIX = "FontHeightFix";
 	private static final String PROP_FONT_HEIGHT_FIX_RAITO = "FontHeightFixRaito";
 	private static final String PROP_DISABLE_ORIGINAL_RESIZE = "DisableOriginalResize";
+	private static final String PROP_COMMENT_MODE_INDEX = "CommentMode";
 
 	/*
 	 * ‚±‚±‚Ü‚ÅŠg’£Ý’è 1.22r3 ‚É‘Î‚·‚é
@@ -744,6 +751,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_FONT_HEIGHT_FIX, Boolean.toString(setting.isFontHeightFix()));
 		prop.setProperty(PROP_FONT_HEIGHT_FIX_RAITO,setting.getFontHeightFixRaito());
 		prop.setProperty(PROP_DISABLE_ORIGINAL_RESIZE, Boolean.toString(setting.isDisableOriginalResize()));
+		prop.setProperty(PROP_COMMENT_MODE_INDEX, Integer.toString(setting.getCommentIndex()));
 
 		/*
 		 * ‚±‚±‚Ü‚ÅŠg’£Ý’è•Û‘¶ 1.22r3 ‚É‘Î‚·‚é
@@ -848,7 +856,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_OPTIONAL_TRANSLUCENT, "true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_FONT_HEIGHT_FIX,"true")),
 			prop.getProperty(PROP_FONT_HEIGHT_FIX_RAITO,"116"),
-			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ORIGINAL_RESIZE, "true"))
+			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ORIGINAL_RESIZE, "true")),
+			Integer.parseInt(prop.getProperty(PROP_COMMENT_MODE_INDEX, "0"))
 		);
 	}
 
