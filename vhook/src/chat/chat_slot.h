@@ -10,6 +10,7 @@ struct CHAT_SLOT_ITEM{
 	CHAT_ITEM* chat_item;
 	SDL_Surface* surf;
 	int y;
+	float speed;
 	//ƒŠƒtƒ@ƒŒƒ“ƒX
 	CHAT_SLOT* slot;
 };

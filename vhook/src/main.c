@@ -6,6 +6,8 @@
 #include "mydef.h"
 #include "nicodef.h"
 #include "process.h"
+int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, const char* com_type);
+
 /**
  * ライブラリ初期化
  */
@@ -34,9 +36,9 @@ int init(FILE* log){
  */
 int initData(DATA* data,FILE* log,const SETTING* setting){
 	int i;
-	data->enable_user_comment = setting->enable_user_comment;
-	data->enable_owner_comment = setting->enable_owner_comment;
-	data->enable_optional_comment = setting->enable_optional_comment;
+	data->user.enable_comment = setting->enable_user_comment;
+	data->owner.enable_comment = setting->enable_owner_comment;
+	data->optional.enable_comment = setting->enable_optional_comment;
 	data->log = log;
 	data->fontsize_fix = setting->fontsize_fix;
 	data->show_video = setting->show_video;
@@ -45,7 +47,13 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	data->shadow_kind = setting->shadow_kind;
 	data->process_first_called=FALSE;
 	data->video_length = setting->video_length;
+	if (data->video_length <= 0){
+		data->video_length = INTEGER_MAX;
+	}
 	data->nico_width_now = setting->nico_width_now;
+	data->font_h_fix_r = setting->font_h_fix_r;
+	data->original_resize = setting->original_resize;
+	data->comment_speed = setting->comment_speed;
 	fputs("[main/init]initializing context...\n",log);
 	//フォント
 	TTF_Font** font = data->font;
@@ -75,68 +83,59 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	/*
 	 * ユーザコメント
 	 */
-	if(data->enable_user_comment){
-		fputs("[main/init]User Comment is enabled.\n",log);
-		//コメントデータ
-		if(initChat(log,&data->chat,setting->data_user_path,&data->slot,data->video_length)){
-			fputs("[main/init]initialized comment.\n",log);
-		}else{
-			fputs("[main/init]failed to initialize comment.",log);
-			return FALSE;
-		}
-		//コメントスロット
-		if(initChatSlot(log,&data->slot,setting->user_slot_max,&data->chat)){
-			fputs("[main/init]initialized comment slot.\n",log);
-		}else{
-			fputs("[main/init]failed to initialize comment slot.",log);
-			return FALSE;
-		}
+	if (!initCommentData(data, &data->user, log,
+			setting->data_user_path, setting->user_slot_max, "user")){
+		return FALSE;
 	}
 	/*
 	 * オーナコメント
 	 */
-	if(data->enable_owner_comment){
-		fputs("[main/init]Owner Comment is enabled.\n",log);
-		//コメントデータ
-		if(initChat(log,&data->ownerchat,setting->data_owner_path,&data->ownerslot,data->video_length)){
-			fputs("[main/init]initialized owner comment.\n",log);
-		}else{
-			fputs("[main/init]failed to initialize owner comment.",log);
-			return FALSE;
-		}
-		//コメントスロット	owner_slot_max must be infinite
-		if(initChatSlot(log,&data->ownerslot, setting->owner_slot_max,&data->ownerchat)){
-			fputs("[main/init]initialized owner comment slot.\n",log);
-		}else{
-			fputs("[main/init]failed to initialize owner comment slot.",log);
-			return FALSE;
-		}
+	if (!initCommentData(data, &data->owner, log,
+			setting->data_owner_path, setting->owner_slot_max, "owner")){
+		return FALSE;
 	}
 	/*
 	 * オプショナルコメント
 	 */
-	if(data->enable_optional_comment){
-		fputs("[main/init]Optional Comment is enabled.\n",log);
-		//コメントデータ
-		if(initChat(log,&data->optionalchat,setting->data_optional_path,&data->optionalslot,data->video_length)){
-			fputs("[main/init]initialized optional comment.\n",log);
-		}else{
-			fputs("[main/init]failed to initialize optional comment.",log);
-			return FALSE;
-		}
-		//コメントスロット	owner_slot_max must be infinite
-		if(initChatSlot(log,&data->optionalslot, setting->optional_slot_max,&data->optionalchat)){
-			fputs("[main/init]initialized optional comment slot.\n",log);
-		}else{
-			fputs("[main/init]failed to initialize optional comment slot.",log);
-			return FALSE;
-		}
+	if (!initCommentData(data, &data->optional, log,
+			setting->data_optional_path, setting->optional_slot_max, "optional")){
+		return FALSE;
 	}
 
 	//終わり。
 	fputs("[main/init]initialized context.\n",log);
 	return TRUE;
 }
+/*
+ * コメントデータの初期化
+ * DATA data->user owner optional
+ */
+int initCommentData(DATA* data, CDATA* cdata,FILE* log,const char* path, int max_slot, const char* com_type){
+	if (cdata->enable_comment){
+		fprintf(log,"[main/init]%s comment is enabled.\n",com_type);
+		//コメントデータ
+		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length)){
+			fprintf(log,"[main/init]initialized %s comment.\n",com_type);
+		}else{
+			fprintf(log,"[main/init]failed to initialize %s comment.",com_type);
+			return FALSE;
+		}
+		if (cdata->chat.max_item > 0){
+			//コメントスロット
+			if(initChatSlot(log, &cdata->slot, max_slot, &cdata->chat)){
+				fprintf(log,"[main/init]initialized %s comment slot.\n",com_type);
+			}else{
+				fprintf(log,"[main/init]failed to initialize %s comment slot.",com_type);
+				return FALSE;
+			}
+		} else {
+			cdata->enable_comment = FALSE;
+			fprintf(log,"[main/init]%s comment has changed to disable.\n",com_type);
+		}
+	}
+	return TRUE;
+}
+
 /*
  * 映像の変換
  */
@@ -177,19 +176,19 @@ int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 int closeData(DATA* data){
 	int i;
 	//ユーザコメントが有効なら開放
-	if(data->enable_user_comment){
-		closeChat(&data->chat);
-		closeChatSlot(&data->slot);
+	if(data->user.enable_comment){
+		closeChat(&data->user.chat);
+		closeChatSlot(&data->user.slot);
 	}
 	//オーナコメントが有効なら開放
-	if(data->enable_owner_comment){
-		closeChat(&data->ownerchat);
-		closeChatSlot(&data->ownerslot);
+	if(data->owner.enable_comment){
+		closeChat(&data->owner.chat);
+		closeChatSlot(&data->owner.slot);
 	}
 	//オプショナルコメントが有効なら開放
-	if(data->enable_optional_comment){
-		closeChat(&data->optionalchat);
-		closeChatSlot(&data->optionalslot);
+	if(data->optional.enable_comment){
+		closeChat(&data->optional.chat);
+		closeChatSlot(&data->optional.slot);
 	}
 		//フォント開放
 	for(i=0;i<CMD_FONT_MAX;i++){

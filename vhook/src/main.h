@@ -7,23 +7,32 @@
 #include "chat/chat.h"
 #include "chat/chat_slot.h"
 
+struct CDATA{
+	int enable_comment;
+	CHAT chat;
+	CHAT_SLOT slot;
+};
+
 struct DATA{
 	FILE* log;
 	TTF_Font* font[CMD_FONT_MAX];
 	SDL_Surface* screen;
 	/*それぞれのコメントに応じたデータ*/
 	//ユーザコメント
-	int enable_user_comment;
-	CHAT chat;
-	CHAT_SLOT slot;
+	CDATA user;
+//	int enable_user_comment;
+//	CHAT chat;
+//	CHAT_SLOT slot;
 	//投稿者コメント
-	int enable_owner_comment;
-	CHAT ownerchat;
-	CHAT_SLOT ownerslot;
+	CDATA owner;
+//	int enable_owner_comment;
+//	CHAT ownerchat;
+//	CHAT_SLOT ownerslot;
 	//オプショナルコメント
-	int enable_optional_comment;
-	CHAT optionalchat;
-	CHAT_SLOT optionalslot;
+	CDATA optional;
+//	int enable_optional_comment;
+//	CHAT optionalchat;
+//	CHAT_SLOT optionalslot;
 	//一般的なデータ
 	int shadow_kind;
 	int show_video;
@@ -34,6 +43,9 @@ struct DATA{
 	int video_length;
 //	int aspect100;		// アスペクト比*100	Not used now
 	int nico_width_now;	// 元動画の横幅
+	float font_h_fix_r;	// フォントの高さをnicoplayer.swfに合わせる倍率(0< <2)（実験的）
+	int original_resize;	// さきゅばす独自リサイズが有効（デフォルト有効）
+	int comment_speed;	// コメント速度を指定する場合≠0
 };
 
 typedef struct SETTING{
@@ -60,6 +72,9 @@ typedef struct SETTING{
 	int opaque_comment;
 	int optional_trunslucent;
 	// コミュニティ動画では通常コメントをオプショナルスレッドとして半透明にしているため、選択可能にする
+	float font_h_fix_r;	// フォントの高さをnicoplayer.swfに合わせる倍率（実験的）
+	int original_resize;	// さきゅばす独自リサイズが有効（デフォルト有効）
+	int comment_speed;	// コメント速度を指定する場合≠0
 }SETTING;
 
 int init(FILE* log);

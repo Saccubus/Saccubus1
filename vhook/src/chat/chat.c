@@ -28,6 +28,10 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	max_item = SDL_SwapLE32(max_item);
 	fprintf(log,"[chat/init]%d comments.\n",max_item);
 	chat->max_item = max_item;
+	//
+	if (max_item == 0){
+		return TRUE;
+	}
 	//アイテム配列の確保
 	chat->item = malloc(sizeof(CHAT_ITEM) * max_item);
 	if(chat->item == NULL){
@@ -113,7 +117,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			item->vstart = vpos - TEXT_AHEAD_SEC;
 			item->vend = item->vstart + TEXT_SHOW_SEC;
 		}
-		if (video_length != 0){
+		if (video_length > 0){
 			int fix = item->vend - video_length;
 			if(fix > 0){
 				item->vend -= fix;

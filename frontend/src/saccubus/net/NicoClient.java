@@ -630,7 +630,8 @@ public class NicoClient {
 
 	private String commentCommand2006(CommentType comType, String back_comment){
 		return "<thread user_id=\"" + UserID
-		+  "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey
+		+ "\" scores=\"1"	//NGscore
+		+ "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey
 		+ "\" res_from=\"-" + back_comment
 		+ "\" version=\"20061206\" thread=\"" + ThreadID
 		+ Official
@@ -651,6 +652,7 @@ public class NicoClient {
 		if(NeedsKey){
 			sb.append(Official);
 		}
+		sb.append("\" scores=\"1");	//NGscore
 		sb.append("\"/>");
 		//thread end, thread_leaves start
 		sb.append("<thread_leaves thread=\"" + ThreadID);
@@ -661,6 +663,7 @@ public class NicoClient {
 		if(NeedsKey){
 			sb.append(Official);
 		}
+		sb.append("\" scores=\"1");	//NGscore
 		sb.append("\">0-");	//>0-10:100,1000<
 		sb.append((VideoLength + 59) / 60);
 		sb.append(":100,");

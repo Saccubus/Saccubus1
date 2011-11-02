@@ -196,7 +196,7 @@ public class ChatSave {
 */
 	public void setComment(String com_str) {
 		// System.out.println("Comment[" + com_str.length() + "]:" + com_str);
-		Comment = com_str;
+		Comment += com_str;
 	}
 
 	public void printXML(PrintWriter pw)

@@ -92,6 +92,7 @@ void addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int 
 	}else{
 		y = 0;
 	}
+	setspeed(data->comment_speed,slot_item,video_width);
 	int running;
 	do{
 		running = FALSE;

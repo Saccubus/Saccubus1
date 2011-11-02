@@ -1,5 +1,6 @@
 package saccubus;
 
+import java.util.Date;
 import java.util.Properties;
 import java.io.IOException;
 import java.io.FileOutputStream;
@@ -102,6 +103,8 @@ public class ConvertingSetting {
 	private String fontHeightFixRatio;
 	private boolean disableOriginalResize;
 	private int commentIndex;
+	private boolean setCommentSpeed;
+	private String commentSpeed;
 
 	private ConvertingSetting(
 			String mailaddress,
@@ -268,7 +271,9 @@ public class ConvertingSetting {
 			boolean font_height_fix,
 			String font_height_fix_raito,
 			boolean disable_original_resize,
-			int comment_index
+			int comment_index,
+			boolean set_comment_speed,
+			String comment_speed
 		)
 	{
 		this(	mailaddress,
@@ -341,6 +346,8 @@ public class ConvertingSetting {
 		fontHeightFixRatio = font_height_fix_raito;
 		disableOriginalResize = disable_original_resize;
 		commentIndex = comment_index;
+		setCommentSpeed = set_comment_speed;
+		commentSpeed = comment_speed;
 	}
 
 
@@ -548,6 +555,12 @@ public class ConvertingSetting {
 	public int getCommentIndex() {
 		return commentIndex;
 	}
+	public boolean isSetCommentSpeed(){
+		return setCommentSpeed;
+	}
+	public String getCommentSpeed(){
+		return commentSpeed;
+	}
 
 	private static final String PROP_FILE = "./saccubus.xml";
 	private static final String PROP_MAILADDR = "MailAddress";
@@ -633,6 +646,8 @@ public class ConvertingSetting {
 	private static final String PROP_FONT_HEIGHT_FIX_RAITO = "FontHeightFixRaito";
 	private static final String PROP_DISABLE_ORIGINAL_RESIZE = "DisableOriginalResize";
 	private static final String PROP_COMMENT_MODE_INDEX = "CommentMode";
+	private static final String PROP_SET_COMMENT_SPEED = "SetCommentSpeed";
+	private static final String PROP_COMMENT_SPEED = "CommentSpeed";
 
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -752,12 +767,15 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_FONT_HEIGHT_FIX_RAITO,setting.getFontHeightFixRaito());
 		prop.setProperty(PROP_DISABLE_ORIGINAL_RESIZE, Boolean.toString(setting.isDisableOriginalResize()));
 		prop.setProperty(PROP_COMMENT_MODE_INDEX, Integer.toString(setting.getCommentIndex()));
+		prop.setProperty(PROP_SET_COMMENT_SPEED, Boolean.toString(setting.isSetCommentSpeed()));
+		prop.setProperty(PROP_COMMENT_SPEED, setting.getCommentSpeed());
 
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
 		try {
-			prop.storeToXML(new FileOutputStream(PROP_FILE), "settings");
+			prop.storeToXML(new FileOutputStream(PROP_FILE),
+				"settings-"+new Date().toString()+"-Rev"+MainFrame_AboutBox.rev);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -857,7 +875,9 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_FONT_HEIGHT_FIX,"true")),
 			prop.getProperty(PROP_FONT_HEIGHT_FIX_RAITO,"116"),
 			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ORIGINAL_RESIZE, "true")),
-			Integer.parseInt(prop.getProperty(PROP_COMMENT_MODE_INDEX, "0"))
+			Integer.parseInt(prop.getProperty(PROP_COMMENT_MODE_INDEX, "0")),
+			Boolean.parseBoolean(prop.getProperty(PROP_SET_COMMENT_SPEED, "false")),
+			prop.getProperty(PROP_COMMENT_SPEED, "")
 		);
 	}
 

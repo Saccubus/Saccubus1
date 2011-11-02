@@ -5,10 +5,15 @@
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造板です。
 
-　・1.26α3 (2011/10/07)　新コメント表示を旧表示と切り替え可能
+　・1.26α4 (2011/11/02)　コメント速度を独自指定可能、Pixel/Sec
 
 □修正・改変点
-　1.26α3 
+　1.26α4
+　・コメント速度を独自指定可能、Pixel/Sec
+　・コメントスコア読み込み
+　・[log]vhext.txtを temp\「動画ID」[log]vhext.txtに移動
+
+　1.26α3以降
 　・新コメント表示を旧表示と切り替え可能
 
 　1.26α2以降
@@ -151,32 +156,25 @@
 
 
 ●注意●
-　・本Rev.は確定版SDLライブラリを同梱しています。（binフォルダ内）
-　　1.23より前のSDLライブラリは使用しないで下さい。
-　・本Rev.は再修正版optionファイルを同梱しています。
+　・本Rev.は確定版SDLライブラリ（2011/11/02版）を同梱しています。（binフォルダ内）
+　　本RevからlibSDL_gfx-13.dllが不要になりました。
+　　（nicovideoE.dllにスタティックリンク済み）
+　・本Rev.は再修正版optionファイル（2011/11/02版）を同梱しています。
+　　（iPhone用仮×2、PSP用追加×2を追加）
 　　1.22r3 1.22r3e8aBETA 及び本スレ>>153のoptionファイルは■破棄・削除■して下さい。
 
 □インストール方法と拡張機能設定
-　1.22r2以前のさきゅばすを使用中の方は「初めてさきゅばすを使う方」
-　を実行して下さい。
+　◆1.22r2以前のさきゅばすを使用中の方
+　　「初めてさきゅばすを使う方」を実行して下さい。
 
-　1.26α以降をご使用中の方
-　・Saccubus.jarを差し替えます。
-
-　1.25r以前、1.23以降のさきゅばすをご使用中の方
-　・Saccubus.jarとSaccubus.exeと
-　　bin\nicovideoE.dllを差し替えます。
-
-　1.22r3e8以前、1.22r3以降のRev.をご使用中の方は以下が必要です。
-　・Saccubus.jarとSaccubus.exeを差し替えます。
-　・本Rev.のbinフォルダ内のファイルを使用中のbinフォルダに
-　　コピーして下さい。
-　　(もしファイルが上書きされる場合、先にバックアップして下さい)
+　◆1.22r3以降をご使用中の方
 　・自分で修正したoptionファイルをお持ちの方は
 　　自分が使用するオプションファイルだけ別の場所に移動して下さい。
-　　元のoptionフォルダを■削除■して下さい。
-　　本Rev.のoptionフォルダをさきゅばすフォルダにコピーして下さい。
-　　移動したファイルをoption内にコピーして戻して下さい。
+　・以前のさきゅばすフォルダに全て上書きして下さい。
+　・移動したオプションファイルをoption内にコピーして戻して下さい。
+　◆拡張機能
+　・コメント速度を独自に指定可能になりました。
+　・コメント表示モードが新表示・旧表示を選択可能になりました。
 　・動画アスペクト比によるオプション自動判定ができるようになりました。
 　　「動画設定」「変換オプション設定」「FFmpegの設定１」と「FFmpegの設定２」に
 　　自動判定の結果選択するオプションを設定します。
@@ -190,11 +188,11 @@
 　　問題は1.25rで対処済みです。
 
 
-　初めてさきゅばすを使う方
-　及び1.22r2以前のさきゅばすを使用中の方
+　◆初めてさきゅばすを使う方
+　　及び1.22r2以前のさきゅばすを使用中の方
 　・前スレ>>341
 　　(http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip)
-　　をダウンロードし展開します。
+　　をダウンロードし展開します。(ドライブ直下の\saccubusを推奨)
 　　binフォルダの FFmpeg.exe、nicovideo.dll が必要です。
 　　*** 同梱しているbinフォルダのファイルだけでは動作しません ***
 　・1.22r3のoptionフォルダを■削除■して下さい。
@@ -217,6 +215,16 @@
 　　過去ログをダウンロードするには（プレミアム会員が必要条件）日付を
 　　2009/7/7 7:7:7 や 2009/7/7 7:7 や 2009/7/7 のように入力します。
 　　右上の変換ボタンをクリックするとダウンロードと変換が開始します。
+
+●コメント速度を独自に指定可能になりました。
+　「変換設定」「拡張vhookライブラリの設定」「コメント速度」にチェックし
+　入力欄にPixel/Secを指定します。（公式の最小値は約130です）
+
+●コメントスコア読み込み
+　■本機能は nicocache_nlと2chスレ
+　　「【ニコニコ】自動ローカル保存プロクシ NicoCache14」
+　　http://hibari.2ch.net/test/read.cgi/software/1305280003/811
+　　を参考にしました。
 
 ●新コメント表示対応（その３）
 　・全ての動画で、コメント取得数を新コメント表示と旧コメント表示の
@@ -380,16 +388,20 @@
 　・通常の Saccubus.exe の起動では、
 　　[log]frontend.txtにログが出力されていますので参照して下さい。
 　・debug.batをダブルクリックして起動するとログを画面表示します。
+　　（Bin.jarが無いとエラーになります。）
 　　本体が起動するので後は同じです。終了後
 　　ログがフォルダ直下の log.txt に出力されるので
 　　参考にして下さい。
 　・作業ファイルは直下のtempフォルダの下に作成しますが
 　　実行が終了すると削除します。
+　　（時々削除し忘れるので、手動で削除する必要が有ります）
+　・[log]vhext.txtを tempフォルダの下に移動するようになりました。
 　・色々設定を変更した時は、設定を初期化してみて下さい。
 
 ●auto.batで動作が変な時、記録を取りたい時は
 　・auto.batの記述を確かめます。
 　・autodebug.batをダブルクリックして起動します。
+　　（Bin.jarが無いとエラーになります。）
 　　auto.batが実行されるので終了するまで待ちます。
 　　途中でエラーが起きても、最後の動画まで実行してから終了します。
 　　autolog.txtにログが記録されます。
@@ -419,7 +431,7 @@
 
 
 収録物
-・まず最初に.txt
+・まず最初に.txt　readme1st.txt
 ・LICENSE.txt　　　　　　　 GPLライセンス
 ・gpl.ja.txt 　　　　　　　 GPLライセンスの非公式日本語訳
 ・LGPL_LICENSE　　　　　　　LGPLライセンス
@@ -427,14 +439,16 @@
 ・Saccubus.jar　　　　　　　本体　1.26α1
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
 ・bin フォルダ配下
-　　nicovideoE.dll(2011.9.13版)統合版拡張Vhookライブラリ　従来＋ワイド(16x9用)
-　　libSDL_gfx-13.dll、SDL.dll、SDL_ttf.dll
+　　nicovideoE.dll(2011.11.02版)統合版拡張Vhookライブラリ　従来＋ワイド(16x9用)
+　　SDL.dll(2011.11.02ビルド)、README-SDL.txt
+　　SDL_ttf.dll(2011.11.02ビルド)、COPYNG
 　　　グラフィックライブラリ、ライセンスはLGPL、nicovideoE.dllに必要
-・option フォルダ配下　　　 変換オプションファイル
+・option フォルダ配下　　　 変換オプションファイル（2011.11.02追加4ファイル）
 ・saccubus_src.zip
 　　Saccubus.jar　のjavaソースファイル、eclipseプロジェクトファイル
 　　nicovideoE.dll　のソースファイル、eclipseプロジェクトファイル
 　　Bin.jar　のjavaソースファイル、eclipseプロジェクトファイル
+　　Saccubdus.exe　のCソースファイル(launcher)、makeファイル、リソース
 ・readmeNew.txt、readme.txt(1.22r)、readme+.txt(1.22r3)
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
 ・autodebug.bat　　　　　　 auto.batのログ記録用バッチファイル
@@ -450,6 +464,7 @@
 　SVN：svn checkout http://svn.sourceforge.jp/svnroot/saccubus/trunk
 
 ・ダウンロード
+　1.26α3 　http://www1.axfc.net/uploader/File/so/70049.zip
 　1.26α2 　http://www1.axfc.net/uploader/File/so/69997.zip
 　1.26α1 　http://www1.axfc.net/uploader/File/so/69922.zip
 　1.26α　　http://www1.axfc.net/uploader/File/so/69016.zip
@@ -465,8 +480,11 @@
 　1.22r3e3　http://www1.axfc.net/uploader/File/so/67064.zip
 　1.22r3e2　http://www1.axfc.net/uploader/File/so/66071.zip
 　1.22r3e1a http://www1.axfc.net/uploader/File/so/65862.zip
+　改造版の元
 　1.22r3　　http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip
-　1.22r　http://sourceforge.jp/projects/saccubus/downloads/30757/Saccubus-1.22r.zip/
+　公式最新
+　1.22r 　　http://sourceforge.jp/projects/saccubus/downloads/30757/Saccubus-1.22r.zip/
+　参考ffmpeg r23386(libfaacあり)　http://www1.axfc.net/uploader/Ne/so/82882.zip
 
 ・サイト
 　さきゅばす公式
@@ -477,6 +495,10 @@
 　　http://www.daily-vocaran.info/nicorank/
 
 変更履歴
+1.26α4（2011/11/02）
+　コメント速度を独自指定可能、Pixel/Sec、コメントスコア読み込み
+　[log]vhext.txtを temp\「動画ID」[log]vhext.txtに移動
+
 1.26α3 (2011/10/07)
 　新コメント表示を旧表示と切り替え可能
 

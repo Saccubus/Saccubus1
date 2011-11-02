@@ -147,8 +147,9 @@ public class NicoXMLReader extends DefaultHandler {
 			item_kicked = false;
 			item_fork = false;
 			//ƒ}ƒCƒƒ‚ƒŠíœ‘ÎÛ
+			//‰^‰cíœ‘ÎÛ
 			String deleted = attributes.getValue("deleted");
-			if(deleted != null && deleted.toLowerCase().equals("1")){
+			if("1".equals(deleted) || "2".equals(deleted)){
 				item_kicked = true;
 				return;
 			}

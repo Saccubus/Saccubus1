@@ -130,6 +130,8 @@ public class MainFrame extends JFrame {
 	JCheckBox disableDoubleResizeCheckBox = new JCheckBox();
 	JCheckBox disableOriginalResizeCheckBox = new JCheckBox();
 	JComboBox commentModeComboBox = new JComboBox(commentModeArray);
+	JCheckBox commentSpeedCheckBox = new JCheckBox();
+	JTextField commentSpeedTextField = new JTextField();
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
 	private static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
@@ -215,19 +217,19 @@ public class MainFrame extends JFrame {
 		grid10_x0_y0_67.gridy = 0;
 		GridBagConstraints grid8_x0_y1_66 = new GridBagConstraints();
 		grid8_x0_y1_66.gridx = 0;
-		grid8_x0_y1_66.insets = INSETS_0_5_5_5;
+		grid8_x0_y1_66.insets = INSETS_0_5_0_5;
 		grid8_x0_y1_66.anchor = GridBagConstraints.WEST;
-		grid8_x0_y1_66.gridwidth = 2;
+		grid8_x0_y1_66.gridwidth = 1;
 		grid8_x0_y1_66.gridy = 1;
 		ViewCommentLabel = new JLabel();
 		ViewCommentLabel.setText("表示コメント数");
-		GridBagConstraints grid8_x3_y1_65 = new GridBagConstraints();
-		grid8_x3_y1_65.fill = GridBagConstraints.HORIZONTAL;
-		grid8_x3_y1_65.gridy = 1;
-		grid8_x3_y1_65.weightx = 1.0;
-		grid8_x3_y1_65.gridwidth = 6;
-		grid8_x3_y1_65.insets = INSETS_0_5_5_5;
-		grid8_x3_y1_65.gridx = 3;
+		GridBagConstraints grid8_x1_y1_65 = new GridBagConstraints();
+		grid8_x1_y1_65.fill = GridBagConstraints.HORIZONTAL;
+		grid8_x1_y1_65.gridy = 1;
+		grid8_x1_y1_65.weightx = 1.0;
+		grid8_x1_y1_65.gridwidth = 6;
+		grid8_x1_y1_65.insets = INSETS_0_5_0_5;
+		grid8_x1_y1_65.gridx = 1;
 		GridBagConstraints grid8_x4_y3_64 = new GridBagConstraints(1, 1,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_0_0_5, 0, 0);
@@ -277,7 +279,7 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid8_x0_y0_58 = new GridBagConstraints();
 		grid8_x0_y0_58.gridx = 0;
 		grid8_x0_y0_58.anchor = GridBagConstraints.WEST;
-		grid8_x0_y0_58.insets = INSETS_0_5_5_5;
+		grid8_x0_y0_58.insets = INSETS_0_5_0_5;
 		grid8_x0_y0_58.gridwidth = 5;
 		grid8_x0_y0_58.weightx = 1.0;
 		grid8_x0_y0_58.fill = GridBagConstraints.HORIZONTAL;
@@ -393,11 +395,27 @@ public class MainFrame extends JFrame {
 		grid2_x__y__35.fill = GridBagConstraints.BOTH;
 		grid2_x__y__35.weighty = 1.0;
 		grid2_x__y__35.weightx = 1.0;
+		GridBagConstraints grid8_x0_y10_0 = new GridBagConstraints();
+		grid8_x0_y10_0.gridx = 0;
+		grid8_x0_y10_0.gridy = 10;
+		grid8_x0_y10_0.gridwidth = 2;
+		grid8_x0_y10_0.weightx = 0.0;
+		grid8_x0_y10_0.anchor = GridBagConstraints.WEST;
+		grid8_x0_y10_0.fill = GridBagConstraints.HORIZONTAL;
+		grid8_x0_y10_0.insets = INSETS_0_5_0_5;
+		GridBagConstraints grid8_x2_y10_1 = new GridBagConstraints();
+		grid8_x2_y10_1.gridx = 2;
+		grid8_x2_y10_1.gridy = 10;
+		grid8_x2_y10_1.gridwidth = 3;
+		grid8_x2_y10_1.weightx = 1.0;
+		grid8_x2_y10_1.anchor = GridBagConstraints.CENTER;
+		grid8_x2_y10_1.fill = GridBagConstraints.HORIZONTAL;
+		grid8_x2_y10_1.insets = INSETS_0_5_0_5;
 		GridBagConstraints grid8_x0_y9_33 = new GridBagConstraints();
 		grid8_x0_y9_33.gridx = 0;
 		grid8_x0_y9_33.fill = GridBagConstraints.HORIZONTAL;
 		grid8_x0_y9_33.weightx = 1.0;
-		grid8_x0_y9_33.insets = INSETS_0_5_5_5;
+		grid8_x0_y9_33.insets = INSETS_0_5_0_5;
 		grid8_x0_y9_33.gridwidth = 5;
 		grid8_x0_y9_33.gridy = 9;
 		GridBagConstraints grid4_x0_y9_26 = new GridBagConstraints();
@@ -988,7 +1006,7 @@ public class MainFrame extends JFrame {
 				BorderFactory.createEtchedBorder(), "拡張vhookライブラリの設定"));
 		VhookSettingPanel.add(getNotUseVhookCheckBox(), grid8_x0_y0_58);
 		VhookSettingPanel.add(ViewCommentLabel, grid8_x0_y1_66);
-		VhookSettingPanel.add(getViewCommentField(), grid8_x3_y1_65);
+		VhookSettingPanel.add(getViewCommentField(), grid8_x1_y1_65);
 		VhookSettingPanel.add(FontPathLabel, grid8_x0_y3_59);
 		VhookSettingPanel.add(FontPathField, grid8_x1_y3_60);
 		VhookSettingPanel.add(SettingFontPathButton, grid8_x4_y3_64);
@@ -999,6 +1017,13 @@ public class MainFrame extends JFrame {
 		VhookSettingPanel.add(ShowConvVideoCheckBox, grid8_x0_y7_63);
 		VhookSettingPanel.add(getFixFontSizeCheckBox(), grid8_x0_y8_14);
 		VhookSettingPanel.add(getOpaqueCommentCheckBox(), grid8_x0_y9_33);
+		commentSpeedCheckBox.setText("コメント速度（Piel/Sec）");
+		commentSpeedCheckBox.setForeground(Color.blue);
+		VhookSettingPanel.add(commentSpeedCheckBox, grid8_x0_y10_0);
+		commentSpeedTextField.setForeground(Color.blue);
+		commentSpeedTextField.setToolTipText("公式の最小値は約138Pixel/Sec");
+		VhookSettingPanel.add(commentSpeedTextField, grid8_x2_y10_1);
+
 		CommentSaveInfoPanel.add(SavingCommentCheckBox, grid4_x0_y6_16);
 		CommentSaveInfoPanel.add(AddTimeStampToCommentCheckBox, grid4_x0_y7_86);
 		CommentSaveInfoPanel.add(getDelCommentCheckBox(), grid4_x0_y8_25);
@@ -1507,7 +1532,9 @@ public class MainFrame extends JFrame {
 			fontHeightFixCheckBox.isSelected(),
 			fontHeightRatioTextField.getText(),
 			disableOriginalResizeCheckBox.isSelected(),
-			commentModeComboBox.getSelectedIndex()
+			commentModeComboBox.getSelectedIndex(),
+			commentSpeedCheckBox.isSelected(),
+			commentSpeedTextField.getText()
 		);
 	}
 
@@ -1604,6 +1631,8 @@ public class MainFrame extends JFrame {
 		fontHeightFixCheckBox.setSelected(setting.isFontHeightFix());
 		fontHeightRatioTextField.setText(setting.getFontHeightFixRaito());
 		disableOriginalResizeCheckBox.setSelected(setting.isDisableOriginalResize());
+		commentSpeedCheckBox.setSelected(setting.isSetCommentSpeed());
+		commentSpeedTextField.setText(setting.getCommentSpeed());
 	}
 
 	/**

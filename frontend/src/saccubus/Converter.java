@@ -1020,6 +1020,7 @@ public class Converter extends Thread {
 
 	private boolean addVhookSetting(FFmpeg ffmpeg, File vhookExe, boolean isWide) {
 		try {
+			String encoding = "Shift_JIS";
 			ffmpeg.addCmd(" -vfilters \"");
 			if (!getFFmpegVfOption().isEmpty()){
 				ffmpeg.addCmd(getFFmpegVfOption());
@@ -1030,20 +1031,20 @@ public class Converter extends Thread {
 			if(CommentMiddleFile!=null){
 				ffmpeg.addCmd("|--data-user:");
 				ffmpeg.addCmd(URLEncoder.encode(
-					Path.toUnixPath(CommentMiddleFile), "Shift_JIS"));
+					Path.toUnixPath(CommentMiddleFile), encoding));
 				ffmpeg.addCmd("|--show-user:");
 				ffmpeg.addCmd(Setting.getVideoShowNum());
 			}
 			if(OwnerMiddleFile!=null){
 				ffmpeg.addCmd("|--data-owner:");
 				ffmpeg.addCmd(URLEncoder.encode(
-					Path.toUnixPath(OwnerMiddleFile), "Shift_JIS"));
+					Path.toUnixPath(OwnerMiddleFile), encoding));
 				ffmpeg.addCmd("|--show-owner:" + NicoClient.STR_OWNER_COMMENT);
 			}
 			if (OptionalMiddleFile!=null){
 				ffmpeg.addCmd("|--data-optional:");
 				ffmpeg.addCmd(URLEncoder.encode(
-					Path.toUnixPath(OptionalMiddleFile), "Shift_JIS"));
+					Path.toUnixPath(OptionalMiddleFile), encoding));
 				ffmpeg.addCmd("|--show-optional:");
 				ffmpeg.addCmd(Setting.getVideoShowNum());
 				if (Setting.isOptionalTranslucent()) {
@@ -1052,7 +1053,7 @@ public class Converter extends Thread {
 			}
 			ffmpeg.addCmd("|--font:");
 			ffmpeg.addCmd(URLEncoder.encode(
-				Path.toUnixPath(Setting.getFontPath()), "Shift_JIS"));
+				Path.toUnixPath(Setting.getFontPath()), encoding));
 			ffmpeg.addCmd("|--font-index:");
 			ffmpeg.addCmd(Setting.getFontIndex());
 			ffmpeg.addCmd("|--shadow:" + Setting.getShadowIndex());
@@ -1078,6 +1079,12 @@ public class Converter extends Thread {
 			}
 			if (Setting.isDisableOriginalResize()){
 				ffmpeg.addCmd("|--disble-original-resize");
+			}
+			String comment_speed = "";
+			if (Setting.isSetCommentSpeed() &&
+				(comment_speed = Setting.getCommentSpeed()) != null && !comment_speed.isEmpty()){
+				ffmpeg.addCmd("|--comment-speed:"
+					+ URLEncoder.encode(comment_speed, encoding));
 			}
 			ffmpeg.addCmd("|\"");
 			return true;

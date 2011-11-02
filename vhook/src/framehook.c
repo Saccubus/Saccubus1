@@ -21,11 +21,12 @@ typedef struct ContextInfo{
  *
  */
 int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[]);
+FILE *changelog(FILE* log,SETTING* setting);
 
 __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc, char *argv[]){
 	int i;
 	//ログ
-	FILE* log = fopen("[log]vhext.txt", "w");
+	FILE* log = fopen("[log]vhext.txt", "w+");
 	if(log == NULL){
 		puts("[framehook/init]failed to open logfile.\n");
 		fflush(log);
@@ -51,6 +52,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 		fflush(log);
 		return -2;
 	}
+	log = changelog(log, &setting);
 	//ライブラリなどの初期化
 	if(init(log)){
 		fputs("[framehook/init]initialized libs.\n",log);
@@ -100,6 +102,9 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	--enable-show-video：描画中に動画を見せる。
 	--enable-fontsize-fix：フォントサイズを自動で調整する。
 	--nico-width-wide : ワイドプレーヤー16:9対応
+	--font-height-fix-ratio:%d ： フォント高さ自動変更の倍率（％）+ int
+	--diable-original-resize : さきゅばす独自リサイズを無効にする（実験的）
+	--comment-speed: コメント速度を指定する場合≠0
 */
 
 int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[]){
@@ -137,6 +142,9 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->opaque_comment=FALSE;
 	setting->nico_width_now=NICO_WIDTH;	//デフォルトは旧プレイヤー幅
 	setting->optional_trunslucent=FALSE;	//デフォルトは半透明にしない
+	setting->font_h_fix_r = 1.0f;	//デフォルトは従来通り（最終調整で合わせること）
+	setting->original_resize = TRUE;	//デフォルトは有効（実験的に無効にする選択を行う）
+	setting->comment_speed = 0;
 	int i;
 	char* arg;
 	for(i=0;i<argc;i++){
@@ -205,9 +213,45 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			fflush(log);
 			setting->nico_width_now = NICO_WIDTH_WIDE;
 		}else if(setting->video_length <= 0 && strncmp(FRAMEHOOK_OPT_VIDEO_LENGTH,arg,FRAMEHOOK_OPT_VIDEO_LENGTH_LEN) == 0){
-			setting->video_length = MAX(0,atoi(arg+FRAMEHOOK_OPT_VIDEO_LENGTH_LEN));
+			setting->video_length = MAX(0,atoi(arg+FRAMEHOOK_OPT_VIDEO_LENGTH_LEN)) * VPOS_FACTOR;
 			fprintf(log,"[framehook/init]video length (to assist ffmpeg):%d\n",setting->video_length);
 			fflush(log);
+		} else if (strncmp(FRAMEHOOK_OPT_FONT_HEIGHT_FIX,arg,FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN) == 0){
+			int font_h_fix_ratio = MAX(0,atoi(arg+FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN));
+			if (font_h_fix_ratio > 0){
+				setting->font_h_fix_r = (float)font_h_fix_ratio / 100.0f;
+				fprintf(log,"[framehook/init]font height fix: %4d%%\n",font_h_fix_ratio);
+				fflush(log);
+			}
+		} else if (strncmp(FRAMEHOOK_OPT_ASPECT_MODE, arg, FRAMEHOOK_OPT_ASPECT_MODE_LEN) == 0) {
+			int aspect_mode = MAX(0, atoi(arg + FRAMEHOOK_OPT_ASPECT_MODE_LEN));
+			/**
+			 * アスペクト比の指定. コメントのフォントサイズや速度に影響する.（いんきゅばす互換）
+			 * 0 -  4:3  → 512
+			 * 1 - 16:9  → 640
+			 */
+			fprintf(log, "[framehook/init]aspect mode:%d\n", aspect_mode);
+			fflush(log);
+			if (aspect_mode){
+				fputs("[framehook/init]use wide player.\n",log);
+				fflush(log);
+				setting->nico_width_now = NICO_WIDTH_WIDE;
+						} else {
+							fputs("[framehook/init]use normal player.\n",log);
+				fflush(log);
+				setting->nico_width_now = NICO_WIDTH;
+			}
+		} else if (strcmp("--disable-original-resize",arg) == 0){
+			setting->original_resize = FALSE;
+			fprintf(log,"[framehook/init]disble original resize (experimental)");
+			fflush(log);
+		} else if (strncmp(FRAMEHOOK_OPT_COMMENT_SPEED,arg,FRAMEHOOK_OPT_COMMENT_SPEED_LEN) == 0){
+			int com_speed = atoi(arg+FRAMEHOOK_OPT_COMMENT_SPEED_LEN);
+			if (com_speed != 0){
+				setting->comment_speed = com_speed;
+				fprintf(log,"[framehook/init]font height fix: %d pixel/sec.\n",com_speed);
+				fflush(log);
+			}
 		}
 	}
 	//引数を正しく入力したか否かのチェック
@@ -218,6 +262,48 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		return FALSE;
 	}
 	return TRUE;
+}
+void filecopy(FILE*dst,FILE*src);
+/*
+ *
+ */
+FILE* changelog(FILE* log,SETTING* setting){
+	char label[] = "[log]vhext.txt";
+	const char *path = setting->data_user_path;
+	if(path == NULL ){
+		path = setting->data_owner_path;
+	}
+	if(path == NULL){
+		return log;
+	}
+	long l = strlen(path) + strlen(label) + 1;
+	char *newname = (char *)malloc(l);
+	if(newname==NULL){
+		return log;
+	}
+	long pos = strcspn(path,"_");
+	strncpy(newname,path,pos);
+	newname[pos] = '\0';
+	strcat(newname,label);
+	FILE* newlog = fopen(newname,"w");
+	free(newname);
+	if(newlog==NULL){
+		return log;
+	}
+	fflush(log);
+	filecopy(newlog,log);
+	fclose(log);
+	return newlog;
+}
+/**
+ *
+ */
+void filecopy(FILE*dst,FILE*src){
+	int c = -1;
+	fseek(src,0L,SEEK_SET);
+	while((c = fgetc(src))!=EOF){
+		fputc(c,dst);
+	}
 }
 
 /*
