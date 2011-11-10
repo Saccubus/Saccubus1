@@ -9,14 +9,21 @@ struct CHAT_ITEM{
 	int no;
 	int vpos;
 	int location;
+	int full;	// whether full ommand?
 	//文字の修飾
 	int size;
 	int color;
+	SDL_Color color24;
 	Uint16* str;
 	//内部処理で使う
 	int vstart;
 	int vend;
 	int showed;
+	// int duration;	// vend - vstart
+	  // ＠秒数の場合  指定値
+	  // ue shitaの場合  300 vpos
+	  // 4:3の場合  400 vpos
+	  // 16:9の場合  400+α vpos
 	//リファレンス
 	CHAT* chat;
 };

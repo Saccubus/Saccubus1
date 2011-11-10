@@ -230,7 +230,8 @@ public class NicoXMLReader extends DefaultHandler {
 	 */
 	public void endDocument() {
 		// System.out.println("----------");
-		System.out.println("Converting finished.");
+		System.out.println("Converting finished. "
+			+ packet.size() + " items.");
 	}
 
 }

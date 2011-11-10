@@ -105,6 +105,8 @@ public class ConvertingSetting {
 	private int commentIndex;
 	private boolean setCommentSpeed;
 	private String commentSpeed;
+	private boolean debugNicovideo;
+	private boolean enableCA;	//âºê›íË
 
 	private ConvertingSetting(
 			String mailaddress,
@@ -273,7 +275,9 @@ public class ConvertingSetting {
 			boolean disable_original_resize,
 			int comment_index,
 			boolean set_comment_speed,
-			String comment_speed
+			String comment_speed,
+			boolean debug_nicovideo,
+			boolean enable_CA
 		)
 	{
 		this(	mailaddress,
@@ -348,6 +352,8 @@ public class ConvertingSetting {
 		commentIndex = comment_index;
 		setCommentSpeed = set_comment_speed;
 		commentSpeed = comment_speed;
+		debugNicovideo = debug_nicovideo;
+		enableCA = enable_CA;
 	}
 
 
@@ -561,6 +567,12 @@ public class ConvertingSetting {
 	public String getCommentSpeed(){
 		return commentSpeed;
 	}
+	public boolean isDebugNicovideo(){
+		return debugNicovideo;
+	}
+	public boolean isEnableCA(){
+		return enableCA;
+	}
 
 	private static final String PROP_FILE = "./saccubus.xml";
 	private static final String PROP_MAILADDR = "MailAddress";
@@ -648,6 +660,7 @@ public class ConvertingSetting {
 	private static final String PROP_COMMENT_MODE_INDEX = "CommentMode";
 	private static final String PROP_SET_COMMENT_SPEED = "SetCommentSpeed";
 	private static final String PROP_COMMENT_SPEED = "CommentSpeed";
+	private static final String PROP_ENABLE_CA = "EnableCA";
 
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -769,6 +782,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_COMMENT_MODE_INDEX, Integer.toString(setting.getCommentIndex()));
 		prop.setProperty(PROP_SET_COMMENT_SPEED, Boolean.toString(setting.isSetCommentSpeed()));
 		prop.setProperty(PROP_COMMENT_SPEED, setting.getCommentSpeed());
+		prop.setProperty(PROP_ENABLE_CA, Boolean.toString(setting.isEnableCA()));
 
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -805,8 +819,8 @@ public class ConvertingSetting {
 			wide_option_file = new File(option_file_name);
 		}
 		String win_dir = System.getenv("windir");
-		if(!win_dir.endsWith("\\")){
-			win_dir = win_dir+"\\";
+		if(!win_dir.endsWith(File.separator)){
+			win_dir = win_dir+File.separator;
 		}
 		return new ConvertingSetting(
 			user,
@@ -872,13 +886,23 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_WIDE_CMDLINE_IN, ""),
 			prop.getProperty(PROP_WIDE_CMDLINE_OUT,"-threads 4 -s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9"),
 			Boolean.parseBoolean(prop.getProperty(PROP_OPTIONAL_TRANSLUCENT, "true")),
-			Boolean.parseBoolean(prop.getProperty(PROP_FONT_HEIGHT_FIX,"true")),
-			prop.getProperty(PROP_FONT_HEIGHT_FIX_RAITO,"116"),
-			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ORIGINAL_RESIZE, "true")),
+			Boolean.parseBoolean(prop.getProperty(PROP_FONT_HEIGHT_FIX,"false")),
+			prop.getProperty(PROP_FONT_HEIGHT_FIX_RAITO,"102"),
+			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ORIGINAL_RESIZE, "false")),
 			Integer.parseInt(prop.getProperty(PROP_COMMENT_MODE_INDEX, "0")),
 			Boolean.parseBoolean(prop.getProperty(PROP_SET_COMMENT_SPEED, "false")),
-			prop.getProperty(PROP_COMMENT_SPEED, "")
+			prop.getProperty(PROP_COMMENT_SPEED, ""),
+			false,
+			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_CA, "false"))
 		);
+	}
+
+	public void setFontPath(String path) {
+		FontPath = path;
+	}
+
+	public void setFontIndex(int i) {
+		FontIndex = i;
 	}
 
 }

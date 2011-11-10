@@ -17,6 +17,7 @@ import java.util.Properties;
 
 import saccubus.util.Cws2Fws;
 import saccubus.util.Stopwatch;
+import saccubus.util.Util;
 import saccubus.ConvertingSetting;
 import saccubus.FFmpeg.Aspect;
 
@@ -105,6 +106,7 @@ public class Converter extends Thread {
 	private String optionalThreadID = "";	// set in
 	private String errorLog = "";
 	private int videoLength = 0;
+	private int ownerCommentNum = 0;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -213,10 +215,23 @@ public class Converter extends Thread {
 				sendtext("使用できるVhookライブラリがありません。");
 				return false;
 			}
-			a = new File(Setting.getFontPath());
-			if (!a.canRead()) {
-				sendtext("フォントが見つかりません。");
-				return false;
+			if(Setting.isEnableCA()){
+				String windir = System.getenv("windir");
+				if(windir != null){
+					a = new File(windir, "Fonts\\SIMSUN.TTC");
+					if (!a.canRead()) {
+						sendtext("CA用フォントが見つかりません。" + a.getPath());
+						return false;
+					}
+					Setting.setFontPath(a.getPath());
+					Setting.setFontIndex(0);
+				}
+			}else{
+				a = new File(Setting.getFontPath());
+				if (!a.canRead()) {
+					sendtext("フォントが見つかりません。");
+					return false;
+				}
 			}
 		} else {
 			if (isDeleteVideoAfterConverting()) {
@@ -556,10 +571,15 @@ public class Converter extends Thread {
 					}
 				}
 			}
-			CommentMiddleFile = convertToCommentMiddle(CommentFile, mkTemp(TMP_COMMENT));
-			if (CommentMiddleFile == null){
+			CommentMiddleFile = mkTemp(TMP_COMMENT);
+			if(!convertToCommentMiddle(CommentFile, CommentMiddleFile)){
 				sendtext("コメント変換に失敗。おそらく正規表現の間違い？");
+				CommentMiddleFile = null;
 				return false;
+			}
+			if(!CommentMiddleFile.canRead()){
+				CommentMiddleFile = null;
+				// But OK!
 			}
 		}
 		return true;
@@ -612,10 +632,16 @@ public class Converter extends Thread {
 					return true;
 				}
 			}
-			OptionalMiddleFile = convertToCommentMiddle(OptionalThreadFile, mkTemp(TMP_OPTIONALTHREAD));
-			if (OptionalMiddleFile == null){
+			OptionalMiddleFile = mkTemp(TMP_OPTIONALTHREAD);
+			if(!convertToCommentMiddle(OptionalThreadFile, OptionalMiddleFile)){
 				sendtext("オプショナルスレッド変換に失敗。おそらく正規表現の間違い？");
+				OptionalMiddleFile = null;
 				return false;
+			}
+			//コメント数を検査
+			if(!OptionalMiddleFile.canRead()){
+				OptionalMiddleFile = null;
+				// But OK!
 			}
 		}
 		return true;
@@ -652,10 +678,31 @@ public class Converter extends Thread {
 					}
 				}
 			}
-			OwnerMiddleFile = convertToCommentMiddle(OwnerCommentFile, mkTemp(TMP_OWNERCOMMENT));
-			if (OwnerMiddleFile == null){
+			OwnerMiddleFile = mkTemp(TMP_OWNERCOMMENT);
+			if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile)){
 				sendtext("投稿者コメント変換に失敗。おそらく正規表現の間違い？");
+				OwnerMiddleFile = null;
 				return false;
+			}
+			//コメント数を検査
+			if(!OwnerMiddleFile.canRead()){
+				OwnerMiddleFile = null;
+				ownerCommentNum = 0;
+				// But OK!
+			} else {
+				try{
+					FileInputStream fos = new FileInputStream(OwnerMiddleFile);
+					ownerCommentNum = Util.readInt(fos);
+					fos.close();
+				}catch (FileNotFoundException e) {
+					e.printStackTrace();
+					OwnerMiddleFile = null;
+					return false;
+				} catch (IOException e) {
+					e.printStackTrace();
+					OwnerMiddleFile = null;
+					return false;
+				}
 			}
 		}
 		return true;
@@ -669,19 +716,35 @@ public class Converter extends Thread {
 			System.out.println("Deleted: " + OptionalThreadFile.getPath());
 		}
 		deleteList(listOfCommentFile);
-		// OwnerCommentFile.delete();
 		if (OwnerCommentFile != null && OwnerCommentFile.delete()) {
 			System.out.println("Deleted: " + OwnerCommentFile.getPath());
 		}
 	}
 
-	private File convertToCommentMiddle(File commentfile, File middlefile) {
-		if (!ConvertToVideoHook.convert(
+	private boolean convertToCommentMiddle(File commentfile, File middlefile) {
+		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile,
 				Setting.getNG_ID(), Setting.getNG_Word())){
-			return null;
+			return false;
 		}
-		return middlefile;
+		//コメント数が0の時削除する
+		try{
+			FileInputStream fis = new FileInputStream(middlefile);
+			int comment_num = Util.readInt(fis);
+			fis.close();
+			if(comment_num == 0){
+				if(middlefile.delete()){
+					System.out.println("Deleted 0 comment-file: " + middlefile.getPath());
+				}
+			}
+		}catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 	private boolean convertVideo() throws IOException {
@@ -769,7 +832,7 @@ public class Converter extends Thread {
 		} else if (code == CODE_CONVERTING_ABORTED) { /*中断*/
 
 		} else {
-			sendtext("変換エラー：" + ffmpeg.getLastError());
+			sendtext("変換エラー：(" + code + ") "+ ffmpeg.getLastError());
 		}
 		return false;
 	}
@@ -876,13 +939,11 @@ public class Converter extends Thread {
 						System.out.println("Deleted: " + OwnerMiddleFile.getPath());
 					}
 				}
-				/*
 				if (OptionalMiddleFile != null) {
 					if (OptionalMiddleFile.delete()) {
 						System.out.println("Deleted: " + OptionalMiddleFile.getPath());
 					}
 				}
-				*/
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -1039,7 +1100,11 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--data-owner:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(OwnerMiddleFile), encoding));
-				ffmpeg.addCmd("|--show-owner:" + NicoClient.STR_OWNER_COMMENT);
+				int ownershowcomment = Integer.parseInt(NicoClient.STR_OWNER_COMMENT);
+				if(ownershowcomment > ownerCommentNum){
+					ownershowcomment = ownerCommentNum;
+				}
+				ffmpeg.addCmd("|--show-owner:" + ownershowcomment);
 			}
 			if (OptionalMiddleFile!=null){
 				ffmpeg.addCmd("|--data-optional:");
@@ -1078,13 +1143,16 @@ public class Converter extends Thread {
 						+ Setting.getFontHeightFixRaito());
 			}
 			if (Setting.isDisableOriginalResize()){
-				ffmpeg.addCmd("|--disble-original-resize");
+				ffmpeg.addCmd("|--disable-original-resize");
 			}
-			String comment_speed = "";
+			String comment_speed = Setting.getCommentSpeed();
 			if (Setting.isSetCommentSpeed() &&
-				(comment_speed = Setting.getCommentSpeed()) != null && !comment_speed.isEmpty()){
+				comment_speed != null && !comment_speed.isEmpty()){
 				ffmpeg.addCmd("|--comment-speed:"
 					+ URLEncoder.encode(comment_speed, encoding));
+			}
+			if(Setting.isDebugNicovideo()){
+				ffmpeg.addCmd("|--deb");
 			}
 			ffmpeg.addCmd("|\"");
 			return true;

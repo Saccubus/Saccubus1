@@ -27,11 +27,16 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	int i;
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
+	char linebuf[128];
+	char *ver="1.26.1.7";
+	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
+		puts(linebuf);
 		puts("[framehook/init]failed to open logfile.\n");
 		fflush(log);
 		return -1;
 	}else{
+		fputs(linebuf,log);
 		fputs("[framehook/init]initializing..\n",log);
 		fflush(log);
 	}
@@ -70,6 +75,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 		return -5;
 	}
 	ContextInfo* ci = (ContextInfo*)*ctxp;
+	memset(ci, (int)NULL, sizeof(ContextInfo));
 	ci->log = log;
 	fflush(log);
 	if(initData(&ci->data,log,&setting)){
@@ -103,8 +109,9 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	--enable-fontsize-fix：フォントサイズを自動で調整する。
 	--nico-width-wide : ワイドプレーヤー16:9対応
 	--font-height-fix-ratio:%d ： フォント高さ自動変更の倍率（％）+ int
-	--diable-original-resize : さきゅばす独自リサイズを無効にする（実験的）
+	--disable-original-resize : さきゅばす独自リサイズを無効にする（実験的）
 	--comment-speed: コメント速度を指定する場合≠0
+	--deb : デバッグ出力を有効にする
 */
 
 int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[]){
@@ -145,6 +152,39 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->font_h_fix_r = 1.0f;	//デフォルトは従来通り（最終調整で合わせること）
 	setting->original_resize = TRUE;	//デフォルトは有効（実験的に無効にする選択を行う）
 	setting->comment_speed = 0;
+	setting->debug = FALSE;
+/*
+	// ↓は実験的設定
+	setting->limitwidth_resize = TRUE;
+	setting->linefeed_resize = TRUE;
+	setting->double_resize = TRUE;
+	// obsolate
+	//setting->font_double_scale = TRUE;	// フォント字形の自動修正が有効（デフォルト2倍の字形）
+
+	// 臨界幅は同倍率の動画で512～600px 動画が、4:3 or 16:9に無関係
+	// 但し、fullコマンドでは640～680px
+	// 更に文字サイズによっても異なる（資料少なし）
+	setting->nico_limit_width[0] = NICO_WIDTH;
+	setting->nico_limit_width[1] = NICO_WIDTH_WIDE;
+	setting->nico_limit_height[0] = NICO_HEIGHT;
+	setting->nico_limit_height[1] = NICO_HEIGHT;
+	setting->double_resize_width[0] = NICO_WIDTH;
+	setting->double_resize_width[1] = NICO_WIDTH_WIDE;
+	setting->double_limit_width[0] = NICO_WIDTH<<1;
+	setting->double_limit_width[1] = NICO_WIDTH_WIDE<<1;
+	setting->font_height_rate[0] = 100;	//デフォルト4:3は従来通り（最終調整で合わせること）
+	setting->font_height_rate[1] = 100;	//デフォルト16:9は従来通り（最終調整で合わせること）
+	// next_h_ 両方指定すると加算される
+	setting->next_h_rate[0] = 1;	//デフォルト4:3 1%
+	setting->next_h_rate[1] = 1;	//デフォルト16:9 1%
+	setting->next_h_pixel[0] = 0;	//デフォルト4:3 1px
+	setting->next_h_pixel[1] = 0;	//デフォルト16:9 1px
+	setting->fixed_font_size[CMD_FONT_DEF] = COMMENT_FONT_SIZE[CMD_FONT_DEF];
+	setting->fixed_font_size[CMD_FONT_BIG] = COMMENT_FONT_SIZE[CMD_FONT_BIG];
+	setting->fixed_font_size[CMD_FONT_SMALL] = COMMENT_FONT_SIZE[CMD_FONT_SMALL];
+	setting->debug_key = NO_DEBUG_KEY;
+	setting->target_width = 0;
+*/
 	int i;
 	char* arg;
 	for(i=0;i<argc;i++){
@@ -220,7 +260,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			int font_h_fix_ratio = MAX(0,atoi(arg+FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN));
 			if (font_h_fix_ratio > 0){
 				setting->font_h_fix_r = (float)font_h_fix_ratio / 100.0f;
-				fprintf(log,"[framehook/init]font height fix: %4d%%\n",font_h_fix_ratio);
+				fprintf(log,"[framehook/init]font height fix: %d%%\n",font_h_fix_ratio);
 				fflush(log);
 			}
 		} else if (strncmp(FRAMEHOOK_OPT_ASPECT_MODE, arg, FRAMEHOOK_OPT_ASPECT_MODE_LEN) == 0) {
@@ -236,14 +276,14 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 				fputs("[framehook/init]use wide player.\n",log);
 				fflush(log);
 				setting->nico_width_now = NICO_WIDTH_WIDE;
-						} else {
-							fputs("[framehook/init]use normal player.\n",log);
+			} else {
+				fputs("[framehook/init]use normal player.\n",log);
 				fflush(log);
 				setting->nico_width_now = NICO_WIDTH;
 			}
 		} else if (strcmp("--disable-original-resize",arg) == 0){
 			setting->original_resize = FALSE;
-			fprintf(log,"[framehook/init]disble original resize (experimental)");
+			fprintf(log,"[framehook/init]disable original resize (experimental)\n");
 			fflush(log);
 		} else if (strncmp(FRAMEHOOK_OPT_COMMENT_SPEED,arg,FRAMEHOOK_OPT_COMMENT_SPEED_LEN) == 0){
 			int com_speed = atoi(arg+FRAMEHOOK_OPT_COMMENT_SPEED_LEN);
@@ -252,7 +292,123 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 				fprintf(log,"[framehook/init]font height fix: %d pixel/sec.\n",com_speed);
 				fflush(log);
 			}
+		} else if(strcmp("--deb",arg) == 0){
+			setting->debug = TRUE;
+			fprintf(log,"[framehook/init]print debug information\n");
+			fflush(log);
 		}
+	/*
+		// ↓は実験的設定
+		else if (strncmp(FRAMEHOOK_OPT_FONT_HEIGHT_FIX,arg,FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN) == 0){
+			int font_h_fix[6];
+			int n_font = sscanf(arg+FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN,"%d%d%d%d%d%d",
+				font_h_fix,font_h_fix+1,font_h_fix+2,font_h_fix+3,font_h_fix+4,font_h_fix+5);
+			if(n_font > 5){
+				setting->next_h_pixel[1] = (short)font_h_fix[5];
+			}
+			if(n_font > 4){
+				setting->next_h_pixel[0] = (short)font_h_fix[4];
+			}
+			if(n_font > 3){
+				setting->next_h_rate[1] = (short)font_h_fix[3];
+			}
+			if(n_font > 2){
+				setting->next_h_rate[0] = (short)font_h_fix[2];
+			}
+			if(n_font > 1){
+				setting->font_height_rate[1] = (short)font_h_fix[1];
+			}
+			if(n_font > 0){
+				setting->font_height_rate[0] = (short)font_h_fix[0];
+			}
+			fprintf(log, "[framehook/init]font height fix ratio:%d%% %d%%, y_diff:%d%% %d%% %dpx %dpx (experimental)\n",
+				setting->font_height_rate[0],setting->font_height_rate[1],setting->next_h_rate[0],setting->next_h_rate[1],setting->next_h_pixel[0],setting->next_h_pixel[1]);
+			fflush(log);
+		} else if (strcmp("--disable-limitwidth-resize",arg) == 0){
+			setting->limitwidth_resize = FALSE;
+			fprintf(log,"[framehook/init]disable limit-width resize (experimental)\n");
+			fflush(log);
+		} else if (strncmp(FRAMEHOOK_OPT_LIMIT_WIDTH, arg, FRAMEHOOK_OPT_LIMIT_WIDTH_LEN) == 0) {
+			int limit_width[4];
+			int n_limit = sscanf(arg + FRAMEHOOK_OPT_LIMIT_WIDTH_LEN,"%d%d%d%d",limit_width,limit_width+1,limit_width+2,limit_width+3);
+			if(n_limit > 3){
+				setting->double_resize_width[1] = (short)limit_width[3];
+			}
+			if(n_limit > 2){
+				setting->double_resize_width[0] = (short)limit_width[2];
+			}
+			if(n_limit > 1){
+				setting->nico_limit_width[1] = (short)limit_width[1];
+			}
+			if(n_limit > 0){
+				setting->nico_limit_width[0] = (short)limit_width[0];
+			}
+			fprintf(log, "[framehook/init]limit width:%d %d, double_resize start:%d %d (experimental)\n",
+				setting->nico_limit_width[0], setting->nico_limit_width[1],
+				setting->double_resize_width[0], setting->double_resize_width[1]);
+			fflush(log);
+		} else if (strncmp(FRAMEHOOK_OPT_LIMIT_HEIGHT, arg, FRAMEHOOK_OPT_LIMIT_HEIGHT_LEN) == 0) {
+			int limit_height[2];
+			int n_limith = sscanf(arg + FRAMEHOOK_OPT_LIMIT_HEIGHT_LEN,"%d%d", limit_height, limit_height + 1);
+			if(n_limith > 1){
+				setting->nico_limit_height[1] = (short)limit_height[1];
+			}
+			if(n_limith > 0){
+				setting->nico_limit_height[0] = (short)limit_height[0];
+			}
+			fprintf(log, "[framehook/init]limit height:%d %d (experimental)\n",setting->nico_limit_height[0],setting->nico_limit_height[1]);
+			fflush(log);
+		} else if (strcmp("--disable-linefeed-resize",arg) == 0){
+			setting->linefeed_resize = FALSE;
+			fprintf(log,"[framehook/init]disable llinefeed resize (experimental)\n");
+			fflush(log);
+		} else if (strcmp("--disable-double-resize",arg) == 0){
+			setting->double_resize = FALSE;
+			fprintf(log,"[framehook/init]disable double resize (experimental)\n");
+			fflush(log);
+		//} else if (strcmp("--disable-font-doublescale-fix",arg) == 0){
+		//	setting->font_double_scale = FALSE;
+		//	fprintf(log,"[framehook/init]disable font doublescaled (experimental)\n");
+		//	fflush(log);
+		} else if (strncmp(FRAMEHOOK_OPT_FIXED_FONT_SIZE, arg, FRAMEHOOK_OPT_FIXED_FONT_SIZE_LEN) == 0) {
+			int fixed_font[CMD_FONT_MAX];
+			int n_font = sscanf(arg + FRAMEHOOK_OPT_FIXED_FONT_SIZE_LEN,"%d%d%d",fixed_font,fixed_font+1,fixed_font+2);
+			if (n_font > CMD_FONT_DEF){
+				setting->fixed_font_size[CMD_FONT_DEF] = (short)fixed_font[CMD_FONT_DEF];
+			}
+			if (n_font > CMD_FONT_BIG){
+				setting->fixed_font_size[CMD_FONT_BIG] = (short)fixed_font[CMD_FONT_BIG];
+			}
+			if (n_font > CMD_FONT_SMALL){
+				setting->fixed_font_size[CMD_FONT_SMALL] = (short)fixed_font[CMD_FONT_SMALL];
+			}
+			fprintf(log, "[framehook/init]fixed font size: DEFAULT=%d BIG=%d SMALL=%d (experimental)\n",
+					setting->fixed_font_size[CMD_FONT_DEF],
+					setting->fixed_font_size[CMD_FONT_BIG],
+					setting->fixed_font_size[CMD_FONT_SMALL]);
+			fflush(log);
+		} else if(strncmp(FRAMEHOOK_OPT_DOUBLE_RESIZE_WIDTH,arg,FRAMEHOOK_OPT_DOUBLE_RESIZE_WIDTH_LEN) == 0){
+			int double_limit[2];
+			int n_double = sscanf(arg+FRAMEHOOK_OPT_DOUBLE_RESIZE_WIDTH_LEN,"%d%d",double_limit,double_limit+1);
+			if(n_double > 1){
+				setting->double_limit_width[1] = (short)double_limit[1];
+			}
+			if(n_double > 0){
+				setting->double_limit_width[0] = (short)double_limit[0];
+			}
+			fprintf(log, "[framehook/init]double_resize limit width:%d %d (experimental)\n",
+				setting->double_limit_width[0],setting->double_limit_width[1]);
+			fflush(log);
+		} else if (strncmp(FRAMEHOOK_OPT_TARGET_SIZE, arg, FRAMEHOOK_OPT_TARGET_SIZE_LEN) == 0) {
+			setting->target_width = MAX(0,atoi(arg + FRAMEHOOK_OPT_TARGET_SIZE_LEN));
+			fprintf(log, "[framehook/init]target width: %d (experimaental)\n",setting->target_width);
+			fflush(log);
+		} else if (strncmp(FRAMEHOOK_OPT_DEBUG_KEY, arg, FRAMEHOOK_OPT_DEBUG_KEY_LEN) == 0) {
+			setting->debug_key = MAX(0,atoi(arg + FRAMEHOOK_OPT_DEBUG_KEY_LEN));
+			fprintf(log, "[framehook/init]debug key: %d (experimaental)\n",setting->debug_key);
+			fflush(log);
+		}
+	*/
 	}
 	//引数を正しく入力したか否かのチェック
 	//ここでチェックしているの以外は、デフォルト設定で逃げる。
@@ -261,6 +417,17 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		fflush(log);
 		return FALSE;
 	}
+/*
+	fprintf(log, "[framehook/DEBUG]font height fix ratio:%d%% %d%%, y_diff:%d%% %d%%  %dpx %dpx(experimental)\n",
+		setting->font_height_rate[0],setting->font_height_rate[1],setting->next_h_rate[0],setting->next_h_rate[1],setting->next_h_pixel[0],setting->next_h_pixel[1]);
+	fprintf(log, "[framehook/DEBUG]limit width:%d %d, double_resize:%d %d (experimental)\n",
+		setting->nico_limit_width[0], setting->nico_limit_width[1],
+		setting->double_resize_width[0], setting->double_resize_width[1]);
+	fprintf(log, "[framehook/DEBUG]double_resize limit width:%d %d (experimental)\n",
+		setting->double_limit_width[0],setting->double_limit_width[1]);
+	fprintf(log, "[framehook/DEBUG]limit height:%d %d (experimental)\n",setting->nico_limit_height[0],setting->nico_limit_height[1]);
+	fprintf(log, "[framehook/DEBUG]target width: %d (experimaental)\n",setting->target_width);
+*/
 	return TRUE;
 }
 void filecopy(FILE*dst,FILE*src);
@@ -321,17 +488,17 @@ __declspec(dllexport) void ExtProcess(void *ctx,const toolbox *tbox,vhext_frame 
 
 		//SDLのサーフェイスに変換
 		SDL_Surface* surf = SDL_CreateRGBSurfaceFrom(pict->data,
-													pict->w,pict->h,24,pict->linesize,
-												#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-														0xff000000,
-														0x00ff0000,
-														0x0000ff00,
-												#else
-														0x000000ff,
-														0x0000ff00,
-														0x00ff0000,
-												#endif
-														0x00000000
+												pict->w,pict->h,24,pict->linesize,
+											#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+												0xff000000,
+												0x00ff0000,
+												0x0000ff00,
+											#else
+												0x000000ff,
+												0x0000ff00,
+												0x00ff0000,
+											#endif
+												0x00000000
 												);
 	//フィルタ
 	int now_vpos = (pict->pts * VPOS_FACTOR);
@@ -365,4 +532,3 @@ __declspec(dllexport) void ExtRelease(void *ctx,const toolbox *tbox){
 		//ライブラリの終了
 		close();
 }
-

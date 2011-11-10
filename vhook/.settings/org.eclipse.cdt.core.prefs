@@ -1,5 +1,8 @@
-#Wed Nov 02 12:42:48 JST 2011
+#Sat Nov 05 05:30:22 JST 2011
 eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LANG/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LANG/operation=append
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LANG/value=C
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/delimiter=;
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/operation=replace
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/value=C\:/MinGW/bin

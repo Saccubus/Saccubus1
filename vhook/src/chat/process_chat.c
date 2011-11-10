@@ -7,6 +7,7 @@
 
 //このソース内でしか使わないメソッド
 void drawComment(SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos);
+int convSDLcolor(SDL_Color sc);
 
 /**
  * コメントを描画する。
@@ -17,14 +18,18 @@ int process_chat(DATA* data,CDATA* cdata,const char* com_type,SDL_Surface* surf,
 	CHAT_ITEM* chat_item;
 	CHAT_SLOT_ITEM* slot_item;
 	FILE* log = data->log;
+	int cy = 0;
 	if (cdata->enable_comment){
+		if(data->debug){
+			fprintf(log,"[process-chat/DEBUG]<vpos:%d>%s w:%d, h:%d\n",now_vpos,com_type,surf->w,surf->h);
+		}
 		/*見せないものを削除 */
 		slot = &cdata->slot;
 		resetChatSlotIterator(slot);
 		while((slot_item = getChatSlotErased(slot,now_vpos)) != NULL){
 			chat_item = slot_item->chat_item;
-			fprintf(log,"[process-chat/process]%s<vpos:%6d>com%4d<color:%2d loc:%2d size:%2d %6d-%6d(%6d)> erased. \n",
-				com_type,now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->vstart,chat_item->vend,chat_item->vpos);
+			fprintf(log,"[process-chat/process]comment %d<vpos:%d>%s<color:%d:#%06x loc:%d size:%d y:%d  %d - %d(vpos:%d)> erased. \n",
+				chat_item->no,now_vpos,com_type,chat_item->color,convSDLcolor(chat_item->color24),chat_item->location,chat_item->size,slot_item->y,chat_item->vstart,chat_item->vend,chat_item->vpos);
 			fflush(log);
 			deleteChatSlot(slot,slot_item);
 		}
@@ -32,14 +37,17 @@ int process_chat(DATA* data,CDATA* cdata,const char* com_type,SDL_Surface* surf,
 		chat = &cdata->chat;
 		resetChatIterator(chat);
 		while((chat_item = getChatShowed(chat,now_vpos)) != NULL){
-			fprintf(log,"[process-chat/process]%s<vpos:%6d>com%4d<color:%2d loc:%2d size:%2d %6d-%6d(%6d)> added. \n",
-				com_type,now_vpos,chat_item->no,chat_item->color,chat_item->location,chat_item->size,chat_item->vstart,chat_item->vend,chat_item->vpos);
+			cy = addChatSlot(data,slot,chat_item,surf->w,surf->h);
+			fprintf(log,"[process-chat/process]comment %d<vpos:%d>%s<color:%d:#%06x loc:%d size:%d y:%d  %d - %d(vpos:%d)> added. \n",
+				chat_item->no,now_vpos,com_type,chat_item->color,convSDLcolor(chat_item->color24),chat_item->location,chat_item->size,cy,chat_item->vstart,chat_item->vend,chat_item->vpos);
 			fflush(log);
-			addChatSlot(data,slot,chat_item,surf->w,surf->h);
 		}
 		drawComment(surf,slot,now_vpos);
 	}
 	return TRUE;
+}
+int convSDLcolor(SDL_Color sc){
+	return ((sc.r)<<16)+((sc.g)<<8)+(sc.b);
 }
 
 /*

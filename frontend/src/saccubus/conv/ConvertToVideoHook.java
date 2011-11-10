@@ -10,19 +10,19 @@ import javax.xml.parsers.*;
  * <p>
  * タイトル: さきゅばす
  * </p>
- * 
+ *
  * <p>
  * 説明: ニコニコ動画の動画をコメントつきで保存
  * </p>
- * 
+ *
  * <p>
  * 著作権: Copyright (c) 2007 PSI
  * </p>
- * 
+ *
  * <p>
  * 会社名:
  * </p>
- * 
+ *
  * @author 未入力
  * @version 1.0
  */
@@ -49,6 +49,7 @@ public class ConvertToVideoHook {
 			// 変換結果の書き込み
 			FileOutputStream fos = new FileOutputStream(out);
 			packet.write(fos);
+			fos.flush();
 			fos.close();
 			return true;
 		} catch (IOException ex) {

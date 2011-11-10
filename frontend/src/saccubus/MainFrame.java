@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 import psi.lib.swing.PopupRightClick;
+import saccubus.net.NicoClient;
 import saccubus.util.*;
 
 /**
@@ -132,6 +133,7 @@ public class MainFrame extends JFrame {
 	JComboBox commentModeComboBox = new JComboBox(commentModeArray);
 	JCheckBox commentSpeedCheckBox = new JCheckBox();
 	JTextField commentSpeedTextField = new JTextField();
+	JCheckBox enableCA_CheckBox = new JCheckBox();
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
 	private static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
@@ -1017,7 +1019,7 @@ public class MainFrame extends JFrame {
 		VhookSettingPanel.add(ShowConvVideoCheckBox, grid8_x0_y7_63);
 		VhookSettingPanel.add(getFixFontSizeCheckBox(), grid8_x0_y8_14);
 		VhookSettingPanel.add(getOpaqueCommentCheckBox(), grid8_x0_y9_33);
-		commentSpeedCheckBox.setText("コメント速度（Piel/Sec）");
+		commentSpeedCheckBox.setText("コメント速度（Pixel/Sec）");
 		commentSpeedCheckBox.setForeground(Color.blue);
 		VhookSettingPanel.add(commentSpeedCheckBox, grid8_x0_y10_0);
 		commentSpeedTextField.setForeground(Color.blue);
@@ -1184,7 +1186,7 @@ public class MainFrame extends JFrame {
 		experimentPanel.setLayout(new GridBagLayout());
 		experimentPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"実験的設定", TitledBorder.LEADING, TitledBorder.TOP,
+				"実験的設定（仮）", TitledBorder.LEADING, TitledBorder.TOP,
 				getFont(), Color.blue));
 		fontHeightFixCheckBox.setText("フォントの高さを調整する");
 		fontHeightFixCheckBox.setForeground(Color.blue);
@@ -1221,6 +1223,7 @@ public class MainFrame extends JFrame {
 		grid20_x1_y1.weighty = 0.0;
 		grid20_x1_y1.insets = INSETS_0_5_0_5;
 		experimentPanel.add(fontHeightRatioTextField,grid20_x1_y1);
+	/*
 		disableLimitWidthResizeCheckBox.setText("臨界幅リサイズを無効にする");
 		disableLimitWidthResizeCheckBox.setForeground(Color.red);
 		disableLimitWidthResizeCheckBox.setSelected(false);
@@ -1269,9 +1272,11 @@ public class MainFrame extends JFrame {
 		grid20_x0_y6.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x0_y6.insets = INSETS_0_5_0_5;
 		experimentPanel.add(disableDoubleResizeCheckBox, grid20_x0_y6);
-		disableOriginalResizeCheckBox.setText("さきゅばす独自リサイズを無効にする");
+	*/
+		disableOriginalResizeCheckBox.setText("開発版を有効（従来のさきゅばすのリサイズを無効にする）");
 		disableOriginalResizeCheckBox.setForeground(Color.blue);
-		disableOriginalResizeCheckBox.setToolTipText("リサイズ後のコメントの高さを動画の高さの１／３以下にする");
+		disableOriginalResizeCheckBox.setToolTipText("コメントアート用に調整中。" +
+			"現在はオフの方がいいみたいです。安定したらオフの方に反映します。");
 		GridBagConstraints grid20_x0_y7 = new GridBagConstraints();
 		grid20_x0_y7.gridx = 0;
 		grid20_x0_y7.gridy = 7;
@@ -1283,6 +1288,20 @@ public class MainFrame extends JFrame {
 		grid20_x0_y7.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x0_y7.insets = INSETS_0_5_0_5;
 		experimentPanel.add(disableOriginalResizeCheckBox, grid20_x0_y7);
+		enableCA_CheckBox.setText("ＣＡ暫定的対応：明朝体フォントSimsun等幅を使う");
+		enableCA_CheckBox.setForeground(Color.blue);
+		enableCA_CheckBox.setToolTipText("フォント変化は出来ません。" +
+			"コメントアートにはゴシック体より安定してCAに使用されるので" +
+			"このチェックボタンで強制的に使用するようになります");
+		GridBagConstraints drid20_x0_y8 = new GridBagConstraints();
+		drid20_x0_y8.gridx = 0;
+		drid20_x0_y8.gridy = 8;
+		drid20_x0_y8.gridwidth = 2;
+		drid20_x0_y8.weightx = 1.0;
+		drid20_x0_y8.anchor = GridBagConstraints.NORTH;
+		drid20_x0_y8.fill = GridBagConstraints.HORIZONTAL;
+		drid20_x0_y8.insets = INSETS_0_5_0_5;
+		experimentPanel.add(enableCA_CheckBox, drid20_x0_y8);
 	}
 
 	private void setPopup() {
@@ -1534,8 +1553,18 @@ public class MainFrame extends JFrame {
 			disableOriginalResizeCheckBox.isSelected(),
 			commentModeComboBox.getSelectedIndex(),
 			commentSpeedCheckBox.isSelected(),
-			commentSpeedTextField.getText()
+			commentSpeedTextField.getText(),
+			getDebugMode(),
+			enableCA_CheckBox.isSelected()
 		);
+	}
+
+	private boolean getDebugMode() {
+		String proxy = ProxyTextField.getText();
+		if (proxy != null && proxy.startsWith(NicoClient.DEBUG_PROXY)){
+			return true;
+		}
+		return false;
 	}
 
 	private void setSetting(ConvertingSetting setting) {

@@ -51,7 +51,7 @@ public class NicoClient {
 	private final NicoMap nicomap;
 	private Stopwatch Stopwatch;
 
-	private static final String DEBUG_PROXY = "debug/";
+	public static final String DEBUG_PROXY = "debug/";
 
 	/**
 	 * ブラウザ共有しないでログイン
