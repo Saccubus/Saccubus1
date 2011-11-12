@@ -1,11 +1,14 @@
 package saccubus;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 import java.io.IOException;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.File;
+
+import saccubus.util.Bool;
 
 /**
  * <p>
@@ -108,6 +111,8 @@ public class ConvertingSetting {
 	private boolean debugNicovideo;
 	private boolean enableCA;	//âºê›íË
 
+	private Map<String, String> replaceOptions;
+
 	private ConvertingSetting(
 			String mailaddress,
 			String password,
@@ -149,6 +154,7 @@ public class ConvertingSetting {
 			boolean disable_vhook,
 			int shadow_index)
 	{
+		replaceOptions = null;
 		MailAddress = mailaddress;
 		Password = password;
 		SaveVideo = savevideo;
@@ -356,7 +362,9 @@ public class ConvertingSetting {
 		enableCA = enable_CA;
 	}
 
-
+	public Map<String,String> getReplaceOptions(){
+		return replaceOptions;
+	}
 	public File getVideoFile() {
 		return VideoFile;
 	}
@@ -903,6 +911,198 @@ public class ConvertingSetting {
 
 	public void setFontIndex(int i) {
 		FontIndex = i;
+	}
+
+	public void setOptionFile(File file) {
+		OptionFile = file;
+	}
+
+	public void setWideOptionFile(File file) {
+		wideOptionFile = file;
+	}
+
+	public void override(String prefix,
+			Map<String, String> settingMap,
+			Map<String, String> optionMap) {
+		override(prefix);
+		if(optionMap != null && !optionMap.isEmpty()){
+			replaceOptions = optionMap;
+		}
+		override(settingMap);
+	}
+
+	private void override(String prefix) {
+		if (prefix != null && !prefix.isEmpty()) {
+			setOptionFile(new File(OptionFile.getParentFile(), prefix
+					+ OptionFile.getName()));
+			setWideOptionFile(new File(wideOptionFile.getParentFile(), prefix
+					+ wideOptionFile.getName()));
+		}
+	}
+
+	private void override(Map<String, String> map) {
+		if (map == null || map.isEmpty()) {
+			return;
+		}
+		if (map.containsKey(PROP_FONT_PATH))
+			FontPath = map.get(PROP_FONT_PATH);
+		if (map.containsKey(PROP_FONT_INDEX))
+			FontIndex = Integer.parseInt(map.get(PROP_FONT_INDEX));
+		if (map.containsKey(PROP_SAVE_VIDEO))
+			SaveVideo = Bool.parseBoolean(map.get(PROP_SAVE_VIDEO));
+		if (map.containsKey(PROP_SAVE_COMMENT)) {
+			SaveComment = Bool.parseBoolean(map.get(PROP_SAVE_COMMENT));
+			SaveOwnerComment = SaveComment;
+		}
+		if (map.containsKey(PROP_CMDLINE_EXT))
+			CmdLineOptionExt = map.get(PROP_CMDLINE_EXT);
+		if (map.containsKey(PROP_WIDE_CMDLINE_EXT))
+			wideCmdLineOptionExt = map.get(PROP_WIDE_CMDLINE_EXT);
+		if (map.containsKey(PROP_ENABLE_CA))
+			enableCA = Bool.parseBoolean(map.get(PROP_ENABLE_CA));
+		/*
+		if (videofile.lastIndexOf(".") <= videofile.lastIndexOf(File.separator)) {
+			videofile += ".flv";
+		}
+		VideoFile = new File(videofile);
+//			map.get(PROP_VIDEO_FILE, ".\\video.flv"),
+		if (commentfile.lastIndexOf(".") <= commentfile.lastIndexOf(File.separator)) {
+			commentfile += ".xml";
+		}
+		CommentFile = new File(commentfile);
+		SaveConverted = saveconverted;
+		if (convvideofile.lastIndexOf(".") <= convvideofile.lastIndexOf(File.separator)) {
+			convvideofile += ".avi";
+		}
+		ConvertedVideoFile = new File(convvideofile);
+		try {
+			VideoShowNum = Integer.parseInt(videoshownum);
+		} catch (NumberFormatException ex) {
+			VideoShowNum = 40;
+		}
+		FFmpegPath = ffmpegpath;
+		VhookPath = vhookpath;
+		CmdLineOptionMain = cmdlineoption_main;
+		CmdLineOptionIn = cmdlineoption_in;
+		CmdLineOptionOut = cmdlineoption_out;
+		BackComment = backcomment;
+		Vhook_ShowConvertingVideo = showconvvideo;
+		DeleteVideoAfterConverting = delete_video_after_conv;
+		VideoFixFileName = video_fix_file_name;
+		VideoFixFileNameFolder = new File(video_fix_file_name_folder, "");
+		DeleteCommentAfterConverting = delete_comment_after_conv;
+		CommentFixFileName = comment_fix_file_name;
+		CommentFixFileNameFolder = new File(comment_fix_file_name_folder, "");
+		NotAddVideoID_Conv = not_add_videoid_conv;
+		ConvFixFileName = conv_fix_file_name;
+		ConvFixFileNameFolder = new File(conv_fix_file_name_folder, "");
+		NG_Word = ngword;
+		NG_ID = ngid;
+		UseProxy = use_proxy;
+		Proxy = proxy;
+		ProxyPort = proxy_port;
+		FixFontSize = fix_font_size;
+		FixCommentNum = fix_comment_num;
+		OpaqueComment = opaque_comment;
+		OptionFile = option_file;
+		DisableVhook = disable_vhook;
+		ShadowIndex = shadow_index;
+
+		ConvertWithComment = convertwithcomment;
+		if (ownercommentfile.lastIndexOf(".") <= ownercommentfile.lastIndexOf(File.separator)) {
+			ownercommentfile += ".xml";
+		}
+		OwnerCommentFile = new File(ownercommentfile);
+		ConvertWithOwnerComment = convertwithownercomment;
+		AddTimeStamp = addtimestamp;
+		AddOption_ConvVideoFile = addOption_ConvVideoFile;
+		History1 = history1;
+		VhookWidePath = vhook_wide_path;
+		UseVhookNormal = use_vhook_normal;
+		UseVhookWide = use_vhook_wide;
+		BrowserIE = browserIE;
+		BrowserFF = browserFF;
+		BrowserChrome = browserChrome;
+		BrowserChromium = browserChromium;
+		BrowserOpera = browserOpera;
+		BrowserOther = browserOther;
+		BrowserCookiePath = browserCookiePath;
+		optionFolder = option_folder;
+		wideOptionFile = wide_option_file;
+		wideCmdLineOptionMain = wide_cmdlineoption_main;
+		wideCmdLineOptionIn = wide_cmdlineoption_in;
+		wideCmdLineOptionOut = wide_cmdlineoption_out;
+		optionalTranslucent = optional_translucent;
+		fontHeightFix = font_height_fix;
+		fontHeightFixRatio = font_height_fix_raito;
+		disableOriginalResize = disable_original_resize;
+		commentIndex = comment_index;
+		setCommentSpeed = set_comment_speed;
+		commentSpeed = comment_speed;
+		debugNicovideo = debug_nicovideo;
+ */
+//			Boolean.parseBoolean(map.get(PROP_ADD_TIMESTAMP, "false")),
+//			map.get(PROP_COMMENT_FILE, ".\\comment.xml"),
+//			Boolean.parseBoolean(map.get(PROP_SAVE_OWNERCOMMENT, "false")),	// false<-true 1.22r3e8
+//			map.get(PROP_OWNERCOMMENT_FILE, ".\\comment" + Converter.OWNER_EXT),
+//			Boolean.parseBoolean(map.get(PROP_SAVE_CONVERTED, "true")),
+//			Boolean.parseBoolean(map.get(PROP_CONV_WITH_COMMENT,"true")),
+//			Boolean.parseBoolean(map.get(PROP_CONV_WITH_OWNERCOMMENT,"false")),	// false<-true 1.22r3e8
+//			map.get(PROP_CONVERTED_FILE, ".\\video.avi"),
+//			map.get(PROP_SHOW_COMMENT, "40"),
+//			map.get(PROP_FFMPEG_PATH,".\\bin\\ffmpeg.exe"),
+//			map.get(PROP_VHOOK_PATH,".\\bin\\nicovideoE.dll"),
+//			map.get(PROP_CMDLINE_MAIN,""),
+//			map.get(PROP_CMDLINE_IN, ""),
+//			map.get(PROP_CMDLINE_OUT,"-threads 4 -s 512x384 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 4:3"),
+//			map.get(PROP_BACK_COMMENT, "500"),
+//			Boolean.parseBoolean(map.get(PROP_SHOW_VIDEO, "true")),
+//			Boolean.parseBoolean(map.get(PROP_DEL_VIDEO_AFTER_CONV, "false")),
+//			Boolean.parseBoolean(map.get(PROP_VIDEO_FIX_FILE_NAME, "true")),
+//			map.get(PROP_VIDEO_FIX_FILE_NAME_FOLDER,".\\[out]video\\"),
+//			Boolean.parseBoolean(map.get(PROP_DEL_COMMENT_AFTER_CONV, "false")),
+//			Boolean.parseBoolean(map.get(PROP_COMMENT_FIX_FILE_NAME, "true")),
+//			map.get(PROP_COMMENT_FIX_FILE_NAME_FOLDER, ".\\[out]comment\\"),
+//			Boolean.parseBoolean(map.get(PROP_NOT_ADD_VIDEOID_CONV, "false")),
+//			Boolean.parseBoolean(map.get(PROP_CONV_FIX_FILE_NAME,"true")),
+//			map.get(PROP_CONV_FIX_FILE_NAME_FOLDER, ".\\[out]converted\\"),
+//			map.get(PROP_NG_WORD, ""),
+//			map.get(PROP_NG_ID, ""),
+//			Boolean.parseBoolean(map.get(PROP_USE_PROXY, "false")),
+//			map.get(PROP_PROXY,""),
+//			Integer.parseInt(map.get(PROP_PROXY_PORT,"-1")),
+//			Boolean.parseBoolean(map.get(PROP_FIX_FONT_SIZE, "true")),
+//			Boolean.parseBoolean(map.get(PROP_FIX_COMMENT_NUM, "true")),
+//			Boolean.parseBoolean(map.get(PROP_OPAQUE_COMMENT,"false")),
+//			option_file,
+//			Boolean.parseBoolean(map.get(PROP_DISABLE_VHOOK,"false")),
+//			Integer.parseInt(map.get(PROP_SHADOW_INDEX,"1"),10),
+//			Boolean.parseBoolean(map.get(PROP_ADD_OPTION_CONV_VIDEO, "false")),
+//			map.get(PROP_HISTORY1, "http://www.nicovideo.jp/watch/"),
+//			map.get(PROP_VHOOK_WIDE_PATH,".\\bin\\nicovideoE.dll"),
+//			Boolean.parseBoolean(map.get(PROP_USE_VHOOK,"true")),
+//			Boolean.parseBoolean(map.get(PROP_USE_VHOOK_WIDE,"true")),
+//			Boolean.parseBoolean(map.get(PROP_BROWSER_IE, "false")),
+//			Boolean.parseBoolean(map.get(PROP_FIREFOX, "false")),
+//			Boolean.parseBoolean(map.get(PROP_CHROME, "false")),
+//			Boolean.parseBoolean(map.get(PROP_CHROMIUM, "false")),
+//			Boolean.parseBoolean(map.get(PROP_OPERA, "false")),
+//			Boolean.parseBoolean(map.get(PROP_USE_COOKIE_PATH, "false")),
+//			map.get(PROP_BROWSER_COOKIE_PATH,"Å|èÍèäÇÕé©ï™Ç≈ë{ÇµÇƒâ∫Ç≥Ç¢Å|"),
+//			map.get(PROP_OPTION_FOLDER, ".\\option"),
+//			wide_option_file,
+//			map.get(PROP_WIDE_CMDLINE_MAIN,""),
+//			map.get(PROP_WIDE_CMDLINE_IN, ""),
+//			map.get(PROP_WIDE_CMDLINE_OUT,"-threads 4 -s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9"),
+//			Boolean.parseBoolean(map.get(PROP_OPTIONAL_TRANSLUCENT, "true")),
+//			Boolean.parseBoolean(map.get(PROP_FONT_HEIGHT_FIX,"false")),
+//			map.get(PROP_FONT_HEIGHT_FIX_RAITO,"102"),
+//			Boolean.parseBoolean(map.get(PROP_DISABLE_ORIGINAL_RESIZE, "false")),
+//			Integer.parseInt(map.get(PROP_COMMENT_MODE_INDEX, "0")),
+//			Boolean.parseBoolean(map.get(PROP_SET_COMMENT_SPEED, "false")),
+//			map.get(PROP_COMMENT_SPEED, ""),
+//			false,
+//		);
 	}
 
 }

@@ -5,10 +5,17 @@
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造板です。
 
-　・1.26.1 (2011/11/05)　実験的設定を変更、CAへの対応その２
+　・1.26.2 (2011/11/12)　CUI修正　auto.batやSaccubusConvList使用時の
+　　２パス指定、一部設定のオーバーライド可能
 
 □修正・改変点
-　1.26.1
+　1.26.2 (2011/11/12)
+　・CUI修正　auto.batやSaccubusConvList使用時の修正
+　　２パス指定可能
+　　一部設定のオーバーライド可能
+　　CUI使用時にLog.txtを出力する、autodebug.bat廃止
+
+　1.26.1以降
 　・実験的設定を変更、CAへの対応その２
 　　ダブルリサイズ・fullコマンド・２４ビットカラーを実装（オフ不可）
 　　改行リサイズ・臨界幅リサイズ変更・開発版を選択可能（上手く行ってない）
@@ -164,7 +171,7 @@
 
 ●注意●
 　・本Rev.は確定版SDLライブラリ（2011/11/02版）を同梱しています。（binフォルダ内）
-　　libSDL_gfx-13.dllが不要になりました。
+　　libSDL_gfx-13.dllが不要になりました。autodebug.batが不要になりました。
 　　（nicovideoE.dllにスタティックリンク済み）
 　・本Rev.は再修正版optionファイル（2011/11/02版）を同梱しています。
 　　（iPhone用仮×2、PSP用追加×2を追加）
@@ -223,6 +230,52 @@
 　　過去ログをダウンロードするには（プレミアム会員が必要条件）日付を
 　　2009/7/7 7:7:7 や 2009/7/7 7:7 や 2009/7/7 のように入力します。
 　　右上の変換ボタンをクリックするとダウンロードと変換が開始します。
+
+
+●CUI修正
+　・auto,batやSaccubusConvList,exe実行時にlog.txtを出力する。
+　・設定のオーバーライド可能（保存されない）
+　①基本の使い方
+　　　java -jar Saccubus.jar Mail@address.com password 動画ID 日時 今回の追加オプション
+　　auto.batの場合　%CMD% sm9999 "2009/7/7 7:7"
+　　　日時は省略可能、現在の場合は0を指定
+　　ConvListの場合の入力欄　sm9999 13190010
+　　　日時は1970/1/1からの秒数で指定、/や"は使用不可、省略可能
+　②オプションファイルの変更（2passエンコードの例）
+　　　最初に2pass用のオプションファイルを1pass目、2pass目と2組（ｘアスペクト比2種）用意する
+　　　1pass目ファイル名　[PC][4：3].xml　　 [PC][16：9].xml　　　 とし
+　　　2pass目ファイル名　p2[PC][4：3].xml　p2[PC][16：9].xml　として（p2は変更可能）
+　　auto.batの場合次のように2行指定する
+　　　%CMD% sm9999
+　　　%CMD% sm9999 0 p2　　　　　日時(0)は省略不可、p2はオプションファイルの接頭辞
+　　ConvListの場合：下の入力欄に入力またはペーストを2回行う（2pass目は手入力が必要）
+　　　sm9999
+　　　sm9999 0 p2
+　③設定(saccubus.xml)のオーバーライド
+　　指定方法　key名=オーバーライド値
+　　オーバーライド可能なkey　7　　　　　　　（既定値）
+　　　　FontPath　　　　　　フォントファイルのパス（%WINDIR%\Fonts\msgothic.ttc）
+　　　　FontIndex 　　　　　フォントインデックス（1）
+　　　　SaveVideoFile 　　　動画を保存する（true）
+　　　　SaveCommentFile 　　コメントを保存する（true）
+　　　　CMD_EXT 　　　　　　直接入力時の従来の変換後の拡張子（.avi）
+　　　　WideCMD_EXT 　　　　直接入力時のワイドの変換後の拡張子（.mp4）
+　　　　EnableCA　　　　　　CA用のフォントに強制変更する（false）
+　　例えばsm8628149をCA用のフォントに強制変更する場合は
+　　auto.batの場合　%CMD% sm8628149 0 EnableCA=true
+　　ConvListの場合　sm8628149 0 EnableCA=true
+　④組み合わせ　②と③は同時に組み合わせて使用可能
+　　例えばsm9を2passで2pass目は動画コメントを保存（ダウンロード）しない場合は
+　　auto.batの場合
+　　　%CMD% sm9
+　　　%CMD% sm9 0 p2 SaveVideoFile=false SaveCommentFile=false
+　　ConvListの場合
+　　　sm9
+　　　sm9 0 p2 SaveVideoFile=false SaveCommentFile=false
+
+　■SaccubusConvList,exeは以下からダウンロード出来ます。
+　　さきゅばす変換リスト(URLリスト連続変換)　by もちやまさん
+　　http://www.ne.jp/asahi/mochiyama/my/file/SaccubusConvList.zip
 
 ●CA（コメントアート）対応　その２
 　　「変換設定」タブ「実験的設定」を変更しました。
@@ -382,6 +435,8 @@
 　　０個選択時→エラー
 
 ●過去ログを複数ファイルに保存する
+　（1.26α3から新コメント表示にすれば過去ログを一度に保存可能です。
+　　サーバーが切断しなければ380万コメントまで確認済み。約7分）
 　・「保存設定」「動画・コメント」画面の
 　　<保存するフォルダを指定し、ファイル名は自動で決定する>と
 　　<コメントファイル名に時刻を付加する>チェックボックスを
@@ -418,13 +473,11 @@
 　・[log]vhext.txtを tempフォルダの下に移動するようになりました。
 　・色々設定を変更した時は、設定を初期化してみて下さい。
 
-●auto.batで動作が変な時、記録を取りたい時は
+●auto.batで動作が変な時は
 　・auto.batの記述を確かめます。
-　・autodebug.batをダブルクリックして起動します。
-　　（Bin.jarが無いとエラーになります。）
-　　auto.batが実行されるので終了するまで待ちます。
+　　auto.batが実行して終了するまで待ちます。
 　　途中でエラーが起きても、最後の動画まで実行してから終了します。
-　　autolog.txtにログが記録されます。
+　　log.txtにログが記録されます。（１MBまで）
 
 ●設定を初期化するには
 　・Saccubus.xml を別の名前に変更します。
@@ -471,7 +524,6 @@
 　　Saccubdus.exe　のCソースファイル(launcher)、makeファイル、リソース
 ・readmeNew.txt、readme.txt(1.22r)、readme+.txt(1.22r3)
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
-・autodebug.bat　　　　　　 auto.batのログ記録用バッチファイル
 ・AUTO2PROC.BAT　　　　　　 ２プロセス自動実行本体
 ・AUTO2PROCDEBUG.BAT　　　  ２プロセス自動実行時のログ記録用
 ・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
@@ -484,6 +536,7 @@
 　SVN：svn checkout http://svn.sourceforge.jp/svnroot/saccubus/trunk
 
 ・ダウンロード
+　1.26.1　　http://www1.axfc.net/uploader/File/so/71270.zip
 　1.26α4 　http://www1.axfc.net/uploader/File/so/71171.zip
 　1.26α3 　http://www1.axfc.net/uploader/File/so/70049.zip
 　1.26α2 　http://www1.axfc.net/uploader/File/so/69997.zip
@@ -516,6 +569,12 @@
 　　http://www.daily-vocaran.info/nicorank/
 
 変更履歴
+1.26.2 (2011/11/12)
+　CUI修正　auto.batやSaccubusConvList使用時の修正
+　　２パス指定可能
+　　一部設定のオーバーライド可能
+　　CUI使用時にLog.txtを出力する、autodebug.bat廃止
+
 1.26.1 (2011/11/05)
 　実験的設定を変更、CAへの対応その２
 　　ダブルリサイズ・fullコマンド・２４ビットカラーを実装
