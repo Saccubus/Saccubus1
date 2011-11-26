@@ -21,16 +21,22 @@ typedef struct ContextInfo{
  *
  */
 int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[]);
+FILE* changelog(FILE* log,SETTING* setting);
 
 __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc, char *argv[]){
 	int i;
 	//ログ
-	FILE* log = fopen("[log]vhext.txt", "w");
+	FILE* log = fopen("[log]vhext.txt", "w+");
+	char linebuf[128];
+	char *ver="1.28.20";
+	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
+		puts(linebuf);
 		puts("[framehook/init]failed to open logfile.\n");
 		fflush(log);
 		return -1;
 	}else{
+		fputs(linebuf,log);
 		fputs("[framehook/init]initializing..\n",log);
 		fflush(log);
 	}
@@ -51,6 +57,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 		fflush(log);
 		return -2;
 	}
+	log = changelog(log, &setting);
 	//ライブラリなどの初期化
 	if(init(log)){
 		fputs("[framehook/init]initialized libs.\n",log);
@@ -103,6 +110,8 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	--nico-width-wide : ワイドプレーヤー16:9対応
 	--font-height-fix-ratio:%d ： フォント高さ自動変更の倍率（％）+ int
 	--disable-original-resize : さきゅばす独自リサイズを無効にする（実験的）
+	--comment-speed: コメント速度を指定する場合≠0
+	--deb : デバッグ出力を有効にする
 */
 
 int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[]){
@@ -112,7 +121,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		fflush(log);
 		return FALSE;
 	}
-	/*videoの長さ VPOS_FACTORでスケール */
+	/*videoの長さ*/
 	setting->video_length = (tbox->video_length * VPOS_FACTOR);
 	if (setting->video_length<=0){
 		fprintf(log,"[framehook/init]video_length is less or equals 0.\n");
@@ -140,9 +149,29 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->opaque_comment=FALSE;
 	setting->nico_width_now=NICO_WIDTH;	//デフォルトは旧プレイヤー幅
 	setting->optional_trunslucent=FALSE;	//デフォルトは半透明にしない
-
-	// ↓は実験的設定
+	setting->font_h_fix_r = 1.0f;	//デフォルトは従来通り（最終調整で合わせること）
 	setting->original_resize = TRUE;	//デフォルトは有効（実験的に無効にする選択を行う）
+	setting->comment_speed = 0;
+	setting->enableCA = FALSE;
+	setting->debug = FALSE;
+	// CA用フォント
+	int f;
+	for(f=0;f<CA_FONT_MAX;f++){
+		setting->CAfont_path[f] = NULL;
+	}
+	// CA切替用Unicode群
+	setting->change_simsun_uc = "0x2581-0x258f 0x02cb 0xe800";	//  ブロック
+	setting->change_gulim_uc = "0x2661 02665 0xadf8";	//  ハート &#heartsuit;
+	setting->protect_gothic_uc = "0x30fb 0xff61-0xff9f";	// ・ 中点
+	setting->zero_width_uc = "0x200b 0x2029-0x202f";	// ゼロ幅
+	setting->spaceable_uc = "0x02cb";	// griph が未対応のため空白に
+	setting->georgia_uc = "0x10d0-0x10fb";	//グルジア文字 特殊フォント
+	/* その他　参考
+	 * 空白   0x00a0 0x2001 0x3000 など
+	 */
+
+/*
+	// ↓は実験的設定
 	setting->limitwidth_resize = TRUE;
 	setting->linefeed_resize = TRUE;
 	setting->double_resize = TRUE;
@@ -172,6 +201,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->fixed_font_size[CMD_FONT_SMALL] = COMMENT_FONT_SIZE[CMD_FONT_SMALL];
 	setting->debug_key = NO_DEBUG_KEY;
 	setting->target_width = 0;
+*/
 	int i;
 	char* arg;
 	for(i=0;i<argc;i++){
@@ -239,8 +269,18 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			fputs("[framehook/init]use wide player.\n",log);
 			fflush(log);
 			setting->nico_width_now = NICO_WIDTH_WIDE;
+		}else if(setting->video_length <= 0 && strncmp(FRAMEHOOK_OPT_VIDEO_LENGTH,arg,FRAMEHOOK_OPT_VIDEO_LENGTH_LEN) == 0){
+			setting->video_length = MAX(0,atoi(arg+FRAMEHOOK_OPT_VIDEO_LENGTH_LEN)) * VPOS_FACTOR;
+			fprintf(log,"[framehook/init]video length (to assist ffmpeg):%d\n",setting->video_length);
+			fflush(log);
+		} else if (strncmp(FRAMEHOOK_OPT_FONT_HEIGHT_FIX,arg,FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN) == 0){
+			int font_h_fix_ratio = MAX(0,atoi(arg+FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN));
+			if (setting->font_h_fix_r==1.0f && font_h_fix_ratio > 0){
+				setting->font_h_fix_r = (float)font_h_fix_ratio / 100.0f;
+				fprintf(log,"[framehook/init]font height fix: %d%%\n",font_h_fix_ratio);
+				fflush(log);
+			}
 		} else if (strncmp(FRAMEHOOK_OPT_ASPECT_MODE, arg, FRAMEHOOK_OPT_ASPECT_MODE_LEN) == 0) {
-			// for Inqubus
 			int aspect_mode = MAX(0, atoi(arg + FRAMEHOOK_OPT_ASPECT_MODE_LEN));
 			/**
 			 * アスペクト比の指定. コメントのフォントサイズや速度に影響する.（いんきゅばす互換）
@@ -258,13 +298,79 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 				fflush(log);
 				setting->nico_width_now = NICO_WIDTH;
 			}
-		}else if(setting->video_length <= 0 && strncmp(FRAMEHOOK_OPT_VIDEO_LENGTH,arg,FRAMEHOOK_OPT_VIDEO_LENGTH_LEN) == 0){
-			// obsolate
-			setting->video_length = MAX(0,atoi(arg+FRAMEHOOK_OPT_VIDEO_LENGTH_LEN)) * VPOS_FACTOR;
-			fprintf(log,"[framehook/init]video length (to assist ffmpeg):%d\n",setting->video_length);
+		} else if (setting->original_resize && strcmp("--disable-original-resize",arg) == 0){
+			setting->original_resize = FALSE;
+			fprintf(log,"[framehook/init]disable original resize (experimental)\n");
+			fflush(log);
+		} else if (strncmp(FRAMEHOOK_OPT_COMMENT_SPEED,arg,FRAMEHOOK_OPT_COMMENT_SPEED_LEN) == 0){
+			int com_speed = atoi(arg+FRAMEHOOK_OPT_COMMENT_SPEED_LEN);
+			if (com_speed != 0){
+				setting->comment_speed = com_speed;
+				fprintf(log,"[framehook/init]font height fix: %d pixel/sec.\n",com_speed);
+				fflush(log);
+			}
+		} else if(!setting->enableCA && strcmp("--enable-CA",arg) == 0){
+			setting->enableCA = TRUE;
+			fprintf(log,"[framehook/init]Comment Art mode enable.\n");
+			fflush(log);
+		} else if(!setting->debug && strcmp("--debug-print",arg) == 0){
+			setting->debug = TRUE;
+			fprintf(log,"[framehook/init]print debug information\n");
 			fflush(log);
 		}
-
+		// CA用フォント
+		else if(strncmp(FRAMEHOOK_OPT_SIMSUN_FONT,arg,FRAMEHOOK_OPT_SIMSUN_FONT_LEN) == 0){
+			char* font = arg+FRAMEHOOK_OPT_SIMSUN_FONT_LEN;
+			setting->CAfont_path[SIMSUN_FONT] = font;
+			fprintf(log,"[framehook/init]SIMSUN Font path:%s\n",setting->CAfont_path[SIMSUN_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_GULIM_FONT,arg,FRAMEHOOK_OPT_GULIM_FONT_LEN) == 0){
+			char* font = arg+FRAMEHOOK_OPT_GULIM_FONT_LEN;
+			setting->CAfont_path[GULIM_FONT] = font;
+			fprintf(log,"[framehook/init]GULIM Font path:%s\n",setting->CAfont_path[GULIM_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_ARIAL_FONT,arg,FRAMEHOOK_OPT_ARIAL_FONT_LEN) == 0){
+			char* font = arg+FRAMEHOOK_OPT_ARIAL_FONT_LEN;
+			setting->CAfont_path[ARIAL_FONT] = font;
+			fprintf(log,"[framehook/init]ARIAL Font path:%s\n",setting->CAfont_path[ARIAL_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_GOTHIC_FONT,arg,FRAMEHOOK_OPT_GOTHIC_FONT_LEN) == 0){
+			char* font = arg+FRAMEHOOK_OPT_GOTHIC_FONT_LEN;
+			setting->CAfont_path[GOTHIC_FONT] = font;
+			fprintf(log,"[framehook/init]GOTHIC Font path:%s\n",setting->CAfont_path[GOTHIC_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_GEORGIA_FONT,arg,FRAMEHOOK_OPT_GEORGIA_FONT_LEN) == 0){
+			char* font = arg+FRAMEHOOK_OPT_GEORGIA_FONT_LEN;
+			setting->CAfont_path[GEORGIA_FONT] = font;
+			fprintf(log,"[framehook/init]GEORGIA Font path:%s\n",setting->CAfont_path[GEORGIA_FONT]);
+			fflush(log);
+		}
+		// CA切替用Unicode群
+		else if(strncmp(FRAMEHOOK_OPT_CHANGE_SIMSUN_UNICODE,arg,FRAMEHOOK_OPT_CHANGE_SIMSUN_UNICODE_LEN) == 0){
+			char* unicode = arg+FRAMEHOOK_OPT_CHANGE_SIMSUN_UNICODE_LEN;
+			setting->change_simsun_uc = unicode;
+			fprintf(log,"[framehook/init]Change to SIMSUN Font Unicode:%s\n",setting->change_simsun_uc);
+			fflush(log);
+		}
+		else if(strncmp(FRAMEHOOK_OPT_CHANGE_GULIM_UNICODE,arg,FRAMEHOOK_OPT_CHANGE_GULIM_UNICODE_LEN) == 0){
+			char* unicode = arg+FRAMEHOOK_OPT_CHANGE_GULIM_UNICODE_LEN;
+			setting->change_gulim_uc = unicode;
+			fprintf(log,"[framehook/init]Change to GULIM Font Unicode:%s\n",setting->change_gulim_uc);
+			fflush(log);
+		}
+		else if(strncmp(FRAMEHOOK_OPT_PROTECT_GOTHIC_UNICODE,arg,FRAMEHOOK_OPT_PROTECT_GOTHIC_UNICODE_LEN) == 0){
+			char* unicode = arg+FRAMEHOOK_OPT_PROTECT_GOTHIC_UNICODE_LEN;
+			setting->protect_gothic_uc = unicode;
+			fprintf(log,"[framehook/init]Protect GOTHIC Font Unicode:%s\n",setting->protect_gothic_uc);
+			fflush(log);
+		}
+		else if(strncmp(FRAMEHOOK_OPT_ZERO_WIDTH_UNICODE,arg,FRAMEHOOK_OPT_ZERO_WIDTH_UNICODE_LEN) == 0){
+			char* unicode = arg+FRAMEHOOK_OPT_ZERO_WIDTH_UNICODE_LEN;
+			setting->zero_width_uc = unicode;
+			fprintf(log,"[framehook/init]Zero width Font Unicode:%s\n",setting->zero_width_uc);
+			fflush(log);
+		}
+	/*
 		// ↓は実験的設定
 		else if (strncmp(FRAMEHOOK_OPT_FONT_HEIGHT_FIX,arg,FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN) == 0){
 			int font_h_fix[6];
@@ -290,10 +396,6 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			}
 			fprintf(log, "[framehook/init]font height fix ratio:%d%% %d%%, y_diff:%d%% %d%% %dpx %dpx (experimental)\n",
 				setting->font_height_rate[0],setting->font_height_rate[1],setting->next_h_rate[0],setting->next_h_rate[1],setting->next_h_pixel[0],setting->next_h_pixel[1]);
-			fflush(log);
-		} else if (strcmp("--disable-original-resize",arg) == 0){
-			setting->original_resize = FALSE;
-			fprintf(log,"[framehook/init]disable original resize (experimental)\n");
 			fflush(log);
 		} else if (strcmp("--disable-limitwidth-resize",arg) == 0){
 			setting->limitwidth_resize = FALSE;
@@ -337,10 +439,6 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			setting->double_resize = FALSE;
 			fprintf(log,"[framehook/init]disable double resize (experimental)\n");
 			fflush(log);
-		//} else if (strcmp("--disable-font-doublescale-fix",arg) == 0){
-		//	setting->font_double_scale = FALSE;
-		//	fprintf(log,"[framehook/init]disable font doublescaled (experimental)\n");
-		//	fflush(log);
 		} else if (strncmp(FRAMEHOOK_OPT_FIXED_FONT_SIZE, arg, FRAMEHOOK_OPT_FIXED_FONT_SIZE_LEN) == 0) {
 			int fixed_font[CMD_FONT_MAX];
 			int n_font = sscanf(arg + FRAMEHOOK_OPT_FIXED_FONT_SIZE_LEN,"%d%d%d",fixed_font,fixed_font+1,fixed_font+2);
@@ -379,6 +477,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			fprintf(log, "[framehook/init]debug key: %d (experimaental)\n",setting->debug_key);
 			fflush(log);
 		}
+	*/
 	}
 	//引数を正しく入力したか否かのチェック
 	//ここでチェックしているの以外は、デフォルト設定で逃げる。
@@ -387,9 +486,32 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		fflush(log);
 		return FALSE;
 	}
-//#if DEBUG == 1
-	fprintf(log, "[framehook/DEBUG]font height fix ratio:%d%% %d%%, y_diff:%d%% %d%%  %dpx %dpx(experimental)\n",
-		setting->font_height_rate[0],setting->font_height_rate[1],setting->next_h_rate[0],setting->next_h_rate[1],setting->next_h_pixel[0],setting->next_h_pixel[1]);
+	if(!setting->enableCA){
+		fflush(log);
+		return TRUE;
+	}
+	if(!setting->CAfont_path[GOTHIC_FONT]){
+		setting->CAfont_path[GOTHIC_FONT] = setting->font_path;
+		fprintf(log,"[framehook/init]no GOTHIC Font path. Use Font path<%s>.\n",setting->font_path);
+	}
+	if(!setting->CAfont_path[SIMSUN_FONT]){
+		setting->CAfont_path[SIMSUN_FONT] = setting->CAfont_path[GOTHIC_FONT];
+		fprintf(log,"[framehook/init]no SIMSUN Font path. Use Font path<%s>.\n",setting->CAfont_path[GOTHIC_FONT]);
+	}
+	if(!setting->CAfont_path[GULIM_FONT]){
+		setting->CAfont_path[GULIM_FONT] = setting->CAfont_path[SIMSUN_FONT];
+		fprintf(log,"[framehook/init]no GULIM Font path. Use Font path<%s>.\n",setting->CAfont_path[SIMSUN_FONT]);
+	}
+	if(!setting->CAfont_path[ARIAL_FONT]){
+		setting->CAfont_path[ARIAL_FONT] = setting->CAfont_path[GOTHIC_FONT];
+		fprintf(log,"[framehook/init]no ARIAL Font path. Use Font path<%s>.\n",setting->CAfont_path[GOTHIC_FONT]);
+	}
+	if(!setting->CAfont_path[GEORGIA_FONT]){
+		setting->CAfont_path[GEORGIA_FONT] = setting->CAfont_path[ARIAL_FONT];
+		fprintf(log,"[framehook/init]no GEORGIA Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
+	}
+	fflush(log);
+/*
 	fprintf(log, "[framehook/DEBUG]limit width:%d %d, double_resize:%d %d (experimental)\n",
 		setting->nico_limit_width[0], setting->nico_limit_width[1],
 		setting->double_resize_width[0], setting->double_resize_width[1]);
@@ -397,8 +519,50 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		setting->double_limit_width[0],setting->double_limit_width[1]);
 	fprintf(log, "[framehook/DEBUG]limit height:%d %d (experimental)\n",setting->nico_limit_height[0],setting->nico_limit_height[1]);
 	fprintf(log, "[framehook/DEBUG]target width: %d (experimaental)\n",setting->target_width);
-//#endif
+*/
 	return TRUE;
+}
+void filecopy(FILE*dst,FILE*src);
+/*
+ *
+ */
+FILE* changelog(FILE* log,SETTING* setting){
+	char label[] = "[log]vhext.txt";
+	const char *path = setting->data_user_path;
+	if(path == NULL ){
+		path = setting->data_owner_path;
+	}
+	if(path == NULL){
+		return log;
+	}
+	long l = strlen(path) + strlen(label) + 1;
+	char *newname = (char *)malloc(l);
+	if(newname==NULL){
+		return log;
+	}
+	long pos = strcspn(path,"_");
+	strncpy(newname,path,pos);
+	newname[pos] = '\0';
+	strcat(newname,label);
+	FILE* newlog = fopen(newname,"w");
+	free(newname);
+	if(newlog==NULL){
+		return log;
+	}
+	fflush(log);
+	filecopy(newlog,log);
+	fclose(log);
+	return newlog;
+}
+/**
+ *
+ */
+void filecopy(FILE*dst,FILE*src){
+	int c = -1;
+	fseek(src,0L,SEEK_SET);
+	while((c = fgetc(src))!=EOF){
+		fputc(c,dst);
+	}
 }
 
 /*
@@ -448,15 +612,14 @@ __declspec(dllexport) void ExtProcess(void *ctx,const toolbox *tbox,vhext_frame 
 __declspec(dllexport) void ExtRelease(void *ctx,const toolbox *tbox){
 		ContextInfo *ci;
 		ci = (ContextInfo *) ctx;
-
 		FILE* log = ci->log;
 		fputs("[framehook/close]closing...\n",log);
 		if (ctx) {
-				closeData(&ci->data);
+			closeData(&ci->data);
 			fputs("[framehook/close]closed.\n",log);
-				fclose(log);
+			fclose(log);
 			//コンテキスト全体
-				free(ctx);
+			free(ctx);
 		}
 		//ライブラリの終了
 		close();

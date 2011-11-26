@@ -10,22 +10,20 @@ struct CHAT_ITEM{
 	int vpos;
 	int location;
 	int full;	// whether full ommand?
-	int color24;	// whether 24bit color?
 	//文字の修飾
 	int size;
 	int color;
-	// obsolate
-	//int font_pixel_size;	// resize前
+	SDL_Color color24;
 	Uint16* str;
 	//内部処理で使う
 	int vstart;
 	int vend;
 	int showed;
-	int duration;	// vend - vstart
-		// ＠秒数の場合  指定値
-		// ue shitaの場合  300 vpos
-		// 4:3の場合  400 vpos
-		// 16:9の場合  400+α vpos
+	// int duration;	// vend - vstart
+	  // ＠秒数の場合  指定値
+	  // ue shitaの場合  300 vpos
+	  // 4:3の場合  400 vpos
+	  // 16:9の場合  400+α vpos
 	//リファレンス
 	CHAT* chat;
 };
@@ -48,10 +46,11 @@ struct CHAT_SET{
 };
 
 //初期化
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,DATA* data);
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length);
 void closeChat();
 //イテレータ
 void resetChatIterator(CHAT* chat);
 CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos);
+SDL_Color convColor24(int c);
 
 #endif /*CHAT_H_*/

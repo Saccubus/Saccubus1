@@ -5,11 +5,14 @@
 #include "chat.h"
 #include "../mydef.h"
 #include "../nicodef.h"
+#include "../unicode/util.h"
+
+SDL_Color convColor24(int color);
 /*
  * 出力 CHAT chat 領域確保、項目設定
  * 出力 CHAT_SLOT chat->slot ← slot ポインタ設定のみ
  */
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,DATA* data){
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length){
 	int i;
 	int max_no = INTEGER_MIN;
 	int min_no = INTEGER_MAX;
@@ -38,7 +41,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		fputs("[chat/init]failed to malloc for comment.\n",log);
 		return FALSE;
 	}
-	if (video_length <= 0){
+	if (video_length == 0){
 		fprintf(log,"[chat/fix]cannot adjust end time since video_length UNKOWN\n");
 	}
 	/*個別要素の初期化*/
@@ -49,9 +52,9 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	int size;
 	int color;
 	int str_length;
-	int duration;
+	// int duration;
 	int full;
-	int color24;
+	SDL_Color color24;
 	Uint16* str;
 	for(i=0;i<max_item;i++){
 		item = &chat->item[i];
@@ -112,18 +115,21 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			full = 0;
 		}
 		// color24bit ?
-		if(GET_CMD_COLOR24(location)!=0){
-			color24 = 1;
-		} else {
-			color24 = 0;
+		if(color < 0){
+		//	color = color & 0x00ffffff;
+			color24 = convColor24(color & 0x00ffffff);
+			color = -24;
+		}else if(color < CMD_COLOR_MAX){
+			color24 = COMMENT_COLOR[color];
+		}else{
+			color24 = COMMENT_COLOR[CMD_COLOR_DEF];
 		}
-		if(color24){
-			// color は24bit color で反転している　saccubus1.26γ1以降
-			color = ~color & 0x00ffffff;
-		}
+	/*
 		// bit 15-8 を＠秒数とみなす　saccubus1.26α1以降
 		duration = GET_CMD_DURATION(location);
+	*/
 		location = GET_CMD_LOC(location);
+	/*
 		if (duration == 0){	// 通常コメント
 			if (location != CMD_LOC_DEF){
 				duration = TEXT_SHOW_SEC - TEXT_AHEAD_SEC;
@@ -133,23 +139,27 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		} else {	// @秒数
 			duration *= VPOS_FACTOR;
 		}
+	*/
 		//変数セット
 		item->no = no;
 		item->vpos = vpos;
 		item->location = location;
 		item->size = size;
 		item->color = color;
+		removeZeroWidth(str,str_length/sizeof(Uint16));
 		item->str = str;
 		/*内部処理より*/
 		if(location != CMD_LOC_DEF){
 			item->vstart = vpos;
-			item->vend = vpos + duration;
+			item->vend = vpos + TEXT_SHOW_SEC_S;
+			// item->vend = vpos + duration;
 		}else{
-			item->vstart = vpos - TEXT_AHEAD_SEC;	//16:9の場合はーαが必要だが？
-			item->vend = item->vstart + duration;	//16:9の場合は＋αが必要だが？
+			item->vstart = vpos - TEXT_AHEAD_SEC;
+			item->vend = vpos + TEXT_SHOW_SEC_S;
+			// item->vend = item->vstart + duration;
 		}
 		item->full = full;
-		item->duration = duration;
+		// item->duration = duration;
 		item->color24 = color24;
 		if (video_length > 0){
 			int fix = item->vend - video_length;
@@ -157,7 +167,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 				item->vend -= fix;
 				item->vpos -= fix;
 				item->vstart -= fix;
-				fprintf(log,"[chat/fix]comment %d time adjusted : %d units.\n",i, fix);
+				fprintf(log,"[chat/fix]comment %d<index:%d> time adjusted : %5.2f Sec.\n",no,i,(double)fix/(double)VPOS_FACTOR);
 			}
 		}
 		/*内部処理より　おわり*/
@@ -167,11 +177,16 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	chat->min_no = min_no;
 	return TRUE;
 }
-
+//BE,LE共通
+SDL_Color convColor24(int c){
+	SDL_Color sc;
+	sc.r = (c & 0x00ff0000) >> 16;
+	sc.g = (c & 0x0000ff00) >> 8;
+	sc.b = (c & 0x000000ff) >> 0;
+	sc.unused = 0;
+	return sc;
+}
 void closeChat(CHAT* chat){
-	if(chat->item==NULL){
-		return;
-	}
 	int i;
 	int max_item = chat->max_item;
 	for(i=0;i<max_item;i++){
@@ -190,16 +205,14 @@ void resetChatIterator(CHAT* chat){
  * イテレータを得る
  */
 CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos){
-	int i = chat->iterator_index;
+	int *i = &chat->iterator_index;
 	int max_item = chat->max_item;
 	CHAT_ITEM* item;
-	for(; i<max_item; i++){
-		item = &chat->item[i];
+	for(;*i<max_item;(*i)++){
+		item = &chat->item[*i];
 		if(now_vpos >= item->vstart && now_vpos <= item->vend && !item->showed){
-			chat->iterator_index = i;
 			return item;
 		}
 	}
-	chat->iterator_index = i;
 	return NULL;
 }

@@ -6,6 +6,7 @@
 #include "mydef.h"
 #include "nicodef.h"
 #include "process.h"
+#include "unicode/util.h"
 int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, const char* com_type);
 
 /**
@@ -46,15 +47,19 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	data->optional_trunslucent = setting->optional_trunslucent;
 	data->shadow_kind = setting->shadow_kind;
 	data->process_first_called=FALSE;
-	data->nico_width_now = setting->nico_width_now;
-	// followings are obsolate.
 	data->video_length = setting->video_length;
 	if (data->video_length <= 0){
 		data->video_length = INTEGER_MAX;
 	}
-
-	// experimental
+	data->nico_width_now = setting->nico_width_now;
+	data->font_h_fix_r = setting->font_h_fix_r;
 	data->original_resize = setting->original_resize;
+	data->comment_speed = setting->comment_speed;
+	data->enableCA = setting->enableCA;
+	data->debug = setting->debug;
+//	data->limit_height = NICO_HEIGHT;
+/*
+	// experimental
 	data->limitwidth_resize = setting->limitwidth_resize;
 	data->linefeed_resize = setting->linefeed_resize;
 	data->double_resize = setting->double_resize;
@@ -65,10 +70,10 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	} else {
 		is_wide = 1;
 	}
-		data->font_height_rate = setting->font_height_rate[is_wide];
-		data->limit_height = setting->nico_limit_height[is_wide];
-		data->next_h_rate = setting->next_h_rate[is_wide];
-		data->next_h_pixel = setting->next_h_pixel[is_wide];
+	data->font_height_rate = setting->font_height_rate[is_wide];
+	data->limit_height = setting->nico_limit_height[is_wide];
+	data->next_h_rate = setting->next_h_rate[is_wide];
+	data->next_h_pixel = setting->next_h_pixel[is_wide];
 	data->limit_width[0] = setting->nico_limit_width[0];
 	data->limit_width[1] = setting->nico_limit_width[1];
 	data->double_resize_width[0] = setting->double_resize_width[0];
@@ -86,35 +91,32 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	data->font_scaling = 1;
 	// フォントを2倍化するのはリサイズ計算を狂わせるので中止
 	//  ターゲットを拡大した時にフォントが滑らかにするのは今後別手段で行う
-/*
-	if(setting->fontsize_fix && setting->font_double_scale){
-		if(setting->original_resize){
-			data->font_scaling = 2;
-		} else if(scale100 >= 200 || (scale100 != 100 && scale100 != 50)){
-			//自動スケールが２倍以上か１，１／２以外場合はフォントを２倍に拡大
-			data->font_scaling = 2;
-		}
-	}
-*/
-	fprintf(log,"[main/debug]font pre-scaling:%d%%.\n",data->font_scaling*100);
 
+	fprintf(log,"[main/debug]font pre-scaling:%d%%.\n",data->font_scaling*100);
+*/
 	fputs("[main/init]initializing context...\n",log);
 	//フォント
 	TTF_Font** font = data->font;
 	const char* font_path = setting->font_path;
 	const int font_index = setting->font_index;
+	int fixed_font_index = font_index;
+	int fontsize;
+	/* ターゲットを拡大した時にフォントが滑らかにするため２倍化する。 */
+	int isfontdoubled = 0;
+	if(data->fontsize_fix){
+		isfontdoubled = 1;
+	}
+	int line_skip[CMD_FONT_MAX];
 	for(i=0;i<CMD_FONT_MAX;i++){
-		int fontsize = setting->fixed_font_size[i];
-		/*
-		 * フォントを2倍化するのはリサイズ計算を狂わせるので中止
-		 *  ターゲットを拡大した時にフォントが滑らかにするのは今後別手段で行う
-		if(data->font_scaling == 2){
-			fontsize <<= 1;
-		}
-		 */
+		/* ターゲットを拡大した時にフォントが滑らかにするため２倍化する。 */
+	//	int fontsize = setting->fixed_font_size[i];
+		fontsize = COMMENT_FONT_SIZE[i]<<isfontdoubled;
+		//実験からSDL指定値は-1するとニコニコ動画と文字幅が合う?
+		//fontsize -= 1;
+
 		font[i] = TTF_OpenFontIndex(font_path,fontsize,font_index);
 		if(font[i] == NULL){
-			fprintf(log,"[main/init]failed to load font:%s index:[%d].\n",font_path,font_index);
+			fprintf(log,"[main/init]failed to load font:%s size:%d index:%d.\n",font_path,fontsize,font_index);
 			//0でも試してみる。
 			fputs("[main/init]retrying to open font at index:0...",log);
 			font[i] = TTF_OpenFontIndex(font_path,fontsize,0);
@@ -123,36 +125,133 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 				return FALSE;
 			}else{
 				fputs("success.\n",log);
+				fixed_font_index = 0;
 			}
 		}
 		TTF_SetFontStyle(font[i],TTF_STYLE_BOLD);
-		data->fixed_font_size[i] = TTF_FontHeight(font[i]);
+		data->fixed_font_height[i] = TTF_FontHeight(font[i]);
 		// TTF_FontHeight()が正しいかどうかは疑問？
-		// 実験では設定値と違うpt数になった
-		data->font_pixel_size[i] = TTF_FontLineSkip(font[i]);
-		//これもpt数だった。
-		/*
+		// 実験では設定値と違う値になった
+		line_skip[i] = TTF_FontLineSkip(font[i]);
+		//これも違う値だった。
 		// 参考 1 pt = 1/72 inch, 1 px = 1 dot
-		// Win-PCでは 96 dot per inch だから 4/3倍
-		data->font_pixel_size[i] = data->font_pixel_size[i] * 4 / 3;
-		*/
-		data->font_pixel_size[i] = FONT_PIXEL_SIZE[i];
-		// SDL_Surface に描画後の高さは文字(列)毎に異なるのでこの値で修正する。
+		data->font_pixel_size[i] = FONT_PIXEL_SIZE[i]<<isfontdoubled;
+		// SDL_Surface に描画後の高さは文字(列)毎に異なるのでこの値で修正する。drawText()
+		fprintf(log,"[main/init]load font[%d]:%s size:%d index:%d.\n",i,font_path,fontsize,fixed_font_index);
 	}
-	fprintf(log,"[main/init]initialized font, height is DEF=%dpt(%dpx), BIG=%dpt(%dpx), SMALL=%dpt(%dpx)\n",
-		data->fixed_font_size[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_DEF],
-		data->fixed_font_size[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_BIG],
-		data->fixed_font_size[CMD_FONT_SMALL],data->font_pixel_size[CMD_FONT_SMALL]
-		);
+	fputs("[main/init]initialized font, ",log);
+	if(isfontdoubled){
+		fputs("X2 scaled ",log);
+	}
+	fprintf(log,"height is DEF=%d %dpx(%dpx), BIG=%d %dpx(%dpx), SMALL=%d %dpx(%dpx)\n",
+		data->fixed_font_height[CMD_FONT_DEF],line_skip[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_DEF],
+		data->fixed_font_height[CMD_FONT_BIG],line_skip[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_BIG],
+		data->fixed_font_height[CMD_FONT_SMALL],line_skip[CMD_FONT_SMALL],data->font_pixel_size[CMD_FONT_SMALL]
+	);
 
-	fprintf(log, "[main/DEBUG]font height fix ratio:%d%%, y_diff:%d%% %dpx (experimental)\n",
-		data->font_height_rate,data->next_h_rate,data->next_h_pixel);
+	if(data->enableCA){
+		// CAフォント
+		fputs("[main/init]initializing CA(Comment Art) Feature...\n",log);
+		int font_height[CMD_FONT_MAX];
+		int comment_fontsize;
+		int f;
+		for(f = 0;f<CA_FONT_MAX;f++){
+			font = &data->CAfont[f][0];		//pointer2 set
+			font_path = setting->CAfont_path[f];
+			if(font_path==NULL){
+				fprintf(log,"[main/init]error. CA font path[%d] is NULL\n",f);
+				return FALSE;
+			}
+			for(i=0;i<CMD_FONT_MAX;i++){
+				fontsize = COMMENT_FONT_SIZE[i];
+				//実験からSDL指定値はマイナスするとニコニコ動画と文字幅が合う?
+				fontsize -= CA_FONT_SIZE_DECREMENT[f];
+				/* ターゲットを拡大した時にフォントが滑らかにするため２倍化する。 */
+				fontsize <<= isfontdoubled;
+				comment_fontsize = COMMENT_FONT_SIZE[i]<<isfontdoubled;
+				fixed_font_index = 0;
+				if(f == GOTHIC_FONT){
+					fixed_font_index = 1;
+				}
+				fprintf(log,"[main/init]loading CAfont[%d][%d]:%s size:%d index:%d ",f,i,font_path,fontsize,fixed_font_index);
+				int try=10;
+				while(try>0){
+					font[i] = TTF_OpenFontIndex(font_path,fontsize,fixed_font_index);
+					fputs(".",log);
+					if(font[i] == NULL){
+						fprintf(log,"\n[main/init]failed to load CAfont[%d][%d]:%s size:%d index:%d.\n",f,i,font_path,fontsize,fixed_font_index);
+						return FALSE;
+					}
+					TTF_SetFontStyle(font[i],TTF_STYLE_BOLD);
+					font_height[i] = TTF_FontHeight(font[i]);
+					line_skip[i] = TTF_FontLineSkip(font[i]);
+					if(font_height[i]==comment_fontsize){
+						break;
+					}
+					if(--try<=0){
+						break;
+					}
+					TTF_CloseFont(font[i]);
+					if(font_height[i]>comment_fontsize){
+						fontsize--;
+					}else{
+						fontsize++;
+					}
+				}
+				fprintf(log,"\n[main/init]load CAfont[%d][%d]:%s size:%d index:%d.\n",f,i,font_path,fontsize,fixed_font_index);
+			}
+			fprintf(log,"CAfont:%d>%s height is DEF=%dpt %dpx(%dpx), BIG=%dpt %dpx(%dpx), SMALL=%dpt %dpx(%dpx)\n",
+				f,(data->fontsize_fix?"x2 scaled":""),
+				font_height[CMD_FONT_DEF],line_skip[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_DEF],
+				font_height[CMD_FONT_BIG],line_skip[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_BIG],
+				font_height[CMD_FONT_SMALL],line_skip[CMD_FONT_SMALL],data->font_pixel_size[CMD_FONT_SMALL]
+			);
+		}
+		fputs("[main/init]Initializing Font change Characters,\n",log);
+		i = convUint16(setting->protect_gothic_uc,&data->font_change[GOTHIC_FONT]);
+		fprintf(log, "[main/init]GOTHIC Font protect %d pairs.\n", i>>1);
+		i = convUint16(setting->change_simsun_uc,&data->font_change[SIMSUN_FONT]);
+		fprintf(log, "[main/init]SIMSUN Font change %d pairs.\n", i>>1);
+		i = convUint16(setting->change_gulim_uc,&data->font_change[GULIM_FONT]);
+		fprintf(log, "[main/init]GULIM Font change %d pairs.\n", i>>1);
+		data->font_change[ARIAL_FONT] = NULL;
+		i = convUint16(setting->georgia_uc,&data->font_change[GEORGIA_FONT]);
+		fprintf(log,"[main/init]GEORGIA Font use %d pairs.\n", i>>1);
+		i = convUint16(setting->zero_width_uc,&data->zero_width);
+		fprintf(log,"[main/init]Zero width char use %d pairs.\n", i>>1);
+		if(data->debug){
+			for(f=0;f<CA_FONT_MAX;f++){
+				Uint16* u = data->font_change[f];
+				if(u==NULL){
+					continue;
+				}
+				fprintf(log,"font change(%d)",f);
+				while(*u){
+					fprintf(log," %04x-%04x",*u,*(u+1));
+					u += 2;
+				}
+				fputs("\n",log);
+			}
+			Uint16* u = data->zero_width;
+			if(u!=NULL){
+				fprintf(log,"zero width");
+				while(*u){
+					fprintf(log," %04x-%04x",*u,*(u+1));
+					u += 2;
+				}
+				fputs("\n",log);
+			}
+		}
+		fputs("[main/init]initialized CA(Comment Art) Feature.\n",log);
+	}
+	fprintf(log, "[main/init]font height fix ratio:%.0f%% (experimental)\n",(data->font_h_fix_r * 100));
+/*
 	fprintf(log, "[main/DEBUG]limit width:%d %d, double_resize:%d %d (experimental)\n",
 		data->limit_width[0], data->limit_width[1],
 		data->double_resize_width[0],data->double_resize_width[1]);
-	fprintf(log, "[main/DEBUG]limit height:%d (experimental)\n",data->limit_height);
-	fprintf(log, "[main/DEBUG]target width: %d (experimaental)\n",
-		data->target_width);
+*/
+//	fprintf(log, "[main/init]limit height:%d (experimental)\n",data->limit_height);
+//	fprintf(log, "[main/init]target width: %d (experimaental)\n",data->target_width);
 	fflush(log);
 	/*
 	 * ユーザコメント
@@ -178,7 +277,6 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 
 	//終わり。
 	fputs("[main/init]initialized context.\n",log);
-	fflush(log);
 	return TRUE;
 }
 /*
@@ -189,11 +287,11 @@ int initCommentData(DATA* data, CDATA* cdata,FILE* log,const char* path, int max
 	if (cdata->enable_comment){
 		fprintf(log,"[main/init]%s comment is enabled.\n",com_type);
 		//コメントデータ
-		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length,data)){
+		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length)){
 			fprintf(log,"[main/init]initialized %s comment.\n",com_type);
 		}else{
 			fprintf(log,"[main/init]failed to initialize %s comment.",com_type);
-			closeChat(&cdata->chat);	// メモリリーク防止
+			// closeChat(&cdata->chat);	// メモリリーク防止
 			return FALSE;
 		}
 		if (cdata->chat.max_item > 0){
@@ -206,15 +304,15 @@ int initCommentData(DATA* data, CDATA* cdata,FILE* log,const char* path, int max
 				fprintf(log,"[main/init]initialized %s comment slot.\n",com_type);
 			}else{
 				fprintf(log,"[main/init]failed to initialize %s comment slot.",com_type);
-				closeChatSlot(&cdata->slot);	// メモリリーク防止
+				// closeChatSlot(&cdata->slot);	// メモリリーク防止
 				return FALSE;
 			}
 		} else {
-			fprintf(log,"[main/init]%s comment has changed to disable.\n",com_type);
-			//closeChat(&cdata->chat);
 			cdata->enable_comment = FALSE;
+			fprintf(log,"[main/init]%s comment has changed to disable.\n",com_type);
 		}
 	}
+	fflush(log);
 	return TRUE;
 }
 
@@ -224,15 +322,19 @@ int initCommentData(DATA* data, CDATA* cdata,FILE* log,const char* path, int max
 int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 	FILE* log = data->log;
 	if(!data->process_first_called){
+		int aspect100 = surf->w * 100 /surf->h;
+		fprintf(log,"[main/process]screen size is %dx%d, aspect is %d/100.\n",surf->w,surf->h, aspect100);
+		fflush(log);
+	/*
 		double scale = (double)(surf->w) / (double)(data->nico_width_now);
 		double aspect = (double)surf->w  /(double)surf->h;
 		fprintf(log,"[main/process]screen size:%dx%d, aspect:%5.3f, scale:%5.3f.\n",surf->w,surf->h, aspect,scale);
-		fflush(log);
 		if(surf->w != (int)data->target_width){
 			fprintf(log,"[main/process]screen size differs from target_width:%d.\n",data->target_width);
 			fflush(log);
 			return FALSE;
 		}
+	*/
 	}
 	/*フィルタをかける*/
 	if(process(data,surf,now_vpos)){
@@ -263,22 +365,18 @@ int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
  */
 int closeData(DATA* data){
 	int i;
-	// enable_commentは途中で無効化する場合があるが問題ない
 	//ユーザコメントが有効なら開放
 	if(data->user.enable_comment){
-		fputs("[main/closeData]user\n",data->log);
 		closeChat(&data->user.chat);
 		closeChatSlot(&data->user.slot);
 	}
 	//オーナコメントが有効なら開放
 	if(data->owner.enable_comment){
-		fputs("[main/closeData]owner\n",data->log);
 		closeChat(&data->owner.chat);
 		closeChatSlot(&data->owner.slot);
 	}
 	//オプショナルコメントが有効なら開放
 	if(data->optional.enable_comment){
-		fputs("[main/closeData]optional\n",data->log);
 		closeChat(&data->optional.chat);
 		closeChatSlot(&data->optional.slot);
 	}
@@ -286,7 +384,21 @@ int closeData(DATA* data){
 	for(i=0;i<CMD_FONT_MAX;i++){
 		TTF_CloseFont(data->font[i]);
 	}
-	fputs("[main/closeData]finished.\n",data->log);
+	//CAフォント開放
+	if(data->enableCA){
+		int f;
+		for(f=0;f<CA_FONT_MAX;f++){
+			for(i=0;i<CMD_FONT_MAX;i++){
+				if(data->CAfont[f][i]!=data->font[i]){
+					fprintf(data->log,"free CAfont[%d][%d]\n",f,i);
+					TTF_CloseFont(data->CAfont[f][i]);
+				}
+			}
+			fprintf(data->log,"free font_change[%d]\n",f);
+			free(data->font_change[f]);
+		}
+		free(data->zero_width);
+	}
 	return TRUE;
 }
 
@@ -294,9 +406,9 @@ int closeData(DATA* data){
  * ライブラリシャットダウン
  */
 int close(){
-		//SDLをシャットダウン
-		SDL_Quit();
+	//SDLをシャットダウン
+	SDL_Quit();
 	//同じくTTFをシャットダウン
-		TTF_Quit();
+	TTF_Quit();
 	return TRUE;
 }

@@ -24,10 +24,7 @@ SDL_Surface* connectSurface(SDL_Surface* top,SDL_Surface* bottom){
 
 	SDL_BlitSurface(top,NULL,ret,NULL);
 
-//	SDL_Rect rect2 = {0,top->h};
-	SDL_Rect rect2;
-	rect2.x = 0;
-	rect2.y = top->h;
+	SDL_Rect rect2 = {0,top->h};
 	SDL_BlitSurface(bottom,NULL,ret,&rect2);
 	SDL_FreeSurface(top);
 	SDL_FreeSurface(bottom);
@@ -174,3 +171,4 @@ void getRGBA(SDL_Surface* surf,int x,int y,char* r,char* g,char* b,char* a){
 	char* pix = (char*)surf->pixels;
 	SDL_GetRGBA(*(Uint32*)(&pix[pix_index]),surf->format,(Uint8*)r,(Uint8*)g,(Uint8*)b,(Uint8*)a);
 }
+
