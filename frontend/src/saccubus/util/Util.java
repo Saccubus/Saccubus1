@@ -16,10 +16,10 @@ public class Util {
 		os.write((i >> 24) & 0xff);
 	}
 	public static int readInt(InputStream is) throws IOException{
-		int num =	(is.read() & 0xff) + 
-		(is.read() & 0xff) << 8+
-		(is.read() & 0xff) << 16+
-		(is.read() & 0xff) << 24;
+		int num = (is.read() & 0xff) +
+		((is.read() & 0xff) << 8) +
+		((is.read() & 0xff) << 16) +
+		((is.read() & 0xff) << 24);
 		return num;
 	}
 

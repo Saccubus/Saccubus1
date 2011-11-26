@@ -12,7 +12,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 import psi.lib.swing.PopupRightClick;
-import saccubus.experiment.ExperimentalPanel;
+import saccubus.net.NicoClient;
 import saccubus.util.*;
 
 /**
@@ -48,6 +48,9 @@ public class MainFrame extends JFrame {
 	BorderLayout borderLayout1 = new BorderLayout();
 	JMenuBar jMenuBar1 = new JMenuBar();
 	JMenu jMenuFile = new JMenu();
+	JMenuItem jMenuOpen = new JMenuItem();
+	JMenuItem jMenuSave = new JMenuItem();
+	JMenuItem jMenuSaveAs = new JMenuItem();
 	JMenuItem jMenuFileExit = new JMenuItem();
 	JMenu jMenuHelp = new JMenu();
 	JMenuItem jMenuHelpAbout = new JMenuItem();
@@ -75,7 +78,8 @@ public class MainFrame extends JFrame {
 	JLabel PasswordLabel = new JLabel();
 	JPasswordField PasswordField = new JPasswordField();
 	JPanel CommentSaveInfoPanel = new JPanel();
-	JPanel OwnerCommentInfoPanel = new JPanel();
+//	JPanel OwnerCommentInfoPanel = new JPanel();
+	JPanel OldCommentModePanel = new JPanel();
 	GridBagLayout gridBagLayout4 = new GridBagLayout();
 	JCheckBox SavingVideoCheckBox = new JCheckBox();
 	JTextField VideoSavedFileField = new JTextField();
@@ -83,7 +87,9 @@ public class MainFrame extends JFrame {
 	JCheckBox SavingCommentCheckBox = new JCheckBox();
 	JTextField CommentSavedFileField = new JTextField();
 	JCheckBox AddTimeStampToCommentCheckBox = new JCheckBox();
-	JCheckBox SavingOwnerCommentCheckBox = new JCheckBox();
+//	JCheckBox SavingOwnerCommentCheckBox = new JCheckBox();
+	JCheckBox oldCommentModeEnableCheckBox = new JCheckBox();
+	JCheckBox newCommentModeEnableCheckBox = new JCheckBox();
 	JLabel OwnerCommentNoticeLabel1 = new JLabel();
 	JButton ShowSavingCommentFileDialogButton = new JButton();
 	JPanel ConvertedVideoSavingInfoPanel = new JPanel();
@@ -117,15 +123,36 @@ public class MainFrame extends JFrame {
 	JPanel OptionalThreadInfoPanel = new JPanel();
 	JLabel OptionalthreadLabel = new JLabel();
 	JCheckBox OptionalTranslucentCheckBox = new JCheckBox();
-	ExperimentalPanel experimentPanel = new ExperimentalPanel();
-//                                                 (up left down right)
-	public static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
-	static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
-	static final Insets INSETS_0_0_5_5 = new Insets(0, 0, 5, 5);
-	static final Insets INSETS_0_0_0_5 = new Insets(0, 0, 0, 5);
-	static final Insets INSETS_0_0_0_0 = new Insets(0, 0, 0, 0);
-	static final Insets INSETS_5_5_5_5 = new Insets(5, 5, 5, 5);
-	public static final Insets INSETS_0_25_0_5 = new Insets(0, 25, 0, 5);
+	JPanel experimentPanel = new JPanel();
+	JCheckBox fontHeightFixCheckBox = new JCheckBox();
+	JTextField fontHeightRatioTextField = new JTextField();
+	JLabel fontHeightRatioLabel = new JLabel();
+	JCheckBox disableLimitWidthResizeCheckBox = new JCheckBox();
+	JLabel limitWidthResizeLabel = new JLabel();
+	JTextField limitWidthTextField = new JTextField();
+	JCheckBox disableLinefeedResizeCheckBox = new JCheckBox();
+	JCheckBox disableDoubleResizeCheckBox = new JCheckBox();
+	JCheckBox disableOriginalResizeCheckBox = new JCheckBox();
+	JComboBox commentModeComboBox = new JComboBox(commentModeArray);
+	JCheckBox commentSpeedCheckBox = new JCheckBox();
+	JTextField commentSpeedTextField = new JTextField();
+	JCheckBox enableCA_CheckBox = new JCheckBox();
+	JCheckBox scoreCheckBox = new JCheckBox();
+	JTextField scoreTextField = new JTextField();
+	JCheckBox disableEcoCheckBox = new JCheckBox();
+//                                                   (up left down right)
+	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
+	private static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
+	private static final Insets INSETS_0_0_5_5 = new Insets(0, 0, 5, 5);
+	private static final Insets INSETS_0_0_0_5 = new Insets(0, 0, 0, 5);
+	private static final Insets INSETS_0_0_0_0 = new Insets(0, 0, 0, 0);
+	private static final Insets INSETS_5_5_5_5 = new Insets(5, 5, 5, 5);
+	private static final Insets INSETS_0_25_0_5 = new Insets(0, 25, 0, 5);
+	private static final String[] commentModeArray = {
+		"0：コメント表示自動選択（2010年12月22日以後は新表示）",
+		"1：新コメント表示（毎分最新100コメント＋旧表示）",
+		"2：旧コメント表示（最大10分以上で1000コメント表示）",
+	};
 
 	public MainFrame() {
 		try {
@@ -147,13 +174,6 @@ public class MainFrame extends JFrame {
 	 * @throws java.lang.Exception
 	 */
 	private void jbInit() throws Exception {
-		GridBagConstraints grid8_x0_y10_33 = new GridBagConstraints();
-		grid8_x0_y10_33.gridx = 0;
-		grid8_x0_y10_33.fill = GridBagConstraints.HORIZONTAL;
-		grid8_x0_y10_33.weightx = 1.0;
-		grid8_x0_y10_33.insets = INSETS_0_5_5_5;
-		grid8_x0_y10_33.gridwidth = 5;
-		grid8_x0_y10_33.gridy = 10;
 		GridBagConstraints grid8_x1_y6_73 = new GridBagConstraints();
 		grid8_x1_y6_73.fill = GridBagConstraints.HORIZONTAL;
 		grid8_x1_y6_73.gridy = 6;
@@ -205,19 +225,19 @@ public class MainFrame extends JFrame {
 		grid10_x0_y0_67.gridy = 0;
 		GridBagConstraints grid8_x0_y1_66 = new GridBagConstraints();
 		grid8_x0_y1_66.gridx = 0;
-		grid8_x0_y1_66.insets = INSETS_0_5_5_5;
+		grid8_x0_y1_66.insets = INSETS_0_5_0_5;
 		grid8_x0_y1_66.anchor = GridBagConstraints.WEST;
-		grid8_x0_y1_66.gridwidth = 2;
+		grid8_x0_y1_66.gridwidth = 1;
 		grid8_x0_y1_66.gridy = 1;
 		ViewCommentLabel = new JLabel();
 		ViewCommentLabel.setText("表示コメント数");
-		GridBagConstraints grid8_x3_y1_65 = new GridBagConstraints();
-		grid8_x3_y1_65.fill = GridBagConstraints.HORIZONTAL;
-		grid8_x3_y1_65.gridy = 1;
-		grid8_x3_y1_65.weightx = 1.0;
-		grid8_x3_y1_65.gridwidth = 6;
-		grid8_x3_y1_65.insets = INSETS_0_5_5_5;
-		grid8_x3_y1_65.gridx = 3;
+		GridBagConstraints grid8_x1_y1_65 = new GridBagConstraints();
+		grid8_x1_y1_65.fill = GridBagConstraints.HORIZONTAL;
+		grid8_x1_y1_65.gridy = 1;
+		grid8_x1_y1_65.weightx = 1.0;
+		grid8_x1_y1_65.gridwidth = 6;
+		grid8_x1_y1_65.insets = INSETS_0_5_0_5;
+		grid8_x1_y1_65.gridx = 1;
 		GridBagConstraints grid8_x4_y3_64 = new GridBagConstraints(1, 1,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_0_0_5, 0, 0);
@@ -267,7 +287,7 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid8_x0_y0_58 = new GridBagConstraints();
 		grid8_x0_y0_58.gridx = 0;
 		grid8_x0_y0_58.anchor = GridBagConstraints.WEST;
-		grid8_x0_y0_58.insets = INSETS_0_5_5_5;
+		grid8_x0_y0_58.insets = INSETS_0_5_0_5;
 		grid8_x0_y0_58.gridwidth = 5;
 		grid8_x0_y0_58.weightx = 1.0;
 		grid8_x0_y0_58.fill = GridBagConstraints.HORIZONTAL;
@@ -383,6 +403,29 @@ public class MainFrame extends JFrame {
 		grid2_x__y__35.fill = GridBagConstraints.BOTH;
 		grid2_x__y__35.weighty = 1.0;
 		grid2_x__y__35.weightx = 1.0;
+		GridBagConstraints grid8_x0_y10_0 = new GridBagConstraints();
+		grid8_x0_y10_0.gridx = 0;
+		grid8_x0_y10_0.gridy = 10;
+		grid8_x0_y10_0.gridwidth = 2;
+		grid8_x0_y10_0.weightx = 0.0;
+		grid8_x0_y10_0.anchor = GridBagConstraints.WEST;
+		grid8_x0_y10_0.fill = GridBagConstraints.HORIZONTAL;
+		grid8_x0_y10_0.insets = INSETS_0_5_0_5;
+		GridBagConstraints grid8_x2_y10_1 = new GridBagConstraints();
+		grid8_x2_y10_1.gridx = 2;
+		grid8_x2_y10_1.gridy = 10;
+		grid8_x2_y10_1.gridwidth = 3;
+		grid8_x2_y10_1.weightx = 1.0;
+		grid8_x2_y10_1.anchor = GridBagConstraints.CENTER;
+		grid8_x2_y10_1.fill = GridBagConstraints.HORIZONTAL;
+		grid8_x2_y10_1.insets = INSETS_0_5_0_5;
+		GridBagConstraints grid8_x0_y9_33 = new GridBagConstraints();
+		grid8_x0_y9_33.gridx = 0;
+		grid8_x0_y9_33.fill = GridBagConstraints.HORIZONTAL;
+		grid8_x0_y9_33.weightx = 1.0;
+		grid8_x0_y9_33.insets = INSETS_0_5_0_5;
+		grid8_x0_y9_33.gridwidth = 5;
+		grid8_x0_y9_33.gridy = 9;
 		GridBagConstraints grid4_x0_y9_26 = new GridBagConstraints();
 		grid4_x0_y9_26.gridx = 0;
 		grid4_x0_y9_26.gridwidth = 4;
@@ -444,23 +487,17 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid11_x0_y0_75 = new GridBagConstraints();
 		grid11_x0_y0_75.gridx = 0;
 		grid11_x0_y0_75.gridy = 0;
-		grid11_x0_y0_75.gridwidth = 4;
-		grid11_x0_y0_75.gridheight = 1;
 		grid11_x0_y0_75.weightx = 1.0;
-		grid11_x0_y0_75.weighty = 0.0;
-		grid11_x0_y0_75.anchor = GridBagConstraints.NORTHWEST;
+		grid11_x0_y0_75.anchor = GridBagConstraints.CENTER;
 		grid11_x0_y0_75.fill = GridBagConstraints.HORIZONTAL;
 		grid11_x0_y0_75.insets = INSETS_0_5_5_5;
 		GridBagConstraints grid11_x0_y1_76 = new GridBagConstraints();
 		grid11_x0_y1_76.gridx = 0;
 		grid11_x0_y1_76.gridy = 1;
-		grid11_x0_y1_76.gridwidth = 4;
-		grid11_x0_y1_76.gridheight = 1;
 		grid11_x0_y1_76.weightx = 1.0;
-		grid11_x0_y1_76.weighty = 0.0;
-		grid11_x0_y1_76.anchor = GridBagConstraints.NORTHWEST;
+		grid11_x0_y1_76.anchor = GridBagConstraints.WEST;
 		grid11_x0_y1_76.fill = GridBagConstraints.HORIZONTAL;
-		grid11_x0_y1_76.insets = new Insets(0, 25, 5, 5);
+		grid11_x0_y1_76.insets = INSETS_0_5_5_5;
 		GridBagConstraints grid8_x0_y8_14 = new GridBagConstraints();
 		grid8_x0_y8_14.gridx = 0;
 		grid8_x0_y8_14.anchor = GridBagConstraints.WEST;
@@ -512,6 +549,34 @@ public class MainFrame extends JFrame {
 		jMenuHelpAbout
 				.addActionListener(new MainFrame_jMenuHelpAbout_ActionAdapter(
 						this));
+		jMenuOpen.setText("開く(Open)...");
+		jMenuOpen.setForeground(Color.blue);
+		jMenuOpen.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JTextField propFileField = new JTextField();
+				showSaveDialog("設定ファイルのパス", propFileField, false, false);
+				setSetting(ConvertingSetting.loadSetting(null, null, propFileField.getText()));
+			}
+		});
+		jMenuSave.setText("上書き保存 (Save saccubus.xml)");
+		jMenuSave.setForeground(Color.blue);
+		jMenuSave.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ConvertingSetting.saveSetting(getSetting());
+			}
+		});
+		jMenuSaveAs.setText("名前を付けて保存 (saveAs)...");
+		jMenuSaveAs.setForeground(Color.blue);
+		jMenuSaveAs.addActionListener(new ActionListener() {
+			JTextField propFileField = new JTextField("./saccubus.xml");
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showSaveDialog("設定ファイルのパス", propFileField,	true, false);
+				ConvertingSetting.saveSetting(getSetting(), propFileField.getText());
+			}
+		});
 		VideoInfoPanel.setLayout(gridBagLayout1);
 		VideoID_TextField.setText("http://www.nicovideo.jp/watch/");
 		DoButton.setText(DoButtonDefString);
@@ -636,6 +701,8 @@ public class MainFrame extends JFrame {
 		BrowserInfoPanel.add(BrowserCookieDialogButton, grid13_x1_y7_104);
 
 		SavingVideoCheckBox.setText("動画をダウンロードする");
+		disableEcoCheckBox.setText("エコノミー時は中止");
+		disableEcoCheckBox.setForeground(Color.blue);
 		ShowSavingVideoFileDialogButton.setText("参照");
 		ShowSavingVideoFileDialogButton
 				.addActionListener(new MainFrame_ShowSavingVideoDialogButton_actionAdapter(
@@ -667,17 +734,16 @@ public class MainFrame extends JFrame {
 				.addActionListener(new MainFrame_ShowSavingCommentFolderDialogButton_actionAdapter(
 						this));
 		Comment_SaveFileRadioButton.setText("保存するファイル名を指定する");
-		OwnerCommentInfoPanel.setBorder(BorderFactory.createTitledBorder(
+ 		OldCommentModePanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"投稿者コメント保存設定", TitledBorder.LEADING, TitledBorder.TOP,
-			//	new Font("MS UI Gothic", Font.PLAIN, 12),
+				"投稿者コメント保存説明・コメント表示モード設定", TitledBorder.LEADING, TitledBorder.TOP,
 				getFont(), Color.blue));
-		OwnerCommentInfoPanel.setLayout(gridBagLayout11);
-		SavingOwnerCommentCheckBox.setForeground(Color.blue);
-		SavingOwnerCommentCheckBox.setText("投稿者コメントをダウンロードする　（取得数＝１０００ 固定）");
-		OwnerCommentNoticeLabel1.setText("（フォルダ指定は通常コメントの設定通り・変換後に削除しない）");
+ 		OldCommentModePanel.setLayout(gridBagLayout11);
+ 		commentModeComboBox.setForeground(Color.blue);
+		OwnerCommentNoticeLabel1.setText("投稿者コメント保存　取得数１０００ 　フォルダ指定は通常コメントの設定通り・変換後に削除しない");
 		OwnerCommentNoticeLabel1.setForeground(Color.blue);
 		OwnerCommentNoticeLabel1.setToolTipText("ファイル名は、タイトル＋［Ｏｗｎｅｒ］．ｘｍｌ");
+
 		ConvertedVideoSavingInfoPanel.setBorder(BorderFactory
 				.createTitledBorder(BorderFactory.createEtchedBorder(),
 						"コメント付き動画保存設定"));
@@ -784,6 +850,9 @@ public class MainFrame extends JFrame {
 		Conv_SaveFileRadioButton.setText("保存するファイル名を指定する");
 		BasicInfoTabPanel.setLayout(gridBagLayout12);
 		jMenuBar1.add(jMenuFile);
+		jMenuFile.add(jMenuOpen);
+		jMenuFile.add(jMenuSave);
+		jMenuFile.add(jMenuSaveAs);
 		jMenuFile.add(jMenuFileExit);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
@@ -960,8 +1029,7 @@ public class MainFrame extends JFrame {
 		MainTabbedPane.add(BasicInfoTabPanel, "基本設定");
 		MainTabbedPane.add(SavingInfoTabPanel, "保存設定");
 		MainTabbedPane.add(FFMpegInfoTabPanel, "動画設定");
-		MainTabbedPane.add(getConvertingSettingPanel(), "変換設定");
-		MainTabbedPane.addTab("実験的設定", null, experimentPanel, null);
+		MainTabbedPane.addTab("変換設定", null, getConvertingSettingPanel(), null);
 		SavingInfoTabPanel.add(getSaveInfoTabPaneEach(), grid2_x__y__35);
 		FFmpegInfoTabPaneEach.addTab("変換オプション設定", null, FFMpegTabPanel, null);
 		FFmpegInfoTabPaneEach.addTab("FFMpegの位置と機能", null, FFMpegTab2Panel, null);
@@ -979,7 +1047,7 @@ public class MainFrame extends JFrame {
 				BorderFactory.createEtchedBorder(), "拡張vhookライブラリの設定"));
 		VhookSettingPanel.add(getNotUseVhookCheckBox(), grid8_x0_y0_58);
 		VhookSettingPanel.add(ViewCommentLabel, grid8_x0_y1_66);
-		VhookSettingPanel.add(getViewCommentField(), grid8_x3_y1_65);
+		VhookSettingPanel.add(getViewCommentField(), grid8_x1_y1_65);
 		VhookSettingPanel.add(FontPathLabel, grid8_x0_y3_59);
 		VhookSettingPanel.add(FontPathField, grid8_x1_y3_60);
 		VhookSettingPanel.add(SettingFontPathButton, grid8_x4_y3_64);
@@ -989,7 +1057,14 @@ public class MainFrame extends JFrame {
 		VhookSettingPanel.add(getShadowComboBox(), grid8_x1_y6_73);
 		VhookSettingPanel.add(ShowConvVideoCheckBox, grid8_x0_y7_63);
 		VhookSettingPanel.add(getFixFontSizeCheckBox(), grid8_x0_y8_14);
-		VhookSettingPanel.add(getOpaqueCommentCheckBox(), grid8_x0_y10_33);
+		VhookSettingPanel.add(getOpaqueCommentCheckBox(), grid8_x0_y9_33);
+		commentSpeedCheckBox.setText("コメント速度（Pixel/Sec）");
+		commentSpeedCheckBox.setForeground(Color.blue);
+		VhookSettingPanel.add(commentSpeedCheckBox, grid8_x0_y10_0);
+		commentSpeedTextField.setForeground(Color.blue);
+		commentSpeedTextField.setToolTipText("公式の最小値は約138Pixel/Sec");
+		VhookSettingPanel.add(commentSpeedTextField, grid8_x2_y10_1);
+
 		CommentSaveInfoPanel.add(SavingCommentCheckBox, grid4_x0_y6_16);
 		CommentSaveInfoPanel.add(AddTimeStampToCommentCheckBox, grid4_x0_y7_86);
 		CommentSaveInfoPanel.add(getDelCommentCheckBox(), grid4_x0_y8_25);
@@ -1002,8 +1077,8 @@ public class MainFrame extends JFrame {
 		CommentSaveInfoPanel.add(Comment_SaveFileRadioButton,grid4_x0_y13_20);
 		CommentSaveInfoPanel.add(CommentSavedFileField, grid4_x0_y14_21);
 		CommentSaveInfoPanel.add(ShowSavingCommentFileDialogButton,grid4_x3_y14_24);
-		OwnerCommentInfoPanel.add(SavingOwnerCommentCheckBox, grid11_x0_y0_75);
-		OwnerCommentInfoPanel.add(OwnerCommentNoticeLabel1, grid11_x0_y1_76);
+		OldCommentModePanel.add(commentModeComboBox, grid11_x0_y0_75);
+		OldCommentModePanel.add(OwnerCommentNoticeLabel1, grid11_x0_y1_76);
 		ConvertedVideoSavingInfoPanel.add(SavingConvertedVideoCheckBox,
 				new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -1146,6 +1221,124 @@ public class MainFrame extends JFrame {
 		grid6_x0_y2_82.fill = GridBagConstraints.BOTH;
 		grid6_x0_y2_82.insets = INSETS_0_5_5_5;
 		FFMpegTab2Panel.add(CheckFFmpegFunctionPanel, grid6_x0_y2_82);
+
+		experimentPanel.setLayout(new GridBagLayout());
+		experimentPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"実験的設定（仮）", TitledBorder.LEADING, TitledBorder.TOP,
+				getFont(), Color.blue));
+		fontHeightFixCheckBox.setText("フォントの高さを調整する");
+		fontHeightFixCheckBox.setForeground(Color.blue);
+		GridBagConstraints grid20_x0_y0 = new GridBagConstraints();
+		grid20_x0_y0.gridx = 0;
+		grid20_x0_y0.gridy = 0;
+		grid20_x0_y0.gridwidth = 2;
+		grid20_x0_y0.gridheight = 1;
+		grid20_x0_y0.weightx = 1.0;
+		grid20_x0_y0.weighty = 0.0;
+		grid20_x0_y0.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y0.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y0.insets = INSETS_0_5_0_5;
+		experimentPanel.add(fontHeightFixCheckBox, grid20_x0_y0);
+		fontHeightRatioLabel.setText("倍率（％）");
+		fontHeightRatioLabel.setForeground(Color.blue);
+		GridBagConstraints grid20_x0_y1 = new GridBagConstraints();
+		grid20_x0_y1.gridx = 0;
+		grid20_x0_y1.gridy = 1;
+		grid20_x0_y1.weightx = 0.0;
+		grid20_x0_y1.weighty = 0.0;
+		grid20_x0_y1.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y1.fill = GridBagConstraints.NONE;
+		grid20_x0_y1.insets = INSETS_0_5_0_5;
+		experimentPanel.add(fontHeightRatioLabel, grid20_x0_y1);
+		fontHeightRatioTextField.setText("116");
+		fontHeightRatioTextField.setForeground(Color.blue);
+		GridBagConstraints grid20_x1_y1 = new GridBagConstraints();
+		grid20_x1_y1.gridx = 1;
+		grid20_x1_y1.gridy = 1;
+		grid20_x1_y1.anchor = GridBagConstraints.NORTHWEST;
+		grid20_x1_y1.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x1_y1.weightx = 1.0;
+		grid20_x1_y1.weighty = 0.0;
+		grid20_x1_y1.insets = INSETS_0_5_0_5;
+		experimentPanel.add(fontHeightRatioTextField,grid20_x1_y1);
+	/*
+		disableLimitWidthResizeCheckBox.setText("臨界幅リサイズを無効にする");
+		disableLimitWidthResizeCheckBox.setForeground(Color.red);
+		disableLimitWidthResizeCheckBox.setSelected(false);
+		disableLimitWidthResizeCheckBox.setEnabled(false);
+		disableLimitWidthResizeCheckBox.setToolTipText("現rev.では有効・変更不可");
+		GridBagConstraints grid20_x0_y2 = new GridBagConstraints();
+		grid20_x0_y2.gridx = 0;
+		grid20_x0_y2.gridy = 2;
+		grid20_x0_y2.gridwidth = 2;
+		grid20_x0_y2.gridheight = 1;
+		grid20_x0_y2.weightx = 1.0;
+		grid20_x0_y2.weighty = 0.0;
+		grid20_x0_y2.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y2.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y2.insets = INSETS_0_5_0_5;
+		experimentPanel.add(disableLimitWidthResizeCheckBox, grid20_x0_y2);
+		disableLinefeedResizeCheckBox.setText("改行リサイズを無効にする");
+		disableLinefeedResizeCheckBox.setForeground(Color.red);
+		disableLinefeedResizeCheckBox.setSelected(true);
+		disableLinefeedResizeCheckBox.setEnabled(false);
+		disableLinefeedResizeCheckBox.setToolTipText("現rev.では無効・変更不可");
+		GridBagConstraints grid20_x0_y5 = new GridBagConstraints();
+		grid20_x0_y5.gridx = 0;
+		grid20_x0_y5.gridy = 5;
+		grid20_x0_y5.gridwidth = 2;
+		grid20_x0_y5.gridheight = 1;
+		grid20_x0_y5.weightx = 1.0;
+		grid20_x0_y5.weighty = 0.0;
+		grid20_x0_y5.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y5.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y5.insets = INSETS_0_5_0_5;
+		experimentPanel.add(disableLinefeedResizeCheckBox, grid20_x0_y5);
+		disableDoubleResizeCheckBox.setText("ダブルリサイズを無効にする");
+		disableDoubleResizeCheckBox.setForeground(Color.red);
+		disableDoubleResizeCheckBox.setSelected(true);
+		disableDoubleResizeCheckBox.setEnabled(false);
+		disableDoubleResizeCheckBox.setToolTipText("現rev.では無効・変更不可");
+		GridBagConstraints grid20_x0_y6 = new GridBagConstraints();
+		grid20_x0_y6.gridx = 0;
+		grid20_x0_y6.gridy = 6;
+		grid20_x0_y6.gridwidth = 2;
+		grid20_x0_y6.gridheight = 1;
+		grid20_x0_y6.weightx = 1.0;
+		grid20_x0_y6.weighty = 0.0;
+		grid20_x0_y6.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y6.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y6.insets = INSETS_0_5_0_5;
+		experimentPanel.add(disableDoubleResizeCheckBox, grid20_x0_y6);
+	*/
+		disableOriginalResizeCheckBox.setText("開発版を有効（従来のさきゅばすのリサイズを無効にする）");
+		disableOriginalResizeCheckBox.setForeground(Color.blue);
+		disableOriginalResizeCheckBox.setToolTipText("コメントアート用に調整中。" +
+			"現在はオフの方がいいみたいです。安定したらオフの方に反映します。");
+		GridBagConstraints grid20_x0_y7 = new GridBagConstraints();
+		grid20_x0_y7.gridx = 0;
+		grid20_x0_y7.gridy = 7;
+		grid20_x0_y7.gridwidth = 2;
+		grid20_x0_y7.gridheight = 1;
+		grid20_x0_y7.weightx = 1.0;
+		grid20_x0_y7.weighty = 0.0;
+		grid20_x0_y7.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y7.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y7.insets = INSETS_0_5_0_5;
+		experimentPanel.add(disableOriginalResizeCheckBox, grid20_x0_y7);
+		enableCA_CheckBox.setText("ＣＡ暫定的対応：４種類のフォントを使う");
+		enableCA_CheckBox.setForeground(Color.blue);
+		enableCA_CheckBox.setToolTipText("フォント変化を強制的に使用するようになります");
+		GridBagConstraints drid20_x0_y8 = new GridBagConstraints();
+		drid20_x0_y8.gridx = 0;
+		drid20_x0_y8.gridy = 8;
+		drid20_x0_y8.gridwidth = 2;
+		drid20_x0_y8.weightx = 1.0;
+		drid20_x0_y8.anchor = GridBagConstraints.NORTH;
+		drid20_x0_y8.fill = GridBagConstraints.HORIZONTAL;
+		drid20_x0_y8.insets = INSETS_0_5_0_5;
+		experimentPanel.add(enableCA_CheckBox, drid20_x0_y8);
 	}
 
 	private void setPopup() {
@@ -1327,6 +1520,15 @@ public class MainFrame extends JFrame {
 			ownercomment = comment.substring(0, index);
 		}
 		ownercomment += saccubus.Converter.OWNER_EXT;
+		int score;
+		try{
+			score = Integer.parseInt(scoreTextField.getText());
+			if(score >= 0){
+				score = Integer.MIN_VALUE;
+			}
+		}catch(NumberFormatException e){
+			score = Integer.MIN_VALUE;
+		}
 		return new ConvertingSetting(
 			MailAddrField.getText(),
 			new String(PasswordField.getPassword()),
@@ -1335,7 +1537,7 @@ public class MainFrame extends JFrame {
 			SavingCommentCheckBox.isSelected(),
 			AddTimeStampToCommentCheckBox.isSelected(),
 			CommentSavedFileField.getText(),
-			SavingOwnerCommentCheckBox.isSelected(),
+			true,	//	SavingOwnerCommentCheckBox.isSelected(),
 			ownercomment,
 			SavingConvertedVideoCheckBox.isSelected(),
 			ConvertWithCommentCheckBox.isSelected(),
@@ -1391,8 +1593,25 @@ public class MainFrame extends JFrame {
 			wideCommandLineInOptionField.getText(),
 			wideCommandLineOutOptionField.getText(),
 			OptionalTranslucentCheckBox.isSelected(),
-			experimentPanel.getSetting()
+			fontHeightFixCheckBox.isSelected(),
+			fontHeightRatioTextField.getText(),
+			disableOriginalResizeCheckBox.isSelected(),
+			commentModeComboBox.getSelectedIndex(),
+			commentSpeedCheckBox.isSelected(),
+			commentSpeedTextField.getText(),
+			getDebugMode(),
+			enableCA_CheckBox.isSelected(),
+			"" + score,
+			disableEcoCheckBox.isSelected()
 		);
+	}
+
+	private boolean getDebugMode() {
+		String proxy = ProxyTextField.getText();
+		if (proxy != null && proxy.startsWith(NicoClient.DEBUG_PROXY)){
+			return true;
+		}
+		return false;
 	}
 
 	private void setSetting(ConvertingSetting setting) {
@@ -1403,7 +1622,8 @@ public class MainFrame extends JFrame {
 		SavingCommentCheckBox.setSelected(setting.isSaveComment());
 		AddTimeStampToCommentCheckBox.setSelected(setting.isAddTimeStamp());
 		CommentSavedFileField.setText(setting.getCommentFile().getPath());
-		SavingOwnerCommentCheckBox.setSelected(setting.isSaveOwnerComment());
+//		SavingOwnerCommentCheckBox.setSelected(setting.isSaveOwnerComment());
+		commentModeComboBox.setSelectedIndex(setting.getCommentIndex());
 		SavingConvertedVideoCheckBox.setSelected(setting.isSaveConverted());
 		ConvertWithCommentCheckBox.setSelected(setting.isConvertWithComment());
 		ConvertWithOwnerCommentCheckBox.setSelected(setting.isConvertWithOwnerComment());
@@ -1484,7 +1704,14 @@ public class MainFrame extends JFrame {
 		wideCommandLineOutOptionField.setText(setting.getWideCmdLineOptionOut());
 		wideCommandLineInOptionField.setText(setting.getWideCmdLineOptionIn());
 		OptionalTranslucentCheckBox.setSelected(setting.isOptionalTranslucent());
-		experimentPanel.setSetting(setting.getExpSetting());
+		fontHeightFixCheckBox.setSelected(setting.isFontHeightFix());
+		fontHeightRatioTextField.setText(setting.getFontHeightFixRaito());
+		disableOriginalResizeCheckBox.setSelected(setting.isDisableOriginalResize());
+		commentSpeedCheckBox.setSelected(setting.isSetCommentSpeed());
+		commentSpeedTextField.setText(setting.getCommentSpeed());
+		enableCA_CheckBox.setSelected(setting.isEnableCA());
+		scoreTextField.setText(setting.getScoreLimit());
+		disableEcoCheckBox.setSelected(setting.isDisableEco());
 	}
 
 	/**
@@ -1654,8 +1881,8 @@ public class MainFrame extends JFrame {
 			ArrayList<String> list = execFFmpeg("-y "
 				+ "-i \"" + inputVideo.getPath() + "\"");
 			for (String line : list){
-				if (line.indexOf("Stream #0.") >= 0){
-					TextFFmpegOutput.append(line.replace("Stream #0.", "").trim() + "\n");
+				if (line.indexOf("Stream #") >= 0){
+					TextFFmpegOutput.append(line.replace("Stream ", "").trim() + "\n");
 				}
 			}
 		} catch(NullPointerException ex){
@@ -1687,7 +1914,7 @@ public class MainFrame extends JFrame {
 		ffmpeg.exec(new FFmpeg.Callback() {
 				@Override
 				public void doEveryLoop(String e) {
-					//System.out.println(e);
+					System.out.println(e);
 					output.add(e.trim() + "\n");
 				}
 		});
@@ -1763,8 +1990,18 @@ public class MainFrame extends JFrame {
 	private JPanel getConvertingSettingPanel() {
 		if (ConvertingSettingPanel == null) {
 
+			GridBagConstraints grid_x0_y2_0 = new GridBagConstraints();
+			grid_x0_y2_0.gridx = 0;
+			grid_x0_y2_0.gridy = 2;
+			grid_x0_y2_0.gridwidth = 1;
+			grid_x0_y2_0.gridheight = 1;
+			grid_x0_y2_0.weightx = 1.0;
+			grid_x0_y2_0.weighty = 1.0;
+			grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+			grid_x0_y2_0.fill = GridBagConstraints.HORIZONTAL;
+			grid_x0_y2_0.insets = INSETS_0_5_0_5;
 			GridBagConstraints grid_x0_y1_11 = new GridBagConstraints();
-			grid_x0_y1_11.weighty = 1.0;
+			grid_x0_y1_11.weighty = 0.0;
 			grid_x0_y1_11.weightx = 1.0;
 			grid_x0_y1_11.gridy = 1;
 			grid_x0_y1_11.gridx = 0;
@@ -1780,6 +2017,7 @@ public class MainFrame extends JFrame {
 			grid_x0_y0_0.gridy = 0;
 			ConvertingSettingPanel = new JPanel();
 			ConvertingSettingPanel.setLayout(new GridBagLayout());
+			ConvertingSettingPanel.add(experimentPanel, grid_x0_y2_0);
 			ConvertingSettingPanel.add(getNGWordSettingPanel(), grid_x0_y1_11);
 			ConvertingSettingPanel.add(VhookSettingPanel, grid_x0_y0_0);
 		}
@@ -1793,16 +2031,32 @@ s	 * @return javax.swing.JPanel
 	 */
 	private JPanel getNGWordSettingPanel() {
 		if (NGWordSettingPanel == null) {
+			GridBagConstraints grid_x1_y2_7 = new GridBagConstraints();
+			grid_x1_y2_7.gridx = 1;
+			grid_x1_y2_7.gridy = 2;
+			grid_x1_y2_7.weightx = 1.0;
+			grid_x1_y2_7.fill = GridBagConstraints.HORIZONTAL;
+			grid_x1_y2_7.insets = INSETS_0_5_0_5;
+			scoreTextField.setText("-99999999");
+			scoreTextField.setForeground(Color.blue);
+			GridBagConstraints grid_x0_y2_6 = new GridBagConstraints();
+			grid_x0_y2_6.gridx = 0;
+			grid_x0_y2_6.gridy = 2;
+			grid_x0_y2_6.anchor = GridBagConstraints.WEST;
+			grid_x0_y2_6.insets = new Insets(0, 5, 0, 0);
+			scoreCheckBox.setText("score");
+			scoreCheckBox.setForeground(Color.blue);
+			scoreCheckBox.setSelected(false);
 			GridBagConstraints grid_x1_y1_5 = new GridBagConstraints();
 			grid_x1_y1_5.fill = GridBagConstraints.HORIZONTAL;
 			grid_x1_y1_5.gridy = 1;
 			grid_x1_y1_5.weightx = 1.0;
-			grid_x1_y1_5.insets = INSETS_0_5_5_5;
+			grid_x1_y1_5.insets = INSETS_0_5_0_5;
 			grid_x1_y1_5.gridx = 1;
 			GridBagConstraints grid_x0_y1_4 = new GridBagConstraints();
 			grid_x0_y1_4.gridx = 0;
 			grid_x0_y1_4.anchor = GridBagConstraints.WEST;
-			grid_x0_y1_4.insets = new Insets(0, 5, 5, 0);
+			grid_x0_y1_4.insets = new Insets(0, 5, 0, 0);
 			grid_x0_y1_4.gridy = 1;
 			NGIDLabel = new JLabel();
 			NGIDLabel.setText("NG ID");
@@ -1810,12 +2064,13 @@ s	 * @return javax.swing.JPanel
 			grid_x1_y0_3.fill = GridBagConstraints.HORIZONTAL;
 			grid_x1_y0_3.gridy = 0;
 			grid_x1_y0_3.weightx = 1.0;
-			grid_x1_y0_3.insets = INSETS_0_5_5_5;
+			grid_x1_y0_3.insets = INSETS_0_5_0_5;
 			grid_x1_y0_3.gridx = 1;
 			GridBagConstraints grid_x0_y0_2 = new GridBagConstraints();
 			grid_x0_y0_2.gridx = 0;
-			grid_x0_y0_2.insets = new Insets(0, 5, 5, 0);
+			grid_x0_y0_2.insets = new Insets(0, 5, 0, 0);
 			grid_x0_y0_2.gridy = 0;
+			grid_x0_y0_2.anchor = GridBagConstraints.WEST;
 			NGWordLavel = new JLabel();
 			NGWordLavel.setText("NGワード");
 			NGWordSettingPanel = new JPanel();
@@ -1827,6 +2082,8 @@ s	 * @return javax.swing.JPanel
 			NGWordSettingPanel.add(getNGWordTextField(), grid_x1_y0_3);
 			NGWordSettingPanel.add(NGIDLabel, grid_x0_y1_4);
 			NGWordSettingPanel.add(getNGIDTextField(), grid_x1_y1_5);
+			//NGWordSettingPanel.add(scoreCheckBox, grid_x0_y2_6);
+			//NGWordSettingPanel.add(scoreTextField, grid_x1_y2_7);
 		}
 		return NGWordSettingPanel;
 	}
@@ -2055,9 +2312,15 @@ s	 * @return javax.swing.JPanel
 			GridBagConstraints grid_x0_y0_34 = new GridBagConstraints();
 			grid_x0_y0_34.insets = INSETS_0_5_0_5;
 			grid_x0_y0_34.gridy = 0;
-			grid_x0_y0_34.weightx = 1.0;
+			grid_x0_y0_34.weightx = 0.0;
 			grid_x0_y0_34.fill = GridBagConstraints.HORIZONTAL;
 			grid_x0_y0_34.gridx = 0;
+			GridBagConstraints grid_x1_y0_34_2 = new GridBagConstraints();
+			grid_x1_y0_34_2.insets = INSETS_0_5_0_5;
+			grid_x1_y0_34_2.gridy = 0;
+			grid_x1_y0_34_2.weightx = 1.0;
+			grid_x1_y0_34_2.fill = GridBagConstraints.HORIZONTAL;
+			grid_x1_y0_34_2.gridx = 1;
 			GridBagConstraints grid_x3_y3_31 = new GridBagConstraints(3,
 					2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
@@ -2072,6 +2335,7 @@ s	 * @return javax.swing.JPanel
 				//	, TitledBorder.LEADING, TitledBorder.TOP,
 				//	new Font("MS UI Gothic", Font.PLAIN, 12), Color.black));
 			VideoSaveInfoPanel.add(SavingVideoCheckBox, grid_x0_y0_34);
+			VideoSaveInfoPanel.add(disableEcoCheckBox, grid_x1_y0_34_2);
 			VideoSaveInfoPanel.add(getDelVideoCheckBox(), grid_x0_y1_15);
 			VideoSaveInfoPanel.add(Video_SaveFolderRadioButton,
 					grid_x0_y2_27);
@@ -2141,7 +2405,7 @@ s	 * @return javax.swing.JPanel
 					grid_x_y_36);
 			VideoSavingTabbedPanel.add(CommentSaveInfoPanel,
 					grid_x0_y1_37);
-			VideoSavingTabbedPanel.add(OwnerCommentInfoPanel,
+			VideoSavingTabbedPanel.add(OldCommentModePanel,
 					grid_x0_y2_79);
 		}
 		return VideoSavingTabbedPanel;
@@ -2403,6 +2667,7 @@ s	 * @return javax.swing.JPanel
 		}
 		return ShadowComboBox;
 	}
+
 }
 
 class MainFrame_ShowSavingVideoFolderDialogButton_actionAdapter implements
@@ -2568,5 +2833,4 @@ class MainFrame_jMenuHelpAbout_ActionAdapter implements ActionListener {
 	public void actionPerformed(ActionEvent actionEvent) {
 		adaptee.jMenuHelpAbout_actionPerformed(actionEvent);
 	}
-
 }

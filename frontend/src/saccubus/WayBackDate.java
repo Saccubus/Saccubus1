@@ -104,6 +104,13 @@ public class WayBackDate {
 	}
 
 	/**
+	 * waybackdate ‚Ì 1970/1/1 0:0:0 ‚©‚ç‚Ì•b”‚ğ•Ô‚·
+	 */
+	public long getSecond(){
+		return date.getTime() / 1000;
+	}
+
+	/**
 	 *
 	 * @param time
 	 * @ƒƒO‚ÌŠÔw’è•¶š—ñ<br>

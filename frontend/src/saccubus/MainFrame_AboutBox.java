@@ -42,8 +42,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.26δ";
-	private static final String modefied = " (2011/09/25)";
+	public static final String rev = "1.28";	//"1.28.dev10"
+	private static final String modefied = " (2011/11/26)";
 
 	String productHTML =
 		"<html><p>本プログラムは<br/>" +
@@ -52,8 +52,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 	//	"  <a href=\'http://sourceforge.jp/projects/coroid/downloads/48371/saccubus_nibr1.4.4.zip/\'>" +
 	//	"さきゅばすNicoBrowser拡張1.4.4</a><br/>" +
 	//	"を改造したものです。<br/>" +
-		" <a href=\'http://sourceforge.jp/projects/coroid/downloads/52940/inqubus1.7.0.zip/\'>"	+
-		"いんきゅばす1.7.0</a><br/>を参考にしています。</p>" +
+		" <a href=\'http://sourceforge.jp/projects/coroid/downloads/52981/inqubus1.7.2.zip/\'>"	+
+		"いんきゅばす1.7.2</a><br/>を参考にしています。</p>" +
 	//	" orz " + rev + " " + modefied + "<br/>"+
 	//	"本プログラムのオリジナルは以下の通りです。<br/><br/>"+
 		"<p><a href=\'http://sourceforge.jp/projects/saccubus/\'>" +

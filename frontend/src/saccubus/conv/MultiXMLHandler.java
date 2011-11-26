@@ -54,24 +54,9 @@ public class MultiXMLHandler extends DefaultHandler {
 		// System.out.print(qName + " ");
 	}
 
-	/**
-	 *
-	 * @param ch
-	 *            char[]
-	 * @param offset
-	 *            int
-	 * @param length
-	 *            int
-	 */
 	public void characters(char[] ch, int offset, int length) {
 		if (chat != null) {
-			for (int i = offset; i < offset + length; i++) {
-				if (!Character.isDefined(ch[i])) {
-					ch[i] = '?';
-				}
-			}
-			String com = new String(ch, offset, length);
-			chat.setComment(com);
+			chat.setComment(new String(ch, offset, length));
 		}
 	}
 

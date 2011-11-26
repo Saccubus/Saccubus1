@@ -167,13 +167,18 @@ public class NicoClient {
 				debug("■Response:" + Integer.toString(code) + " " + con.getResponseMessage() + "\n");
 				return con;
 			} else {
-				System.out.print("Error Response:" + Integer.toString(code) + " " + con.getResponseMessage());
+				System.out.println("Error Response:" + Integer.toString(code) + " " + con.getResponseMessage());
+				setExtraError("" + code);
 				return null;
 			}
 		} catch(IOException ex){
 			ex.printStackTrace();
+			System.out.println("Connection error. Check proxy ?");
+			setExtraError("コネクションエラー。プロキシが不正？");
 		} catch(IllegalStateException ex){
 			ex.printStackTrace();
+			System.out.println("Connection error. Check proxy ?");
+			setExtraError("コネクションエラー。プロキシが不正？");
 		}
 		return null;
 	}
@@ -351,44 +356,7 @@ public class NicoClient {
 		String dest = bytebuf.toString();	// to Unicode
 		return dest;
 	}
-/*
-	private static byte[] getSafeMSDOSbytes(byte[] b, int len)
-	{
-		if (len == 0 || len > 2 || (len == 1 && b[0] == '?')){
-			byte[] ret = { (byte) '-' };
-			return ret;
-		}
-		if (len == 1){
-			byte[] ret = new byte[1];
-			ret[0] = b[0];
-			return ret;
-		}
-		// len == 2
-		String uc = new String(b);
-		int byte0 = b[0] & 0xFF;
-		int byte1 = b[1] & 0xFF;
-		if (b.length != 2) {
-			System.out.println("Length=" + b.length + " is not Equals len=2, maybe bug: <"
-					+ byte0 + ", " + byte1 + ">");
-			byte[] ret = { (byte) '_' };
-			return ret;
-		}
-		if (byte0 < 0x81 || byte0 == 0x85 || byte0 == 0x86
-				|| (byte0 >= 0xA0 && byte0 <= 0xDF) || (byte0 >= 0xEF && byte0 <= 0xFF))
-		{
-			System.out.println("Maybe bug: <" + byte0 + ", " + byte1 + "> in Charcter " + uc);
-			byte[] ret = { (byte) '_' };
-			return ret;
-		}
-		if (byte1 == 0x5C || byte1 == 0x7C){
-			System.out.println("Checked Danger Byte Code<" + byte1 + "> in Charcter " + uc);
-		}
-		byte[] ret = new byte[2];
-		ret[0] = b[0];
-		ret[1] = b[1];
-		return ret;
-	}
-*/
+
 	private String VideoTitle = null;
 	private int VideoLength = -1;
 
@@ -420,7 +388,7 @@ public class NicoClient {
 			}
 			BufferedReader br = new BufferedReader(new InputStreamReader(con
 					.getInputStream(), encoding));
-			System.out.print("ok.\nCheking VideoTitle...");
+			System.out.print("ok.\nChecking VideoTitle...");
 			debug("\n");
 			String ret;
 			int index = -1;
@@ -431,6 +399,7 @@ public class NicoClient {
 					VideoTitle = safeFileName(
 						ret.substring(index+TITLE_PARSE_STR_START.length(),
 							ret.lastIndexOf(TITLE_END)));
+					System.out.print("<" + VideoTitle + ">...");
 					break;
 				}
 			}
@@ -448,6 +417,7 @@ public class NicoClient {
 	private boolean NeedsKey = false;
 	private String Premium = "";
 	private String OptionalThraedID = "";	// normal Comment ID when Community DOUGA
+	private boolean economy = false;
 	public boolean getVideoInfo(String tag, String watchInfo, String time) {
 		if (!getVideoHistoryAndTitle(tag, watchInfo)) {
 			return false;
@@ -497,6 +467,7 @@ public class NicoClient {
 				System.out.println("ng.\nCan't get video information keys.");
 				return false;
 			}
+			economy  = VideoUrl.toLowerCase().contains("low");
 			System.out.println("ok.");
 			System.out.println("Video:<" + VideoUrl + ">; Comment:<" + MsgUrl
 					+ (NeedsKey ? ">; needs_key=1" : ">"));
@@ -534,21 +505,23 @@ public class NicoClient {
 				System.out.println("Video url is not detected.");
 				return null;
 			}
-			if (file.canRead()) { // ファイルがすでに存在するなら削除する。
-				if(file.delete()) {
-					System.out.print("");
-				}
+			if (file.canRead() && file.delete()) { // ファイルがすでに存在するなら削除する。
+				System.out.print("previous video deleted...");
 			}
 			HttpURLConnection con = urlConnect(VideoUrl, "GET", Cookie, true, false, null);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK) {
 				System.out.println("Can't get video:" + VideoUrl);
+				if("403".equals(getExtraError())){
+					setExtraError("=不適切な動画の可能性。readmeNew.txt参照");
+				}
 				return null;
 			}
 			InputStream is = con.getInputStream();
 			OutputStream os = new FileOutputStream(file);
 			if(Debug){
-				nicomap.putConnection(con);
-				nicomap.printAll(System.out);
+				NicoMap videoMap = new NicoMap();
+				videoMap.putConnection(con);
+				videoMap.printAll(System.out);
 			}
 
 			ContentType = con.getHeaderField("Content-Type");
@@ -556,10 +529,6 @@ public class NicoClient {
 			int max_size = con.getContentLength();	// -1 when invalid
 			System.out.print("size="+(max_size/1000)+"Kbytes");
 			System.out.println(", type=" + ContentType + ", " + ContentDisp);
-			String temp =  con.getHeaderField("optional_thread_id");
-			if (temp!=null && !temp.isEmpty() && !temp.equals(OptionalThraedID)){
-				System.out.println("Again OptionalThreadID:<" + temp + "> NOT CHANGED");
-			}
 			System.out.print("Downloading video...");
 			int size = 0;
 			int read = 0;
@@ -582,7 +551,7 @@ public class NicoClient {
 					return null;
 				}
 			}
-			debugsOut("■read+write statistics(bytes) ");
+			debugsOut("\n■read+write statistics(bytes) ");
 			System.out.println("ok.");
 			is.close();
 			os.flush();
@@ -604,75 +573,100 @@ public class NicoClient {
 	private String ThreadID = null;
 	private String MsgUrl = null;
 	public  final static String STR_OWNER_COMMENT = "1000";
-
+	private static final long NEW_COMMENT_BEGIN_SECOND =
+		new WayBackDate("2010/12/22 18:00").getSecond();
+	// Refer to http://blog.nicovideo.jp/2010/12/post_261.php
+	// 2010年12月22日 18:00 動画のコメントが消えにくくなる対応について
 	private  enum CommentType {
-		USER, OWNER, OPTIONAL,
+		USER{
+			public String dlmsg(){ return "コメント"; }
+		},
+		OWNER{
+			public String dlmsg(){ return "投稿者コメント"; }
+		},
+		OPTIONAL{
+			public String dlmsg(){ return "オプショナルスレッド"; }
+		};
+		public abstract String dlmsg();
 	}
 
 	public File getComment(final File file, final JLabel status, final String back_comment,
-			final String time, final ConvertStopFlag flag) {
-		if (time != null && !time.isEmpty() && WayBackKey.equals("0")){
+			final String time, final ConvertStopFlag flag, final int comment_mode) {
+		if (time != null && !time.isEmpty() && "0".equals(WayBackKey)){
 			if (!getWayBackKey(time)) { // WayBackKey
 				// System.out.println("It may be wrong Date.");
 				return null;
 			}
 		}
-		return downloadComment(file, status, back_comment, CommentType.USER, flag);
+		boolean useNewComment = true;
+		if(comment_mode == 2 || comment_mode == 0 && !hasNewCommentBegun){
+			useNewComment = false;
+		}
+		return downloadComment(file, status, back_comment, CommentType.USER, flag, useNewComment);
 	}
 
 	public File getOwnerComment(final File file, final JLabel status, final ConvertStopFlag flag) {
-		return downloadComment(file, status, STR_OWNER_COMMENT, CommentType.OWNER, flag);
+		return downloadComment(file, status, STR_OWNER_COMMENT, CommentType.OWNER, flag, false);
 	}
 
 	public File getOptionalThread(final File file, final JLabel status, final String optionalThreadID,
-			final String back_comment, final String time, final ConvertStopFlag flag) {
+			final String back_comment, final String time, final ConvertStopFlag flag,final int comment_mode) {
 		ThreadID = optionalThreadID;
-		OptionalThraedID = "";
-		NeedsKey = false;
-		Official = "";
-		return downloadComment(file, status, back_comment, CommentType.OPTIONAL, flag);
+	 	NeedsKey = false;
+	 	Official = "";
+		// この後でOwnerCommentを取得するとユーザー動画の投稿者コメントが取得される。
+		if (time != null && !time.isEmpty()){
+		 	WayBackKey = "0";
+			if (!getWayBackKey(time)) { // WayBackKey
+				return null;
+			}
+		}
+		boolean useNewComment = true;
+		if(comment_mode == 2 || comment_mode == 0 && !hasNewCommentBegun){
+			useNewComment = false;
+		}
+		return downloadComment(file, status, back_comment, CommentType.OPTIONAL, flag, useNewComment);
 	}
 
 	private String Official = "";
 
-	private String commentCommand2006(boolean isOwnerComment, String back_comment){
-		String req;
-		if (isOwnerComment){
-			req = "<thread user_id=\"" + UserID
-				+ "\" when=\"0\" waybackkey=\"0"
-				+ "\" res_from=\"-" + back_comment
-				+ "\" version=\"20061206\" thread=\"" + ThreadID
-				+ "\" fork=\"1\"  "+ Official + "/>";
-		} else {
-			req = "<thread user_id=\"" + UserID + "\" when=\""
-				+ WayBackTime + "\" waybackkey=\"" + WayBackKey
-				+ "\" res_from=\"-" + back_comment
-				+ "\" version=\"20061206\" thread=\"" + ThreadID
-				+ "\" " + Official + "/>";
-		}
-		return req;
+	private String commentCommand2006(CommentType comType, String back_comment){
+		return "<thread user_id=\"" + UserID
+		+ "\" scores=\"1"	//NGscore
+		+ "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey
+		+ "\" res_from=\"-" + back_comment
+		+ "\" version=\"20061206\" thread=\"" + ThreadID
+		+ Official
+		+ (comType == CommentType.OWNER ? "\" fork=\"1\"/>" :  "\"/>");
 	}
 
-	private String commentCommand2009(boolean isOwnerComment, String back_comment){
-		// 投稿者コメントは2006versionを使用するらしい。「いんきゅばす1.7.0」
-		if (isOwnerComment || NeedsKey || !WayBackKey.equals("0")) {
-			return commentCommand2006(isOwnerComment, back_comment);
-		}
+	private String commentCommand2009(CommentType commentType, String back_comment){
 		String req;
+		String wayback =  "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey;
 		StringBuffer sb = new StringBuffer();
-		sb.append("<packet><thread user_id=\"" + UserID);
-		sb.append("\" when=\"");
-		sb.append(WayBackTime);
-		sb.append("\" waybackkey=\"");
-		sb.append(WayBackKey);
-		//sb.append("\" res_from=\"-" + back_comment);
-		sb.append("\" version=\"20090904\" thread=\"" + ThreadID);
-		sb.append("\" ");
-		sb.append(Official);
-		sb.append("/>");
-		sb.append("<thread_leaves thread=\"" + ThreadID);
+		sb.append("<packet>");
+		sb.append("<thread thread=\"" + ThreadID);
+		sb.append("\" version=\"20090904");
+		if(!"0".equals(WayBackKey)){
+			sb.append(wayback);
+		}
 		sb.append("\" user_id=\"" + UserID);
-		sb.append("\">0-");
+		if(NeedsKey){
+			sb.append(Official);
+		}
+		sb.append("\" scores=\"1");	//NGscore
+		sb.append("\"/>");
+		//thread end, thread_leaves start
+		sb.append("<thread_leaves thread=\"" + ThreadID);
+		if(!"0".equals(WayBackKey)){
+			sb.append(wayback);
+		}
+		sb.append("\" user_id=\"" + UserID);
+		if(NeedsKey){
+			sb.append(Official);
+		}
+		sb.append("\" scores=\"1");	//NGscore
+		sb.append("\">0-");	//>0-10:100,1000<
 		sb.append((VideoLength + 59) / 60);
 		sb.append(":100,");
 		sb.append(back_comment);
@@ -683,7 +677,7 @@ public class NicoClient {
 	}
 
 	private File downloadComment(final File file, final JLabel status,
-			String back_comment, CommentType commentType, final ConvertStopFlag flag) {
+			String back_comment, CommentType commentType, final ConvertStopFlag flag, boolean useNewComment) {
 		System.out.print("Downloading " + commentType.toString().toLowerCase()
 				+" comment, size:" + back_comment + "...");
 		//String official = "";	/* 公式動画用のkey追加 */
@@ -692,21 +686,33 @@ public class NicoClient {
 					&& !getOfficialOption(ThreadID)) {
 				return null;
 			}
-			Official ="force_184=\"" + force184
-			+ "\" threadkey=\"" + threadKey + "\" ";
+			Official ="\" force_184=\"" + force184
+					+ "\" threadkey=\"" + threadKey;
 		}
 		FileOutputStream fos = null;
 		try {
-			if (file.canRead()) {	//	ファイルがすでに存在するなら削除する。
-				if (file.delete()) {
-					System.out.print("");
-				}
+			if (file.canRead()	 && file.delete()) {	//	ファイルがすでに存在するなら削除する。
+				System.out.print("previous " + commentType.toString().toLowerCase() + " comment deleted...");
 			}
 			fos = new FileOutputStream(file);
 			HttpURLConnection con = urlConnect(MsgUrl, "POST", Cookie, true, true, "close");
 			OutputStream os = con.getOutputStream();
-			String req = commentCommand2009(commentType==CommentType.OWNER, back_comment);
-			debug("■write:" + req + "\n");
+			/*
+			 * 投稿者コメントは2006versionを使用するらしい。「いんきゅばす1.7.0」
+			 * 過去ログ新表示、チャンネル＋コミュニティ新表示。「coroid　いんきゅばす1.7.2」
+			 * 新コメント表示と旧表示を選択可能にする。
+			 * 既定では2010年12月22日 18:00以後は新表示にする。
+			 *		http://sourceforge.jp/projects/coroid/wiki/NicoApiSpec
+			 */
+			String req;
+			if (useNewComment) {
+				req = commentCommand2009(commentType, back_comment);
+				System.out.print("New comment mode...");
+			} else {
+				req = commentCommand2006(commentType, back_comment);
+				System.out.print("Old comment mode...");
+			}
+			debug("\n■write:" + req + "\n");
 			os.write(req.getBytes());
 			os.flush();
 			os.close();
@@ -723,18 +729,12 @@ public class NicoClient {
 				max_size = Integer.parseInt(content_length_str);
 			}
 			int size = 0;
-			String dlmsg="";
-			switch(commentType){
-			case USER:			dlmsg = "コメント";	break;
-			case OWNER: 		dlmsg = "投稿者コメント";break;
-			case OPTIONAL:	dlmsg = "オプショナルスレッド";	break;
-			}
 			debugsInit();
 			while ((read = is.read(buf, 0, buf.length)) > 0) {
 				debugsAdd(read);
 				fos.write(buf, 0, read);
 				size += read;
-				sendStatus(status, dlmsg, max_size, size);
+				sendStatus(status, commentType.dlmsg(), max_size, size);
 				Stopwatch.show();
 				if (flag.needStop()) {
 					System.out.println("\nStopped.");
@@ -757,6 +757,8 @@ public class NicoClient {
 			con.disconnect();
 			return file;
 		} catch (IOException ex) {
+			ex.printStackTrace();
+		} catch(NumberFormatException ex){
 			ex.printStackTrace();
 		}
 		finally{
@@ -798,7 +800,7 @@ public class NicoClient {
 				System.out.println("ret: " + ret);
 				return false;
 			}
-			System.out.print("ok...");
+			System.out.println("ok.  Thread Key: " + threadKey);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -808,18 +810,22 @@ public class NicoClient {
 
 	private String WayBackKey = "0";
 	private String WayBackTime = "0";
-//	private final static String WAYBACKKEY_STR = "waybackkey=";
 	private String ExtraError = "";
+	private boolean hasNewCommentBegun = true;
 
 	/**
+	 * Parse String time to canonical String WayBackTime<br/>
+	 * Check whether new comment mode has begun then,<br/>
+	 * And get wayback key from ThreadID.
 	 * @param time
 	 * @return
 	 */
 	private boolean getWayBackKey(String time) {
 		System.out.print("Setting wayback time...");
 		try {
-			if (!WayBackKey.equals("0")){
+			if(!"0".equals(WayBackKey)){
 				System.out.println("ok. But this call twice, not necessary.");
+				hasNewCommentBegun = true;
 				return true;
 			}
 			WayBackDate wayback = new WayBackDate(time);
@@ -847,14 +853,15 @@ public class NicoClient {
 			String waybackkey = nicomap.get("waybackkey");
 			if (waybackkey == null || waybackkey.isEmpty()) {
 				System.out.println("ng.\nCannot get wayback key. it's invalid");
-				if (Premium.equals("0")){
+				if ("0".equals(Premium)){
 					setExtraError("一般会員は過去ログ不可です");
 				}
 				return false;
 			}
-			System.out.println("ok.\nwayback key: " + waybackkey);
+			System.out.println("ok.  Wayback key: " + waybackkey);
 			WayBackTime = waybacktime;
 			WayBackKey = waybackkey;
+			hasNewCommentBegun = wayback.getSecond() > NEW_COMMENT_BEGIN_SECOND;
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -885,7 +892,7 @@ public class NicoClient {
 			}
 			br = new BufferedReader(new InputStreamReader(con
 					.getInputStream(), encoding));
-			System.out.print("  Cheking TopPage...");
+			System.out.print("  Checking TopPage...");
 			// debug("\n");
 			String ret;
 			boolean found = false;
@@ -1003,6 +1010,10 @@ public class NicoClient {
 
 	public int getVideoLength() {
 		return VideoLength;
+	}
+
+	public boolean isEco() {
+		return economy;
 	}
 
 	/**

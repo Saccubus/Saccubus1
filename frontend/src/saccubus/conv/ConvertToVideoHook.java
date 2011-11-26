@@ -10,25 +10,25 @@ import javax.xml.parsers.*;
  * <p>
  * タイトル: さきゅばす
  * </p>
- * 
+ *
  * <p>
  * 説明: ニコニコ動画の動画をコメントつきで保存
  * </p>
- * 
+ *
  * <p>
  * 著作権: Copyright (c) 2007 PSI
  * </p>
- * 
+ *
  * <p>
  * 会社名:
  * </p>
- * 
+ *
  * @author 未入力
  * @version 1.0
  */
 public class ConvertToVideoHook {
 	public static boolean convert(File file, File out, String ng_id,
-			String ng_word, String ng_fonts) {
+			String ng_word) {
 		try {
 			Packet packet = new Packet();
 			// SAXパーサーファクトリを生成
@@ -38,7 +38,7 @@ public class ConvertToVideoHook {
 			// XMLファイルを指定されたデフォルトハンドラーで処理します
 			NicoXMLReader nico_reader = null;
 			try {
-				nico_reader = new NicoXMLReader(packet, ng_id, ng_word, ng_fonts);
+				nico_reader = new NicoXMLReader(packet, ng_id, ng_word);
 			} catch (java.util.regex.PatternSyntaxException e) {
 				e.printStackTrace();
 				return false;
@@ -49,6 +49,7 @@ public class ConvertToVideoHook {
 			// 変換結果の書き込み
 			FileOutputStream fos = new FileOutputStream(out);
 			packet.write(fos);
+			fos.flush();
 			fos.close();
 			return true;
 		} catch (IOException ex) {

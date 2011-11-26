@@ -33,25 +33,14 @@ public class Chat {
 
 	private static final int CMD_LOC_BOTTOM = 2;
 
-	/**
-	 * Location bit 7 追加
-	 * 0: 従来、1: Color 24bit
-	 */
-	private static final int CMD_LOC_COLOR24BIT_MODE_MASK = 0x00000080;
+	private static final int CMD_LOC_FULL = 4;
 
 	/**
 	 * Location bit 15-8 追加
 	 * 0: 従来、1～255: ＠秒数
 	 */
-	//private static final int CMD_LOC_MAX = 256;
+	@SuppressWarnings("unused")
 	private static final int CMD_LOC_SECONDS_MASK = 0x0000ff00;
-
-	/**
-	 * 臨界幅リサイズの値をワイドプレイヤー基準にする
-	 * 4:3動画でも同じ
-	 * Location bit 6
-	 */
-	private static final int CMD_FULL = 0x00000040;
 
 	@SuppressWarnings("unused")
 	private static final int CMD_SIZE_MAX = 3;
@@ -134,10 +123,10 @@ public class Chat {
 	public void setDate(String date_str) {
 		Date = Integer.parseInt(date_str);
 		// System.out.println("date:" + date_str);
-+	}
-*/
+	}
 	String strsec = "";
 	int sec = 0;
+*/
 	public void setMail(String mail_str) {
 		// System.out.println("mail:" + mail_str);
 		Color = CMD_COLOR_DEF;
@@ -157,6 +146,7 @@ public class Chat {
 				Location |= CMD_LOC_BOTTOM;
 				isLocationAssigned = true;
 			}
+	/*
 			// ＠秒数
 			else if (str.startsWith("@") && strsec.isEmpty()) {
 				strsec = str.substring(1);
@@ -169,9 +159,10 @@ public class Chat {
 					}
 				}
 			}
+	*/
 			// フルコマンド
 			else if (str.equals("full")){
-				Location |= CMD_FULL;
+				Location |= CMD_LOC_FULL;
 			}
 			// サイズ
 			else if (str.equals("big") && !isSizeAssigned) {
@@ -232,20 +223,26 @@ public class Chat {
 				isColorAssigned = true;
 			} else if (str.startsWith("#") && !isColorAssigned){
 				// color 24bit1
-				try{
-					Color = Integer.decode(str);
-					// for White commpatibility, 
-					// compliment Color (~Color) to white(0xffffff) to white(0)
-					Color = 0x00ffffff & ~Color;
-				} catch(NumberFormatException e){
-					System.out.println("[Chat.java]error com=" + No + ",str=" + str + ",mail=" + mail_str);
-					//e.printStackTrace();
-					Color = 0;	// white
+				if(str.length()<7){
+					Color = CMD_COLOR_DEF;	// default
+					System.out.println("[Chat.java]waring str=" + str + ",mail=" + mail_str);
+				}else{
+					try{
+						Color = Integer.decode(str);
+						if(Color < 0 || Color > 0x00ffffff){
+							Color = CMD_COLOR_DEF;
+						} else{
+							// 24bit Color is represeted as MINUS value;
+							Color += Integer.MIN_VALUE;
+						}
+					} catch(NumberFormatException e){
+						System.out.println("[Chat.java]error str=" + str + ",mail=" + mail_str);
+						//e.printStackTrace();
+						Color = CMD_COLOR_DEF;	// default
+					}
 				}
 				isColorAssigned = true;
-				Location |= CMD_LOC_COLOR24BIT_MODE_MASK;
-				// Color = simulateColor16(str.substr(1));
-				// No need for nicovideoE.dll ver1.26.gamma
+		// 		Color = simulateColor16(str.substr(1));
 			} else {
 				// System.out.println("Unknown command:" + str);
 			}
@@ -259,6 +256,12 @@ public class Chat {
 			No = -1;
 		}
 		// System.out.println("no:" + no_str);
+	}
+	public void setNo(int n){
+		No = n;
+	}
+	public int getNo(){
+		return No;
 	}
 /*
 	public void setUserID(String user_id_str) {
@@ -282,16 +285,17 @@ public class Chat {
 
 	public void setComment(String com_str) {
 		// System.out.println("Comment[" + com_str.length() + "]:" + com_str);
-		Comment += com_str;
-		Comment = Comment.replace("\t", "      ");
+		Comment += com_str.replace("\t", "\u2001\u2001");
+		//Comment += com_str.replace("\t", "      ");	//0x20 6文字
 	}
 
 	public void write(OutputStream os) throws IOException {
-		byte[] a = {  };
+		byte[] a = {0,0,};
 		try {
 			a = (Comment + "\0").getBytes("UnicodeLittleUnmarked");
 		} catch (UnsupportedEncodingException ex) {
 			ex.printStackTrace();
+			//throw new IOException("[Chat/write:1]Processing:"+No+"<"+Comment+">");
 		}
 		Util.writeInt(os, No);
 		Util.writeInt(os, Vpos);
@@ -303,6 +307,7 @@ public class Chat {
 			os.write(a);
 		} catch (IOException ex1) {
 			ex1.printStackTrace();
+			throw new IOException("[Chat/write:2]Processing:"+No+"<"+Comment+">");
 		}
 	}
 
