@@ -1,0 +1,13 @@
+#Sat Nov 05 05:30:22 JST 2011
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LANG/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LANG/operation=append
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LANG/value=C
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/operation=replace
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/value=C\:/MinGW/bin
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/PATH/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/PATH/operation=replace
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/PATH/value=C\:/MinGW/lib;C\:\\MinGW\\bin;C\:\\MinGW\\msys\\1.0\\bin;C\:/pleiades/eclipse/jre/bin/client;C\:/pleiades/eclipse/jre/bin;C\:/pleiades/eclipse/jre/lib/i386;C\:\\Program Files\\Common Files\\Microsoft Shared\\Windows Live;C\:\\Windows\\system32;C\:\\Windows;C\:\\Windows\\System32\\Wbem;C\:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C\:\\Program Files\\Common Files\\Roxio Shared\\10.0\\DLLShared\\;C\:\\Program Files\\Common Files\\Roxio Shared\\DLLShared\\;C\:\\usr\\local\\bin\\;C\:\\Program Files\\Microsoft SQL Server\\100\\Tools\\Binn\\;C\:\\Program Files\\Microsoft SQL Server\\100\\DTS\\Binn\\;C\:\\Program Files\\Windows Live\\Shared;C\:\\Program Files\\Microsoft Windows Performance Toolkit\\;C\:\\Subversion\\bin;C\:\\glassfishv3\\jdk\\bin;C\:\\android-sdk-windows\\platform-tools;C\:\\ant\\bin;C\:\\MINGW\\msys\\1.0\\bin;C\:\\Program Files\\QuickTime\\QTSystem\\;C\:\\Pleiades\\jre6\\bin;C\:\\pleiades\\eclipse
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/append=true
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/appendContributed=true
