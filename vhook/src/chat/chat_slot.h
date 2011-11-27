@@ -10,6 +10,7 @@ struct CHAT_SLOT_ITEM{
 	CHAT_ITEM* chat_item;
 	SDL_Surface* surf;
 	int y;
+	float speed;
 	//リファレンス
 	CHAT_SLOT* slot;
 };
@@ -26,7 +27,7 @@ struct CHAT_SLOT{
 int initChatSlot(FILE* log,CHAT_SLOT* slot,int max_slot,CHAT* chat);
 void closeChatSlot(CHAT_SLOT* slot);
 //追加、削除
-CHAT_SLOT_ITEM* addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int video_height);
+int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int video_height);
 void deleteChatSlot(CHAT_SLOT* slot,CHAT_SLOT_ITEM* item);
 void deleteChatSlotFromIndex(CHAT_SLOT* slot,int index);
 
