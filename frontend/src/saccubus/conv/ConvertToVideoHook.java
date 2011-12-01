@@ -1,6 +1,7 @@
 package saccubus.conv;
 
 import java.io.*;
+import java.util.regex.Pattern;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
 import org.xml.sax.*;
@@ -27,8 +28,8 @@ import javax.xml.parsers.*;
  * @version 1.0
  */
 public class ConvertToVideoHook {
-	public static boolean convert(File file, File out, String ng_id,
-			String ng_word) {
+	public static boolean convert(File file, File out, Pattern ng_id,
+			Pattern ng_word, Pattern ng_cmd) {
 		try {
 			Packet packet = new Packet();
 			// SAXパーサーファクトリを生成
@@ -38,7 +39,7 @@ public class ConvertToVideoHook {
 			// XMLファイルを指定されたデフォルトハンドラーで処理します
 			NicoXMLReader nico_reader = null;
 			try {
-				nico_reader = new NicoXMLReader(packet, ng_id, ng_word);
+				nico_reader = new NicoXMLReader(packet, ng_id, ng_word, ng_cmd);
 			} catch (java.util.regex.PatternSyntaxException e) {
 				e.printStackTrace();
 				return false;

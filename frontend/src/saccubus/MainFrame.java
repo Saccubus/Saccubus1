@@ -52,6 +52,7 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuSave = new JMenuItem();
 	JMenuItem jMenuSaveAs = new JMenuItem();
 	JMenuItem jMenuFileExit = new JMenuItem();
+	JMenuItem jMenuInit = new JMenuItem();
 	JMenu jMenuHelp = new JMenu();
 	JMenuItem jMenuHelpAbout = new JMenuItem();
 	JLabel statusBar = new JLabel();
@@ -577,6 +578,14 @@ public class MainFrame extends JFrame {
 				ConvertingSetting.saveSetting(getSetting(), propFileField.getText());
 			}
 		});
+		jMenuInit.setText("èâä˙âª (Init)");
+		jMenuInit.setForeground(Color.blue);
+		jMenuInit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setSetting(ConvertingSetting.loadSetting(null, null, "...", false));
+			}
+		});
 		VideoInfoPanel.setLayout(gridBagLayout1);
 		VideoID_TextField.setText("http://www.nicovideo.jp/watch/");
 		DoButton.setText(DoButtonDefString);
@@ -853,6 +862,7 @@ public class MainFrame extends JFrame {
 		jMenuFile.add(jMenuOpen);
 		jMenuFile.add(jMenuSave);
 		jMenuFile.add(jMenuSaveAs);
+		jMenuFile.add(jMenuInit);
 		jMenuFile.add(jMenuFileExit);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
@@ -1781,6 +1791,8 @@ public class MainFrame extends JFrame {
 	private JPanel NGWordSettingPanel = null;
 	private JLabel NGWordLavel = null;
 	private JTextField NGWordTextField = null;
+	//JLabel ngCmdLabel = null;
+	//JTextField ngCmdTextField = null;
 	private JLabel NGIDLabel = null;
 	private JTextField NGIDTextField = null;
 	private JPanel ProxyInfoPanel = null;

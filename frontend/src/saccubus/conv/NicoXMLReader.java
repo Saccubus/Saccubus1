@@ -39,15 +39,18 @@ public class NicoXMLReader extends DefaultHandler {
 
 	private final Pattern NG_ID;
 
+	private final Pattern NG_Cmd;
+
 	private boolean item_fork;
 
-	public NicoXMLReader(Packet packet, String ng_id, String ng_word) {
+	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, Pattern ngCmdPat){
 		this.packet = packet;
-		NG_Word = makePattern(ng_word);
-		NG_ID = makePattern(ng_id);
+		NG_Word = ngWordPat;
+		NG_Cmd = ngCmdPat;
+		NG_ID = ngIdPat;
 	}
 
-	private static final Pattern makePattern(String word) {
+	public static final Pattern makePattern(String word) throws PatternSyntaxException{
 		if (word == null || word.length() <= 0) {
 			return null;
 		}
@@ -105,12 +108,7 @@ public class NicoXMLReader extends DefaultHandler {
 		String reg = regb.substring(0);
 		System.out.println("reg:" + reg);
 		Pattern pat;
-		try{
-			pat = Pattern.compile(reg);
-		} catch(PatternSyntaxException ex){
-			ex.printStackTrace();
-			pat = Pattern.compile(reg, Pattern.LITERAL);
-		}
+		pat = Pattern.compile(reg);
 		return pat;
 	}
 
@@ -155,7 +153,13 @@ public class NicoXMLReader extends DefaultHandler {
 			}
 			// item.setDate(attributes.getValue("date"));
 			String mail = attributes.getValue("mail");
-			if (match(NG_Word, mail)) {
+			//184（匿名）でない場合は、186（通知）を最後に付加
+			if(mail==null){
+				mail = "186";
+			}else if(!mail.contains("184")){
+				mail += " 186";
+			}
+			if (match(NG_Cmd, mail)) {
 				item_kicked = true;
 				return;
 			}

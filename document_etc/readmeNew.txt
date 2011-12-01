@@ -3,14 +3,19 @@
 の３４１氏の 1.22r3 を元に、NicoBrowser拡張1.4.4および
 いんきゅばす1.7.2（作者：雪羽氏）の一部機能を借用して改造しました。
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
-本ソフトはナンバリングだけは正式名称になったけれど実態は改造板です。
+本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-　・1.28 (2011/11/26)　エコノミーモード時に中止するオプション追加
-　　実験的設定　CAへの対応その3、CUIオプション追加
-　　設定ファイルの読み込み・保存追加
+　・1.29.dev1 (2011/12/01)
+　　生IDに186を付加、NG関係の内部処理変更
+　　設定ファイルの初期化追加
 
 □修正・改変点
-　1.28 (2011/11/26)
+　1.29.dev1
+　・生ID（非匿名）コメントのコマンドに内部的に186を付加
+　・NG関係の内部処理を変更、正規表現パターン作成を1回だけに
+　・設定ファイルの初期化を追加
+
+　1.28以降
 　・エコノミーモード時に中止するオプション追加
 　・実験的設定　CAへの対応その3
 　・CUIオプション追加
@@ -196,9 +201,9 @@
 　・以前のさきゅばすフォルダに■全て上書き■して下さい。
 　・移動したオプションファイルをoption内にコピーして戻して下さい。
 　◆拡張機能
-　・設定ファイルの読み込み・保存・別名保存が出来るようになりました。
+　・設定ファイルの読み込み・保存・別名保存・初期化が出来るようになりました。
 　・CA対応実験的設定でフォント4種類を強制選択可能になりました。
-　・CUIオプションを追加しました。
+　・CUI引数を追加しました。
 　・エコノミーモード時に中止する設定が可能になりました。
 　・1.26.1～2でフォントサイズ自動調整時の拡大機能を削除しましたが元に戻しました。
 　・コメント速度を独自に指定可能になりました。
@@ -221,7 +226,7 @@
 　・前スレ>>341
 　　(http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip)
 　　をダウンロードし展開します。(ドライブ直下の\saccubusを推奨)
-　　binフォルダの FFmpeg.exe が必要です。
+　　binフォルダの ffmpeg.exe （SVN-r21400）が必要です。
 　　*** 同梱しているbinフォルダのファイルだけでは動作しません ***
 　・1.22r3のoptionフォルダを■削除■して下さい。
 　・本Rev.を1.22r3を展開したフォルダにコピーします。
@@ -232,6 +237,11 @@
 　・投稿者コメントを付加して動画にしたい場合は
 　　「保存設定」「コメント付き動画」「投稿者コメントを付加する」に
 　　チェックします。スクリプトは再現されません。
+
+　★　FFmpeg 21400の代わりに新しいN55686も使用可能ですが　★
+　★　実績が少ないので人柱度は大きくなります。　　　　　　★
+　　N55686(libfaac無し、libvo_aacencあり)+optionVO
+　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
 
 
 □起動
@@ -245,8 +255,18 @@
 　　右上の変換ボタンをクリックするとダウンロードと変換が開始します。
 
 
+●生ID（非匿名）コメントのコマンドに内部的に186を付加
+　以下はNGワード使用例（名前はお遊びです＼(^o^)／）
+　　186					コテハン殺し
+　　184					匿名拒否
+　　docomo				ドコモイラネ
+　　/(docomo (white )?)?(184|186)/	デフォルトコマンドNG
+
+●ファイルメニューに設定ファイルの初期化を追加。
+　・FFmpegの初期化は21400向けになります。
+
 ●設定ファイルの読み込み・保存・別名保存
-　・メニューから設定ファイル(*.xml)の開く・上書き保存・名前を付けて保存が
+　・ファイルメニューから設定ファイル(*.xml)の開く・上書き保存・名前を付けて保存が
 　　出来るようになりました。書式は自動生成・保存されたものと同じに限ります。
 
 ●CA（コメントアート）対応　その3
@@ -268,6 +288,15 @@
 　　動画・コメントを強制ダウンロードし、変換を行わない。
 　@PUP （半角英大文字）
 　　PC画面の左上にauto.bat中止用のボタン・ステータスを表示する。
+　例）sm9を2passで2pass目は動画コメントを保存（ダウンロード）しない場合は
+　　オプション設定を2pass用の1pass目指定で、ファイル名が
+　　　1pass目　オプション.xml　　2pass目　p2オプション.xmlとすると
+　　auto.batの場合
+　　　%CMD% sm9 0 @PUP
+　　　%CMD% sm9 0 @PUP p2 @NDL
+　　ConvListの場合
+　　　sm9
+　　　sm9 0 p2 @NDL
 
 ●エコノミーモード時に中止
 　「保存設定」「動画・コメント」タブ「動画保存設定」「エコノミー時は中止」
@@ -450,7 +479,7 @@
 　　指定して下さい。
 　　（参考）大抵の場合は　%USERPROFILE%フォルダ
 　　　（XP 32の場合　　　　　C:\Doccuments and Settings\ユーザー名\
-　　　　Win7,Vista 32の場合　C:\Users\ユーザー名\ ）の下に
+　　　　Win7,Vista 32の場合　C:\Users\ユーザー名\ ）の下か２つ下に
 　　　　メーカー名\製品名\〇〇\Cookies〇〇
 　　　というファイルがあります。
 
@@ -525,17 +554,19 @@
 　　log.txtにログが記録されます。（１MBまで）
 
 ●設定を初期化するには
+　・ファイルメニューの初期化をクリックします。(1.29以降)
+（1.28以前
 　・Saccubus.xml を別の名前に変更します。
 　　また保存する必要がなければ、ゴミ箱に入れます。
 　・Saccubus.exe をダブルクリックで実行します。
 　・さきゅばすを終了します。
 　　→新しく初期化されたSaccubus.xmlが作成されます。
-
+　）
 
 ■機能確認
 　・ブラウザのセッション共有機能確認は
-　　Win7 Home 32bit + IE9, Firefox5.0-8.0, Chrome13, SRware 及び
-　　XP SP3 Home 32bit + IE8, Firefox5.0-8.0, Chrome13, SRware
+　　Win7 Home 32bit + IE9, Firefox5.0-8.0, Chrome13-15, SRware 及び
+　　XP SP3 Home 32bit + IE8, Firefox5.0-8.0, Chrome13-15, SRware
 　　で行いました。
 　・動画変換確認は、1.22r3（SVN-21400 前スレ341）で行いました。
 　　Win7 32bit Core2Duo, WinXP 32bit CeleronD
@@ -554,7 +585,7 @@
 ・gpl.ja.txt 　　　　　　　 GPLライセンスの非公式日本語訳
 ・LGPL_LICENSE　　　　　　　LGPLライセンス
 ・agpl-3.0.txt　　　　　　　AGPLv3ライセンス
-・Saccubus.jar　　　　　　　本体　1.26.1
+・Saccubus.jar　　　　　　　本体　1.29
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
 ・bin フォルダ配下
 　　nicovideoE.dll(2011.11.26版)統合版拡張Vhookライブラリ　従来＋ワイド(16x9用)
@@ -581,6 +612,10 @@
 　SVN：svn checkout http://svn.sourceforge.jp/svnroot/saccubus/trunk
 
 ・ダウンロード
+　公式最新
+　1.22r 　　http://sourceforge.jp/projects/saccubus/downloads/30757/Saccubus-1.22r.zip/
+　改造版
+　1.28　　　http://www1.axfc.net/uploader/File/so/72010.zip
 　1.26.2　　http://www1.axfc.net/uploader/File/so/71481.zip
 　1.26.1　　http://www1.axfc.net/uploader/File/so/71270.zip
 　1.26α4 　http://www1.axfc.net/uploader/File/so/71171.zip
@@ -602,19 +637,25 @@
 　1.22r3e1a http://www1.axfc.net/uploader/File/so/65862.zip
 　改造版の元
 　1.22r3　　http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip
-　公式最新
-　1.22r 　　http://sourceforge.jp/projects/saccubus/downloads/30757/Saccubus-1.22r.zip/
-　参考ffmpeg r23386(libfaacあり)　http://www1.axfc.net/uploader/Ne/so/82882.zip
+　参考ffmpeg
+　r23386(libfaacあり)　http://www1.axfc.net/uploader/Ne/so/82882.zip
+　N55686(libfaac無し、libvo_aacencあり)+optionVO
+　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
 
 ・サイト
 　さきゅばす公式
 　　http://saccubus.sourceforge.jp/
 　coroid project　「いんきゅばす」を含む
 　　http://sourceforge.jp/projects/coroid/
-　ニコニコランキングメーカー(nicorank)配布サイト↓
+　ニコニコランキングメーカー(nicorank)配布サイト
 　　http://www.daily-vocaran.info/nicorank/
 
 変更履歴
+1.29.dev1
+　・生ID（非匿名）コメントのコマンドに内部的に186を付加
+　・NG関係の内部処理を変更、正規表現パターン作成を1回だけに。
+　・ファイルメニューに設定ファイルの初期化を追加。
+
 1.28 (2011/11/26)
 　エコノミーモード時に中止するオプション追加
 　実験的設定　CAへの対応その3
@@ -669,7 +710,7 @@
 　バグ修正版、Saccubus.jarのみ
 
 1.23 (2011/8/27)
-　ナンバリングは正式名称になったけれど実態は改造板
+　ナンバリングは正式名称になったけれど実態は改造版
 　動画アスペクト比により4:3と16:9オプションを自動選択、オプション選択画面追加
 　再修正版optionファイル同梱
 　SDLライブラリ確定版同梱（SDL.dll, SDL_ttf.dll, libSDL_gfx-13.dll）

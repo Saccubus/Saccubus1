@@ -824,11 +824,18 @@ public class ConvertingSetting {
 	}
 
 	public static ConvertingSetting loadSetting(String user, String password, String propFile) {
+	    return loadSetting(user, password, propFile, true);
+	}
+
+	public static ConvertingSetting loadSetting(String user,
+			String password, String propFile, boolean logingError) {
 		Properties prop = new Properties();
 		try {
 			prop.loadFromXML(new FileInputStream(propFile));
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			if(logingError){
+				ex.printStackTrace();
+			}
 		}
 		if (user == null) {
 			user = prop.getProperty(PROP_MAILADDR, "");

@@ -11,9 +11,12 @@ import java.io.*;
 
 import saccubus.conv.CombineXML;
 import saccubus.conv.ConvertToVideoHook;
+import saccubus.conv.NicoXMLReader;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import saccubus.util.Cws2Fws;
 import saccubus.util.Stopwatch;
@@ -120,6 +123,9 @@ public class Converter extends Thread {
 	private File gulimFont = null;
 	private File arialFont = null;
 	private File georgiaFont = null;
+	private Pattern ngWordPat;
+	private Pattern ngIDPat;
+	private Pattern ngCmdPat;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -550,6 +556,20 @@ public class Converter extends Thread {
 		return true;
 	}
 
+	private boolean makeNGPattern() {
+		sendtext("NGパターン作成中");
+		try{
+			ngWordPat = NicoXMLReader.makePattern(Setting.getNG_Word());
+			ngCmdPat = ngWordPat;
+			ngIDPat = NicoXMLReader.makePattern(Setting.getNG_ID());
+		}catch (Exception e) {
+			sendtext("NGパターン作成に失敗。おそらく正規表現の間違い？");
+			return false;
+		}
+		sendtext("NGパターン作成終了");
+		return true;
+	}
+
 	private Path mkTemp(String uniq){
 		return Path.mkTemp(Tag + uniq);
 	}
@@ -611,7 +631,7 @@ public class Converter extends Thread {
 			}
 			CommentMiddleFile = mkTemp(TMP_COMMENT);
 			if(!convertToCommentMiddle(CommentFile, CommentMiddleFile)){
-				sendtext("コメント変換に失敗。おそらく正規表現の間違い？");
+				sendtext("コメント変換に失敗");
 				CommentMiddleFile = null;
 				return false;
 			}
@@ -672,7 +692,7 @@ public class Converter extends Thread {
 			}
 			OptionalMiddleFile = mkTemp(TMP_OPTIONALTHREAD);
 			if(!convertToCommentMiddle(OptionalThreadFile, OptionalMiddleFile)){
-				sendtext("オプショナルスレッド変換に失敗。おそらく正規表現の間違い？");
+				sendtext("オプショナルスレッド変換に失敗");
 				OptionalMiddleFile = null;
 				return false;
 			}
@@ -718,7 +738,7 @@ public class Converter extends Thread {
 			}
 			OwnerMiddleFile = mkTemp(TMP_OWNERCOMMENT);
 			if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile)){
-				sendtext("投稿者コメント変換に失敗。おそらく正規表現の間違い？");
+				sendtext("投稿者コメント変換に失敗");
 				OwnerMiddleFile = null;
 				return false;
 			}
@@ -762,7 +782,7 @@ public class Converter extends Thread {
 	private boolean convertToCommentMiddle(File commentfile, File middlefile) {
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile,
-				Setting.getNG_ID(), Setting.getNG_Word())){
+				ngIDPat, ngWordPat, ngCmdPat)){
 			return false;
 		}
 		//コメント数が0の時削除する
@@ -940,6 +960,11 @@ public class Converter extends Thread {
 
 			if (!isSaveConverted()) {
 				sendtext("動画・コメントを保存し、変換は行いませんでした。");
+				return;
+			}
+
+			Stopwatch.show();
+			if(!makeNGPattern() || stopFlagReturn()){
 				return;
 			}
 
