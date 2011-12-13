@@ -1,11 +1,12 @@
 /*
- * unitl.c
+ * util.c
  *
  *  Created on: 2011/11/14
  *      Author: orz
  */
 #include "util.h"
 #include "../mydef.h"
+#include <stdio.h>
 
 int isMatchKanji(Uint16* u,Uint16* kanji){
 	while(*kanji!='\0'){
