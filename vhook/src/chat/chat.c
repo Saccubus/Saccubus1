@@ -5,7 +5,7 @@
 #include "chat.h"
 #include "../mydef.h"
 #include "../nicodef.h"
-#include "../unicode/util.h"
+#include "../unicode/uniutil.h"
 
 SDL_Color convColor24(int color);
 /*

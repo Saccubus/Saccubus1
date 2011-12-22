@@ -10,6 +10,7 @@
 #include "mydef.h"
 #include "nicodef.h"
 #include "util.h"
+#include "unicode/uniutil.h"
 
 typedef struct ContextInfo{
 	FILE* log;
@@ -28,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.29.1";
+	char *ver="1.29.16";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -149,59 +150,38 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->opaque_comment=FALSE;
 	setting->nico_width_now=NICO_WIDTH;	//デフォルトは旧プレイヤー幅
 	setting->optional_trunslucent=FALSE;	//デフォルトは半透明にしない
+	setting->font_w_fix_r = 1.0f;	//デフォルトは従来通り（最終調整で合わせること）
 	setting->font_h_fix_r = 1.0f;	//デフォルトは従来通り（最終調整で合わせること）
 	setting->original_resize = TRUE;	//デフォルトは有効（実験的に無効にする選択を行う）
 	setting->comment_speed = 0;
 	setting->enableCA = FALSE;
 	setting->debug = FALSE;
+	setting->use_lineskip_as_fontsize = FALSE;	//デフォルトは無効 FonrsizeにLineskipを合わせる（実験的）
 	// CA用フォント
+	//  MS UI GOTHIC は msgothic.ttc の index=2
 	int f;
 	for(f=0;f<CA_FONT_MAX;f++){
 		setting->CAfont_path[f] = NULL;
 	}
 	// CA切替用Unicode群
-	setting->change_simsun_uc = "0x2581-0x258f 0x02cb 0xe800";	//  ブロック
-	setting->change_gulim_uc = "0x2661 02665 0xadf8";	//  ハート &#heartsuit;
-	setting->protect_gothic_uc = "0x30fb 0xff61-0xff9f";	// ・ 中点
-	setting->zero_width_uc = "0x200b 0x2029-0x202f";	// ゼロ幅
-	setting->spaceable_uc = "0x02cb";	// griph が未対応のため空白に
-	setting->georgia_uc = "0x10d0-0x10fb";	//グルジア文字 特殊フォント
+	//setting->CAfont_change_uc[SIMSUN_FONT] = "02cb 2196-2199 2470-249b 2504-250b 250d-250e 2550-2573 2581-258f 2593-2595 3021-3029 3105-3129 3220-3229 e758-e864 f929 f995";	//明朝化 SIMSUN
+	//setting->CAfont_change_uc[GULIM_FONT] = "249c-24b5 24d0-24e9 2592 25a3-25a9 25b6-25b7 25c0-25c1 25c8 25d0-25d1 260e-260f 261c 261e 2660-2661 2663-2665 2667-2669 266c 3131-318e 3200-321c 3260-327b ac00-d7a3 f900-fa0b";	//丸ゴ GULIM
+	//setting->CAfont_change_uc[GOTHIC_FONT] = "30fb ff61-ff9f";	//ゴシック：保護 ・ 中点 半角カナ
+	//setting->zero_width_uc = "0x200b 0x2029-0x202f";	// ゼロ幅
+	//setting->spaceable_uc = "0x02cb";	// griph が未対応のため空白に
+	//setting->CAfont_change_uc[ARIAL_FONT] = NULL;
+	//setting->CAfont_change_uc[GEORGIA_FONT] = "10d0-10fb";	//グルジア文字 winフォント
+	//setting->CAfont_change_uc[UI_GOTHIC_FONT] = NULL;
+	//setting->CAfont_change_uc[DEVANAGARI] = "0900-097f";	//デーヴァナーガリー文字 winフォント
+	//setting->CAfont_change_uc[TAHOMA_FONT] = "0e00-0e7f";	//タホマ
 	/* その他　参考
 	 * 空白   0x00a0 0x2001 0x3000 など
 	 */
+	// 実験的追加フォント
+	setting->extra_path = NULL;
+	//setting->extra_uc = NULL;
+	setting->extra_fontindex = 0;
 
-/*
-	// ↓は実験的設定
-	setting->limitwidth_resize = TRUE;
-	setting->linefeed_resize = TRUE;
-	setting->double_resize = TRUE;
-	// obsolate
-	//setting->font_double_scale = TRUE;	// フォント字形の自動修正が有効（デフォルト2倍の字形）
-
-	// 臨界幅は同倍率の動画で512～600px 動画が、4:3 or 16:9に無関係
-	// 但し、fullコマンドでは640～680px
-	// 更に文字サイズによっても異なる（資料少なし）
-	setting->nico_limit_width[0] = NICO_WIDTH;
-	setting->nico_limit_width[1] = NICO_WIDTH_WIDE;
-	setting->nico_limit_height[0] = NICO_HEIGHT;
-	setting->nico_limit_height[1] = NICO_HEIGHT;
-	setting->double_resize_width[0] = NICO_WIDTH;
-	setting->double_resize_width[1] = NICO_WIDTH_WIDE;
-	setting->double_limit_width[0] = NICO_WIDTH<<1;
-	setting->double_limit_width[1] = NICO_WIDTH_WIDE<<1;
-	setting->font_height_rate[0] = 100;	//デフォルト4:3は従来通り（最終調整で合わせること）
-	setting->font_height_rate[1] = 100;	//デフォルト16:9は従来通り（最終調整で合わせること）
-	// next_h_ 両方指定すると加算される
-	setting->next_h_rate[0] = 1;	//デフォルト4:3 1%
-	setting->next_h_rate[1] = 1;	//デフォルト16:9 1%
-	setting->next_h_pixel[0] = 0;	//デフォルト4:3 1px
-	setting->next_h_pixel[1] = 0;	//デフォルト16:9 1px
-	setting->fixed_font_size[CMD_FONT_DEF] = COMMENT_FONT_SIZE[CMD_FONT_DEF];
-	setting->fixed_font_size[CMD_FONT_BIG] = COMMENT_FONT_SIZE[CMD_FONT_BIG];
-	setting->fixed_font_size[CMD_FONT_SMALL] = COMMENT_FONT_SIZE[CMD_FONT_SMALL];
-	setting->debug_key = NO_DEBUG_KEY;
-	setting->target_width = 0;
-*/
 	int i;
 	char* arg;
 	for(i=0;i<argc;i++){
@@ -273,6 +253,13 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			setting->video_length = MAX(0,atoi(arg+FRAMEHOOK_OPT_VIDEO_LENGTH_LEN)) * VPOS_FACTOR;
 			fprintf(log,"[framehook/init]video length (to assist ffmpeg):%d\n",setting->video_length);
 			fflush(log);
+		} else if (strncmp(FRAMEHOOK_OPT_FONT_WIDTH_FIX,arg,FRAMEHOOK_OPT_FONT_WIDTH_FIX_LEN) == 0){
+			int font_w_fix_ratio = MAX(0,atoi(arg+FRAMEHOOK_OPT_FONT_WIDTH_FIX_LEN));
+			if (setting->font_w_fix_r==1.0f && font_w_fix_ratio > 0){
+				setting->font_w_fix_r = (float)font_w_fix_ratio / 100.0f;
+				fprintf(log,"[framehook/init]font width fix: %d%%\n",font_w_fix_ratio);
+				fflush(log);
+			}
 		} else if (strncmp(FRAMEHOOK_OPT_FONT_HEIGHT_FIX,arg,FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN) == 0){
 			int font_h_fix_ratio = MAX(0,atoi(arg+FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN));
 			if (setting->font_h_fix_r==1.0f && font_h_fix_ratio > 0){
@@ -317,51 +304,85 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			setting->debug = TRUE;
 			fprintf(log,"[framehook/init]print debug information\n");
 			fflush(log);
+		} else if(!setting->use_lineskip_as_fontsize && strcmp("--use-lineskip-as-fontsize",arg) == 0){
+			setting->use_lineskip_as_fontsize = TRUE;
+			fprintf(log,"[framehook/init]use Lineskip as Fontsize (experimental)\n");
+			fflush(log);
 		}
 		// CA用フォント
-		else if(strncmp(FRAMEHOOK_OPT_SIMSUN_FONT,arg,FRAMEHOOK_OPT_SIMSUN_FONT_LEN) == 0){
+		else if(strncmp(FRAMEHOOK_OPT_SIMSUN_FONT,arg,FRAMEHOOK_OPT_SIMSUN_FONT_LEN) == 0
+				&& setting->CAfont_path[SIMSUN_FONT]==NULL){
 			char* font = arg+FRAMEHOOK_OPT_SIMSUN_FONT_LEN;
 			setting->CAfont_path[SIMSUN_FONT] = font;
 			fprintf(log,"[framehook/init]SIMSUN Font path:%s\n",setting->CAfont_path[SIMSUN_FONT]);
 			fflush(log);
-		}else if(strncmp(FRAMEHOOK_OPT_GULIM_FONT,arg,FRAMEHOOK_OPT_GULIM_FONT_LEN) == 0){
+		}else if(strncmp(FRAMEHOOK_OPT_GULIM_FONT,arg,FRAMEHOOK_OPT_GULIM_FONT_LEN) == 0
+				&& setting->CAfont_path[GULIM_FONT]==NULL){
 			char* font = arg+FRAMEHOOK_OPT_GULIM_FONT_LEN;
 			setting->CAfont_path[GULIM_FONT] = font;
 			fprintf(log,"[framehook/init]GULIM Font path:%s\n",setting->CAfont_path[GULIM_FONT]);
 			fflush(log);
-		}else if(strncmp(FRAMEHOOK_OPT_ARIAL_FONT,arg,FRAMEHOOK_OPT_ARIAL_FONT_LEN) == 0){
+		}else if(strncmp(FRAMEHOOK_OPT_ARIAL_FONT,arg,FRAMEHOOK_OPT_ARIAL_FONT_LEN) == 0
+				&& setting->CAfont_path[ARIAL_FONT]==NULL){
 			char* font = arg+FRAMEHOOK_OPT_ARIAL_FONT_LEN;
 			setting->CAfont_path[ARIAL_FONT] = font;
 			fprintf(log,"[framehook/init]ARIAL Font path:%s\n",setting->CAfont_path[ARIAL_FONT]);
 			fflush(log);
-		}else if(strncmp(FRAMEHOOK_OPT_GOTHIC_FONT,arg,FRAMEHOOK_OPT_GOTHIC_FONT_LEN) == 0){
+		}else if(strncmp(FRAMEHOOK_OPT_GOTHIC_FONT,arg,FRAMEHOOK_OPT_GOTHIC_FONT_LEN) == 0
+				&& setting->CAfont_path[GOTHIC_FONT]==NULL){
 			char* font = arg+FRAMEHOOK_OPT_GOTHIC_FONT_LEN;
 			setting->CAfont_path[GOTHIC_FONT] = font;
 			fprintf(log,"[framehook/init]GOTHIC Font path:%s\n",setting->CAfont_path[GOTHIC_FONT]);
 			fflush(log);
-		}else if(strncmp(FRAMEHOOK_OPT_GEORGIA_FONT,arg,FRAMEHOOK_OPT_GEORGIA_FONT_LEN) == 0){
+		}else if(strncmp(FRAMEHOOK_OPT_GEORGIA_FONT,arg,FRAMEHOOK_OPT_GEORGIA_FONT_LEN) == 0
+				&& setting->CAfont_path[GEORGIA_FONT]==NULL){
 			char* font = arg+FRAMEHOOK_OPT_GEORGIA_FONT_LEN;
 			setting->CAfont_path[GEORGIA_FONT] = font;
 			fprintf(log,"[framehook/init]GEORGIA Font path:%s\n",setting->CAfont_path[GEORGIA_FONT]);
 			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_MSUI_GOTHIC_FONT,arg,FRAMEHOOK_OPT_MSUI_GOTHIC_FONT_LEN) == 0
+				&& setting->CAfont_path[UI_GOTHIC_FONT]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_MSUI_GOTHIC_FONT_LEN;
+			setting->CAfont_path[UI_GOTHIC_FONT] = font;
+			fprintf(log,"[framehook/init]UI GOTHIC Font path:%s\n",setting->CAfont_path[UI_GOTHIC_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_DEVANAGARI_FONT,arg,FRAMEHOOK_OPT_DEVANAGARI_FONT_LEN) == 0
+				&& setting->CAfont_path[DEVANAGARI]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_DEVANAGARI_FONT_LEN;
+			setting->CAfont_path[DEVANAGARI] = font;
+			fprintf(log,"[framehook/init]DEVANAGARI Font path:%s\n",setting->CAfont_path[DEVANAGARI]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_TAHOMA_FONT,arg,FRAMEHOOK_OPT_TAHOMA_FONT_LEN) == 0
+				&& setting->CAfont_path[TAHOMA_FONT]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_TAHOMA_FONT_LEN;
+			setting->CAfont_path[TAHOMA_FONT] = font;
+			fprintf(log,"[framehook/init]TAHOMA Font path:%s\n",setting->CAfont_path[TAHOMA_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_EXTRA_FONT,arg,FRAMEHOOK_OPT_EXTRA_FONT_LEN) == 0
+				&& setting->extra_path==NULL){
+			char* font = arg+FRAMEHOOK_OPT_EXTRA_FONT_LEN;
+			setting->extra_path = font;
+			fprintf(log,"[framehook/init]Extra Font:%s\n",setting->extra_path);
+			fflush(log);
 		}
 		// CA切替用Unicode群
+		/*
 		else if(strncmp(FRAMEHOOK_OPT_CHANGE_SIMSUN_UNICODE,arg,FRAMEHOOK_OPT_CHANGE_SIMSUN_UNICODE_LEN) == 0){
 			char* unicode = arg+FRAMEHOOK_OPT_CHANGE_SIMSUN_UNICODE_LEN;
-			setting->change_simsun_uc = unicode;
-			fprintf(log,"[framehook/init]Change to SIMSUN Font Unicode:%s\n",setting->change_simsun_uc);
+			setting->CAfont_change_uc[SIMSUN_FONT] = unicode;
+			fprintf(log,"[framehook/init]Change to SIMSUN Font Unicode:%s\n",setting->CAfont_change_uc[SIMSUN_FONT]);
 			fflush(log);
 		}
 		else if(strncmp(FRAMEHOOK_OPT_CHANGE_GULIM_UNICODE,arg,FRAMEHOOK_OPT_CHANGE_GULIM_UNICODE_LEN) == 0){
 			char* unicode = arg+FRAMEHOOK_OPT_CHANGE_GULIM_UNICODE_LEN;
-			setting->change_gulim_uc = unicode;
-			fprintf(log,"[framehook/init]Change to GULIM Font Unicode:%s\n",setting->change_gulim_uc);
+			setting->CAfont_change_uc[GULIM_FONT] = unicode;
+			fprintf(log,"[framehook/init]Change to GULIM Font Unicode:%s\n",setting->CAfont_change_uc[GULIM_FONT]);
 			fflush(log);
 		}
 		else if(strncmp(FRAMEHOOK_OPT_PROTECT_GOTHIC_UNICODE,arg,FRAMEHOOK_OPT_PROTECT_GOTHIC_UNICODE_LEN) == 0){
 			char* unicode = arg+FRAMEHOOK_OPT_PROTECT_GOTHIC_UNICODE_LEN;
-			setting->protect_gothic_uc = unicode;
-			fprintf(log,"[framehook/init]Protect GOTHIC Font Unicode:%s\n",setting->protect_gothic_uc);
+			setting->CAfont_change_uc[GOTHIC_FONT] = unicode;
+			fprintf(log,"[framehook/init]Protect GOTHIC Font Unicode:%s\n",setting->CAfont_change_uc[GOTHIC_FONT]);
 			fflush(log);
 		}
 		else if(strncmp(FRAMEHOOK_OPT_ZERO_WIDTH_UNICODE,arg,FRAMEHOOK_OPT_ZERO_WIDTH_UNICODE_LEN) == 0){
@@ -370,114 +391,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			fprintf(log,"[framehook/init]Zero width Font Unicode:%s\n",setting->zero_width_uc);
 			fflush(log);
 		}
-	/*
-		// ↓は実験的設定
-		else if (strncmp(FRAMEHOOK_OPT_FONT_HEIGHT_FIX,arg,FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN) == 0){
-			int font_h_fix[6];
-			int n_font = sscanf(arg+FRAMEHOOK_OPT_FONT_HEIGHT_FIX_LEN,"%d%d%d%d%d%d",
-				font_h_fix,font_h_fix+1,font_h_fix+2,font_h_fix+3,font_h_fix+4,font_h_fix+5);
-			if(n_font > 5){
-				setting->next_h_pixel[1] = (short)font_h_fix[5];
-			}
-			if(n_font > 4){
-				setting->next_h_pixel[0] = (short)font_h_fix[4];
-			}
-			if(n_font > 3){
-				setting->next_h_rate[1] = (short)font_h_fix[3];
-			}
-			if(n_font > 2){
-				setting->next_h_rate[0] = (short)font_h_fix[2];
-			}
-			if(n_font > 1){
-				setting->font_height_rate[1] = (short)font_h_fix[1];
-			}
-			if(n_font > 0){
-				setting->font_height_rate[0] = (short)font_h_fix[0];
-			}
-			fprintf(log, "[framehook/init]font height fix ratio:%d%% %d%%, y_diff:%d%% %d%% %dpx %dpx (experimental)\n",
-				setting->font_height_rate[0],setting->font_height_rate[1],setting->next_h_rate[0],setting->next_h_rate[1],setting->next_h_pixel[0],setting->next_h_pixel[1]);
-			fflush(log);
-		} else if (strcmp("--disable-limitwidth-resize",arg) == 0){
-			setting->limitwidth_resize = FALSE;
-			fprintf(log,"[framehook/init]disable limit-width resize (experimental)\n");
-			fflush(log);
-		} else if (strncmp(FRAMEHOOK_OPT_LIMIT_WIDTH, arg, FRAMEHOOK_OPT_LIMIT_WIDTH_LEN) == 0) {
-			int limit_width[4];
-			int n_limit = sscanf(arg + FRAMEHOOK_OPT_LIMIT_WIDTH_LEN,"%d%d%d%d",limit_width,limit_width+1,limit_width+2,limit_width+3);
-			if(n_limit > 3){
-				setting->double_resize_width[1] = (short)limit_width[3];
-			}
-			if(n_limit > 2){
-				setting->double_resize_width[0] = (short)limit_width[2];
-			}
-			if(n_limit > 1){
-				setting->nico_limit_width[1] = (short)limit_width[1];
-			}
-			if(n_limit > 0){
-				setting->nico_limit_width[0] = (short)limit_width[0];
-			}
-			fprintf(log, "[framehook/init]limit width:%d %d, double_resize start:%d %d (experimental)\n",
-				setting->nico_limit_width[0], setting->nico_limit_width[1],
-				setting->double_resize_width[0], setting->double_resize_width[1]);
-			fflush(log);
-		} else if (strncmp(FRAMEHOOK_OPT_LIMIT_HEIGHT, arg, FRAMEHOOK_OPT_LIMIT_HEIGHT_LEN) == 0) {
-			int limit_height[2];
-			int n_limith = sscanf(arg + FRAMEHOOK_OPT_LIMIT_HEIGHT_LEN,"%d%d", limit_height, limit_height + 1);
-			if(n_limith > 1){
-				setting->nico_limit_height[1] = (short)limit_height[1];
-			}
-			if(n_limith > 0){
-				setting->nico_limit_height[0] = (short)limit_height[0];
-			}
-			fprintf(log, "[framehook/init]limit height:%d %d (experimental)\n",setting->nico_limit_height[0],setting->nico_limit_height[1]);
-			fflush(log);
-		} else if (strcmp("--disable-linefeed-resize",arg) == 0){
-			setting->linefeed_resize = FALSE;
-			fprintf(log,"[framehook/init]disable llinefeed resize (experimental)\n");
-			fflush(log);
-		} else if (strcmp("--disable-double-resize",arg) == 0){
-			setting->double_resize = FALSE;
-			fprintf(log,"[framehook/init]disable double resize (experimental)\n");
-			fflush(log);
-		} else if (strncmp(FRAMEHOOK_OPT_FIXED_FONT_SIZE, arg, FRAMEHOOK_OPT_FIXED_FONT_SIZE_LEN) == 0) {
-			int fixed_font[CMD_FONT_MAX];
-			int n_font = sscanf(arg + FRAMEHOOK_OPT_FIXED_FONT_SIZE_LEN,"%d%d%d",fixed_font,fixed_font+1,fixed_font+2);
-			if (n_font > CMD_FONT_DEF){
-				setting->fixed_font_size[CMD_FONT_DEF] = (short)fixed_font[CMD_FONT_DEF];
-			}
-			if (n_font > CMD_FONT_BIG){
-				setting->fixed_font_size[CMD_FONT_BIG] = (short)fixed_font[CMD_FONT_BIG];
-			}
-			if (n_font > CMD_FONT_SMALL){
-				setting->fixed_font_size[CMD_FONT_SMALL] = (short)fixed_font[CMD_FONT_SMALL];
-			}
-			fprintf(log, "[framehook/init]fixed font size: DEFAULT=%d BIG=%d SMALL=%d (experimental)\n",
-					setting->fixed_font_size[CMD_FONT_DEF],
-					setting->fixed_font_size[CMD_FONT_BIG],
-					setting->fixed_font_size[CMD_FONT_SMALL]);
-			fflush(log);
-		} else if(strncmp(FRAMEHOOK_OPT_DOUBLE_RESIZE_WIDTH,arg,FRAMEHOOK_OPT_DOUBLE_RESIZE_WIDTH_LEN) == 0){
-			int double_limit[2];
-			int n_double = sscanf(arg+FRAMEHOOK_OPT_DOUBLE_RESIZE_WIDTH_LEN,"%d%d",double_limit,double_limit+1);
-			if(n_double > 1){
-				setting->double_limit_width[1] = (short)double_limit[1];
-			}
-			if(n_double > 0){
-				setting->double_limit_width[0] = (short)double_limit[0];
-			}
-			fprintf(log, "[framehook/init]double_resize limit width:%d %d (experimental)\n",
-				setting->double_limit_width[0],setting->double_limit_width[1]);
-			fflush(log);
-		} else if (strncmp(FRAMEHOOK_OPT_TARGET_SIZE, arg, FRAMEHOOK_OPT_TARGET_SIZE_LEN) == 0) {
-			setting->target_width = MAX(0,atoi(arg + FRAMEHOOK_OPT_TARGET_SIZE_LEN));
-			fprintf(log, "[framehook/init]target width: %d (experimaental)\n",setting->target_width);
-			fflush(log);
-		} else if (strncmp(FRAMEHOOK_OPT_DEBUG_KEY, arg, FRAMEHOOK_OPT_DEBUG_KEY_LEN) == 0) {
-			setting->debug_key = MAX(0,atoi(arg + FRAMEHOOK_OPT_DEBUG_KEY_LEN));
-			fprintf(log, "[framehook/init]debug key: %d (experimaental)\n",setting->debug_key);
-			fflush(log);
-		}
-	*/
+		*/
 	}
 	//引数を正しく入力したか否かのチェック
 	//ここでチェックしているの以外は、デフォルト設定で逃げる。
@@ -510,16 +424,26 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		setting->CAfont_path[GEORGIA_FONT] = setting->CAfont_path[ARIAL_FONT];
 		fprintf(log,"[framehook/init]no GEORGIA Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
 	}
+	if(setting->original_resize){
+		replacedSPACE = 0x3000;
+		setting->CAfont_path[UI_GOTHIC_FONT] = setting->CAfont_path[GOTHIC_FONT];
+		fprintf(log,"[framehook/init]UI GOTHIC Font path. Use Font path<%s>.\n",setting->CAfont_path[UI_GOTHIC_FONT]);
+	}else{
+		replacedSPACE = 0x3000;
+		if(!setting->CAfont_path[UI_GOTHIC_FONT]){
+			setting->CAfont_path[UI_GOTHIC_FONT] = setting->CAfont_path[ARIAL_FONT];
+			fprintf(log,"[framehook/init]no UI GOTHIC Font path. Use Font path<%s>.\n",setting->CAfont_path[UI_GOTHIC_FONT]);
+		}
+	}
+	if(!setting->CAfont_path[DEVANAGARI]){
+		setting->CAfont_path[DEVANAGARI] = setting->CAfont_path[ARIAL_FONT];
+		fprintf(log,"[framehook/init]no DEVANAGARI Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
+	}
+	if(!setting->CAfont_path[TAHOMA_FONT]){
+		setting->CAfont_path[TAHOMA_FONT] = setting->CAfont_path[ARIAL_FONT];
+		fprintf(log,"[framehook/init]no TAHOMA_FONT Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
+	}
 	fflush(log);
-/*
-	fprintf(log, "[framehook/DEBUG]limit width:%d %d, double_resize:%d %d (experimental)\n",
-		setting->nico_limit_width[0], setting->nico_limit_width[1],
-		setting->double_resize_width[0], setting->double_resize_width[1]);
-	fprintf(log, "[framehook/DEBUG]double_resize limit width:%d %d (experimental)\n",
-		setting->double_limit_width[0],setting->double_limit_width[1]);
-	fprintf(log, "[framehook/DEBUG]limit height:%d %d (experimental)\n",setting->nico_limit_height[0],setting->nico_limit_height[1]);
-	fprintf(log, "[framehook/DEBUG]target width: %d (experimaental)\n",setting->target_width);
-*/
 	return TRUE;
 }
 void filecopy(FILE*dst,FILE*src);

@@ -7,6 +7,7 @@
 #define NICO_HEIGHT	384
 #define NICO_HEIGHT_WIDE 360
 #define NICO_WIDTH_WIDE	640
+#define NICO_COMMENT_HIGHT 385
 #define NICO_LIMIT_WIDTH	544
 #define NICO_LIMIT_WIDTH_WIDE	672
 
@@ -152,16 +153,37 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 #define GULIM_FONT	2
 #define ARIAL_FONT	3
 #define GEORGIA_FONT	4
-#define CA_FONT_MAX	5
+#define UI_GOTHIC_FONT 5
+#define DEVANAGARI	6
+#define TAHOMA_FONT 7
+#define EXTRA_FONT 8
+#define CA_FONT_MAX	9
 #define UNDEFINED_FONT	(-1)
 #define NULL_FONT	(-2)
 
-static const int CA_FONT_SIZE_DECREMENT[CA_FONT_MAX] = {
-	0, //gothic
-	0, //simsun
-	0, //gulim
-	4, //arial
-	0, //georgia
+static char* const CA_FONT_NAME[CA_FONT_MAX] = {
+	"GOTHIC",
+	"SIMSUN",
+	"GULIM",
+	"ARIAL",
+	"GEORGIA",
+	"UI GOTHIC",
+	"DEVANAGARI",
+	"TAHOMA",
+	"EXTRA",
+};
+
+static const int CA_FONT_SIZE_FIX[CA_FONT_MAX][CMD_FONT_MAX] = {
+//	DEF,BIG,SNALL
+	{0,-1,1},	//gothic
+	{0,-1,1},	//simsun
+	{0,-1,1},	//gulim
+	{0,1,0},	//arial
+	{-2,-2,-2},	//georgia
+	{0,-1,1},	//ms ui gothic
+	{0,0,0},	//devanagari
+	{0,0,0},	//tahoma
+	{0,0,0},	//extra
 };
 
 #endif /*NICODEF_H_*/

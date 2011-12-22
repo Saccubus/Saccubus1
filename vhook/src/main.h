@@ -43,44 +43,33 @@ struct DATA{
 	int video_length;
 //	int aspect100;		// アスペクト比*100	Not used now
 	int nico_width_now;	// 元動画の横幅
+	float font_w_fix_r;	// フォントの幅をnicoplayer.swfに合わせる倍率(0< <2)（実験的）
 	float font_h_fix_r;	// フォントの高さをnicoplayer.swfに合わせる倍率(0< <2)（実験的）
 	int original_resize;	// さきゅばす独自リサイズが有効（デフォルト有効）
 	int comment_speed;	// コメント速度を指定する場合≠0
 	int enableCA;
+	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
 	int debug;
+	double width_scale;	//書き込み可　videowidth/nicowidth_now
 	// CA用フォント
 	TTF_Font* CAfont[CA_FONT_MAX][CMD_FONT_MAX];
 	// CA切替用Unicode群
-	Uint16* font_change[CA_FONT_MAX];
+	//Uint16* font_change[CA_FONT_MAX];
 	// 0:*protect_gothic
 	// 1:*change_simsun
 	// 2:*change_gulim
 	// 3:*arial
 	// 4:*gergia
-	Uint16* zero_width;
-	Uint16* spaceable;
+	// 5:*msui_gothic
+	// 6:*devanagari
+	// 7:*extra
+	Uint16* extra_change;
+	//Uint16* zero_width;
+	//Uint16* spaceable;
 //	int limit_height;
 	// 実験的設定↓
 	short font_pixel_size[CMD_FONT_MAX];
 	short fixed_font_height[CMD_FONT_MAX];	// 修正フォント指定(ポイント指定)
-/*
-	// short font_height_rate;	// フォントの高さをニコ動に合わせる倍率（元動画アスペクト比による）
-	short next_h_rate;	// コメントの高さの次の高さとの差（%）（元動画アスペクト比による）
-	short next_h_pixel;	// コメントの高さの次の高さとの差（px）(4:3,16:9)
-	short limit_width[2];	// 臨界幅リサイズ幅（ノーマル、フル）
-	short double_resize_width[2];	// ダブルリサイズ開始幅（ノーマル、フル）
-	short limit_height;	// 弾幕モード開始の高さ（元動画アスペクト比による）
-	short font_scaling;	//data->font[]内のフォントサイズのスケーリング倍率
-	short double_limit_width[2];	// ダブルリサイズ臨界幅（ノーマル、フル）
-	short debug_key;	// デバッグキー
-	short target_width;	// 変換後の横幅、指定がなければ元動画の横幅
-	//  ↑ニコ動に対し２倍や１／２倍のスケールの時にフォントをzoomさせないため
-	//  TRUE OR FALSE
-	short limitwidth_resize;	// 臨界幅リサイズが有効（デフォルト有効）
-	short linefeed_resize;	// 改行リサイズが有効（デフォルト有効）
-	short double_resize;		// ダブルリサイズが有効（デフォルト有効）
-	short font_double_scale;		// フォントサイズ自動修正が有効（デフォルト2倍サイズが有効）
-*/
 };
 
 typedef struct SETTING{
@@ -110,38 +99,21 @@ typedef struct SETTING{
 	// CA用フォント
 	const char* CAfont_path[CA_FONT_MAX];
 	// CA切替用Unicode群
-	const char* change_simsun_uc;
-	const char* change_gulim_uc;
-	const char* protect_gothic_uc;
-	const char* zero_width_uc;
-	const char* spaceable_uc;
-	const char* georgia_uc;
+	//const char* CAfont_change_uc[CA_FONT_MAX];
+	//const char* zero_width_uc;
+	//const char* spaceable_uc;
+	// 実験用追加フォント
+	const char* extra_path;
+	const char* extra_uc;
+	int extra_fontindex;
 	// コミュニティ動画では通常コメントをオプショナルスレッドとして半透明にしているため、選択可能にする
+	float font_w_fix_r;	// フォントの幅をnicoplayer.swfに合わせる倍率（実験的）
 	float font_h_fix_r;	// フォントの高さをnicoplayer.swfに合わせる倍率（実験的）
 	int original_resize;	// さきゅばす独自リサイズが有効（デフォルト有効）
 	int comment_speed;	// コメント速度を指定する場合≠0
 	int enableCA;
+	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
 	int debug;
-/*
-	// 実験的設定↓
-	short font_height_rate[2];	// フォントの高さをニコ動に合わせる倍率（4:3,16:9）
-	short nico_limit_width[2];	// 臨界幅リサイズ幅（ノーマル、フル）
-	short double_resize_width[2];	// ダブルリサイズ開始幅（ノーマル、フル）
-	short nico_limit_height[2];	// 弾幕モード開始の高さ（4:3,16:9）
-	short next_h_rate[2];	// コメントの高さの次の高さとの差（%）（4:3,16:9）
-	short next_h_pixel[2];	// コメントの高さの次の高さとの差（px）(4:3,16:9)
-	short double_limit_width[2];	// ダブルリサイズ臨界幅（ノーマル、フル）
-	short fixed_font_size[CMD_FONT_MAX];	// 修正フォント指定(ポイント指定)
-	short debug_key;	// デバッグキー
-	short target_width;	// オプションから変換後の横幅をスクレイピング、指定がなければ元動画の横幅
-	//  ニコ動に対し２倍や１／２倍のスケールの時にフォントをzoomさせないため
-	//  TRUE OR FALSE
-	short limitwidth_resize;	// 臨界幅リサイズが有効（デフォルト有効）
-	short linefeed_resize;	// 改行リサイズが有効（デフォルト有効）
-	short double_resize;		// ダブルリサイズが有効（デフォルト有効）
-	// obsolate
-	//short font_double_scale;		// フォントサイズ自動修正が有効（デフォルト2倍サイズが有効）
-*/
 }SETTING;
 
 int init(FILE* log);

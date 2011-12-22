@@ -91,10 +91,11 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	// 弾幕モードの高さの設定　16:9でオリジナルリサイズでない場合は上下にはみ出す
 	int limit_height = video_height;
 	if(!data->original_resize){
-		limit_height = (NICO_HEIGHT * video_width) / data->nico_width_now;
+		limit_height = (double)NICO_HEIGHT * data->width_scale;
 	}
-	int y_min = (video_height - limit_height) >> 1;
+	int y_min = (video_height>>1) - (limit_height>>1);
 	int y_max = y_min + limit_height;
+	y_max+=limit_height/NICO_COMMENT_HIGHT + 1;	//コメントの高さは385=384+1 下にはみ出す
 	/*ロケーションで分岐*/
 	int y;
 	if(item->location == CMD_LOC_BOTTOM){
@@ -146,10 +147,10 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			}
 		}
 	}while(running);
-	//暫定対策：CAモード時はコメント(n-1)行分見えればランダム（弾幕化）しない
+	//暫定対策：CAモード時はコメント(n-0.5)行分見えればランダム（弾幕化）しない
 	int h1 = 0;
 	if(data->enableCA){
-		h1 = data->font_pixel_size[item->size];
+		h1 = (int)((double)FONT_PIXEL_SIZE[item->size] * data->width_scale * 0.5);
 	}
 	/*そもそも画面内に無ければ無意味。*/
 	if(y+h1 < y_min || y+surf->h-h1 > y_max){	// 1行以上範囲を超えてるので、ランダムに配置。
