@@ -5,15 +5,21 @@
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-　・1.29.dev1 (2011/12/01)
-　　生IDに186を付加、NG関係の内部処理変更
-　　設定ファイルの初期化追加
+　・1.29 (2011/12/21)　CA（コメントアート）対応　その4
+　　・CAフォント追加　インド、タイ・アラビア　計６種
+　　・フォント変化の修正（まだ途中）、実験的設定（仮）デバッグ用設定を追加
+　　・コメント自動調整数の修正
+　　・生ID（非匿名）コメントのコマンドに内部的に186を付加
+　　・設定ファイルの初期化を追加
+　　・NG関係の内部処理を変更、正規表現パターン作成を1回だけに
 
 □修正・改変点
-　1.29.dev1
+　1.29 (2011/12/21)　CA（コメントアート）対応　その4
+　・CAフォント追加　インド、タイ・アラビア　計６種
+　・フォント変化の修正（まだ途中）、実験的設定（仮）デバッグ用設定を追加
 　・生ID（非匿名）コメントのコマンドに内部的に186を付加
-　・NG関係の内部処理を変更、正規表現パターン作成を1回だけに
 　・設定ファイルの初期化を追加
+　・NG関係の内部処理を変更、正規表現パターン作成を1回だけに
 
 　1.28以降
 　・エコノミーモード時に中止するオプション追加
@@ -167,7 +173,8 @@
 　同梱のさきゅばす1.22rのreadme.txt、1.22r3のreadme+.txtを
 　ご覧下さい。
 　1.22r3e、1.23以降の不具合報告等はさきゅばすスレでお願いします。
-　http://hibari.2ch.net/test/read.cgi/software/1310301611/
+　【ニコニコ】コメント付動画作成ツール さきゅばす
+　　http://anago.2ch.net/test/read.cgi/software/1310301611/
 
 
 □動作環境
@@ -202,7 +209,7 @@
 　・移動したオプションファイルをoption内にコピーして戻して下さい。
 　◆拡張機能
 　・設定ファイルの読み込み・保存・別名保存・初期化が出来るようになりました。
-　・CA対応実験的設定でフォント4種類を強制選択可能になりました。
+　・CA対応実験的設定でフォント６種類を強制選択可能になりました。
 　・CUI引数を追加しました。
 　・エコノミーモード時に中止する設定が可能になりました。
 　・1.26.1～2でフォントサイズ自動調整時の拡大機能を削除しましたが元に戻しました。
@@ -228,6 +235,10 @@
 　　をダウンロードし展開します。(ドライブ直下の\saccubusを推奨)
 　　binフォルダの ffmpeg.exe （SVN-r21400）が必要です。
 　　*** 同梱しているbinフォルダのファイルだけでは動作しません ***
+　★　FFmpeg 21400の代わりに新しいN55686も使用可能ですが　★
+　★　実績が少ないので人柱度は大きくなります。　　　　　　★
+　　N55686(libfaac無し、libvo_aacencあり)+optionVO
+　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
 　・1.22r3のoptionフォルダを■削除■して下さい。
 　・本Rev.を1.22r3を展開したフォルダにコピーします。
 　　同名のファイル・フォルダは■上書き■します。
@@ -237,11 +248,6 @@
 　・投稿者コメントを付加して動画にしたい場合は
 　　「保存設定」「コメント付き動画」「投稿者コメントを付加する」に
 　　チェックします。スクリプトは再現されません。
-
-　★　FFmpeg 21400の代わりに新しいN55686も使用可能ですが　★
-　★　実績が少ないので人柱度は大きくなります。　　　　　　★
-　　N55686(libfaac無し、libvo_aacencあり)+optionVO
-　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
 
 
 □起動
@@ -254,13 +260,22 @@
 　　2009/7/7 7:7:7 や 2009/7/7 7:7 や 2009/7/7 のように入力します。
 　　右上の変換ボタンをクリックするとダウンロードと変換が開始します。
 
+●CA（コメントアート）対応　その4
+　・CAフォント追加　mangal.ttf デーヴァナーガリ文字（インド）、tahoma.ttf（タイ・アラビア）
+　　（計６種）
+　・フォント変化の修正（まだ途中）
+　・実験的設定（仮）にフォント幅の設定、TTF_Lineskipをフォントサイズとする設定、
+　　追加フォント設定を追加（全てデバッグ用）
 
 ●生ID（非匿名）コメントのコマンドに内部的に186を付加
-　以下はNGワード使用例（名前はお遊びです＼(^o^)／）
-　　186					コテハン殺し
-　　184					匿名拒否
-　　docomo				ドコモイラネ
-　　/(docomo (white )?)?(184|186)/	デフォルトコマンドNG
+　以下はNGワード使用例
+　　186		生ID全部NG
+　　184		匿名NG
+　　docomo	ドコモNG
+　　iPhone	iPhoneNG
+　　/((docomo|iPhone) (white )?)?(184|186)/	デフォルトコマンドNG
+　　　最後の書式はJavaの正規表現です。同じ記法が使えます。
+　　　参照http://java.sun.com/javase/ja/6/docs/ja/api/java/util/regex/Pattern.html
 
 ●ファイルメニューに設定ファイルの初期化を追加。
 　・FFmpegの初期化は21400向けになります。
@@ -281,7 +296,7 @@
 　　（自動調整をオフにしても拡大はしますが文字の表示が少し粗雑になります。）
 
 ●CUI追加
-　4引数以降（過去ログ日時の後）の指定キーワードを３つ追加しました。
+　５番目以降の引数（過去ログ日時の後）の指定キーワードを３つ追加しました。
 　@NDL （半角英大文字）
 　　動画・コメントをダウンロードしない。（変換は設定ファイル通り）
 　@DLO （半角英大文字）
@@ -314,7 +329,9 @@
 　　auto.batの場合　%CMD% sm9999 "2009/7/7 7:7"
 　　　日時は省略可能、現在の場合は0を指定
 　　ConvListの場合の入力欄　sm9999 13190010
-　　　日時は1970/1/1からの秒数で指定、/や"は使用不可、省略可能
+　　　日時は1970/1/1からの秒数または↓で指定、省略可能
+　　　Ver 1.04以降で日時の指定が、2011/12/1 または "2009/1/1 07:08:10" で可能になりました。
+　　　もちやまさん、ありがとうございます。
 　②オプションファイルの変更（2passエンコードの例）
 　　　最初に2pass用のオプションファイルを1pass目、2pass目と2組（ｘアスペクト比2種）用意する
 　　　1pass目ファイル名　[PC][4：3].xml　　 [PC][16：9].xml　　　 とし
@@ -571,7 +588,7 @@
 　・動画変換確認は、1.22r3（SVN-21400 前スレ341）で行いました。
 　　Win7 32bit Core2Duo, WinXP 32bit CeleronD
 　・但し再生確認はPC上だけで、携帯その他では未確認
-　・前スレ>>670 は変換エラーする動画(Decoder not found)がありました。
+　・前スレ>>670(SVN-25041) は変換エラーする動画(Decoder not found)がありました。
 　・前スレ>>481(SVN-23386)は livx264でのマルチスレッドオプション
 　　（-threads）が機能しないかもしれません。
 　・いんきゅばす（旧NicoBrowser拡張さきゅばす1.4.4以降）用に配布している
@@ -588,7 +605,7 @@
 ・Saccubus.jar　　　　　　　本体　1.29
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
 ・bin フォルダ配下
-　　nicovideoE.dll(2011.11.26版)統合版拡張Vhookライブラリ　従来＋ワイド(16x9用)
+　　nicovideoE.dll(2011.11.26版)統合版拡張Vhookライブラリ　従来＋ワイド
 　　SDL.dll(2011.11.02ビルド)、README-SDL.txt
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYNG
 　　　グラフィックライブラリ、ライセンスはLGPL、nicovideoE.dllに必要
@@ -599,11 +616,11 @@
 　　Bin.jar　のjavaソースファイル、eclipseプロジェクトファイル
 　　Saccubdus.exe　のCソースファイル(launcher)、makeファイル、リソース
 ・readmeNew.txt、readme.txt(1.22r)、readme+.txt(1.22r3)
+・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
 ・AUTO2PROC.BAT　　　　　　 ２プロセス自動実行本体
 ・AUTO2PROCDEBUG.BAT　　　  ２プロセス自動実行時のログ記録用
 ・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
-・auto.bat 　　　　　　　　 　　　　　　（1.22rの物）
 ・オプションファイル見本.xml　　　　　　（1.22rの物）
 
 関連リンク
@@ -612,8 +629,14 @@
 　SVN：svn checkout http://svn.sourceforge.jp/svnroot/saccubus/trunk
 
 ・ダウンロード
-　公式最新
+　公式最新(Vista・Win7では追加ファイルが必要。公式ユーザーページ参照)
 　1.22r 　　http://sourceforge.jp/projects/saccubus/downloads/30757/Saccubus-1.22r.zip/
+　改造版の元
+　1.22r3　　http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip
+　参考ffmpeg
+　r23386(libfaacあり)　http://www1.axfc.net/uploader/Ne/so/82882.zip
+　N55686(libfaac無し、libvo_aacencあり)+optionVO
+　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
 　改造版
 　1.28　　　http://www1.axfc.net/uploader/File/so/72010.zip
 　1.26.2　　http://www1.axfc.net/uploader/File/so/71481.zip
@@ -635,23 +658,23 @@
 　1.22r3e3　http://www1.axfc.net/uploader/File/so/67064.zip
 　1.22r3e2　http://www1.axfc.net/uploader/File/so/66071.zip
 　1.22r3e1a http://www1.axfc.net/uploader/File/so/65862.zip
-　改造版の元
-　1.22r3　　http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip
-　参考ffmpeg
-　r23386(libfaacあり)　http://www1.axfc.net/uploader/Ne/so/82882.zip
-　N55686(libfaac無し、libvo_aacencあり)+optionVO
-　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
 
 ・サイト
 　さきゅばす公式
 　　http://saccubus.sourceforge.jp/
+　【ニコニコ】コメント付動画作成ツール さきゅばす
+　　http://anago.2ch.net/test/read.cgi/software/1310301611/
 　coroid project　「いんきゅばす」を含む
 　　http://sourceforge.jp/projects/coroid/
 　ニコニコランキングメーカー(nicorank)配布サイト
 　　http://www.daily-vocaran.info/nicorank/
 
 変更履歴
-1.29.dev1
+1.29 (2011/12/21)　CA（コメントアート）対応　その4
+　・CAフォント追加　インド、タイ・アラビア　計６種
+　・フォント変化の修正（まだ途中）、実験的設定（仮）デバッグ用設定を追加
+
+1.29.dev1 (2011/12/01)
 　・生ID（非匿名）コメントのコマンドに内部的に186を付加
 　・NG関係の内部処理を変更、正規表現パターン作成を1回だけに。
 　・ファイルメニューに設定ファイルの初期化を追加。

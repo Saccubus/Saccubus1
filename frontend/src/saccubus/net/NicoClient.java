@@ -936,7 +936,6 @@ public class NicoClient {
 	public String getBackCommentFromLength(String def) {
 		if (VideoLength < 0) {
 			return def;
-/**
 		} else if (VideoLength >= 0 && VideoLength < 60) {
 			return "100";
 		} else if (VideoLength >= 60 && VideoLength < 300) {
@@ -944,10 +943,11 @@ public class NicoClient {
 		} else if (VideoLength >= 300 && VideoLength < 600) {
 			return "500";
 		} else {
-*/
+/*
 		} if (VideoLength < 600){		//↓数値計算では正しい数はでない。実際の分布による。
 			return Integer.toString((VideoLength+59)/60 * 100);
 		} else {
+*/
 			return "1000";
 		}
 	}

@@ -1,13 +1,17 @@
 /*
- * unitl.c
+ * util.c
  *
  *  Created on: 2011/11/14
  *      Author: orz
  */
-#include "util.h"
+#include <stdio.h>
+#include "uniutil.h"
 #include "../mydef.h"
+#include "unitable.h"
 
 int isMatchKanji(Uint16* u,Uint16* kanji){
+	if(kanji==NULL)
+		return FALSE;
 	while(*kanji!='\0'){
 		if(*kanji<=*u && *u<=*(kanji+1)){
 			return TRUE;
@@ -16,7 +20,7 @@ int isMatchKanji(Uint16* u,Uint16* kanji){
 	}
 	return FALSE;
 }
-
+/*
 int isMatchZeroWidth(Uint16* u,Uint16* zero){
 	while(*zero!='\0'){
 		if(*zero==*u){
@@ -26,27 +30,45 @@ int isMatchZeroWidth(Uint16* u,Uint16* zero){
 	}
 	return FALSE;
 }
+*/
 
 int isAscii(Uint16* u){
-	if(0x0000 < *u && *u < 0x0080){
-		return TRUE;
-	}else{
-		return FALSE;
-	}
+	return (0x0000 < *u && *u < 0x0080);
+}
+
+/*
+int isArabic(Uint16* u){
+	return ((0x0600 <= *u && *u <= 0x06ff)
+	  ||(0x0750 <= *u && *u <= 0x077f));
 }
 
 int isMincho(Uint16* u){
-	if(0x2581<=*u && *u<=0x258f){
-		return TRUE;
-	}
-	return FALSE;
+	return (0x2581<=*u && *u<=0x258f);
+}
+*/
+
+int getDetaiType(int u){
+	return UNITABLE[u];
 }
 
-int isHANKAKU(Uint16* u){
-	if(0xff61<=*u && *u<=0xff9f){
-		return TRUE;
+int getGlyphEixst(DATA* data,Uint16 u){
+	int f;
+	for(f=0;f<CA_FONT_MAX;f++){
+		TTF_Font* font = data->CAfont[f][CMD_FONT_DEF];
+		if(font!=NULL && TTF_GlyphIsProvided(font,u))
+			return f;
 	}
-	return FALSE;
+	return UNDEFINED_FONT;
+}
+
+int isGlyphExist(DATA* data,int fonttype,Uint16 u){
+	TTF_Font* font = data->CAfont[fonttype][CMD_FONT_DEF];
+	return (font!=NULL && TTF_GlyphIsProvided(font,u));
+}
+
+/*
+int isHANKAKU(Uint16* u){
+	return (0xff61<=*u && *u<=0xff9f);
 }
 
 int isZeroWidth(Uint16* u){
@@ -58,7 +80,12 @@ int isZeroWidth(Uint16* u){
 	}
 	return FALSE;
 }
+*/
+int isZeroWidth(Uint16* u){
+	return (getDetaiType(*u)==ZERO_WIDTH_CHAR);
+}
 
+/*
 int getFontType(Uint16* u,Uint16** ca,int basefont){
 	if(*u == '\0'){
 		return NULL_FONT;
@@ -75,10 +102,13 @@ int getFontType(Uint16* u,Uint16** ca,int basefont){
 	if(isMatchKanji(u,ca[GEORGIA_FONT])){	//use special
 		return GEORGIA_FONT;
 	}
+	if(isMatchKanji(u,ca[DEVANAGARI])){
+		return DEVANAGARI;
+	}
 	if(isMincho(u)){
 		return SIMSUN_FONT;
 	}
-	if(isAscii(u)){
+	if(isAscii(u) || isArabic(u)){
 		return ARIAL_FONT;
 	}
 	if(isHANKAKU(u)){
@@ -89,8 +119,58 @@ int getFontType(Uint16* u,Uint16** ca,int basefont){
 	}
 	return basefont;
 }
+*/
 
+int getFontType2(Uint16* u,int basefont,DATA* data){
+	if(u==NULL || *u == '\0'){
+		return NULL_FONT;
+	}
+//	if(*u==0x2001){		// one of SPACE char and GOTHIC only
+//		return GOTHIC_FONT;
+//	}
+	switch(getDetaiType(*u)){
+		case STRONG_SIMSUN_CHAR:
+		case WEAK_SIMSUN_CHAR:
+		case SIMSUN_NOT_CHANGE_CHAR:
+		//case UNDEF_OR_SIMSUN:	//最終的にはXP,Vista,Win7共通時にSIMSUNに
+			return SIMSUN_FONT;
+		case GULIM_CHAR:
+			return GULIM_FONT;
+		case GOTHIC_CHAR:	//ゴシック保護
+		case GOTHIC_NOT_PROTECT:	//保護なしゴシック
+			return GOTHIC_FONT;
+		case ARIAL_CHAR:
+			return ARIAL_FONT;
+		case GEORGIA_CHAR:	//use special
+			return GEORGIA_FONT;
+		case UI_GOTHIC_CHAR:	//use special
+			return UI_GOTHIC_FONT;
+		case DEVANAGARI_CHAR:	//use special
+			return DEVANAGARI;
+		case TAHOMA_CHAR:
+			return TAHOMA_FONT;
+		default:
+			//include UNDEFINED_CHAR
+			if(isGlyphExist(data,basefont,*u))
+				return basefont;
+			else
+				return getGlyphEixst(data,*u);
+	}
+}
+
+int getFontType(Uint16* u,int basefont,DATA* data){
+	if(isMatchExtra(u,data->extra_change))
+		return EXTRA_FONT;
+	else
+		return getFontType2(u,basefont,data);
+}
+
+/*
 int getFirstFont(Uint16* u,int fonttype,Uint16** ca){
+	if(u==NULL || *u == '\0'){
+		return fonttype;
+	}
+	int foundBase = FALSE;
 	while(*u!=0){
 		if(isMatchKanji(u,ca[SIMSUN_FONT])){	//change
 			return SIMSUN_FONT;
@@ -107,9 +187,46 @@ int getFirstFont(Uint16* u,int fonttype,Uint16** ca){
 		if(isHANKAKU(u)){	//protect
 			return GOTHIC_FONT;
 		}
+		if(isAscii(u)){
+			if(foundBase)
+				return fonttype;
+		}else{
+			foundBase = TRUE;
+		}
 		u++;
 	}
 	return fonttype;
+}
+*/
+int getFirstFont(Uint16* u,int basefont,DATA* data){
+	if(u==NULL || *u == '\0'){
+		return basefont;
+	}
+	int foundBase = FALSE;
+	while(*u!='\0'){
+		switch (getDetaiType(*u)) {
+			case STRONG_SIMSUN_CHAR:
+				return SIMSUN_FONT;
+			case GULIM_CHAR:
+				return GULIM_FONT;
+			case GOTHIC_CHAR:
+				return GOTHIC_FONT;
+			case ARIAL_CHAR:
+				if(foundBase)
+					return basefont;
+				else
+					break;
+			case WEAK_SIMSUN_CHAR:
+				basefont = SIMSUN_FONT;
+				foundBase = TRUE;
+				break;
+			default:
+				foundBase = TRUE;
+				break;
+		}
+		u++;
+	}
+	return basefont;
 }
 
 Uint16 replaceSpace(Uint16 u){

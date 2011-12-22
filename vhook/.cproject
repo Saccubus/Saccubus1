@@ -5,6 +5,9 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055" moduleId="org.eclipse.cdt.core.settings" name="Release">
+				<macros>
+					<stringMacro name="HOMEDRIVE" type="VALUE_TEXT" value="D:"/>
+				</macros>
 				<externalSettings>
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/vhook"/>
@@ -39,7 +42,8 @@
 								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.option.optimization.level.1496536622" name="最適化レベル" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.more" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.694403866" name="デバッグ・レベル" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.default" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.2113363943" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="C:/mingw/include/SDL"/>
+									<listOptionValue builtIn="false" value="&quot;${HOMEDRIVE}/mingw/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${HOMEDRIVE}/mingw/include/SDL&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1371605120" name="定義済みのシンボル (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_GNU_SOURCE=1"/>
@@ -59,7 +63,7 @@
 								<option defaultValue="true" id="gnu.c.link.option.shared.651983291" name="共用 (-shared)" superClass="gnu.c.link.option.shared" valueType="boolean"/>
 								<option id="gnu.c.link.option.strip.1548957663" name="シンボル情報の除去 (-s)" superClass="gnu.c.link.option.strip" value="true" valueType="boolean"/>
 								<option id="gnu.c.link.option.paths.1420612223" name="ライブラリー検索パス (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="C:/MinGW/lib"/>
+									<listOptionValue builtIn="false" value="/MinGW/lib"/>
 								</option>
 								<option id="gnu.c.link.option.ldflags.1729749471" name="リンカー・フラグ" superClass="gnu.c.link.option.ldflags" value="-mwindows" valueType="string"/>
 								<option id="gnu.c.link.option.noshared.1113272581" name="共用ライブラリーなし (-static)" superClass="gnu.c.link.option.noshared" value="false" valueType="boolean"/>

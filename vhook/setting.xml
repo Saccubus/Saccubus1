@@ -5,7 +5,7 @@
 
 </language>
 <language name="C ソース・ファイル">
-<includepath>C:/mingw/include</includepath>
+<includepath>/mingw/include</includepath>
 
 </language>
 <language name="オブジェクト・ファイル">

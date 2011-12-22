@@ -63,6 +63,7 @@ public class Converter extends Thread {
 	private Aspect videoAspect;
 	private File fwsFile = null;
 	private VideoIDFilter DefaultVideoIDFilter;
+	/*
 	private static final String CHANGE_SIMSUN_UNICODE =
 			"0x2581-0x258f 0x02cb 0xe800";
 	private static final String CHANGE_GULIM_UNICODE =
@@ -71,6 +72,7 @@ public class Converter extends Thread {
 			"0x30fb 0xff61-0xff9f";
 	private static final String ZERO_WIDTH_UNICODE =
 			"0x200b 0x2029-0x202f";
+	*/
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -123,6 +125,9 @@ public class Converter extends Thread {
 	private File gulimFont = null;
 	private File arialFont = null;
 	private File georgiaFont = null;
+	private File msuigothicFont = null;
+	private File devabagariFont = null;
+	private File tahomaFont = null;
 	private Pattern ngWordPat;
 	private Pattern ngIDPat;
 	private Pattern ngCmdPat;
@@ -260,12 +265,27 @@ public class Converter extends Thread {
 					sendtext("CA用フォントが見つかりません。" + gothicFont.getPath());
 					return false;
 				}
+				msuigothicFont = gothicFont;
 				georgiaFont  = new File(windir,"Fonts\\sylfaen.ttf");
 				if (!georgiaFont.canRead()) {
 					sendtext("CA用フォントが見つかりません。" + georgiaFont.getPath());
 					//return false;
 					System.out.println("CA用フォント" + georgiaFont.getPath() + "を" + gothicFont.getName() + "で代替します。");
 					georgiaFont = gothicFont;
+				}
+				devabagariFont = new File(windir,"Fonts\\mangal.ttf");
+				if (!devabagariFont.canRead()) {
+					sendtext("CA用フォントが見つかりません。" + devabagariFont.getPath());
+					//return false;
+					System.out.println("CA用フォント" + devabagariFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					devabagariFont = arialFont;
+				}
+				tahomaFont = new File(windir,"Fonts\\tahoma.ttf");
+				if (!tahomaFont.canRead()) {
+					sendtext("CA用フォントが見つかりません。" + tahomaFont.getPath());
+					//return false;
+					System.out.println("CA用フォント" + tahomaFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					tahomaFont = arialFont;
 				}
 			}
 			a = new File(Setting.getFontPath());
@@ -1201,9 +1221,6 @@ public class Converter extends Thread {
 			if (isWide){
 				ffmpeg.addCmd("|--nico-width-wide");
 			}
-			if (Setting.isDisableOriginalResize()){
-				ffmpeg.addCmd("|--disable-original-resize");
-			}
 		//	if (videoLength > 0){
 		//		ffmpeg.addCmd("|--video-length:");
 		//		ffmpeg.addCmd(Integer.toString(videoLength));
@@ -1222,6 +1239,7 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--debug-print");
 			}
 			if(Setting.isEnableCA()){
+				ffmpeg.addCmd("|--enable-CA");
 				ffmpeg.addCmd("|--gothic-font:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(gothicFont.getPath()), encoding));
@@ -1237,7 +1255,17 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--georgia-font:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(georgiaFont.getPath()), encoding));
-				ffmpeg.addCmd("|--change-simsun-unicode:");
+				ffmpeg.addCmd("|--msui-font:");
+				ffmpeg.addCmd(URLEncoder.encode(
+					Path.toUnixPath(msuigothicFont.getPath()), encoding));
+				ffmpeg.addCmd("|--devanagari-font:");
+				ffmpeg.addCmd(URLEncoder.encode(
+					Path.toUnixPath(devabagariFont.getPath()), encoding));
+				ffmpeg.addCmd("|--tahoma-font:");
+				ffmpeg.addCmd(URLEncoder.encode(
+					Path.toUnixPath(tahomaFont.getPath()), encoding));
+			/*
+			  	ffmpeg.addCmd("|--change-simsun-unicode:");
 				ffmpeg.addCmd(URLEncoder.encode(CHANGE_SIMSUN_UNICODE, encoding));
 				ffmpeg.addCmd("|--change-gulim-unicode:");
 				ffmpeg.addCmd(URLEncoder.encode(CHANGE_GULIM_UNICODE, encoding));
@@ -1245,9 +1273,23 @@ public class Converter extends Thread {
 				ffmpeg.addCmd(URLEncoder.encode(PROTECT_GOTHIC_UNICODE, encoding));
 				ffmpeg.addCmd("|--zero-width-unicode:");
 				ffmpeg.addCmd(URLEncoder.encode(ZERO_WIDTH_UNICODE, encoding));
-				ffmpeg.addCmd("|--enable-CA");
+			*/
+				if(Setting.isUseLineSkip()){
+					ffmpeg.addCmd("|--use-lineskip-as-fontsize");
+				}
+				if(Setting.isUseExtraFont()){
+					ffmpeg.addCmd("|--extra-font:"
+						+ Setting.getExtraFontText());
+				}
 			}
-			ffmpeg.addCmd("|--end-of-argument\"");
+			if (Setting.isDisableOriginalResize()){
+				ffmpeg.addCmd("|--disable-original-resize");
+			}
+			if (Setting.isFontWidthFix()){
+				ffmpeg.addCmd("|--font-width-fix-ratio:"
+					+ Setting.getFontWidthFixRaito());
+			}
+			ffmpeg.addCmd("|--end-of-argument1|--end-of-argument2\"");
 			return true;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

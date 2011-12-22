@@ -112,6 +112,11 @@ public class ConvertingSetting {
 	private boolean enableCA;	//âºê›íË
 	private String scoreLimit;
 	private boolean disableEco;
+	private boolean fontWidthFix;
+	private String fontWidthFixRatio;
+	private boolean useLineSkip;
+	private boolean useExtraFont;
+	private String extraFontText;
 
 	private Map<String, String> replaceOptions;
 
@@ -287,7 +292,12 @@ public class ConvertingSetting {
 			boolean debug_nicovideo,
 			boolean enable_CA,
 			String score_limit,
-			boolean disable_eco
+			boolean disable_eco,
+			boolean font_width_fix,
+			String font_width_fix_raito,
+			boolean use_lineskip,
+			boolean use_extra_font,
+			String extra_font_text
 		)
 	{
 		this(	mailaddress,
@@ -366,6 +376,11 @@ public class ConvertingSetting {
 		enableCA = enable_CA;
 		scoreLimit = score_limit;
 		disableEco = disable_eco;
+		fontWidthFix = font_width_fix;
+		fontWidthFixRatio = font_width_fix_raito;
+		useLineSkip = use_lineskip;
+		useExtraFont = use_extra_font;
+		extraFontText = extra_font_text;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -593,6 +608,21 @@ public class ConvertingSetting {
 	public boolean isDisableEco(){
 		return disableEco;
 	}
+	public boolean isFontWidthFix(){
+		return fontWidthFix;
+	}
+	public String getFontWidthFixRaito(){
+		return fontWidthFixRatio;
+	}
+	public boolean isUseLineSkip(){
+		return useLineSkip;
+	}
+	public boolean isUseExtraFont(){
+		return useExtraFont;
+	}
+	public String getExtraFontText(){
+		return extraFontText;
+	}
 
 	private static final String PROP_FILE = "./saccubus.xml";
 	private static final String PROP_MAILADDR = "MailAddress";
@@ -683,6 +713,11 @@ public class ConvertingSetting {
 	private static final String PROP_ENABLE_CA = "EnableCA";
 	private static final String PROP_SCORE_LIMIT = "CommentScoreLimit";
 	private static final String PROP_DISABLE_ECO = "DisableEco";
+	private static final String PROP_FONT_WIDTH_FIX = "FontWidthFix";
+	private static final String PROP_FONT_WIDTH_FIX_RATIO = "FontWidthFixRatio";
+	private static final String PROP_USE_LINESKIP = "UseLineskipAsFontsize";
+	private static final String PROP_USE_EXTRA_FONT = "UseExtraFont";
+	private static final String PROP_EXTRA_FONT_TEXT = "ExtraFontText";
 
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -807,6 +842,11 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ENABLE_CA, Boolean.toString(setting.isEnableCA()));
 		prop.setProperty(PROP_SCORE_LIMIT, setting.getScoreLimit());
 		prop.setProperty(PROP_DISABLE_ECO, Boolean.toString(setting.isDisableEco()));
+		prop.setProperty(PROP_FONT_WIDTH_FIX, Boolean.toString(setting.isFontWidthFix()));
+		prop.setProperty(PROP_FONT_WIDTH_FIX_RATIO, setting.getFontWidthFixRaito());
+		prop.setProperty(PROP_USE_LINESKIP, Boolean.toString(setting.isUseLineSkip()));
+		prop.setProperty(PROP_USE_EXTRA_FONT,Boolean.toString(setting.isUseExtraFont()));
+		prop.setProperty(PROP_EXTRA_FONT_TEXT, setting.getExtraFontText());
 
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -930,7 +970,12 @@ public class ConvertingSetting {
 			false,
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_CA, "false")),
 			prop.getProperty(PROP_SCORE_LIMIT, ""+Integer.MIN_VALUE),
-			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ECO, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ECO, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_FONT_WIDTH_FIX, "false")),
+			prop.getProperty(PROP_FONT_WIDTH_FIX_RATIO, ""),
+			Boolean.parseBoolean(prop.getProperty(PROP_USE_LINESKIP, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_USE_EXTRA_FONT, "false")),
+			prop.getProperty(PROP_EXTRA_FONT_TEXT, "")
 		);
 	}
 

@@ -127,12 +127,12 @@ public class MainFrame extends JFrame {
 	JPanel experimentPanel = new JPanel();
 	JCheckBox fontHeightFixCheckBox = new JCheckBox();
 	JTextField fontHeightRatioTextField = new JTextField();
-	JLabel fontHeightRatioLabel = new JLabel();
-	JCheckBox disableLimitWidthResizeCheckBox = new JCheckBox();
-	JLabel limitWidthResizeLabel = new JLabel();
-	JTextField limitWidthTextField = new JTextField();
-	JCheckBox disableLinefeedResizeCheckBox = new JCheckBox();
-	JCheckBox disableDoubleResizeCheckBox = new JCheckBox();
+	//JLabel fontHeightRatioLabel = new JLabel();
+	//JCheckBox disableLimitWidthResizeCheckBox = new JCheckBox();
+	//JLabel limitWidthResizeLabel = new JLabel();
+	//JTextField limitWidthTextField = new JTextField();
+	//JCheckBox disableLinefeedResizeCheckBox = new JCheckBox();
+	//JCheckBox disableDoubleResizeCheckBox = new JCheckBox();
 	JCheckBox disableOriginalResizeCheckBox = new JCheckBox();
 	JComboBox commentModeComboBox = new JComboBox(commentModeArray);
 	JCheckBox commentSpeedCheckBox = new JCheckBox();
@@ -141,6 +141,12 @@ public class MainFrame extends JFrame {
 	JCheckBox scoreCheckBox = new JCheckBox();
 	JTextField scoreTextField = new JTextField();
 	JCheckBox disableEcoCheckBox = new JCheckBox();
+	JCheckBox fontWidthFixCheckBox = new JCheckBox();
+	JTextField fontWidthRatioTextField = new JTextField();
+	JCheckBox useLineskipAsFontsizeCheckBox = new JCheckBox();
+	JCheckBox useExtraFontCheckBox = new JCheckBox();
+	JLabel extraFontLabel = new JLabel();
+	JTextField extraFontTextField = new JTextField();
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
 	private static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
@@ -233,11 +239,12 @@ public class MainFrame extends JFrame {
 		ViewCommentLabel = new JLabel();
 		ViewCommentLabel.setText("表示コメント数");
 		GridBagConstraints grid8_x1_y1_65 = new GridBagConstraints();
+		grid8_x1_y1_65.anchor = GridBagConstraints.CENTER;
 		grid8_x1_y1_65.fill = GridBagConstraints.HORIZONTAL;
 		grid8_x1_y1_65.gridy = 1;
 		grid8_x1_y1_65.weightx = 1.0;
 		grid8_x1_y1_65.gridwidth = 6;
-		grid8_x1_y1_65.insets = INSETS_0_5_0_5;
+		grid8_x1_y1_65.insets = INSETS_0_0_0_5;
 		grid8_x1_y1_65.gridx = 1;
 		GridBagConstraints grid8_x4_y3_64 = new GridBagConstraints(1, 1,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
@@ -1237,91 +1244,54 @@ public class MainFrame extends JFrame {
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"実験的設定（仮）", TitledBorder.LEADING, TitledBorder.TOP,
 				getFont(), Color.blue));
-		fontHeightFixCheckBox.setText("フォントの高さを調整する");
-		fontHeightFixCheckBox.setForeground(Color.blue);
+		fontWidthFixCheckBox.setText("フォント幅の調整（％）");
+		fontWidthFixCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid20_x0_y0 = new GridBagConstraints();
 		grid20_x0_y0.gridx = 0;
 		grid20_x0_y0.gridy = 0;
 		grid20_x0_y0.gridwidth = 2;
-		grid20_x0_y0.gridheight = 1;
-		grid20_x0_y0.weightx = 1.0;
-		grid20_x0_y0.weighty = 0.0;
-		grid20_x0_y0.anchor = GridBagConstraints.NORTH;
-		grid20_x0_y0.fill = GridBagConstraints.HORIZONTAL;
+		//grid20_x0_y0.gridheight = 1;
+		grid20_x0_y0.weightx = 0.0;
+		//grid20_x0_y0.weighty = 0.0;
+		grid20_x0_y0.anchor = GridBagConstraints.NORTHWEST;
+		grid20_x0_y0.fill = GridBagConstraints.NONE;
 		grid20_x0_y0.insets = INSETS_0_5_0_5;
-		experimentPanel.add(fontHeightFixCheckBox, grid20_x0_y0);
-		fontHeightRatioLabel.setText("倍率（％）");
-		fontHeightRatioLabel.setForeground(Color.blue);
+		experimentPanel.add(fontWidthFixCheckBox, grid20_x0_y0);
+		fontWidthRatioTextField.setText("100");
+		fontWidthRatioTextField.setForeground(Color.blue);
+		GridBagConstraints grid20_x1_y0 = new GridBagConstraints();
+		grid20_x1_y0.gridx = 2;
+		grid20_x1_y0.gridy = 0;
+		grid20_x1_y0.weightx = 1.0;
+		grid20_x1_y0.gridwidth = 2;
+		grid20_x1_y0.anchor = GridBagConstraints.NORTHWEST;
+		grid20_x1_y0.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x1_y0.insets = INSETS_0_5_0_5;
+		experimentPanel.add(fontWidthRatioTextField, grid20_x1_y0);
+		//fontHeightRatioLabel.setText("倍率（％）");
+		//fontHeightRatioLabel.setForeground(Color.blue);
+		fontHeightFixCheckBox.setText("フォント高の調整（％）");
+		fontHeightFixCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid20_x0_y1 = new GridBagConstraints();
 		grid20_x0_y1.gridx = 0;
 		grid20_x0_y1.gridy = 1;
 		grid20_x0_y1.weightx = 0.0;
-		grid20_x0_y1.weighty = 0.0;
-		grid20_x0_y1.anchor = GridBagConstraints.NORTH;
+		grid20_x0_y1.gridwidth = 2;
+		grid20_x0_y1.anchor = GridBagConstraints.NORTHWEST;
 		grid20_x0_y1.fill = GridBagConstraints.NONE;
 		grid20_x0_y1.insets = INSETS_0_5_0_5;
-		experimentPanel.add(fontHeightRatioLabel, grid20_x0_y1);
-		fontHeightRatioTextField.setText("116");
+		experimentPanel.add(fontHeightFixCheckBox, grid20_x0_y1);
+		fontHeightRatioTextField.setText("100");
 		fontHeightRatioTextField.setForeground(Color.blue);
 		GridBagConstraints grid20_x1_y1 = new GridBagConstraints();
-		grid20_x1_y1.gridx = 1;
+		grid20_x1_y1.gridx = 2;
 		grid20_x1_y1.gridy = 1;
 		grid20_x1_y1.anchor = GridBagConstraints.NORTHWEST;
 		grid20_x1_y1.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x1_y1.weightx = 1.0;
-		grid20_x1_y1.weighty = 0.0;
+		grid20_x1_y1.gridwidth = 2;
 		grid20_x1_y1.insets = INSETS_0_5_0_5;
 		experimentPanel.add(fontHeightRatioTextField,grid20_x1_y1);
-	/*
-		disableLimitWidthResizeCheckBox.setText("臨界幅リサイズを無効にする");
-		disableLimitWidthResizeCheckBox.setForeground(Color.red);
-		disableLimitWidthResizeCheckBox.setSelected(false);
-		disableLimitWidthResizeCheckBox.setEnabled(false);
-		disableLimitWidthResizeCheckBox.setToolTipText("現rev.では有効・変更不可");
-		GridBagConstraints grid20_x0_y2 = new GridBagConstraints();
-		grid20_x0_y2.gridx = 0;
-		grid20_x0_y2.gridy = 2;
-		grid20_x0_y2.gridwidth = 2;
-		grid20_x0_y2.gridheight = 1;
-		grid20_x0_y2.weightx = 1.0;
-		grid20_x0_y2.weighty = 0.0;
-		grid20_x0_y2.anchor = GridBagConstraints.NORTH;
-		grid20_x0_y2.fill = GridBagConstraints.HORIZONTAL;
-		grid20_x0_y2.insets = INSETS_0_5_0_5;
-		experimentPanel.add(disableLimitWidthResizeCheckBox, grid20_x0_y2);
-		disableLinefeedResizeCheckBox.setText("改行リサイズを無効にする");
-		disableLinefeedResizeCheckBox.setForeground(Color.red);
-		disableLinefeedResizeCheckBox.setSelected(true);
-		disableLinefeedResizeCheckBox.setEnabled(false);
-		disableLinefeedResizeCheckBox.setToolTipText("現rev.では無効・変更不可");
-		GridBagConstraints grid20_x0_y5 = new GridBagConstraints();
-		grid20_x0_y5.gridx = 0;
-		grid20_x0_y5.gridy = 5;
-		grid20_x0_y5.gridwidth = 2;
-		grid20_x0_y5.gridheight = 1;
-		grid20_x0_y5.weightx = 1.0;
-		grid20_x0_y5.weighty = 0.0;
-		grid20_x0_y5.anchor = GridBagConstraints.NORTH;
-		grid20_x0_y5.fill = GridBagConstraints.HORIZONTAL;
-		grid20_x0_y5.insets = INSETS_0_5_0_5;
-		experimentPanel.add(disableLinefeedResizeCheckBox, grid20_x0_y5);
-		disableDoubleResizeCheckBox.setText("ダブルリサイズを無効にする");
-		disableDoubleResizeCheckBox.setForeground(Color.red);
-		disableDoubleResizeCheckBox.setSelected(true);
-		disableDoubleResizeCheckBox.setEnabled(false);
-		disableDoubleResizeCheckBox.setToolTipText("現rev.では無効・変更不可");
-		GridBagConstraints grid20_x0_y6 = new GridBagConstraints();
-		grid20_x0_y6.gridx = 0;
-		grid20_x0_y6.gridy = 6;
-		grid20_x0_y6.gridwidth = 2;
-		grid20_x0_y6.gridheight = 1;
-		grid20_x0_y6.weightx = 1.0;
-		grid20_x0_y6.weighty = 0.0;
-		grid20_x0_y6.anchor = GridBagConstraints.NORTH;
-		grid20_x0_y6.fill = GridBagConstraints.HORIZONTAL;
-		grid20_x0_y6.insets = INSETS_0_5_0_5;
-		experimentPanel.add(disableDoubleResizeCheckBox, grid20_x0_y6);
-	*/
 		disableOriginalResizeCheckBox.setText("開発版を有効（従来のさきゅばすのリサイズを無効にする）");
 		disableOriginalResizeCheckBox.setForeground(Color.blue);
 		disableOriginalResizeCheckBox.setToolTipText("コメントアート用に調整中。" +
@@ -1329,26 +1299,70 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid20_x0_y7 = new GridBagConstraints();
 		grid20_x0_y7.gridx = 0;
 		grid20_x0_y7.gridy = 7;
-		grid20_x0_y7.gridwidth = 2;
-		grid20_x0_y7.gridheight = 1;
+		grid20_x0_y7.gridwidth = 4;
+		//grid20_x0_y7.gridheight = 1;
 		grid20_x0_y7.weightx = 1.0;
-		grid20_x0_y7.weighty = 0.0;
-		grid20_x0_y7.anchor = GridBagConstraints.NORTH;
+		//grid20_x0_y7.weighty = 0.0;
+		grid20_x0_y7.anchor = GridBagConstraints.NORTHWEST;
 		grid20_x0_y7.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x0_y7.insets = INSETS_0_5_0_5;
 		experimentPanel.add(disableOriginalResizeCheckBox, grid20_x0_y7);
-		enableCA_CheckBox.setText("ＣＡ暫定的対応：４種類のフォントを使う");
+		enableCA_CheckBox.setText("ＣＡ暫定的対応：６種類のフォントを使う");
 		enableCA_CheckBox.setForeground(Color.blue);
 		enableCA_CheckBox.setToolTipText("フォント変化を強制的に使用するようになります");
 		GridBagConstraints drid20_x0_y8 = new GridBagConstraints();
 		drid20_x0_y8.gridx = 0;
 		drid20_x0_y8.gridy = 8;
-		drid20_x0_y8.gridwidth = 2;
+		drid20_x0_y8.gridwidth = 4;
 		drid20_x0_y8.weightx = 1.0;
-		drid20_x0_y8.anchor = GridBagConstraints.NORTH;
+		drid20_x0_y8.anchor = GridBagConstraints.NORTHWEST;
 		drid20_x0_y8.fill = GridBagConstraints.HORIZONTAL;
 		drid20_x0_y8.insets = INSETS_0_5_0_5;
 		experimentPanel.add(enableCA_CheckBox, drid20_x0_y8);
+		useLineskipAsFontsizeCheckBox.setText("LineSkipをFontSizeとする（デバッグ用）");
+		useLineskipAsFontsizeCheckBox.setForeground(Color.blue);
+		GridBagConstraints grid20_x0_y9 = new GridBagConstraints();
+		grid20_x0_y9.gridx = 0;
+		grid20_x0_y9.gridy = 9;
+		grid20_x0_y9.gridwidth = 4;
+		grid20_x0_y9.weightx = 1.0;
+		grid20_x0_y9.anchor = GridBagConstraints.NORTHWEST;
+		grid20_x0_y9.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y9.insets = INSETS_0_5_0_5;
+		experimentPanel.add(useLineskipAsFontsizeCheckBox, grid20_x0_y9);
+		useExtraFontCheckBox.setText("追加フォントを有効（デバッグ用）");
+		useExtraFontCheckBox.setForeground(Color.blue);
+		GridBagConstraints grid20_x0_y10 = new GridBagConstraints();
+		grid20_x0_y10.gridx = 0;
+		grid20_x0_y10.gridy = 10;
+		grid20_x0_y10.weightx = 1.0;
+		grid20_x0_y10.gridwidth = 4;
+		grid20_x0_y10.anchor = GridBagConstraints.NORTHWEST;
+		grid20_x0_y10.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y10.insets = INSETS_0_5_0_5;
+		experimentPanel.add(useExtraFontCheckBox,grid20_x0_y10);
+		extraFontLabel.setText("追加フォント");
+		extraFontLabel.setForeground(Color.blue);
+		extraFontLabel.setToolTipText("追加フォントパス フォント番号 開始unicode16進4桁-終了16進4桁　と指定して下さい");
+		GridBagConstraints grid20_x0_y11 = new GridBagConstraints();
+		grid20_x0_y11.gridx = 0;
+		grid20_x0_y11.gridy = 11;
+		grid20_x0_y11.gridwidth = 1;
+		grid20_x0_y11.weightx = 0.0;
+		grid20_x0_y11.anchor = GridBagConstraints.CENTER;
+		grid20_x0_y11.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y11.insets = INSETS_0_5_0_5;
+		experimentPanel.add(extraFontLabel, grid20_x0_y11);
+		extraFontTextField.setForeground(Color.blue);
+		GridBagConstraints grid20_x1_y11 = new GridBagConstraints();
+		grid20_x1_y11.gridx = 1;
+		grid20_x1_y11.gridy = 11;
+		grid20_x1_y11.gridwidth = 3;
+		grid20_x1_y11.weightx = 1.0;
+		grid20_x1_y11.anchor = GridBagConstraints.NORTHWEST;
+		grid20_x1_y11.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x1_y11.insets = INSETS_0_5_0_5;
+		experimentPanel.add(extraFontTextField, grid20_x1_y11);
 	}
 
 	private void setPopup() {
@@ -1612,7 +1626,12 @@ public class MainFrame extends JFrame {
 			getDebugMode(),
 			enableCA_CheckBox.isSelected(),
 			"" + score,
-			disableEcoCheckBox.isSelected()
+			disableEcoCheckBox.isSelected(),
+			fontWidthFixCheckBox.isSelected(),
+			fontWidthRatioTextField.getText(),
+			useLineskipAsFontsizeCheckBox.isSelected(),
+			useExtraFontCheckBox.isSelected(),
+			extraFontTextField.getText()
 		);
 	}
 
@@ -1722,6 +1741,11 @@ public class MainFrame extends JFrame {
 		enableCA_CheckBox.setSelected(setting.isEnableCA());
 		scoreTextField.setText(setting.getScoreLimit());
 		disableEcoCheckBox.setSelected(setting.isDisableEco());
+		fontWidthFixCheckBox.setSelected(setting.isFontWidthFix());
+		fontWidthRatioTextField.setText(setting.getFontWidthFixRaito());
+		useLineskipAsFontsizeCheckBox.setSelected(setting.isUseLineSkip());
+		useExtraFontCheckBox.setSelected(setting.isUseExtraFont());
+		extraFontTextField.setText(setting.getExtraFontText());
 	}
 
 	/**
