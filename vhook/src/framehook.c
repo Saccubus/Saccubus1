@@ -340,11 +340,17 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			setting->CAfont_path[GEORGIA_FONT] = font;
 			fprintf(log,"[framehook/init]GEORGIA Font path:%s\n",setting->CAfont_path[GEORGIA_FONT]);
 			fflush(log);
-		}else if(strncmp(FRAMEHOOK_OPT_MSUI_GOTHIC_FONT,arg,FRAMEHOOK_OPT_MSUI_GOTHIC_FONT_LEN) == 0
-				&& setting->CAfont_path[UI_GOTHIC_FONT]==NULL){
-			char* font = arg+FRAMEHOOK_OPT_MSUI_GOTHIC_FONT_LEN;
-			setting->CAfont_path[UI_GOTHIC_FONT] = font;
-			fprintf(log,"[framehook/init]UI GOTHIC Font path:%s\n",setting->CAfont_path[UI_GOTHIC_FONT]);
+//		}else if(strncmp(FRAMEHOOK_OPT_MSUI_GOTHIC_FONT,arg,FRAMEHOOK_OPT_MSUI_GOTHIC_FONT_LEN) == 0
+//				&& setting->CAfont_path[UI_GOTHIC_FONT]==NULL){
+//			char* font = arg+FRAMEHOOK_OPT_MSUI_GOTHIC_FONT_LEN;
+//			setting->CAfont_path[UI_GOTHIC_FONT] = font;
+//			fprintf(log,"[framehook/init]UI GOTHIC Font path:%s\n",setting->CAfont_path[UI_GOTHIC_FONT]);
+//			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_ARIALUNI_FONT,arg,FRAMEHOOK_OPT_ARIALUNI_FONT_LEN) == 0
+				&& setting->CAfont_path[ARIALUNI_FONT]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_ARIALUNI_FONT_LEN;
+			setting->CAfont_path[ARIALUNI_FONT] = font;
+			fprintf(log,"[framehook/init]ARIAL UNICODE MS Font path:%s\n",setting->CAfont_path[ARIAL_FONT]);
 			fflush(log);
 		}else if(strncmp(FRAMEHOOK_OPT_DEVANAGARI_FONT,arg,FRAMEHOOK_OPT_DEVANAGARI_FONT_LEN) == 0
 				&& setting->CAfont_path[DEVANAGARI]==NULL){
@@ -357,6 +363,24 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			char* font = arg+FRAMEHOOK_OPT_TAHOMA_FONT_LEN;
 			setting->CAfont_path[TAHOMA_FONT] = font;
 			fprintf(log,"[framehook/init]TAHOMA Font path:%s\n",setting->CAfont_path[TAHOMA_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_MINGLIU_FONT,arg,FRAMEHOOK_OPT_MINGLIU_FONT_LEN) == 0
+				&& setting->CAfont_path[MINGLIU_FONT]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_MINGLIU_FONT_LEN;
+			setting->CAfont_path[MINGLIU_FONT] = font;
+			fprintf(log,"[framehook/init]MingLiU Font path:%s\n",setting->CAfont_path[MINGLIU_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_NMINCHO_FONT,arg,FRAMEHOOK_OPT_NMINCHO_FONT_LEN) == 0
+				&& setting->CAfont_path[N_MINCHO_FONT]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_NMINCHO_FONT_LEN;
+			setting->CAfont_path[N_MINCHO_FONT] = font;
+			fprintf(log,"[framehook/init]NMINCHO Font path:%s\n",setting->CAfont_path[N_MINCHO_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_ESTRANGELO_FONT,arg,FRAMEHOOK_OPT_ESTRANGELO_FONT_LEN) == 0
+				&& setting->CAfont_path[N_MINCHO_FONT]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_ESTRANGELO_FONT_LEN;
+			setting->CAfont_path[N_MINCHO_FONT] = font;
+			fprintf(log,"[framehook/init]ESTRANGELO EDESSA Font path:%s\n",setting->CAfont_path[ESTRANGELO_EDESSA_FONT]);
 			fflush(log);
 		}else if(strncmp(FRAMEHOOK_OPT_EXTRA_FONT,arg,FRAMEHOOK_OPT_EXTRA_FONT_LEN) == 0
 				&& setting->extra_path==NULL){
@@ -424,16 +448,9 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		setting->CAfont_path[GEORGIA_FONT] = setting->CAfont_path[ARIAL_FONT];
 		fprintf(log,"[framehook/init]no GEORGIA Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
 	}
-	if(setting->original_resize){
-		replacedSPACE = 0x3000;
-		setting->CAfont_path[UI_GOTHIC_FONT] = setting->CAfont_path[GOTHIC_FONT];
-		fprintf(log,"[framehook/init]UI GOTHIC Font path. Use Font path<%s>.\n",setting->CAfont_path[UI_GOTHIC_FONT]);
-	}else{
-		replacedSPACE = 0x3000;
-		if(!setting->CAfont_path[UI_GOTHIC_FONT]){
-			setting->CAfont_path[UI_GOTHIC_FONT] = setting->CAfont_path[ARIAL_FONT];
-			fprintf(log,"[framehook/init]no UI GOTHIC Font path. Use Font path<%s>.\n",setting->CAfont_path[UI_GOTHIC_FONT]);
-		}
+	if(!setting->CAfont_path[ARIALUNI_FONT]){
+		//setting->CAfont_path[ARIALUNI_FONT] = setting->CAfont_path[ARIAL_FONT];
+		fprintf(log,"[framehook/init]no ARIAL UNICODE Font path.\n",setting->CAfont_path[ARIALUNI_FONT]);
 	}
 	if(!setting->CAfont_path[DEVANAGARI]){
 		setting->CAfont_path[DEVANAGARI] = setting->CAfont_path[ARIAL_FONT];
@@ -441,8 +458,21 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	}
 	if(!setting->CAfont_path[TAHOMA_FONT]){
 		setting->CAfont_path[TAHOMA_FONT] = setting->CAfont_path[ARIAL_FONT];
-		fprintf(log,"[framehook/init]no TAHOMA_FONT Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
+		fprintf(log,"[framehook/init]no TAHOMA Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
 	}
+	if(!setting->CAfont_path[MINGLIU_FONT]){
+		setting->CAfont_path[MINGLIU_FONT] = setting->CAfont_path[GOTHIC_FONT];
+		fprintf(log,"[framehook/init]no MINGLIU Font path. Use Font path<%s>.\n",setting->CAfont_path[GOTHIC_FONT]);
+	}
+	if(!setting->CAfont_path[N_MINCHO_FONT]){
+		setting->CAfont_path[N_MINCHO_FONT] = setting->CAfont_path[SIMSUN_FONT];
+		fprintf(log,"[framehook/init]no N MINCHO Font path. Use Font path<%s>.\n",setting->CAfont_path[SIMSUN_FONT]);
+	}
+	if(!setting->CAfont_path[ESTRANGELO_EDESSA_FONT]){
+		setting->CAfont_path[ESTRANGELO_EDESSA_FONT] = setting->CAfont_path[ARIAL_FONT];
+		fprintf(log,"[framehook/init]no ESTRANGELO_EDESSA Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
+	}
+	replaceSPACE = 0x3000;
 	fflush(log);
 	return TRUE;
 }

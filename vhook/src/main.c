@@ -138,7 +138,7 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 			font = &data->CAfont[f][0];		//pointer2 set
 			font_path = setting->CAfont_path[f];
 			if(font_path==NULL){
-				if(f==EXTRA_FONT){
+				if(f==EXTRA_FONT || f==ARIALUNI_FONT){
 					continue;
 				}
 				fprintf(log,"[main/init]error. CA font path[%d] is NULL\n",f);
@@ -147,8 +147,8 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 			fixed_font_index = 0;
 			if(f == GOTHIC_FONT){
 				fixed_font_index = 1;
-			}else if(f == UI_GOTHIC_FONT && strcmp(font_path,setting->CAfont_path[GOTHIC_FONT])==0){
-				fixed_font_index = 2;
+//			}else if(f == UI_GOTHIC_FONT && strcmp(font_path,setting->CAfont_path[GOTHIC_FONT])==0){
+//				fixed_font_index = 2;
 			}else if(f == EXTRA_FONT){
 				fixed_font_index = setting->extra_fontindex;
 			}
