@@ -134,6 +134,7 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 		int font_height[CMD_FONT_MAX];
 		int target_size;
 		int current_size;
+		int try = 1;
 		for(f = 0;f<CA_FONT_MAX;f++){
 			font = &data->CAfont[f][0];		//pointer2 set
 			font_path = setting->CAfont_path[f];
@@ -144,27 +145,29 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 				fprintf(log,"[main/init]error. CA font path[%d] is NULL\n",f);
 				return FALSE;
 			}
-			fixed_font_index = 0;
+			fixed_font_index = setting->CAfont_index[f];
+/*
 			if(f == GOTHIC_FONT){
 				fixed_font_index = 1;
-//			}else if(f == UI_GOTHIC_FONT && strcmp(font_path,setting->CAfont_path[GOTHIC_FONT])==0){
-//				fixed_font_index = 2;
+			}else if(f == UI_GOTHIC_FONT && strcmp(font_path,setting->CAfont_path[GOTHIC_FONT])==0){
+				fixed_font_index = 2;
 			}else if(f == EXTRA_FONT){
 				fixed_font_index = setting->extra_fontindex;
 			}
+*/
 			for(i=0;i<CMD_FONT_MAX;i++){
 				fontsize = COMMENT_FONT_SIZE[i];
 				//実験からSDL指定値はマイナスするとニコニコ動画と文字幅が合う?
 				//fontsize -= CA_FONT_SIZE_DECREMENT[f];
 				/* ターゲットを拡大した時にフォントが滑らかにするため２倍化する。 */
 				fontsize <<= isfontdoubled;
-				target_size = fontsize;
+				try = 1;
 				if(!data->original_resize){
-					target_size += CA_FONT_SIZE_FIX[f][i]<<isfontdoubled;	//文字間隔は合わないが文字サイズを合わせる
+					fontsize += CA_FONT_SIZE_FIX[f][i]<<isfontdoubled;	//文字間隔は合わないが文字サイズを合わせる
+					try = 2;
 				}
+				target_size = fontsize;
 				fprintf(log,"[main/init]loading CAfont[%s][%d]:%s size:%d index:%d target:%d\n",CA_FONT_NAME[f],i,font_path,fontsize,fixed_font_index,target_size);
-				//int try=10<<isfontdoubled;
-				int try=1;	//mangal.ttfフォントが変なので一時中止。
 				while(try>0){
 					font[i] = TTF_OpenFontIndex(font_path,fontsize,fixed_font_index);
 					if(font[i] == NULL){
@@ -375,7 +378,7 @@ int extra_font(SETTING* setting, FILE* log){
 		return FALSE;
 	}
 	setting->CAfont_path[EXTRA_FONT] = path;
-	setting->extra_fontindex = fontindex;
+	setting->CAfont_index[EXTRA_FONT] = fontindex;
 	setting->extra_uc = next+1;
 	return TRUE;
 }

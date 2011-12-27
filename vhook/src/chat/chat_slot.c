@@ -149,18 +149,20 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	}while(running);
 	//暫定対策：CAモード時はコメント(n-0.5)行分見えればランダム（弾幕化）しない
 	int h1 = 0;
-	if(data->enableCA){
+	if(!data->original_resize){
 		h1 = (int)((double)FONT_PIXEL_SIZE[item->size] * data->width_scale * 0.5);
 	}
 	/*そもそも画面内に無ければ無意味。*/
 	if(y+h1 < y_min || y+surf->h-h1 > y_max){	// 1行以上範囲を超えてるので、ランダムに配置。
-		fprintf(data->log,"[chat_slot/add]comment %d loc=%d dif=%d y=%d -> random\n",item->no,item->location,h1,y);
+		fprintf(data->log,"[chat_slot/add]comment %d %s %s dif=%d y=%d -> random\n",
+			item->no,COM_LOC_NAME[item->location],COM_FONTSIZE_NAME[item->size],h1,y);
 		y = y_min + ((rnd() & 0xffff) * (limit_height - surf->h)) / 0xffff;
 	}
 	//追加
 	slot_item->used = TRUE;
 	slot_item->y = y;
-	fprintf(data->log,"[chat_slot/add]comment %d loc=%d size=%d y=%d\n",item->no,item->location,item->size,y);
+	fprintf(data->log,"[chat_slot/add]comment %d %s %s y=%d\n",
+		item->no,COM_LOC_NAME[item->location],COM_FONTSIZE_NAME[item->size],y);
 	return y;
 }
 /*

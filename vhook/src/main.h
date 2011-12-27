@@ -98,6 +98,7 @@ typedef struct SETTING{
 	int optional_trunslucent;
 	// CA用フォント
 	const char* CAfont_path[CA_FONT_MAX];
+	int CAfont_index[CA_FONT_MAX];
 	// CA切替用Unicode群
 	//const char* CAfont_change_uc[CA_FONT_MAX];
 	//const char* zero_width_uc;
@@ -105,7 +106,7 @@ typedef struct SETTING{
 	// 実験用追加フォント
 	const char* extra_path;
 	const char* extra_uc;
-	int extra_fontindex;
+	//int extra_fontindex;
 	// コミュニティ動画では通常コメントをオプショナルスレッドとして半透明にしているため、選択可能にする
 	float font_w_fix_r;	// フォントの幅をnicoplayer.swfに合わせる倍率（実験的）
 	float font_h_fix_r;	// フォントの高さをnicoplayer.swfに合わせる倍率（実験的）

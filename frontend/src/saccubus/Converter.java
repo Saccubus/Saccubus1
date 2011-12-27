@@ -125,9 +125,13 @@ public class Converter extends Thread {
 	private File gulimFont = null;
 	private File arialFont = null;
 	private File georgiaFont = null;
-	private File msuigothicFont = null;
+//	private File msuigothicFont = null;
 	private File devabagariFont = null;
 	private File tahomaFont = null;
+	private File mingliuFont = null;
+	private File newMinchoFont = null;
+	private File estrangeloEdessaFont = null;
+	private File arialUnicodeFont = null;
 	private Pattern ngWordPat;
 	private Pattern ngIDPat;
 	private Pattern ngCmdPat;
@@ -265,7 +269,7 @@ public class Converter extends Thread {
 					sendtext("CA用フォントが見つかりません。" + gothicFont.getPath());
 					return false;
 				}
-				msuigothicFont = gothicFont;
+				//msuigothicFont = gothicFont;
 				georgiaFont  = new File(windir,"Fonts\\sylfaen.ttf");
 				if (!georgiaFont.canRead()) {
 					sendtext("CA用フォントが見つかりません。" + georgiaFont.getPath());
@@ -286,6 +290,34 @@ public class Converter extends Thread {
 					//return false;
 					System.out.println("CA用フォント" + tahomaFont.getPath() + "を" + arialFont.getName() + "で代替します。");
 					tahomaFont = arialFont;
+				}
+				mingliuFont = new File(windir,"Fonts\\mingliu.ttc");
+				if (!mingliuFont.canRead()) {
+					sendtext("CA用フォントが見つかりません。" + mingliuFont.getPath());
+					//return false;
+					System.out.println("CA用フォント" + mingliuFont.getPath() + "を" + simsunFont.getName() + "で代替します。");
+					mingliuFont = simsunFont;
+				}
+				newMinchoFont = new File(windir,"Fonts\\NGULIM.TTF");
+				if (!newMinchoFont.canRead()) {
+					sendtext("CA用フォントが見つかりません。" + newMinchoFont.getPath());
+					//return false;
+					System.out.println("CA用フォント" + newMinchoFont.getPath() + "を" + simsunFont.getName() + "で代替します。");
+					newMinchoFont = simsunFont;
+				}
+				estrangeloEdessaFont = new File(windir,"Fonts\\estre.ttf");
+				if (!estrangeloEdessaFont.canRead()) {
+					sendtext("CA用フォントが見つかりません。" + estrangeloEdessaFont.getPath());
+					//return false;
+					System.out.println("CA用フォント" + estrangeloEdessaFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					estrangeloEdessaFont = arialFont;
+				}
+				arialUnicodeFont = new File(windir,"Fonts\\ARIALUNI.TTF");
+				if (!arialUnicodeFont.canRead()) {
+					sendtext("CA用フォントが見つかりません。" + arialUnicodeFont.getPath());
+					//return false;
+					System.out.println("CA用フォントが見つかりません。" + arialUnicodeFont.getPath());
+					arialUnicodeFont = null;
 				}
 			}
 			a = new File(Setting.getFontPath());
@@ -1255,15 +1287,32 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--georgia-font:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(georgiaFont.getPath()), encoding));
-				ffmpeg.addCmd("|--msui-font:");
-				ffmpeg.addCmd(URLEncoder.encode(
-					Path.toUnixPath(msuigothicFont.getPath()), encoding));
+//				ffmpeg.addCmd("|--msui-font:");
+//				ffmpeg.addCmd(URLEncoder.encode(
+//					Path.toUnixPath(msuigothicFont.getPath()), encoding));
 				ffmpeg.addCmd("|--devanagari-font:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(devabagariFont.getPath()), encoding));
 				ffmpeg.addCmd("|--tahoma-font:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(tahomaFont.getPath()), encoding));
+				ffmpeg.addCmd("|--mingliu-font:");
+				ffmpeg.addCmd(URLEncoder.encode(
+					Path.toUnixPath(mingliuFont.getPath()), encoding));
+				String newMinchoPath = Path.toUnixPath(newMinchoFont.getPath());
+				if(newMinchoFont==simsunFont){
+					newMinchoPath = "1 " + newMinchoPath;	//NSIMSUN is index 1 of simsun.ttc
+				}
+				ffmpeg.addCmd("|--new-mincho-font:");
+				ffmpeg.addCmd(URLEncoder.encode(newMinchoPath, encoding));
+				ffmpeg.addCmd("|--estrangelo-edessa-font:");
+				ffmpeg.addCmd(URLEncoder.encode(
+					Path.toUnixPath(estrangeloEdessaFont.getPath()), encoding));
+				if(arialUnicodeFont!=null){
+					ffmpeg.addCmd("|--arial-unicode-font:");
+					ffmpeg.addCmd(URLEncoder.encode(
+						Path.toUnixPath(arialUnicodeFont.getPath()), encoding));
+				}
 			/*
 			  	ffmpeg.addCmd("|--change-simsun-unicode:");
 				ffmpeg.addCmd(URLEncoder.encode(CHANGE_SIMSUN_UNICODE, encoding));
@@ -1289,7 +1338,7 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--font-width-fix-ratio:"
 					+ Setting.getFontWidthFixRaito());
 			}
-			ffmpeg.addCmd("|--end-of-argument1|--end-of-argument2\"");
+			ffmpeg.addCmd("|--end-of-loooooooooooooooooooooong-argument1|--end-of-argument2\"");
 			return true;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

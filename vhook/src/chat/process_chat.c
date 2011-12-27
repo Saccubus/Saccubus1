@@ -29,8 +29,9 @@ int process_chat(DATA* data,CDATA* cdata,const char* com_type,SDL_Surface* surf,
 		resetChatSlotIterator(slot);
 		while((slot_item = getChatSlotErased(slot,now_vpos)) != NULL){
 			chat_item = slot_item->chat_item;
-			fprintf(log,"[process-chat/process]comment %d vpos:%d %s color:%d:#%06x loc:%d size:%d  %d - %d(vpos:%d) erased.\n",
-				chat_item->no,now_vpos,com_type,chat_item->color,convSDLcolor(chat_item->color24),chat_item->location,chat_item->size,chat_item->vstart,chat_item->vend,chat_item->vpos);
+			fprintf(log,"[process-chat/process]comment %d vpos:%d %s color:%d:#%06x %5s %6s  %d - %d(vpos:%d) erased.\n",
+				chat_item->no,now_vpos,com_type,chat_item->color,convSDLcolor(chat_item->color24),
+				COM_LOC_NAME[chat_item->location],COM_FONTSIZE_NAME[chat_item->size],chat_item->vstart,chat_item->vend,chat_item->vpos);
 			fflush(log);
 			deleteChatSlot(slot,slot_item);
 		}
@@ -39,8 +40,9 @@ int process_chat(DATA* data,CDATA* cdata,const char* com_type,SDL_Surface* surf,
 		resetChatIterator(chat);
 		while((chat_item = getChatShowed(chat,now_vpos)) != NULL){
 			addChatSlot(data,slot,chat_item,surf->w,surf->h);
-			fprintf(log,"[process-chat/process]comment %d vpos:%d %s color:%d:#%06x loc:%d size:%d  %d - %d(vpos:%d) added.\n",
-				chat_item->no,now_vpos,com_type,chat_item->color,convSDLcolor(chat_item->color24),chat_item->location,chat_item->size,chat_item->vstart,chat_item->vend,chat_item->vpos);
+			fprintf(log,"[process-chat/process]comment %d vpos:%d %s color:%d:#%06x %5s %6s  %d - %d(vpos:%d) added.\n",
+				chat_item->no,now_vpos,com_type,chat_item->color,convSDLcolor(chat_item->color24),
+				COM_LOC_NAME[chat_item->location],COM_FONTSIZE_NAME[chat_item->size],chat_item->vstart,chat_item->vend,chat_item->vpos);
 			fflush(log);
 		}
 		drawComment(surf,slot,now_vpos);

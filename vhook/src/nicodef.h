@@ -65,7 +65,7 @@ What if that's the same implementation as NICOPLAYER.SWF.
 It should be 36% Height or 129px ?
 or just use Number of Lines of each OS (Win or Mac/Linux?).
 
-The REAL is as followwing. THANKS for Comment Artists!
+The REAL is as followwing. THANKS for Comment Artisan! A.K.A. SHOKUNIN!
 ( http://www37.atwiki.jp/commentart/pages/26.html
   http://www37.atwiki.jp/commentart?cmd=upload&act=open&pageid=21&file=%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88%E9%AB%98%E3%81%95%E4%B8%80%E8%A6%A7.jpg
  )
@@ -166,7 +166,7 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 #define ARIAL_FONT	3
 #define GEORGIA_FONT	4
 //UI_GOTHIC is out of use
-#define UI_GOTHIC_FONT 5
+//#define UI_GOTHIC_FONT 5
 #define ARIALUNI_FONT 5
 #define DEVANAGARI	6
 #define TAHOMA_FONT 7
@@ -189,8 +189,8 @@ static char* const CA_FONT_NAME[CA_FONT_MAX] = {
 	"DEVANAGARI",
 	"TAHOMA",
 	"MINGLIU",
-	"NEW MINCHO"
-	"ESTRANGELO EDESSA"
+	"NEW MINCHO",
+	"ESTRANGELO EDESSA",
 	"EXTRA",
 };
 

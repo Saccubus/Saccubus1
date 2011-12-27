@@ -146,8 +146,8 @@ int getFontType2(Uint16* u,int basefont,DATA* data){
 			return ARIAL_FONT;
 		case GEORGIA_CHAR:	//use special
 			return GEORGIA_FONT;
-		case UI_GOTHIC_CHAR:	//use special
-			return UI_GOTHIC_FONT;
+//		case UI_GOTHIC_CHAR:	//use special
+//			return UI_GOTHIC_FONT;
 		case DEVANAGARI_CHAR:	//use special
 			return DEVANAGARI;
 		case TAHOMA_CHAR:
@@ -213,8 +213,6 @@ int getFirstFont(Uint16* u,int basefont,DATA* data){
 			foundBase = TRUE;
 		else if(foundBase)
 			return basefont;
-		else
-			continue;
 		switch (getDetaiType(*u)) {
 			case STRONG_SIMSUN_CHAR:
 				return SIMSUN_FONT;
@@ -240,7 +238,7 @@ int getFirstFont(Uint16* u,int basefont,DATA* data){
 
 Uint16 replaceSpace(Uint16 u){
 	if(u == 0x02cb){
-		return 0x3000;
+		return 0x02cb;
 	}else{
 		return u;
 	}
@@ -331,4 +329,13 @@ int getUint16(const char** unicodep){
 	}
 	*unicodep = endp;
 	return uc;
+}
+
+int uint16len(Uint16* u){
+	if(u==NULL)
+		return 0;
+	int l=0;
+	while(*u++!='\0')
+		l++;
+	return l;
 }

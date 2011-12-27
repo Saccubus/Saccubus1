@@ -29,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.29.16";
+	char *ver="1.30.6";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -162,6 +162,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	int f;
 	for(f=0;f<CA_FONT_MAX;f++){
 		setting->CAfont_path[f] = NULL;
+		setting->CAfont_index[f] = 0;
 	}
 	// CA切替用Unicode群
 	//setting->CAfont_change_uc[SIMSUN_FONT] = "02cb 2196-2199 2470-249b 2504-250b 250d-250e 2550-2573 2581-258f 2593-2595 3021-3029 3105-3129 3220-3229 e758-e864 f929 f995";	//明朝化 SIMSUN
@@ -180,7 +181,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	// 実験的追加フォント
 	setting->extra_path = NULL;
 	//setting->extra_uc = NULL;
-	setting->extra_fontindex = 0;
+	//setting->extra_fontindex = 0;
 
 	int i;
 	char* arg;
@@ -332,6 +333,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 				&& setting->CAfont_path[GOTHIC_FONT]==NULL){
 			char* font = arg+FRAMEHOOK_OPT_GOTHIC_FONT_LEN;
 			setting->CAfont_path[GOTHIC_FONT] = font;
+			setting->CAfont_index[GOTHIC_FONT] = 1;
 			fprintf(log,"[framehook/init]GOTHIC Font path:%s\n",setting->CAfont_path[GOTHIC_FONT]);
 			fflush(log);
 		}else if(strncmp(FRAMEHOOK_OPT_GEORGIA_FONT,arg,FRAMEHOOK_OPT_GEORGIA_FONT_LEN) == 0
@@ -373,13 +375,21 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		}else if(strncmp(FRAMEHOOK_OPT_NMINCHO_FONT,arg,FRAMEHOOK_OPT_NMINCHO_FONT_LEN) == 0
 				&& setting->CAfont_path[N_MINCHO_FONT]==NULL){
 			char* font = arg+FRAMEHOOK_OPT_NMINCHO_FONT_LEN;
+			int index = atoi(font);
+			if(index!=0){
+				font = strchr(font,' ');
+				if(font!=NULL){
+					font++;
+				}
+			}
 			setting->CAfont_path[N_MINCHO_FONT] = font;
-			fprintf(log,"[framehook/init]NMINCHO Font path:%s\n",setting->CAfont_path[N_MINCHO_FONT]);
+			setting->CAfont_index[N_MINCHO_FONT] = index;
+			fprintf(log,"[framehook/init]NMINCHO Font path:%s %d\n",setting->CAfont_path[N_MINCHO_FONT],index);
 			fflush(log);
 		}else if(strncmp(FRAMEHOOK_OPT_ESTRANGELO_FONT,arg,FRAMEHOOK_OPT_ESTRANGELO_FONT_LEN) == 0
-				&& setting->CAfont_path[N_MINCHO_FONT]==NULL){
+				&& setting->CAfont_path[ESTRANGELO_EDESSA_FONT]==NULL){
 			char* font = arg+FRAMEHOOK_OPT_ESTRANGELO_FONT_LEN;
-			setting->CAfont_path[N_MINCHO_FONT] = font;
+			setting->CAfont_path[ESTRANGELO_EDESSA_FONT] = font;
 			fprintf(log,"[framehook/init]ESTRANGELO EDESSA Font path:%s\n",setting->CAfont_path[ESTRANGELO_EDESSA_FONT]);
 			fflush(log);
 		}else if(strncmp(FRAMEHOOK_OPT_EXTRA_FONT,arg,FRAMEHOOK_OPT_EXTRA_FONT_LEN) == 0
@@ -472,7 +482,6 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		setting->CAfont_path[ESTRANGELO_EDESSA_FONT] = setting->CAfont_path[ARIAL_FONT];
 		fprintf(log,"[framehook/init]no ESTRANGELO_EDESSA Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
 	}
-	replaceSPACE = 0x3000;
 	fflush(log);
 	return TRUE;
 }
