@@ -117,6 +117,9 @@ public class ConvertingSetting {
 	private boolean useLineSkip;
 	private boolean useExtraFont;
 	private String extraFontText;
+	private String ngCommand;
+	private String replaceCommand;
+	private boolean enableNgCommand;
 
 	private Map<String, String> replaceOptions;
 
@@ -297,7 +300,10 @@ public class ConvertingSetting {
 			String font_width_fix_raito,
 			boolean use_lineskip,
 			boolean use_extra_font,
-			String extra_font_text
+			String extra_font_text,
+			String ng_command,
+			String replace_command,
+			boolean enable_NG_command
 		)
 	{
 		this(	mailaddress,
@@ -381,6 +387,9 @@ public class ConvertingSetting {
 		useLineSkip = use_lineskip;
 		useExtraFont = use_extra_font;
 		extraFontText = extra_font_text;
+		ngCommand = ng_command;
+		replaceCommand = replace_command;
+		enableNgCommand = enable_NG_command;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -623,6 +632,15 @@ public class ConvertingSetting {
 	public String getExtraFontText(){
 		return extraFontText;
 	}
+	public String getNGCommand(){
+		return ngCommand;
+	}
+	public String getReplaceCommand(){
+		return replaceCommand;
+	}
+	public boolean isEnableNgCommand(){
+		return enableNgCommand;
+	}
 
 	private static final String PROP_FILE = "./saccubus.xml";
 	private static final String PROP_MAILADDR = "MailAddress";
@@ -718,6 +736,9 @@ public class ConvertingSetting {
 	private static final String PROP_USE_LINESKIP = "UseLineskipAsFontsize";
 	private static final String PROP_USE_EXTRA_FONT = "UseExtraFont";
 	private static final String PROP_EXTRA_FONT_TEXT = "ExtraFontText";
+	private static final String PROP_NG_COMMAND = "NGCommand";
+	private static final String PROP_REPLACE_COMMAND = "ReplaceCommand";
+	private static final String PROP_ENABLE_NG_COMMAND = "EnableNGCommand";
 
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -847,6 +868,9 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_USE_LINESKIP, Boolean.toString(setting.isUseLineSkip()));
 		prop.setProperty(PROP_USE_EXTRA_FONT,Boolean.toString(setting.isUseExtraFont()));
 		prop.setProperty(PROP_EXTRA_FONT_TEXT, setting.getExtraFontText());
+		prop.setProperty(PROP_NG_COMMAND, setting.getNGCommand());
+		prop.setProperty(PROP_REPLACE_COMMAND, setting.getReplaceCommand());
+		prop.setProperty(PROP_ENABLE_NG_COMMAND, Boolean.toString(setting.isEnableNgCommand()));
 
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -975,7 +999,10 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_FONT_WIDTH_FIX_RATIO, ""),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_LINESKIP, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_EXTRA_FONT, "false")),
-			prop.getProperty(PROP_EXTRA_FONT_TEXT, "")
+			prop.getProperty(PROP_EXTRA_FONT_TEXT, ""),
+			prop.getProperty(PROP_NG_COMMAND, ""),
+			prop.getProperty(PROP_REPLACE_COMMAND, ""),
+			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_NG_COMMAND, "false"))
 		);
 	}
 

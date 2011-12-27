@@ -10,6 +10,7 @@ import saccubus.net.Path;
 import java.io.*;
 
 import saccubus.conv.CombineXML;
+import saccubus.conv.CommandReplace;
 import saccubus.conv.ConvertToVideoHook;
 import saccubus.conv.NicoXMLReader;
 
@@ -134,7 +135,7 @@ public class Converter extends Thread {
 	private File arialUnicodeFont = null;
 	private Pattern ngWordPat;
 	private Pattern ngIDPat;
-	private Pattern ngCmdPat;
+	private CommandReplace ngCmd;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -612,8 +613,12 @@ public class Converter extends Thread {
 		sendtext("NGパターン作成中");
 		try{
 			ngWordPat = NicoXMLReader.makePattern(Setting.getNG_Word());
-			ngCmdPat = ngWordPat;
 			ngIDPat = NicoXMLReader.makePattern(Setting.getNG_ID());
+			if (Setting.isEnableNgCommand()){
+				ngCmd = new CommandReplace(Setting.getNGCommand(), Setting.getReplaceCommand());
+			} else {
+				ngCmd = new CommandReplace(null, null);
+			}
 		}catch (Exception e) {
 			sendtext("NGパターン作成に失敗。おそらく正規表現の間違い？");
 			return false;
@@ -834,7 +839,7 @@ public class Converter extends Thread {
 	private boolean convertToCommentMiddle(File commentfile, File middlefile) {
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile,
-				ngIDPat, ngWordPat, ngCmdPat)){
+				ngIDPat, ngWordPat, ngCmd)){
 			return false;
 		}
 		//コメント数が0の時削除する

@@ -29,7 +29,7 @@ import javax.xml.parsers.*;
  */
 public class ConvertToVideoHook {
 	public static boolean convert(File file, File out, Pattern ng_id,
-			Pattern ng_word, Pattern ng_cmd) {
+			Pattern ng_word, CommandReplace ng_cmd) {
 		try {
 			Packet packet = new Packet();
 			// SAXパーサーファクトリを生成

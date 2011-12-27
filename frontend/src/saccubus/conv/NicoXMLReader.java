@@ -39,15 +39,15 @@ public class NicoXMLReader extends DefaultHandler {
 
 	private final Pattern NG_ID;
 
-	private final Pattern NG_Cmd;
+	private final CommandReplace NG_Cmd;
 
 	private boolean item_fork;
 
-	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, Pattern ngCmdPat){
+	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd){
 		this.packet = packet;
 		NG_Word = ngWordPat;
-		NG_Cmd = ngCmdPat;
 		NG_ID = ngIdPat;
+		NG_Cmd = cmd;
 	}
 
 	public static final Pattern makePattern(String word) throws PatternSyntaxException{
@@ -159,10 +159,11 @@ public class NicoXMLReader extends DefaultHandler {
 			}else if(!mail.contains("184")){
 				mail += " 186";
 			}
-			if (match(NG_Cmd, mail)) {
+			if (match(NG_Word, mail)) {
 				item_kicked = true;
 				return;
 			}
+			mail = NG_Cmd.replace(mail);
 			item.setMail(mail);
 			item.setNo(attributes.getValue("no"));
 			String user_id = attributes.getValue("user_id");
