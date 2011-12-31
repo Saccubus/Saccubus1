@@ -22,7 +22,7 @@ import java.io.InputStreamReader;
 public class Path extends File{
 	static final long serialVersionUID = 1L;
 
-	Path(String path){
+	public Path(String path){
 		super(path);
 		// 注意　pathが相対パス名でも絶対パス名でもない時は
 		// カレントディレクトリにあるファイルを意味する

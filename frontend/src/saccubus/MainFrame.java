@@ -1,19 +1,51 @@
 package saccubus;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
-import java.awt.event.*;
-
-import javax.swing.*;
-import javax.swing.border.*;
-
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
 import psi.lib.swing.PopupRightClick;
+import saccubus.net.Loader;
 import saccubus.net.NicoClient;
-import saccubus.util.*;
+import saccubus.net.Path;
+import saccubus.util.FileDropTarget;
 
 /**
  * <p>
@@ -55,8 +87,11 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuInit = new JMenuItem();
 	JMenu jMenuHelp = new JMenu();
 	JMenuItem jMenuHelpAbout = new JMenuItem();
-	JLabel statusBar = new JLabel();
-	JLabel elapsedTimeBar = new JLabel();
+	JMenu jMenuLoad = new JMenu();
+	JMenuItem jMenuNGConfig = new JMenuItem();
+	JMenuItem jMenuViewHistory = new JMenuItem();
+	public JLabel statusBar = new JLabel();
+	public JLabel elapsedTimeBar = new JLabel();
 	JLabel vhookInfoBar = new JLabel();
 	JLabel infoBar = new JLabel();
 	JTabbedPane MainTabbedPane = new JTabbedPane();
@@ -148,6 +183,7 @@ public class MainFrame extends JFrame {
 	JLabel extraFontLabel = new JLabel();
 	JTextField extraFontTextField = new JTextField();
 //                                                   (up left down right)
+	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
 	private static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
 	private static final Insets INSETS_0_0_5_5 = new Insets(0, 0, 5, 5);
@@ -557,6 +593,11 @@ public class MainFrame extends JFrame {
 		jMenuHelpAbout
 				.addActionListener(new MainFrame_jMenuHelpAbout_ActionAdapter(
 						this));
+		jMenuLoad.setText("ロード");
+		jMenuNGConfig.setText("NG設定ロード");
+		jMenuNGConfig.addActionListener(new MainFrame_LoadNGConfig(this));
+		//jMenuViewHistory.setText("視聴履歴のロード");
+		//jMenuViewHistory.addActionListener(new MainFrame_LoadViewHistory(this));
 		jMenuOpen.setText("開く(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
@@ -871,6 +912,9 @@ public class MainFrame extends JFrame {
 		jMenuFile.add(jMenuSaveAs);
 		jMenuFile.add(jMenuInit);
 		jMenuFile.add(jMenuFileExit);
+		jMenuBar1.add(jMenuLoad);
+		jMenuLoad.add(jMenuNGConfig);
+		//jMenuLoad.add(jMenuViewHistory);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
 		setJMenuBar(jMenuBar1);
@@ -1029,7 +1073,7 @@ public class MainFrame extends JFrame {
 		FFmpegPathSettingPanel.add(CheckFFmpegVersionButton, grid__x2_y0_107);
 		FFmpegPathSettingPanel.add(FFmpegPathField, new GridBagConstraints(0, 1, 2,
 				1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 5, 0, 0), 0, 0));
+				GridBagConstraints.BOTH, INSETS_0_5_0_0, 0, 0));
 		GridBagConstraints grid__x2_y1_108 = new GridBagConstraints(2, 1,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0);
@@ -1524,7 +1568,7 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	private ConvertingSetting getSetting() {
+	public ConvertingSetting getSetting() {
 		int back_comment;
 		try {
 			back_comment = Integer.parseInt(CommentNumField.getText());
@@ -2090,7 +2134,7 @@ s	 * @return javax.swing.JPanel
 			grid_x2_y3_10.gridx = 2;
 			grid_x2_y3_10.gridy = 3;
 			grid_x2_y3_10.anchor = GridBagConstraints.WEST;
-			grid_x2_y3_10.insets = new Insets(0, 5, 0, 0);
+			grid_x2_y3_10.insets = INSETS_0_5_0_0;
 			replaceCommandLabel = new JLabel("コマンド置換");
 			replaceCommandLabel.setForeground(Color.blue);
 			GridBagConstraints grid_x1_y3_9 = new GridBagConstraints();
@@ -2121,7 +2165,7 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y2_6.gridx = 0;
 			grid_x0_y2_6.gridy = 2;
 			grid_x0_y2_6.anchor = GridBagConstraints.WEST;
-			grid_x0_y2_6.insets = new Insets(0, 5, 0, 0);
+			grid_x0_y2_6.insets = INSETS_0_5_0_0;
 			scoreCheckBox.setText("score");
 			scoreCheckBox.setForeground(Color.blue);
 			GridBagConstraints grid_x1_y1_5 = new GridBagConstraints();
@@ -2134,7 +2178,7 @@ s	 * @return javax.swing.JPanel
 			GridBagConstraints grid_x0_y1_4 = new GridBagConstraints();
 			grid_x0_y1_4.gridx = 0;
 			grid_x0_y1_4.anchor = GridBagConstraints.WEST;
-			grid_x0_y1_4.insets = new Insets(0, 5, 0, 0);
+			grid_x0_y1_4.insets = INSETS_0_5_0_0;
 			grid_x0_y1_4.gridy = 1;
 			NGIDLabel = new JLabel();
 			NGIDLabel.setText("NG ID");
@@ -2147,7 +2191,7 @@ s	 * @return javax.swing.JPanel
 			grid_x1_y0_3.gridwidth = 3;
 			GridBagConstraints grid_x0_y0_2 = new GridBagConstraints();
 			grid_x0_y0_2.gridx = 0;
-			grid_x0_y0_2.insets = new Insets(0, 5, 0, 0);
+			grid_x0_y0_2.insets = INSETS_0_5_0_0;
 			grid_x0_y0_2.gridy = 0;
 			grid_x0_y0_2.anchor = GridBagConstraints.WEST;
 			NGWordLavel = new JLabel();
@@ -2917,3 +2961,47 @@ class MainFrame_jMenuHelpAbout_ActionAdapter implements ActionListener {
 		adaptee.jMenuHelpAbout_actionPerformed(actionEvent);
 	}
 }
+
+class MainFrame_LoadNGConfig implements ActionListener {
+	MainFrame mainFrame;
+
+	MainFrame_LoadNGConfig(MainFrame frame){
+		mainFrame = frame;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		JLabel status = mainFrame.statusBar;
+		JLabel watch = mainFrame.elapsedTimeBar;
+		status.setText("NG設定のロード");
+		Loader loader = new Loader(mainFrame.getSetting(), status, watch);
+		Path file = new Path("configNG.xml");
+		String url = "http://ext.nicovideo.jp/api/configurengclient?mode=get";
+		if (loader.load(url, file)){
+			status.setText("NG設定をロードしました：" + file.getRelativePath());
+		}
+	}
+}
+/*
+class MainFrame_LoadViewHistory implements ActionListener {
+	MainFrame mainFrame;
+
+	MainFrame_LoadViewHistory(MainFrame adaptee){
+		mainFrame = adaptee;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		JLabel status = mainFrame.statusBar;
+		JLabel watch = mainFrame.elapsedTimeBar;
+		status.setText("視聴履歴のロード");
+		Loader loader = new Loader(mainFrame.getSetting(), status, watch);
+		Path file = new Path("myhistory.html");
+		String url = "http://www.nicovideo.jp/my/history";
+		if (loader.load(url, file)){
+			status.setText("視聴履歴をロードしました：" + file.getRelativePath());
+		}
+	}
+}
+*/
+

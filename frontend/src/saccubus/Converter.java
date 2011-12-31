@@ -64,6 +64,10 @@ public class Converter extends Thread {
 	private Aspect videoAspect;
 	private File fwsFile = null;
 	private VideoIDFilter DefaultVideoIDFilter;
+	private String proxy;
+	private int proxy_port;
+	private String mailAddress;
+	private String password;
 	/*
 	private static final String CHANGE_SIMSUN_UNICODE =
 			"0x2581-0x258f 0x02cb 0xe800";
@@ -175,6 +179,7 @@ public class Converter extends Thread {
 	private boolean isCommentFixFileName(){
 		return Setting.isCommentFixFileName();
 	}
+/*
 	private String getProxy(){
 		return Setting.getProxy();
 	}
@@ -187,6 +192,7 @@ public class Converter extends Thread {
 	private String getPassword(){
 		return Setting.getPassword();
 	}
+*/
 	private boolean isDeleteVideoAfterConverting(){
 		return Setting.isDeleteVideoAfterConverting();
 	}
@@ -339,48 +345,31 @@ public class Converter extends Thread {
 		if (isSaveVideo() ||
 				isSaveComment() || isSaveOwnerComment()) {
 			// ブラウザセッション共有の場合はここでセッションを読み込む
-			if (Setting.isBrowserIE()){
-				BrowserKind = BrowserCookieKind.MSIE;
-				UserSession = BrowserInfo.getUserSession(BrowserKind);
+			UserSession = BrowserInfo.getUserSession(Setting);
+			BrowserKind = BrowserInfo.getValidBrowser();
+			if (BrowserKind == BrowserCookieKind.NONE){
+				mailAddress = Setting.getMailAddress();
+				password = Setting.getPassword();
+				if (mailAddress == null || mailAddress.isEmpty()
+					|| password == null || password.isEmpty()) {
+					sendtext("メールアドレスかパスワードが空白です。");
+					return false;
+				}
+			} else if (UserSession.isEmpty()){
+					sendtext("ブラウザ" + BrowserKind.getName() + "のセッション取得に失敗");
+					return false;
 			}
-			if (UserSession.isEmpty() && Setting.isBrowserFF()){
-				BrowserKind = BrowserCookieKind.Firefox;
-				UserSession = BrowserInfo.getUserSession(BrowserKind);
-			}
-			if (UserSession.isEmpty() && Setting.isBrowserChrome()){
-				BrowserKind = BrowserCookieKind.Chrome;
-				UserSession = BrowserInfo.getUserSession(BrowserKind);
-			}
-			if (UserSession.isEmpty() && Setting.isBrowserChromium()){
-				BrowserKind = BrowserCookieKind.Chromium;
-				UserSession = BrowserInfo.getUserSession(BrowserKind);
-			}
-			if (UserSession.isEmpty() && Setting.isBrowserOpera()){
-				BrowserKind = BrowserCookieKind.Opera;
-				UserSession = BrowserInfo.getUserSession(BrowserKind);
-			}
-			if (UserSession.isEmpty() && Setting.isBrowserOther()){
-				BrowserKind = BrowserCookieKind.Other;
-				UserSession = BrowserInfo.getUserSessionOther(Setting.getBrowserCookiePath());
-			}
-			if (BrowserKind != BrowserCookieKind.NONE && UserSession.isEmpty()){
-				sendtext("ブラウザ　" + BrowserKind.toString()
-						+ "　のセッション取得に失敗");
-				return false;
-			}
-			if (BrowserKind == BrowserCookieKind.NONE
-				&& (getMailAddress() == null
-					|| getMailAddress().isEmpty()
-					|| getPassword() == null
-					|| getPassword().isEmpty())) {
-				sendtext("メールアドレスかパスワードが空白です。");
-				return false;
-			}
-			if (useProxy()
-				&& (   getProxy() == null || getProxy().isEmpty()
-					|| getProxyPort() < 0 || getProxyPort() > 65535   )){
-				sendtext("プロキシの設定が不正です。");
-				return false;
+			if (useProxy()){
+				proxy = Setting.getProxy();
+				proxy_port = Setting.getProxyPort();
+				if (   proxy == null || proxy.isEmpty()
+					|| proxy_port < 0 || proxy_port > 65535   ){
+					sendtext("プロキシの設定が不正です。");
+					return false;
+				}
+			} else {
+				proxy = null;
+				proxy_port = -1;
 			}
 		}
 		sendtext("チェック終了");
@@ -389,19 +378,13 @@ public class Converter extends Thread {
 
 	private NicoClient getNicoClient() {
 		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()) {
-			String proxy = null;
-			int proxy_port = -1;
-			if (useProxy()) {
-				proxy = getProxy();
-				proxy_port = getProxyPort();
-			}
 			sendtext("ログイン中");
 			NicoClient client = null;
 			if (BrowserKind != BrowserCookieKind.NONE){
 				// セッション共有、ログイン済みのNicoClientをclientに返す
 				client = new NicoClient(BrowserKind, UserSession, proxy, proxy_port, Stopwatch);
 			} else {
-				client = new NicoClient(getMailAddress(), getPassword(), proxy, proxy_port, Stopwatch);
+				client = new NicoClient(mailAddress, password, proxy, proxy_port, Stopwatch);
 			}
 			if (!client.isLoggedIn()) {
 				sendtext("ログイン失敗 " + BrowserInfo.getBrowserName() + " " + client.getExtraError());

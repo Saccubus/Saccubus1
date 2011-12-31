@@ -5,6 +5,8 @@ package saccubus.net;
 
 import java.util.Arrays;
 
+import saccubus.ConvertingSetting;
+
 /**
 /**
  * <p>
@@ -22,8 +24,29 @@ import java.util.Arrays;
 public class BrowserInfo {
 
 	public enum BrowserCookieKind {
-		NONE, MSIE, IE6, Firefox3, Firefox, Chrome,
-		Opera, Chromium, Other,
+		NONE {
+			@Override
+			public String getName(){
+				return "‚³‚«‚ã‚Î‚·";
+			}
+		},
+		MSIE {
+			@Override
+			public String getName(){
+				return "Internet Exploror";
+			}
+		},
+		IE6,
+		Firefox3,
+		Firefox,
+		Chrome,
+		Opera,
+		Chromium,
+		Other,;
+
+		public String getName(){
+			return name();
+		}
 	}
 
 	private BrowserCookieKind validBrowser;
@@ -38,12 +61,54 @@ public class BrowserInfo {
 		}
 	}
 
+	private static final BrowserCookieKind[] ALL_BROWSER = BrowserCookieKind.values();
+	public static final int NUM_BROWSER = ALL_BROWSER.length;
+
 	public BrowserInfo(){
 		validBrowser = BrowserCookieKind.NONE;
 	}
 
 	private static final String NICOVIDEO_URL = "http://www.nicovideo.jp";
 
+	/**
+	 * get valid user session & set valid browser
+	 * @param setting : ConvertingSetting
+	 * @return user_session : String
+	 */
+	public String getUserSession(ConvertingSetting setting){
+		String user_session = "";
+		if(setting == null)
+			return user_session;
+		for (BrowserCookieKind browser : ALL_BROWSER){
+			switch(browser){
+			case MSIE:
+				if (setting.isBrowserIE()){
+					user_session = getUserSession(browser);
+				}
+				break;
+			case Firefox:
+			case Chrome:
+			case Chromium:
+			case Opera:
+				if (user_session.isEmpty() && setting.isBrowser(browser)){
+					user_session = getUserSession(browser);
+				}
+				break;
+			case Other:
+				if (user_session.isEmpty() && setting.isBrowserOther()){
+					user_session = getUserSessionOther(setting.getBrowserCookiePath());
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		return user_session;
+	}
+
+	public BrowserCookieKind getValidBrowser(){
+		return validBrowser;
+	}
 	/**
 	 *
 	 * @param browserKind

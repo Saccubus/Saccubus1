@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.File;
 
+import saccubus.net.BrowserInfo;
+import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.util.Bool;
 
 /**
@@ -122,6 +124,9 @@ public class ConvertingSetting {
 	private boolean enableNgCommand;
 
 	private Map<String, String> replaceOptions;
+
+	// NONE,MSIE,IE6,FireFox3,FireFox,Chrome,Opera,Chromium,Other
+	private static final boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
 
 	private ConvertingSetting(
 			String mailaddress,
@@ -358,12 +363,21 @@ public class ConvertingSetting {
 		VhookWidePath = vhook_wide_path;
 		UseVhookNormal = use_vhook_normal;
 		UseVhookWide = use_vhook_wide;
+		useBrowser[BrowserCookieKind.NONE.ordinal()] = true;
 		BrowserIE = browserIE;
+		useBrowser[BrowserCookieKind.MSIE.ordinal()] = browserIE;
+		useBrowser[BrowserCookieKind.IE6.ordinal()] = false;
 		BrowserFF = browserFF;
+		useBrowser[BrowserCookieKind.Firefox.ordinal()] = browserFF;
 		BrowserChrome = browserChrome;
+		useBrowser[BrowserCookieKind.Firefox3.ordinal()] = false;
+		useBrowser[BrowserCookieKind.Chrome.ordinal()] = browserChrome;
 		BrowserChromium = browserChromium;
+		useBrowser[BrowserCookieKind.Chromium.ordinal()] = browserChromium;
 		BrowserOpera = browserOpera;
+		useBrowser[BrowserCookieKind.Opera.ordinal()] = browserOpera;
 		BrowserOther = browserOther;
+		useBrowser[BrowserCookieKind.Other.ordinal()] = browserOther;
 		BrowserCookiePath = browserCookiePath;
 		optionFolder = option_folder;
 		wideOptionFile = wide_option_file;
@@ -559,6 +573,9 @@ public class ConvertingSetting {
 	}
 	public boolean isBrowserOpera(){
 		return BrowserOpera;
+	}
+	public boolean isBrowser(BrowserCookieKind browser){
+		return useBrowser[browser.ordinal()];
 	}
 	public boolean isBrowserOther(){
 		return BrowserOther;
