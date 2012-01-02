@@ -182,6 +182,7 @@ public class MainFrame extends JFrame {
 	JCheckBox useExtraFontCheckBox = new JCheckBox();
 	JLabel extraFontLabel = new JLabel();
 	JTextField extraFontTextField = new JTextField();
+	private String encrypt_pass;
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -1678,8 +1679,8 @@ public class MainFrame extends JFrame {
 			extraFontTextField.getText(),
 			ngCommandField.getText(),
 			replaceCommandField.getText(),
-			ngCommandCheckBox.isSelected()
-
+			ngCommandCheckBox.isSelected(),
+			encrypt_pass
 		);
 	}
 
@@ -1797,6 +1798,7 @@ public class MainFrame extends JFrame {
 		ngCommandField.setText(setting.getNGCommand());
 		replaceCommandField.setText(setting.getReplaceCommand());
 		ngCommandCheckBox.setSelected(setting.isEnableNgCommand());
+		encrypt_pass = setting.getEncryptPass();
 	}
 
 	/**

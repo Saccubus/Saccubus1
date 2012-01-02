@@ -1,5 +1,6 @@
 package saccubus;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
@@ -11,6 +12,7 @@ import java.io.File;
 import saccubus.net.BrowserInfo;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.util.Bool;
+import saccubus.util.Encryption;
 
 /**
  * <p>
@@ -122,11 +124,12 @@ public class ConvertingSetting {
 	private String ngCommand;
 	private String replaceCommand;
 	private boolean enableNgCommand;
+	private String encryptedPass;
 
 	private Map<String, String> replaceOptions;
 
-	// NONE,MSIE,IE6,FireFox3,FireFox,Chrome,Opera,Chromium,Other
-	private static final boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
+	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
+	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
 
 	private ConvertingSetting(
 			String mailaddress,
@@ -308,7 +311,8 @@ public class ConvertingSetting {
 			String extra_font_text,
 			String ng_command,
 			String replace_command,
-			boolean enable_NG_command
+			boolean enable_NG_command,
+			String encrypt_pass
 		)
 	{
 		this(	mailaddress,
@@ -366,11 +370,11 @@ public class ConvertingSetting {
 		useBrowser[BrowserCookieKind.NONE.ordinal()] = true;
 		BrowserIE = browserIE;
 		useBrowser[BrowserCookieKind.MSIE.ordinal()] = browserIE;
-		useBrowser[BrowserCookieKind.IE6.ordinal()] = false;
+	//	useBrowser[BrowserCookieKind.IE6.ordinal()] = false;
 		BrowserFF = browserFF;
 		useBrowser[BrowserCookieKind.Firefox.ordinal()] = browserFF;
 		BrowserChrome = browserChrome;
-		useBrowser[BrowserCookieKind.Firefox3.ordinal()] = false;
+	//	useBrowser[BrowserCookieKind.Firefox3.ordinal()] = false;
 		useBrowser[BrowserCookieKind.Chrome.ordinal()] = browserChrome;
 		BrowserChromium = browserChromium;
 		useBrowser[BrowserCookieKind.Chromium.ordinal()] = browserChromium;
@@ -404,6 +408,7 @@ public class ConvertingSetting {
 		ngCommand = ng_command;
 		replaceCommand = replace_command;
 		enableNgCommand = enable_NG_command;
+		encryptedPass = encrypt_pass;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -658,6 +663,9 @@ public class ConvertingSetting {
 	public boolean isEnableNgCommand(){
 		return enableNgCommand;
 	}
+	public String getEncryptPass(){
+		return encryptedPass;
+	}
 
 	private static final String PROP_FILE = "./saccubus.xml";
 	private static final String PROP_MAILADDR = "MailAddress";
@@ -756,6 +764,7 @@ public class ConvertingSetting {
 	private static final String PROP_NG_COMMAND = "NGCommand";
 	private static final String PROP_REPLACE_COMMAND = "ReplaceCommand";
 	private static final String PROP_ENABLE_NG_COMMAND = "EnableNGCommand";
+	private static final String PROP_ENCRYPT_PASS = "EncryptedPassword";
 
 	/*
 	 * ここまで拡張設定 1.22r3 に対する
@@ -763,8 +772,29 @@ public class ConvertingSetting {
 
 	public static void saveSetting(ConvertingSetting setting, String propFile) {
 		Properties prop = new Properties();
-		prop.setProperty(PROP_MAILADDR, setting.getMailAddress());
-		prop.setProperty(PROP_PASSWORD, setting.getPassword());
+		String user = setting.getMailAddress();
+		String password = setting.getPassword();
+		String encrypt_pass = setting.getEncryptPass();
+		if (user != null && !user.isEmpty()
+			&& password != null && !password.isEmpty()
+			&& encrypt_pass.isEmpty()){
+			// パスワードを暗号化する
+			Key skey = Encryption.makeKey(128,user);
+			String try_encryption = Encryption.encode(password, skey);
+			if (Encryption.decode(try_encryption, skey).equals(password)){
+				//復号確認OK
+				password = "#";
+				encrypt_pass = "_" + try_encryption;
+				System.out.println("パスワードは暗号化されました　 Entry:" + PROP_ENCRYPT_PASS);
+			} else {
+				System.out.println("パスワード暗号化失敗");
+			}
+		}else {
+			System.out.println("パスワードを暗号化しません");
+		}
+		prop.setProperty(PROP_MAILADDR, user);
+		prop.setProperty(PROP_PASSWORD, password);
+		prop.setProperty(PROP_ENCRYPT_PASS, encrypt_pass);
 		prop.setProperty(PROP_SAVE_VIDEO, Boolean.toString(setting
 			.isSaveVideo()));
 		prop.setProperty(PROP_VIDEO_FILE, setting.getVideoFile().getPath());
@@ -921,8 +951,47 @@ public class ConvertingSetting {
 		if (user == null) {
 			user = prop.getProperty(PROP_MAILADDR, "");
 		}
+		String encrypt_pass = prop.getProperty(PROP_ENCRYPT_PASS, "");
 		if (password == null) {
 			password = prop.getProperty(PROP_PASSWORD, "");
+			if (!user.isEmpty() && password.startsWith("#")){
+				//encrypt_pass = prop.getProperty(PROP_ENCRYPT_PASS, "");
+				if (encrypt_pass.startsWith("_")){
+					// 暗号化パスワードを復号する
+					encrypt_pass = encrypt_pass.substring(1);
+					Key skey = Encryption.makeKey(128, user);
+					password = Encryption.decode(encrypt_pass, skey);
+					String try_encryption = Encryption.encode(password, skey);
+					if (try_encryption.equals(encrypt_pass)){
+						System.out.println("パスワードは復号されました");
+						encrypt_pass = "";
+					}else{
+						System.out.println("パスワード復号失敗");
+						password = "";
+						encrypt_pass = "";
+					}
+				} else {
+					password = encrypt_pass;
+					encrypt_pass = "#";
+					System.out.println("パスワードは復号されません");
+				}
+			} else {
+				// password encrypt_pass そのまま。更新はpasswordを暗号化する
+				System.out.println("パスワードは暗号化されていません");
+				if (encrypt_pass.isEmpty()){
+					System.out.println("終了時パスワードが暗号化されます");
+				}
+			}
+		} else if (password.startsWith("_")){
+			//おまけ
+			Key skey = Encryption.makeKey(128, user);
+			String try_decode = Encryption.decode(password.substring(1), skey);
+			if (Encryption.encode(try_decode, skey).equals(password.substring(1))){
+				password = try_decode;
+				System.out.println("パスワードは復号されました");
+			}else{
+				System.out.println("パスワード復号失敗");
+			}
 		}
 		String option_file_name = prop.getProperty(PROP_OPTION_FILE, null);
 		File option_file = null;
@@ -1019,7 +1088,8 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_EXTRA_FONT_TEXT, ""),
 			prop.getProperty(PROP_NG_COMMAND, ""),
 			prop.getProperty(PROP_REPLACE_COMMAND, ""),
-			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_NG_COMMAND, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_NG_COMMAND, "false")),
+			encrypt_pass
 		);
 	}
 

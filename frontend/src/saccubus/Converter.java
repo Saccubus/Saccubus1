@@ -387,9 +387,9 @@ public class Converter extends Thread {
 				client = new NicoClient(mailAddress, password, proxy, proxy_port, Stopwatch);
 			}
 			if (!client.isLoggedIn()) {
-				sendtext("ログイン失敗 " + BrowserInfo.getBrowserName() + " " + client.getExtraError());
+				sendtext("ログイン失敗 " + BrowserKind.getName() + " " + client.getExtraError());
 			} else {
-				sendtext("ログイン成功 " + BrowserInfo.getBrowserName());
+				sendtext("ログイン成功 " + BrowserKind.getName());
 			}
 			return client;
 		} else {
