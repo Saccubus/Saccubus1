@@ -51,19 +51,18 @@ int getDetaiType(int u){
 	return UNITABLE[u];
 }
 
-int getGlyphEixst(DATA* data,Uint16 u){
-	int f;
-	for(f=0;f<CA_FONT_MAX;f++){
-		TTF_Font* font = data->CAfont[f][CMD_FONT_DEF];
-		if(font!=NULL && TTF_GlyphIsProvided(font,u))
-			return f;
-	}
-	return UNDEFINED_FONT;
-}
-
 int isGlyphExist(DATA* data,int fonttype,Uint16 u){
 	TTF_Font* font = data->CAfont[fonttype][CMD_FONT_DEF];
 	return (font!=NULL && TTF_GlyphIsProvided(font,u));
+}
+
+int getGlyphExist(DATA* data,Uint16 u){
+	int f;
+	for(f=0;f<CA_FONT_MAX;f++){
+		if(isGlyphExist(data,f,u))
+			return f;
+	}
+	return UNDEFINED_FONT;
 }
 
 /*
@@ -134,6 +133,10 @@ int getFontType2(Uint16* u,int basefont,DATA* data){
 		case SIMSUN_NOT_CHANGE_CHAR:
 		//case UNDEF_OR_SIMSUN:	//最終的にはXP,Vista,Win7共通時にSIMSUNに
 			return SIMSUN_FONT;
+		case MINGLIU_CHAR:	//明朝変化なし
+			return MINGLIU_FONT;
+		case N_MINCHO_CHAR:	//明朝変化なし simsun or ngulim
+			return N_MINCHO_FONT;
 		case GULIM_CHAR:
 			return GULIM_FONT;
 		case GOTHIC_CHAR:	//ゴシック保護
@@ -143,18 +146,20 @@ int getFontType2(Uint16* u,int basefont,DATA* data){
 			return ARIAL_FONT;
 		case GEORGIA_CHAR:	//use special
 			return GEORGIA_FONT;
-		case UI_GOTHIC_CHAR:	//use special
-			return UI_GOTHIC_FONT;
+//		case UI_GOTHIC_CHAR:	//use special
+//			return UI_GOTHIC_FONT;
 		case DEVANAGARI_CHAR:	//use special
 			return DEVANAGARI;
 		case TAHOMA_CHAR:
 			return TAHOMA_FONT;
+		case ESTRANGELO_EDESSA:
+			return ESTRANGELO_EDESSA_FONT;
 		default:
 			//include UNDEFINED_CHAR
 			if(isGlyphExist(data,basefont,*u))
 				return basefont;
 			else
-				return getGlyphEixst(data,*u);
+				return getGlyphExist(data,*u);
 	}
 }
 
@@ -204,6 +209,10 @@ int getFirstFont(Uint16* u,int basefont,DATA* data){
 	}
 	int foundBase = FALSE;
 	while(*u!='\0'){
+		if(!isAscii(u))
+			foundBase = TRUE;
+		else if(foundBase)
+			return basefont;
 		switch (getDetaiType(*u)) {
 			case STRONG_SIMSUN_CHAR:
 				return SIMSUN_FONT;
@@ -211,17 +220,15 @@ int getFirstFont(Uint16* u,int basefont,DATA* data){
 				return GULIM_FONT;
 			case GOTHIC_CHAR:
 				return GOTHIC_FONT;
-			case ARIAL_CHAR:
-				if(foundBase)
-					return basefont;
-				else
-					break;
+//			case ARIAL_CHAR:
+//				if(foundBase)
+//					return basefont;
+//				else
+//					break;
 			case WEAK_SIMSUN_CHAR:
 				basefont = SIMSUN_FONT;
-				foundBase = TRUE;
 				break;
 			default:
-				foundBase = TRUE;
 				break;
 		}
 		u++;
@@ -231,7 +238,7 @@ int getFirstFont(Uint16* u,int basefont,DATA* data){
 
 Uint16 replaceSpace(Uint16 u){
 	if(u == 0x02cb){
-		return 0x3000;
+		return 0x02cb;
 	}else{
 		return u;
 	}
@@ -322,4 +329,13 @@ int getUint16(const char** unicodep){
 	}
 	*unicodep = endp;
 	return uc;
+}
+
+int uint16len(Uint16* u){
+	if(u==NULL)
+		return 0;
+	int l=0;
+	while(*u++!='\0')
+		l++;
+	return l;
 }

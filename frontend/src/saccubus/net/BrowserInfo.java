@@ -3,9 +3,8 @@
  */
 package saccubus.net;
 
-import java.util.Arrays;
+import saccubus.ConvertingSetting;
 
-/**
 /**
  * <p>
  * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
@@ -22,12 +21,33 @@ import java.util.Arrays;
 public class BrowserInfo {
 
 	public enum BrowserCookieKind {
-		NONE, MSIE, IE6, Firefox3, Firefox, Chrome,
-		Opera, Chromium, Other,
+		NONE {
+			@Override
+			public String getName(){
+				return "‚³‚«‚ã‚Î‚·";
+			}
+		},
+		MSIE {
+			@Override
+			public String getName(){
+				return "Internet Exploror";
+			}
+		},
+	//	IE6,
+	//	Firefox3,
+		Firefox,
+		Chrome,
+		Opera,
+		Chromium,
+		Other,;
+
+		public String getName(){
+			return name();
+		}
 	}
 
 	private BrowserCookieKind validBrowser;
-
+/*
 	public String getBrowserName(){
 		if (validBrowser == BrowserCookieKind.NONE){
 			return "‚³‚«‚ã‚Î‚·";
@@ -37,13 +57,55 @@ public class BrowserInfo {
 			return validBrowser.toString();
 		}
 	}
+*/
+	private static final BrowserCookieKind[] ALL_BROWSER = BrowserCookieKind.values();
+	public static final int NUM_BROWSER = ALL_BROWSER.length;
 
 	public BrowserInfo(){
 		validBrowser = BrowserCookieKind.NONE;
 	}
 
-	private static final String NICOVIDEO_URL = "http://www.nicovideo.jp";
+	//private static final String NICOVIDEO_URL = "http://www.nicovideo.jp";
 
+	/**
+	 * get valid user session & set valid browser
+	 * @param setting : ConvertingSetting
+	 * @return user_session : String
+	 */
+	public String getUserSession(ConvertingSetting setting){
+		String user_session = "";
+		if(setting == null)
+			return user_session;
+		for (BrowserCookieKind browser : ALL_BROWSER){
+			switch(browser){
+			case MSIE:
+				if (setting.isBrowser(browser)){
+					user_session = getUserSession(browser);
+				}
+				break;
+			case Firefox:
+			case Chrome:
+			case Chromium:
+			case Opera:
+				if (user_session.isEmpty() && setting.isBrowser(browser)){
+					user_session = getUserSession(browser);
+				}
+				break;
+			case Other:
+				if (user_session.isEmpty() && setting.isBrowserOther()){
+					user_session = getUserSessionOther(setting.getBrowserCookiePath());
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		return user_session;
+	}
+
+	public BrowserCookieKind getValidBrowser(){
+		return validBrowser;
+	}
 	/**
 	 *
 	 * @param browserKind
@@ -53,9 +115,9 @@ public class BrowserInfo {
         String user_session = "";
         switch (browserKind)
         {
-            case IE6:
-                user_session = getUserSessionFromIE6(NICOVIDEO_URL);
-                break;
+         // case IE6:
+         //     user_session = getUserSessionFromIE6(NICOVIDEO_URL);
+         //     break;
             case MSIE:
                 user_session = getUserSessionFromMSIE();
                 break;
@@ -64,7 +126,7 @@ public class BrowserInfo {
                 if (!user_session.isEmpty()){
                 	break;
                 }
-            case Firefox3:
+         // case Firefox3:
                 user_session = getUserSessionFromFilefox3();
                 break;
             case Chrome:
@@ -175,7 +237,7 @@ public class BrowserInfo {
         	return "";
         }
     }
-
+/*
     /// <summary>
     /// IE6 ‚©‚ç user_session ‚ðŽæ“¾
     /// </summary>
@@ -199,9 +261,10 @@ public class BrowserInfo {
         StringBuilder buff = new StringBuilder(new String(dummy));
         int[] ref_size = new int[1];
         ref_size[0] = size;
-        //InternetGetCookie(url, null, buff, /*ref*/ ref_size);
+        //InternetGetCookie(url, null, buff, /*ref / ref_size);
         return buff.toString().replace(';', ',');
     }
+*/
 /*
  *  [DllImport("wininet.dll")]
  *  private extern static bool InternetGetCookie(string url, string name, StringBuilder data, ref uint size);

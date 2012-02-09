@@ -42,8 +42,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.29";
-	private static final String modefied = " (2011/12/21)";
+	public static final String rev = "1.30";
+	private static final String modefied = " (2012/02/08)";
 
 	String productHTML =
 		"<html><p>本プログラムは<br/>" +
@@ -61,7 +61,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 		"<table border=0>" +
 		"<tr><td>Copyright (C) <td>2008 Saccubus Developers Team"+
 		"<tr><td><td>2007-2008 PSI"+
-		"<tr><td><td>2011-2011 orz"+
+		"<tr><td><td>2011-2012 orz"+
 		"</table><br/>" +
 		"ニコニコ動画の動画をコメントつきで保存</p>" +
 		"<p>関連リンク<br/>" +

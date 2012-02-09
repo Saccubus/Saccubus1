@@ -29,7 +29,7 @@ import javax.xml.parsers.*;
  */
 public class ConvertToVideoHook {
 	public static boolean convert(File file, File out, Pattern ng_id,
-			Pattern ng_word, Pattern ng_cmd) {
+			Pattern ng_word, CommandReplace ng_cmd, int score_limit) {
 		try {
 			Packet packet = new Packet();
 			// SAXパーサーファクトリを生成
@@ -39,7 +39,7 @@ public class ConvertToVideoHook {
 			// XMLファイルを指定されたデフォルトハンドラーで処理します
 			NicoXMLReader nico_reader = null;
 			try {
-				nico_reader = new NicoXMLReader(packet, ng_id, ng_word, ng_cmd);
+				nico_reader = new NicoXMLReader(packet, ng_id, ng_word, ng_cmd, score_limit);
 			} catch (java.util.regex.PatternSyntaxException e) {
 				e.printStackTrace();
 				return false;

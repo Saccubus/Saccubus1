@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	INFOBAR2で動作確認済み。他のAUのWIN端末でも動作すると思います。
+	-flags bitexact -trell -aic → -flags bitexact+aic
+-->
+<properties>
+	<entry key="EXT">.3g2</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-flags +bitexact+aic -vcodec mpeg4 -mbd 2 -s 320x180 -r 29.97 -b:v 768k -acodec libvo_aacenc -ac 2 -ar 44100 -b:a 192k -f 3g2 -absf aac_adtstoasc</entry>
+</properties>

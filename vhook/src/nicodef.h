@@ -21,6 +21,12 @@
 #define CMD_LOC_TOP		(1)
 #define CMD_LOC_BOTTOM	(2)
 
+static char* const COM_LOC_NAME[3] = {
+	"naka",	//CMD_LOC_DEF
+	"ue",	//CMD_LOC_TOP
+	"shita",	//CMD_LOC_BOTTOM
+};
+
 #define GET_CMD_LOC(x)	((x) & 0x03)
 //#define GET_CMD_DURATION(x)	((x) >> 8 & 0xff)
 #define GET_CMD_FULL(x)	((x) & 4)
@@ -30,6 +36,12 @@
 #define CMD_FONT_DEF	0
 #define CMD_FONT_BIG	1
 #define CMD_FONT_SMALL	2
+
+static char* const COM_FONTSIZE_NAME[CMD_FONT_MAX] = {
+	"medium",	//CMD_FONT_DEF
+	"big",
+	"small",
+};
 
 static const int LINEFEED_RESIZE_LIMIT[CMD_FONT_MAX] = {
 //  Lines of this limit should be resized.
@@ -53,7 +65,7 @@ What if that's the same implementation as NICOPLAYER.SWF.
 It should be 36% Height or 129px ?
 or just use Number of Lines of each OS (Win or Mac/Linux?).
 
-The REAL is as followwing. THANKS for Comment Artists!
+The REAL is as followwing. THANKS for Comment Artisan! A.K.A. SHOKUNIN!
 ( http://www37.atwiki.jp/commentart/pages/26.html
   http://www37.atwiki.jp/commentart?cmd=upload&act=open&pageid=21&file=%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88%E9%AB%98%E3%81%95%E4%B8%80%E8%A6%A7.jpg
  )
@@ -153,11 +165,16 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 #define GULIM_FONT	2
 #define ARIAL_FONT	3
 #define GEORGIA_FONT	4
-#define UI_GOTHIC_FONT 5
+//UI_GOTHIC is out of use
+//#define UI_GOTHIC_FONT 5
+#define ARIALUNI_FONT 5
 #define DEVANAGARI	6
 #define TAHOMA_FONT 7
-#define EXTRA_FONT 8
-#define CA_FONT_MAX	9
+#define MINGLIU_FONT 8
+#define N_MINCHO_FONT 9
+#define ESTRANGELO_EDESSA_FONT 10
+#define EXTRA_FONT 11
+#define CA_FONT_MAX	12
 #define UNDEFINED_FONT	(-1)
 #define NULL_FONT	(-2)
 
@@ -167,9 +184,13 @@ static char* const CA_FONT_NAME[CA_FONT_MAX] = {
 	"GULIM",
 	"ARIAL",
 	"GEORGIA",
-	"UI GOTHIC",
+	//"UI GOTHIC",
+	"ARIAL UNICODE",
 	"DEVANAGARI",
 	"TAHOMA",
+	"MINGLIU",
+	"NEW MINCHO",
+	"ESTRANGELO EDESSA",
 	"EXTRA",
 };
 
@@ -180,9 +201,12 @@ static const int CA_FONT_SIZE_FIX[CA_FONT_MAX][CMD_FONT_MAX] = {
 	{0,-1,1},	//gulim
 	{0,1,0},	//arial
 	{-2,-2,-2},	//georgia
-	{0,-1,1},	//ms ui gothic
+	{0,0,0},	//arial unicode
 	{0,0,0},	//devanagari
 	{0,0,0},	//tahoma
+	{0,0,0},	//MingLiU
+	{0,0,0},	//new mincho, smsun or new_gulim
+	{0,0,0},	//estrangelo edessa
 	{0,0,0},	//extra
 };
 

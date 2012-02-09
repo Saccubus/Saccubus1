@@ -6,11 +6,8 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URLEncoder;
-import java.net.URLDecoder;
 import javax.swing.JLabel;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 import javax.net.ssl.HttpsURLConnection;
 
@@ -47,7 +44,7 @@ public class NicoClient {
 	private final String Pass;
 	private boolean Logged_in = false;
 	private final Proxy ConProxy;
-	private boolean Debug = false;
+	boolean Debug = false;
 	private final NicoMap nicomap;
 	private Stopwatch Stopwatch;
 
@@ -123,7 +120,7 @@ public class NicoClient {
 		}
 	}
 
-	private void debug(String messege){
+	void debug(String messege){
 		if (Debug){
 			System.out.print(messege);
 		}
@@ -131,7 +128,7 @@ public class NicoClient {
 
 	private String Cookie = null;
 
-	private HttpURLConnection urlConnectGET(String url){
+	HttpURLConnection urlConnectGET(String url){
 		return urlConnect(url, "GET");
 	}
 
@@ -631,10 +628,13 @@ public class NicoClient {
 	private String Official = "";
 
 	private String commentCommand2006(CommentType comType, String back_comment){
+		if(!back_comment.endsWith("-")){
+			back_comment = "-" + back_comment;
+		}
 		return "<thread user_id=\"" + UserID
 		+ "\" scores=\"1"	//NGscore
 		+ "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey
-		+ "\" res_from=\"-" + back_comment
+		+ "\" res_from=\"" + back_comment
 		+ "\" version=\"20061206\" thread=\"" + ThreadID
 		+ Official
 		+ (comType == CommentType.OWNER ? "\" fork=\"1\"/>" :  "\"/>");
@@ -643,6 +643,12 @@ public class NicoClient {
 	private String commentCommand2009(CommentType commentType, String back_comment){
 		String req;
 		String wayback =  "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey;
+		String resfrom;
+		if(!back_comment.endsWith("-")){
+			resfrom = "";
+		}else {
+			resfrom = "\" res_from=\"" + back_comment;
+		}
 		StringBuffer sb = new StringBuffer();
 		sb.append("<packet>");
 		sb.append("<thread thread=\"" + ThreadID);
@@ -666,6 +672,7 @@ public class NicoClient {
 			sb.append(Official);
 		}
 		sb.append("\" scores=\"1");	//NGscore
+		sb.append(resfrom);
 		sb.append("\">0-");	//>0-10:100,1000<
 		sb.append((VideoLength + 59) / 60);
 		sb.append(":100,");
@@ -873,8 +880,10 @@ public class NicoClient {
 		String url = "http://www.nicovideo.jp";
 		System.out.print("Checking login...");
 		// GET (NO_POST), UTF-8, AllowAutoRedirect,
+/*
 		BufferedReader br = null;
 		try {
+*/
 			HttpURLConnection con = urlConnectGET(url);
 			// response 200, 302 is OK
 			if (con == null){
@@ -883,9 +892,16 @@ public class NicoClient {
 			}
 			String new_cookie = detectCookie(con);
 			if (new_cookie == null || new_cookie.isEmpty()) {
-				System.out.print(" new_cookie isEmpty.");
+				System.out.print(" new_cookie isEmpty. ");
 				// but continue
 			}
+			String auth = nicomap.get("x-niconico-authflag");
+			if(auth==null || auth.isEmpty() || auth.equals("0")){
+				System.out.println("ng. Not logged in. authflag=" + auth);
+				con.disconnect();
+				return false;
+			}
+/*
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
 				encoding = "UTF-8";
@@ -917,12 +933,14 @@ public class NicoClient {
 				System.out.println("ng. Can't found UserID Key. Is Niconico TopPage format ◆CHANGED?◆");
 				return false;
 			}
+*/
 			if (new_cookie != null && !new_cookie.isEmpty()) {
 				Cookie += "; " + new_cookie;
 			}
 			debug("\n■Now Cookie is<" + Cookie + ">\n");
 			System.out.println("ok.");
 			return true;
+/*
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			return false;
@@ -931,6 +949,7 @@ public class NicoClient {
 				try { br.close(); } catch (IOException e) { }
 			}
 		}
+*/
 	}
 
 	public String getBackCommentFromLength(String def) {
@@ -1014,102 +1033,5 @@ public class NicoClient {
 
 	public boolean isEco() {
 		return economy;
-	}
-
-	/**
-	 * Map<String Key, String Value><br/>
-	 * Key は lowercase の英数字
-	 * @author orz
-	 *
-	 */
-	private static class NicoMap {
-		private Map<String, String> map;
-		private NicoMap(){
-			map = new HashMap<String, String>();
-		}
-		/**
-		 * 全マッピングをプリントアウトする
-		 * @param out
-		 */
-		private void printAll(PrintStream out) {
-			for (String key: map.keySet()){
-				out.println("■map:<" + key + "> <" + map.get(key) + ">");
-			}
-		}
-		/**
-		 * keyを含んでいればtrue
-		 * @param key
-		 * @return
-		 */
-		private boolean containsKey(String key) {
-			return map.containsKey(key.toLowerCase());
-		}
-		/**
-		 * keyをlowercaseに直してmapにput
-		 * @param key
-		 * @param value
-		 */
-		private void put(String key, String value){
-			map.put(key.toLowerCase(), value);
-		}
-		/**
-		 * =の前をkey, 後ろをvalueとしてput<br/>
-		 * =がない場合は何もしない
-		 * @param str
-		 */
-		private void put(String str){
-			int idx = str.indexOf("=");
-			if (idx < 0) {
-				return;
-			}
-			String key = str.substring(0, idx);
-			String value = str.substring(idx + 1);
-			put(key, value);
-		}
-		/**
-		 * keyをlowercaseに直してmapからget
-		 * @param key
-		 * @return
-		 */
-		private String get(String key){
-			return map.get(key.toLowerCase());
-		}
-		/**
-		 * HttpURLConnectionのヘッダーを全部putする
-		 * @param con　connect後のHttpURLConnection
-		 */
-		private void putConnection(HttpURLConnection con){
-			String key;
-			if ((key = con.getHeaderFieldKey(0)) != null){
-				this.put(key, con.getHeaderField(0));
-			}
-			for (int i = 1; (key = con.getHeaderFieldKey(i)) != null; i++){
-				this.put(key, con.getHeaderField(i));
-			}
-		}
-		/**
-		 * 文字列を&で区切って分割しputする<br/>
-		 * 分割後の文字列はkey=valueとなっていること
-		 * @param string
-		 */
-		private void putArray(String string){
-			String[] array = string.split("&");
-			for (int i = 0; i < array.length; i++) {
-				this.put(array[i]);
-			}
-		}
-		/**
-		 * 文字列を&で区切って分割しURLDecodeしたのちputする<br/>
-		 * 分割後の文字列はkey=valueとなっていること
-		 * @param string
-		 * @param encoding
-		 */
-		private void putArrayURLDecode(String string, String encoding)
-				throws UnsupportedEncodingException {
-			String[] array = string.split("&");
-			for (int i = 0; i < array.length; i++) {
-				this.put(URLDecoder.decode(array[i], encoding));
-			}
-		}
 	}
 }

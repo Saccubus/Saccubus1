@@ -10,6 +10,7 @@ import saccubus.net.Path;
 import java.io.*;
 
 import saccubus.conv.CombineXML;
+import saccubus.conv.CommandReplace;
 import saccubus.conv.ConvertToVideoHook;
 import saccubus.conv.NicoXMLReader;
 
@@ -63,6 +64,10 @@ public class Converter extends Thread {
 	private Aspect videoAspect;
 	private File fwsFile = null;
 	private VideoIDFilter DefaultVideoIDFilter;
+	private String proxy;
+	private int proxy_port;
+	private String mailAddress;
+	private String password;
 	/*
 	private static final String CHANGE_SIMSUN_UNICODE =
 			"0x2581-0x258f 0x02cb 0xe800";
@@ -125,12 +130,16 @@ public class Converter extends Thread {
 	private File gulimFont = null;
 	private File arialFont = null;
 	private File georgiaFont = null;
-	private File msuigothicFont = null;
+//	private File msuigothicFont = null;
 	private File devabagariFont = null;
 	private File tahomaFont = null;
+	private File mingliuFont = null;
+	private File newMinchoFont = null;
+	private File estrangeloEdessaFont = null;
+	private File arialUnicodeFont = null;
 	private Pattern ngWordPat;
 	private Pattern ngIDPat;
-	private Pattern ngCmdPat;
+	private CommandReplace ngCmd;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -170,6 +179,7 @@ public class Converter extends Thread {
 	private boolean isCommentFixFileName(){
 		return Setting.isCommentFixFileName();
 	}
+/*
 	private String getProxy(){
 		return Setting.getProxy();
 	}
@@ -182,6 +192,7 @@ public class Converter extends Thread {
 	private String getPassword(){
 		return Setting.getPassword();
 	}
+*/
 	private boolean isDeleteVideoAfterConverting(){
 		return Setting.isDeleteVideoAfterConverting();
 	}
@@ -265,7 +276,7 @@ public class Converter extends Thread {
 					sendtext("CA用フォントが見つかりません。" + gothicFont.getPath());
 					return false;
 				}
-				msuigothicFont = gothicFont;
+				//msuigothicFont = gothicFont;
 				georgiaFont  = new File(windir,"Fonts\\sylfaen.ttf");
 				if (!georgiaFont.canRead()) {
 					sendtext("CA用フォントが見つかりません。" + georgiaFont.getPath());
@@ -287,6 +298,34 @@ public class Converter extends Thread {
 					System.out.println("CA用フォント" + tahomaFont.getPath() + "を" + arialFont.getName() + "で代替します。");
 					tahomaFont = arialFont;
 				}
+				mingliuFont = new File(windir,"Fonts\\mingliu.ttc");
+				if (!mingliuFont.canRead()) {
+					sendtext("CA用フォントが見つかりません。" + mingliuFont.getPath());
+					//return false;
+					System.out.println("CA用フォント" + mingliuFont.getPath() + "を" + simsunFont.getName() + "で代替します。");
+					mingliuFont = simsunFont;
+				}
+				newMinchoFont = new File(windir,"Fonts\\NGULIM.TTF");
+				if (!newMinchoFont.canRead()) {
+					sendtext("CA用フォントが見つかりません。" + newMinchoFont.getPath());
+					//return false;
+					System.out.println("CA用フォント" + newMinchoFont.getPath() + "を" + simsunFont.getName() + "で代替します。");
+					newMinchoFont = simsunFont;
+				}
+				estrangeloEdessaFont = new File(windir,"Fonts\\estre.ttf");
+				if (!estrangeloEdessaFont.canRead()) {
+					sendtext("CA用フォントが見つかりません。" + estrangeloEdessaFont.getPath());
+					//return false;
+					System.out.println("CA用フォント" + estrangeloEdessaFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					estrangeloEdessaFont = arialFont;
+				}
+				arialUnicodeFont = new File(windir,"Fonts\\ARIALUNI.TTF");
+				if (!arialUnicodeFont.canRead()) {
+					sendtext("CA用フォントが見つかりません。" + arialUnicodeFont.getPath());
+					//return false;
+					System.out.println("CA用フォントが見つかりません。" + arialUnicodeFont.getPath());
+					arialUnicodeFont = null;
+				}
 			}
 			a = new File(Setting.getFontPath());
 			if (!a.canRead()) {
@@ -306,48 +345,31 @@ public class Converter extends Thread {
 		if (isSaveVideo() ||
 				isSaveComment() || isSaveOwnerComment()) {
 			// ブラウザセッション共有の場合はここでセッションを読み込む
-			if (Setting.isBrowserIE()){
-				BrowserKind = BrowserCookieKind.MSIE;
-				UserSession = BrowserInfo.getUserSession(BrowserKind);
+			UserSession = BrowserInfo.getUserSession(Setting);
+			BrowserKind = BrowserInfo.getValidBrowser();
+			if (BrowserKind == BrowserCookieKind.NONE){
+				mailAddress = Setting.getMailAddress();
+				password = Setting.getPassword();
+				if (mailAddress == null || mailAddress.isEmpty()
+					|| password == null || password.isEmpty()) {
+					sendtext("メールアドレスかパスワードが空白です。");
+					return false;
+				}
+			} else if (UserSession.isEmpty()){
+					sendtext("ブラウザ" + BrowserKind.getName() + "のセッション取得に失敗");
+					return false;
 			}
-			if (UserSession.isEmpty() && Setting.isBrowserFF()){
-				BrowserKind = BrowserCookieKind.Firefox;
-				UserSession = BrowserInfo.getUserSession(BrowserKind);
-			}
-			if (UserSession.isEmpty() && Setting.isBrowserChrome()){
-				BrowserKind = BrowserCookieKind.Chrome;
-				UserSession = BrowserInfo.getUserSession(BrowserKind);
-			}
-			if (UserSession.isEmpty() && Setting.isBrowserChromium()){
-				BrowserKind = BrowserCookieKind.Chromium;
-				UserSession = BrowserInfo.getUserSession(BrowserKind);
-			}
-			if (UserSession.isEmpty() && Setting.isBrowserOpera()){
-				BrowserKind = BrowserCookieKind.Opera;
-				UserSession = BrowserInfo.getUserSession(BrowserKind);
-			}
-			if (UserSession.isEmpty() && Setting.isBrowserOther()){
-				BrowserKind = BrowserCookieKind.Other;
-				UserSession = BrowserInfo.getUserSessionOther(Setting.getBrowserCookiePath());
-			}
-			if (BrowserKind != BrowserCookieKind.NONE && UserSession.isEmpty()){
-				sendtext("ブラウザ　" + BrowserKind.toString()
-						+ "　のセッション取得に失敗");
-				return false;
-			}
-			if (BrowserKind == BrowserCookieKind.NONE
-				&& (getMailAddress() == null
-					|| getMailAddress().isEmpty()
-					|| getPassword() == null
-					|| getPassword().isEmpty())) {
-				sendtext("メールアドレスかパスワードが空白です。");
-				return false;
-			}
-			if (useProxy()
-				&& (   getProxy() == null || getProxy().isEmpty()
-					|| getProxyPort() < 0 || getProxyPort() > 65535   )){
-				sendtext("プロキシの設定が不正です。");
-				return false;
+			if (useProxy()){
+				proxy = Setting.getProxy();
+				proxy_port = Setting.getProxyPort();
+				if (   proxy == null || proxy.isEmpty()
+					|| proxy_port < 0 || proxy_port > 65535   ){
+					sendtext("プロキシの設定が不正です。");
+					return false;
+				}
+			} else {
+				proxy = null;
+				proxy_port = -1;
 			}
 		}
 		sendtext("チェック終了");
@@ -356,24 +378,18 @@ public class Converter extends Thread {
 
 	private NicoClient getNicoClient() {
 		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()) {
-			String proxy = null;
-			int proxy_port = -1;
-			if (useProxy()) {
-				proxy = getProxy();
-				proxy_port = getProxyPort();
-			}
 			sendtext("ログイン中");
 			NicoClient client = null;
 			if (BrowserKind != BrowserCookieKind.NONE){
 				// セッション共有、ログイン済みのNicoClientをclientに返す
 				client = new NicoClient(BrowserKind, UserSession, proxy, proxy_port, Stopwatch);
 			} else {
-				client = new NicoClient(getMailAddress(), getPassword(), proxy, proxy_port, Stopwatch);
+				client = new NicoClient(mailAddress, password, proxy, proxy_port, Stopwatch);
 			}
 			if (!client.isLoggedIn()) {
-				sendtext("ログイン失敗 " + BrowserInfo.getBrowserName() + " " + client.getExtraError());
+				sendtext("ログイン失敗 " + BrowserKind.getName() + " " + client.getExtraError());
 			} else {
-				sendtext("ログイン成功 " + BrowserInfo.getBrowserName());
+				sendtext("ログイン成功 " + BrowserKind.getName());
 			}
 			return client;
 		} else {
@@ -579,9 +595,10 @@ public class Converter extends Thread {
 	private boolean makeNGPattern() {
 		sendtext("NGパターン作成中");
 		try{
-			ngWordPat = NicoXMLReader.makePattern(Setting.getNG_Word());
-			ngCmdPat = ngWordPat;
+			String all_regex = "/((docomo |iPhone )?.* 18[46])|(18[46]( docomo | iPhone)? .*( docomo | iPhone)?)/";
+			ngWordPat = NicoXMLReader.makePattern(Setting.getNG_Word().replaceFirst("all", all_regex));
 			ngIDPat = NicoXMLReader.makePattern(Setting.getNG_ID());
+			ngCmd = new CommandReplace(Setting.getNGCommand(), Setting.getReplaceCommand());
 		}catch (Exception e) {
 			sendtext("NGパターン作成に失敗。おそらく正規表現の間違い？");
 			return false;
@@ -802,7 +819,7 @@ public class Converter extends Thread {
 	private boolean convertToCommentMiddle(File commentfile, File middlefile) {
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile,
-				ngIDPat, ngWordPat, ngCmdPat)){
+				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit())){
 			return false;
 		}
 		//コメント数が0の時削除する
@@ -1255,15 +1272,32 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--georgia-font:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(georgiaFont.getPath()), encoding));
-				ffmpeg.addCmd("|--msui-font:");
-				ffmpeg.addCmd(URLEncoder.encode(
-					Path.toUnixPath(msuigothicFont.getPath()), encoding));
+//				ffmpeg.addCmd("|--msui-font:");
+//				ffmpeg.addCmd(URLEncoder.encode(
+//					Path.toUnixPath(msuigothicFont.getPath()), encoding));
 				ffmpeg.addCmd("|--devanagari-font:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(devabagariFont.getPath()), encoding));
 				ffmpeg.addCmd("|--tahoma-font:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(tahomaFont.getPath()), encoding));
+				ffmpeg.addCmd("|--mingliu-font:");
+				ffmpeg.addCmd(URLEncoder.encode(
+					Path.toUnixPath(mingliuFont.getPath()), encoding));
+				String newMinchoPath = Path.toUnixPath(newMinchoFont.getPath());
+				if(newMinchoFont==simsunFont){
+					newMinchoPath = "1 " + newMinchoPath;	//NSIMSUN is index 1 of simsun.ttc
+				}
+				ffmpeg.addCmd("|--new-mincho-font:");
+				ffmpeg.addCmd(URLEncoder.encode(newMinchoPath, encoding));
+				ffmpeg.addCmd("|--estrangelo-edessa-font:");
+				ffmpeg.addCmd(URLEncoder.encode(
+					Path.toUnixPath(estrangeloEdessaFont.getPath()), encoding));
+				if(arialUnicodeFont!=null){
+					ffmpeg.addCmd("|--arial-unicode-font:");
+					ffmpeg.addCmd(URLEncoder.encode(
+						Path.toUnixPath(arialUnicodeFont.getPath()), encoding));
+				}
 			/*
 			  	ffmpeg.addCmd("|--change-simsun-unicode:");
 				ffmpeg.addCmd(URLEncoder.encode(CHANGE_SIMSUN_UNICODE, encoding));
@@ -1289,7 +1323,7 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--font-width-fix-ratio:"
 					+ Setting.getFontWidthFixRaito());
 			}
-			ffmpeg.addCmd("|--end-of-argument1|--end-of-argument2\"");
+			ffmpeg.addCmd("|--end-of-loooooooooooooooooooooong-argument1|--end-of-argument2\"");
 			return true;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

@@ -6,6 +6,8 @@ import java.util.regex.PatternSyntaxException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 
+import saccubus.SharedNgScore;
+
 /**
  * <p>
  * タイトル: さきゅばす
@@ -39,15 +41,21 @@ public class NicoXMLReader extends DefaultHandler {
 
 	private final Pattern NG_ID;
 
-	private final Pattern NG_Cmd;
+	private final CommandReplace NG_Cmd;
 
 	private boolean item_fork;
 
-	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, Pattern ngCmdPat){
+	private final int ng_Score;
+	private int countNG_Score = 0;
+	private int countNG_Word = 0;
+	private int countNG_ID = 0;
+
+	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd, int scoreLimit){
 		this.packet = packet;
 		NG_Word = ngWordPat;
-		NG_Cmd = ngCmdPat;
 		NG_ID = ngIdPat;
+		NG_Cmd = cmd;
+		ng_Score = scoreLimit;
 	}
 
 	public static final Pattern makePattern(String word) throws PatternSyntaxException{
@@ -59,8 +67,9 @@ public class NicoXMLReader extends DefaultHandler {
 		int tmp_index = 0;
 		int index;
 		for (index = 0; index < tmp.length && tmp_index < tmp.length; index++) {
-			if (tmp[tmp_index].startsWith("/")) {
-				StringBuffer str = new StringBuffer(tmp[tmp_index]);
+			String tmpw = tmp[tmp_index];
+			if (tmpw.startsWith("/") && !tmpw.endsWith("/")) {
+				StringBuffer str = new StringBuffer(tmpw);
 				for (tmp_index++; tmp_index < tmp.length; tmp_index++) {
 					str.append(" " + tmp[tmp_index]);
 					if (tmp[tmp_index].endsWith("/")) {
@@ -69,8 +78,8 @@ public class NicoXMLReader extends DefaultHandler {
 					}
 				}
 				tmp2[index] = str.substring(0);
-			} else if (tmp[tmp_index].startsWith("\"")) {
-				StringBuffer str = new StringBuffer(tmp[tmp_index]);
+			} else if (tmpw.startsWith("\"") && !tmpw.endsWith("\"")) {
+				StringBuffer str = new StringBuffer(tmpw);
 				for (tmp_index++; tmp_index < tmp.length; tmp_index++) {
 					str.append(" " + tmp[tmp_index]);
 					if (tmp[tmp_index].endsWith("\"")) {
@@ -80,7 +89,7 @@ public class NicoXMLReader extends DefaultHandler {
 				}
 				tmp2[index] = str.substring(0);
 			} else {
-				tmp2[index] = tmp[tmp_index];
+				tmp2[index] = tmpw;
 				tmp_index++;
 			}
 		}
@@ -95,10 +104,9 @@ public class NicoXMLReader extends DefaultHandler {
 			if (i > 0) {
 				regb.append("|");
 			}
-			if (e.length() > 1 && e.indexOf("/") == 0 && e.lastIndexOf("/") == e.length() - 1) {
+			if (e.length() > 1 && e.startsWith("/") && e.endsWith("/")) {
 				regb.append("(" + e.substring(1, e.length() - 1) + ")");
-			} else if (e.length() > 1 && e.indexOf("\"") == 0
-					&& e.lastIndexOf("\"") == e.length() - 1) {
+			} else if (e.length() > 1 && e.startsWith("\"") && e.endsWith("\"")) {
 				regb.append("(" + Pattern.quote(e.substring(1, e.length() - 1))
 						+ ")");
 			} else {
@@ -151,6 +159,23 @@ public class NicoXMLReader extends DefaultHandler {
 				item_kicked = true;
 				return;
 			}
+			//NG共有レベル対象削除
+			if(ng_Score>SharedNgScore.MINSCORE){
+				String score_str = attributes.getValue("score");
+				int score = 0;
+				if (score_str != null){
+					try {
+						score = Integer.parseInt(score_str);
+					} catch(NumberFormatException e){
+						score = 0;
+					}
+				}
+				if(score <= ng_Score){
+					item_kicked = true;
+					countNG_Score++;
+					return;
+				}
+			}
 			// item.setDate(attributes.getValue("date"));
 			String mail = attributes.getValue("mail");
 			//184（匿名）でない場合は、186（通知）を最後に付加
@@ -159,15 +184,18 @@ public class NicoXMLReader extends DefaultHandler {
 			}else if(!mail.contains("184")){
 				mail += " 186";
 			}
-			if (match(NG_Cmd, mail)) {
+			if (match(NG_Word, mail)) {
 				item_kicked = true;
+				countNG_Word++;
 				return;
 			}
+			mail = NG_Cmd.replace(mail);
 			item.setMail(mail);
 			item.setNo(attributes.getValue("no"));
 			String user_id = attributes.getValue("user_id");
 			if (match(NG_ID, user_id)) {
 				item_kicked = true;
+				countNG_ID++;
 				return;
 			}
 			String forkval = attributes.getValue("fork");
@@ -205,6 +233,7 @@ public class NicoXMLReader extends DefaultHandler {
 			String com = new String(ch, offset, length);
 			if (match(NG_Word, com)) {
 				item_kicked = true;
+				countNG_Word++;
 				return;
 			}
 			item.setComment(com);
@@ -236,6 +265,8 @@ public class NicoXMLReader extends DefaultHandler {
 		// System.out.println("----------");
 		System.out.println("Converting finished. "
 			+ packet.size() + " items.");
+		System.out.println("Deleted NG Word:"+countNG_Word
+			+" ID:"+countNG_ID+" Score:"+countNG_Score);
 	}
 
 }
