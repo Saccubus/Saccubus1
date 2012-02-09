@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- jpg連続出力オプション(N55686用) -->
+<properties>
+<entry key="EXT">%d.jpg</entry>
+<entry key="MAIN"></entry>
+<entry key="IN"></entry>
+<!-- -r にはjpg出力レート(/sec)を指定する -->
+<entry key="OUT">-r 1/5 -s 512x384 -an -flags +bitexact -f image2 -aspect 4:3</entry>
+</properties>

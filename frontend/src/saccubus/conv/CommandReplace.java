@@ -15,13 +15,12 @@ public class CommandReplace {
 	private final ArrayList<String> replaceList;
 
 	public CommandReplace(String src, String dest){
-		//src.replaceAll(src, dest);
 		ngList = makeList(src);
 		replaceList = makeList(dest);
 	}
 
 	private final ArrayList<String> makeList(String str){
-		if (str == null){
+		if (str == null || str.isEmpty()){
 			return null;
 		}
 		String[] tmp = str.split(" ");
@@ -67,7 +66,7 @@ public class CommandReplace {
 		for (int i = 0; i < ngList.size(); i++){
 			String ngCmd = ngList.get(i);
 			String replaceCmd;
-			if (i < replaceList.size()){
+			if (replaceList != null && i < replaceList.size()){
 				replaceCmd = replaceList.get(i);
 			} else {
 				replaceCmd = "";

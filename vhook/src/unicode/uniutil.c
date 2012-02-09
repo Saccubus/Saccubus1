@@ -56,7 +56,7 @@ int isGlyphExist(DATA* data,int fonttype,Uint16 u){
 	return (font!=NULL && TTF_GlyphIsProvided(font,u));
 }
 
-int getGlyphEixst(DATA* data,Uint16 u){
+int getGlyphExist(DATA* data,Uint16 u){
 	int f;
 	for(f=0;f<CA_FONT_MAX;f++){
 		if(isGlyphExist(data,f,u))
@@ -159,7 +159,7 @@ int getFontType2(Uint16* u,int basefont,DATA* data){
 			if(isGlyphExist(data,basefont,*u))
 				return basefont;
 			else
-				return getGlyphEixst(data,*u);
+				return getGlyphExist(data,*u);
 	}
 }
 

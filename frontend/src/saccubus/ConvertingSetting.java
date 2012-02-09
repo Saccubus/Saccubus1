@@ -114,7 +114,7 @@ public class ConvertingSetting {
 	private String commentSpeed;
 	private boolean debugNicovideo;
 	private boolean enableCA;	//仮設定
-	private String scoreLimit;
+	private int scoreLimit;
 	private boolean disableEco;
 	private boolean fontWidthFix;
 	private String fontWidthFixRatio;
@@ -123,7 +123,6 @@ public class ConvertingSetting {
 	private String extraFontText;
 	private String ngCommand;
 	private String replaceCommand;
-	private boolean enableNgCommand;
 	private String encryptedPass;
 
 	private Map<String, String> replaceOptions;
@@ -302,7 +301,7 @@ public class ConvertingSetting {
 			String comment_speed,
 			boolean debug_nicovideo,
 			boolean enable_CA,
-			String score_limit,
+			int score_limit,
 			boolean disable_eco,
 			boolean font_width_fix,
 			String font_width_fix_raito,
@@ -311,7 +310,6 @@ public class ConvertingSetting {
 			String extra_font_text,
 			String ng_command,
 			String replace_command,
-			boolean enable_NG_command,
 			String encrypt_pass
 		)
 	{
@@ -407,7 +405,6 @@ public class ConvertingSetting {
 		extraFontText = extra_font_text;
 		ngCommand = ng_command;
 		replaceCommand = replace_command;
-		enableNgCommand = enable_NG_command;
 		encryptedPass = encrypt_pass;
 	}
 
@@ -633,7 +630,7 @@ public class ConvertingSetting {
 	public boolean isEnableCA(){
 		return enableCA;
 	}
-	public String getScoreLimit(){
+	public int getScoreLimit(){
 		return scoreLimit;
 	}
 	public boolean isDisableEco(){
@@ -660,14 +657,11 @@ public class ConvertingSetting {
 	public String getReplaceCommand(){
 		return replaceCommand;
 	}
-	public boolean isEnableNgCommand(){
-		return enableNgCommand;
-	}
 	public String getEncryptPass(){
 		return encryptedPass;
 	}
 
-	private static final String PROP_FILE = "./saccubus.xml";
+	static final String PROP_FILE = ".\\saccubus.xml";
 	private static final String PROP_MAILADDR = "MailAddress";
 	private static final String PROP_PASSWORD = "Password";
 	private static final String PROP_SAVE_VIDEO = "SaveVideoFile";
@@ -763,7 +757,6 @@ public class ConvertingSetting {
 	private static final String PROP_EXTRA_FONT_TEXT = "ExtraFontText";
 	private static final String PROP_NG_COMMAND = "NGCommand";
 	private static final String PROP_REPLACE_COMMAND = "ReplaceCommand";
-	private static final String PROP_ENABLE_NG_COMMAND = "EnableNGCommand";
 	private static final String PROP_ENCRYPT_PASS = "EncryptedPassword";
 
 	/*
@@ -908,7 +901,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_SET_COMMENT_SPEED, Boolean.toString(setting.isSetCommentSpeed()));
 		prop.setProperty(PROP_COMMENT_SPEED, setting.getCommentSpeed());
 		prop.setProperty(PROP_ENABLE_CA, Boolean.toString(setting.isEnableCA()));
-		prop.setProperty(PROP_SCORE_LIMIT, setting.getScoreLimit());
+		prop.setProperty(PROP_SCORE_LIMIT, "" + setting.getScoreLimit());
 		prop.setProperty(PROP_DISABLE_ECO, Boolean.toString(setting.isDisableEco()));
 		prop.setProperty(PROP_FONT_WIDTH_FIX, Boolean.toString(setting.isFontWidthFix()));
 		prop.setProperty(PROP_FONT_WIDTH_FIX_RATIO, setting.getFontWidthFixRaito());
@@ -917,7 +910,6 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_EXTRA_FONT_TEXT, setting.getExtraFontText());
 		prop.setProperty(PROP_NG_COMMAND, setting.getNGCommand());
 		prop.setProperty(PROP_REPLACE_COMMAND, setting.getReplaceCommand());
-		prop.setProperty(PROP_ENABLE_NG_COMMAND, Boolean.toString(setting.isEnableNgCommand()));
 
 		/*
 		 * ここまで拡張設定保存 1.22r3 に対する
@@ -982,15 +974,20 @@ public class ConvertingSetting {
 					System.out.println("終了時パスワードが暗号化されます");
 				}
 			}
-		} else if (password.startsWith("_")){
-			//おまけ
-			Key skey = Encryption.makeKey(128, user);
-			String try_decode = Encryption.decode(password.substring(1), skey);
-			if (Encryption.encode(try_decode, skey).equals(password.substring(1))){
-				password = try_decode;
-				System.out.println("パスワードは復号されました");
-			}else{
-				System.out.println("パスワード復号失敗");
+		} else {
+			if (password.startsWith("_")){
+				encrypt_pass = password;
+				password = "!";
+			}
+			if (password.startsWith("!") && encrypt_pass.startsWith("_")){
+				Key skey = Encryption.makeKey(128, user);
+				String try_decode = Encryption.decode(encrypt_pass.substring(1), skey);
+				if (Encryption.encode(try_decode, skey).equals(encrypt_pass.substring(1))){
+					password = try_decode;
+					System.out.println("パスワードは復号されました");
+				}else{
+					System.out.println("パスワード復号失敗");
+				}
 			}
 		}
 		String option_file_name = prop.getProperty(PROP_OPTION_FILE, null);
@@ -1079,7 +1076,7 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_COMMENT_SPEED, ""),
 			false,
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_CA, "false")),
-			prop.getProperty(PROP_SCORE_LIMIT, ""+Integer.MIN_VALUE),
+			Integer.parseInt(prop.getProperty(PROP_SCORE_LIMIT, ""+SharedNgScore.MINSCORE)),
 			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ECO, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_FONT_WIDTH_FIX, "false")),
 			prop.getProperty(PROP_FONT_WIDTH_FIX_RATIO, ""),
@@ -1088,7 +1085,6 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_EXTRA_FONT_TEXT, ""),
 			prop.getProperty(PROP_NG_COMMAND, ""),
 			prop.getProperty(PROP_REPLACE_COMMAND, ""),
-			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_NG_COMMAND, "false")),
 			encrypt_pass
 		);
 	}

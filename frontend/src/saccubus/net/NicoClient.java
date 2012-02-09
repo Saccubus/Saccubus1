@@ -628,10 +628,13 @@ public class NicoClient {
 	private String Official = "";
 
 	private String commentCommand2006(CommentType comType, String back_comment){
+		if(!back_comment.endsWith("-")){
+			back_comment = "-" + back_comment;
+		}
 		return "<thread user_id=\"" + UserID
 		+ "\" scores=\"1"	//NGscore
 		+ "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey
-		+ "\" res_from=\"-" + back_comment
+		+ "\" res_from=\"" + back_comment
 		+ "\" version=\"20061206\" thread=\"" + ThreadID
 		+ Official
 		+ (comType == CommentType.OWNER ? "\" fork=\"1\"/>" :  "\"/>");
@@ -640,6 +643,12 @@ public class NicoClient {
 	private String commentCommand2009(CommentType commentType, String back_comment){
 		String req;
 		String wayback =  "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey;
+		String resfrom;
+		if(!back_comment.endsWith("-")){
+			resfrom = "";
+		}else {
+			resfrom = "\" res_from=\"" + back_comment;
+		}
 		StringBuffer sb = new StringBuffer();
 		sb.append("<packet>");
 		sb.append("<thread thread=\"" + ThreadID);
@@ -663,6 +672,7 @@ public class NicoClient {
 			sb.append(Official);
 		}
 		sb.append("\" scores=\"1");	//NGscore
+		sb.append(resfrom);
 		sb.append("\">0-");	//>0-10:100,1000<
 		sb.append((VideoLength + 59) / 60);
 		sb.append(":100,");
@@ -870,8 +880,10 @@ public class NicoClient {
 		String url = "http://www.nicovideo.jp";
 		System.out.print("Checking login...");
 		// GET (NO_POST), UTF-8, AllowAutoRedirect,
+/*
 		BufferedReader br = null;
 		try {
+*/
 			HttpURLConnection con = urlConnectGET(url);
 			// response 200, 302 is OK
 			if (con == null){
@@ -880,9 +892,16 @@ public class NicoClient {
 			}
 			String new_cookie = detectCookie(con);
 			if (new_cookie == null || new_cookie.isEmpty()) {
-				System.out.print(" new_cookie isEmpty.");
+				System.out.print(" new_cookie isEmpty. ");
 				// but continue
 			}
+			String auth = nicomap.get("x-niconico-authflag");
+			if(auth==null || auth.isEmpty() || auth.equals("0")){
+				System.out.println("ng. Not logged in. authflag=" + auth);
+				con.disconnect();
+				return false;
+			}
+/*
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
 				encoding = "UTF-8";
@@ -914,12 +933,14 @@ public class NicoClient {
 				System.out.println("ng. Can't found UserID Key. Is Niconico TopPage format ŸCHANGED?Ÿ");
 				return false;
 			}
+*/
 			if (new_cookie != null && !new_cookie.isEmpty()) {
 				Cookie += "; " + new_cookie;
 			}
 			debug("\n¡Now Cookie is<" + Cookie + ">\n");
 			System.out.println("ok.");
 			return true;
+/*
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			return false;
@@ -928,6 +949,7 @@ public class NicoClient {
 				try { br.close(); } catch (IOException e) { }
 			}
 		}
+*/
 	}
 
 	public String getBackCommentFromLength(String def) {

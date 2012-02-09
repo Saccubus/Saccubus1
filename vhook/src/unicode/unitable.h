@@ -363,7 +363,7 @@ static unsigned char* UNITABLE =
 0530-058f アルメニア    	■check■
 0590-05ff ヘブライ      	■check■
 0600-06ff アラビア      (tahoma.ttf)
-0700-077f シリア        	■check■
+0700-077f シリア        estrangelo edessa
 0780-08ff ターナ        	■check■
 0900-097f テバナガリ    mangal.ttf
 0980-09ff ベンガル      	■check■
@@ -395,9 +395,9 @@ static unsigned char* UNITABLE =
 1900-194f リンブ        	■check■
 1950-19ef タイレ        	■check■
 19e0-1cff クメール記号  	■check■
-1d00-1dff ふりがな拡張  	MS UI Gothic で見える	■check■
-1e00-1eff ラテン拡張追加	MS UI Gothic で見える	■check■
-1f00-1fff ギリシャ拡張  	MS UI Gothic で見える	■check■
+1d00-1dff ふりがな拡張  	Arial
+1e00-1eff ラテン拡張追加	Arial
+1f00-1fff ギリシャ拡張  	Arial
 2000-33ff 一般句読点
 3400-4dbf CJK統合漢字拡～
 4e00-629f	CJK統合漢字～	simsunかundef undefと誤魔化す

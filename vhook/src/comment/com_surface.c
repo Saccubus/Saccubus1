@@ -260,14 +260,14 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			/* zoomx *= linefeedResizeScale(size,nb_line,data->fontsize_fix); */
 		}
 	}
-	//コメント高さ補正
+/*	コメント高さ補正
 	if(!linefeed_resized){
 		int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
 		ret = adjustComment(ret,data,h);
 		fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
 			item->no,ret->w,ret->h,(data->fontsize_fix?" 200%":""));
 	}
-
+*/
 	if(location != CMD_LOC_DEF){
 		// ue shitaコマンドのみリサイズあり
 

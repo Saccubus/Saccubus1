@@ -89,7 +89,6 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuHelpAbout = new JMenuItem();
 	JMenu jMenuLoad = new JMenu();
 	JMenuItem jMenuNGConfig = new JMenuItem();
-	JMenuItem jMenuViewHistory = new JMenuItem();
 	public JLabel statusBar = new JLabel();
 	public JLabel elapsedTimeBar = new JLabel();
 	JLabel vhookInfoBar = new JLabel();
@@ -162,27 +161,19 @@ public class MainFrame extends JFrame {
 	JPanel experimentPanel = new JPanel();
 	JCheckBox fontHeightFixCheckBox = new JCheckBox();
 	JTextField fontHeightRatioTextField = new JTextField();
-	//JLabel fontHeightRatioLabel = new JLabel();
-	//JCheckBox disableLimitWidthResizeCheckBox = new JCheckBox();
-	//JLabel limitWidthResizeLabel = new JLabel();
-	//JTextField limitWidthTextField = new JTextField();
-	//JCheckBox disableLinefeedResizeCheckBox = new JCheckBox();
-	//JCheckBox disableDoubleResizeCheckBox = new JCheckBox();
 	JCheckBox disableOriginalResizeCheckBox = new JCheckBox();
 	JComboBox commentModeComboBox = new JComboBox(commentModeArray);
 	JCheckBox commentSpeedCheckBox = new JCheckBox();
 	JTextField commentSpeedTextField = new JTextField();
 	JCheckBox enableCA_CheckBox = new JCheckBox();
-	JCheckBox scoreCheckBox = new JCheckBox();
-	JTextField scoreTextField = new JTextField();
 	JCheckBox disableEcoCheckBox = new JCheckBox();
 	JCheckBox fontWidthFixCheckBox = new JCheckBox();
 	JTextField fontWidthRatioTextField = new JTextField();
 	JCheckBox useLineskipAsFontsizeCheckBox = new JCheckBox();
 	JCheckBox useExtraFontCheckBox = new JCheckBox();
-	JLabel extraFontLabel = new JLabel();
 	JTextField extraFontTextField = new JTextField();
 	private String encrypt_pass;
+	SharedNgScore sharedNgScore = new SharedNgScore();
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -204,8 +195,13 @@ public class MainFrame extends JFrame {
 			jbInit();
 			setPopup();
 			setDropTarget();
-			ConvertingSetting setting = ConvertingSetting.loadSetting(null,
-					null);
+			ConvertingSetting setting;
+			if(new File(ConvertingSetting.PROP_FILE).exists()){
+				setting = ConvertingSetting.loadSetting(null, null);
+			} else {
+				setting = ConvertingSetting.loadSetting(null,
+					null, ".\\saccubus.ini", false);
+			}
 			this.setSetting(setting);
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -594,11 +590,9 @@ public class MainFrame extends JFrame {
 		jMenuHelpAbout
 				.addActionListener(new MainFrame_jMenuHelpAbout_ActionAdapter(
 						this));
-		jMenuLoad.setText("ロード");
-		jMenuNGConfig.setText("NG設定ロード");
+		jMenuLoad.setText("詳細設定");
+		jMenuNGConfig.setText("ニコニコ動画のNG設定保存");
 		jMenuNGConfig.addActionListener(new MainFrame_LoadNGConfig(this));
-		//jMenuViewHistory.setText("視聴履歴のロード");
-		//jMenuViewHistory.addActionListener(new MainFrame_LoadViewHistory(this));
 		jMenuOpen.setText("開く(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
@@ -632,7 +626,7 @@ public class MainFrame extends JFrame {
 		jMenuInit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setSetting(ConvertingSetting.loadSetting(null, null, "...", false));
+				setSetting(ConvertingSetting.loadSetting(null, null, "./saccubus.ini", false));
 			}
 		});
 		VideoInfoPanel.setLayout(gridBagLayout1);
@@ -674,7 +668,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y1_97.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y1_97.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserIECheckBox, grid13_x0_y1_97);
-		BrowserFFCheckBox.setText("Firefox (FF3/FF4/FF5/FF6)");
+		BrowserFFCheckBox.setText("Firefox (FF3/FF4～10)");
 		BrowserFFCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y2_98 = new GridBagConstraints();
 		grid13_x0_y2_98.gridx = 0;
@@ -915,7 +909,6 @@ public class MainFrame extends JFrame {
 		jMenuFile.add(jMenuFileExit);
 		jMenuBar1.add(jMenuLoad);
 		jMenuLoad.add(jMenuNGConfig);
-		//jMenuLoad.add(jMenuViewHistory);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
 		setJMenuBar(jMenuBar1);
@@ -1352,7 +1345,7 @@ public class MainFrame extends JFrame {
 		grid20_x0_y7.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x0_y7.insets = INSETS_0_5_0_5;
 		experimentPanel.add(disableOriginalResizeCheckBox, grid20_x0_y7);
-		enableCA_CheckBox.setText("ＣＡ暫定的対応：10種類のフォントを使う");
+		enableCA_CheckBox.setText("ＣＡフォント暫定的対応：10種類のフォントを使う");
 		enableCA_CheckBox.setForeground(Color.blue);
 		enableCA_CheckBox.setToolTipText("フォント変化を強制的に使用するようになります");
 		GridBagConstraints drid20_x0_y8 = new GridBagConstraints();
@@ -1364,44 +1357,44 @@ public class MainFrame extends JFrame {
 		drid20_x0_y8.fill = GridBagConstraints.HORIZONTAL;
 		drid20_x0_y8.insets = INSETS_0_5_0_5;
 		experimentPanel.add(enableCA_CheckBox, drid20_x0_y8);
-		useLineskipAsFontsizeCheckBox.setText("LineSkipをFontSizeとする（デバッグ用）");
-		useLineskipAsFontsizeCheckBox.setForeground(Color.blue);
-		GridBagConstraints grid20_x0_y9 = new GridBagConstraints();
-		grid20_x0_y9.gridx = 0;
-		grid20_x0_y9.gridy = 9;
-		grid20_x0_y9.gridwidth = 4;
-		grid20_x0_y9.weightx = 1.0;
-		grid20_x0_y9.anchor = GridBagConstraints.NORTHWEST;
-		grid20_x0_y9.fill = GridBagConstraints.HORIZONTAL;
-		grid20_x0_y9.insets = INSETS_0_5_0_5;
-		experimentPanel.add(useLineskipAsFontsizeCheckBox, grid20_x0_y9);
-		useExtraFontCheckBox.setText("追加フォントを有効（デバッグ用）");
+	//	useLineskipAsFontsizeCheckBox.setText("LineSkipをFontSizeとする（デバッグ用）");
+	//	useLineskipAsFontsizeCheckBox.setForeground(Color.blue);
+	//	GridBagConstraints grid20_x0_y9 = new GridBagConstraints();
+	//	grid20_x0_y9.gridx = 0;
+	//	grid20_x0_y9.gridy = 9;
+	//	grid20_x0_y9.gridwidth = 4;
+	//	grid20_x0_y9.weightx = 1.0;
+	//	grid20_x0_y9.anchor = GridBagConstraints.NORTHWEST;
+	//	grid20_x0_y9.fill = GridBagConstraints.HORIZONTAL;
+	//	grid20_x0_y9.insets = INSETS_0_5_0_5;
+	//	experimentPanel.add(useLineskipAsFontsizeCheckBox, grid20_x0_y9);
+		useExtraFontCheckBox.setText("追加フォント");
 		useExtraFontCheckBox.setForeground(Color.blue);
+		useExtraFontCheckBox.setToolTipText("追加フォントパス フォント番号 開始unicode16進4桁-終了16進4桁　と指定して下さい");
 		GridBagConstraints grid20_x0_y10 = new GridBagConstraints();
 		grid20_x0_y10.gridx = 0;
 		grid20_x0_y10.gridy = 10;
-		grid20_x0_y10.weightx = 1.0;
-		grid20_x0_y10.gridwidth = 4;
+	//	grid20_x0_y10.weightx = 1.0;
+	//	grid20_x0_y10.gridwidth = 4;
 		grid20_x0_y10.anchor = GridBagConstraints.NORTHWEST;
 		grid20_x0_y10.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x0_y10.insets = INSETS_0_5_0_5;
 		experimentPanel.add(useExtraFontCheckBox,grid20_x0_y10);
-		extraFontLabel.setText("追加フォント");
-		extraFontLabel.setForeground(Color.blue);
-		extraFontLabel.setToolTipText("追加フォントパス フォント番号 開始unicode16進4桁-終了16進4桁　と指定して下さい");
-		GridBagConstraints grid20_x0_y11 = new GridBagConstraints();
-		grid20_x0_y11.gridx = 0;
-		grid20_x0_y11.gridy = 11;
-		grid20_x0_y11.gridwidth = 1;
-		grid20_x0_y11.weightx = 0.0;
-		grid20_x0_y11.anchor = GridBagConstraints.CENTER;
-		grid20_x0_y11.fill = GridBagConstraints.HORIZONTAL;
-		grid20_x0_y11.insets = INSETS_0_5_0_5;
-		experimentPanel.add(extraFontLabel, grid20_x0_y11);
+	//	extraFontLabel.setText("追加フォント");
+	//	extraFontLabel.setForeground(Color.blue);
+	//	GridBagConstraints grid20_x0_y11 = new GridBagConstraints();
+	//	grid20_x0_y11.gridx = 0;
+	//	grid20_x0_y11.gridy = 11;
+	//	grid20_x0_y11.gridwidth = 1;
+	//	grid20_x0_y11.weightx = 0.0;
+	//	grid20_x0_y11.anchor = GridBagConstraints.CENTER;
+	//	grid20_x0_y11.fill = GridBagConstraints.HORIZONTAL;
+	//	grid20_x0_y11.insets = INSETS_0_5_0_5;
+	//	experimentPanel.add(extraFontLabel, grid20_x0_y11);
 		extraFontTextField.setForeground(Color.blue);
 		GridBagConstraints grid20_x1_y11 = new GridBagConstraints();
 		grid20_x1_y11.gridx = 1;
-		grid20_x1_y11.gridy = 11;
+		grid20_x1_y11.gridy = 10;
 		grid20_x1_y11.gridwidth = 3;
 		grid20_x1_y11.weightx = 1.0;
 		grid20_x1_y11.anchor = GridBagConstraints.NORTHWEST;
@@ -1589,6 +1582,7 @@ public class MainFrame extends JFrame {
 			ownercomment = comment.substring(0, index);
 		}
 		ownercomment += saccubus.Converter.OWNER_EXT;
+/*
 		int score;
 		try{
 			score = Integer.parseInt(scoreTextField.getText());
@@ -1598,6 +1592,7 @@ public class MainFrame extends JFrame {
 		}catch(NumberFormatException e){
 			score = Integer.MIN_VALUE;
 		}
+*/
 		return new ConvertingSetting(
 			MailAddrField.getText(),
 			new String(PasswordField.getPassword()),
@@ -1670,7 +1665,7 @@ public class MainFrame extends JFrame {
 			commentSpeedTextField.getText(),
 			getDebugMode(),
 			enableCA_CheckBox.isSelected(),
-			"" + score,
+			sharedNgScore.getScore(),
 			disableEcoCheckBox.isSelected(),
 			fontWidthFixCheckBox.isSelected(),
 			fontWidthRatioTextField.getText(),
@@ -1678,8 +1673,7 @@ public class MainFrame extends JFrame {
 			useExtraFontCheckBox.isSelected(),
 			extraFontTextField.getText(),
 			ngCommandField.getText(),
-			replaceCommandField.getText(),
-			ngCommandCheckBox.isSelected(),
+			"",	//replaceCommandField.getText(),
 			encrypt_pass
 		);
 	}
@@ -1788,7 +1782,7 @@ public class MainFrame extends JFrame {
 		commentSpeedCheckBox.setSelected(setting.isSetCommentSpeed());
 		commentSpeedTextField.setText(setting.getCommentSpeed());
 		enableCA_CheckBox.setSelected(setting.isEnableCA());
-		scoreTextField.setText(setting.getScoreLimit());
+		sharedNgScore.setScore(setting.getScoreLimit());
 		disableEcoCheckBox.setSelected(setting.isDisableEco());
 		fontWidthFixCheckBox.setSelected(setting.isFontWidthFix());
 		fontWidthRatioTextField.setText(setting.getFontWidthFixRaito());
@@ -1796,8 +1790,7 @@ public class MainFrame extends JFrame {
 		useExtraFontCheckBox.setSelected(setting.isUseExtraFont());
 		extraFontTextField.setText(setting.getExtraFontText());
 		ngCommandField.setText(setting.getNGCommand());
-		replaceCommandField.setText(setting.getReplaceCommand());
-		ngCommandCheckBox.setSelected(setting.isEnableNgCommand());
+	//	replaceCommandField.setText(setting.getReplaceCommand());
 		encrypt_pass = setting.getEncryptPass();
 	}
 
@@ -1866,7 +1859,7 @@ public class MainFrame extends JFrame {
 	JTextField wideCommandLineOutOptionField = new JTextField();
 	private JPanel ConvertingSettingPanel = null;
 	private JPanel NGWordSettingPanel = null;
-	private JLabel NGWordLavel = null;
+	private JLabel NGWordLabel = null;
 	private JTextField NGWordTextField = null;
 	//JLabel ngCmdLabel = null;
 	//JTextField ngCmdTextField = null;
@@ -1895,10 +1888,16 @@ public class MainFrame extends JFrame {
 	private JButton WideFFmpegOptionReloadButton = null;
 	private JPanel FFmpegOptionComboBoxPanel = null;
 	private JPanel WideFFmpegOptionComboBoxPanel = null;
-	private JCheckBox ngCommandCheckBox;
+	private JLabel ngCommandLabel;
 	private JTextField ngCommandField;
-	private JLabel replaceCommandLabel;
-	private JTextField replaceCommandField;
+//	private JLabel replaceCommandLabel;
+//	private JTextField replaceCommandField;
+	private final JRadioButton sharedNgNoneRadioButton = new JRadioButton();
+	private final JRadioButton sharedNgLowRadioButton = new JRadioButton();
+	private final JRadioButton sharedNgMediumRadioButton = new JRadioButton();
+	private final JRadioButton sharedNgHighRadioButton = new JRadioButton();
+	private JLabel sharedNgLabel;
+	private JPanel sharedNgPanel;
 
 	public void DoButton_actionPerformed(ActionEvent e) {
 		if (converter == null || converter.isConverted()) {
@@ -2124,25 +2123,70 @@ s	 * @return javax.swing.JPanel
 	 */
 	private JPanel getNGWordSettingPanel() {
 		if (NGWordSettingPanel == null) {
-			GridBagConstraints grid_x3_y3_11 = new GridBagConstraints();
-			grid_x3_y3_11.gridx = 3;
-			grid_x3_y3_11.gridy = 3;
-			grid_x3_y3_11.weightx = 0.5;
-			grid_x3_y3_11.fill = GridBagConstraints.HORIZONTAL;
-			grid_x3_y3_11.insets = INSETS_0_5_0_5;
-			replaceCommandField = new JTextField();
-			replaceCommandField.setForeground(Color.blue);
-			GridBagConstraints grid_x2_y3_10 = new GridBagConstraints();
-			grid_x2_y3_10.gridx = 2;
-			grid_x2_y3_10.gridy = 3;
-			grid_x2_y3_10.anchor = GridBagConstraints.WEST;
-			grid_x2_y3_10.insets = INSETS_0_5_0_0;
-			replaceCommandLabel = new JLabel("コマンド置換");
-			replaceCommandLabel.setForeground(Color.blue);
+			sharedNgPanel = new JPanel();
+			sharedNgPanel.setLayout(new GridBagLayout());
+			GridBagConstraints grid_x0_y5_17 = new GridBagConstraints();
+			grid_x0_y5_17.gridx = 0;
+			grid_x0_y5_17.gridy = 5;
+			grid_x0_y5_17.gridwidth = 2;
+			grid_x0_y5_17.weightx = 1.0;
+			grid_x0_y5_17.anchor = GridBagConstraints.WEST;
+			grid_x0_y5_17.fill = GridBagConstraints.HORIZONTAL;
+			grid_x0_y5_17.insets = INSETS_0_0_0_0;
+			GridBagConstraints grid_x4_y4_16 = new GridBagConstraints();
+			grid_x4_y4_16.gridx = 4;
+			grid_x4_y4_16.gridy = 0;
+			grid_x4_y4_16.weightx = 1.0;
+			grid_x4_y4_16.anchor = GridBagConstraints.WEST;
+			grid_x4_y4_16.insets = INSETS_0_0_0_0;
+			sharedNgNoneRadioButton.setText("無し");
+			GridBagConstraints grid_x3_y4_15 = new GridBagConstraints();
+			grid_x3_y4_15.gridx = 3;
+			grid_x3_y4_15.gridy = 0;
+			grid_x3_y4_15.insets = INSETS_0_0_0_0;
+			sharedNgLowRadioButton.setText("弱");
+			GridBagConstraints grid_x2_y4_14 = new GridBagConstraints();
+			grid_x2_y4_14.gridx = 2;
+			grid_x2_y4_14.gridy = 0;
+			grid_x2_y4_14.insets = INSETS_0_0_0_0;
+			sharedNgMediumRadioButton.setText("中");
+			GridBagConstraints grid_x1_y4_13 = new GridBagConstraints();
+			grid_x1_y4_13.gridx = 1;
+			grid_x1_y4_13.gridy = 0;
+			grid_x1_y4_13.insets = INSETS_0_0_0_0;
+			sharedNgHighRadioButton.setText("強");
+			GridBagConstraints grid_x0_y4_12 = new GridBagConstraints();
+			grid_x0_y4_12.gridx = 0;
+			grid_x0_y4_12.gridy = 0;
+			grid_x0_y4_12.anchor = GridBagConstraints.WEST;
+			grid_x0_y4_12.insets = INSETS_0_5_0_5;
+			sharedNgLabel = new JLabel();
+			sharedNgLabel.setText("NG共有レベル ");
+			sharedNgLabel.setForeground(Color.blue);
+			sharedNgPanel.add(sharedNgLabel, grid_x0_y4_12);
+			sharedNgPanel.add(sharedNgHighRadioButton, grid_x1_y4_13);
+			sharedNgPanel.add(sharedNgMediumRadioButton, grid_x2_y4_14);
+			sharedNgPanel.add(sharedNgLowRadioButton, grid_x3_y4_15);
+			sharedNgPanel.add(sharedNgNoneRadioButton, grid_x4_y4_16);
+		//	GridBagConstraints grid_x1_y4_11 = new GridBagConstraints();
+		//	grid_x1_y4_11.gridx = 1;
+		//	grid_x1_y4_11.gridy = 4;
+		//	grid_x1_y4_11.weightx = 1.0;
+		//	grid_x1_y4_11.fill = GridBagConstraints.HORIZONTAL;
+		//	grid_x1_y4_11.insets = INSETS_0_5_0_5;
+		//	replaceCommandField = new JTextField();
+		//	replaceCommandField.setForeground(Color.blue);
+		//	GridBagConstraints grid_x0_y4_10 = new GridBagConstraints();
+		//	grid_x0_y4_10.gridx = 0;
+		//	grid_x0_y4_10.gridy = 4;
+		//	grid_x0_y4_10.anchor = GridBagConstraints.WEST;
+		//	grid_x0_y4_10.insets = INSETS_0_5_0_0;
+		//	replaceCommandLabel = new JLabel(" ");
+		//	replaceCommandLabel.setForeground(Color.blue);
 			GridBagConstraints grid_x1_y3_9 = new GridBagConstraints();
 			grid_x1_y3_9.gridx = 1;
 			grid_x1_y3_9.gridy = 3;
-			grid_x1_y3_9.weightx = 0.5;
+			grid_x1_y3_9.weightx = 1.0;
 			grid_x1_y3_9.fill = GridBagConstraints.HORIZONTAL;
 			grid_x1_y3_9.insets = INSETS_0_5_0_5;
 			ngCommandField = new JTextField();
@@ -2151,32 +2195,30 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y3_8.gridx = 0;
 			grid_x0_y3_8.gridy = 3;
 			grid_x0_y3_8.anchor = GridBagConstraints.WEST;
-			grid_x0_y3_8.insets = INSETS_0_0_0_0;
-			ngCommandCheckBox = new JCheckBox("NGコマンド");
-			ngCommandCheckBox.setSelected(false);
-			ngCommandCheckBox.setForeground(Color.blue);
-			GridBagConstraints grid_x1_y2_7 = new GridBagConstraints();
-			grid_x1_y2_7.gridx = 1;
-			grid_x1_y2_7.gridy = 2;
-			grid_x1_y2_7.weightx = 1.0;
-			grid_x1_y2_7.fill = GridBagConstraints.HORIZONTAL;
-			grid_x1_y2_7.insets = INSETS_0_5_0_5;
-			scoreTextField.setText("-99999999");
-			scoreTextField.setForeground(Color.blue);
-			GridBagConstraints grid_x0_y2_6 = new GridBagConstraints();
-			grid_x0_y2_6.gridx = 0;
-			grid_x0_y2_6.gridy = 2;
-			grid_x0_y2_6.anchor = GridBagConstraints.WEST;
-			grid_x0_y2_6.insets = INSETS_0_5_0_0;
-			scoreCheckBox.setText("score");
-			scoreCheckBox.setForeground(Color.blue);
+			grid_x0_y3_8.insets = INSETS_0_5_0_0;
+			ngCommandLabel = new JLabel("NGコマンド");
+			ngCommandLabel.setForeground(Color.blue);
+		//	GridBagConstraints grid_x1_y2_7 = new GridBagConstraints();
+		//	grid_x1_y2_7.gridx = 1;
+		//	grid_x1_y2_7.gridy = 2;
+		//	grid_x1_y2_7.weightx = 1.0;
+		//	grid_x1_y2_7.fill = GridBagConstraints.HORIZONTAL;
+		//	grid_x1_y2_7.insets = INSETS_0_5_0_5;
+		//	scoreTextField.setText("" + SharedNgGroup.MINSCORE);
+		//	scoreTextField.setForeground(Color.blue);
+		//	GridBagConstraints grid_x0_y2_6 = new GridBagConstraints();
+		//	grid_x0_y2_6.gridx = 0;
+		//	grid_x0_y2_6.gridy = 2;
+		//	grid_x0_y2_6.anchor = GridBagConstraints.WEST;
+		//	grid_x0_y2_6.insets = INSETS_0_5_0_0;
+		//	scoreCheckBox.setText("score");
+		//	scoreCheckBox.setForeground(Color.blue);
 			GridBagConstraints grid_x1_y1_5 = new GridBagConstraints();
 			grid_x1_y1_5.fill = GridBagConstraints.HORIZONTAL;
 			grid_x1_y1_5.gridy = 1;
 			grid_x1_y1_5.weightx = 1.0;
 			grid_x1_y1_5.insets = INSETS_0_5_0_5;
 			grid_x1_y1_5.gridx = 1;
-			grid_x1_y1_5.gridwidth = 3;
 			GridBagConstraints grid_x0_y1_4 = new GridBagConstraints();
 			grid_x0_y1_4.gridx = 0;
 			grid_x0_y1_4.anchor = GridBagConstraints.WEST;
@@ -2190,29 +2232,32 @@ s	 * @return javax.swing.JPanel
 			grid_x1_y0_3.weightx = 1.0;
 			grid_x1_y0_3.insets = INSETS_0_5_0_5;
 			grid_x1_y0_3.gridx = 1;
-			grid_x1_y0_3.gridwidth = 3;
 			GridBagConstraints grid_x0_y0_2 = new GridBagConstraints();
 			grid_x0_y0_2.gridx = 0;
 			grid_x0_y0_2.insets = INSETS_0_5_0_0;
 			grid_x0_y0_2.gridy = 0;
 			grid_x0_y0_2.anchor = GridBagConstraints.WEST;
-			NGWordLavel = new JLabel();
-			NGWordLavel.setText("NGワード");
+			NGWordLabel = new JLabel();
+			NGWordLabel.setText("NGワード");
 			NGWordSettingPanel = new JPanel();
 			NGWordSettingPanel.setLayout(new GridBagLayout());
 			NGWordSettingPanel.setBorder(BorderFactory.createTitledBorder(
 					BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 					"NGワード・ID設定"));
-			NGWordSettingPanel.add(NGWordLavel, grid_x0_y0_2);
+			NGWordSettingPanel.add(NGWordLabel, grid_x0_y0_2);
 			NGWordSettingPanel.add(getNGWordTextField(), grid_x1_y0_3);
 			NGWordSettingPanel.add(NGIDLabel, grid_x0_y1_4);
 			NGWordSettingPanel.add(getNGIDTextField(), grid_x1_y1_5);
-			//NGWordSettingPanel.add(scoreCheckBox, grid_x0_y2_6);
-			//NGWordSettingPanel.add(scoreTextField, grid_x1_y2_7);
-			NGWordSettingPanel.add(ngCommandCheckBox, grid_x0_y3_8);
+			NGWordSettingPanel.add(ngCommandLabel, grid_x0_y3_8);
 			NGWordSettingPanel.add(ngCommandField, grid_x1_y3_9);
-			NGWordSettingPanel.add(replaceCommandLabel, grid_x2_y3_10);
-			NGWordSettingPanel.add(replaceCommandField, grid_x3_y3_11);
+		//	NGWordSettingPanel.add(replaceCommandLabel, grid_x0_y4_10);
+		//	NGWordSettingPanel.add(replaceCommandField, grid_x1_y4_11);
+			NGWordSettingPanel.add(sharedNgPanel, grid_x0_y5_17);
+			sharedNgScore.add(sharedNgHighRadioButton,SharedNgScore.HIGH);
+			sharedNgScore.add(sharedNgMediumRadioButton,SharedNgScore.MEDIUM);
+			sharedNgScore.add(sharedNgLowRadioButton,SharedNgScore.LOW);
+			sharedNgScore.add(sharedNgNoneRadioButton,SharedNgScore.NONE);
+			sharedNgNoneRadioButton.setSelected(true);
 		}
 		return NGWordSettingPanel;
 	}
@@ -2975,12 +3020,12 @@ class MainFrame_LoadNGConfig implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		JLabel status = mainFrame.statusBar;
 		JLabel watch = mainFrame.elapsedTimeBar;
-		status.setText("NG設定のロード");
+		status.setText("ニコニコ動画のNG設定保存");
 		Loader loader = new Loader(mainFrame.getSetting(), status, watch);
 		Path file = new Path("configNG.xml");
 		String url = "http://ext.nicovideo.jp/api/configurengclient?mode=get";
 		if (loader.load(url, file)){
-			status.setText("NG設定をロードしました：" + file.getRelativePath());
+			status.setText("ニコニコ動画のNG設定を保存しました：" + file.getRelativePath());
 		}
 	}
 }

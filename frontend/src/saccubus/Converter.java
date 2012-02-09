@@ -595,13 +595,10 @@ public class Converter extends Thread {
 	private boolean makeNGPattern() {
 		sendtext("NGパターン作成中");
 		try{
-			ngWordPat = NicoXMLReader.makePattern(Setting.getNG_Word());
+			String all_regex = "/((docomo |iPhone )?.* 18[46])|(18[46]( docomo | iPhone)? .*( docomo | iPhone)?)/";
+			ngWordPat = NicoXMLReader.makePattern(Setting.getNG_Word().replaceFirst("all", all_regex));
 			ngIDPat = NicoXMLReader.makePattern(Setting.getNG_ID());
-			if (Setting.isEnableNgCommand()){
-				ngCmd = new CommandReplace(Setting.getNGCommand(), Setting.getReplaceCommand());
-			} else {
-				ngCmd = new CommandReplace(null, null);
-			}
+			ngCmd = new CommandReplace(Setting.getNGCommand(), Setting.getReplaceCommand());
 		}catch (Exception e) {
 			sendtext("NGパターン作成に失敗。おそらく正規表現の間違い？");
 			return false;
@@ -822,7 +819,7 @@ public class Converter extends Thread {
 	private boolean convertToCommentMiddle(File commentfile, File middlefile) {
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile,
-				ngIDPat, ngWordPat, ngCmd)){
+				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit())){
 			return false;
 		}
 		//コメント数が0の時削除する

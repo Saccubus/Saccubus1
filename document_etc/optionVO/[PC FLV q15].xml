@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	(H.263+COPY).FLV  FLV1
+-->
+<properties>
+	<entry key="EXT">15.flv</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-vcodec flv -qscale 15 -pass 1 -acodec libmp3lame -ar 44100
+	<!-- -s 512x384  -->
+	<!-- -s 640x360  -->
+	</entry>
+</properties>

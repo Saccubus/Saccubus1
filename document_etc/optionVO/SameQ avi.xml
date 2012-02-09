@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--ローカルファイルを変換するには
+	[out]Videoフォルダに「[sm0]***.flv」を、
+	[out]commentフォルダに「[sm0]***.xml」ファイルを置いて
+	動画IDをsm0にして、動画・コメントをダウンロードしないで変換する
+	■orz　-aspect指定なしで共用可能　拡張子→avi
+-->
+<properties>
+	<entry key="EXT">avi</entry>
+	<entry key="MAIN" />
+	<entry key="IN" />
+	<entry key="OUT">-sameq</entry>
+</properties>
