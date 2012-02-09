@@ -220,6 +220,7 @@
 　　拡張Vhook統合版 (nicovideoE.dll)について
 　　拡張Vhookワイド（nicovideo16x9.dll）について
 　　過去ログを複数ファイルに保存する
+　　投稿者コメント
 　動作が変なときは
 　auto.batで動作が変な時は
 　設定を初期化するには
