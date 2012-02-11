@@ -62,6 +62,13 @@ readmeNew.txt
 　　saccubus.xmlがない時とメニューから初期化を実行した時に
 　　saccubus.iniを読み込んでffmpeg55686用にoptionフォルダと
 　　ffmpegを設定します。使用しない場合は削除して下さい。
+　　●ffmpeg55686の SVN-r21400との主な違い
+　　・AACエンコーダとして、■libfaac が使えません■。
+　　　代わりに -acodec libvo_aacenc を使って下さい。
+　　・VP8(WebM)用のデコーダ・エンコーダが使えます。
+　　・その他デコーダが増えています。
+　　・jpg拡張子に対するバグがなくなっています。
+
 　◆拡張機能（概要）
 　・NGコマンドでコメントのコマンドを無効に出来ます。
 　・NG共有レベルを設定できます。
@@ -93,12 +100,8 @@ readmeNew.txt
 　◆初めてさきゅばすを使う方
 　　及び1.22r2以前のさきゅばすを使用中の方
 　②ffmpeg55686同梱版をお使い下さい。
-　・ブラウザ情報共有設定で「上記以外のブラウザの…」にチェックする
-　　場合は、Cookiesファイルの場所、複数候補の場合はその親フォルダを
-　　指定して下さい。
-　・投稿者コメントを付加して動画にしたい場合は
-　　「保存設定」「コメント付き動画」「投稿者コメントを付加する」に
-　　チェックします。スクリプトは再現されません。
+　・「さきゅばすファイル一式」内のファイルをフォルダに展開して下さい。
+　　(ドライブ直下の\saccubusを推奨)
 
 　①ffmpeg55686無し版のための参考情報
 　初めての方にはお勧めしませんが、念のために残しておきます。
@@ -121,6 +124,9 @@ readmeNew.txt
 　　過去ログをダウンロードするには（プレミアム会員が必要条件）日付を
 　　2009/7/7 7:7:7 や 2009/7/7 7:7 や 2009/7/7 のように入力します。
 　　右上の変換ボタンをクリックするとダウンロードと変換が開始します。
+
+□基本機能設定
+　readme.txtを参照して下さい。
 
 □拡張機能（変更点）説明
 ●NGコマンド
@@ -406,6 +412,14 @@ readmeNew.txt
 　　<DL動画>ボタンをクリックして動画をチェックしておくと
 　　FFmpegの設定ミスが減らせるかも？
 
+●投稿者コメント（投コメ）
+　投稿者コメントを付加して動画にしたい場合は
+　　保存設定→コメント付き動画→投稿者コメントを付加する
+　にチェックします。スクリプトは再現されません。
+　ダウンロードは設定なしで行われます。
+　→動画タイトル[Owner].xml
+
+
 ■動作が変なときは
 　・通常の Saccubus.exe の起動では、
 　　[log]frontend.txtにログが出力されていますので参照して下さい。
@@ -506,6 +520,9 @@ readmeNew.txt
 ・ソースコード
 　http://sourceforge.jp/projects/saccubus/svn/view/trunk
 　SVN：svn checkout http://svn.sourceforge.jp/svnroot/saccubus/trunk
+・改造済みFFmpegレポジトリ
+　http://git.sourceforge.jp/view?p=saccubus/FFmpeg.git
+　git clone git://git.sourceforge.jp/gitroot/saccubus/FFmpeg.git
 
 ・ダウンロード
 　公式最新(Vista・Win7では追加ファイルが必要。公式ユーザーページ参照)
@@ -549,6 +566,14 @@ readmeNew.txt
 　　http://sourceforge.jp/projects/coroid/
 　ニコニコランキングメーカー(nicorank)配布サイト
 　　http://www.daily-vocaran.info/nicorank/
+　お気に入りの動画を携帯で見よう。 byあべちんさん
+　　http://blog.k-tai-douga.com/
+　FFmpeg公式レポジトリ
+　　git://git.videolan.org/ffmpeg.git　masterブランチ
+　　ffmpeg55686使用公式バージョン
+　　　commit 47044625ba0829d10e48f8c205e2c976181de01a
+　　　Date:   Sun Nov 27 06:17:03 2011 +0100
+　　　（N-35236-g4704462　Release 0.8.7.git）
 
 
 変更履歴・修正・改変点

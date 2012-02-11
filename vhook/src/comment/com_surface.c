@@ -140,8 +140,9 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 
 		if(data->fontsize_fix || data->enableCA){
 			zoomx *= autoscale;
-			if(data->fontsize_fix)
+			if(data->fontsize_fix){
 				zoomx *= 0.5;
+			}
 			//zoomx = (0.5 * (double)video_width) / (double)data->nico_width_now;
 			//zoomx = (0.5f * (double)video_width) / (double)NICO_WIDTH;
 			//zoomy = (0.5f * (double)video_height) / (double)NICO_HEIGHT;
@@ -240,6 +241,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		// nicolimit_width *= 2.0;
 		zoom_w *= 0.5;
 		/* zoom *= 0.5 */
+		auto_scaled = TRUE;
 	}
 	//nico_width += 32;	// 512->544, 640->672
 
@@ -260,14 +262,14 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			/* zoomx *= linefeedResizeScale(size,nb_line,data->fontsize_fix); */
 		}
 	}
-/*	コメント高さ補正
+///*	コメント高さ補正
 	if(!linefeed_resized){
 		int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
 		ret = adjustComment(ret,data,h);
 		fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
 			item->no,ret->w,ret->h,(data->fontsize_fix?" 200%":""));
 	}
-*/
+//*/
 	if(location != CMD_LOC_DEF){
 		// ue shitaコマンドのみリサイズあり
 
@@ -421,11 +423,7 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 						ret->w,ret->h,COM_FONTSIZE_NAME[size],index-str);
 				}
 			}
-//			if(newfont==UNDEFINED_FONT||newfont==NULL_FONT){
-//				fonttype = basefont;
-//			}else{
-				fonttype = newfont;	//GOTHIC, SMSUN. GULIM, ARIAL, GEORGIA
-//			}
+			fonttype = newfont;	//GOTHIC, SMSUN. GULIM, ARIAL, GEORGIA
 			last = index;
 			if(isAscii(last)){
 				secondBase = getFirstFont(last,basefont,data);	//第二基準フォント
@@ -439,7 +437,7 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 		index++;
 	}
 	ret = arrangeSurface(ret,drawText3(data,size,SdlColor,fonttype,last,index));
-	if(!ret){
+	if(ret==NULL){
 		fprintf(log,"[comsurface/drawText2]drawtext3 NULL last. make NullSurface.\n");
 		return drawNullSurface(0,data->font_pixel_size[size]);
 	}
@@ -451,7 +449,8 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 }
 
 SDL_Surface* drawNullSurface(int w,int h){
-	return SDL_CreateRGBSurface( SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+	//not make nor use alpha
+	return SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_HWACCEL,
 	                             w,h,32,
 	                        #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	                             0xff000000,
@@ -474,7 +473,10 @@ SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right){
 	if(right==NULL){
 		return left;
 	}
-	SDL_Surface* ret = SDL_CreateRGBSurface(SDL_SRCALPHA,
+	//not make nor use alpha
+	SDL_Surface* ret = drawNullSurface(left->w+right->w, MAX(left->h,right->h));
+/*
+	SDL_Surface* ret = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_HWACCEL,
                                             left->w+right->w,
                                             MAX(left->h,right->h),
                                             32,
@@ -490,9 +492,10 @@ SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right){
                                             0xff000000
                                         #endif
                                         );
-	SDL_SetAlpha(left,SDL_SRCALPHA | SDL_RLEACCEL,0xff);
-	SDL_SetAlpha(right,SDL_SRCALPHA | SDL_RLEACCEL,0xff);
-	SDL_Rect rect = {left->w,0,ret->w,ret->h};
+*/
+	SDL_SetAlpha(left,SDL_RLEACCEL,0xff);	//not use alpha
+	SDL_SetAlpha(right,SDL_RLEACCEL,0xff);	//not use alpha
+	SDL_Rect rect = {left->w,0,0,0};		//use only x y
 	SDL_BlitSurface(left,NULL,ret,NULL);
 	SDL_BlitSurface(right,NULL,ret,&rect);
 	SDL_FreeSurface(left);
@@ -518,7 +521,7 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,int fontsel,Uint16
 	int l2 = 0;
 	for(;from<to;from++){
 		if(!isZeroWidth(from)){
-			text[l2++] = replaceSpace(*from);
+			text[l2++] = *from;
 		}
 	}
 	text[l2]='\0';
@@ -546,16 +549,16 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 	if(debug)
 		fprintf(log,"[comsurface/drawText4]TTF_RenderUNICODE surf(%d, %d) %s %d chars\n",
 			surf->w,surf->h,COM_FONTSIZE_NAME[size],uint16len(str));
-	SDL_SetAlpha(surf,SDL_SRCALPHA | SDL_RLEACCEL,0xff);
+	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
 	SDL_Surface* ret = drawNullSurface(surf->w,data->font_pixel_size[size]);
 	if(!ret){
 		fprintf(log,"***ERROR*** [comsurface/drawText4]drawNullSurface : %s\n",SDL_GetError());
 		fflush(log);
 		return NULL;
 	}
-	SDL_Rect rect = {0,0,ret->w,ret->h};
+	SDL_Rect srcrect = {0,0,ret->w,ret->h};
 	//rect.y = 0;	// = (ret->h - surf->h)>>1
-	SDL_BlitSurface(surf,NULL,ret,&rect);
+	SDL_BlitSurface(surf,&srcrect,ret,NULL);
 	SDL_FreeSurface(surf);
 	return ret;
 }

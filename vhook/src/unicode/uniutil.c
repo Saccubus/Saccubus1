@@ -236,6 +236,7 @@ int getFirstFont(Uint16* u,int basefont,DATA* data){
 	return basefont;
 }
 
+/*
 Uint16 replaceSpace(Uint16 u){
 	if(u == 0x02cb){
 		return 0x02cb;
@@ -243,6 +244,7 @@ Uint16 replaceSpace(Uint16 u){
 		return u;
 	}
 }
+*/
 
 void removeZeroWidth(Uint16* str,int len){
 	int i;

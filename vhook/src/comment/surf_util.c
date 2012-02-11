@@ -1,9 +1,13 @@
 #include <SDL/SDL.h>
+#include "com_surface.h"
 #include "surf_util.h"
 #include "../mydef.h"
 
 SDL_Surface* connectSurface(SDL_Surface* top,SDL_Surface* bottom){
-	SDL_Surface* ret = SDL_CreateRGBSurface( SDL_SRCALPHA,
+	//not make nor use alpha channel
+	SDL_Surface* ret = drawNullSurface(MAX(top->w,bottom->w), top->h+bottom->h);
+/*
+	SDL_Surface* ret = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_HWACCEL,
 											MAX(top->w,bottom->w),
 											top->h+bottom->h,
 											32,
@@ -19,12 +23,13 @@ SDL_Surface* connectSurface(SDL_Surface* top,SDL_Surface* bottom){
 												0xff000000
 											#endif
 											);
-	SDL_SetAlpha(top,SDL_SRCALPHA | SDL_RLEACCEL,0xff);
-	SDL_SetAlpha(bottom,SDL_SRCALPHA | SDL_RLEACCEL,0xff);
+*/
+	SDL_SetAlpha(top,SDL_RLEACCEL,0xff);	//not use alpha
+	SDL_SetAlpha(bottom,SDL_RLEACCEL,0xff);	//not use alpha
 
 	SDL_BlitSurface(top,NULL,ret,NULL);
 
-	SDL_Rect rect2 = {0,top->h};
+	SDL_Rect rect2 = {0,top->h,0,0};	//use only x y
 	SDL_BlitSurface(bottom,NULL,ret,&rect2);
 	SDL_FreeSurface(top);
 	SDL_FreeSurface(bottom);

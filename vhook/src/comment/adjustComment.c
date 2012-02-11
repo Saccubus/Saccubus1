@@ -42,16 +42,18 @@ double linefeedResizeScale(int size,int nb_line,int fontFixed){
 }
 
 SDL_Surface* adjustComment(SDL_Surface* surf,DATA* data,int height){
-	SDL_SetAlpha(surf,SDL_SRCALPHA | SDL_RLEACCEL,0xff);
-	SDL_Surface* ret = drawNullSurface(surf->w,height);
+	//not make nor use alpha
+	int width = surf->w;
+	SDL_Surface* ret = drawNullSurface(width, height);
 	if(ret==NULL){
 		FILE* log = data->log;
 		fprintf(log,"***ERROR*** [comsurface/adjust]drawNullSurface : %s\n",SDL_GetError());
 		fflush(log);
 		return surf;
 	}
-	SDL_Rect rect = {0,0,ret->w,height};
-	SDL_BlitSurface(surf,NULL,ret,&rect);
+	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+	SDL_Rect rect = {0,0,width,height};
+	SDL_BlitSurface(surf,&rect,ret,NULL);
 	SDL_FreeSurface(surf);
 	return ret;
 }
