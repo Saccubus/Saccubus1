@@ -598,7 +598,7 @@ public class MainFrame extends JFrame {
 		jMenuOpen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JTextField propFileField = new JTextField();
+				JTextField propFileField = new JTextField("");
 				showSaveDialog("設定ファイルのパス", propFileField, false, false);
 				setSetting(ConvertingSetting.loadSetting(null, null, propFileField.getText()));
 			}
@@ -614,7 +614,7 @@ public class MainFrame extends JFrame {
 		jMenuSaveAs.setText("名前を付けて保存 (saveAs)...");
 		jMenuSaveAs.setForeground(Color.blue);
 		jMenuSaveAs.addActionListener(new ActionListener() {
-			JTextField propFileField = new JTextField("./saccubus.xml");
+			JTextField propFileField = new JTextField(ConvertingSetting.PROP_FILE);
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				showSaveDialog("設定ファイルのパス", propFileField,	true, false);
@@ -1582,17 +1582,6 @@ public class MainFrame extends JFrame {
 			ownercomment = comment.substring(0, index);
 		}
 		ownercomment += saccubus.Converter.OWNER_EXT;
-/*
-		int score;
-		try{
-			score = Integer.parseInt(scoreTextField.getText());
-			if(score >= 0){
-				score = Integer.MIN_VALUE;
-			}
-		}catch(NumberFormatException e){
-			score = Integer.MIN_VALUE;
-		}
-*/
 		return new ConvertingSetting(
 			MailAddrField.getText(),
 			new String(PasswordField.getPassword()),
@@ -1678,12 +1667,14 @@ public class MainFrame extends JFrame {
 		);
 	}
 
-	private boolean getDebugMode() {
+	private String getDebugMode() {
+
 		String proxy = ProxyTextField.getText();
 		if (proxy != null && proxy.startsWith(NicoClient.DEBUG_PROXY)){
-			return true;
+			proxy = proxy.substring(0, proxy.indexOf('/', NicoClient.DEBUG_PROXY.length()) + 1);
+			return proxy.replace(NicoClient.DEBUG_PROXY, "");
 		}
-		return false;
+		return null;
 	}
 
 	private void setSetting(ConvertingSetting setting) {

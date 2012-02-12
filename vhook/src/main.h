@@ -50,6 +50,7 @@ struct DATA{
 	int enableCA;
 	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
 	int debug;
+	const char* debug_mode;
 	double width_scale;	//書き込み可　videowidth/nicowidth_now
 	// CA用フォント
 	TTF_Font* CAfont[CA_FONT_MAX][CMD_FONT_MAX];
@@ -115,6 +116,7 @@ typedef struct SETTING{
 	int enableCA;
 	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
 	int debug;
+	const char* debug_mode;	// debugモード文字列
 }SETTING;
 
 int init(FILE* log);

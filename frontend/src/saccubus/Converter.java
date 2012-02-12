@@ -1252,8 +1252,8 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--comment-speed:"
 					+ URLEncoder.encode(comment_speed, encoding));
 			}
-			if(Setting.isDebugNicovideo()){
-				ffmpeg.addCmd("|--debug-print");
+			if(Setting.getDebugNicovideo() != null){
+				ffmpeg.addCmd("|--debug-print:" + Setting.getDebugNicovideo());
 			}
 			if(Setting.isEnableCA()){
 				ffmpeg.addCmd("|--enable-CA");
@@ -1298,16 +1298,6 @@ public class Converter extends Thread {
 					ffmpeg.addCmd(URLEncoder.encode(
 						Path.toUnixPath(arialUnicodeFont.getPath()), encoding));
 				}
-			/*
-			  	ffmpeg.addCmd("|--change-simsun-unicode:");
-				ffmpeg.addCmd(URLEncoder.encode(CHANGE_SIMSUN_UNICODE, encoding));
-				ffmpeg.addCmd("|--change-gulim-unicode:");
-				ffmpeg.addCmd(URLEncoder.encode(CHANGE_GULIM_UNICODE, encoding));
-				ffmpeg.addCmd("|--protect-gothic-unicode:");
-				ffmpeg.addCmd(URLEncoder.encode(PROTECT_GOTHIC_UNICODE, encoding));
-				ffmpeg.addCmd("|--zero-width-unicode:");
-				ffmpeg.addCmd(URLEncoder.encode(ZERO_WIDTH_UNICODE, encoding));
-			*/
 				if(Setting.isUseLineSkip()){
 					ffmpeg.addCmd("|--use-lineskip-as-fontsize");
 				}

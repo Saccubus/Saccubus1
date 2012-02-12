@@ -177,3 +177,6 @@ void getRGBA(SDL_Surface* surf,int x,int y,char* r,char* g,char* b,char* a){
 	SDL_GetRGBA(*(Uint32*)(&pix[pix_index]),surf->format,(Uint8*)r,(Uint8*)g,(Uint8*)b,(Uint8*)a);
 }
 
+int cmpSDLColor(SDL_Color col1, SDL_Color col2){
+	return (col1.r == col2.r && col1.g == col2.g && col1.b == col2.b);
+}

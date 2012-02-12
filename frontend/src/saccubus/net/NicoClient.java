@@ -48,7 +48,7 @@ public class NicoClient {
 	private final NicoMap nicomap;
 	private Stopwatch Stopwatch;
 
-	public static final String DEBUG_PROXY = "debug/";
+	public static final String DEBUG_PROXY = "debug";	// debug paramerter end with '/'
 
 	/**
 	 * ブラウザ共有しないでログイン
@@ -73,7 +73,7 @@ public class NicoClient {
 		if (proxy != null && proxy.startsWith(DEBUG_PROXY)){
 			System.out.println("Print debug information.");
 			Debug = true;
-			proxy = proxy.substring(DEBUG_PROXY.length());
+			proxy = proxy.substring(proxy.indexOf('/', DEBUG_PROXY.length())+1);
 		}
 		if (proxy != null && !proxy.isEmpty() &&
 				proxy_port >= 0 && proxy_port <= 65535) {

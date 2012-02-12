@@ -11,13 +11,13 @@
 #include "shadow.h"
 #include "../unicode/uniutil.h"
 #include "adjustComment.h"
-
+#include "render_unicode.h"
 
 SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right);
 //SDL_Surface* drawText(DATA* data,int size,int color,Uint16* str);
 SDL_Surface* drawText2(DATA* data,int size,SDL_Color color,Uint16* str);
 SDL_Surface* drawText3(DATA* data,int size,SDL_Color color,int fontsel,Uint16* from,Uint16* to);
-SDL_Surface* drawText4(DATA* data,int size,SDL_Color color,TTF_Font* font,Uint16* str);
+SDL_Surface* drawText4(DATA* data,int size,SDL_Color color,TTF_Font* font,Uint16* str,int fontsel);
 int cmpSDLColor(SDL_Color col1, SDL_Color col2);
 int isDoubleResize(double width, double limit_width, int size, int line, FILE* log);
 
@@ -169,6 +169,15 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 				linefeed_resized =TRUE;
 			}
 		}
+		//	コメント高さ補正
+		if(!linefeed_resized){
+			int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
+			if(h!=ret->h){
+				ret = adjustComment(ret,data,h);
+				fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
+					item->no,ret->w,ret->h,(data->fontsize_fix?" 200%":""));
+			}
+		}
 		if(location != CMD_LOC_DEF){
 			/* ue shitaコマンドのみリサイズあり */
 			/*
@@ -221,6 +230,15 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		fputs("\n",log);
 		fflush(log);
 
+		/*
+		 * 枠をつける？
+		 */
+		if(debug){
+			SDL_Surface* tmp = ret;
+			ret = drawFrame(data,item,tmp,RENDER_COLOR_BG,1);
+			SDL_FreeSurface(tmp);
+		}
+
 		return ret;
 
 	 }
@@ -262,14 +280,15 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			/* zoomx *= linefeedResizeScale(size,nb_line,data->fontsize_fix); */
 		}
 	}
-///*	コメント高さ補正
+	//	コメント高さ補正
 	if(!linefeed_resized){
 		int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
-		ret = adjustComment(ret,data,h);
-		fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
-			item->no,ret->w,ret->h,(data->fontsize_fix?" 200%":""));
+		if(h!=ret->h){
+			ret = adjustComment(ret,data,h);
+			fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
+				item->no,ret->w,ret->h,(data->fontsize_fix?" 200%":""));
+		}
 	}
-//*/
 	if(location != CMD_LOC_DEF){
 		// ue shitaコマンドのみリサイズあり
 
@@ -335,6 +354,15 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	fputs("\n",log);
 	fflush(log);
 
+	/*
+	 * 枠をつける？
+	 */
+	if(debug){
+		SDL_Surface* tmp = ret;
+		ret = drawFrame(data,item,tmp,RENDER_COLOR_BG,1);
+		SDL_FreeSurface(tmp);
+	}
+
 	return ret;
 }
 
@@ -396,7 +424,7 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 	FILE* log = data->log;
 	int debug = data->debug;
 	if(!data->enableCA){
-		return drawText4(data,size,SdlColor,data->font[size],str);
+		return drawText4(data,size,SdlColor,data->font[size],str,-1);
 	}
 	SDL_Surface* ret = NULL;
 	Uint16* index = str;
@@ -532,16 +560,19 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,int fontsel,Uint16
 		free(text);
 		return drawNullSurface(0,data->font_pixel_size[size]);
 	}
-	SDL_Surface* ret = drawText4(data,size,SdlColor,data->CAfont[fontsel][size],text);
+	SDL_Surface* ret = drawText4(data,size,SdlColor,data->CAfont[fontsel][size],text,fontsel);
 	free(text);
 	return ret;
 }
 
-SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str){
+SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel){
 	FILE* log = data->log;
 	int debug = data->debug;
-	SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
-	if(!surf){
+	//SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
+	//SDL_Color bgc = COMMENT_COLOR[CMD_COLOR_YELLOW];
+	SDL_Surface* surf = render_unicode(data,font,str,SdlColor,fontsel);
+
+	if(surf==NULL){
 		fprintf(log,"***ERROR*** [comsurface/drawText4]TTF_RenderUNICODE : %s\n",TTF_GetError());
 		fflush(log);
 		return NULL;
@@ -551,7 +582,7 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 			surf->w,surf->h,COM_FONTSIZE_NAME[size],uint16len(str));
 	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
 	SDL_Surface* ret = drawNullSurface(surf->w,data->font_pixel_size[size]);
-	if(!ret){
+	if(ret==NULL){
 		fprintf(log,"***ERROR*** [comsurface/drawText4]drawNullSurface : %s\n",SDL_GetError());
 		fflush(log);
 		return NULL;
@@ -561,10 +592,6 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 	SDL_BlitSurface(surf,&srcrect,ret,NULL);
 	SDL_FreeSurface(surf);
 	return ret;
-}
-
-int cmpSDLColor(SDL_Color col1, SDL_Color col2){
-	return (col1.r == col2.r && col1.g == col2.g && col1.b == col2.b);
 }
 
 int isDoubleResize(double width, double limit_width, int size, int line, FILE* log){

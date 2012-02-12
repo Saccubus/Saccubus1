@@ -8,18 +8,21 @@ SDL_Surface* noShadow(SDL_Surface* surf,int is_black,int is_fix_size){
 }
 /*右下*/
 #define SHADOW_SIZE 3
+#define SHADOW2_SIZE 2
 
 SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,int is_fix_size){
 	/*スライド幅の確定*/
 	int slide = SHADOW_SIZE;
+	int slide2 = SHADOW2_SIZE;
 	if(is_fix_size){
 		slide <<= 1;
+		slide2 <<= 1;
 	}
 	int w = surf->w;
 	int h = surf->h;
 	SDL_Surface* shadow = SDL_CreateRGBSurface(		SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
-												w+(slide<<1),
-												h+(slide<<1),
+												w+(slide+slide2),
+												h+(slide+slide2),
 												32,
 												#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 												    0xff000000,
@@ -34,8 +37,8 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,int is_fix_size){
 												#endif
 											);
 	SDL_Surface* shadow2 = SDL_CreateRGBSurface(	SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
-												w+(slide<<1),
-												h+(slide<<1),
+												w+(slide+slide2),
+												h+(slide+slide2),
 												32,
 												#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 												    0xff000000,

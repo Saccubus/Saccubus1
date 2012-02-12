@@ -112,7 +112,7 @@ public class ConvertingSetting {
 	private int commentIndex;
 	private boolean setCommentSpeed;
 	private String commentSpeed;
-	private boolean debugNicovideo;
+	private String debugNicovideo;
 	private boolean enableCA;	//âºê›íË
 	private int scoreLimit;
 	private boolean disableEco;
@@ -299,7 +299,7 @@ public class ConvertingSetting {
 			int comment_index,
 			boolean set_comment_speed,
 			String comment_speed,
-			boolean debug_nicovideo,
+			String debug_nicovideo,
 			boolean enable_CA,
 			int score_limit,
 			boolean disable_eco,
@@ -624,7 +624,7 @@ public class ConvertingSetting {
 	public String getCommentSpeed(){
 		return commentSpeed;
 	}
-	public boolean isDebugNicovideo(){
+	public String getDebugNicovideo(){
 		return debugNicovideo;
 	}
 	public boolean isEnableCA(){
@@ -1074,7 +1074,7 @@ public class ConvertingSetting {
 			Integer.parseInt(prop.getProperty(PROP_COMMENT_MODE_INDEX, "0")),
 			Boolean.parseBoolean(prop.getProperty(PROP_SET_COMMENT_SPEED, "false")),
 			prop.getProperty(PROP_COMMENT_SPEED, ""),
-			false,
+			null,
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_CA, "false")),
 			Integer.parseInt(prop.getProperty(PROP_SCORE_LIMIT, ""+SharedNgScore.MINSCORE)),
 			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ECO, "false")),

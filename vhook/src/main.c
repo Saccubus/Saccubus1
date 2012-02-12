@@ -63,6 +63,7 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	data->use_lineskip_as_fontsize = setting->use_lineskip_as_fontsize;
 	data->debug = setting->debug;
 //	data->limit_height = NICO_HEIGHT;
+	data->debug_mode = setting->debug_mode;
 	fputs("[main/init]initializing context...\n",log);
 	//ƒtƒHƒ“ƒg
 	TTF_Font** font = data->font;
@@ -352,7 +353,7 @@ int printFontInfo(FILE* log, TTF_Font** font,int size,const char* name){
 }
 
 // extra font (experimental Windows Only)
-// expra_path="path,index,unicodeLow-unicodeHigh"
+// expra_path="path index unicodeLow-unicodeHigh"
 int extra_font(SETTING* setting, FILE* log){
 	if(!setting->extra_path){
 		return TRUE;

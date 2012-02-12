@@ -98,4 +98,7 @@ void exitExtProcess();
 #define FRAMEHOOK_OPT_EXTRA_FONT		"--extra-font:"
 #define FRAMEHOOK_OPT_EXTRA_FONT_LEN	strlen(FRAMEHOOK_OPT_EXTRA_FONT)
 
+#define FRAMEHOOK_OPT_DEBUG	"--debug-print:"
+#define FRAMEHOOK_OPT_DEBUG_LEN	strlen(FRAMEHOOK_OPT_DEBUG)
+
 #endif /*FRAMEHOOK_H_*/
