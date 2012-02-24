@@ -44,6 +44,9 @@
 								<option id="gnu.c.compiler.option.include.paths.2113363943" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${HOMEDRIVE}/mingw/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${HOMEDRIVE}/mingw/include/SDL&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${HOMEDRIVE}/MinGW/lib/gcc/mingw32/4.6.2/include-fixed&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${HOMEDRIVE}/MinGW/lib/gcc/mingw32/4.6.2/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${HOMEDRIVE}/MinGW/lib/gcc/mingw32/4.6.1/include&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1371605120" name="定義済みのシンボル (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_GNU_SOURCE=1"/>

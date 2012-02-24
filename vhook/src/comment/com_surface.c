@@ -187,9 +187,16 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			 * 文字の大きさで臨界幅は変動する←正確に合わせるのは現状では無理？
 			 * コメントの幅が動画の幅に収まるように倍率を調整
 			 * ダブルリサイズ　→　無条件にリサイズ（判定済み）
-			 * 改行リサイズ　→　無条件になし（判定済み）
+			 * 改行リサイズ　→　無条件になし（再判定→フォント幅を縮小）
 			 * 両方なし　→　今回判定
 			 */
+			double rate = nicolimit_width / (double)ret->w;
+			if(linefeed_resized && zoomx > rate){
+				fprintf(log,"[comsurface/LfAgain]comment %d previous width %.0f rate %.2f%%%s\n",
+					item->no,(double)ret->w * zoomx,rate * 100.0,(data->fontsize_fix?" 200%":""));
+				font_width_rate *= rate;
+				zoomx = rate;
+			}else
 			if(!linefeed_resized && (double)ret->w * zoomx > nicolimit_width){
 				//ダブルリサイズ時には臨界幅は２倍済
 				// 縮小
@@ -300,7 +307,13 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		 * ダブルリサイズ　→　nicolimit_widthは2倍済 で判定
 		 * 両方なし　→　今回判定
 		 */
-		if(zoom_w /* ret->w * zoomx */ > nicolimit_width){
+		if(linefeed_resized && zoom_w > nicolimit_width){
+			font_width_rate *= nicolimit_width / zoom_w;
+			fprintf(log,"[comsurface/LfAgain]comment %d previous width %.0f font_width %.2f%%%s\n",
+				item->no,zoom_w,font_width_rate * 100.0,(data->fontsize_fix?" 200%":""));
+			zoom_w = nicolimit_width;
+		}else
+		if(zoom_w > nicolimit_width){
 		// if(!linefeed_resized && zoom_w > nicolimit_width){
 			limit_width_resized = TRUE;
 			zoom_w = nicolimit_width;
@@ -315,7 +328,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	 */
 	if(data->fontsize_fix || data->enableCA){
 		if(video_width != nico_width){
-			zoom_w = ceil(zoom_w * autoscale);
+			zoom_w *= autoscale;
 			// zoomx *= autoscale
 			auto_scaled = TRUE;
 		}

@@ -1,6 +1,6 @@
 readmeNew.txt
 【ニコニコ】コメント付動画作成ツール さきゅばすスレ(前スレ)
-<http://anago.2ch.net/test/read.cgi/software/1235626069/>
+<http://hibari.2ch.net/test/read.cgi/software/1235626069/>
 の３４１氏の 1.22r3 を元に、NicoBrowser拡張1.4.4および
 いんきゅばす1.7.2（作者：雪羽氏）の一部機能を借用して改造しました。
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
