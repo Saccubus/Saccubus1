@@ -33,7 +33,7 @@ int isMatchZeroWidth(Uint16* u,Uint16* zero){
 */
 
 int isAscii(Uint16* u){
-	return (0x0000 < *u && *u < 0x0080);
+	return ((0x0000 < *u && *u < 0x0080) || *u==0x00a0);
 }
 
 /*
@@ -47,7 +47,7 @@ int isMincho(Uint16* u){
 }
 */
 
-int getDetaiType(int u){
+int getDetailType(int u){
 	return UNITABLE[u];
 }
 
@@ -66,10 +66,6 @@ int getGlyphExist(DATA* data,Uint16 u){
 }
 
 /*
-int isHANKAKU(Uint16* u){
-	return (0xff61<=*u && *u<=0xff9f);
-}
-
 int isZeroWidth(Uint16* u){
 	if(0x2029<=*u && *u<=0x202f){
 		return TRUE;
@@ -81,44 +77,8 @@ int isZeroWidth(Uint16* u){
 }
 */
 int isZeroWidth(Uint16* u){
-	return (getDetaiType(*u)==ZERO_WIDTH_CHAR);
+	return (getDetailType(*u)==ZERO_WIDTH_CHAR);
 }
-
-/*
-int getFontType(Uint16* u,Uint16** ca,int basefont){
-	if(*u == '\0'){
-		return NULL_FONT;
-	}
-	if(isMatchKanji(u,ca[SIMSUN_FONT])){
-		return SIMSUN_FONT;
-	}
-	if(isMatchKanji(u,ca[GULIM_FONT])){
-		return GULIM_FONT;
-	}
-	if(isMatchKanji(u,ca[GOTHIC_FONT])){
-		return GOTHIC_FONT;
-	}
-	if(isMatchKanji(u,ca[GEORGIA_FONT])){	//use special
-		return GEORGIA_FONT;
-	}
-	if(isMatchKanji(u,ca[DEVANAGARI])){
-		return DEVANAGARI;
-	}
-	if(isMincho(u)){
-		return SIMSUN_FONT;
-	}
-	if(isAscii(u) || isArabic(u)){
-		return ARIAL_FONT;
-	}
-	if(isHANKAKU(u)){
-		return GOTHIC_FONT;
-	}
-	if(*u==0x2001){		// one of SPACE char and GOTHIC only
-		return GOTHIC_FONT;
-	}
-	return basefont;
-}
-*/
 
 int getFontType2(Uint16* u,int basefont,DATA* data){
 	if(u==NULL || *u == '\0'){
@@ -127,7 +87,13 @@ int getFontType2(Uint16* u,int basefont,DATA* data){
 //	if(*u==0x2001){		// one of SPACE char and GOTHIC only
 //		return GOTHIC_FONT;
 //	}
-	switch(getDetaiType(*u)){
+	if(*u==0x0020||*u==0x00a0){	//Ascii space -> fix fontsize w,h
+		return ARIAL_FONT|(*u<<8);
+	}
+	if(*u==0x3000){	//‘SŠp‹ó”’->fix fontsize w,h
+		return basefont|*u;
+	}
+	switch(getDetailType(*u)){
 		case STRONG_SIMSUN_CHAR:
 		case WEAK_SIMSUN_CHAR:
 		case SIMSUN_NOT_CHANGE_CHAR:
@@ -170,40 +136,7 @@ int getFontType(Uint16* u,int basefont,DATA* data){
 		return getFontType2(u,basefont,data);
 }
 
-/*
-int getFirstFont(Uint16* u,int fonttype,Uint16** ca){
-	if(u==NULL || *u == '\0'){
-		return fonttype;
-	}
-	int foundBase = FALSE;
-	while(*u!=0){
-		if(isMatchKanji(u,ca[SIMSUN_FONT])){	//change
-			return SIMSUN_FONT;
-		}
-		if(isMatchKanji(u,ca[GULIM_FONT])){	//change
-			return GULIM_FONT;
-		}
-		if(isMatchKanji(u,ca[GOTHIC_FONT])){	//protect
-			return GOTHIC_FONT;
-		}
-		if(isMincho(u)){
-			return SIMSUN_FONT;
-		}
-		if(isHANKAKU(u)){	//protect
-			return GOTHIC_FONT;
-		}
-		if(isAscii(u)){
-			if(foundBase)
-				return fonttype;
-		}else{
-			foundBase = TRUE;
-		}
-		u++;
-	}
-	return fonttype;
-}
-*/
-int getFirstFont(Uint16* u,int basefont,DATA* data){
+int getFirstFont(Uint16* u,int basefont){
 	if(u==NULL || *u == '\0'){
 		return basefont;
 	}
@@ -213,18 +146,13 @@ int getFirstFont(Uint16* u,int basefont,DATA* data){
 			foundBase = TRUE;
 		else if(foundBase)
 			return basefont;
-		switch (getDetaiType(*u)) {
+		switch (getDetailType(*u)) {
 			case STRONG_SIMSUN_CHAR:
 				return SIMSUN_FONT;
 			case GULIM_CHAR:
 				return GULIM_FONT;
 			case GOTHIC_CHAR:
 				return GOTHIC_FONT;
-//			case ARIAL_CHAR:
-//				if(foundBase)
-//					return basefont;
-//				else
-//					break;
 			case WEAK_SIMSUN_CHAR:
 				basefont = SIMSUN_FONT;
 				break;

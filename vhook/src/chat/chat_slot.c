@@ -105,12 +105,10 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	}
 	setspeed(data->comment_speed,slot_item,video_width);
 	int running;
+	int first_comment=TRUE;
 	do{
 		running = FALSE;
-		//第2コメント以後で画面以上の高さは調べるまでもない
-		if(surf->h > limit_height){
-			break;
-		}
+		first_comment=TRUE;
 		for(i=0;i<slot_max;i++){
 			CHAT_SLOT_ITEM* other_slot = &slot->item[i];
 			if(!other_slot->used){
@@ -119,13 +117,19 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			const CHAT_ITEM* other_item = other_slot->chat_item;
 			int other_y = other_slot->y;
 			/*無視する条件*/
+			if(other_item->location != item->location){	//別ロケーション
+				continue;
+			}
+			//同一ロケーション発見→第1コメントではない
+			first_comment=FALSE;
+			//第2コメント以後で画面以上の高さは調べるまでもない
+			if(surf->h >= limit_height){
+				break;
+			}
 			if(other_y + other_slot->surf->h <= y){
 				continue;
 			}
 			if(y + surf->h <= other_y){
-				continue;
-			}
-			if(other_item->location != item->location){
 				continue;
 			}
 			int start = MAX(other_item->vstart,item->vstart);
@@ -154,8 +158,13 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 //		h1 = (int)((double)FONT_PIXEL_SIZE[item->size] * data->width_scale * 0.5);
 //	}
 	/*そもそも画面内に無ければ無意味。*/
+	if(first_comment){
+		//第1コメントは画面外でも弾幕化しない
+		fprintf(data->log,"[chat_slot/add first]comment %d %s %s y=%d\n",
+			item->no,COM_LOC_NAME[item->location],COM_FONTSIZE_NAME[item->size],y);
+	}else
 	if(y < y_min || y+surf->h > y_max){	// 範囲を超えてるので、ランダムに配置。
-		fprintf(data->log,"[chat_slot/add]comment %d %s %s y=%d -> random\n",
+		fprintf(data->log,"[chat_slot/add random]comment %d %s %s y=%d -> random\n",
 			item->no,COM_LOC_NAME[item->location],COM_FONTSIZE_NAME[item->size],y);
 		y = y_min + ((rnd() & 0xffff) * (limit_height - surf->h)) / 0xffff;
 	}
@@ -190,6 +199,6 @@ CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos){
 		if(now_vpos < item->vstart || now_vpos > item->vend){
 			return slot_item;
 		}
-d	}
+	}
 	return NULL;
 }

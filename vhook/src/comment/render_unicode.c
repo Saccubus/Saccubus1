@@ -10,12 +10,13 @@
 
 SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int fontsel){
 	//SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
-	if(!data->debug){
+	const char *mode=data->debug_mode;
+	if(!data->debug || strcmp(mode,"/")==0 || strcmp(mode,"-frame/")==0){
 		return TTF_RenderUNICODE_Blended(font,str,fg);	//default original mode
 	}
 	SDL_Color bg = {0,0,0,0};
 	int fontfg = FALSE;
-	if(strstr(data->debug_mode,"-font")!=NULL){
+	if(strstr(mode,"-font")!=NULL){
 		switch(fontsel){
 		case GOTHIC_FONT:	bg.r = 0xff; break;
 		case SIMSUN_FONT:	bg.g = 0xff; break;
@@ -23,20 +24,20 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 		case ARIAL_FONT:	bg.r = bg.g = bg.b = 0xff;	break;
 		default:			break;
 		}
-	} else {
+	} else if(strstr(mode,"-bg")){
 		bg = RENDER_COLOR_BG;
 	}
-	if(strstr(data->debug_mode,"-fontfg")!=NULL){
+	if(strstr(mode,"-fontfg")!=NULL){
 		fg = bg;
 		bg = COMMENT_COLOR[CMD_COLOR_BLACK];
 		fontfg = TRUE;
 	}
 	SDL_Surface* surf;
 	Uint32 colkey;
-	if(strstr(data->debug_mode,"-solid")!=NULL){
+	if(strstr(mode,"-solid")!=NULL){
 		surf = TTF_RenderUNICODE_Solid(font,str,fg);
 		colkey = 0;
-	}else if(strstr(data->debug_mode,"-shaded")!=NULL){
+	}else if(strstr(mode,"-shaded")!=NULL){
 		SDL_Color black = {0x00,0x00,0x00,0x00};
 		surf = TTF_RenderUNICODE_Shaded(font,str,fg,black);
 		colkey = 0;

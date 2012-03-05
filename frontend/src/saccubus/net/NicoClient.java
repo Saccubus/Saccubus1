@@ -765,6 +765,9 @@ public class NicoClient {
 			return file;
 		} catch (IOException ex) {
 			ex.printStackTrace();
+			if(ex.toString().contains("Unexpected end of file from server")){
+				setExtraError("サーバーから切断されました。タイムアウト？");
+			}
 		} catch(NumberFormatException ex){
 			ex.printStackTrace();
 		}

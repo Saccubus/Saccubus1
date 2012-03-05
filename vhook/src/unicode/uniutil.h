@@ -20,7 +20,7 @@ int isZeroWidth(Uint16* u);
 int getDetailType(int u);
 int getFontType2(Uint16* u,int fonttype,DATA* data);
 int getFontType(Uint16* u,int fonttype,DATA* data);
-int getFirstFont(Uint16* u,int fonttype,DATA* data);
+int getFirstFont(Uint16* u,int fonttype);
 Uint16 replaceSpace(Uint16 u);
 void removeZeroWidth(Uint16* str,int len);
 int convUint16(const char* unicode, Uint16** out);

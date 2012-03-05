@@ -175,10 +175,13 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 #define ESTRANGELO_EDESSA_FONT 10
 #define EXTRA_FONT 11
 #define CA_FONT_MAX	12
+#define SPACE_0020 (CA_FONT_MAX+0)
+#define SPACE_00A0 (CA_FONT_MAX+1)
+#define SPACE_3000 (CA_FONT_MAX+2)
 #define UNDEFINED_FONT	(-1)
 #define NULL_FONT	(-2)
 
-static char* const CA_FONT_NAME[CA_FONT_MAX] = {
+static char* const CA_FONT_NAME[CA_FONT_MAX+3] = {
 	"GOTHIC",
 	"SIMSUN",
 	"GULIM",
@@ -192,10 +195,14 @@ static char* const CA_FONT_NAME[CA_FONT_MAX] = {
 	"NEW MINCHO",
 	"ESTRANGELO EDESSA",
 	"EXTRA",
+	//--end of font type---//
+	"SPACE 0020",	//=CA_FONT_MAX
+	"SPACE 00A0",
+	"SPACE 3000",
 };
 
 static const int CA_FONT_SIZE_FIX[CA_FONT_MAX][CMD_FONT_MAX] = {
-//	DEF,BIG,SNALL
+//	DEF,BIG,SMALL
 	{0,-1,1},	//gothic
 	{0,-1,1},	//simsun
 	{0,-1,1},	//gulim
@@ -208,6 +215,45 @@ static const int CA_FONT_SIZE_FIX[CA_FONT_MAX][CMD_FONT_MAX] = {
 	{0,0,0},	//new mincho, smsun or new_gulim
 	{0,0,0},	//estrangelo edessa
 	{0,0,0},	//extra
+};
+
+static const int CA_FONT_HIGHT_TUNED[4][2][CMD_FONT_MAX] = {
+//	{{DEF,BIG,SMALL},{DEF,BIG,SMALL}for fontsize_fixed},
+	{{24,38,16},{47,74,31}},	//gothic glyph-advance width is {25,40,16}{50,80,33(>32)}
+								//setting SDL size is {23,37,15},{46,73,30}
+	//specially 3000 is other definition
+	{{24,38,16},{47,74,31}},	//simsun
+	{{24,38,16},{47,74,31}},	//gulim
+	{{24,41,15},{46,78,30}},	//arial glyph-advance width of'a' is {13,22,8},{26,44,16}
+								//setting SDL size is {20,36,13},{40,69,26}
+	//specially 00A0 & 0020 is other definition
+};
+
+static const int CA_FONT_WIDTH_TUNED[4][2][CMD_FONT_MAX] = {
+//	{{DEF,BIG,SMALL},{DEF,BIG,SMALL}}
+	{{25,40,16},{50,80,33}},	//gothic
+	{{25,40,16},{50,80,33}},	//simsun
+	{{25,40,16},{50,80,33}},	//gulim
+	{{13,22, 8},{26,44,16}},	//arial
+};
+
+static const int CA_FONT_SIZE_TUNED[4][2][CMD_FONT_MAX] = {
+//	{{DEF,BIG,SMALL},{DEF,BIG,SMALL}for fontsize_fixed},
+	{{23,37,15},{46,73,30}},	//gothic
+	{{23,37,15},{46,73,30}},	//simsun
+	{{23,37,15},{46,73,30}},	//gulim
+	{{20,36,13},{40,69,26}},	//arial
+};
+
+static const int CA_FONT_SPACE_WIDTH[CMD_FONT_MAX] = {
+//ASCII SPACE 0020/00A0 arial.ttf
+	6,11,4
+};
+static const int CA_FONT_3000_WIDTH[3][CMD_FONT_MAX] = {
+//KANJI SPACE 3000 msgothic.ttc#1
+	{17,27,11},		//gothic
+	{25,40,16},		//simsun
+	{25,40,16},		//gulim
 };
 
 #endif /*NICODEF_H_*/

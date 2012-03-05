@@ -147,15 +147,6 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 				return FALSE;
 			}
 			fixed_font_index = setting->CAfont_index[f];
-/*
-			if(f == GOTHIC_FONT){
-				fixed_font_index = 1;
-			}else if(f == UI_GOTHIC_FONT && strcmp(font_path,setting->CAfont_path[GOTHIC_FONT])==0){
-				fixed_font_index = 2;
-			}else if(f == EXTRA_FONT){
-				fixed_font_index = setting->extra_fontindex;
-			}
-*/
 			for(i=0;i<CMD_FONT_MAX;i++){
 				fontsize = COMMENT_FONT_SIZE[i];
 				//実験からSDL指定値はマイナスするとニコニコ動画と文字幅が合う?
@@ -163,11 +154,24 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 				/* ターゲットを拡大した時にフォントが滑らかにするため２倍化する。 */
 				fontsize <<= isfontdoubled;
 				try = 1;
+				target_size = fontsize;
+				if(!data->original_resize){
+					try = 10;
+					if(f<4){
+						fontsize = CA_FONT_SIZE_TUNED[f][isfontdoubled][i];
+						target_size = CA_FONT_HIGHT_TUNED[f][isfontdoubled][i];
+					}else{	//文字間隔は合わないが文字サイズを合わせる
+						fontsize += CA_FONT_SIZE_FIX[f][i]<<isfontdoubled;
+						target_size = fontsize;
+					}
+				}
+/*
 				if(!data->original_resize){
 					fontsize += CA_FONT_SIZE_FIX[f][i]<<isfontdoubled;	//文字間隔は合わないが文字サイズを合わせる
-					try = 2;
+					try = 10;
 				}
 				target_size = fontsize;
+*/
 				fprintf(log,"[main/init]loading CAfont[%s][%d]:%s size:%d index:%d target:%d\n",CA_FONT_NAME[f],i,font_path,fontsize,fixed_font_index,target_size);
 				while(try>0){
 					font[i] = TTF_OpenFontIndex(font_path,fontsize,fixed_font_index);
