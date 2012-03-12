@@ -8,7 +8,10 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -42,11 +45,14 @@ public class Prompt {
 	private static String logname = LOGFILE;
 	private static int maxsize = 1000000;
 	private static boolean enablePupup = false;
-	private static Hashtable<String, String> settingMap = new Hashtable<String, String>(16);
-	private static Hashtable<String, String> optionMap = new Hashtable<String, String>(16);
-	private static Hashtable<String,String> downloadMap = new Hashtable<String, String>(16);
+	private static HashMap<String, String> settingMap = new HashMap<String, String>(16);
+	private static HashMap<String, String> optionMap = new HashMap<String, String>(16);
+	private static HashMap<String,String> downloadMap = new HashMap<String, String>(16);
 	private static String optionFilePrefix = "";
 	private static ConvertingSetting setting;
+	private static String propFile = ConvertingSetting.PROP_FILE;
+	private static Properties prop;
+
 	public static void main(String[] args) {
 		if(!setLog(logname)){
 			exit(1);
@@ -56,14 +62,35 @@ public class Prompt {
 			System.out.println("Error. MailAddress, Password, VideoID must be specified.");
 			exit(2);
 		}
-		String mail = args[0];
-		String pass = args[1];
-		String tag = args[2];
-		String time = args.length < 4 ? "" : args[3];
+		String mail = "";
+		String pass = "";
+		String tag = "";
+		String time = "";
+		ArrayList<String> atArgs = new ArrayList<String>();
+		int i = 0;
+		for(String arg : args){
+			if(arg.startsWith("@") || i>3){
+				atArgs.add(arg);
+			}else{
+				switch(i){
+				case 0:	mail = arg;	i++;	break;
+				case 1:	pass = arg;	i++;	break;
+				case 2:	tag = arg;	i++;	break;
+				case 3:	time = arg;	i++;	break;
+				}
+			}
+		}
+	//	mail = args[0];
+	//	pass = args[1];
+	//	tag = args[2];
+	//	time = args.length < 4 ? "" : args[3];
+		if (mail.isEmpty() || pass.isEmpty() || tag.isEmpty()){
+			System.out.println("Error. MailAddress, Password, VideoID must be specified.");
+			exit(2);
+		}
 		int index;
-		String arg, key, value;
-		for (int i = 4; i< args.length; i++){
-			arg = args[i];
+		String key, value;
+		for (String arg : atArgs){
 			if(arg == null || arg.isEmpty()){
 				continue;
 			}
@@ -71,15 +98,15 @@ public class Prompt {
 				break;
 			}
 			if(arg.equals("@NDL")){
-				downloadMap.put("SaveVideoFile", "false");
-				downloadMap.put("SaveCommentFile", "false");
+				downloadMap.put(ConvertingSetting.PROP_SAVE_VIDEO, "false");
+				downloadMap.put(ConvertingSetting.PROP_SAVE_COMMENT, "false");
 				System.out.println("Set No Download.");
 				continue;
 			}
 			if(arg.equals("@DLO")){
-				downloadMap.put("SaveVideoFile", "true");
-				downloadMap.put("SaveCommentFile", "true");
-				downloadMap.put("SaveConvertedFile","false");
+				downloadMap.put(ConvertingSetting.PROP_SAVE_VIDEO, "true");
+				downloadMap.put(ConvertingSetting.PROP_SAVE_COMMENT, "true");
+				downloadMap.put(ConvertingSetting.PROP_SAVE_CONVERTED,"false");
 				System.out.println("Set Download Only.");
 				continue;
 			}
@@ -87,14 +114,19 @@ public class Prompt {
 				enablePupup = true;
 				continue;
 			}
+			if(arg.equals("@SET=")){
+				propFile  = arg.substring(arg.indexOf('=')+1);
+			}
 			if(arg.startsWith("-") && arg.contains("=")){
+				//ffmpeg変換オプション
 				index = arg.indexOf('=');
-				key = arg.substring(1, index);
+				key = arg.substring(0, index);
 				value = arg.substring(index+1);
 				optionMap.put(key, value);
 				continue;
 			}
 			if(arg.contains("=")){
+				//saccubus.xmlプロパティ
 				index = arg.indexOf('=');
 				key = arg.substring(0, index);
 				value = arg.substring(index+1);
@@ -102,7 +134,8 @@ public class Prompt {
 				continue;
 			}
 			if(arg.contains(":")){
-				if(time.contains(":")){
+				//過去ログ時刻の引用符"yyyy/mm/dd hh:MM"なし
+				if(time.contains("/")){
 					time = time.trim() + " " + arg.trim();
 				}
 				continue;
@@ -114,9 +147,29 @@ public class Prompt {
 			}
 			System.out.println("Undefined Argument: <" + arg + ">");
 		}
-		setting = ConvertingSetting.loadSetting(mail, pass);
-		setting.override(optionFilePrefix, settingMap, optionMap);
-		setting.override(downloadMap);
+		prop = ConvertingSetting.loadProperty(propFile, true);
+		//option prefix 設定
+		if(!optionFilePrefix.isEmpty()){
+			prop.setProperty(ConvertingSetting.PROP_OPTION_FILE,
+				optionFilePrefix+ConvertingSetting.PROP_OPTION_FILE);
+			prop.setProperty(ConvertingSetting.PROP_WIDE_OPTION_FILE,
+				optionFilePrefix+ConvertingSetting.PROP_WIDE_OPTION_FILE);
+		}
+		//settingMap 設定
+		for(Entry<String, String> e : settingMap.entrySet()){
+			prop.setProperty(e.getKey(), e.getValue());
+		}
+		//downloadMap 設定
+		for(Entry<String, String> e : downloadMap.entrySet()){
+			prop.setProperty(e.getKey(), e.getValue());
+		}
+		setting = ConvertingSetting.loadSetting(mail, pass, prop);
+	//	setting.override(optionFilePrefix, settingMap, optionMap);
+		//optionMap 設定
+		if(!optionMap.isEmpty()){
+			setting.setReplaceOptions(optionMap);
+		}
+	//	setting.override(downloadMap);
 		JLabel status = new JLabel();
 		JLabel info = new JLabel();
 		JLabel watch = new JLabel();
@@ -129,7 +182,7 @@ public class Prompt {
 			}
 		});
 		Window popup = new Window(null);
-		popup.setSize(300, 25);
+		popup.setSize(360, 20);
 		popup.setLocation(0,0);
 		popup.setLayout(new BorderLayout(5, 0));
 		Color fg = Color.black;
@@ -138,7 +191,8 @@ public class Prompt {
 		popup.setBackground(bg);
 		stopButton.setForeground(fg);
 		stopButton.setBackground(bg);
-		stopButton.setSize(40,20);
+		stopButton.setSize(25,15);
+		stopButton.setBounds(0, 0, 25, 15);
 		stopButton.setVisible(true);
 		status.setForeground(fg);
 		status.setBackground(bg);
@@ -160,10 +214,10 @@ public class Prompt {
 		if(!optionFilePrefix.isEmpty()){
 			System.out.println("OptionPrefix: " + optionFilePrefix);
 		}
-		if(args.length > 4){
+		if(!atArgs.isEmpty()){
 			System.out.print("Other args:");
-			for(int i = 4; i < args.length; i++){
-				System.out.print(" " + args[i]);
+			for(String arg : atArgs){
+				System.out.print(" " + arg);
 			}
 			System.out.println();
 		}
@@ -182,6 +236,7 @@ public class Prompt {
 		// System.out.println("VideoInfo: " + info.getText());
 		// System.out.println("ElapsedTime: " + watch.getText());
 		System.out.println("Finished.");
+		System.out.println();
 	}
 
 	private static int getLogsize(){

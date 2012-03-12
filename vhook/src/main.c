@@ -77,48 +77,63 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 		isfontdoubled = 1;
 	}
 	int line_skip[CMD_FONT_MAX];
-	for(i=0;i<CMD_FONT_MAX;i++){
-		/* ターゲットを拡大した時にフォントが滑らかにするため２倍化する。 */
-		//int fontsize = setting->fixed_font_size[i];
-		fontsize = COMMENT_FONT_SIZE[i]<<isfontdoubled;
-		//実験からSDL指定値は-1するとニコニコ動画と文字幅が合う?
-		//fontsize -= 1;
-
-		font[i] = TTF_OpenFontIndex(font_path,fontsize,font_index);
-		if(font[i] == NULL){
-			fprintf(log,"[main/init]failed to load font:%s size:%d index:%d.\n",font_path,fontsize,font_index);
-			//0でも試してみる。
-			fputs("[main/init]retrying to open font at index:0...",log);
-			font[i] = TTF_OpenFontIndex(font_path,fontsize,0);
-			if(font[i] == NULL){
-				fputs("failed.\n",log);
-				return FALSE;
-			}else{
-				fputs("success.\n",log);
-				fixed_font_index = 0;
-			}
-		}
-		TTF_SetFontStyle(font[i],TTF_STYLE_BOLD);
-		data->fixed_font_height[i] = TTF_FontHeight(font[i]);
-		// TTF_FontHeight()が正しいかどうかは疑問？
-		// 実験では設定値と違う値になった
-		line_skip[i] = TTF_FontLineSkip(font[i]);
-		//これも違う値だった。
-		// 参考 1 pt = 1/72 inch, 1 px = 1 dot
+	int pointsizemode = FALSE;
+	if(setting->debug && strstr(setting->debug_mode,"-point")!=NULL){
+		pointsizemode = TRUE;
+	}
+	for (i=0;i<CMD_FONT_MAX;++i) {
 		data->font_pixel_size[i] = FONT_PIXEL_SIZE[i]<<isfontdoubled;
-		// SDL_Surface に描画後の高さは文字(列)毎に異なるのでこの値で修正する。drawText()
-		fprintf(log,"[main/init]load font[%d]:%s size:%d index:%d.\n",i,font_path,fontsize,fixed_font_index);
-		printFontInfo(log,font,i,"");
 	}
-	fputs("[main/init]initialized font, ",log);
-	if(isfontdoubled){
-		fputs("Double scaled ",log);
-	}
-	fprintf(log,"height is DEF=%d %dpx(%dpx), BIG=%d %dpx(%dpx), SMALL=%d %dpx(%dpx)\n",
-		data->fixed_font_height[CMD_FONT_DEF],line_skip[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_DEF],
-		data->fixed_font_height[CMD_FONT_BIG],line_skip[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_BIG],
-		data->fixed_font_height[CMD_FONT_SMALL],line_skip[CMD_FONT_SMALL],data->font_pixel_size[CMD_FONT_SMALL]
+	fprintf(log,"[main/init]Font height is DEF=%dpx, BIG=%dpx, SMALL=%dpx\n",
+		data->font_pixel_size[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_SMALL]
 	);
+	if(!setting->enableCA){
+		for(i=0;i<CMD_FONT_MAX;i++){
+			/* ターゲットを拡大した時にフォントが滑らかにするため２倍化する。 */
+			//int fontsize = setting->fixed_font_size[i];
+			fontsize = COMMENT_FONT_SIZE[i]<<isfontdoubled;
+			if(pointsizemode){
+				fontsize = COMMENT_POINT_SIZE[i]<<isfontdoubled;
+			}
+			//実験からSDL指定値は-1するとニコニコ動画と文字幅が合う?
+			//fontsize -= 1;
+
+			font[i] = TTF_OpenFontIndex(font_path,fontsize,font_index);
+			if(font[i] == NULL){
+				fprintf(log,"[main/init]failed to load font:%s size:%d index:%d.\n",font_path,fontsize,font_index);
+				//0でも試してみる。
+				fputs("[main/init]retrying to open font at index:0...",log);
+				font[i] = TTF_OpenFontIndex(font_path,fontsize,0);
+				if(font[i] == NULL){
+					fputs("failed.\n",log);
+					return FALSE;
+				}else{
+					fputs("success.\n",log);
+					fixed_font_index = 0;
+				}
+			}
+			TTF_SetFontStyle(font[i],TTF_STYLE_BOLD);
+			data->fixed_font_height[i] = TTF_FontHeight(font[i]);
+			// TTF_FontHeight()が正しいかどうかは疑問？
+			// 実験では設定値と違う値になった
+			line_skip[i] = TTF_FontLineSkip(font[i]);
+			//これも違う値だった。
+			// 参考 1 pt = 1/72 inch, 1 px = 1 dot
+			data->font_pixel_size[i] = FONT_PIXEL_SIZE[i]<<isfontdoubled;
+			// SDL_Surface に描画後の高さは文字(列)毎に異なるのでこの値で修正する。drawText()
+			fprintf(log,"[main/init]load font[%d]:%s size:%d index:%d.\n",i,font_path,fontsize,fixed_font_index);
+			printFontInfo(log,font,i,"");
+		}
+		fputs("[main/init]initialized font, ",log);
+		if(isfontdoubled){
+			fputs("Double scaled ",log);
+		}
+		fprintf(log,"height is DEF=%d %dpx(%dpx), BIG=%d %dpx(%dpx), SMALL=%d %dpx(%dpx)\n",
+			data->fixed_font_height[CMD_FONT_DEF],line_skip[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_DEF],
+			data->fixed_font_height[CMD_FONT_BIG],line_skip[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_BIG],
+			data->fixed_font_height[CMD_FONT_SMALL],line_skip[CMD_FONT_SMALL],data->font_pixel_size[CMD_FONT_SMALL]
+		);
+	}
 
 	int f;
 	if(data->enableCA){
@@ -155,6 +170,14 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 				fontsize <<= isfontdoubled;
 				try = 1;
 				target_size = fontsize;
+				if(pointsizemode){
+					fontsize = COMMENT_POINT_SIZE[i];
+					fontsize <<= isfontdoubled;
+					target_size = fontsize;
+					if(!data->original_resize){
+						try = 10;
+					}
+				}else
 				if(!data->original_resize){
 					try = 10;
 					if(f<4){
@@ -233,30 +256,28 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 			i = convUint16(setting->extra_uc,&data->extra_change);
 			fprintf(log,"[main/init]EXTRA Font use %d pairs.\n", i>>1);
 		}
-		if(data->debug){
-			Uint16* u = data->extra_change;
-			fprintf(log,"font change(%s)",CA_FONT_NAME[EXTRA_FONT]);
-			if(u==NULL){
-				fprintf(log," is NULL.\n");
-			}else{
-				while(*u){
-					fprintf(log," %04x-%04x",*u,*(u+1));
-					u += 2;
-				}
-				fputs("\n",log);
+		Uint16* u = data->extra_change;
+		fprintf(log,"font change(%s)",CA_FONT_NAME[EXTRA_FONT]);
+		if(u==NULL){
+			fprintf(log," is NULL.\n");
+		}else{
+			while(*u){
+				fprintf(log," %04x-%04x",*u,*(u+1));
+				u += 2;
 			}
-			/*
-			Uint16* u = data->zero_width;
-			if(u!=NULL){
-				fprintf(log,"zero width");
-				while(*u){
-					fprintf(log," %04x-%04x",*u,*(u+1));
-					u += 2;
-				}
-				fputs("\n",log);
-			}
-			*/
+			fputs("\n",log);
 		}
+		/*
+		Uint16* u = data->zero_width;
+		if(u!=NULL){
+			fprintf(log,"zero width");
+			while(*u){
+				fprintf(log," %04x-%04x",*u,*(u+1));
+				u += 2;
+			}
+			fputs("\n",log);
+		}
+		*/
 		fputs("[main/init]initialized CA(Comment Art) Feature.\n",log);
 	}
 	fprintf(log, "[main/init]font width fix ratio:%.0f%% (experimental)\n",(data->font_w_fix_r * 100));

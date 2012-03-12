@@ -43,7 +43,6 @@ import javax.swing.border.TitledBorder;
 
 import psi.lib.swing.PopupRightClick;
 import saccubus.net.Loader;
-import saccubus.net.NicoClient;
 import saccubus.net.Path;
 import saccubus.util.FileDropTarget;
 
@@ -174,6 +173,8 @@ public class MainFrame extends JFrame {
 	JTextField extraFontTextField = new JTextField();
 	private String encrypt_pass;
 	SharedNgScore sharedNgScore = new SharedNgScore();
+	JLabel debugModeLabel = new JLabel();
+	JTextField debugModeField = new JTextField();
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -350,7 +351,7 @@ public class MainFrame extends JFrame {
 		grid9_x0_y1_55.gridx = 0;
 		grid9_x0_y1_55.fill = GridBagConstraints.HORIZONTAL;
 		grid9_x0_y1_55.weightx = 1.0;
-		grid9_x0_y1_55.gridwidth = 2;
+		grid9_x0_y1_55.gridwidth = 4;
 		grid9_x0_y1_55.gridy = 1;
 		GridBagConstraints grid9_x1_y5_53 = new GridBagConstraints(1, 3,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
@@ -358,21 +359,21 @@ public class MainFrame extends JFrame {
 		grid9_x1_y5_53.gridy = 5;
 		grid9_x1_y5_53.gridheight = 1;
 		grid9_x1_y5_53.weightx = 1.0;
-		grid9_x1_y5_53.gridwidth = 1;
+		grid9_x1_y5_53.gridwidth = 3;
 		GridBagConstraints grid9_x1_y4_52 = new GridBagConstraints(2, 2,
 				1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_0_5_5, 0, 0);
 		grid9_x1_y4_52.gridy = 4;
-		grid9_x1_y4_52.gridwidth = 1;
+		grid9_x1_y4_52.gridwidth = 3;
 		grid9_x1_y4_52.weightx = 1.0;
 		grid9_x1_y4_52.gridx = 1;
 		GridBagConstraints grid9_x1_y3_51 = new GridBagConstraints(2, 1,
 				1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_0_5_5, 0, 0);
-		grid9_x1_y3_51.gridy = 3;
+		grid9_x1_y3_51.gridy = 2;
 		grid9_x1_y3_51.gridwidth = 1;
 		grid9_x1_y3_51.weightx = 1.0;
-		grid9_x1_y3_51.gridx = 1;
+		grid9_x1_y3_51.gridx = 3;
 		GridBagConstraints grid9_x0_y5_50 = new GridBagConstraints(0, 3,
 				1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.BOTH, INSETS_0_5_5_5, 0, 0);
@@ -385,7 +386,8 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid9_x0_y3_48 = new GridBagConstraints(0, 1,
 				1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.BOTH, INSETS_0_5_5_5, 0, 0);
-		grid9_x0_y3_48.gridy = 3;
+		grid9_x0_y3_48.gridy = 2;
+		grid9_x0_y3_48.gridx = 2;
 		GridBagConstraints grid5_x3_y8_45 = new GridBagConstraints(3, 5,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, INSETS_0_0_5_5, 0, 0);
@@ -1374,33 +1376,39 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid20_x0_y10 = new GridBagConstraints();
 		grid20_x0_y10.gridx = 0;
 		grid20_x0_y10.gridy = 10;
-	//	grid20_x0_y10.weightx = 1.0;
-	//	grid20_x0_y10.gridwidth = 4;
 		grid20_x0_y10.anchor = GridBagConstraints.NORTHWEST;
 		grid20_x0_y10.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x0_y10.insets = INSETS_0_5_0_5;
 		experimentPanel.add(useExtraFontCheckBox,grid20_x0_y10);
-	//	extraFontLabel.setText("追加フォント");
-	//	extraFontLabel.setForeground(Color.blue);
-	//	GridBagConstraints grid20_x0_y11 = new GridBagConstraints();
-	//	grid20_x0_y11.gridx = 0;
-	//	grid20_x0_y11.gridy = 11;
-	//	grid20_x0_y11.gridwidth = 1;
-	//	grid20_x0_y11.weightx = 0.0;
-	//	grid20_x0_y11.anchor = GridBagConstraints.CENTER;
-	//	grid20_x0_y11.fill = GridBagConstraints.HORIZONTAL;
-	//	grid20_x0_y11.insets = INSETS_0_5_0_5;
-	//	experimentPanel.add(extraFontLabel, grid20_x0_y11);
 		extraFontTextField.setForeground(Color.blue);
-		GridBagConstraints grid20_x1_y11 = new GridBagConstraints();
-		grid20_x1_y11.gridx = 1;
-		grid20_x1_y11.gridy = 10;
-		grid20_x1_y11.gridwidth = 3;
-		grid20_x1_y11.weightx = 1.0;
-		grid20_x1_y11.anchor = GridBagConstraints.NORTHWEST;
-		grid20_x1_y11.fill = GridBagConstraints.HORIZONTAL;
-		grid20_x1_y11.insets = INSETS_0_5_0_5;
-		experimentPanel.add(extraFontTextField, grid20_x1_y11);
+		GridBagConstraints grid20_x1_y10 = new GridBagConstraints();
+		grid20_x1_y10.gridx = 1;
+		grid20_x1_y10.gridy = 10;
+		grid20_x1_y10.gridwidth = 3;
+		grid20_x1_y10.weightx = 1.0;
+		grid20_x1_y10.anchor = GridBagConstraints.NORTHWEST;
+		grid20_x1_y10.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x1_y10.insets = INSETS_0_5_0_5;
+		experimentPanel.add(extraFontTextField, grid20_x1_y10);
+		debugModeLabel.setText("追加モード");
+		debugModeLabel.setForeground(Color.blue);
+		debugModeLabel.setToolTipText("黄枠モード他の追加の動作を指定します");
+		GridBagConstraints grid20_x0_y12 = new GridBagConstraints();
+		grid20_x0_y12.gridx = 0;
+		grid20_x0_y12.gridy = 12;
+		grid20_x0_y12.anchor = GridBagConstraints.WEST;
+		grid20_x0_y12.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x0_y12.insets = INSETS_0_5_0_5;
+		experimentPanel.add(debugModeLabel, grid20_x0_y12);
+		debugModeField.setForeground(Color.blue);
+		GridBagConstraints grid20_x1_y12 = new GridBagConstraints();
+		grid20_x1_y12.gridx = 1;
+		grid20_x1_y12.gridy = 12;
+		grid20_x1_y12.gridwidth = 3;
+		grid20_x1_y12.anchor = GridBagConstraints.WEST;
+		grid20_x1_y12.fill = GridBagConstraints.HORIZONTAL;
+		grid20_x1_y12.insets = INSETS_0_5_0_5;
+		experimentPanel.add(debugModeField, grid20_x1_y12);
 	}
 
 	private void setPopup() {
@@ -1652,7 +1660,7 @@ public class MainFrame extends JFrame {
 			commentModeComboBox.getSelectedIndex(),
 			commentSpeedCheckBox.isSelected(),
 			commentSpeedTextField.getText(),
-			getDebugMode(),
+//			getDebugMode(),
 			enableCA_CheckBox.isSelected(),
 			sharedNgScore.getScore(),
 			disableEcoCheckBox.isSelected(),
@@ -1663,10 +1671,11 @@ public class MainFrame extends JFrame {
 			extraFontTextField.getText(),
 			ngCommandField.getText(),
 			"",	//replaceCommandField.getText(),
-			encrypt_pass
+			encrypt_pass,
+			debugModeField.getText()
 		);
 	}
-
+/*
 	private String getDebugMode() {
 
 		String proxy = ProxyTextField.getText();
@@ -1676,7 +1685,7 @@ public class MainFrame extends JFrame {
 		}
 		return null;
 	}
-
+*/
 	private void setSetting(ConvertingSetting setting) {
 		MailAddrField.setText(setting.getMailAddress());
 		PasswordField.setText(setting.getPassword());
@@ -1783,6 +1792,7 @@ public class MainFrame extends JFrame {
 		ngCommandField.setText(setting.getNGCommand());
 	//	replaceCommandField.setText(setting.getReplaceCommand());
 		encrypt_pass = setting.getEncryptPass();
+		debugModeField.setText(setting.getExtraMode());
 	}
 
 	/**
@@ -2737,15 +2747,11 @@ s	 * @return javax.swing.JPanel
 	private JPanel getFFmpegOptionComboBoxPanel() {
 		if (FFmpegOptionComboBoxPanel == null) {
 			GridBagConstraints grid_x_y_47 = new GridBagConstraints();
-			grid_x_y_47.fill = GridBagConstraints.BOTH;
-			grid_x_y_47.gridx = -1;
-			grid_x_y_47.gridy = -1;
+			grid_x_y_47.fill = GridBagConstraints.NONE;
 			grid_x_y_47.insets = INSETS_0_0_5_5;
 			GridBagConstraints grid_x_y_46 = new GridBagConstraints();
 			grid_x_y_46.fill = GridBagConstraints.HORIZONTAL;
 			grid_x_y_46.gridwidth = 3;
-			grid_x_y_46.gridx = -1;
-			grid_x_y_46.gridy = -1;
 			grid_x_y_46.weightx = 1.0;
 			grid_x_y_46.insets = INSETS_0_5_5_5;
 			FFmpegOptionComboBoxPanel = new JPanel();
@@ -2766,7 +2772,7 @@ s	 * @return javax.swing.JPanel
 	private JPanel getWideFFmpegOptionComboBoxPanel() {
 		if (WideFFmpegOptionComboBoxPanel == null) {
 			GridBagConstraints grid_x_y_1_ = new GridBagConstraints();
-			grid_x_y_1_.fill = GridBagConstraints.BOTH;
+			grid_x_y_1_.fill = GridBagConstraints.NONE;
 			grid_x_y_1_.insets = INSETS_0_0_5_5;
 			GridBagConstraints grid_x_y_2_ = new GridBagConstraints();
 			grid_x_y_2_.fill = GridBagConstraints.HORIZONTAL;

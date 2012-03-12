@@ -3,14 +3,14 @@
 #include "shadow.h"
 
 /*影なし*/
-SDL_Surface* noShadow(SDL_Surface* surf,int is_black,int is_fix_size){
+SDL_Surface* noShadow(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
 	return surf;
 }
 /*右下*/
 #define SHADOW_SIZE 3
 #define SHADOW2_SIZE 2
 
-SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,int is_fix_size){
+SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
 	/*スライド幅の確定*/
 	int slide = SHADOW_SIZE;
 	int slide2 = SHADOW2_SIZE;
@@ -56,10 +56,12 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,int is_fix_size){
 	SDL_SetAlpha(surf,0,0xff);
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
 	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
-	if(is_black){//黒であれば、周りをしろで囲む
+	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(shadow,0xffffffff);
-	}else{
+	}else if(is_black==0){
 		setRGB(shadow,0);
+	}else{
+		setRGB(shadow,SDL_MapRGB(surf->format,c.r,c.g,c.b));
 	}
 	SDL_SetAlpha(shadow,0,0xff);
 	SDL_BlitSurface(shadow,NULL,shadow2,NULL);
@@ -120,7 +122,7 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,int is_fix_size){
 
 /*右下*/
 #define SHADOW_SLIDE 2
-SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,int is_fix_size){
+SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
 	/*スライド幅の確定*/
 	int slide = SHADOW_SLIDE;
 	if(is_fix_size){
@@ -147,10 +149,12 @@ SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,int is_fix_size){
 	SDL_SetAlpha(surf,0,0xff);//一回alpha合成を切る
 	SDL_BlitSurface(surf,NULL,black,&rect);
 	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
-	if(is_black){//黒であれば、周りをしろで囲む
+	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(black,0xffffffff);
-	}else{
+	}else if(is_black==0){
 		setRGB(black,0);
+	}else{
+		setRGB(black,SDL_MapRGB(surf->format,c.r,c.g,c.b));
 	}
 	setAlpha(black,0.6f);
 	shadowBlitSurface(surf,NULL,black,NULL);
@@ -159,7 +163,7 @@ SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,int is_fix_size){
 }
 
 //散らすのではなく、囲ってしまう。
-SDL_Surface* likeOld(SDL_Surface* surf,int is_black,int is_fix_size){
+SDL_Surface* likeOld(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
 	/*スライド幅の確定*/
 	int slide = SHADOW_SIZE;
 	if(is_fix_size){
@@ -203,10 +207,12 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,int is_fix_size){
 	SDL_SetAlpha(surf,0,0xff);
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
 	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
-	if(is_black){//黒であれば、周りをしろで囲む
+	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(shadow,0xffffffff);
-	}else{
+	}else if(is_black==0){
 		setRGB(shadow,0);
+	}else{
+		setRGB(shadow,SDL_MapRGB(surf->format,c.r,c.g,c.b));
 	}
 	SDL_SetAlpha(shadow,0,0xff);
 	SDL_BlitSurface(shadow,NULL,shadow2,NULL);
@@ -264,7 +270,7 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,int is_fix_size){
 
 
 //定義
-SDL_Surface* (*ShadowFunc[SHADOW_MAX])(SDL_Surface* surf,int is_black,int is_fix_size) = {
+SDL_Surface* (*ShadowFunc[SHADOW_MAX])(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c) = {
 	noShadow,
 	likeNicoNico,
 	likeNovel,

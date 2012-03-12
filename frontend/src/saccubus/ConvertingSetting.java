@@ -11,7 +11,6 @@ import java.io.File;
 
 import saccubus.net.BrowserInfo;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
-import saccubus.util.Bool;
 import saccubus.util.Encryption;
 
 /**
@@ -112,7 +111,7 @@ public class ConvertingSetting {
 	private int commentIndex;
 	private boolean setCommentSpeed;
 	private String commentSpeed;
-	private String debugNicovideo;
+//	private String debugNicovideo;
 	private boolean enableCA;	//âºê›íË
 	private int scoreLimit;
 	private boolean disableEco;
@@ -124,6 +123,7 @@ public class ConvertingSetting {
 	private String ngCommand;
 	private String replaceCommand;
 	private String encryptedPass;
+	private String extraMode;
 
 	private Map<String, String> replaceOptions;
 
@@ -299,7 +299,6 @@ public class ConvertingSetting {
 			int comment_index,
 			boolean set_comment_speed,
 			String comment_speed,
-			String debug_nicovideo,
 			boolean enable_CA,
 			int score_limit,
 			boolean disable_eco,
@@ -310,7 +309,8 @@ public class ConvertingSetting {
 			String extra_font_text,
 			String ng_command,
 			String replace_command,
-			String encrypt_pass
+			String encrypt_pass,
+			String extra_mode
 		)
 	{
 		this(	mailaddress,
@@ -394,7 +394,6 @@ public class ConvertingSetting {
 		commentIndex = comment_index;
 		setCommentSpeed = set_comment_speed;
 		commentSpeed = comment_speed;
-		debugNicovideo = debug_nicovideo;
 		enableCA = enable_CA;
 		scoreLimit = score_limit;
 		disableEco = disable_eco;
@@ -406,6 +405,7 @@ public class ConvertingSetting {
 		ngCommand = ng_command;
 		replaceCommand = replace_command;
 		encryptedPass = encrypt_pass;
+		extraMode = extra_mode;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -624,9 +624,9 @@ public class ConvertingSetting {
 	public String getCommentSpeed(){
 		return commentSpeed;
 	}
-	public String getDebugNicovideo(){
-		return debugNicovideo;
-	}
+//	public String getDebugNicovideo(){
+//		return debugNicovideo;
+//	}
 	public boolean isEnableCA(){
 		return enableCA;
 	}
@@ -660,55 +660,58 @@ public class ConvertingSetting {
 	public String getEncryptPass(){
 		return encryptedPass;
 	}
+	public String getExtraMode(){
+		return extraMode;
+	}
 
-	static final String PROP_FILE = ".\\saccubus.xml";
-	private static final String PROP_MAILADDR = "MailAddress";
-	private static final String PROP_PASSWORD = "Password";
-	private static final String PROP_SAVE_VIDEO = "SaveVideoFile";
-	private static final String PROP_VIDEO_FILE = "VideoFile";
-	private static final String PROP_SAVE_COMMENT = "SaveCommentFile";
-	private static final String PROP_COMMENT_FILE = "CommentFile";
-	private static final String PROP_SAVE_CONVERTED = "SaveConvertedFile";
-	private static final String PROP_CONVERTED_FILE = "ConvertedFile";
-	private static final String PROP_FFMPEG_PATH = "FFnpegPath";
-	private static final String PROP_VHOOK_PATH = "VhookPath";
-	private static final String PROP_FONT_PATH = "FontPath";
-	private static final String PROP_FONT_INDEX = "FontIndex";
-	private static final String PROP_CMDLINE_EXT = "CMD_EXT";
-	private static final String PROP_CMDLINE_MAIN = "CMD_MAIN";
-	private static final String PROP_CMDLINE_IN = "CMD_IN";
-	private static final String PROP_CMDLINE_OUT = "CMD_OUT";
-	private static final String PROP_BACK_COMMENT = "BackComment";
-	private static final String PROP_SHOW_VIDEO = "ShowVideo";
-	private static final String PROP_SHOW_COMMENT = "ShowCommentNum";
-	private static final String PROP_VIDEO_FIX_FILE_NAME = "VideoFixFileName";
-	private static final String PROP_DEL_VIDEO_AFTER_CONV = "DeleteVideoAfterConv";
-	private static final String PROP_VIDEO_FIX_FILE_NAME_FOLDER = "VideoFixFileNameFolder";
-	private static final String PROP_DEL_COMMENT_AFTER_CONV = "DeleteCommentAfterConv";
-	private static final String PROP_COMMENT_FIX_FILE_NAME = "CommentFixFileName";
-	private static final String PROP_COMMENT_FIX_FILE_NAME_FOLDER = "CommentFixFileNameFolder";
-	private static final String PROP_NOT_ADD_VIDEOID_CONV = "NotAddVideoIDtoConverted";
-	private static final String PROP_CONV_FIX_FILE_NAME = "ConvFixFileName";
-	private static final String PROP_CONV_FIX_FILE_NAME_FOLDER = "ConvFixFileNameFolder";
-	private static final String PROP_NG_WORD = "NG_Word";
-	private static final String PROP_NG_ID = "NG_ID";
-	private static final String PROP_USE_PROXY = "UseProxy";
-	private static final String PROP_PROXY = "Proxy";
-	private static final String PROP_PROXY_PORT = "ProxyPort";
-	private static final String PROP_FIX_FONT_SIZE = "FixFontSize";
-	private static final String PROP_FIX_COMMENT_NUM = "FixCommentSize";
-	private static final String PROP_OPAQUE_COMMENT = "OpaqueComment";
-	private static final String PROP_OPTION_FILE = "OptionFile";
-	private static final String PROP_DISABLE_VHOOK = "VhookDisabled";
-	private static final String PROP_SHADOW_INDEX = "ShadowIndex";
+	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
+	static final String PROP_MAILADDR = "MailAddress";
+	static final String PROP_PASSWORD = "Password";
+	static final String PROP_SAVE_VIDEO = "SaveVideoFile";
+	static final String PROP_VIDEO_FILE = "VideoFile";
+	static final String PROP_SAVE_COMMENT = "SaveCommentFile";
+	static final String PROP_COMMENT_FILE = "CommentFile";
+	static final String PROP_SAVE_CONVERTED = "SaveConvertedFile";
+	static final String PROP_CONVERTED_FILE = "ConvertedFile";
+	static final String PROP_FFMPEG_PATH = "FFnpegPath";
+	static final String PROP_VHOOK_PATH = "VhookPath";
+	static final String PROP_FONT_PATH = "FontPath";
+	static final String PROP_FONT_INDEX = "FontIndex";
+	static final String PROP_CMDLINE_EXT = "CMD_EXT";
+	static final String PROP_CMDLINE_MAIN = "CMD_MAIN";
+	static final String PROP_CMDLINE_IN = "CMD_IN";
+	static final String PROP_CMDLINE_OUT = "CMD_OUT";
+	static final String PROP_BACK_COMMENT = "BackComment";
+	static final String PROP_SHOW_VIDEO = "ShowVideo";
+	static final String PROP_SHOW_COMMENT = "ShowCommentNum";
+	static final String PROP_VIDEO_FIX_FILE_NAME = "VideoFixFileName";
+	static final String PROP_DEL_VIDEO_AFTER_CONV = "DeleteVideoAfterConv";
+	static final String PROP_VIDEO_FIX_FILE_NAME_FOLDER = "VideoFixFileNameFolder";
+	static final String PROP_DEL_COMMENT_AFTER_CONV = "DeleteCommentAfterConv";
+	static final String PROP_COMMENT_FIX_FILE_NAME = "CommentFixFileName";
+	static final String PROP_COMMENT_FIX_FILE_NAME_FOLDER = "CommentFixFileNameFolder";
+	static final String PROP_NOT_ADD_VIDEOID_CONV = "NotAddVideoIDtoConverted";
+	static final String PROP_CONV_FIX_FILE_NAME = "ConvFixFileName";
+	static final String PROP_CONV_FIX_FILE_NAME_FOLDER = "ConvFixFileNameFolder";
+	static final String PROP_NG_WORD = "NG_Word";
+	static final String PROP_NG_ID = "NG_ID";
+	static final String PROP_USE_PROXY = "UseProxy";
+	static final String PROP_PROXY = "Proxy";
+	static final String PROP_PROXY_PORT = "ProxyPort";
+	static final String PROP_FIX_FONT_SIZE = "FixFontSize";
+	static final String PROP_FIX_COMMENT_NUM = "FixCommentSize";
+	static final String PROP_OPAQUE_COMMENT = "OpaqueComment";
+	static final String PROP_OPTION_FILE = "OptionFile";
+	static final String PROP_DISABLE_VHOOK = "VhookDisabled";
+	static final String PROP_SHADOW_INDEX = "ShadowIndex";
 
 	/*
 	 * Ç±Ç±Ç©ÇÁägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
 	 */
-	private static final String PROP_CONV_WITH_COMMENT = "AddComment";	//"ConvertWithComment";
-	private static final String PROP_SAVE_OWNERCOMMENT = "TCDownload";	//"SaveOwnerComment";
-	private static final String PROP_OWNERCOMMENT_FILE = "TCFileName";	//"OwnerCommentFile";
-	private static final String PROP_CONV_WITH_OWNERCOMMENT = "AddTcomment"; //"ConvertWithOwnerComment"
+	static final String PROP_CONV_WITH_COMMENT = "AddComment";	//"ConvertWithComment";
+	static final String PROP_SAVE_OWNERCOMMENT = "TCDownload";	//"SaveOwnerComment";
+	static final String PROP_OWNERCOMMENT_FILE = "TCFileName";	//"OwnerCommentFile";
+	static final String PROP_CONV_WITH_OWNERCOMMENT = "AddTcomment"; //"ConvertWithOwnerComment"
 	@SuppressWarnings("unused")
 	private static final String PROP_DEL_OWNERCOMMENT_AFTER_CONV = "TCDelete";	// No use
 	@SuppressWarnings("unused")
@@ -719,45 +722,46 @@ public class ConvertingSetting {
 	private static final String PROP_TEMP_DIR = "TempDir";					// No use .
 	@SuppressWarnings("unused")
 	private static final String PROP_NICO_BROWSER = "NicoBrowserFileName";	// No use
-	private static final String PROP_ADD_TIMESTAMP = "AddTimeStamp";
+	static final String PROP_ADD_TIMESTAMP = "AddTimeStamp";
 		// Add Timestamp to comment filename, when using multiple comment files as wayback logs.
-	private static final String PROP_ADD_OPTION_CONV_VIDEO = "AddOptionToConvertedVideo";
+	static final String PROP_ADD_OPTION_CONV_VIDEO = "AddOptionToConvertedVideo";
 		// Make subfolder of video titile name and Add FFmpeg option to converted video filename,
-	private static final String PROP_HISTORY1= "History1";
-	private static final String PROP_VHOOK_WIDE_PATH = "VhookWidePath";
-	private static final String PROP_USE_VHOOK = "UseVhookNormal";
-	private static final String PROP_USE_VHOOK_WIDE = "UseVhookWide";
-	private static final String PROP_BROWSER_IE = "ShareBrowserIE";
-	private static final String PROP_FIREFOX = "ShareFirefox";
-	private static final String PROP_CHROME = "ShareChrome";
-	private static final String PROP_CHROMIUM = "ShareChromium";
-	private static final String PROP_OPERA = "ShareOpera";
-	private static final String PROP_USE_COOKIE_PATH = "UseCookiePath";
-	private static final String PROP_BROWSER_COOKIE_PATH = "BrowserCookiePath";
-	private static final String PROP_OPTION_FOLDER = "OptionFolder";
-	private static final String PROP_WIDE_OPTION_FILE = "WideOptionFile";
-	private static final String PROP_WIDE_CMDLINE_EXT = "WideCMD_EXT";
-	private static final String PROP_WIDE_CMDLINE_MAIN = "WideCMD_MAIN";
-	private static final String PROP_WIDE_CMDLINE_IN = "WideCMD_IN";
-	private static final String PROP_WIDE_CMDLINE_OUT = "WideCMD_OUT";
-	private static final String PROP_OPTIONAL_TRANSLUCENT = "OptionalTranslucent";	// Optional_threadÇîºìßñæÇ…Ç∑ÇÈ
-	private static final String PROP_FONT_HEIGHT_FIX = "FontHeightFix";
-	private static final String PROP_FONT_HEIGHT_FIX_RAITO = "FontHeightFixRaito";
-	private static final String PROP_DISABLE_ORIGINAL_RESIZE = "DisableOriginalResize";
-	private static final String PROP_COMMENT_MODE_INDEX = "CommentMode";
-	private static final String PROP_SET_COMMENT_SPEED = "SetCommentSpeed";
-	private static final String PROP_COMMENT_SPEED = "CommentSpeed";
-	private static final String PROP_ENABLE_CA = "EnableCA";
-	private static final String PROP_SCORE_LIMIT = "CommentScoreLimit";
-	private static final String PROP_DISABLE_ECO = "DisableEco";
-	private static final String PROP_FONT_WIDTH_FIX = "FontWidthFix";
-	private static final String PROP_FONT_WIDTH_FIX_RATIO = "FontWidthFixRatio";
-	private static final String PROP_USE_LINESKIP = "UseLineskipAsFontsize";
-	private static final String PROP_USE_EXTRA_FONT = "UseExtraFont";
-	private static final String PROP_EXTRA_FONT_TEXT = "ExtraFontText";
-	private static final String PROP_NG_COMMAND = "NGCommand";
-	private static final String PROP_REPLACE_COMMAND = "ReplaceCommand";
-	private static final String PROP_ENCRYPT_PASS = "EncryptedPassword";
+	static final String PROP_HISTORY1= "History1";
+	static final String PROP_VHOOK_WIDE_PATH = "VhookWidePath";
+	static final String PROP_USE_VHOOK = "UseVhookNormal";
+	static final String PROP_USE_VHOOK_WIDE = "UseVhookWide";
+	static final String PROP_BROWSER_IE = "ShareBrowserIE";
+	static final String PROP_FIREFOX = "ShareFirefox";
+	static final String PROP_CHROME = "ShareChrome";
+	static final String PROP_CHROMIUM = "ShareChromium";
+	static final String PROP_OPERA = "ShareOpera";
+	static final String PROP_USE_COOKIE_PATH = "UseCookiePath";
+	static final String PROP_BROWSER_COOKIE_PATH = "BrowserCookiePath";
+	static final String PROP_OPTION_FOLDER = "OptionFolder";
+	static final String PROP_WIDE_OPTION_FILE = "WideOptionFile";
+	static final String PROP_WIDE_CMDLINE_EXT = "WideCMD_EXT";
+	static final String PROP_WIDE_CMDLINE_MAIN = "WideCMD_MAIN";
+	static final String PROP_WIDE_CMDLINE_IN = "WideCMD_IN";
+	static final String PROP_WIDE_CMDLINE_OUT = "WideCMD_OUT";
+	static final String PROP_OPTIONAL_TRANSLUCENT = "OptionalTranslucent";	// Optional_threadÇîºìßñæÇ…Ç∑ÇÈ
+	static final String PROP_FONT_HEIGHT_FIX = "FontHeightFix";
+	static final String PROP_FONT_HEIGHT_FIX_RAITO = "FontHeightFixRaito";
+	static final String PROP_DISABLE_ORIGINAL_RESIZE = "DisableOriginalResize";
+	static final String PROP_COMMENT_MODE_INDEX = "CommentMode";
+	static final String PROP_SET_COMMENT_SPEED = "SetCommentSpeed";
+	static final String PROP_COMMENT_SPEED = "CommentSpeed";
+	static final String PROP_ENABLE_CA = "EnableCA";
+	static final String PROP_SCORE_LIMIT = "CommentScoreLimit";
+	static final String PROP_DISABLE_ECO = "DisableEco";
+	static final String PROP_FONT_WIDTH_FIX = "FontWidthFix";
+	static final String PROP_FONT_WIDTH_FIX_RATIO = "FontWidthFixRatio";
+	static final String PROP_USE_LINESKIP = "UseLineskipAsFontsize";
+	static final String PROP_USE_EXTRA_FONT = "UseExtraFont";
+	static final String PROP_EXTRA_FONT_TEXT = "ExtraFontText";
+	static final String PROP_NG_COMMAND = "NGCommand";
+	static final String PROP_REPLACE_COMMAND = "ReplaceCommand";
+	static final String PROP_ENCRYPT_PASS = "EncryptedPassword";
+	static final String PROP_EXTRA_MODE = "ExtraMode";
 
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -910,6 +914,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_EXTRA_FONT_TEXT, setting.getExtraFontText());
 		prop.setProperty(PROP_NG_COMMAND, setting.getNGCommand());
 		prop.setProperty(PROP_REPLACE_COMMAND, setting.getReplaceCommand());
+		prop.setProperty(PROP_EXTRA_MODE, setting.getExtraMode());
 
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -926,6 +931,18 @@ public class ConvertingSetting {
 		saveSetting(setting, PROP_FILE);
 	}
 
+	public static Properties loadProperty(String propFile,boolean traceError){
+		Properties prop = new Properties();
+		try {
+			prop.loadFromXML(new FileInputStream(propFile));
+		} catch (IOException ex) {
+			if(traceError){
+				ex.printStackTrace();
+			}
+		}
+		return prop;
+	}
+
 	public static ConvertingSetting loadSetting(String user, String password, String propFile) {
 	    return loadSetting(user, password, propFile, true);
 	}
@@ -940,6 +957,11 @@ public class ConvertingSetting {
 				ex.printStackTrace();
 			}
 		}
+		return loadSetting(user, password, prop);
+	}
+
+	public static ConvertingSetting loadSetting(String user,
+			String password, Properties prop) {
 		if (user == null) {
 			user = prop.getProperty(PROP_MAILADDR, "");
 		}
@@ -1074,7 +1096,6 @@ public class ConvertingSetting {
 			Integer.parseInt(prop.getProperty(PROP_COMMENT_MODE_INDEX, "0")),
 			Boolean.parseBoolean(prop.getProperty(PROP_SET_COMMENT_SPEED, "false")),
 			prop.getProperty(PROP_COMMENT_SPEED, ""),
-			null,
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_CA, "false")),
 			Integer.parseInt(prop.getProperty(PROP_SCORE_LIMIT, ""+SharedNgScore.MINSCORE)),
 			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ECO, "false")),
@@ -1085,7 +1106,8 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_EXTRA_FONT_TEXT, ""),
 			prop.getProperty(PROP_NG_COMMAND, ""),
 			prop.getProperty(PROP_REPLACE_COMMAND, ""),
-			encrypt_pass
+			encrypt_pass,
+			prop.getProperty(PROP_EXTRA_MODE, "")
 		);
 	}
 
@@ -1117,6 +1139,7 @@ public class ConvertingSetting {
 		disableOriginalResize = b;
 	}
 
+/*
 	public void override(String prefix,
 			Map<String, String> settingMap,
 			Map<String, String> optionMap) {
@@ -1158,148 +1181,13 @@ public class ConvertingSetting {
 			enableCA = Bool.parseBoolean(map.get(PROP_ENABLE_CA));
 		if (map.containsKey(PROP_SAVE_CONVERTED))
 			SaveConverted = Bool.parseBoolean(map.get(PROP_SAVE_CONVERTED));
-/*
-		if (videofile.lastIndexOf(".") <= videofile.lastIndexOf(File.separator)) {
-			videofile += ".flv";
-		}
-		VideoFile = new File(videofile);
-//			map.get(PROP_VIDEO_FILE, ".\\video.flv"),
-		if (commentfile.lastIndexOf(".") <= commentfile.lastIndexOf(File.separator)) {
-			commentfile += ".xml";
-		}
-		CommentFile = new File(commentfile);
-		if (convvideofile.lastIndexOf(".") <= convvideofile.lastIndexOf(File.separator)) {
-			convvideofile += ".avi";
-		}
-		ConvertedVideoFile = new File(convvideofile);
-		try {
-			VideoShowNum = Integer.parseInt(videoshownum);
-		} catch (NumberFormatException ex) {
-			VideoShowNum = 40;
-		}
-		FFmpegPath = ffmpegpath;
-		VhookPath = vhookpath;
-		CmdLineOptionMain = cmdlineoption_main;
-		CmdLineOptionIn = cmdlineoption_in;
-		CmdLineOptionOut = cmdlineoption_out;
-		BackComment = backcomment;
-		Vhook_ShowConvertingVideo = showconvvideo;
-		DeleteVideoAfterConverting = delete_video_after_conv;
-		VideoFixFileName = video_fix_file_name;
-		VideoFixFileNameFolder = new File(video_fix_file_name_folder, "");
-		DeleteCommentAfterConverting = delete_comment_after_conv;
-		CommentFixFileName = comment_fix_file_name;
-		CommentFixFileNameFolder = new File(comment_fix_file_name_folder, "");
-		NotAddVideoID_Conv = not_add_videoid_conv;
-		ConvFixFileName = conv_fix_file_name;
-		ConvFixFileNameFolder = new File(conv_fix_file_name_folder, "");
-		NG_Word = ngword;
-		NG_ID = ngid;
-		UseProxy = use_proxy;
-		Proxy = proxy;
-		ProxyPort = proxy_port;
-		FixFontSize = fix_font_size;
-		FixCommentNum = fix_comment_num;
-		OpaqueComment = opaque_comment;
-		OptionFile = option_file;
-		DisableVhook = disable_vhook;
-		ShadowIndex = shadow_index;
-
-		ConvertWithComment = convertwithcomment;
-		if (ownercommentfile.lastIndexOf(".") <= ownercommentfile.lastIndexOf(File.separator)) {
-			ownercommentfile += ".xml";
-		}
-		OwnerCommentFile = new File(ownercommentfile);
-		ConvertWithOwnerComment = convertwithownercomment;
-		AddTimeStamp = addtimestamp;
-		AddOption_ConvVideoFile = addOption_ConvVideoFile;
-		History1 = history1;
-		VhookWidePath = vhook_wide_path;
-		UseVhookNormal = use_vhook_normal;
-		UseVhookWide = use_vhook_wide;
-		BrowserIE = browserIE;
-		BrowserFF = browserFF;
-		BrowserChrome = browserChrome;
-		BrowserChromium = browserChromium;
-		BrowserOpera = browserOpera;
-		BrowserOther = browserOther;
-		BrowserCookiePath = browserCookiePath;
-		optionFolder = option_folder;
-		wideOptionFile = wide_option_file;
-		wideCmdLineOptionMain = wide_cmdlineoption_main;
-		wideCmdLineOptionIn = wide_cmdlineoption_in;
-		wideCmdLineOptionOut = wide_cmdlineoption_out;
-		optionalTranslucent = optional_translucent;
-		fontHeightFix = font_height_fix;
-		fontHeightFixRatio = font_height_fix_raito;
-		disableOriginalResize = disable_original_resize;
-		commentIndex = comment_index;
-		setCommentSpeed = set_comment_speed;
-		commentSpeed = comment_speed;
-		debugNicovideo = debug_nicovideo;
- */
-//			Boolean.parseBoolean(map.get(PROP_ADD_TIMESTAMP, "false")),
-//			map.get(PROP_COMMENT_FILE, ".\\comment.xml"),
-//			Boolean.parseBoolean(map.get(PROP_SAVE_OWNERCOMMENT, "false")),	// false<-true 1.22r3e8
-//			map.get(PROP_OWNERCOMMENT_FILE, ".\\comment" + Converter.OWNER_EXT),
-//			Boolean.parseBoolean(map.get(PROP_SAVE_CONVERTED, "true")),
-//			Boolean.parseBoolean(map.get(PROP_CONV_WITH_COMMENT,"true")),
-//			Boolean.parseBoolean(map.get(PROP_CONV_WITH_OWNERCOMMENT,"false")),	// false<-true 1.22r3e8
-//			map.get(PROP_CONVERTED_FILE, ".\\video.avi"),
-//			map.get(PROP_SHOW_COMMENT, "40"),
-//			map.get(PROP_FFMPEG_PATH,".\\bin\\ffmpeg.exe"),
-//			map.get(PROP_VHOOK_PATH,".\\bin\\nicovideoE.dll"),
-//			map.get(PROP_CMDLINE_MAIN,""),
-//			map.get(PROP_CMDLINE_IN, ""),
-//			map.get(PROP_CMDLINE_OUT,"-threads 4 -s 512x384 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 4:3"),
-//			map.get(PROP_BACK_COMMENT, "500"),
-//			Boolean.parseBoolean(map.get(PROP_SHOW_VIDEO, "true")),
-//			Boolean.parseBoolean(map.get(PROP_DEL_VIDEO_AFTER_CONV, "false")),
-//			Boolean.parseBoolean(map.get(PROP_VIDEO_FIX_FILE_NAME, "true")),
-//			map.get(PROP_VIDEO_FIX_FILE_NAME_FOLDER,".\\[out]video\\"),
-//			Boolean.parseBoolean(map.get(PROP_DEL_COMMENT_AFTER_CONV, "false")),
-//			Boolean.parseBoolean(map.get(PROP_COMMENT_FIX_FILE_NAME, "true")),
-//			map.get(PROP_COMMENT_FIX_FILE_NAME_FOLDER, ".\\[out]comment\\"),
-//			Boolean.parseBoolean(map.get(PROP_NOT_ADD_VIDEOID_CONV, "false")),
-//			Boolean.parseBoolean(map.get(PROP_CONV_FIX_FILE_NAME,"true")),
-//			map.get(PROP_CONV_FIX_FILE_NAME_FOLDER, ".\\[out]converted\\"),
-//			map.get(PROP_NG_WORD, ""),
-//			map.get(PROP_NG_ID, ""),
-//			Boolean.parseBoolean(map.get(PROP_USE_PROXY, "false")),
-//			map.get(PROP_PROXY,""),
-//			Integer.parseInt(map.get(PROP_PROXY_PORT,"-1")),
-//			Boolean.parseBoolean(map.get(PROP_FIX_FONT_SIZE, "true")),
-//			Boolean.parseBoolean(map.get(PROP_FIX_COMMENT_NUM, "true")),
-//			Boolean.parseBoolean(map.get(PROP_OPAQUE_COMMENT,"false")),
-//			option_file,
-//			Boolean.parseBoolean(map.get(PROP_DISABLE_VHOOK,"false")),
-//			Integer.parseInt(map.get(PROP_SHADOW_INDEX,"1"),10),
-//			Boolean.parseBoolean(map.get(PROP_ADD_OPTION_CONV_VIDEO, "false")),
-//			map.get(PROP_HISTORY1, "http://www.nicovideo.jp/watch/"),
-//			map.get(PROP_VHOOK_WIDE_PATH,".\\bin\\nicovideoE.dll"),
-//			Boolean.parseBoolean(map.get(PROP_USE_VHOOK,"true")),
-//			Boolean.parseBoolean(map.get(PROP_USE_VHOOK_WIDE,"true")),
-//			Boolean.parseBoolean(map.get(PROP_BROWSER_IE, "false")),
-//			Boolean.parseBoolean(map.get(PROP_FIREFOX, "false")),
-//			Boolean.parseBoolean(map.get(PROP_CHROME, "false")),
-//			Boolean.parseBoolean(map.get(PROP_CHROMIUM, "false")),
-//			Boolean.parseBoolean(map.get(PROP_OPERA, "false")),
-//			Boolean.parseBoolean(map.get(PROP_USE_COOKIE_PATH, "false")),
-//			map.get(PROP_BROWSER_COOKIE_PATH,"Å|èÍèäÇÕé©ï™Ç≈ë{ÇµÇƒâ∫Ç≥Ç¢Å|"),
-//			map.get(PROP_OPTION_FOLDER, ".\\option"),
-//			wide_option_file,
-//			map.get(PROP_WIDE_CMDLINE_MAIN,""),
-//			map.get(PROP_WIDE_CMDLINE_IN, ""),
-//			map.get(PROP_WIDE_CMDLINE_OUT,"-threads 4 -s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9"),
-//			Boolean.parseBoolean(map.get(PROP_OPTIONAL_TRANSLUCENT, "true")),
-//			Boolean.parseBoolean(map.get(PROP_FONT_HEIGHT_FIX,"false")),
-//			map.get(PROP_FONT_HEIGHT_FIX_RAITO,"102"),
-//			Boolean.parseBoolean(map.get(PROP_DISABLE_ORIGINAL_RESIZE, "false")),
-//			Integer.parseInt(map.get(PROP_COMMENT_MODE_INDEX, "0")),
-//			Boolean.parseBoolean(map.get(PROP_SET_COMMENT_SPEED, "false")),
-//			map.get(PROP_COMMENT_SPEED, ""),
-//			false,
-//		);
+	}
+*/
+	/**
+	 * @param replaceOptions ÉZÉbÉgÇ∑ÇÈ replaceOptions
+	 */
+	public void setReplaceOptions(Map<String, String> replaceOptions) {
+		this.replaceOptions = replaceOptions;
 	}
 
 }

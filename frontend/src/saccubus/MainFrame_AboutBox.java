@@ -42,8 +42,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.31.dev5";
-	private static final String modefied = " (2012/03/05)";
+	public static final String rev = "1.31.dev11";
+	private static final String modefied = " (2012/03/12)";
 
 	String productHTML =
 		"<html><p>本プログラムは<br/>" +
@@ -66,7 +66,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 		"ニコニコ動画の動画をコメントつきで保存</p>" +
 		"<p>関連リンク<br/>" +
 		"<a href=\'http://sourceforge.jp/projects/saccubus/\'>さきゅばす project</a><br/>" +
-		"<a href=\'http://sourceforge.jp/projects/coroid/\'>coroid project（いんきゅばすを含む）</a><br/>" +
+		"<a href=\'http://sourceforge.jp/projects/coroid/\'>coroid project（いんきゅばすを含む）雪羽氏</a><br/>" +
 		"<br/><a href=\'http://anago.2ch.net/test/read.cgi/software/1310301611/\'>2chさきゅばすスレ</a>" +
 		"</p></html>";
 

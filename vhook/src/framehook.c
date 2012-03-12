@@ -29,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.31.5";
+	char *ver="1.31.11";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -157,7 +157,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->enableCA = FALSE;
 	setting->debug = FALSE;
 	setting->use_lineskip_as_fontsize = FALSE;	//デフォルトは無効 FonrsizeにLineskipを合わせる（実験的）
-	setting->debug_mode = NULL;
+	setting->debug_mode = "";
 	// CA用フォント
 	//  MS UI GOTHIC は msgothic.ttc の index=2
 	int f;
@@ -302,13 +302,13 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			setting->enableCA = TRUE;
 			fprintf(log,"[framehook/init]Comment Art mode enable.\n");
 			fflush(log);
-		} else if(!setting->debug && strncmp(FRAMEHOOK_OPT_DEBUG,arg,FRAMEHOOK_OPT_DEBUG_LEN) == 0){
+		} else if(!setting->debug && strcmp(arg,"--debug-print") == 0){
 			setting->debug = TRUE;
 			fprintf(log,"[framehook/init]print debug information\n");
+			fflush(log);
+		} else if(strcmp(setting->debug_mode,"") == 0 && strncmp(FRAMEHOOK_OPT_DEBUG,arg,FRAMEHOOK_OPT_DEBUG_LEN) == 0){
 			setting->debug_mode = arg+FRAMEHOOK_OPT_DEBUG_LEN;
-			if (strlen(setting->debug_mode)>0){
-				fprintf(log,"[framehook/init]debug mode:\n",setting->debug_mode);
-			}
+			fprintf(log,"[framehook/init]debug mode:%s\n",setting->debug_mode);
 			fflush(log);
 		} else if(!setting->use_lineskip_as_fontsize && strcmp("--use-lineskip-as-fontsize",arg) == 0){
 			setting->use_lineskip_as_fontsize = TRUE;
@@ -434,18 +434,20 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	}
 	//引数を正しく入力したか否かのチェック
 	//ここでチェックしているの以外は、デフォルト設定で逃げる。
-	if(!setting->font_path){
-		fputs("[framehook/init]please set FONT PATH.\n",log);
-		fflush(log);
-		return FALSE;
-	}
 	if(!setting->enableCA){
+		if(!setting->font_path){
+			fputs("[framehook/init]please set FONT PATH.\n",log);
+			fflush(log);
+			return FALSE;
+		}
 		fflush(log);
 		return TRUE;
 	}
 	if(!setting->CAfont_path[GOTHIC_FONT]){
-		setting->CAfont_path[GOTHIC_FONT] = setting->font_path;
-		fprintf(log,"[framehook/init]no GOTHIC Font path. Use Font path<%s>.\n",setting->font_path);
+//		setting->CAfont_path[GOTHIC_FONT] = setting->font_path;
+//		fprintf(log,"[framehook/init]no GOTHIC Font path. Use Font path<%s>.\n",setting->font_path);
+		fprintf(log,"[framehook/init]no GOTHIC Font path.\n");
+		return FALSE;
 	}
 	if(!setting->CAfont_path[SIMSUN_FONT]){
 		setting->CAfont_path[SIMSUN_FONT] = setting->CAfont_path[GOTHIC_FONT];

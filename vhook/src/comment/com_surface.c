@@ -90,7 +90,10 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	}
 	int is_black = item->color == CMD_COLOR_BLACK
 		|| cmpSDLColor(item->color24, COMMENT_COLOR[CMD_COLOR_BLACK]);
-	ret = (*ShadowFunc[shadow])(ret,is_black,data->fontsize_fix);
+	if(debug && strstr(data->debug_mode,"fg")!=NULL){
+		is_black = 2;
+	}
+	ret = (*ShadowFunc[shadow])(ret,is_black,data->fontsize_fix,SdlColor);
 	fprintf(log,"[comsurface/make1]ShadowFunc:%d (%d, %d) %s %d line\n",shadow,ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
 
 	/*
@@ -671,7 +674,7 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 	int debug = data->debug;
 	//SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
 	//SDL_Color bgc = COMMENT_COLOR[CMD_COLOR_YELLOW];
-	SDL_Surface* surf = render_unicode(data,font,str,SdlColor,fontsel);
+	SDL_Surface* surf = render_unicode(data,font,str,SdlColor,size,fontsel);
 
 	if(surf==NULL){
 		fprintf(log,"***ERROR*** [comsurface/drawText4]TTF_RenderUNICODE : %s\n",TTF_GetError());

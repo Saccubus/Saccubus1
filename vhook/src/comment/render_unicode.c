@@ -4,16 +4,22 @@
  *  Created on: 2012/02/12
  *      Author: orz
  */
+#include <SDL/SDL_rotozoom.h>
 #include "render_unicode.h"
 #include "surf_util.h"
 #include "com_surface.h"
+#include "../unicode/uniutil.h"
 
-SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int fontsel){
+SDL_Surface* pointsConv(DATA* data,SDL_Surface* surf,Uint16* str,int size,int fontsel);
+SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int size,int fontsel){
 	//SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
+	SDL_Surface* ret;
 	const char *mode=data->debug_mode;
-	if(!data->debug || strcmp(mode,"/")==0 || strcmp(mode,"-frame/")==0){
-		return TTF_RenderUNICODE_Blended(font,str,fg);	//default original mode
-	}
+	int is_render_change = strstr(mode,"-solid")!=NULL ||
+		strstr(mode,"-shaded")!=NULL || strstr(mode,"-blended")!=NULL;
+	if(!data->debug || strcmp(mode,"/")==0 || !is_render_change){
+		ret = TTF_RenderUNICODE_Blended(font,str,fg);	//default original mode
+	}else{
 	SDL_Color bg = {0,0,0,0};
 	int fontfg = FALSE;
 	if(strstr(mode,"-font")!=NULL){
@@ -21,10 +27,11 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 		case GOTHIC_FONT:	bg.r = 0xff; break;
 		case SIMSUN_FONT:	bg.g = 0xff; break;
 		case GULIM_FONT:	bg.b = 0xff; break;
+		case -1:
 		case ARIAL_FONT:	bg.r = bg.g = bg.b = 0xff;	break;
 		default:			break;
 		}
-	} else if(strstr(mode,"-bg")){
+	} else if(strstr(mode,"-bg")!=NULL){
 		bg = RENDER_COLOR_BG;
 	}
 	if(strstr(mode,"-fontfg")!=NULL){
@@ -43,7 +50,8 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 		colkey = 0;
 	}else{
 		surf = TTF_RenderUNICODE_Blended(font,str,fg);
-		colkey = SDL_MapRGBA(surf->format,0,0,0,0);
+		//colkey = SDL_MapRGBA(surf->format,0,0,0,0);
+		colkey = 0;
 	}
 	SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);	//surface for background
 	if (!fontfg){
@@ -59,7 +67,45 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 	SDL_BlitSurface(surf,NULL,tmp,NULL);
 	SDL_FreeSurface(surf);
 	//SDL_SetColorKey(tmp,SDL_RLEACCEL,0);	//reset color key
-	return tmp;
+	ret = tmp;
+	}
+	if(strstr(mode,"-point")!=NULL || strstr(mode,"-tune")!=NULL){
+		ret = pointsConv(data,ret,str,size,fontsel);
+	}
+	return ret;
+}
+
+SDL_Surface* pointsConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int fontsel){
+	SDL_Surface* ret;
+	FILE *log = data->log;
+	int sizeFix = data->fontsize_fix;
+
+	int ow = surf->w;
+	int oh = surf->h;
+	// point(72dpi)->pixel(96dpi) 1.33333333”{
+	int len = uint16len(str);
+	double doh;
+	double dh;
+	double rate;
+	if(GOTHIC_FONT<fontsel || fontsel>ARIAL_FONT){
+		fontsel=GOTHIC_FONT;
+	}
+	doh = (double)oh;
+	dh = (double)(CA_FONT_HIGHT_TUNED[fontsel][0][size] << sizeFix);
+	if(dh==doh){
+		return surf;
+	}
+	rate = dh/doh;
+	ret = zoomSurface(surf,rate,rate,SMOOTHING_ON);
+	SDL_FreeSurface(surf);
+	if(!ret){
+		fprintf(log,"***ERROR*** [comsurface/point]zoomSurface : %s\n",SDL_GetError());
+		fflush(log);
+		return NULL;
+	}
+	fprintf(log,"[point] build(%d, %d)->(%d, %d)%s%s%s.\n",
+		ow,oh,ret->w,ret->h,(data->original_resize ? "": " dev"),(data->enableCA?" CA":""),(data->fontsize_fix?" fix":""));
+	return ret;
 }
 
 SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,SDL_Surface* surf,SDL_Color col,int s){

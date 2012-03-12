@@ -107,15 +107,22 @@ static const float LINEFEED_RESIZE_SCALE[CMD_FONT_MAX] = {
 /*
 LineFeed Resize Of FontSize(font_height surface_height/96dpi) [gothic]
         DEF  BIG  SMALL  DEF  BIG  SMALL
-prig    24   39   15     29   45   18
+orig    24   39   15     29   45   18
 resized 12   20    8     15   24   10
 scale%  50.0 51.3 53.3   51.7 53.3 55.6
 */
 
+//pixel size in 96dpi Windows
 static const int COMMENT_FONT_SIZE[CMD_FONT_MAX] = {
 	24,//DEF
 	39,//BIG
 	15,//SMALL
+};
+//points, i.e. pixel size in 72dpi
+static const int COMMENT_POINT_SIZE[CMD_FONT_MAX] = {
+	18,	//medium DEF
+	29,	//big BIG
+	11,	//small SMALL
 };
 
 #define CMD_COLOR_MAX	17
@@ -231,10 +238,10 @@ static const int CA_FONT_HIGHT_TUNED[4][2][CMD_FONT_MAX] = {
 
 static const int CA_FONT_WIDTH_TUNED[4][2][CMD_FONT_MAX] = {
 //	{{DEF,BIG,SMALL},{DEF,BIG,SMALL}}
-	{{25,40,16},{50,80,33}},	//gothic
-	{{25,40,16},{50,80,33}},	//simsun
-	{{25,40,16},{50,80,33}},	//gulim
-	{{13,22, 8},{26,44,16}},	//arial
+	{{25,40,16},{50,80,32}},	//gothic
+	{{25,40,16},{50,80,32}},	//simsun
+	{{25,40,16},{50,80,32}},	//gulim
+	{{13,22, 8},{26,44,16}},	//arial 'a'
 };
 
 static const int CA_FONT_SIZE_TUNED[4][2][CMD_FONT_MAX] = {

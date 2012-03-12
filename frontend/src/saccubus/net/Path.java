@@ -3,8 +3,10 @@ package saccubus.net;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.channels.FileChannel;
 
 /**
  * <p>
@@ -349,5 +351,24 @@ public class Path extends File{
 			dir = new File("");
 		}
 		return new Path(dir, string);
+	}
+	/**
+	 *
+	 * @param srcfile
+	 * @param destfile
+	 */
+	public static void fileCopy(File srcfile, File destfile) {
+		FileChannel srcch = null, destch = null;
+		try {
+			srcch = new FileInputStream(srcfile).getChannel();
+			destch = new FileOutputStream(destfile).getChannel();
+			destch.transferFrom(srcch, 0, srcch.size());
+			//sc.transferTo(0, sc.size(), dc);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (destch != null) try { destch.close(); } catch (IOException e) {}
+			if (srcch != null) try { srcch.close(); } catch (IOException e) {}
+		}
 	}
 }

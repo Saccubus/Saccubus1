@@ -16,6 +16,8 @@ import saccubus.conv.NicoXMLReader;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -68,16 +70,6 @@ public class Converter extends Thread {
 	private int proxy_port;
 	private String mailAddress;
 	private String password;
-	/*
-	private static final String CHANGE_SIMSUN_UNICODE =
-			"0x2581-0x258f 0x02cb 0xe800";
-	private static final String CHANGE_GULIM_UNICODE =
-			"0x2661 02665 0xadf8";
-	private static final String PROTECT_GOTHIC_UNICODE =
-			"0x30fb 0xff61-0xff9f";
-	private static final String ZERO_WIDTH_UNICODE =
-			"0x200b 0x2029-0x202f";
-	*/
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -326,11 +318,12 @@ public class Converter extends Thread {
 					System.out.println("CA用フォントが見つかりません。" + arialUnicodeFont.getPath());
 					arialUnicodeFont = null;
 				}
-			}
-			a = new File(Setting.getFontPath());
-			if (!a.canRead()) {
-				sendtext("フォントが見つかりません。");
-				return false;
+			}else{
+				a = new File(Setting.getFontPath());
+				if (!a.canRead()) {
+					sendtext("フォントが見つかりません。");
+					return false;
+				}
 			}
 		} else {
 			if (isDeleteVideoAfterConverting()) {
@@ -924,6 +917,16 @@ public class Converter extends Thread {
 		}
 		int code = converting_video();
 		Stopwatch.stop();
+		//vhext(nicovideoログ)をコピーする
+		File log_vhext = new File(".","[log]vhext.txt");
+		File video_vhext = Path.mkTemp(Tag+"[log]vhext.txt");
+		if(video_vhext.exists()){
+			if(log_vhext.delete()){
+				Path.fileCopy(video_vhext, log_vhext);
+			}
+		}else{
+			Path.fileCopy(video_vhext, log_vhext);
+		}
 		if (code == 0) {
 			sendtext("変換が正常に終了しました。");
 			System.out.println(ffmpeg.getLastFrame());
@@ -1220,9 +1223,11 @@ public class Converter extends Thread {
 					ffmpeg.addCmd("|--optional-translucent");
 				}
 			}
-			ffmpeg.addCmd("|--font:");
-			ffmpeg.addCmd(URLEncoder.encode(
-				Path.toUnixPath(Setting.getFontPath()), encoding));
+			if(Setting.getFontPath()!=null){
+				ffmpeg.addCmd("|--font:");
+				ffmpeg.addCmd(URLEncoder.encode(
+					Path.toUnixPath(Setting.getFontPath()), encoding));
+			}
 			ffmpeg.addCmd("|--font-index:");
 			ffmpeg.addCmd(Setting.getFontIndex());
 			ffmpeg.addCmd("|--shadow:" + Setting.getShadowIndex());
@@ -1252,8 +1257,9 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--comment-speed:"
 					+ URLEncoder.encode(comment_speed, encoding));
 			}
-			if(Setting.getDebugNicovideo() != null){
-				ffmpeg.addCmd("|--debug-print:" + Setting.getDebugNicovideo());
+			if(Setting.getExtraMode().contains("debug")){
+				ffmpeg.addCmd("|--debug-print");
+				ffmpeg.addCmd("|--debug-print:" + Setting.getExtraMode().replaceFirst("debug", ""));
 			}
 			if(Setting.isEnableCA()){
 				ffmpeg.addCmd("|--enable-CA");
@@ -1302,8 +1308,9 @@ public class Converter extends Thread {
 					ffmpeg.addCmd("|--use-lineskip-as-fontsize");
 				}
 				if(Setting.isUseExtraFont()){
-					ffmpeg.addCmd("|--extra-font:"
-						+ Setting.getExtraFontText());
+					ffmpeg.addCmd("|--extra-font:");
+					ffmpeg.addCmd(URLEncoder.encode(
+						Setting.getExtraFontText(), encoding));
 				}
 			}
 			if (Setting.isDisableOriginalResize()){
@@ -1425,12 +1432,55 @@ public class Converter extends Thread {
 				MainOption = Setting.getWideCmdLineOptionMain();
 			}
 		}
+		//replaceチェック
+		Map<String,String> optionPair = Setting.getReplaceOptions();
+		if(optionPair!=null){
+			for(Entry<String, String> pair : optionPair.entrySet()){
+				String optMain = replaceOption(MainOption,pair.getKey(),pair.getValue());
+				if(optMain!=null)
+					MainOption = optMain;
+				String optIn = replaceOption(InOption,pair.getKey(),pair.getValue());
+				if(optIn!=null)
+					InOption = optIn;
+				String optOut = replaceOption(OutOption,pair.getKey(),pair.getValue());
+				if(optOut!=null)
+					OutOption = optOut;
+				if(optIn==null && optOut==null && optMain==null){
+					OutOption = pair.getKey() + " " + pair.getValue() + " " + OutOption;
+				}
+			}
+		}
 		//オプションに拡張子を含んでしまった場合にも対応☆
 		if(ExtOption != null && !ExtOption.startsWith(".")){
 			ExtOption = "."+ExtOption;
 		}
 		ffmpegVfOption = getvfOption();
 		return true;
+	}
+
+	/**
+	 * @param option :String
+	 * @param key
+	 * @param value
+	 * @return replaced :String
+	 */
+	private String replaceOption(String option, String key, String value) {
+		key += " ";
+		if (option!=null && !option.isEmpty() && option.contains(key)){
+			String ret = option.trim();
+			int keypos = ret.indexOf(key);
+			ret = ret + " ";
+			int valpos = ret.indexOf(" ", keypos) + 1;
+			if(valpos>=ret.length()){
+				// key is last token
+				return ret + value;
+			}
+			ret = ret + " ";
+			int valend = ret.indexOf(" ", valpos);
+			ret = ret.substring(0, valpos) + value +ret.substring(valend);
+			return ret.trim();
+		}
+		return null;
 	}
 
 	private String getvfOption() {
