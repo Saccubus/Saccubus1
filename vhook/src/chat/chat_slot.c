@@ -94,8 +94,8 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 		limit_height = (double)NICO_HEIGHT * data->width_scale;
 	}
 	int y_min = (video_height>>1) - (limit_height>>1);
-	int y_max = y_min + limit_height;
-	y_max+=limit_height/NICO_COMMENT_HIGHT + 1;	//コメントの高さは385=384+1 下にはみ出す
+	int y_max = y_min + limit_height +
+		limit_height/NICO_COMMENT_HIGHT + 1;	//コメントの高さは385=384+1 下にはみ出す
 	/*ロケーションで分岐*/
 	int y;
 	if(item->location == CMD_LOC_BOTTOM){
@@ -103,6 +103,9 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	}else{
 		y = y_min;
 	}
+	if(data->debug)
+	fprintf(data->log,"width %d, height %d, widthscale %.3f, limitheight %d, y_min %d, y_max %d y %d\n",
+		video_width, video_height, data->width_scale, limit_height, y_min, y_max, y);
 	setspeed(data->comment_speed,slot_item,video_width);
 	int running;
 	int first_comment=TRUE;

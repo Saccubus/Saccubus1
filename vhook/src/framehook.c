@@ -29,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.31.11";
+	char *ver="1.31.13";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -157,7 +157,10 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->enableCA = FALSE;
 	setting->debug = FALSE;
 	setting->use_lineskip_as_fontsize = FALSE;	//デフォルトは無効 FonrsizeにLineskipを合わせる（実験的）
-	setting->debug_mode = "";
+	setting->extra_mode = "";
+	setting->input_size = NULL;
+	setting->set_size = NULL;
+	setting->pad_option = NULL;
 	// CA用フォント
 	//  MS UI GOTHIC は msgothic.ttc の index=2
 	int f;
@@ -306,13 +309,28 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			setting->debug = TRUE;
 			fprintf(log,"[framehook/init]print debug information\n");
 			fflush(log);
-		} else if(strcmp(setting->debug_mode,"") == 0 && strncmp(FRAMEHOOK_OPT_DEBUG,arg,FRAMEHOOK_OPT_DEBUG_LEN) == 0){
-			setting->debug_mode = arg+FRAMEHOOK_OPT_DEBUG_LEN;
-			fprintf(log,"[framehook/init]debug mode:%s\n",setting->debug_mode);
+		} else if(strncmp(FRAMEHOOK_OPT_DEBUG,arg,FRAMEHOOK_OPT_DEBUG_LEN) == 0){
+			setting->extra_mode = arg+FRAMEHOOK_OPT_DEBUG_LEN;
+			fprintf(log,"[framehook/init]extra mode:%s\n",setting->extra_mode);
 			fflush(log);
 		} else if(!setting->use_lineskip_as_fontsize && strcmp("--use-lineskip-as-fontsize",arg) == 0){
 			setting->use_lineskip_as_fontsize = TRUE;
 			fprintf(log,"[framehook/init]use Lineskip as Fontsize (experimental)\n");
+			fflush(log);
+		}
+		else if (strncmp(FRAMEHOOK_OPT_INPUT_SIZE,arg,FRAMEHOOK_OPT_INPUT_SIZE_LEN) == 0){
+			setting->input_size = arg+FRAMEHOOK_OPT_INPUT_SIZE_LEN;
+			fprintf(log,"[framehook/init]input size: %s\n",setting->input_size);
+			fflush(log);
+		}
+		else if (strncmp(FRAMEHOOK_OPT_SET_SIZE,arg,FRAMEHOOK_OPT_SET_SIZE_LEN) == 0){
+			setting->set_size = arg+FRAMEHOOK_OPT_SET_SIZE_LEN;
+			fprintf(log,"[framehook/init]set size: %s\n",setting->set_size);
+			fflush(log);
+		}
+		else if (strncmp(FRAMEHOOK_OPT_PAD_OPTION,arg,FRAMEHOOK_OPT_PAD_OPTION_LEN) == 0){
+			setting->pad_option = arg+FRAMEHOOK_OPT_PAD_OPTION_LEN;
+			fprintf(log,"[framehook/init]pad option: %s\n",setting->pad_option);
 			fflush(log);
 		}
 		// CA用フォント

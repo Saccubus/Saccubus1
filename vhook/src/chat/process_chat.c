@@ -6,7 +6,7 @@
 #include "../mydef.h"
 
 //このソース内でしか使わないメソッド
-void drawComment(SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos);
+void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos,int x,int y);
 int convSDLcolor(SDL_Color sc);
 
 /**
@@ -39,16 +39,20 @@ int process_chat(DATA* data,CDATA* cdata,const char* com_type,SDL_Surface* surf,
 		chat = &cdata->chat;
 		resetChatIterator(chat);
 		while((chat_item = getChatShowed(chat,now_vpos)) != NULL){
-			addChatSlot(data,slot,chat_item,surf->w,surf->h);
+			addChatSlot(data,slot,chat_item,data->vout_width,data->vout_height);
+		//	addChatSlot(data,slot,chat_item,surf->w,surf->h);
 			fprintf(log,"[process-chat/process]comment %d vpos:%d %s color:%d:#%06x %5s %6s  %d - %d(vpos:%d) added.\n",
 				chat_item->no,now_vpos,com_type,chat_item->color,convSDLcolor(chat_item->color24),
 				COM_LOC_NAME[chat_item->location],COM_FONTSIZE_NAME[chat_item->size],chat_item->vstart,chat_item->vend,chat_item->vpos);
 			fflush(log);
 		}
-		drawComment(surf,slot,now_vpos);
+		drawComment(data,surf,slot,now_vpos,data->vout_x,data->vout_y);
 	}
 	return TRUE;
 }
+/*
+ * cnvert SDL_Color to RGB 24bit
+ */
 int convSDLcolor(SDL_Color sc){
 	return ((sc.r)<<16)+((sc.g)<<8)+(sc.b);
 }
@@ -57,7 +61,7 @@ int convSDLcolor(SDL_Color sc){
  * レイヤ順にそって描画する
  */
 
-void drawComment(SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos){
+void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int x, int y){
 	int i;
 	SDL_Rect rect;
 	int max_item = slot->max_item;
@@ -65,8 +69,8 @@ void drawComment(SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos){
 	for(i=0;i<max_item;i++){
 		item = &slot->item[i];
 		if(item->used){
-			rect.x = getX(now_vpos,item,surf->w);
-			rect.y = item->y;
+			rect.x = getX(now_vpos,item,data->vout_width) + x;
+			rect.y = item->y + y;
 			SDL_BlitSurface(item->surf,NULL,surf,&rect);
 		}
 	}

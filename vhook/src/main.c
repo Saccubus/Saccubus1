@@ -63,7 +63,26 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	data->use_lineskip_as_fontsize = setting->use_lineskip_as_fontsize;
 	data->debug = setting->debug;
 //	data->limit_height = NICO_HEIGHT;
-	data->debug_mode = setting->debug_mode;
+	int outw = setting->nico_width_now;
+	int outh = outw==NICO_WIDTH_WIDE ? NICO_HEIGHT_WIDE : NICO_HEIGHT;
+	const char* param = setting->input_size;
+	if(param!=NULL){
+		sscanf(param,"%d:%d",&outw,&outh);
+	}
+	param = setting->set_size;	//-s "width"x"height" in ffmpeg OUT OPTION
+	if(param!=null){
+		sscanf(param,"%d:%d",&outw,&outh);
+	}
+	data->vout_width = outw;
+	data->vout_height = outh;
+	data->vout_x = 0;
+	data->vout_y = 0;
+	if(setting->pad_option!=NULL){
+		sscanf(setting->pad_option,"%*d:%*d:%d:%d",&data->vout_x,&data->vout_y);
+	}
+	fprintf(log,"[main/init]output: %dx%d @(%d,%d)\n",
+		data->vout_width,data->vout_height,data->vout_x,data->vout_y);
+	data->extra_mode = setting->extra_mode;
 	fputs("[main/init]initializing context...\n",log);
 	//フォント
 	TTF_Font** font = data->font;
@@ -78,7 +97,7 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	}
 	int line_skip[CMD_FONT_MAX];
 	int pointsizemode = FALSE;
-	if(setting->debug && strstr(setting->debug_mode,"-point")!=NULL){
+	if(setting->debug && strstr(setting->extra_mode,"-point")!=NULL){
 		pointsizemode = TRUE;
 	}
 	for (i=0;i<CMD_FONT_MAX;++i) {
@@ -88,6 +107,7 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 		data->font_pixel_size[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_SMALL]
 	);
 	if(!setting->enableCA){
+		fputs("[main/init]initializing default Font...\n",log);
 		for(i=0;i<CMD_FONT_MAX;i++){
 			/* ターゲットを拡大した時にフォントが滑らかにするため２倍化する。 */
 			//int fontsize = setting->fixed_font_size[i];
@@ -96,7 +116,7 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 				fontsize = COMMENT_POINT_SIZE[i]<<isfontdoubled;
 			}
 			//実験からSDL指定値は-1するとニコニコ動画と文字幅が合う?
-			//fontsize -= 1;
+			fontsize -= 1;
 
 			font[i] = TTF_OpenFontIndex(font_path,fontsize,font_index);
 			if(font[i] == NULL){
@@ -138,7 +158,7 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	int f;
 	if(data->enableCA){
 		// CAフォント
-		fputs("[main/init]initializing CA(Comment Art) Feature...\n",log);
+		fputs("[main/init]initializing CA(Comment Art) Font...\n",log);
 		for(f=0;f<CA_FONT_MAX;f++){
 			for(i=0;i<CMD_FONT_MAX;i++){
 				data->CAfont[f][i] = NULL;
@@ -165,7 +185,7 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 			for(i=0;i<CMD_FONT_MAX;i++){
 				fontsize = COMMENT_FONT_SIZE[i];
 				//実験からSDL指定値はマイナスするとニコニコ動画と文字幅が合う?
-				//fontsize -= CA_FONT_SIZE_DECREMENT[f];
+				fontsize -= 1;
 				/* ターゲットを拡大した時にフォントが滑らかにするため２倍化する。 */
 				fontsize <<= isfontdoubled;
 				try = 1;
@@ -180,7 +200,7 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 				}else
 				if(!data->original_resize){
 					try = 10;
-					if(f<4){
+					if(f <= ARIAL_FONT){	//gothic simsun gulim arial
 						fontsize = CA_FONT_SIZE_TUNED[f][isfontdoubled][i];
 						target_size = CA_FONT_HIGHT_TUNED[f][isfontdoubled][i];
 					}else{	//文字間隔は合わないが文字サイズを合わせる
@@ -195,11 +215,13 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 				}
 				target_size = fontsize;
 */
-				fprintf(log,"[main/init]loading CAfont[%s][%d]:%s size:%d index:%d target:%d\n",CA_FONT_NAME[f],i,font_path,fontsize,fixed_font_index,target_size);
+				if(data->debug)
+					fprintf(log,"[main/init]loading CAfont[%s][%d]:%s size:%d index:%d target:%d\n",CA_FONT_NAME[f],i,font_path,fontsize,fixed_font_index,target_size);
 				while(try>0){
 					font[i] = TTF_OpenFontIndex(font_path,fontsize,fixed_font_index);
 					if(font[i] == NULL){
-						fprintf(log,"[main/init]failed to load CAfont[%s][%d]:%s size:%d index:%d.\n",CA_FONT_NAME[f],i,font_path,fontsize,fixed_font_index);
+						if(data->debug)
+							fprintf(log,"[main/init]failed to load CAfont[%s][%d]:%s size:%d index:%d.\n",CA_FONT_NAME[f],i,font_path,fontsize,fixed_font_index);
 						return FALSE;
 					}
 					TTF_SetFontStyle(font[i],TTF_STYLE_BOLD);
@@ -214,7 +236,8 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 						break;
 					}
 					if(--try<=0){
-						fprintf(log,"[main/init]load CAfont try count end.\n");
+						if(data->debug)
+							fprintf(log,"[main/init]load CAfont try count end.\n");
 						break;
 					}
 					TTF_CloseFont(font[i]);
@@ -224,8 +247,10 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 						fontsize++;
 					}
 				}
-				fprintf(log,"[main/init]loaded  CAfont[%s][%d]:%s size:%d index:%d.\n",CA_FONT_NAME[f],i,font_path,fontsize,fixed_font_index);
-				printFontInfo(log,font,i,CA_FONT_NAME[f]);
+				if(data->debug){
+					fprintf(log,"[main/init]loaded  CAfont[%s][%d]:%s size:%d index:%d.\n",CA_FONT_NAME[f],i,font_path,fontsize,fixed_font_index);
+					printFontInfo(log,font,i,CA_FONT_NAME[f]);
+				}
 			}
 			fprintf(log,"CAfont[%s]%s height is DEF=%dpt %dpx(%dpx), BIG=%dpt %dpx(%dpx), SMALL=%dpt %dpx(%dpx)\n",
 				CA_FONT_NAME[f],(data->fontsize_fix?" Double scaled":""),
@@ -415,22 +440,11 @@ int extra_font(SETTING* setting, FILE* log){
 int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 	FILE* log = data->log;
 	if(!data->process_first_called){
-	/*
-		int aspect100 = surf->w * 100 /surf->h;
-		fprintf(log,"[main/process]screen size is %dx%d, aspect is %d/100.\n",surf->w,surf->h, aspect100);
+		data->width_scale = (double)(data->vout_width) / (double)(data->nico_width_now);
+		fprintf(log,"[main/process]screen size:%dx%d aspect:%.3f->%.3f scale:%.0f%%.\n",
+			surf->w,surf->h,data->nico_width_now==NICO_WIDTH_WIDE?1.7777:1.3333,
+			(double)data->vout_width/(double)data->vout_height,data->width_scale*100.0);
 		fflush(log);
-	*/
-		data->width_scale = (double)(surf->w) / (double)(data->nico_width_now);
-		fprintf(log,"[main/process]screen size:%dx%d aspect:%.3f scale:%.0f%%.\n",
-			surf->w,surf->h,(double)surf->w/(double)surf->h,data->width_scale*100.0);
-		fflush(log);
-	/*
-		if(surf->w != (int)data->target_width){
-			fprintf(log,"[main/process]screen size differs from target_width:%d.\n",data->target_width);
-			fflush(log);
-			return FALSE;
-		}
-	*/
 	}
 	/*フィルタをかける*/
 	if(process(data,surf,now_vpos)){

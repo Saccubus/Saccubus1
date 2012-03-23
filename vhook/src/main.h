@@ -43,6 +43,10 @@ struct DATA{
 	int video_length;
 //	int aspect100;		// アスペクト比*100	Not used now
 	int nico_width_now;	// 元動画の横幅
+	int vout_width;
+	int vout_height;
+	int vout_x;
+	int vout_y;
 	float font_w_fix_r;	// フォントの幅をnicoplayer.swfに合わせる倍率(0< <2)（実験的）
 	float font_h_fix_r;	// フォントの高さをnicoplayer.swfに合わせる倍率(0< <2)（実験的）
 	int original_resize;	// さきゅばす独自リサイズが有効（デフォルト有効）
@@ -50,7 +54,7 @@ struct DATA{
 	int enableCA;
 	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
 	int debug;
-	const char* debug_mode;
+	const char* extra_mode;
 	double width_scale;	//書き込み可　videowidth/nicowidth_now
 	// CA用フォント
 	TTF_Font* CAfont[CA_FONT_MAX][CMD_FONT_MAX];
@@ -89,6 +93,10 @@ typedef struct SETTING{
 	int optional_slot_max;
 	int shadow_kind;
 	int nico_width_now;	// 元動画の横幅
+	//int nico_height_now = 384
+	const char* input_size;
+	const char* set_size;
+	const char* pad_option;
 	/*TRUE OR FALSE*/
 	int enable_user_comment;
 	int enable_owner_comment;
@@ -116,7 +124,7 @@ typedef struct SETTING{
 	int enableCA;
 	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
 	int debug;
-	const char* debug_mode;	// debugモード文字列
+	const char* extra_mode;	// debugモード文字列
 }SETTING;
 
 int init(FILE* log);

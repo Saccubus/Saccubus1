@@ -98,7 +98,16 @@ void exitExtProcess();
 #define FRAMEHOOK_OPT_EXTRA_FONT		"--extra-font:"
 #define FRAMEHOOK_OPT_EXTRA_FONT_LEN	strlen(FRAMEHOOK_OPT_EXTRA_FONT)
 
-#define FRAMEHOOK_OPT_DEBUG	"--debug-print:"
+#define FRAMEHOOK_OPT_DEBUG	"--extra-mode:"
 #define FRAMEHOOK_OPT_DEBUG_LEN	strlen(FRAMEHOOK_OPT_DEBUG)
+
+#define FRAMEHOOK_OPT_INPUT_SIZE	"--input-size:"
+#define FRAMEHOOK_OPT_INPUT_SIZE_LEN	strlen(FRAMEHOOK_OPT_INPUT_SIZE)
+
+#define FRAMEHOOK_OPT_SET_SIZE	"--set-size:"
+#define FRAMEHOOK_OPT_SET_SIZE_LEN	strlen(FRAMEHOOK_OPT_SET_SIZE)
+
+#define FRAMEHOOK_OPT_PAD_OPTION	"--pad-option:"
+#define FRAMEHOOK_OPT_PAD_OPTION_LEN	strlen(FRAMEHOOK_OPT_PAD_OPTION)
 
 #endif /*FRAMEHOOK_H_*/
