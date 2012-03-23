@@ -276,7 +276,7 @@ public class FFmpeg {
 			}
 		}
 		public boolean isWide(){
-			if (aspect >= 1.523) {	// 640x420
+			if (aspect >= 1.666) {	// 640x384
 				return true;
 			} else {
 				return false;
@@ -284,6 +284,9 @@ public class FFmpeg {
 		}
 		public String explain(){
 			return "(" + width + "x" + height + ")" + String.format("%.3f", aspect);
+		}
+		public String getSize(){
+			return "" + width + ":" + height;
 		}
 		public static final Aspect NORMAL = new Aspect(4, 3);
 		public static final Aspect WIDE = new Aspect(16, 9);

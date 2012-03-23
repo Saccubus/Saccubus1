@@ -17,8 +17,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -80,6 +83,7 @@ public class MainFrame extends JFrame {
 	JMenuBar jMenuBar1 = new JMenuBar();
 	JMenu jMenuFile = new JMenu();
 	JMenuItem jMenuOpen = new JMenuItem();
+	JMenuItem jMenuAdd = new JMenuItem();
 	JMenuItem jMenuSave = new JMenuItem();
 	JMenuItem jMenuSaveAs = new JMenuItem();
 	JMenuItem jMenuFileExit = new JMenuItem();
@@ -173,8 +177,12 @@ public class MainFrame extends JFrame {
 	JTextField extraFontTextField = new JTextField();
 	private String encrypt_pass;
 	SharedNgScore sharedNgScore = new SharedNgScore();
-	JLabel debugModeLabel = new JLabel();
-	JTextField debugModeField = new JTextField();
+	JLabel extraModeLabel = new JLabel();
+	JTextField extraModeField = new JTextField();
+	JPanel additionalOptionPanel = new JPanel();
+	JTextField additionalOptionFiled = new JTextField();
+	JTextField wideAdditionalOptionFiled = new JTextField();
+
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -355,7 +363,7 @@ public class MainFrame extends JFrame {
 		grid9_x0_y1_55.gridy = 1;
 		GridBagConstraints grid9_x1_y5_53 = new GridBagConstraints(1, 3,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, INSETS_0_0_5_5, 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_0_0_5, 0, 0);
 		grid9_x1_y5_53.gridy = 5;
 		grid9_x1_y5_53.gridheight = 1;
 		grid9_x1_y5_53.weightx = 1.0;
@@ -376,7 +384,7 @@ public class MainFrame extends JFrame {
 		grid9_x1_y3_51.gridx = 3;
 		GridBagConstraints grid9_x0_y5_50 = new GridBagConstraints(0, 3,
 				1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.BOTH, INSETS_0_5_5_5, 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0);
 		grid9_x0_y5_50.gridy = 5;
 		GridBagConstraints grid9_x0_y4_49 = new GridBagConstraints(0, 2,
 				2, 1, 0.0, 0.0, GridBagConstraints.WEST,
@@ -603,6 +611,16 @@ public class MainFrame extends JFrame {
 				JTextField propFileField = new JTextField("");
 				showSaveDialog("設定ファイルのパス", propFileField, false, false);
 				setSetting(ConvertingSetting.loadSetting(null, null, propFileField.getText()));
+			}
+		});
+		jMenuAdd.setText("追加 (Add)...");
+		jMenuAdd.setForeground(Color.blue);
+		jMenuAdd.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JTextField propFileField = new JTextField("");
+				showSaveDialog("追加用設定ファイルのパス", propFileField, false, false);
+				setSetting(ConvertingSetting.addSetting(getSetting(), propFileField.getText()));
 			}
 		});
 		jMenuSave.setText("上書き保存 (Save saccubus.xml)");
@@ -883,6 +901,10 @@ public class MainFrame extends JFrame {
 			"FFmpegの設定２ （拡張Vhook ワイドを選択した時）",
 			TitledBorder.LEADING, TitledBorder.TOP, getFont(), Color.blue));
 		WideFFmpegSettingPanel.setLayout(new GridBagLayout());
+		additionalOptionPanel.setBorder(BorderFactory.createTitledBorder(
+			BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+			"FFmpeg追加設定 (オプションを上書き/追加します)",
+			TitledBorder.LEADING, TitledBorder.TOP, getFont(), Color.blue));
 		FontPathLabel.setText("フォントパス");
 		SettingFontPathButton.setText("参照");
 		SettingFontPathButton
@@ -905,6 +927,7 @@ public class MainFrame extends JFrame {
 		BasicInfoTabPanel.setLayout(gridBagLayout12);
 		jMenuBar1.add(jMenuFile);
 		jMenuFile.add(jMenuOpen);
+		jMenuFile.add(jMenuAdd);
 		jMenuFile.add(jMenuSave);
 		jMenuFile.add(jMenuSaveAs);
 		jMenuFile.add(jMenuInit);
@@ -1048,6 +1071,34 @@ public class MainFrame extends JFrame {
 		WideFFmpegSettingPanel.add(new JLabel(OutLabel.getText()), grid9_x0_y5_50);
 		WideFFmpegSettingPanel.add(wideCommandLineOutOptionField, grid9_x1_y5_53);
 		WideFFmpegSettingPanel.setForeground(Color.blue);
+// Addtional opttion
+		additionalOptionPanel.setLayout(new GridBagLayout());
+		GridBagConstraints grid90_x0_y0_ = new GridBagConstraints();
+		grid90_x0_y0_.gridx = 0;
+		grid90_x0_y0_.gridy = 0;
+		grid90_x0_y0_.anchor = GridBagConstraints.WEST;
+		grid90_x0_y0_.insets = INSETS_0_5_5_5;
+		additionalOptionPanel.add(new JLabel("設定１に追加"), grid90_x0_y0_);
+		GridBagConstraints grid90_x1_y0_ = new GridBagConstraints();
+		grid90_x1_y0_.gridx = 1;
+		grid90_x1_y0_.gridy = 0;
+		grid90_x1_y0_.weightx = 1.0;
+		grid90_x1_y0_.fill = GridBagConstraints.HORIZONTAL;
+		grid90_x1_y0_.insets = INSETS_0_5_5_5;
+		additionalOptionPanel.add(additionalOptionFiled, grid90_x1_y0_);
+		GridBagConstraints grid90_x0_y1_ = new GridBagConstraints();
+		grid90_x0_y1_.gridx = 0;
+		grid90_x0_y1_.gridy = 1;
+		grid90_x0_y1_.anchor = GridBagConstraints.WEST;
+		grid90_x0_y1_.insets = INSETS_0_5_0_5;
+		additionalOptionPanel.add(new JLabel("設定２に追加"), grid90_x0_y1_);
+		GridBagConstraints grid90_x1_y1_ = new GridBagConstraints();
+		grid90_x1_y1_.gridx = 1;
+		grid90_x1_y1_.gridy = 1;
+		grid90_x1_y1_.weightx = 1.0;
+		grid90_x1_y1_.fill = GridBagConstraints.HORIZONTAL;
+		grid90_x1_y1_.insets = INSETS_0_5_0_5;
+		additionalOptionPanel.add(wideAdditionalOptionFiled, grid90_x1_y1_);
 // Added FFmpegPathSettingPanel form here
 		FFmpegPathSettingPanel.add(FFmpegPathLabel, new GridBagConstraints(0, 0, 1,
 				1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
@@ -1201,11 +1252,19 @@ public class MainFrame extends JFrame {
 		grid6_x0_y3_111.gridx = 0;
 		grid6_x0_y3_111.gridy = 3;
 		grid6_x0_y3_111.weightx = 1.0;
-		grid6_x0_y3_111.weighty = 1.0;
 		grid6_x0_y3_111.anchor = GridBagConstraints.NORTH;
 		grid6_x0_y3_111.fill = GridBagConstraints.HORIZONTAL;
 		grid6_x0_y3_111.insets = INSETS_0_5_0_5;
 		FFMpegTabPanel.add(WideFFmpegSettingPanel, grid6_x0_y3_111);
+		GridBagConstraints grid6_x0_y4_ = new GridBagConstraints();
+		grid6_x0_y4_.gridx = 0;
+		grid6_x0_y4_.gridy = 4;
+		grid6_x0_y4_.weightx = 1.0;
+		grid6_x0_y4_.weighty = 1.0;
+		grid6_x0_y4_.anchor = GridBagConstraints.NORTH;
+		grid6_x0_y4_.fill = GridBagConstraints.HORIZONTAL;
+		grid6_x0_y4_.insets = INSETS_0_5_0_5;
+		FFMpegTabPanel.add(additionalOptionPanel, grid6_x0_y4_);
 		FFMpegTab2Panel.add(PathSettingPanel, new GridBagConstraints(0, 0, 1, 1,
 				1.0, 0.0, GridBagConstraints.NORTHEAST,
 				GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0));
@@ -1390,17 +1449,17 @@ public class MainFrame extends JFrame {
 		grid20_x1_y10.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x1_y10.insets = INSETS_0_5_0_5;
 		experimentPanel.add(extraFontTextField, grid20_x1_y10);
-		debugModeLabel.setText("追加モード");
-		debugModeLabel.setForeground(Color.blue);
-		debugModeLabel.setToolTipText("黄枠モード他の追加の動作を指定します");
+		extraModeLabel.setText("追加モード");
+		extraModeLabel.setForeground(Color.blue);
+		extraModeLabel.setToolTipText("黄枠モード他の追加の動作を指定します");
 		GridBagConstraints grid20_x0_y12 = new GridBagConstraints();
 		grid20_x0_y12.gridx = 0;
 		grid20_x0_y12.gridy = 12;
 		grid20_x0_y12.anchor = GridBagConstraints.WEST;
 		grid20_x0_y12.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x0_y12.insets = INSETS_0_5_0_5;
-		experimentPanel.add(debugModeLabel, grid20_x0_y12);
-		debugModeField.setForeground(Color.blue);
+		experimentPanel.add(extraModeLabel, grid20_x0_y12);
+		extraModeField.setForeground(Color.blue);
 		GridBagConstraints grid20_x1_y12 = new GridBagConstraints();
 		grid20_x1_y12.gridx = 1;
 		grid20_x1_y12.gridy = 12;
@@ -1408,7 +1467,7 @@ public class MainFrame extends JFrame {
 		grid20_x1_y12.anchor = GridBagConstraints.WEST;
 		grid20_x1_y12.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x1_y12.insets = INSETS_0_5_0_5;
-		experimentPanel.add(debugModeField, grid20_x1_y12);
+		experimentPanel.add(extraModeField, grid20_x1_y12);
 	}
 
 	private void setPopup() {
@@ -1672,7 +1731,9 @@ public class MainFrame extends JFrame {
 			ngCommandField.getText(),
 			"",	//replaceCommandField.getText(),
 			encrypt_pass,
-			debugModeField.getText()
+			extraModeField.getText(),
+			additionalOptionFiled.getText(),
+			wideAdditionalOptionFiled.getText()
 		);
 	}
 /*
@@ -1792,7 +1853,9 @@ public class MainFrame extends JFrame {
 		ngCommandField.setText(setting.getNGCommand());
 	//	replaceCommandField.setText(setting.getReplaceCommand());
 		encrypt_pass = setting.getEncryptPass();
-		debugModeField.setText(setting.getExtraMode());
+		extraModeField.setText(setting.getExtraMode());
+		additionalOptionFiled.setText(setting.getAddOption());
+		wideAdditionalOptionFiled.setText(setting.getWideAddOption());
 	}
 
 	/**
@@ -2659,6 +2722,18 @@ s	 * @return javax.swing.JPanel
 					.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							if (FFmpegOptionModel.isFile()) {// ファイル
+								Properties prop = new Properties();
+								try {
+									prop.loadFromXML(new FileInputStream(
+										FFmpegOptionModel.getSelectedFile()));
+								} catch (IOException ex) {
+									statusBar.setText("設定2のオプションファイルが表示できません。");
+									ex.printStackTrace();
+								}
+								ExtOptionField.setText(prop.getProperty("EXT", ""));
+								MainOptionField.setText(prop.getProperty("MAIN", ""));
+								CommandLineInOptionField.setText(prop.getProperty("IN", ""));
+								CommandLineOutOptionField.setText(prop.getProperty("OUT", ""));
 								ExtOptionField.setEnabled(false);
 								MainOptionField.setEnabled(false);
 								CommandLineInOptionField.setEnabled(false);
@@ -2685,10 +2760,23 @@ s	 * @return javax.swing.JPanel
 					.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							if (WideFFmpegOptionModel.isFile()) {// ファイル
+								Properties prop = new Properties();
+								try {
+									prop.loadFromXML(new FileInputStream(
+										WideFFmpegOptionModel.getSelectedFile()));
+								} catch (IOException ex) {
+									statusBar.setText("設定2のオプションファイルが表示できません。");
+									ex.printStackTrace();
+								}
+								wideExtOptionField.setText(prop.getProperty("EXT", ""));
+								wideMainOptionField.setText(prop.getProperty("MAIN", ""));
+								wideCommandLineInOptionField.setText(prop.getProperty("IN", ""));
+								wideCommandLineOutOptionField.setText(prop.getProperty("OUT", ""));
 								wideExtOptionField.setEnabled(false);
 								wideMainOptionField.setEnabled(false);
 								wideCommandLineInOptionField.setEnabled(false);
 								wideCommandLineOutOptionField.setEnabled(false);
+								return;
 							} else {// ファイルでない
 								wideExtOptionField.setEnabled(true);
 								wideMainOptionField.setEnabled(true);
@@ -2714,6 +2802,20 @@ s	 * @return javax.swing.JPanel
 					.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							FFmpegOptionModel.reload();
+							if (!FFmpegOptionModel.isFile()) {// ファイルでない
+								Properties prop = new Properties();
+								try {
+									prop.loadFromXML(new FileInputStream(ConvertingSetting.PROP_FILE));
+								} catch (IOException ex) {
+									statusBar.setText("設定1のオプションファイルが更新できません。");
+									ex.printStackTrace();
+									return;
+								}
+								ExtOptionField.setText(prop.getProperty("CMD_EXT", ""));
+								MainOptionField.setText(prop.getProperty("CMD_MAIN", ""));
+								CommandLineInOptionField.setText(prop.getProperty("CMD_IN", ""));
+								CommandLineOutOptionField.setText(prop.getProperty("CMD_OUT", ""));
+							}
 						}
 					});
 		}
@@ -2733,6 +2835,21 @@ s	 * @return javax.swing.JPanel
 					.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							WideFFmpegOptionModel.reload();
+							if (!WideFFmpegOptionModel.isFile()) {// ファイルでない
+								Properties prop = new Properties();
+								try {
+									prop.loadFromXML(new FileInputStream(
+										ConvertingSetting.PROP_FILE));
+								} catch (IOException ex) {
+									statusBar.setText("設定2のオプションファイルが更新できません。");
+									ex.printStackTrace();
+									return;
+								}
+								wideExtOptionField.setText(prop.getProperty("WideCMD_EXT", ""));
+								wideMainOptionField.setText(prop.getProperty("WideCMD_MAIN", ""));
+								wideCommandLineInOptionField.setText(prop.getProperty("WideCMD_IN", ""));
+								wideCommandLineOutOptionField.setText(prop.getProperty("WideCMD_OUT", ""));
+							}
 						}
 					});
 		}

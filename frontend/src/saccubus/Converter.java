@@ -16,6 +16,7 @@ import saccubus.conv.NicoXMLReader;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -70,6 +71,10 @@ public class Converter extends Thread {
 	private int proxy_port;
 	private String mailAddress;
 	private String password;
+	private String inSize;
+	private String setSize;
+	private String padOption;
+	private String outSize;
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -1134,6 +1139,117 @@ public class Converter extends Thread {
 			sendtext("変換オプションファイルの読み込みに失敗しました。");
 			return false;
 		}
+		if(!addAdditionalOption(videoAspect.isWide())){
+			sendtext("追加オプションの設定に失敗しました。");
+			return false;
+		}
+		inSize = videoAspect.getSize();
+		setSize = getSetSize();	//videoSetSize="width"x"height"
+		padOption = getPadOption();		//padOption=width:height:x:y
+		if((outSize = getOutSize())==null){
+			//outSize=width:height in -vfilters outs=w:h
+			int width = videoAspect.getWidth();
+			int height = videoAspect.getHeight();
+			double rate;
+			if(videoAspect.isWide()){
+				rate = 640.0 / (double)width;
+				width = 640;
+				height *= rate;
+			}else{
+				rate = 384.0 / (double)height;
+				width *= rate;
+				height = 384;
+			}
+			if(setSize != null){
+				String[] list = setSize.split(":");
+				try{
+					width = Integer.parseInt(list[0]);
+					height = Integer.parseInt(list[1]);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+			outSize = "" + width + ":" + height;
+		}
+		System.out.println("Output Commetnt Area " + outSize);
+		return true;
+	}
+
+	private String getSetSize() {
+		String[] list = OutOption.split(" +");
+		for(int i=0;i<list.length;i++){
+			String arg = list[i];
+			if(arg.equals("-s") && i+1 < list.length){
+				String size = list[i+1];
+				if(size.contains("x")){
+					return size.replace('x', ':');
+				}
+			}
+		}
+		return null;
+	}
+
+	private String getPadOption() {
+		return getFromVfOpotion("pad=");
+	}
+
+	private String getOutSize(){
+		//outSize=width:height in -vfilters outs=w:h
+		String outs = getFromVfOpotion("outs=");
+		if(outs != null){
+			if(outs.equals(getvfOption())){
+				setFfmpegVfOption("");
+			} else if(getvfOption().startsWith(outs)){
+				setFfmpegVfOption(getFFmpegVfOption().replace(outs + ",", ""));
+			} else {
+				setFfmpegVfOption(getFFmpegVfOption().replace("," + outs, ""));
+			}
+		}
+		return outs;
+	}
+
+	private String getFromVfOpotion(String prefix){
+		String option = getFFmpegVfOption();
+		String[] list = option.split(",");
+		for(int i=0; i<list.length; i++){
+			String arg = list[i];
+			if(arg.startsWith(prefix)){
+				return arg.substring(prefix.length());
+			}
+		}
+		return null;
+	}
+
+	private boolean addAdditionalOption(boolean wide) {
+		String addOption = "";
+		if(wide){
+			addOption = Setting.getWideAddOption();
+		}else{
+			addOption = Setting.getAddOption();
+		}
+		if(addOption.isEmpty()){
+			return true;
+		}
+		String[] list = addOption.split(" +");
+		HashMap<String,String> optionMap = new HashMap<String, String>(16);
+		String key = "";
+		String value = "";
+		for(int i=0;i<list.length;i++){
+			String arg = list[i];
+			if(arg.startsWith("-")){
+				if(!key.isEmpty()){
+					optionMap.put(key, value);
+				}
+				key = arg;
+				value = "";
+			}else{
+				value = arg;
+			}
+		}
+		if(!key.isEmpty()){
+			optionMap.put(key, value);
+		}
+		replace3option(optionMap);
 		return true;
 	}
 
@@ -1243,6 +1359,13 @@ public class Converter extends Thread {
 			if (isWide){
 				ffmpeg.addCmd("|--nico-width-wide");
 			}
+			ffmpeg.addCmd("|--input-size:" + inSize);
+			if(setSize != null){
+				ffmpeg.addCmd("|--set-size:" + setSize);
+			}
+			if(padOption != null){
+				ffmpeg.addCmd("|--pad-option:" + padOption);
+			}
 		//	if (videoLength > 0){
 		//		ffmpeg.addCmd("|--video-length:");
 		//		ffmpeg.addCmd(Integer.toString(videoLength));
@@ -1259,7 +1382,9 @@ public class Converter extends Thread {
 			}
 			if(Setting.getExtraMode().contains("debug")){
 				ffmpeg.addCmd("|--debug-print");
-				ffmpeg.addCmd("|--debug-print:" + Setting.getExtraMode().replaceFirst("debug", ""));
+			}
+			if(!Setting.getExtraMode().isEmpty()){
+				ffmpeg.addCmd("|--extra-mode:" + Setting.getExtraMode().replaceFirst("debug", ""));
 			}
 			if(Setting.isEnableCA()){
 				ffmpeg.addCmd("|--enable-CA");
@@ -1435,20 +1560,7 @@ public class Converter extends Thread {
 		//replaceチェック
 		Map<String,String> optionPair = Setting.getReplaceOptions();
 		if(optionPair!=null){
-			for(Entry<String, String> pair : optionPair.entrySet()){
-				String optMain = replaceOption(MainOption,pair.getKey(),pair.getValue());
-				if(optMain!=null)
-					MainOption = optMain;
-				String optIn = replaceOption(InOption,pair.getKey(),pair.getValue());
-				if(optIn!=null)
-					InOption = optIn;
-				String optOut = replaceOption(OutOption,pair.getKey(),pair.getValue());
-				if(optOut!=null)
-					OutOption = optOut;
-				if(optIn==null && optOut==null && optMain==null){
-					OutOption = pair.getKey() + " " + pair.getValue() + " " + OutOption;
-				}
-			}
+			replace3option(optionPair);
 		}
 		//オプションに拡張子を含んでしまった場合にも対応☆
 		if(ExtOption != null && !ExtOption.startsWith(".")){
@@ -1458,6 +1570,22 @@ public class Converter extends Thread {
 		return true;
 	}
 
+	private void replace3option(Map<String,String> map){
+		for(Entry<String, String> pair : map.entrySet()){
+			String optMain = replaceOption(MainOption,pair.getKey(),pair.getValue());
+			if(optMain!=null)
+				MainOption = optMain;
+			String optIn = replaceOption(InOption,pair.getKey(),pair.getValue());
+			if(optIn!=null)
+				InOption = optIn;
+			String optOut = replaceOption(OutOption,pair.getKey(),pair.getValue());
+			if(optOut!=null)
+				OutOption = optOut;
+			if(optIn==null && optOut==null && optMain==null){
+				OutOption = pair.getKey() + " " + pair.getValue() + " " + OutOption;
+			}
+		}
+	}
 	/**
 	 * @param option :String
 	 * @param key
@@ -1535,6 +1663,9 @@ public class Converter extends Thread {
 	}
 	public String getFFmpegVfOption() {
 		return ffmpegVfOption;
+	}
+	public void setFfmpegVfOption(String vfOption) {
+		ffmpegVfOption = vfOption;
 	}
 	/**
 	 *

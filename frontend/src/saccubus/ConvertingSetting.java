@@ -1,13 +1,14 @@
 package saccubus;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
-import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.File;
 
 import saccubus.net.BrowserInfo;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
@@ -124,6 +125,8 @@ public class ConvertingSetting {
 	private String replaceCommand;
 	private String encryptedPass;
 	private String extraMode;
+	private String addOption;
+	private String wideAddOption;
 
 	private Map<String, String> replaceOptions;
 
@@ -310,7 +313,9 @@ public class ConvertingSetting {
 			String ng_command,
 			String replace_command,
 			String encrypt_pass,
-			String extra_mode
+			String extra_mode,
+			String add_option,
+			String wide_add_option
 		)
 	{
 		this(	mailaddress,
@@ -406,6 +411,8 @@ public class ConvertingSetting {
 		replaceCommand = replace_command;
 		encryptedPass = encrypt_pass;
 		extraMode = extra_mode;
+		addOption = add_option;
+		wideAddOption = wide_add_option;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -663,6 +670,12 @@ public class ConvertingSetting {
 	public String getExtraMode(){
 		return extraMode;
 	}
+	public String getAddOption(){
+		return addOption;
+	}
+	public String getWideAddOption(){
+		return wideAddOption;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -762,12 +775,24 @@ public class ConvertingSetting {
 	static final String PROP_REPLACE_COMMAND = "ReplaceCommand";
 	static final String PROP_ENCRYPT_PASS = "EncryptedPassword";
 	static final String PROP_EXTRA_MODE = "ExtraMode";
+	static final String PROP_ADD_OPTION = "AddOption";
+	static final String PROP_WIDE_ADD_OPTION = "WideAddOption";
 
 	/*
 	 * ここまで拡張設定 1.22r3 に対する
 	 */
 
 	public static void saveSetting(ConvertingSetting setting, String propFile) {
+		Properties prop = setProperty(setting);
+		try {
+			prop.storeToXML(new FileOutputStream(propFile),
+				"settings-"+new Date().toString()+"-Rev"+MainFrame_AboutBox.rev);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static Properties setProperty(ConvertingSetting setting){
 		Properties prop = new Properties();
 		String user = setting.getMailAddress();
 		String password = setting.getPassword();
@@ -787,7 +812,7 @@ public class ConvertingSetting {
 				System.out.println("パスワード暗号化失敗");
 			}
 		}else {
-			System.out.println("パスワードを暗号化しません");
+			System.out.println("メールアドレスが無効なため、パスワードを暗号化しません");
 		}
 		prop.setProperty(PROP_MAILADDR, user);
 		prop.setProperty(PROP_PASSWORD, password);
@@ -915,16 +940,13 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_NG_COMMAND, setting.getNGCommand());
 		prop.setProperty(PROP_REPLACE_COMMAND, setting.getReplaceCommand());
 		prop.setProperty(PROP_EXTRA_MODE, setting.getExtraMode());
+		prop.setProperty(PROP_ADD_OPTION, setting.getAddOption());
+		prop.setProperty(PROP_WIDE_ADD_OPTION, setting.getWideAddOption());
 
 		/*
 		 * ここまで拡張設定保存 1.22r3 に対する
 		 */
-		try {
-			prop.storeToXML(new FileOutputStream(propFile),
-				"settings-"+new Date().toString()+"-Rev"+MainFrame_AboutBox.rev);
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+		return prop;
 	}
 
 	public static void saveSetting(ConvertingSetting setting) {
@@ -941,6 +963,17 @@ public class ConvertingSetting {
 			}
 		}
 		return prop;
+	}
+
+	public static ConvertingSetting addSetting(ConvertingSetting setting, String propFile) {
+		Properties setProp = setProperty(setting);
+		Properties addProp = loadProperty(propFile, true);
+		for(Entry<Object, Object> e : addProp.entrySet()){
+			String key = (String)e.getKey();
+			String value = (String)e.getValue();
+			setProp.put(key, value);
+		}
+		return loadSetting(null, null, addProp);
 	}
 
 	public static ConvertingSetting loadSetting(String user, String password, String propFile) {
@@ -1107,7 +1140,9 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_NG_COMMAND, ""),
 			prop.getProperty(PROP_REPLACE_COMMAND, ""),
 			encrypt_pass,
-			prop.getProperty(PROP_EXTRA_MODE, "")
+			prop.getProperty(PROP_EXTRA_MODE, ""),
+			prop.getProperty(PROP_ADD_OPTION, ""),
+			prop.getProperty(PROP_WIDE_ADD_OPTION, "")
 		);
 	}
 
