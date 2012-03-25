@@ -556,12 +556,12 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 	while(*index != '\0'){
 		if(debug)
 			fprintf(log,"[comsurface/drawText2]str[%d] U+%04hX try %s (base %s)",
-				index-str,*index,CA_FONT_NAME[fonttype&63],CA_FONT_NAME[basefont]);
+				index-str,*index,CA_FONT_NAME[fonttype & 15],CA_FONT_NAME[basefont]);
 		newfont = getFontType(index,basefont,data);
 		if(newfont==UNDEFINED_FONT||newfont==NULL_FONT)
 			newfont = basefont;
 		if(debug)
-			fprintf(log," -->%s\n",CA_FONT_NAME[newfont&63]);
+			fprintf(log," -->%s\n",CA_FONT_NAME[newfont & 15]);
 		if(newfont != fonttype){	//別のフォント出現
 			if(index!=last){
 				ret = arrangeSurface(ret,drawText3(data,size,SdlColor,fonttype,last,index));
@@ -639,27 +639,35 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,int fontsel,Uint16
 	FILE* log = data->log;
 	int debug = data->debug;
 	int h = data->font_pixel_size[size];
-//	fprintf(log,"**DEBUG** size%d fontsel%d from%08x to%08x\n",size,fontsel,from,to);
-	if(fontsel>0x100){
-		int code = fontsel>>8;
+
+	if(fontsel>=CA_FONT_MAX){	//CA_FONT_MAX must be less than or equals 16
+		int code = fontsel & 0xfff0;
 		int w = data->fontsize_fix;
 		if(code==0x0020 || code==0x00a0){
 			w = (CA_FONT_SPACE_WIDTH[size] * len)<<w;
-		}else if(code==0x30){
-			code = 0x3000;
+		}else if(code==0x3000){
 			w = (CA_FONT_3000_WIDTH[fontsel&3][size] * len)<<w;
+		}else if((code & 0xff00)==0x2000){	//fontsel should belog to GOTHIC or fontsel is SIMSUN or GULIM
+			w = (CA_FONT_2000_WIDTH[(code & 0x00f0)>>4][size] * len)<<w;
 		}else{
 			fprintf(log,"[comsurface/drawText3]fontsel error %d\n",fontsel);
 			fflush(log);
 			return NULL;
 		}
+		SDL_Surface* ret = drawNullSurface(w,h);
 		if(debug){
-			int codeno = (code==0x0020)? 0:((code==0x00a0)? 1: 2);
-			fprintf(log,"[comsurface/drawText3]return SPACE font %s U+%04X %s %d chars.\n"
-				,CA_FONT_NAME[CA_FONT_MAX+codeno],code,COM_FONTSIZE_NAME[size],len);
+			int codeno;
+			switch (code & 0xfff0) {
+				case 0x0020:	codeno = 0; break;
+				case 0x00a0:	codeno = 1; break;
+				case 0x3000:	codeno = 3; break;
+				default:		codeno = 2; break;
+			}
+			fprintf(log,"[comsurface/drawText3]return %s font %04X %s %d chars.(%d,%d)\n"
+				,CA_SPACE_NAME[codeno],code,COM_FONTSIZE_NAME[size],len,ret->w,ret->h);
 			fflush(log);
 		}
-		return drawNullSurface(w,h);
+		return ret;
 	}
 	if(*from=='\0' || len==0){
 		if(debug)

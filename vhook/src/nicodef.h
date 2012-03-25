@@ -182,13 +182,14 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 #define ESTRANGELO_EDESSA_FONT 10
 #define EXTRA_FONT 11
 #define CA_FONT_MAX	12
-#define SPACE_0020 (CA_FONT_MAX+0)
-#define SPACE_00A0 (CA_FONT_MAX+1)
-#define SPACE_3000 (CA_FONT_MAX+2)
+#define SPACE_0020 0
+#define SPACE_00A0 1
+#define SPACE_2000 2
+#define SPACE_3000 3
 #define UNDEFINED_FONT	(-1)
 #define NULL_FONT	(-2)
 
-static char* const CA_FONT_NAME[CA_FONT_MAX+3] = {
+static char* const CA_FONT_NAME[CA_FONT_MAX+4] = {
 	"GOTHIC",
 	"SIMSUN",
 	"GULIM",
@@ -203,11 +204,17 @@ static char* const CA_FONT_NAME[CA_FONT_MAX+3] = {
 	"ESTRANGELO EDESSA",
 	"EXTRA",
 	//--end of font type---//
-	"SPACE 0020",	//=CA_FONT_MAX
-	"SPACE 00A0",
-	"SPACE 3000",
+	"NAME 12",
+	"NAME 13",
+	"NAME 14",
+	"NAME 15",
 };
-
+static char* const CA_SPACE_NAME[] = {
+		"SPACE",
+		"no-break-SPACE",
+		"U+2000 series",
+		"CJK SPACE",
+};
 static const int CA_FONT_SIZE_FIX[CA_FONT_MAX][CMD_FONT_MAX] = {
 //	DEF,BIG,SMALL
 	{0,-1,1},	//gothic
@@ -252,9 +259,54 @@ static const int CA_FONT_SIZE_TUNED[4][2][CMD_FONT_MAX] = {
 	{{20,36,13},{40,69,26}},	//arial
 };
 
+/*
+参照teacup掲示板　CA研究用1　http://8713.teacup.com/cas/bbs/t2/17
+
+文字の幅一覧（一部） 投稿者：チャリイ 投稿日：2009年 2月13日(金)04時05分32秒 返信
+  ありがとうございます．お蔭様でタブの数字も集まりました．
+以下がそれを含めた空白関係の幅の表です．ツンデレは20と同じ値になります．
+勿論大部分は以前ぐだぐださんと一緒に作ったものです．
+
+Win, Mac (b, m, s, br, mr, sr)
+2000　21,20　13,12　09,13　11,10　07,06　05,04
+2001　40,39　25,24　16,15　21,20　13,12　09,08
+2002　21,20　13,12　09,08　11,10　07,06　05,04
+2003　40,39　25,24　16,15　21,20　13,12　09,08
+2004　14,13　09,08　06,05　08,07　05,04　04,03
+2005　12,10　07,06　05,04　06,05　04,03　03,02
+2006　07,07　05,04　03,03　04,03　03,02　02,01
+2007　25,26　16,16　10,10　14,13　09,08　06,05
+2008　13,10　09,06　06,04　07,05　05,03　04,02
+2009　06,08　04,05　03,03　04,04　03,02　02,02
+200a　03,05　03,03　02,02　02,03　02,02　02,01
+3000　27,39　17,24　11,15　14,20　09,12　06,08
+0020　11,11　07,07　04,04　06,06　03,03　02,02
+0009　76,84　44,52　28,33　40,43　24,27　16,16
+（全角スペース＝3000，半角スペース＝20，タブ＝9）
+ */
+
+static const int CA_FONT_2000_WIDTH[16][CMD_FONT_MAX] = {
+//	DEF BIG SMALL msgothic.ttc#1
+	{13,21, 9},		//2000
+	{25,40,16},		//2001
+	{13,21, 9},		//2002
+	{25,40,16},		//2003
+	{ 9,14, 6},		//2004
+	{ 7,12, 5},		//2005
+	{ 5, 7, 3},		//2006
+	{16,25,10},		//2007
+	{ 9,13, 6},		//2008
+	{ 4, 6, 3},		//2009
+	{ 3, 3, 2},		//200a
+	{ 0, 0, 0},		//200b
+	{ 0, 0, 0},		//200c
+	{ 0, 0, 0},		//200d
+	{ 0, 0, 0},		//200e
+	{ 0, 0, 0},		//200f
+};
 static const int CA_FONT_SPACE_WIDTH[CMD_FONT_MAX] = {
 //ASCII SPACE 0020/00A0 arial.ttf
-	6,11,4
+	7,11,4	//2012.3.24変更
 };
 static const int CA_FONT_3000_WIDTH[3][CMD_FONT_MAX] = {
 //KANJI SPACE 3000 msgothic.ttc#1

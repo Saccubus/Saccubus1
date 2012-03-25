@@ -22,18 +22,21 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 		int fontfg = FALSE;
 		if(strstr(mode,"-font")!=NULL){
 			switch(fontsel){
-			case GOTHIC_FONT:	bg.r = 0xff; break;
-			case SIMSUN_FONT:	bg.g = 0xff; break;
-			case GULIM_FONT:	bg.b = 0xff; break;
+			case GOTHIC_FONT:	bg.r = 0xff; break;	//red
+			case SIMSUN_FONT:	bg.g = 0xff; break;	//green
+			case GULIM_FONT:	bg.b = 0xff; break;	//blue
 			case -1:
-			case ARIAL_FONT:	bg.r = bg.g = bg.b = 0xff;	break;
-			default:			break;
+			case ARIAL_FONT:	bg.r = bg.g = 0xff;	break;	//yellow
+			default:			bg.r = bg.g = bg.b = 0x80;	//gray
+				break;
 			}
-		}
-		if(strstr(mode,"-fg")!=NULL){
-			fg = bg;
-			bg = COMMENT_COLOR[CMD_COLOR_BLACK];
-			fontfg = TRUE;
+			if(strstr(mode,"-fg")!=NULL){	//use whith -font, -font-fg
+				fg = bg;
+				bg = COMMENT_COLOR[CMD_COLOR_BLACK];
+				fontfg = TRUE;
+			}
+		}else{
+			bg = COMMENT_COLOR[CMD_COLOR_YELLOW];
 		}
 		SDL_Surface* surf;
 		Uint32 colkey;
@@ -52,7 +55,7 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 		SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);	//surface for background
 		if (!fontfg){
 			if(cmpSDLColor(fg,bg)){
-				bg.r = fg.r ^ 0x01;
+				bg.r = fg.r ^ 0xff;
 			}
 			Uint32 bgc = SDL_MapRGBA(tmp->format,bg.r,bg.g,bg.b,255);	//bg color in pixformat
 			SDL_Rect rect = {1,1,tmp->w-1,tmp->h-1};	//rectangle for fill with bgc
@@ -110,13 +113,14 @@ SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,SDL_Surface* surf,SDL_Co
 		col.r = col.g = col.b = 0x00;
 		switch (item->location) {
 			case CMD_LOC_TOP:
-				col.g = 0xff;
+			//	col.g = 0xff;
+				col.r = 0xff;	//red
 				break;
 			case CMD_LOC_BOTTOM:
-				col.b = 0xff;
+				col.b = 0xff;	//blue
 				break;
 			case CMD_LOC_DEF:
-				col.r = col.g = 0xff;
+				col.r = col.g = 0xff;	//yellow
 				break;
 		}
 	}

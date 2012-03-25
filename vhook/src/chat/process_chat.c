@@ -105,7 +105,9 @@ void setspeed(int comment_speed,CHAT_SLOT_ITEM* item,int video_width){
 	}else if(comment_speed!=0){
 		item->speed = (float)comment_speed/(float)VPOS_FACTOR;
 		chat_item->vend = chat_item->vstart
-			+ (video_width + text_width) * VPOS_FACTOR / abs(comment_speed);
+			+ (video_width + text_width) * VPOS_FACTOR / abs(comment_speed)
+			- 1;
+		//vend is last tick of LIFE, so must be - 1 done.
 	}else{
 		item->speed = (float)(video_width + text_width)
 			/(float)(chat_item->vend - chat_item->vstart);

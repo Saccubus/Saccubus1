@@ -151,12 +151,14 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		/*“à•”ˆ—‚æ‚è*/
 		if(location != CMD_LOC_DEF){
 			item->vstart = vpos;
-			item->vend = vpos + TEXT_SHOW_SEC_S;
-			// item->vend = vpos + duration;
+			item->vend = vpos + TEXT_SHOW_SEC_S - 1;
+			//vend is last tick of LIFE, so must be - 1 done.
+			// item->vend = vpos + duration - 1;
 		}else{
 			item->vstart = vpos - TEXT_AHEAD_SEC;
-			item->vend = vpos + TEXT_SHOW_SEC_S;
-			// item->vend = item->vstart + duration;
+			item->vend = vpos + TEXT_SHOW_SEC_S - 1;
+			//vend is last tick of LIFE, so must be - 1 done.
+			// item->vend = item->vstart + duration - 1;
 		}
 		item->full = full;
 		// item->duration = duration;
