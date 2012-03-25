@@ -1143,6 +1143,13 @@ public class Converter extends Thread {
 			sendtext("追加オプションの設定に失敗しました。");
 			return false;
 		}
+		
+		//replaceチェック
+		if(Setting.getReplaceOptions()!=null){
+			replace3option(Setting.getReplaceOptions());
+		}
+		ffmpegVfOption = getvfOption();
+
 		inSize = videoAspect.getSize();
 		setSize = getSetSize();	//videoSetSize="width"x"height"
 		padOption = getPadOption();		//padOption=width:height:x:y
@@ -1557,16 +1564,18 @@ public class Converter extends Thread {
 				MainOption = Setting.getWideCmdLineOptionMain();
 			}
 		}
+/*
 		//replaceチェック
 		Map<String,String> optionPair = Setting.getReplaceOptions();
 		if(optionPair!=null){
 			replace3option(optionPair);
 		}
+		ffmpegVfOption = getvfOption();
+*/
 		//オプションに拡張子を含んでしまった場合にも対応☆
 		if(ExtOption != null && !ExtOption.startsWith(".")){
 			ExtOption = "."+ExtOption;
 		}
-		ffmpegVfOption = getvfOption();
 		return true;
 	}
 
