@@ -290,7 +290,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			double_resized = TRUE;
 			//ダブルリサイズ時には動画幅の２倍にリサイズされる筈
 			nicolimit_width *= 2.0;
-			//意図したダブルリサイズならば高さ基準でリサイズした方が良い？
+
 			int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
 			if(h!=ret->h){
 				ret = adjustComment(ret,data,h);
@@ -320,9 +320,12 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 				zoom_w = resized_w;
 				fprintf(log,"[comsurface/DR limit2]comment %d width %.0f resize %.0f limit+ %.0f\n",
 					item->no,zoom_w,resize,nicolimit_width+32);
+				zoom_h = (zoom_w/(double)ret->w / font_width_rate) * font_height_rate * (double)ret->h;
+				//zoomy = zoom_h/(double)ret->h;
 			}
-/*
-			double wrate = nicolimit_width / zoom_w;
+
+			//意図したダブルリサイズならば高さ基準でリサイズした方が良い？
+			double wrate = (nicolimit_width+32) / zoom_w;
 			double hrate = (double)NICO_HEIGHT / zoom_h;
 			fprintf(log,"[comsurface/DR detail]comment %d  w %.2f%% h %.2f%%%s\n",
 				item->no,wrate*100.0,hrate*100.0,(data->fontsize_fix?" fix":""));
@@ -330,17 +333,17 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			if(0.6 < hrate && hrate <= 1.0){
 				//コメント高が動画以上でありダブルリサイズにより動画高に合わせたと見る。
 				zoom_w *= hrate;
-				if(zoom_w > nicolimit_width){
+				if(zoom_w > nicolimit_width+32){
 					//横幅が大きすぎ
-					font_width_rate *= nicolimit_width / zoom_w;
-					zoom_w = nicolimit_width;
+					font_width_rate *= (nicolimit_width+32) / zoom_w;
+					zoom_w = nicolimit_width+32;
 				}
 				fprintf(log,"[comsurface/DR hrate]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
 					item->no,zoom_w,hrate*100.0,font_width_rate*100.0);
 			}else
 			if(hrate > 1.0){
-				//コメント高が動画以下であり横幅で決めるしか手がない
-				zoom_w *= wrate;
+				//コメント高が動画以下であり横幅で決めるしか手がないがこれはやらない。
+				//zoom_w *= wrate;
 				fprintf(log,"[comsurface/DR wrate]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
 					item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
 			}
@@ -348,11 +351,11 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			else
 			if(0.75 <= h2 && h2 <= 1.5){
 				//横幅基準で高さが動画より微妙になるなら動画高に合わせる
-				zoom_w *= hrate;
-				if(zoom_w > nicolimit_width){
+				//zoom_w *= hrate;
+				if(zoom_w > nicolimit_width+32){
 					//横幅が大きすぎ
-					font_width_rate *= nicolimit_width / zoom_w;
-					zoom_w = nicolimit_width;
+				//	font_width_rate *= (nicolimit_width+32) / zoom_w;
+				//	zoom_w = nicolimit_width+32;
 				}
 				fprintf(log,"[comsurface/DR hrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
 					item->no,zoom_w,hrate*100.0,font_width_rate*100.0);
@@ -360,11 +363,11 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			else
 			{
 				//高さが動画と全然違うので合わせられない
-				zoom_w *= wrate;
+				//zoom_w *= wrate;
 				fprintf(log,"[comsurface/DR wrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
 					item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
 			}
-*/
+
 
 		}else{
 			// ダブルリサイズなし
@@ -547,21 +550,31 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 	SDL_Surface* ret = NULL;
 	Uint16* index = str;
 	Uint16* last = index;
-	int basefont = getFirstFont(last,GOTHIC_FONT);	//第一基準フォント[0..2]
-	int secondBase;
-	if(debug)
-		fprintf(log,"[comsurface/drawText2]first base font %s\n",CA_FONT_NAME[basefont]);
-	int newfont;
+	int basefont = getFirstFont(last,UNDEFINED_FONT);	//第一基準フォント
+	int secondBase = UNDEFINED_FONT;
+	if(debug){
+		fprintf(log,"[comsurface/drawText2]first base font %s\n",CA_FONT_NAME[basefont & 15]);
+	}
 	int fonttype = basefont;
+	int newfont = basefont;
+	int nextfont = basefont;
+	int saved;
+	int foundAscii = FALSE;
+	int wasAscii = FALSE;
 	while(*index != '\0'){
+		if(nextfont==UNDEFINED_FONT)
+			nextfont = GOTHIC_FONT;
 		if(debug)
 			fprintf(log,"[comsurface/drawText2]str[%d] U+%04hX try %s (base %s)",
-				index-str,*index,CA_FONT_NAME[fonttype & 15],CA_FONT_NAME[basefont]);
-		newfont = getFontType(index,basefont,data);
+				index-str,*index,CA_FONT_NAME[nextfont],CA_FONT_NAME[basefont & 15]);
+		newfont = getFontType(index,nextfont,data);
+		wasAscii = foundAscii;
+		foundAscii = isAscii(index);
 		if(newfont==UNDEFINED_FONT||newfont==NULL_FONT)
-			newfont = basefont;
+			newfont = nextfont;
 		if(debug)
-			fprintf(log," -->%s\n",CA_FONT_NAME[newfont & 15]);
+			fprintf(log," -->%s%s%s\n",CA_FONT_NAME[newfont & 15],
+				foundAscii?" foundAscii":"",wasAscii?" wasAscii":"");
 		if(newfont != fonttype){	//別のフォント出現
 			if(index!=last){
 				ret = arrangeSurface(ret,drawText3(data,size,SdlColor,fonttype,last,index));
@@ -572,14 +585,63 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 			}
 			fonttype = newfont;	//GOTHIC, SMSUN. GULIM, ARIAL, GEORGIA,…
 			last = index;
-			if(isAscii(last)){
-				secondBase = getFirstFont(last,basefont);	//第二基準フォント
-				if(basefont!=secondBase){
-					basefont = secondBase;
-					if(debug)
-						fprintf(log,"[somsurface/drawText2]second base font %s\n",CA_FONT_NAME[basefont]);
+		}
+		newfont &= 15;
+		//第２基準フォントの検査
+		if(secondBase==UNDEFINED_FONT){
+			if((foundAscii && basefont<=GOTHIC_FONT && !wasAscii)||
+				(basefont==GOTHIC_FONT &&(newfont==SIMSUN_FONT || newfont==GULIM_FONT))){
+				secondBase = getFirstFont(index,basefont);
+				if(secondBase==basefont || secondBase==GOTHIC_FONT){
+					secondBase = UNDEFINED_FONT;
 				}
+				if(secondBase!=UNDEFINED_FONT && debug)
+					fprintf(log,"[somsurface/drawText2]second base font %s\n",
+						CA_FONT_NAME[secondBase & 15]);
 			}
+		}
+		//隣接フォントの検査
+		saved = nextfont;
+		if(foundAscii && !wasAscii){	//when HANKAKU showed first
+			int tryfont = basefont;
+			tryfont = getFirstFont(last,tryfont);
+			if(tryfont!=UNDEFINED_FONT){
+				//Case Win7,Vista; secondBase is stronger than check
+				if(secondBase!=UNDEFINED_FONT && tryfont>GOTHIC_FONT){
+					tryfont = secondBase;
+				}
+				nextfont = tryfont;
+			}else{
+				nextfont = GOTHIC_FONT;
+			}
+		}else if(newfont!=nextfont){
+			int typechar = getDetailType(*index);
+			switch (newfont) {
+			case SIMSUN_FONT:
+				if(typechar==STRONG_SIMSUN_CHAR || typechar==WEAK_SIMSUN_CHAR){
+					nextfont = SIMSUN_FONT;
+				}
+				break;
+			case GULIM_FONT:
+				if(typechar==GULIM_CHAR){
+					nextfont = GULIM_FONT;
+				}
+				break;
+			case GOTHIC_FONT:
+				//Case XP, nextfont must be GOTHIC if char is ZENKAKU
+				//TO BE DEFINED
+				//Win7,Vista,XP common
+				if(typechar==GOTHIC_CHAR){
+					nextfont = GOTHIC_FONT;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		if(nextfont!=saved && debug){
+			fprintf(log,"[somsurface/drawText2]nextfont %s-> %s\n",
+				CA_FONT_NAME[saved & 15],CA_FONT_NAME[nextfont & 15]);
 		}
 		index++;
 	}

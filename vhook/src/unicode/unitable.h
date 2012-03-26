@@ -12,7 +12,6 @@
  以下のテーブルの文字の意味は次の通り
  - USUAL_FONT 	usually gothic, may change simsun or gulim
  U MS UI GOTHIC
- u UNDEF or SIMSUN	(- or s or w) But, now implemented as '-' To Be Fixed
  g GOTHIC_FONT    	protect gothic	30fb ・中点 ff61-ff9f 半角カナ
  G GOTHIC_FONT    	gothic Not Change
  w SIMSUN_FONT    	weaker than GULIM, change simsun
@@ -43,7 +42,6 @@
 #define UNSUPPORTED_CHAR '.'
 #define USUAL_CHAR '-'
 #define UI_GOTHIC_CHAR 'U'
-#define UNDEF_OR_SIMSUN 'u'
 #define GOTHIC_CHAR 'g'
 #define GOTHIC_NOT_PROTECT 'G'
 #define WEAK_SIMSUN_CHAR 'w'
@@ -60,7 +58,7 @@
 #define ZERO_WIDTH_CHAR 'Z'
 
 /* コメントアウトは参考資料による定義 */
-static unsigned char UNITABLE[] =
+static const Uint8 UNITABLE[] =
 /*       "0               1               2               3               4               5               6               7               8               9               a               b               c               d               e               f               "*/
 /*       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"*/
 /*0000*/ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA--------------------------------G-----------------------------------------------------------------------------------------------"

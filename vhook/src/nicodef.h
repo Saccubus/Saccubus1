@@ -207,7 +207,7 @@ static char* const CA_FONT_NAME[CA_FONT_MAX+4] = {
 	"NAME 12",
 	"NAME 13",
 	"NAME 14",
-	"NAME 15",
+	"UNDEFINED",	// -1 & 15
 };
 static char* const CA_SPACE_NAME[] = {
 		"SPACE",

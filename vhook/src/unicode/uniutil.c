@@ -20,32 +20,10 @@ int isMatchKanji(Uint16* u,Uint16* kanji){
 	}
 	return FALSE;
 }
-/*
-int isMatchZeroWidth(Uint16* u,Uint16* zero){
-	while(*zero!='\0'){
-		if(*zero==*u){
-			return TRUE;
-		}
-		zero++;
-	}
-	return FALSE;
-}
-*/
 
 int isAscii(Uint16* u){
 	return ((0x0000 < *u && *u < 0x0080) || *u==0x00a0);
 }
-
-/*
-int isArabic(Uint16* u){
-	return ((0x0600 <= *u && *u <= 0x06ff)
-	  ||(0x0750 <= *u && *u <= 0x077f));
-}
-
-int isMincho(Uint16* u){
-	return (0x2581<=*u && *u<=0x258f);
-}
-*/
 
 int getDetailType(int u){
 	return UNITABLE[u];
@@ -95,7 +73,11 @@ int getFontType2(Uint16* u,int basefont,DATA* data){
 		}
 	}
 	if(*u==0x3000){	//‘SŠp‹ó”’->fix fontsize w,h
-		return basefont|0x3000;		//3000->300X
+		if(basefont==GOTHIC_FONT){
+			return GOTHIC_FONT|0x3000;		//3000->300X
+		}else{
+			return basefont;
+		}
 	}
 	switch(getDetailType(*u)){
 		case STRONG_SIMSUN_CHAR:

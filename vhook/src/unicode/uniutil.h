@@ -9,6 +9,7 @@
 #define UNIUTIL_H_
 
 #include "../main.h"
+#include "unitable.h"
 
 int isMatchKanji(Uint16* u,Uint16* kanji);
 //int isMatchZeroWidth(Uint16* u,Uint16* zero);
