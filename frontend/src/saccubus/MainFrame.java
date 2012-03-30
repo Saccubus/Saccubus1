@@ -28,6 +28,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -90,8 +91,9 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuInit = new JMenuItem();
 	JMenu jMenuHelp = new JMenu();
 	JMenuItem jMenuHelpAbout = new JMenuItem();
-	JMenu jMenuLoad = new JMenu();
+	JMenu jMenuDetail = new JMenu();
 	JMenuItem jMenuNGConfig = new JMenuItem();
+	JMenuItem jMenuAprilFool = new JMenuItem();
 	public JLabel statusBar = new JLabel();
 	public JLabel elapsedTimeBar = new JLabel();
 	JLabel vhookInfoBar = new JLabel();
@@ -600,9 +602,11 @@ public class MainFrame extends JFrame {
 		jMenuHelpAbout
 				.addActionListener(new MainFrame_jMenuHelpAbout_ActionAdapter(
 						this));
-		jMenuLoad.setText("詳細設定");
+		jMenuDetail.setText("詳細設定");
 		jMenuNGConfig.setText("ニコニコ動画のNG設定保存");
 		jMenuNGConfig.addActionListener(new MainFrame_LoadNGConfig(this));
+		jMenuAprilFool.setText("AprilFool再現");
+		jMenuAprilFool.addActionListener(new MainFrame_jMenuAfDialog(this));
 		jMenuOpen.setText("開く(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
@@ -932,8 +936,9 @@ public class MainFrame extends JFrame {
 		jMenuFile.add(jMenuSaveAs);
 		jMenuFile.add(jMenuInit);
 		jMenuFile.add(jMenuFileExit);
-		jMenuBar1.add(jMenuLoad);
-		jMenuLoad.add(jMenuNGConfig);
+		jMenuBar1.add(jMenuDetail);
+		jMenuDetail.add(jMenuNGConfig);
+		jMenuDetail.add(jMenuAprilFool);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
 		setJMenuBar(jMenuBar1);
@@ -1406,7 +1411,7 @@ public class MainFrame extends JFrame {
 		grid20_x0_y7.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x0_y7.insets = INSETS_0_5_0_5;
 		experimentPanel.add(disableOriginalResizeCheckBox, grid20_x0_y7);
-		enableCA_CheckBox.setText("ＣＡフォント暫定的対応：10種類のフォントを使う");
+		enableCA_CheckBox.setText("ＣＡフォント暫定的対応：11種類のフォントを使う");
 		enableCA_CheckBox.setForeground(Color.blue);
 		enableCA_CheckBox.setToolTipText("フォント変化を強制的に使用するようになります");
 		GridBagConstraints drid20_x0_y8 = new GridBagConstraints();
@@ -3141,6 +3146,148 @@ class MainFrame_LoadNGConfig implements ActionListener {
 		if (loader.load(url, file)){
 			status.setText("ニコニコ動画のNG設定を保存しました：" + file.getRelativePath());
 		}
+	}
+}
+
+class MainFrame_jMenuAfDialog implements ActionListener {
+	MainFrame mainFrame;
+
+	public MainFrame_jMenuAfDialog(MainFrame frame) {
+		mainFrame = frame;
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		AprilFool_Dioalog dialog = new AprilFool_Dioalog(mainFrame);
+		dialog.init();
+		dialog.setVisible(true);
+	}
+
+}
+
+class AprilFool_Dioalog extends JDialog {
+
+	private static final long serialVersionUID = 1L;
+	JPanel panel1;
+	JPanel panel2;
+	JPanel panel;
+	JRadioButton buttonOff;
+	JRadioButton button2008;
+	JRadioButton button2009;
+	JRadioButton button2010;
+	ButtonGroup group;
+	JButton okButton;
+	JButton cancelButton;
+	public static String APRIL_OPT = "-April=";
+	private MainFrame parent;
+	private String extra;
+	private String year = "";
+	private String aprilopt = "";
+
+	public AprilFool_Dioalog(MainFrame frame){
+		super(frame);
+		parent = frame;
+	}
+
+	public AprilFool_Dioalog(){
+		this(null);
+	}
+
+	public void init(){
+		setTitle("エイプリルフール機能の設定");
+		try {
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+		panel1 = new JPanel(new GridLayout(4, 1));
+		buttonOff = new JRadioButton("オフ　通常の設定");
+		button2008 = new JRadioButton("ニコニコ動画2.0(笑) 2008エイプリルフール");
+		button2009 = new JRadioButton("ニコニコ動画(βββ)　2009年エイプリルフール");
+		button2010 = new JRadioButton("ニコニコ動画黒字化　 2010エイプリルフール");
+		panel1.add(buttonOff);
+		panel1.add(button2008);
+		panel1.add(button2009);
+		panel1.add(button2010);
+		group = new ButtonGroup();
+		group.add(buttonOff);
+		group.add(button2008);
+		group.add(button2009);
+		group.add(button2010);
+		extra = parent.extraModeField.getText();
+		showSelectedYear();
+		panel2 = new JPanel(new GridLayout(1, 2, 5, 5));
+		okButton = new JButton("設定");
+		okButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setSelectedYear();
+				dispose();
+			}
+		});
+		cancelButton = new JButton("取り消し");
+		cancelButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		panel2.add(okButton);
+		panel2.add(cancelButton);
+		panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.add(panel1, BorderLayout.NORTH);
+		panel.add(panel2, BorderLayout.SOUTH);
+		add(panel);
+		pack();
+		setLocationRelativeTo(parent);
+		setVisible(true);
+	}
+
+	private void showSelectedYear(){
+		if(extra.contains(APRIL_OPT)){
+			int index = extra.indexOf(APRIL_OPT) + APRIL_OPT.length();
+			int index2 = (extra + " ").indexOf(" ", index);
+			year = extra.substring(index, index2);
+			aprilopt = APRIL_OPT + year;
+			if(year.equals("2008")){
+				group.setSelected(button2008.getModel(), true);
+			}else if(year.equals("2009")){
+				group.setSelected(button2009.getModel(), true);
+			}else if(year.equals("2010")){
+				group.setSelected(button2010.getModel(), true);
+			}else{
+				group.setSelected(buttonOff.getModel(), true);
+			}
+		}
+	}
+
+	private String getSelectedYear(){
+		if(buttonOff.isSelected())
+			return "";
+		if(button2008.isSelected())
+			return "2008";
+		if(button2009.isSelected())
+			return "2009";
+		if(button2010.isSelected())
+			return "2010";
+		return null;
+	}
+
+	private void setSelectedYear(){
+		//設定
+		//元の設定値を削除
+		extra = extra.replace(aprilopt, "").trim();
+		String year = getSelectedYear();
+		//エイプリルフール設定
+		if(year!=null && !year.isEmpty()){
+			parent.extraModeField.setText((extra + " " + APRIL_OPT + year));
+		}else{
+			parent.extraModeField.setText(extra);
+		}
+	}
+
+	public void actionPerformed(ActionEvent e){
+		dispose();
 	}
 }
 /*

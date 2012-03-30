@@ -972,8 +972,9 @@ public class ConvertingSetting {
 			String key = (String)e.getKey();
 			String value = (String)e.getValue();
 			setProp.put(key, value);
+			//System.out.println(key.toString()+"="+value.toString());
 		}
-		return loadSetting(null, null, addProp);
+		return loadSetting(null, null, setProp);
 	}
 
 	public static ConvertingSetting loadSetting(String user, String password, String propFile) {
@@ -1079,7 +1080,7 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_CMDLINE_EXT, "avi"),
 			prop.getProperty(PROP_CMDLINE_MAIN,""),
 			prop.getProperty(PROP_CMDLINE_IN, ""),
-			prop.getProperty(PROP_CMDLINE_OUT,"-threads 4 -s 512x384 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 4:3"),
+			prop.getProperty(PROP_CMDLINE_OUT,"-threads 0 -s 512x384 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 4:3"),
 			prop.getProperty(PROP_BACK_COMMENT, "500"),
 			prop.getProperty(PROP_FONT_PATH, win_dir+"Fonts\\msgothic.ttc"),
 			Integer.parseInt(prop.getProperty(PROP_FONT_INDEX, "1")),
@@ -1121,10 +1122,10 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_WIDE_CMDLINE_EXT, "mp4"),
 			prop.getProperty(PROP_WIDE_CMDLINE_MAIN,""),
 			prop.getProperty(PROP_WIDE_CMDLINE_IN, ""),
-			prop.getProperty(PROP_WIDE_CMDLINE_OUT,"-threads 4 -s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9"),
+			prop.getProperty(PROP_WIDE_CMDLINE_OUT,"-threads 0 -s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9"),
 			Boolean.parseBoolean(prop.getProperty(PROP_OPTIONAL_TRANSLUCENT, "true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_FONT_HEIGHT_FIX,"false")),
-			prop.getProperty(PROP_FONT_HEIGHT_FIX_RAITO,"102"),
+			prop.getProperty(PROP_FONT_HEIGHT_FIX_RAITO,""),
 			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_ORIGINAL_RESIZE, "false")),
 			Integer.parseInt(prop.getProperty(PROP_COMMENT_MODE_INDEX, "0")),
 			Boolean.parseBoolean(prop.getProperty(PROP_SET_COMMENT_SPEED, "false")),
