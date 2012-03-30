@@ -106,7 +106,9 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	if(data->debug)
 	fprintf(data->log,"width %d, height %d, widthscale %.3f, limitheight %d, y_min %d, y_max %d y %d\n",
 		video_width, video_height, data->width_scale, limit_height, y_min, y_max, y);
-	setspeed(data->comment_speed,slot_item,video_width);
+	setspeed(data->comment_speed,slot_item,video_width,data->nico_width_now);
+	if(data->debug)
+		fprintf(data->log,"[chat_slot/add]comment speed %.0fpix/sec.\n",slot_item->speed*100.0);
 	int running;
 	int first_comment=TRUE;
 	do{
@@ -137,6 +139,16 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			}
 			int start = MAX(other_item->vstart,item->vstart);
 			int end = MIN(other_item->vend,item->vend);
+			if(data->nico_width_now==NICO_WIDTH_WIDE && item->location == CMD_LOC_DEF){
+				//ワイド、DEF location(nakaコマンド)の場合は20%の無判定の時間がある
+				//前10%, 後ろ10%？
+				float duration = item->vend - item->vstart;
+				if(data->debug)
+					fprintf(data->log,"[chat_slot/add]duration %.2fsec.\n",
+						duration / (float)VPOS_FACTOR);
+				start += duration * 0.1f;
+				end -= duration * 0.1f;
+			}
 			int obj_x_t1 = getX(start,slot_item,video_width);
 			int obj_x_t2 = getX(end,slot_item,video_width);
 			int o_x_t1 = getX(start,other_slot,video_width);

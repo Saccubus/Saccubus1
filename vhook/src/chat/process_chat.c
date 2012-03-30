@@ -1,4 +1,5 @@
 #include <SDL/SDL.h>
+#include <math.h>
 #include "chat.h"
 #include "chat_slot.h"
 #include "process_chat.h"
@@ -85,7 +86,7 @@ int getX(int now_vpos,const CHAT_SLOT_ITEM* item,int video_width){
 	if(item->chat_item->location != CMD_LOC_DEF){
 		return (width - text_width) >>1;
 	}else{
-		int tmp = now_vpos - item->chat_item->vpos + TEXT_AHEAD_SEC;
+		int tmp = now_vpos - item->chat_item->vstart;
 		if(item->speed < 0.0f){
 			return -text_width -(tmp * item->speed);
 		}
@@ -97,19 +98,46 @@ int getX(int now_vpos,const CHAT_SLOT_ITEM* item,int video_width){
 /**
  *
  */
-void setspeed(int comment_speed,CHAT_SLOT_ITEM* item,int video_width){
+void setspeed(int comment_speed,CHAT_SLOT_ITEM* item,int video_width,int nico_width){
 	int text_width = item->surf->w;
 	CHAT_ITEM* chat_item = item->chat_item;
 	if(chat_item->location!=CMD_LOC_DEF){
 		item->speed = 0.0f;
-	}else if(comment_speed!=0){
-		item->speed = (float)comment_speed/(float)VPOS_FACTOR;
-		chat_item->vend = chat_item->vstart
-			+ (video_width + text_width) * VPOS_FACTOR / abs(comment_speed)
-			- 1;
-		//vend is last tick of LIFE, so must be - 1 done.
 	}else{
-		item->speed = (float)(video_width + text_width)
-			/(float)(chat_item->vend - chat_item->vstart);
+		//int vpos = chat_item->vpos;
+		int vstart = chat_item->vstart;
+		float width = video_width + text_width;
+		if(nico_width == NICO_WIDTH_WIDE){
+			//ƒƒCƒh‚Ìê‡‚Í•\Ž¦ŠúŠÔ‚ª‚T•b
+			//‚½‚¾‚µÕ“Ë”»’è‚Ívpos‚ðŠî€‚É‚S•b‚Å‚ ‚éB
+			item->speed = width * 0.8f / (float)TEXT_SHOW_SEC;
+			//chat_item->vstart = (int)(vpos - (TEXT_AHEAD_SEC * 1.25));
+			chat_item->vpos = (int)(vstart + (TEXT_AHEAD_SEC * 1.25));
+			chat_item->vend = (int)(vstart + (TEXT_SHOW_SEC * 1.25));
+		}else{
+			item->speed = width / (float)TEXT_SHOW_SEC;
+		}
+		if(comment_speed==0){
+			return;
+		}
+		if(comment_speed==-20080401){	//reverse
+			item->speed = -item->speed;
+			return;
+		}
+		if(comment_speed==20090401){	//3 times speed
+			item->speed *= 3;
+//			chat_item->vstart = vpos -
+//				(int)(width_4sec * 0.25f / fabsf(item->speed));
+			chat_item->vpos = vstart +
+				(int)(width * 0.25f / fabsf(item->speed));
+			chat_item->vend = vstart +
+				(int)(width / fabsf(item->speed));
+			return;
+		}
+		item->speed = (float)comment_speed/(float)VPOS_FACTOR;
+		chat_item->vpos = vstart +
+			(int)(width * 0.25f / fabsf(item->speed));
+		chat_item->vend = vstart +
+			(int)(width / fabsf(item->speed));
 	}
 }

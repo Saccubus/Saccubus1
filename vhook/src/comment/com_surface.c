@@ -25,7 +25,6 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	Uint16* index = item->str;
 	Uint16* last = item->str;
 	SDL_Surface* ret = NULL;
-	//int color = item->color;
 	SDL_Color SdlColor = item->color24;
 	int size = item->size;
 	int location = item->location;
@@ -36,6 +35,17 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	double font_height_rate = data->font_h_fix_r;
 	int nico_width = data->nico_width_now;
 
+	/*
+	 * default color変更
+	 */
+	int color = item->color;
+	if(data->defcolor>401){	//401 means April 01, i.e. force april fool
+		color = data->defcolor - 401;
+		SdlColor = COMMENT_COLOR[color];
+	}else if(color==CMD_COLOR_DEF){	//this may be @default
+		color = data->defcolor;
+		SdlColor = COMMENT_COLOR[color];
+	}
 	/*
 	 * 影は置いておいて、とりあえず文字の描画
 	 */
@@ -88,10 +98,9 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	if(shadow >= SHADOW_MAX){
 		shadow = SHADOW_DEFAULT;
 	}
-	int is_black = item->color == CMD_COLOR_BLACK
-		|| cmpSDLColor(item->color24, COMMENT_COLOR[CMD_COLOR_BLACK]);
-	if(debug && strstr(data->extra_mode,"fg")!=NULL){
-		is_black = 2;
+	int is_black = cmpSDLColor(SdlColor, COMMENT_COLOR[CMD_COLOR_BLACK]);
+	if(strstr(data->extra_mode,"font")!=NULL && strstr(data->extra_mode,"fg")!=NULL){
+		is_black = 2;	//SHADOW COLOR is FONT
 	}
 	ret = (*ShadowFunc[shadow])(ret,is_black,data->fontsize_fix,SdlColor);
 	fprintf(log,"[comsurface/make1]ShadowFunc:%d (%d, %d) %s %d line\n",shadow,ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
@@ -368,7 +377,6 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 					item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
 			}
 
-
 		}else{
 			// ダブルリサイズなし
 			linefeed_resized = TRUE;
@@ -589,7 +597,7 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 		newfont &= 15;
 		//第２基準フォントの検査
 		if(secondBase==UNDEFINED_FONT){
-			if((foundAscii && basefont<=GOTHIC_FONT && !wasAscii)||
+			if((foundAscii && !wasAscii && basefont<=GOTHIC_FONT)||
 				(basefont==GOTHIC_FONT &&(newfont==SIMSUN_FONT || newfont==GULIM_FONT))){
 				secondBase = getFirstFont(index,basefont);
 				if(secondBase==basefont || secondBase==GOTHIC_FONT){

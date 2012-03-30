@@ -15,43 +15,30 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 	//SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
 	SDL_Surface* ret;
 	const char* mode=data->extra_mode;
-	if(strstr(mode,"-render")==NULL){
+	if(strstr(mode,"-font")==NULL){
 		ret = TTF_RenderUNICODE_Blended(font,str,fg);	//default original mode
 	}else{
 		SDL_Color bg = {0,0,0,0};
 		int fontfg = FALSE;
-		if(strstr(mode,"-font")!=NULL){
-			switch(fontsel){
-			case GOTHIC_FONT:	bg.r = 0xff; break;	//red
-			case SIMSUN_FONT:	bg.g = 0xff; break;	//green
-			case GULIM_FONT:	bg.b = 0xff; break;	//blue
-			case -1:
-			case ARIAL_FONT:	bg.r = bg.g = 0xff;	break;	//yellow
-			default:			bg.r = bg.g = bg.b = 0x80;	//gray
-				break;
-			}
-			if(strstr(mode,"-fg")!=NULL){	//use whith -font, -font-fg
-				fg = bg;
-				bg = COMMENT_COLOR[CMD_COLOR_BLACK];
-				fontfg = TRUE;
-			}
-		}else{
-			bg = COMMENT_COLOR[CMD_COLOR_YELLOW];
+		switch(fontsel){
+		case GOTHIC_FONT:	bg.r = 0xff; break;	//red
+		case SIMSUN_FONT:	bg.g = 0xff; break;	//green
+		case GULIM_FONT:	bg.b = 0xff; break;	//blue
+		case -1:
+		case ARIAL_FONT:	bg.r = bg.g = 0xff;	break;	//yellow
+		default:			bg.r = bg.g = bg.b = 0x80;	//gray
+			break;
+		}
+		if(strstr(mode,"-fg")!=NULL){	//use whith -font, -font-fg
+			fg = bg;
+			bg = COMMENT_COLOR[CMD_COLOR_BLACK];
+			fontfg = TRUE;
 		}
 		SDL_Surface* surf;
 		Uint32 colkey;
-		if(strstr(mode,"-solid")!=NULL){
-			surf = TTF_RenderUNICODE_Solid(font,str,fg);
-			colkey = 0;
-		}else if(strstr(mode,"-shaded")!=NULL){
-			SDL_Color black = {0x00,0x00,0x00,0x00};
-			surf = TTF_RenderUNICODE_Shaded(font,str,fg,black);
-			colkey = 0;
-		}else{
-			surf = TTF_RenderUNICODE_Blended(font,str,fg);
-			//colkey = SDL_MapRGBA(surf->format,0,0,0,0);
-			colkey = 0;
-		}
+		SDL_Color black = {0x00,0x00,0x00,0x00};
+		surf = TTF_RenderUNICODE_Shaded(font,str,fg,black);
+		colkey = 0;
 		SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);	//surface for background
 		if (!fontfg){
 			if(cmpSDLColor(fg,bg)){
@@ -123,9 +110,6 @@ SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,SDL_Surface* surf,SDL_Co
 				col.r = col.g = 0xff;	//yellow
 				break;
 		}
-	}
-	if(strstr(data->extra_mode,"-double")!=NULL){
-		s <<= 1;
 	}
 	SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);
 	SDL_Rect rect = {0,0,tmp->w,tmp->h};

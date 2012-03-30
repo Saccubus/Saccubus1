@@ -7,6 +7,7 @@
 #include "nicodef.h"
 #include "process.h"
 #include "unicode/uniutil.h"
+#include "april_fool.h"
 int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, const char* com_type);
 
 /**
@@ -38,7 +39,7 @@ int extra_font(SETTING* setting, FILE* log);
  * データの初期化
  * ContextInfo ci->DATA data ← SETTING setting
  */
-int initData(DATA* data,FILE* log,const SETTING* setting){
+int initData(DATA* data,FILE* log,SETTING* setting){
 	int i;
 	data->user.enable_comment = setting->enable_user_comment;
 	data->owner.enable_comment = setting->enable_owner_comment;
@@ -62,16 +63,16 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	data->enableCA = setting->enableCA;
 	data->use_lineskip_as_fontsize = setting->use_lineskip_as_fontsize;
 	data->debug = setting->debug;
+	data->defcolor = CMD_COLOR_DEF;
 //	data->limit_height = NICO_HEIGHT;
 	int outw = setting->nico_width_now;
 	int outh = outw==NICO_WIDTH_WIDE ? NICO_HEIGHT_WIDE : NICO_HEIGHT;
-	const char* param = setting->input_size;
-	if(param!=NULL){
-		sscanf(param,"%d:%d",&outw,&outh);
-	}
-	param = setting->set_size;	//-s "width"x"height" in ffmpeg OUT OPTION
-	if(param!=null){
-		sscanf(param,"%d:%d",&outw,&outh);
+	if(setting->out_size!=NULL){	//-vfilters outs=width:hieight
+		sscanf(setting->out_size,"%d:%d",&outw,&outh);
+	}else if(setting->set_size!=NULL){	//-s "width"x"height" in ffmpeg OUT OPTION
+		sscanf(setting->set_size,"%d:%d",&outw,&outh);
+	}else if(setting->input_size!=NULL){
+		sscanf(setting->input_size,"%d:%d",&outw,&outh);
 	}
 	data->vout_width = outw;
 	data->vout_height = outh;
@@ -83,11 +84,15 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	fprintf(log,"[main/init]output: %dx%d @(%d,%d)\n",
 		data->vout_width,data->vout_height,data->vout_x,data->vout_y);
 	data->extra_mode = setting->extra_mode;
+	if(setting->april_fool != NULL){
+		set_aprilfool(setting,data);
+	}
 	fputs("[main/init]initializing context...\n",log);
 	//フォント
 	TTF_Font** font = data->font;
 	const char* font_path = setting->font_path;
 	const int font_index = setting->font_index;
+	const char* fontdir = setting->fontdir;
 	int fixed_font_index = font_index;
 	int fontsize;
 	/* ターゲットを拡大した時にフォントが滑らかにするため２倍化する。 */
@@ -156,6 +161,7 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 	}
 
 	int f;
+	char font_file_path[128];
 	if(data->enableCA){
 		// CAフォント
 		fputs("[main/init]initializing CA(Comment Art) Font...\n",log);
@@ -180,6 +186,11 @@ int initData(DATA* data,FILE* log,const SETTING* setting){
 				}
 				fprintf(log,"[main/init]error. CA font path[%d] is NULL\n",f);
 				return FALSE;
+			}
+			strcpy(font_file_path,fontdir);
+			strcat(font_file_path,font_path);
+			if(f!=EXTRA_FONT){
+				font_path = font_file_path;
 			}
 			fixed_font_index = setting->CAfont_index[f];
 			for(i=0;i<CMD_FONT_MAX;i++){

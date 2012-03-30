@@ -66,18 +66,10 @@ int getFontType2(Uint16* u,int basefont,DATA* data){
 		return ARIAL_FONT|0x0000|(*u & 0x00f0);	//0020-> 0023 00a0-> 00a3
 	}
 	if(0x2000<=*u && *u<=0x200f){	//Various width Space -> fix fontsize w,h
-		if(basefont==GOTHIC_FONT){
-			return GOTHIC_FONT|0x2000|(*u & 0x000f)<<4;	//2001->2010 200a->20a0
-		}else{
-			return basefont;
-		}
+		return basefont|0x2000|(*u & 0x000f)<<4;	//2001->2010 200a->20a0;
 	}
 	if(*u==0x3000){	//‘SŠp‹ó”’->fix fontsize w,h
-		if(basefont==GOTHIC_FONT){
-			return GOTHIC_FONT|0x3000;		//3000->300X
-		}else{
-			return basefont;
-		}
+		return basefont|0x3000;		//SIMSUN 3001 GULIM 3002
 	}
 	switch(getDetailType(*u)){
 		case STRONG_SIMSUN_CHAR:

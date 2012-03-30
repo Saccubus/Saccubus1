@@ -180,8 +180,9 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 #define MINGLIU_FONT 8
 #define N_MINCHO_FONT 9
 #define ESTRANGELO_EDESSA_FONT 10
-#define EXTRA_FONT 11
-#define CA_FONT_MAX	12
+#define GUJARATI_FONT 11
+#define EXTRA_FONT 12
+#define CA_FONT_MAX	13
 #define SPACE_0020 0
 #define SPACE_00A0 1
 #define SPACE_2000 2
@@ -189,7 +190,7 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 #define UNDEFINED_FONT	(-1)
 #define NULL_FONT	(-2)
 
-static char* const CA_FONT_NAME[CA_FONT_MAX+4] = {
+static char* const CA_FONT_NAME[16] = {
 	"GOTHIC",
 	"SIMSUN",
 	"GULIM",
@@ -202,9 +203,9 @@ static char* const CA_FONT_NAME[CA_FONT_MAX+4] = {
 	"MINGLIU",
 	"NEW MINCHO",
 	"ESTRANGELO EDESSA",
+	"GUJARATI",
 	"EXTRA",
 	//--end of font type---//
-	"NAME 12",
 	"NAME 13",
 	"NAME 14",
 	"UNDEFINED",	// -1 & 15
@@ -228,6 +229,7 @@ static const int CA_FONT_SIZE_FIX[CA_FONT_MAX][CMD_FONT_MAX] = {
 	{0,0,0},	//MingLiU
 	{0,0,0},	//new mincho, smsun or new_gulim
 	{0,0,0},	//estrangelo edessa
+	{0,0,0},	//gujarati
 	{0,0,0},	//extra
 };
 
@@ -235,7 +237,7 @@ static const int CA_FONT_HIGHT_TUNED[4][2][CMD_FONT_MAX] = {
 //	{{DEF,BIG,SMALL},{DEF,BIG,SMALL}for fontsize_fixed},
 	{{24,38,16},{47,74,31}},	//gothic glyph-advance width is {25,40,16}{50,80,33(>32)}
 								//setting SDL size is {23,37,15},{46,73,30}
-	//specially 3000 is other definition
+	//specially 2000-200f,3000 is other definition
 	{{24,38,16},{47,74,31}},	//simsun
 	{{24,38,16},{47,74,31}},	//gulim
 	{{24,41,15},{46,78,30}},	//arial glyph-advance width of'a' is {13,22,8},{26,44,16}

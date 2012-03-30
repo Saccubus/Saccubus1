@@ -52,10 +52,12 @@ struct DATA{
 	int original_resize;	// さきゅばす独自リサイズが有効（デフォルト有効）
 	int comment_speed;	// コメント速度を指定する場合≠0
 	int enableCA;
+	const char* fontdir;
 	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
 	int debug;
 	const char* extra_mode;
 	double width_scale;	//書き込み可　videowidth/nicowidth_now
+	int defcolor;	//デフォルトカラー24bit（エイプリルフール用、@defaultには今は未使用）
 	// CA用フォント
 	TTF_Font* CAfont[CA_FONT_MAX][CMD_FONT_MAX];
 	// CA切替用Unicode群
@@ -97,6 +99,7 @@ typedef struct SETTING{
 	const char* input_size;
 	const char* set_size;
 	const char* pad_option;
+	const char* out_size;
 	/*TRUE OR FALSE*/
 	int enable_user_comment;
 	int enable_owner_comment;
@@ -108,6 +111,7 @@ typedef struct SETTING{
 	// CA用フォント
 	const char* CAfont_path[CA_FONT_MAX];
 	int CAfont_index[CA_FONT_MAX];
+	const char* fontdir;
 	// CA切替用Unicode群
 	//const char* CAfont_change_uc[CA_FONT_MAX];
 	//const char* zero_width_uc;
@@ -125,10 +129,11 @@ typedef struct SETTING{
 	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
 	int debug;
 	const char* extra_mode;	// debugモード文字列
+	const char* april_fool;	// エイプリルフール文字列
 }SETTING;
 
 int init(FILE* log);
-int initData(DATA* data,FILE* log,const SETTING* setting);
+int initData(DATA* data,FILE* log,SETTING* setting);
 int main_process(DATA* data,SDL_Surface* surf,const int now_vpos);
 int closeData(DATA* data);
 int close();

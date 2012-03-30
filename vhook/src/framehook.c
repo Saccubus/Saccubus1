@@ -29,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.31.14";
+	char *ver="1.31.17";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -161,6 +161,9 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->input_size = NULL;
 	setting->set_size = NULL;
 	setting->pad_option = NULL;
+	setting->out_size = NULL;
+	setting->fontdir = "";
+	setting->april_fool = NULL;
 	// CA用フォント
 	//  MS UI GOTHIC は msgothic.ttc の index=2
 	int f;
@@ -168,6 +171,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		setting->CAfont_path[f] = NULL;
 		setting->CAfont_index[f] = 0;
 	}
+	setting->fontdir = NULL;
 	// CA切替用Unicode群
 	//setting->CAfont_change_uc[SIMSUN_FONT] = "02cb 2196-2199 2470-249b 2504-250b 250d-250e 2550-2573 2581-258f 2593-2595 3021-3029 3105-3129 3220-3229 e758-e864 f929 f995";	//明朝化 SIMSUN
 	//setting->CAfont_change_uc[GULIM_FONT] = "249c-24b5 24d0-24e9 2592 25a3-25a9 25b6-25b7 25c0-25c1 25c8 25d0-25d1 260e-260f 261c 261e 2660-2661 2663-2665 2667-2669 266c 3131-318e 3200-321c 3260-327b ac00-d7a3 f900-fa0b";	//丸ゴ GULIM
@@ -333,7 +337,22 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			fprintf(log,"[framehook/init]pad option: %s\n",setting->pad_option);
 			fflush(log);
 		}
+		else if (strncmp(FRAMEHOOK_OPT_OUT_SIZE,arg,FRAMEHOOK_OPT_OUT_SIZE_LEN) == 0){
+			setting->out_size = arg+FRAMEHOOK_OPT_OUT_SIZE_LEN;
+			fprintf(log,"[framehook/init]output size: %s\n",setting->out_size);
+			fflush(log);
+		}
+		else if (strncmp(FRAMEHOOK_OPT_APRIL_FOOL,arg,FRAMEHOOK_OPT_APRIL_FOOL_LEN) == 0){
+			setting->april_fool = arg+FRAMEHOOK_OPT_APRIL_FOOL_LEN;
+			fprintf(log,"[framehook/init]april fool: %s\n",setting->april_fool);
+			fflush(log);
+		}
 		// CA用フォント
+		else if(strncmp(FRAMEHOOK_OPT_FONT_DIR,arg,FRAMEHOOK_OPT_FONT_DIR_LEN)==0){
+			setting->fontdir = arg+FRAMEHOOK_OPT_FONT_DIR_LEN;
+			fprintf(log,"[framehook/init]font dir: %s\n",setting->fontdir);
+			fflush(log);
+		}
 		else if(strncmp(FRAMEHOOK_OPT_SIMSUN_FONT,arg,FRAMEHOOK_OPT_SIMSUN_FONT_LEN) == 0
 				&& setting->CAfont_path[SIMSUN_FONT]==NULL){
 			char* font = arg+FRAMEHOOK_OPT_SIMSUN_FONT_LEN;
@@ -414,6 +433,12 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			char* font = arg+FRAMEHOOK_OPT_ESTRANGELO_FONT_LEN;
 			setting->CAfont_path[ESTRANGELO_EDESSA_FONT] = font;
 			fprintf(log,"[framehook/init]ESTRANGELO EDESSA Font path:%s\n",setting->CAfont_path[ESTRANGELO_EDESSA_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_GUJARATI_FONT,arg,FRAMEHOOK_OPT_GUJARATI_FONT_LEN) == 0
+				&& setting->CAfont_path[GUJARATI_FONT]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_GUJARATI_FONT_LEN;
+			setting->CAfont_path[GUJARATI_FONT] = font;
+			fprintf(log,"[framehook/init]GUJARATI Font path:%s\n",setting->CAfont_path[GUJARATI_FONT]);
 			fflush(log);
 		}else if(strncmp(FRAMEHOOK_OPT_EXTRA_FONT,arg,FRAMEHOOK_OPT_EXTRA_FONT_LEN) == 0
 				&& setting->extra_path==NULL){
@@ -506,6 +531,10 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	if(!setting->CAfont_path[ESTRANGELO_EDESSA_FONT]){
 		setting->CAfont_path[ESTRANGELO_EDESSA_FONT] = setting->CAfont_path[ARIAL_FONT];
 		fprintf(log,"[framehook/init]no ESTRANGELO_EDESSA Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
+	}
+	if(!setting->CAfont_path[GUJARATI_FONT]){
+		setting->CAfont_path[GUJARATI_FONT] = setting->CAfont_path[ARIAL_FONT];
+		fprintf(log,"[framehook/init]no GUJARATI Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
 	}
 	fflush(log);
 	return TRUE;

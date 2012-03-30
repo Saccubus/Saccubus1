@@ -166,6 +166,8 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		if (video_length > 0){
 			int fix = item->vend - video_length;
 			if(fix > 0){
+				if(fix>4)
+					fix = 4;
 				item->vend -= fix;
 				item->vpos -= fix;
 				item->vstart -= fix;
