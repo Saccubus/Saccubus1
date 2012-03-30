@@ -7,5 +7,5 @@
 	<entry key="EXT">avi</entry>
 	<entry key="MAIN"></entry>
 	<entry key="IN"></entry>
-	<entry key="OUT">-s 512x288 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9</entry>
+	<entry key="OUT">-threads 0 -s 512x288 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9</entry>
 </properties>

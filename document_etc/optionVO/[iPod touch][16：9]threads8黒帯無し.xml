@@ -1,12 +1,1 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<!--
-	kuji-raさん提供
-	■orz
--->
-<properties>
-	<entry key="EXT">mp4</entry>
-	<entry key="MAIN"></entry>
-	<entry key="IN"></entry>
-	<entry key="OUT">-threads 8 -vcodec libxvid -b 350k  -bufsize 4096 -g 300 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -s 480x270 -aspect 16:9</entry>
-</properties>
+﻿

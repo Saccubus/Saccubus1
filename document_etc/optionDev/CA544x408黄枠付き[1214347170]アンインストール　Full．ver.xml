@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>settings-Fri Mar 30 09:53:11 JST 2012-Rev1.31.dev17</comment>
+<entry key="History1">http://www.nicovideo.jp/watch/1214347170</entry>
+<entry key="VhookDisabled">false</entry>
+<entry key="CMD_OUT">-threads 0 -s 512x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -aspect 4:3 -crf 23 -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 17 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip</entry>
+<entry key="FixFontSize">true</entry>
+<entry key="FontHeightFix">false</entry>
+<entry key="FFnpegPath">.\bin\ffmpeg55686.exe</entry>
+<entry key="CommentSpeed"/>
+
+<entry key="FontWidthFix">false</entry>
+<entry key="CMD_IN"/>
+<entry key="ShadowIndex">1</entry>
+<entry key="FixCommentSize">true</entry>
+<entry key="DisableOriginalResize">true</entry>
+<entry key="SaveConvertedFile">true</entry>
+<entry key="AddOption">-vfilters pad=544:408:16:12</entry>
+<entry key="EnableCA">true</entry>
+<entry key="SetCommentSpeed">false</entry>
+<entry key="VhookPath">.\bin\nicovideoE.dll</entry>
+<entry key="CMD_EXT">mp4</entry>
+<entry key="UseVhookNormal">true</entry>
+<entry key="AddComment">true</entry>
+<entry key="CMD_MAIN"/>
+<entry key="ExtraMode">-frame -loc</entry>
+</properties>

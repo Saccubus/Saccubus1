@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>for CA-Thu Mar 29 15:02:45 JST 2012-Rev1.31.dev17</comment>
+<entry key="History1">http://www.nicovideo.jp/watch/1329021499</entry>
+<entry key="VhookDisabled">false</entry>
+<entry key="WideOptionFile"/>
+<entry key="FixFontSize">true</entry>
+<entry key="FontHeightFix">false</entry>
+<entry key="FFnpegPath">.\bin\ffmpeg55686.exe</entry>
+<entry key="VhookWidePath">.\bin\nicovideoE.dll</entry>
+<entry key="WideAddOption">-vfilters pad=672:384:16:12</entry>
+<entry key="CommentSpeed"/>
+<entry key="UseLineskipAsFontsize">false</entry>
+<entry key="DeleteVideoAfterConv">false</entry>
+<entry key="WideCMD_MAIN"/>
+<entry key="UseVhookWide">true</entry>
+<entry key="FontWidthFix">false</entry>
+<entry key="ShadowIndex">1</entry>
+<entry key="FixCommentSize">true</entry>
+<entry key="DisableOriginalResize">true</entry>
+<entry key="SaveConvertedFile">true</entry>
+<entry key="WideCMD_EXT">.mp4</entry>
+<entry key="EnableCA">true</entry>
+<entry key="SetCommentSpeed">false</entry>
+<entry key="WideCMD_IN"/>
+<entry key="WideCMD_OUT">-threads 0 -s 640x360 -acodec libvo_aacenc -ab 128k -ar 44100  -ac 2 -vcodec libx264 -crf 23 -b 1400k -async 1</entry>
+<entry key="AddComment">true</entry>
+<entry key="ExtraMode">-frame -loc</entry>
+</properties>
