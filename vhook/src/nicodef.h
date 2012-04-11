@@ -124,6 +124,26 @@ static const int COMMENT_POINT_SIZE[CMD_FONT_MAX] = {
 	29,	//big BIG
 	11,	//small SMALL
 };
+//Big double resize height
+/*
+big二重リサイズ9行(高さ392px・固定時横幅1041～1067px)： 漢字幅26文字程度
+big二重リサイズ10行(高さ384px・固定時横幅1137～1167px)： 漢字幅×29文字程度
+big二重リサイズ11行(高さ389px・固定時横幅1247～1283px)： 漢字幅×32文字程度
+big二重リサイズ12行(高さ388px・固定時横幅1385～1433px)： 漢字幅×35文字程度
+big二重リサイズ13行(高さ381px・固定時横幅1553～1565px)： 漢字幅×39文字程度
+big二重リサイズ14行(高さ381px・固定時横幅1619～1687px)： 漢字幅×41文字程度
+*/
+static const int COMMENT_BIG_DR_HEIGHT[16] = {
+	NICO_HEIGHT,NICO_HEIGHT,NICO_HEIGHT,NICO_HEIGHT,NICO_HEIGHT,	//0-4
+	NICO_HEIGHT,NICO_HEIGHT,NICO_HEIGHT,NICO_HEIGHT,	//5-8
+	392,		//9行
+	384,		//10
+	389,		//11
+	388,		//12
+	381,		//13
+	381,		//14
+	384,		//15
+};
 
 #define CMD_COLOR_MAX	17
 #define CMD_COLOR_DEF	0

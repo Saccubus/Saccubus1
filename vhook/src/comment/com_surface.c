@@ -170,14 +170,16 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		if((int)(ret->h * zoomx) > (NICO_HEIGHT/3) * autoscale + 1){
 			// ダブルリサイズ検査
 			// 改行リサイズ＆改行後の倍率で臨界幅を超えた場合 → 改行リサイズキャンセル
+			double linefeed_zoom = linefeedResizeScale(size,nb_line,data->fontsize_fix);
+			double resized_w = linefeed_zoom * zoomx * ret->w;
 			if(location != CMD_LOC_DEF
-				&& isDoubleResize(0.5 * zoomx * ret->w, nicolimit_width, size, nb_line, log)){
+				&& isDoubleResize(resized_w, nicolimit_width, size, nb_line, log)){
 				//  ダブルリサイズあり → 改行リサイズキャンセル
-				nicolimit_width *= 2.0;
+				nicolimit_width /= linefeed_zoom;	//*= 2.0;
 				double_resized = TRUE;
 			} else{
 				// ダブルリサイズなし
-				zoomx *= linefeedResizeScale(size,nb_line,data->fontsize_fix);	// *= 0.5
+				zoomx *= linefeed_zoom;	// *= 0.5
 				linefeed_resized =TRUE;
 			}
 		}
@@ -294,11 +296,11 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		 */
 		double linefeed_zoom = linefeedResizeScale(size,nb_line,data->fontsize_fix);
 		resized_w = zoom_w * linefeed_zoom;
-		if(location != CMD_LOC_DEF && isDoubleResize(0.5 * zoom_w, nicolimit_width, size, nb_line, log)){
+		if(location != CMD_LOC_DEF && isDoubleResize(resized_w, nicolimit_width, size, nb_line, log)){
 			// ダブルリサイズあり
 			double_resized = TRUE;
 			//ダブルリサイズ時には動画幅の２倍にリサイズされる筈
-			nicolimit_width *= 2.0;
+			nicolimit_width = nicolimit_width / linefeed_zoom;	//*= 2.0;
 
 			int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
 			if(h!=ret->h){
@@ -320,14 +322,15 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 				 * M < limit / resize
 				 */
 				resize = zoom_w / COMMENT_FONT_SIZE[size];
-				resized_w = floor(nicolimit_width / resize) * resize;
+				//resized_w = floor(nicolimit_width / resize) * resize;
+				resized_w = nicolimit_width;
 				fprintf(log,"[comsurface/DR limit1]comment %d previous width %.0f chars %.0f resized %.0f limit %.0f\n",
 					item->no,zoom_w,resize,resized_w,nicolimit_width);
-				if(resized_w+resize < nicolimit_width+32){
+				//if(resized_w+resize < nicolimit_width+32){
 					resized_w += resize;
-				}
+				//}
 				zoom_w = resized_w;
-				fprintf(log,"[comsurface/DR limit2]comment %d width %.0f resize %.0f limit+ %.0f\n",
+				fprintf(log,"[comsurface/DR limit2]comment %d width %.0f chars %.0f limit+ %.0f\n",
 					item->no,zoom_w,resize,nicolimit_width+32);
 				zoom_h = (zoom_w/(double)ret->w / font_width_rate) * font_height_rate * (double)ret->h;
 				//zoomy = zoom_h/(double)ret->h;
@@ -338,43 +341,58 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			double hrate = (double)NICO_HEIGHT / zoom_h;
 			fprintf(log,"[comsurface/DR detail]comment %d  w %.2f%% h %.2f%%%s\n",
 				item->no,wrate*100.0,hrate*100.0,(data->fontsize_fix?" fix":""));
-			double h2 = wrate / hrate;
-			if(0.6 < hrate && hrate <= 1.0){
-				//コメント高が動画以上でありダブルリサイズにより動画高に合わせたと見る。
-				zoom_w *= hrate;
-				if(zoom_w > nicolimit_width+32){
-					//横幅が大きすぎ
-					font_width_rate *= (nicolimit_width+32) / zoom_w;
-					zoom_w = nicolimit_width+32;
+			if(size == CMD_FONT_BIG && 8 < nb_line && nb_line < 16){
+				//コメント行数により矯正
+				double resized_h = COMMENT_BIG_DR_HEIGHT[nb_line];
+				hrate = (double)resized_h / zoom_h;
+				resized_w = zoom_w * hrate;
+				if(resized_w < zoom_w){
+					zoom_w = resized_w;
+					zoom_h = resized_h;
+					wrate = hrate;
+					fprintf(log,"[comsurface/DR AdjByWiki]comment %d (%.0f,%.0f) w %.2f%% h %.2f%% font_width %.2f%%\n",
+						item->no,zoom_w,zoom_h,wrate*100.0,hrate*100.0,font_width_rate*100.0);
 				}
-				fprintf(log,"[comsurface/DR hrate]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
-					item->no,zoom_w,hrate*100.0,font_width_rate*100.0);
-			}else
-			if(hrate > 1.0){
-				//コメント高が動画以下であり横幅で決めるしか手がないがこれはやらない。
-				//zoom_w *= wrate;
-				fprintf(log,"[comsurface/DR wrate]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
-					item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
 			}
-			//以下は動画よりコメント高が凄く高い
-			else
-			if(0.75 <= h2 && h2 <= 1.5){
-				//横幅基準で高さが動画より微妙になるなら動画高に合わせる
-				//zoom_w *= hrate;
-				if(zoom_w > nicolimit_width+32){
-					//横幅が大きすぎ
-				//	font_width_rate *= (nicolimit_width+32) / zoom_w;
-				//	zoom_w = nicolimit_width+32;
+			else {
+				double h2 = wrate / hrate;
+				if(385 < zoom_h && zoom_h < 512){
+					//コメント高が動画以上でありダブルリサイズにより動画高に合わせたと見る。
+					zoom_w *= hrate;
+					if(zoom_w > nicolimit_width+32){
+						//横幅が大きすぎ
+						font_width_rate *= (nicolimit_width+32) / zoom_w;
+						zoom_w = nicolimit_width+32;
+					}
+					fprintf(log,"[comsurface/DR hrate]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
+						item->no,zoom_w,hrate*100.0,font_width_rate*100.0);
+				}else
+				if(zoom_h <= 385){
+					//コメント高が動画以下であり横幅で決めるしか手がないがこれはやらない。
+					//zoom_w *= wrate;
+					fprintf(log,"[comsurface/DR wrate]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
+						item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
 				}
-				fprintf(log,"[comsurface/DR hrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
-					item->no,zoom_w,hrate*100.0,font_width_rate*100.0);
-			}
-			else
-			{
-				//高さが動画と全然違うので合わせられない
-				//zoom_w *= wrate;
-				fprintf(log,"[comsurface/DR wrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
-					item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
+				//以下は動画よりコメント高が凄く高い
+				else
+				if(0.75 <= h2 && h2 <= 1.5){
+					//横幅基準で高さが動画より微妙になるなら動画高に合わせる 今はやらない
+					//zoom_w *= hrate;
+					//if(zoom_w > nicolimit_width+32){
+						//横幅が大きすぎ
+					//	font_width_rate *= (nicolimit_width+32) / zoom_w;
+					//	zoom_w = nicolimit_width+32;
+					//}
+					fprintf(log,"[comsurface/DR hrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
+						item->no,zoom_w,hrate*100.0,font_width_rate*100.0);
+				}
+				else
+				{
+					//高さとアス比が動画と全然違うので合わせられない
+					//zoom_w *= wrate;
+					fprintf(log,"[comsurface/DR wrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
+						item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
+				}
 			}
 
 		}else{
@@ -420,14 +438,15 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			 */
 			resize = zoom_w / COMMENT_FONT_SIZE[size];
 			resized_w = floor(nicolimit_width / resize) * resize;
+			//resized_w = nicolimit_width;
 			fprintf(log,"[comsurface/LWresize]comment %d previous width %.0f chars %.0f resized %.0f limit %.0f\n",
 				item->no,zoom_w,resize,resized_w,nicolimit_width);
-			if(resized_w+resize < nicolimit_width+32){
+			//if(resized_w+resize < nicolimit_width+32){
 				resized_w += resize;
-			}
+			//}
 			limit_width_resized = TRUE;
 			zoom_w = resized_w;
-			fprintf(log,"[comsurface/LWresize]comment %d width %.0f resize %.0f limit+ %.0f\n",
+			fprintf(log,"[comsurface/LWresize]comment %d width %.0f chars %.0f limit+ %.0f\n",
 				item->no,zoom_w,resize,nicolimit_width+32);
 		}
 	}
