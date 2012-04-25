@@ -30,8 +30,11 @@ void closeChatSlot(CHAT_SLOT* slot);
 int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int video_height);
 void deleteChatSlot(CHAT_SLOT* slot,CHAT_SLOT_ITEM* item);
 void deleteChatSlotFromIndex(CHAT_SLOT* slot,int index);
-
 //イテレータ
 void resetChatSlotIterator(CHAT_SLOT* slot);
-CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos);
+CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,VPOS_T now_vpos);
+//pair計算
+int is_valid_pair(double pair[2]);
+int set_crossed(double ret[2],double pair1[2],double pair2[2]);
+
 #endif /*CHAT_SLOT_H_*/

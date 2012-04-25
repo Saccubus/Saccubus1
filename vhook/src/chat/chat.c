@@ -12,7 +12,7 @@ SDL_Color convColor24(int color);
  * 出力 CHAT chat 領域確保、項目設定
  * 出力 CHAT_SLOT chat->slot ← slot ポインタ設定のみ
  */
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length){
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width){
 	int i;
 	int max_no = INTEGER_MIN;
 	int min_no = INTEGER_MAX;
@@ -124,10 +124,8 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		}else{
 			color24 = COMMENT_COLOR[CMD_COLOR_DEF];
 		}
-	/*
 		// bit 15-8 を＠秒数とみなす　saccubus1.26α1以降
-		duration = GET_CMD_DURATION(location);
-	*/
+		//duration = GET_CMD_DURATION(location);
 		location = GET_CMD_LOC(location);
 	/*
 		if (duration == 0){	// 通常コメント
@@ -142,7 +140,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	*/
 		//変数セット
 		item->no = no;
-		item->vpos = vpos;
+		item->vpos = (float)vpos;
 		item->location = location;
 		item->size = size;
 		item->color = color;
@@ -150,24 +148,31 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		item->str = str;
 		/*内部処理より*/
 		if(location != CMD_LOC_DEF){
-			item->vstart = vpos;
-			item->vend = vpos + TEXT_SHOW_SEC_S - 1;
+			item->vstart = (float)vpos;
+			item->vend = (float)(vpos + TEXT_SHOW_SEC_S - 1);
 			//vend is last tick of LIFE, so must be - 1 done.
 			// item->vend = vpos + duration - 1;
 		}else{
-			item->vstart = vpos - TEXT_AHEAD_SEC;
-			item->vend = vpos + TEXT_SHOW_SEC_S - 1;
+			item->vstart = (float)(vpos - TEXT_AHEAD_SEC);
+			item->vstart -= 25.0f;	//for debug
+			item->vend = (float)(vpos + TEXT_SHOW_SEC_S - 1);
 			//vend is last tick of LIFE, so must be - 1 done.
 			// item->vend = item->vstart + duration - 1;
+			if(nico_width==NICO_WIDTH_WIDE){
+				//TEXT_SHOW_SEC is 1.00sec (100vpos) longer. but reset after added to slot.
+				item->vstart -= 25.0f;	//100 * 1/4
+				item->vend += 75.0f;	//100 * 3/4
+			}
 		}
 		item->full = full;
 		// item->duration = duration;
 		item->color24 = color24;
 		if (video_length > 0){
-			int fix = item->vend - video_length;
+			float fix = item->vend - (float)video_length;
 			if(fix > 0){
-				if(fix>4)
-					fix = 4;
+				if(fix > 4.0f)
+					fix = 4.0f;
+				//item->verase -= fix;
 				item->vend -= fix;
 				item->vpos -= fix;
 				item->vstart -= fix;
@@ -208,7 +213,7 @@ void resetChatIterator(CHAT* chat){
 /*
  * イテレータを得る
  */
-CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos){
+CHAT_ITEM* getChatShowed(CHAT* chat,VPOS_T now_vpos){
 	int *i = &chat->iterator_index;
 	int max_item = chat->max_item;
 	CHAT_ITEM* item;

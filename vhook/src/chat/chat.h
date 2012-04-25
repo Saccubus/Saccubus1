@@ -4,10 +4,12 @@
 #include <SDL/SDL.h>
 #include "../struct_define.h"
 
+typedef int VPOS_T;
+
 struct CHAT_ITEM{
 	//場所の特定
 	int no;
-	int vpos;
+	float vpos;
 	int location;
 	int full;	// whether full ommand?
 	//文字の修飾
@@ -16,8 +18,9 @@ struct CHAT_ITEM{
 	SDL_Color color24;
 	Uint16* str;
 	//内部処理で使う
-	int vstart;
-	int vend;
+	VPOS_T vstart;
+	VPOS_T vend;		//last vpos of ceheck y
+	//VPOS_T verase;	//last vpos of show
 	int showed;
 	// int duration;	// vend - vstart
 	  // ＠秒数の場合  指定値
@@ -46,11 +49,11 @@ struct CHAT_SET{
 };
 
 //初期化
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length);
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width);
 void closeChat();
 //イテレータ
 void resetChatIterator(CHAT* chat);
-CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos);
+CHAT_ITEM* getChatShowed(CHAT* chat,VPOS_T now_vpos);
 SDL_Color convColor24(int c);
 
 #endif /*CHAT_H_*/

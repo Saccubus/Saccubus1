@@ -165,6 +165,13 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 
 		/*スケールの調整*/
 		nicolimit_width *= autoscale;
+		//	コメント高さ補正
+		int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
+		if(h!=ret->h){
+			ret = adjustComment(ret,data,h);
+			fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
+				item->no,ret->w,ret->h,(data->fontsize_fix?" fix":""));
+		}
 		// 改行リサイズ
 		// コメントの画像の高さがニコニコ動画基準の高さの１／３より大きいと倍率を１／２にする
 		if((int)(ret->h * zoomx) > (NICO_HEIGHT/3) * autoscale + 1){
@@ -183,6 +190,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 				linefeed_resized =TRUE;
 			}
 		}
+/*
 		//	コメント高さ補正
 		if(!linefeed_resized){
 			int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
@@ -192,6 +200,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 					item->no,ret->w,ret->h,(data->fontsize_fix?" fix":""));
 			}
 		}
+*/
 		if(location != CMD_LOC_DEF){
 			/* ue shitaコマンドのみリサイズあり */
 			/*
@@ -288,6 +297,13 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	}
 	//nico_width += 32;	// 512->544, 640->672
 
+	//	コメント高さ補正
+	int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
+	if(h!=ret->h){
+		ret = adjustComment(ret,data,h);
+		fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
+			item->no,ret->w,ret->h,(data->fontsize_fix?" fix":""));
+	}
 	double resized_w;
 	if (nb_line >= LINEFEED_RESIZE_LIMIT[size]){
 		/*
@@ -302,12 +318,14 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			//ダブルリサイズ時には動画幅の２倍にリサイズされる筈
 			nicolimit_width = nicolimit_width / linefeed_zoom;	//*= 2.0;
 
+/*
 			int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
 			if(h!=ret->h){
 				ret = adjustComment(ret,data,h);
 				fprintf(log,"[comsurface/DRadjust]comment %d adjust(%d, %d) %s\n",
 					item->no,ret->w,ret->h,(data->fontsize_fix?" fix":""));
 			}
+*/
 			/*
 			 * ダブルリサイズの臨界幅リサイズ
 			 * 文字の大きさで臨界幅は変動する
@@ -403,6 +421,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			/* zoomx *= linefeedResizeScale(size,nb_line,data->fontsize_fix); */
 		}
 	}
+/*
 	//	コメント高さ補正
 	if(!linefeed_resized && !double_resized){
 		int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
@@ -412,6 +431,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 				item->no,ret->w,ret->h,(data->fontsize_fix?" fix":""));
 		}
 	}
+*/
 	if(location != CMD_LOC_DEF){
 		// ue shitaコマンドのみリサイズあり
 

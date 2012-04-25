@@ -52,7 +52,7 @@ SDL_Surface* adjustComment(SDL_Surface* surf,DATA* data,int height){
 		return surf;
 	}
 	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
-	SDL_Rect rect = {0,0,width,height};
+	SDL_Rect rect = {0,1,width,height};
 	SDL_BlitSurface(surf,&rect,ret,NULL);
 	SDL_FreeSurface(surf);
 	return ret;

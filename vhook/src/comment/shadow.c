@@ -7,7 +7,7 @@ SDL_Surface* noShadow(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c
 	return surf;
 }
 /*‰E‰º*/
-#define SHADOW_SIZE 3
+#define SHADOW_SIZE 2
 #define SHADOW2_SIZE 2
 
 SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
