@@ -76,6 +76,18 @@ public class Converter extends Thread {
 	private String padOption;
 	private String outSize;
 	private String aprilFool;
+	private StringBuffer sbRet = null;
+	/*
+	 * sbRet is return String value to EXTERNAL PROGRAM such as BAT file, SH script, so on.
+	 * string should be ASCII or URLEncoded in System Encoding.
+	 * format: KEY=VALUE\n[KRY=VALUE\n]...
+	 * KEYs are:
+	 *  RESULT=0 //success, other integer //error code, Prompt(CUI) will exit(this value)
+	 *  DATEUF=integer //Date seconds of first user comment downloaded, otherwise ThreadID
+	 *  ...
+	 */
+	private String result = "0";
+	private String dateUserFirst = "";
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -106,6 +118,11 @@ public class Converter extends Thread {
 		Stopwatch = new Stopwatch(watch);
 	}
 
+	public Converter(String url, String time, ConvertingSetting setting,
+			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch, StringBuffer sbret) {
+		this(url,time,setting,status,flag,movieInfo,watch);
+		sbRet  = sbret;
+	}
 	private File VideoFile = null;
 	private File CommentFile = null;
 	private File OwnerCommentFile = null;
@@ -208,23 +225,27 @@ public class Converter extends Thread {
 		if (!isSaveConverted() && !isSaveVideo()
 			&& !isSaveComment() && !isSaveOwnerComment()){
 			sendtext("何もすることがありません");
+			result = "1";
 			return false;
 		}
 		if (isSaveConverted()) {
 			File a = new File(Setting.getFFmpegPath());
 			if (!a.canRead()) {
 				sendtext("FFmpegが見つかりません。");
+				result = "2";
 				return false;
 			}
 			this.ffmpeg = new FFmpeg(Setting.getFFmpegPath());
 			if (Setting.isUseVhookNormal()){
 				if(Setting.getVhookPath().indexOf(' ') >= 0) {
 					sendtext("すいません。現在vhookライブラリには半角空白は使えません。");
+					result = "3";
 					return false;
 				}
 				VhookNormal = new File(Setting.getVhookPath());
 				if (!VhookNormal.canRead()) {
 					sendtext("Vhookライブラリが見つかりません。");
+					result = "4";
 					return false;
 				}
 				wayOfVhook++;
@@ -236,54 +257,64 @@ public class Converter extends Thread {
 				else {
 					if(Setting.getVhookWidePath().indexOf(' ') >= 0) {
 						sendtext("すいません。現在vhookファイル名には半角空白は使えません。");
+						result = "5";
 						return false;
 					}
 					VhookWide = new File(Setting.getVhookWidePath());
 				}
 				if (!VhookWide.canRead()) {
 					sendtext("Vhookライブラリ（ワイド）が見つかりません。");
+					result = "6";
 					return false;
 				}
 				wayOfVhook++;
 			}
 			if (wayOfVhook == 0){
 				sendtext("使用できるVhookライブラリがありません。");
+				result = "7";
 				return false;
 			}
 			if(Setting.isEnableCA()){
 				String windir = System.getenv("windir");
 				if(windir == null){
 					sendtext("Windowsフォルダが見つかりません。");
+					result = "8";
 					return false;
 				}
 				fontDir = new File(windir, "Fonts");
 				if(!fontDir.isDirectory()){
 					sendtext("Fontsフォルダが見つかりません。");
+					result = "9";
 					return false;
 				}
 				simsunFont = new File(fontDir, "SIMSUN.TTC");
 				if (!simsunFont.canRead()) {
 					sendtext("CA用フォントが見つかりません。" + simsunFont.getPath());
+					result = "10";
 					return false;
 				}
 				gulimFont = new File(fontDir, "GULIM.TTC");
 				if (!gulimFont.canRead()) {
 					sendtext("CA用フォントが見つかりません。" + gulimFont.getPath());
+					result = "11";
 					return false;
 				}
 				arialFont = new File(fontDir, "arial.ttf");
 				if(!arialFont.canRead()){
 					sendtext("CA用フォントが見つかりません。" + arialFont.getPath());
+					result = "12";
 					return false;
 				}
 				gothicFont = new File(fontDir, "msgothic.ttc");
 				if (!gothicFont.canRead()) {
 					sendtext("CA用フォントが見つかりません。" + gothicFont.getPath());
+					result = "13";
 					return false;
 				}
 				georgiaFont  = new File(fontDir, "sylfaen.ttf");
 				if (!georgiaFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + georgiaFont.getPath());
+					//retValue = "14";
 					//return false;
 					System.out.println("CA用フォント" + georgiaFont.getPath() + "を" + gothicFont.getName() + "で代替します。");
 					georgiaFont = gothicFont;
@@ -291,6 +322,7 @@ public class Converter extends Thread {
 				devabagariFont = new File(fontDir, "mangal.ttf");
 				if (!devabagariFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + devabagariFont.getPath());
+					//retValue = "15";
 					//return false;
 					System.out.println("CA用フォント" + devabagariFont.getPath() + "を" + arialFont.getName() + "で代替します。");
 					devabagariFont = arialFont;
@@ -298,6 +330,7 @@ public class Converter extends Thread {
 				tahomaFont = new File(fontDir, "tahoma.ttf");
 				if (!tahomaFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + tahomaFont.getPath());
+					//retValue = "16";
 					//return false;
 					System.out.println("CA用フォント" + tahomaFont.getPath() + "を" + arialFont.getName() + "で代替します。");
 					tahomaFont = arialFont;
@@ -305,6 +338,7 @@ public class Converter extends Thread {
 				mingliuFont = new File(fontDir, "mingliu.ttc");
 				if (!mingliuFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + mingliuFont.getPath());
+					//retValue = "17";
 					//return false;
 					System.out.println("CA用フォント" + mingliuFont.getPath() + "を" + simsunFont.getName() + "で代替します。");
 					mingliuFont = simsunFont;
@@ -312,6 +346,7 @@ public class Converter extends Thread {
 				newMinchoFont = new File(fontDir, "NGULIM.TTF");
 				if (!newMinchoFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + newMinchoFont.getPath());
+					//retValue = "18";
 					//return false;
 					System.out.println("CA用フォント" + newMinchoFont.getPath() + "を" + simsunFont.getName() + "で代替します。");
 					newMinchoFont = simsunFont;
@@ -319,6 +354,7 @@ public class Converter extends Thread {
 				estrangeloEdessaFont = new File(fontDir, "estre.ttf");
 				if (!estrangeloEdessaFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + estrangeloEdessaFont.getPath());
+					//retValue = "19";
 					//return false;
 					System.out.println("CA用フォント" + estrangeloEdessaFont.getPath() + "を" + arialFont.getName() + "で代替します。");
 					estrangeloEdessaFont = arialFont;
@@ -326,6 +362,7 @@ public class Converter extends Thread {
 				arialUnicodeFont = new File(fontDir, "ARIALUNI.TTF");
 				if (!arialUnicodeFont.canRead()) {
 					sendtext("CA用フォントが見つかりません。" + arialUnicodeFont.getPath());
+					//retValue = "20";
 					//return false;
 					System.out.println("警告　CA用フォントが見つかりません。" + arialUnicodeFont.getPath());
 					arialUnicodeFont = null;
@@ -333,6 +370,7 @@ public class Converter extends Thread {
 				gujaratiFont = new File(fontDir, "SHRUTI.TTF");
 				if (!gujaratiFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + gujaratiFont.getPath());
+					//retValue = "21";
 					//return false;
 					System.out.println("CA用フォント" + gujaratiFont.getPath() + "を" + arialFont.getName() + "で代替します。");
 					gujaratiFont = arialFont;
@@ -341,16 +379,19 @@ public class Converter extends Thread {
 				a = new File(Setting.getFontPath());
 				if (!a.canRead()) {
 					sendtext("フォントが見つかりません。");
+					result = "30";
 					return false;
 				}
 			}
 		} else {
 			if (isDeleteVideoAfterConverting()) {
 				sendtext("変換しないのに、動画削除しちゃって良いんですか？");
+				result = "31";
 				return false;
 			}
 			if (isDeleteCommentAfterConverting()) {
 				sendtext("変換しないのに、コメント削除しちゃって良いんですか？");
+				result = "32";
 				return false;
 			}
 		}
@@ -365,10 +406,12 @@ public class Converter extends Thread {
 				if (mailAddress == null || mailAddress.isEmpty()
 					|| password == null || password.isEmpty()) {
 					sendtext("メールアドレスかパスワードが空白です。");
+					result = "33";
 					return false;
 				}
 			} else if (UserSession.isEmpty()){
 					sendtext("ブラウザ" + BrowserKind.getName() + "のセッション取得に失敗");
+					result = "34";
 					return false;
 			}
 			if (useProxy()){
@@ -377,6 +420,7 @@ public class Converter extends Thread {
 				if (   proxy == null || proxy.isEmpty()
 					|| proxy_port < 0 || proxy_port > 65535   ){
 					sendtext("プロキシの設定が不正です。");
+					result = "35";
 					return false;
 				}
 			} else {
@@ -420,6 +464,7 @@ public class Converter extends Thread {
 				}
 				if (!folder.isDirectory()) {
 					sendtext("動画の保存先フォルダが作成できません。");
+					result = "40";
 					return false;
 				}
 				VideoFile = new File(folder,
@@ -430,18 +475,22 @@ public class Converter extends Thread {
 			sendtext("動画のダウンロード開始中");
 			if (client == null){
 				sendtext("ログインしてないのに動画の保存になりました");
+				result = "41";
 				return false;
 			}
 			if(Setting.isDisableEco() &&  client.isEco()){
 				sendtext("エコノミーモードなので中止します");
+				result = "42";
 				return false;
 			}
 			VideoFile = client.getVideo(VideoFile, Status, StopFlag);
 			if (stopFlagReturn()) {
+				result = "43";
 				return false;
 			}
 			if (VideoFile == null) {
 				sendtext("動画のダウンロードに失敗" + client.getExtraError());
+				result = "44";
 				return false;
 			}
 			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
@@ -455,20 +504,24 @@ public class Converter extends Thread {
 					if((videoFilename = detectTitleFromVideo(folder)) == null){
 						if (OtherVideo == null){
 							sendtext("動画ファイルがフォルダに存在しません。");
+							result = "45";
 						} else {
 							sendtext("動画ファイルが.flvでありません：" + OtherVideo);
+							result = "46";
 						}
 						return false;
 					}
 					VideoFile = new File(folder, videoFilename);
 					if (!VideoFile.canRead()) {
 						sendtext("動画ファイルが読み込めません。");
+						result = "47";
 						return false;
 					}
 				} else {
 					VideoFile = Setting.getVideoFile();
 					if (!VideoFile.exists()) {
 						sendtext("動画ファイルが存在しません。");
+						result = "48";
 						return false;
 					}
 				}
@@ -491,6 +544,7 @@ public class Converter extends Thread {
 				}
 				if (!folder.isDirectory()) {
 					sendtext("コメントの保存先フォルダが作成できません。");
+					result = "50";
 					return false;
 				}
 				if (Setting.isAddTimeStamp()) {	// prefix set
@@ -513,6 +567,7 @@ public class Converter extends Thread {
 			}
 			if (client == null){
 				sendtext("ログインしてないのにコメントの保存になりました");
+				result = "51";
 				return false;
 			}
 			if (Setting.isFixCommentNum()) {
@@ -522,12 +577,16 @@ public class Converter extends Thread {
 			sendtext("コメントのダウンロード開始中");
 			CommentFile = client.getComment(CommentFile, Status, back_comment, Time, StopFlag, Setting.getCommentIndex());
 			if (stopFlagReturn()) {
+				result = "52";
 				return false;
 			}
 			if (CommentFile == null) {
 				sendtext("コメントのダウンロードに失敗 " + client.getExtraError());
+				result = "53";
 				return false;
 			}
+			//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
+			dateUserFirst = getDateUserFirst(CommentFile);
 			sendtext("コメントのダウンロード終了");
 			optionalThreadID = client.getOptionalThreadID();
 			sendtext("オプショナルスレッドの保存");
@@ -541,11 +600,17 @@ public class Converter extends Thread {
 				OptionalThreadFile = client.getOptionalThread(
 					OptionalThreadFile, Status, optionalThreadID, back_comment, Time, StopFlag, Setting.getCommentIndex());
 				if (stopFlagReturn()) {
+					result = "54";
 					return false;
 				}
 				if (OptionalThreadFile == null) {
 					sendtext("オプショナルスレッドのダウンロードに失敗 " + client.getExtraError());
+					result = "55";
 					return false;
+				}
+				if (dateUserFirst.isEmpty()) {
+					//ファイルの最初のdate="integer"を探して dateUserFirst にセット
+					dateUserFirst = getDateUserFirst(OptionalThreadFile);
 				}
 				sendtext("オプショナルスレッドの保存終了");
 			}
@@ -564,6 +629,25 @@ public class Converter extends Thread {
 		}
 		return new File(path + OPTIONAL_EXT);
 	}
+	private String getDateUserFirst(File comfile){
+		//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(CommentFile));
+			String text = br.readLine();
+			int begin = 0;
+			int end = 0;
+			if (text.contains("date=\"")) {
+				begin = text.indexOf("date=\"") + "date=\"".length();
+				end = text.indexOf("\" ", begin);
+				if(end>0){
+					return text.substring(begin, end);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
 
 	private boolean saveOwnerComment(NicoClient client){
 		sendtext("投稿者コメントの保存");
@@ -575,6 +659,7 @@ public class Converter extends Thread {
 				}
 				if (!folder.isDirectory()) {
 					sendtext("投稿者コメントの保存先フォルダが作成できません。");
+					result = "60";
 					return false;
 				}
 				OwnerCommentFile = new File(folder, VideoID + VideoTitle + OWNER_EXT);
@@ -584,16 +669,19 @@ public class Converter extends Thread {
 			sendtext("投稿者コメントのダウンロード開始中");
 			if (client == null){
 				sendtext("ログインしてないのに投稿者コメントの保存になりました");
+				result = "61";
 				return false;
 			}
 			OwnerCommentFile = client.getOwnerComment(OwnerCommentFile, Status,
 					StopFlag);
 			if (stopFlagReturn()) {
+				result = "62";
 				return false;
 			}
 			if (OwnerCommentFile == null) {
 				sendtext("投稿者コメントのダウンロードに失敗");
 				System.out.println("投稿者コメントのダウンロードに失敗");
+				//result = "63";
 				return true;
 			}
 			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
@@ -613,6 +701,7 @@ public class Converter extends Thread {
 			ngCmd = new CommandReplace(Setting.getNGCommand(), Setting.getReplaceCommand());
 		}catch (Exception e) {
 			sendtext("NGパターン作成に失敗。おそらく正規表現の間違い？");
+			result = "70";
 			return false;
 		}
 		sendtext("NGパターン作成終了");
@@ -632,6 +721,7 @@ public class Converter extends Thread {
 				ArrayList<String> pathlist = detectFilelistFromComment(folder);
 				if (pathlist == null || pathlist.isEmpty()){
 					sendtext(Tag + ": コメントファイル・過去ログが存在しません。");
+					result = "71";
 					return false;
 				}
 				// VideoTitle は見つかった。
@@ -644,7 +734,12 @@ public class Converter extends Thread {
 					sendtext("コメントファイル結合中");
 					if (!CombineXML.combineXML(filelist, CommentFile)){
 						sendtext("コメントファイルが結合出来ませんでした（バグ？）");
+						result = "72";
 						return false;
+					}
+					if (dateUserFirst.isEmpty()) {
+						//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
+						dateUserFirst = getDateUserFirst(CommentFile);
 					}
 					listOfCommentFile = filelist;
 				} else {
@@ -659,13 +754,19 @@ public class Converter extends Thread {
 						String commentfilename = detectTitleFromComment(folder);
 						if(commentfilename == null){
 							sendtext("コメントファイルがフォルダに存在しません。");
+							result = "73";
 							return false;
 						}
 						// VideoTitle は見つかった。
 						CommentFile = new File(folder, commentfilename);
 						if (!CommentFile.canRead()) {
 							sendtext("コメントファイルが読み込めません。");
+							result = "74";
 							return false;
+						}
+						if (dateUserFirst.isEmpty()) {
+							//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
+							dateUserFirst = getDateUserFirst(CommentFile);
 						}
 					} else {
 						// 処理済み
@@ -674,7 +775,12 @@ public class Converter extends Thread {
 					CommentFile = Setting.getCommentFile();
 					if (!CommentFile.exists()) {
 						sendtext("コメントファイルが存在しません。");
+						result = "75";
 						return false;
+					}
+					if (dateUserFirst.isEmpty()) {
+						//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
+						dateUserFirst = getDateUserFirst(CommentFile);
 					}
 				}
 			}
@@ -682,6 +788,7 @@ public class Converter extends Thread {
 			if(!convertToCommentMiddle(CommentFile, CommentMiddleFile)){
 				sendtext("コメント変換に失敗");
 				CommentMiddleFile = null;
+				result = "76";
 				return false;
 			}
 			if(!CommentMiddleFile.canRead()){
@@ -715,7 +822,12 @@ public class Converter extends Thread {
 					sendtext("オプショナルスレッド結合中");
 					if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
 						sendtext("オプショナルスレッドが結合出来ませんでした（バグ？）");
+						result = "77";
 						return false;
+					}
+					if (dateUserFirst.isEmpty()) {
+						//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
+						dateUserFirst = getDateUserFirst(OptionalThreadFile);
 					}
 					listOfCommentFile.addAll(filelist);
 				} else {
@@ -728,6 +840,10 @@ public class Converter extends Thread {
 						return true;
 					}
 					OptionalThreadFile = new File(folder, filename);
+					if (dateUserFirst.isEmpty()) {
+						//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
+						dateUserFirst = getDateUserFirst(OptionalThreadFile);
+					}
 				}
 			} else {
 				// ファイル指定の時
@@ -738,11 +854,16 @@ public class Converter extends Thread {
 					OptionalThreadFile = null;
 					return true;
 				}
+				if (dateUserFirst.isEmpty()) {
+					//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
+					dateUserFirst = getDateUserFirst(OptionalThreadFile);
+				}
 			}
 			OptionalMiddleFile = mkTemp(TMP_OPTIONALTHREAD);
 			if(!convertToCommentMiddle(OptionalThreadFile, OptionalMiddleFile)){
 				sendtext("オプショナルスレッド変換に失敗");
 				OptionalMiddleFile = null;
+				result = "78";
 				return false;
 			}
 			//コメント数を検査
@@ -763,6 +884,7 @@ public class Converter extends Thread {
 					String ownerfilename = detectTitleFromOwnerComment(folder);
 					if(ownerfilename == null){
 						sendtext("投稿者コメントファイルがフォルダに存在しません。");
+					//	retValue = "80";
 					//	return false;
 						System.out.println("投稿者コメントファイルがフォルダに存在しません。");
 						OwnerCommentFile = null;
@@ -772,12 +894,14 @@ public class Converter extends Thread {
 					OwnerCommentFile = new File(folder, ownerfilename);
 					if (!OwnerCommentFile.canRead()) {
 						sendtext("投稿者コメントファイルが読み込めません。");
+						result = "81";
 						return false;
 					}
 				} else {
 					OwnerCommentFile = Setting.getOwnerCommentFile();
 					if (!OwnerCommentFile.exists()) {
 						sendtext("投稿者コメントファイルが存在しません。");
+					//	retValue = "82";
 					//	return false;
 						System.out.println("投稿者コメントファイルが存在しません。");
 						OwnerCommentFile = null;
@@ -789,6 +913,7 @@ public class Converter extends Thread {
 			if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile)){
 				sendtext("投稿者コメント変換に失敗");
 				OwnerMiddleFile = null;
+				result = "83";
 				return false;
 			}
 			//コメント数を検査
@@ -801,13 +926,10 @@ public class Converter extends Thread {
 					FileInputStream fos = new FileInputStream(OwnerMiddleFile);
 					ownerCommentNum = Util.readInt(fos);
 					fos.close();
-				}catch (FileNotFoundException e) {
-					e.printStackTrace();
-					OwnerMiddleFile = null;
-					return false;
 				} catch (IOException e) {
 					e.printStackTrace();
 					OwnerMiddleFile = null;
+					result = "84";
 					return false;
 				}
 			}
@@ -844,9 +966,6 @@ public class Converter extends Thread {
 					System.out.println("Deleted 0 comment-file: " + middlefile.getPath());
 				}
 			}
-		}catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
@@ -859,11 +978,13 @@ public class Converter extends Thread {
 		Stopwatch.start();
 		if(!VideoFile.canRead()){
 			sendtext("動画が読み込めません");
+			result = "90";
 			return false;
 		}
 		/*ビデオ名の確定*/
 		File folder = Setting.getConvFixFileNameFolder();
 		if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
+			result = "91";
 			return false;
 		}
 		if (Setting.isConvFixFileName()) {
@@ -872,6 +993,7 @@ public class Converter extends Thread {
 			}
 			if (!folder.isDirectory()) {
 				sendtext("変換後の保存先フォルダが作成できません。");
+				result = "92";
 				return false;
 			}
 			String conv_name = VideoTitle;
@@ -883,6 +1005,7 @@ public class Converter extends Thread {
 			}
 			if (conv_name.isEmpty()) {
 				sendtext("変換後のビデオファイル名が確定できません。");
+				result = "93";
 				return false;
 			}
 
@@ -900,6 +1023,7 @@ public class Converter extends Thread {
 				}
 				if (!folder.isDirectory()) {
 					sendtext("動画(FFmpeg設定名)ファイルの保存先フォルダが作成できません。");
+					result = "94";
 					return false;
 				}
 				conv_name = MainOption + InOption + OutOption;
@@ -913,6 +1037,7 @@ public class Converter extends Thread {
 					int len = conv_name.length() - (dirName.length - (255 - 3));
 					if (len < 1){
 						sendtext("作成するビデオファイル名が長すぎます。");
+						result = "95";
 						return false;
 					}
 					conv_name = conv_name.substring(0, len);
@@ -932,6 +1057,7 @@ public class Converter extends Thread {
 		}
 		if (ConvertedVideoFile.getAbsolutePath().equals(VideoFile.getAbsolutePath())){
 			sendtext("変換後のファイル名が変換前と同じです");
+			result = "96";
 			return false;
 		}
 		int code = converting_video();
@@ -955,6 +1081,7 @@ public class Converter extends Thread {
 		} else {
 			sendtext("変換エラー：(" + code + ") "+ ffmpeg.getLastError());
 		}
+		result = "97";
 		return false;
 	}
 
@@ -1080,6 +1207,12 @@ public class Converter extends Thread {
 			System.out.println("変換時間　" + Stopwatch.formatLatency());
 			System.out.println("LastStatus: " + Status.getText());
 			System.out.println("VideoInfo: " + MovieInfo.getText());
+			if(sbRet!=null){
+				sbRet.append("RESULT=" + result + "\n");
+				if(!dateUserFirst.isEmpty()){
+					sbRet.append("DATEUF=" + dateUserFirst + "\n");
+				}
+			}
 		}
 	}
 
@@ -1595,14 +1728,6 @@ public class Converter extends Thread {
 				MainOption = Setting.getWideCmdLineOptionMain();
 			}
 		}
-/*
-		//replaceチェック
-		Map<String,String> optionPair = Setting.getReplaceOptions();
-		if(optionPair!=null){
-			replace3option(optionPair);
-		}
-		ffmpegVfOption = getvfOption();
-*/
 		//オプションに拡張子を含んでしまった場合にも対応☆
 		if(ExtOption != null && !ExtOption.startsWith(".")){
 			ExtOption = "."+ExtOption;

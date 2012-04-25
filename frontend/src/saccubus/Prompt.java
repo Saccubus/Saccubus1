@@ -51,6 +51,7 @@ public class Prompt {
 	private static String optionFilePrefix = "";
 	private static ConvertingSetting setting;
 	private static String propFile = ConvertingSetting.PROP_FILE;
+	private static String addPropFile = "";
 	private static Properties prop;
 
 	public static void main(String[] args) {
@@ -110,12 +111,25 @@ public class Prompt {
 				System.out.println("Set Download Only.");
 				continue;
 			}
+			if(arg.equals("@DLC")){
+				downloadMap.put(ConvertingSetting.PROP_SAVE_COMMENT, "true");
+				downloadMap.put(ConvertingSetting.PROP_SAVE_CONVERTED,"false");
+				System.out.println("Set Download Comment Only.");
+				continue;
+			}
 			if(arg.equals("@PUP")){
 				enablePupup = true;
 				continue;
 			}
-			if(arg.equals("@SET=")){
+			if(arg.startsWith("@SET=")){
 				propFile  = arg.substring(arg.indexOf('=')+1);
+				System.out.println("Set Setting Property File:" + propFile + ".");
+				continue;
+			}
+			if(arg.startsWith("@ADD=")){
+				addPropFile = arg.substring(arg.indexOf('=')+1);
+				System.out.println("Set Adding Property File:" + addPropFile + ".");
+				continue;
 			}
 			if(arg.startsWith("-") && arg.contains("=")){
 				//ffmpegïœä∑ÉIÉvÉVÉáÉì
@@ -164,12 +178,15 @@ public class Prompt {
 			prop.setProperty(e.getKey(), e.getValue());
 		}
 		setting = ConvertingSetting.loadSetting(mail, pass, prop);
+		//@ADDê›íË
+		if(!addPropFile.isEmpty()){
+			ConvertingSetting.addSetting(setting, addPropFile);
+		}
 	//	setting.override(optionFilePrefix, settingMap, optionMap);
 		//optionMap ê›íË
 		if(!optionMap.isEmpty()){
 			setting.setReplaceOptions(optionMap);
 		}
-	//	setting.override(downloadMap);
 		JLabel status = new JLabel();
 		JLabel info = new JLabel();
 		JLabel watch = new JLabel();
@@ -200,9 +217,10 @@ public class Prompt {
 		popup.add(stopButton,BorderLayout.WEST);
 		popup.add(status, BorderLayout.CENTER);
 		popup.setVisible(enablePupup);
+		StringBuffer sbReturn = new StringBuffer(16);
 
-		Converter conv = new Converter(tag, time, setting, status, cuiStop
-										, info, watch);		// these two params are extended
+		Converter conv = new Converter(tag, time, setting, status, cuiStop,
+									   info, watch, sbReturn);		// these three params are extended
 		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		System.out.println("Saccubus on CUI");
 		System.out.println();
@@ -237,6 +255,15 @@ public class Prompt {
 		// System.out.println("ElapsedTime: " + watch.getText());
 		System.out.println("Finished.");
 		System.out.println();
+		String[] ret = sbReturn.toString().split("\n");
+		for(int l=0;l<ret.length;l++){
+			System.out.println(ret[l]);
+			String[] s = ret[l].split("=");
+			if("RESULT".equals(s[0]) && !"0".equals(s[1])){
+				exit(decode(s[1]));
+			}
+		}
+		exit(0);
 	}
 
 	private static int getLogsize(){
