@@ -1,27 +1,22 @@
 【ニコニコ】コメント付動画作成ツール さきゅばす
-http://anago.2ch.net/test/read.cgi/software/1310301611/691
+http://anago.2ch.net/test/read.cgi/software/1310301611/808
 
-691 名前：orz ◆G/QKMfn152 [sage] 投稿日：2012/02/09(木) 02:39:18.50 ID:nWVJkPu+0
-さきゅばす 1.30　　NG関連の追加
-ffmpeg55686無し
-ttp://www1.axfc.net/uploader/File/so/75125.zip
-ffmpeg55686同梱
-ttp://www1.axfc.net/uploader/Ne/so/126815.zip
-変更
-　コメントのNGコマンド追加、NGワードall追加
-　NG共有機能追加
-　ニコニコ動画のNG設定保存追加(さきゅばすへの自動設定なし)
-　パスワードの簡易暗号化追加
-　optionファイル変更(PSP用4種)、optionVO、optionDevフォルダ追加
-　CA暫定的対応時の16:9動画コメント表示変更
-　nicovideoE ログ出力変更
-　CAフォント追加　MingLiU,新明朝,arial unicode(XP),(シリア),
-　CAフォント削除　MS UI gothic
-　ログインチェック方式変更
-ffmpeg55686は以前のと同じで変更したオプションは両方に入っています。
+808 名前：orz ◆G/QKMfn152 [sage] 投稿日：2012/05/02(水) 05:33:59.61 ID:M4Q5JrQTP [1/2]
+さきゅばす1.32 NeroWatch対応
+ttp://www1.axfc.net/uploader/Ne/so/131891.zip
+◆変更点
+　ZeroWatch(5/1から)でログイン後ストールしていたのを修正new
+　CUIの不具合修正、追加
+　　@SET=設定ファイルパス.xml （修正）
+　　　saccubus.xmlの代わりに設定ファイル.xmlを使用する。
+　　@ADD=追加設定ファイルパス.xml （修正）
+　　　追加設定ファイルパス.xmlをファイルメニューの追加で指定するのと同じ
+　　@DLC
+　　　コメントのみを強制ダウンロードし、変換を行わない。new
+◆注意　2.0ではありません。ニワン語には対応していません。
 
->>647さん
-ありがとうございました。こんなんでどうでしょう？
+宜しくお願いいたします
 
->>680さん
-NG共有レベルをブラウザから取ってくるのは出来ませんでした。m(_ _)m
+809 名前：orz ◆G/QKMfn152 [sage] 投稿日：2012/05/02(水) 05:35:38.42 ID:M4Q5JrQTP [2/2]
+NeroWatchって何だｗ
+ZeroWatchです。

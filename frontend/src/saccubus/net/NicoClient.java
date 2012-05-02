@@ -138,6 +138,12 @@ public class NicoClient {
 
 	private HttpURLConnection urlConnect(String url, String method, String cookieProp,
 			boolean doInput, boolean doOutput, String connectionProp){
+		return urlConnect(url,method,cookieProp,doInput,doOutput,connectionProp,false);
+	}
+
+	private HttpURLConnection urlConnect(String url, String method, String cookieProp,
+			boolean doInput, boolean doOutput, String connectionProp, boolean followRedirect){
+
 		try {
 			debug("\n■URL<" + url + ">\n");
 			HttpURLConnection con = (HttpURLConnection) (new URL(url))
@@ -154,6 +160,7 @@ public class NicoClient {
 			if (doOutput){
 				con.setDoOutput(true);
 			}
+			HttpURLConnection.setFollowRedirects(followRedirect);
 			connect(con);
 			if (doOutput){
 				return con;
@@ -361,10 +368,13 @@ public class NicoClient {
 	//RC2になってタイトルが変更、使わなくなった。
 	//private static final String TITLE_PARSE_STR_END = "</title>";
 	private static final String TITLE_END = "‐";
+	private static final String TITLE_ZERO_DIV = "<div class=\"videoDetailExpand\">";
 
 	public boolean getVideoHistoryAndTitle(String tag, String watchInfo) {
 		String url = "http://www.nicovideo.jp/watch/" + tag + watchInfo;
 		System.out.print("Getting video history...");
+		boolean found = false;
+		boolean zero_title = false;
 		try {
 			HttpURLConnection con = urlConnectGET(url);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
@@ -389,19 +399,50 @@ public class NicoClient {
 			debug("\n");
 			String ret;
 			int index = -1;
+			StringBuilder sb = new StringBuilder();
 			while ((ret = br.readLine()) != null) {
 				Stopwatch.show();
-				debug("■readLine(" + encoding + "):" + ret + "\n");
+				sb.append(ret + "\n");
 				if ((index = ret.indexOf(TITLE_PARSE_STR_START)) >= 0) {
+					int index2 = ret.lastIndexOf(TITLE_END);
+					if (index2 < 0){
+						debug("■readLine(" + encoding + "):" + ret + "\n");
+						continue;
+					}
+					found = true;
 					VideoTitle = safeFileName(
-						ret.substring(index+TITLE_PARSE_STR_START.length(),
-							ret.lastIndexOf(TITLE_END)));
+							ret.substring(index+TITLE_PARSE_STR_START.length(),
+							index2));
 					System.out.print("<" + VideoTitle + ">...");
 					break;
+				}
+				if(zero_title){
+					index = ret.indexOf(">") + 1;
+					int index2 = ret.indexOf("</");
+					if(index2 < index){
+						continue;
+					}
+					found = true;
+					zero_title = false;
+					VideoTitle = safeFileName(ret.substring(index,index2));
+					System.out.print("<" + VideoTitle + ">...");
+					break;
+				}
+				if(ret.contains(TITLE_ZERO_DIV)){
+					zero_title = true;
+					continue;
 				}
 			}
 			br.close();
 			con.disconnect();
+			if(!found){
+				Path titleHtml = Path.mkTemp(tag + "title.htm");
+				PrintWriter pw = new PrintWriter(titleHtml);
+				pw.write(sb.toString());
+				pw.flush();
+				pw.close();
+				System.out.println(" Title not found. <" + Path.toUnixPath(titleHtml) + "> saved.");
+			}
 			System.out.println("ok.");
 			Cookie += "; " + new_cookie;
 		} catch (IOException ex) {
