@@ -1,0 +1,8 @@
+flpath=/_felidlabo
+flinstpath=/mingw
+flmakeopt=-j2
+mingwpath=/mingw
+srcpath=/src
+sevenzapath=/_felidlabo/bin/7za920/7za
+gccfiles=/etc/gccfiles.txt
+gccvers=' gcc-4.5.2-tdm-1'
