@@ -40,12 +40,18 @@ class TaskRunner(threading.Thread):
 			val['ffmpeg-file'] = self.task.conf['ffmpeg']['ffmpeg-path'];
 			val['saccubus-opts'] = subprocess.list2cmdline(arg)
 			#FIXME: 動画情報だけ先に取得してしまう。見苦し。
-			_, metainfo = meta_info.downloadMetaInfo(self.task.videoId, self.task.conf['sacc']['resolve-resource-path']);
+			try:
+				_, metainfo = meta_info.downloadMetaInfo(self.task.videoId, self.task.conf['sacc']['resolve-resource-path']);
+			except Exception as e:
+				raise Exception("ネットへの接続に失敗しました。", e);
 			val['out-file-base'] = rule.formatConvertedFilenameBase(self.task.videoId, metainfo['title'])
 			val['resource-path'] = self.task.conf['sacc']['resolve-resource-path'];
 
 			#レシピファイルに本当のコマンドを聞く
-			cmdline = self.createCmdlineFromRecipe(val)
+			try:
+				cmdline = self.createCmdlineFromRecipe(val)
+			except Exception as e:
+				raise Exception("レシピファイルが不正です。", e);
 			if os.name=='posix':
 				self.launchPosix(cmdline);
 			elif os.name=='nt':
