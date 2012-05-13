@@ -24,18 +24,22 @@ from . import constant, error;
 
 def login(userid, password):
 	return searchProfile(
+		# inXP
+		os.path.join(os.getenv('USERPROFILE', ''),'Local Settings','Application Data','Google','Chrome','User Data', 'Default' ),
 		# in windows vista
-		os.path.join(os.getenv('LOCALAPPDATA', ''), 'Google','Chrome','User Data','Default')
+		os.path.join(os.getenv('LOCALAPPDATA', ''), 'Google','Chrome','User Data','Default'),
+		# linux
+		os.path.join(os.getenv('HOME', ''), '.config','google-chrome','Default')
 	);
 
 def searchProfile(*dirs):
 	for d in dirs:
-		if os.path.isdir(d) and os.path.exists(d):
+		if os.path.exists(d) and os.path.isdir(d):
 			try:
-				return readDatabase(os.path.join(d, 'Cookie'));
+				return readDatabase(os.path.join(d, 'Cookies'));
 			except:
 				pass
-	raise error.LoginError("Could not find Chrome cookie!");
+	raise error.LoginError("Could not find Chrome cookie in {0}".format(repr(dirs)));
 	
 
 def readDatabase(fname):
