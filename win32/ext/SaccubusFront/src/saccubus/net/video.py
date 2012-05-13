@@ -41,13 +41,15 @@ def downloadVideo(jar, play_info, meta_info, resDir):
 		os.remove(fname)
 	fsize = int(resp.info()['Content-Length'])
 	with open(fname,'wb') as file, resp:
+		print("Now connecting...");
+		sys.stdout.flush()
 		while 1:
 			buf = resp.read(65536)
 			if not buf:
 				break
 			file.write(buf)
-			sys.stdout.flush()
 			print("Now downloading... {0} of {1}bytes ({2}%)".format(file.tell(), fsize, file.tell()*100//fsize));
+			sys.stdout.flush()
 	return fname
 
 '''

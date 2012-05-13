@@ -52,6 +52,8 @@ class TaskRunner(threading.Thread):
 				self.launchWin(cmdline)
 			else:
 				raise Exception("Unsupported platform!");
+		except BaseException as e:
+			self.task.onExecutingError(e)
 		finally:
 			self.task.onExecuted(self)
 	def launchWin(self, ffarg):
@@ -67,6 +69,8 @@ class TaskRunner(threading.Thread):
 		print("[{0}] executing => {1}".format(self.task.videoId, ffarg))
 		p = subprocess.Popen(cmdline, shell=True)
 		p.wait()
+		if p.returncode != 0:
+			raise Exception("動画{0}の変換に失敗しました。".format(self.task.videoId));
 		print("[{0}] executed".format(self.task.videoId));
 	def launchPosix(self, ffarg):
 		logfile = os.path.join(self.task.conf['sacc']['resolve-resource-path'], rule.formatLogFilename(self.task.videoId))
@@ -81,6 +85,8 @@ class TaskRunner(threading.Thread):
 		print("[{0}] executing => {1}".format(self.task.videoId, ffarg))
 		p = subprocess.Popen("gnome-terminal --disable-factory --command \"sh {0}\"".format(tmp.name), shell='/bin/bash')
 		p.wait()
+		if p.returncode != 0:
+			raise Exception("動画{0}の変換に失敗しました。".format(self.task.videoId));
 		print("[{0}] executed".format(self.task.videoId));
 	def createCmdlineFromRecipe(self, info):
 		recipePath = os.path.join(*self.task.conf['ffmpeg']['recipe'])
@@ -117,6 +123,8 @@ class Task(object):
 			raise Exception("[BUG] Invalid task");
 		self.taskRunner = None;
 		self.parent.after_idle(lambda *a: self.parent.unregistTask(self))
+	def onExecutingError(self, e):
+		self.parent.after_idle(lambda *a: self.parent.onExecutingError(e))
 
 class ConvertListMenu(tkinter.Menu):
 	def __init__(self, master):
@@ -171,6 +179,9 @@ class ConvertList(tkinter.Listbox):
 			raise Exception("[BUG] Task is still running!!");
 		self.taskList.remove(task)
 		self.consumeQueue()
+	def onExecutingError(self, e):
+		tkinter.dialog.messagebox.showerror("変換エラー", "変換エラーが発生しました。\n{0}".format(str(e)))
+
 	def consumeQueue(self):
 		runningTasks = len([t for t in self.taskList if t.running()])
 		left = self.taskLimit - runningTasks
