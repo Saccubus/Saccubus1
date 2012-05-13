@@ -138,7 +138,7 @@ class BackendConfigureWindow(saccubus.gui.dialog.Dialog):
 	def initExitPanel(self):
 		if self.videoId:
 			vframe = tkinter.Frame(self)
-			tkinter.Checkbutton(vframe, variable=self.saveFlag, text='これを以降のデフォルト設定にする').pack(expand=tkinter.NO, side=tkinter.LEFT)
+			tkinter.Checkbutton(vframe, variable=self.saveFlag, text='これをデフォルト設定にも反映させる').pack(expand=tkinter.NO, side=tkinter.LEFT)
 			
 			vframe.pack(expand=tkinter.NO, fill=tkinter.X)
 		frame=tkinter.Frame(self)
