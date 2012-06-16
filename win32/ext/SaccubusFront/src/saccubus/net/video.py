@@ -31,7 +31,9 @@ infoとjarを用いて、指定したディレクトリに動画を保存する�
 '''
 def downloadVideo(jar, play_info, meta_info, resDir):
 	touchWatchPage(jar, meta_info['video_id'])
+	print("Now connecting...");
 	resp = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar)).open(play_info['url'])
+	print("connected.");
 	#FIXME: 見苦しい。
 	orig_fname = resp.info()['Content-Disposition'].split('filename=')[1].replace('"', '').replace("'", "");
 	_, ext = os.path.splitext(orig_fname)
@@ -41,7 +43,7 @@ def downloadVideo(jar, play_info, meta_info, resDir):
 		os.remove(fname)
 	fsize = int(resp.info()['Content-Length'])
 	with open(fname,'wb') as file, resp:
-		print("Now connecting...");
+		print("Downloading started...");
 		sys.stdout.flush()
 		while 1:
 			buf = resp.read(65536)
@@ -57,5 +59,5 @@ def downloadVideo(jar, play_info, meta_info, resDir):
 touchしておきます。
 '''
 def touchWatchPage(jar, video_id):
-	resp = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar)).open(WATCH_PAGE_URL.format(video_id))
+	resp = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar), urllib.request.HTTPRedirectHandler()).open(WATCH_PAGE_URL.format(video_id))
 	resp.close();

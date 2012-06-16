@@ -24,13 +24,13 @@ from .. import test_common;
 from . import video;
 import os;
 
-TEST_VIDEO_ID="sm60" #安心と信頼のsm60
+TEST_VIDEO_ID='1339405721' #ニャル子さん。テスト時に変えたほうが良いかもしれぬ
 
 class Test(unittest.TestCase):
 	def setUp(self):
 		self.jar = login.login(test_common.TEST_USER, test_common.TEST_PASS, 'own')
-		_, self.meta_info = meta_info.downloadMetaInfo('sm60', test_common.RESOURCE_DL_PATH);
-		_, self.play_info = play_info.downloadPlayInfo(self.jar, 'sm60', test_common.RESOURCE_DL_PATH)
+		_, self.meta_info = meta_info.downloadMetaInfo(TEST_VIDEO_ID, test_common.RESOURCE_DL_PATH);
+		_, self.play_info = play_info.downloadPlayInfo(self.jar, TEST_VIDEO_ID, test_common.RESOURCE_DL_PATH)
 	def tearDown(self):
 		pass
 	def testNormalVideoDownloading(self):
@@ -38,7 +38,8 @@ class Test(unittest.TestCase):
 		self.assertTrue(os.path.exists(fname))
 		self.assertTrue(os.path.isfile(fname))
 		os.remove(fname)
-		pass
+	def testTouchingOfficialVideo(self):
+		video.touchWatchPage(self.jar, TEST_VIDEO_ID)
 
 
 if __name__ == "__main__":
