@@ -23,4 +23,4 @@
 '''
 
 def cmdline(info):
-	return "{ffmpeg} -y {sacc} -vcodec libxvid -b 350k  -bufsize 4096 -g 300 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -s 480x270 -aspect 16:9 \"{resource_path}/{out}.mp4\"".format(ffmpeg=info['ffmpeg-file'], sacc=info['saccubus-opts'], resource_path=info['resource-path'], out=info['out-file-base'])
+	return "{ffmpeg} -y {sacc} -vcodec libxvid -b 350k  -bufsize 4096k -g 300 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -s 480x270 -aspect 16:9 \"{resource_path}/{out}.mp4\"".format(ffmpeg=info['ffmpeg-file'], sacc=info['saccubus-opts'], resource_path=info['resource-path'], out=info['out-file-base'])
