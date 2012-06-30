@@ -9,7 +9,7 @@ typedef int VPOS_T;
 struct CHAT_ITEM{
 	//êŠ‚Ì“Á’è
 	int no;
-	float vpos;
+	VPOS_T vpos;
 	int location;
 	int full;	// whether full ommand?
 	//•¶š‚ÌCü

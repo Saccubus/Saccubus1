@@ -1,4 +1,3 @@
-#Tue Dec 13 21:46:20 JST 2011
 eclipse.preferences.version=1
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1024454771/LD_RUN_PATH/delimiter=;
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1024454771/LD_RUN_PATH/operation=append
@@ -10,9 +9,6 @@ environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1024
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1024454771/appendContributed=true
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/delimiter=;
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/operation=replace
-environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/value=/MinGW/lib
-environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/PATH/delimiter=;
-environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/PATH/operation=append
-environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/PATH/value=/MinGW/lib;/MinGW/bin;/MinGW/msys/1.0/bin;D\:/eclipse/jre/bin/client;D\:/eclipse/jre/bin;D\:/eclipse/jre/lib/i386;
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/value=${HOMEDRIVE}/mingw/lib
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/append=true
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/appendContributed=true

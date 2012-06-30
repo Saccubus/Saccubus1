@@ -6,9 +6,10 @@ readmeNew.txt
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-1.32 (2012/05/02)
-　ZeroWatch対応
-　CUI変更　@SET= 修正、@DLC @ADD= 追加
+1.32r (2012/05/09)
+　エイプリルフール2008年逆走の表示修正
+　CA射抜き再現のためnakaコメント判定時間を3.00秒→2.83秒変更
+　CA黄枠再現のためnakaコメント速度を最大0.3%減速
 
 □改造部分について
 【ライセンス】GPLv3（添付してあります）
@@ -505,11 +506,11 @@ readmeNew.txt
 ・gpl.ja.txt 　　　　　　　 GPLライセンスの非公式日本語訳
 ・LGPL_LICENSE　　　　　　　LGPLライセンス
 ・agpl-3.0.txt　　　　　　　AGPLv3ライセンス
-・Saccubus.jar　　　　　　　本体　1.32
+・Saccubus.jar　　　　　　　本体　1.32r
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
 ・bin フォルダ配下
 　　ffmpeg55686.exe ライセンスGPLV3
-　　nicovideoE.dll(2012.03.30版)統合版拡張Vhookライブラリ
+　　nicovideoE.dll(2012.05.09版)統合版拡張Vhookライブラリ
 　　SDL.dll(2011.11.02ビルド)、README-SDL.txt
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYNG
 　　　グラフィックライブラリ、ライセンスはLGPL
@@ -546,6 +547,8 @@ readmeNew.txt
 　N55686(libfaac無し、libvo_aacencあり)+optionVO(古い)
 　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
 　改造版
+さきゅばす1.32 NeroWatch対応 
+　1.32　　　http://www1.axfc.net/uploader/Ne/so/131891.zip
 　1.31r 　　http://www1.axfc.net/uploader/Ne/so/130343.zip
 　1.31　　　http://www1.axfc.net/uploader/Ne/so/130050.zip
 　1.30　　　http://www1.axfc.net/uploader/Ne/so/126815.zip

@@ -166,6 +166,8 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 				break;
 			}
 
+			//vend‚ÍÅŒã‚Ì”vpos‚Í—h‚ç‚®‚Ì‚Å‰¼‚É17vpos‚Æ‚µ‚ÄŒvŽZ
+			end -= (VPOS_T)17;
 			int x_t1 = getX(start,slot_item,video_width,data->width_scale);
 			int x_t2 = getX(end,slot_item,video_width,data->width_scale);
 			int o_x_t1 = getX(start,other_slot,video_width,data->width_scale);
@@ -175,10 +177,13 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			double o_dxstart[2] = {(double)o_x_t1,(double)o_x_t1+(double)other_slot->surf->w-1.0};
 			double o_dxend[2] = {(double)o_x_t2,(double)o_x_t2+(double)other_slot->surf->w-1.0};
 			double dtmp[2];
+			int w_off = data->nico_width_now==NICO_WIDTH_WIDE? 64 : 0;
+			w_off *= data->width_scale;
+			double range[2] = {(double)(w_off + 1),(double)(video_width - 1 - w_off)};
 			//“–‚½‚è”»’è@’Ç‚¢‰z‚µ–³‚µ‘O’ñ
 			if(data->debug)
 				fprintf(data->log,"at %d check (%.0f,%.0f) (%.0f,%.0f)\n",(int)end,dxend[0],dxend[1],o_dxend[0],o_dxend[1]);
-			if(set_crossed(dtmp,dxend,o_dxend)){
+			if(set_crossed(dtmp,dxend,o_dxend) && set_crossed(bang_xpos,range,dtmp)){
 				y = other_y_next1;
 				running = TRUE;
 				if(data->debug){
@@ -186,14 +191,12 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 					bang_vpos = getVposItem(data,slot_item,0,dtmp[slot_item->speed>=0]);
 					bang_end = end;
 					bang_slot = other_slot;
-					bang_xpos[0] = dtmp[0];
-					bang_xpos[1] = dtmp[1];
 				}
 				break;
 			}
 			if(data->debug)
 				fprintf(data->log,"at %d check (%.0f,%.0f) (%.0f,%.0f)\n",(int)start,dxstart[0],dxstart[1],o_dxstart[0],o_dxstart[1]);
-			if(set_crossed(dtmp,dxstart,o_dxstart)){
+			if(set_crossed(dtmp,dxstart,o_dxstart) && set_crossed(bang_xpos,range,dtmp)){
 				y = other_y_next1;
 				running = TRUE;
 				if(data->debug){
@@ -201,8 +204,6 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 					bang_vpos = start;
 					bang_end = end;
 					bang_slot = other_slot;
-					bang_xpos[0] = dtmp[0];
-					bang_xpos[1] = dtmp[1];
 				}
 				break;
 			}
@@ -256,8 +257,8 @@ CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,VPOS_T now_vpos){
 		}
 		item = slot_item->chat_item;
 		if(item==NULL)continue;
-		if(now_vpos >= (item->vpos + TEXT_SHOW_SEC)||
-			(item->location!=CMD_LOC_DEF && now_vpos > item->vend)){
+		if(now_vpos > item->vend &&
+			(item->location!=CMD_LOC_DEF||now_vpos > item->vend+TEXT_AHEAD_SEC)){
 		//if(now_vpos < item->vstart || now_vpos > item->vend){
 			return slot_item;
 		}

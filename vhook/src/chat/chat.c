@@ -140,7 +140,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	*/
 		//•Ï”ƒZƒbƒg
 		item->no = no;
-		item->vpos = (float)vpos;
+		item->vpos = (VPOS_T)vpos;
 		item->location = location;
 		item->size = size;
 		item->color = color;
@@ -148,30 +148,30 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		item->str = str;
 		/*“à•”ˆ—‚æ‚è*/
 		if(location != CMD_LOC_DEF){
-			item->vstart = (float)vpos;
-			item->vend = (float)(vpos + TEXT_SHOW_SEC_S - 1);
+			item->vstart = (VPOS_T)vpos;
+			item->vend = (VPOS_T)(vpos + TEXT_SHOW_SEC_S - 1);
 			//vend is last tick of LIFE, so must be - 1 done.
 			// item->vend = vpos + duration - 1;
 		}else{
-			item->vstart = (float)(vpos - TEXT_AHEAD_SEC);
-			item->vstart -= 25.0f;	//for debug
-			item->vend = (float)(vpos + TEXT_SHOW_SEC_S - 1);
+			item->vstart = (VPOS_T)(vpos - TEXT_AHEAD_SEC);
+			item->vstart -= (VPOS_T)25;	//for debug
+			item->vend = (VPOS_T)(vpos + TEXT_SHOW_SEC_S - 1);
 			//vend is last tick of LIFE, so must be - 1 done.
 			// item->vend = item->vstart + duration - 1;
 			if(nico_width==NICO_WIDTH_WIDE){
 				//TEXT_SHOW_SEC is 1.00sec (100vpos) longer. but reset after added to slot.
-				item->vstart -= 25.0f;	//100 * 1/4
-				item->vend += 75.0f;	//100 * 3/4
+				item->vstart -= (VPOS_T)25;	//100 * 1/4
+				item->vend += (VPOS_T)75;	//100 * 3/4
 			}
 		}
 		item->full = full;
 		// item->duration = duration;
 		item->color24 = color24;
 		if (video_length > 0){
-			float fix = item->vend - (float)video_length;
+			VPOS_T fix = item->vend - (VPOS_T)video_length;
 			if(fix > 0){
-				if(fix > 4.0f)
-					fix = 4.0f;
+				if(fix > (VPOS_T)4)
+					fix = (VPOS_T)4;
 				//item->verase -= fix;
 				item->vend -= fix;
 				item->vpos -= fix;

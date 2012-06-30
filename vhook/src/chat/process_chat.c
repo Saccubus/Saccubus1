@@ -105,19 +105,19 @@ int getX_org(int now_vpos,const CHAT_SLOT_ITEM* item,int video_width,int nico_wi
  * naka ˆÊ’u‚ð‹‚ß‚é
  */
 int getXnaka(VPOS_T vpos,CHAT_SLOT_ITEM* item,int video_width,double scale){
-	//int text_width = item->surf->w;
+	int text_width = item->surf->w;
 	VPOS_T vstart = item->chat_item->vpos - TEXT_AHEAD_SEC;
 	int progress = (vpos - vstart) * item->speed;
 	int xpos;
 	if(item->speed < 0.0f){
-		xpos = (int)(-progress - 16 * scale);	//-16 if 512
+		xpos = (int)(-progress - 16 * scale - text_width);	//-16-text_width if 512 at vpos
 	}else {
-		xpos = (int)((NICO_WIDTH + 16) * scale - progress);	//528 if 512
+		xpos = (int)((NICO_WIDTH + 16) * scale - progress);	//528 if 512 at vpos
 	}
 	if(video_width > NICO_WIDTH * scale){
 		xpos += 64 * scale;
 		//-16 -> 48 if 640
-		//528 -> 692 if 640
+		//528 -> 592 if 640
 	}
 	return xpos;
 }
@@ -157,7 +157,7 @@ void setspeed(int comment_speed,CHAT_SLOT_ITEM* item,int video_width,int nico_wi
 	}else{
 		VPOS_T vpos = chat_item->vpos;
 		int text_width = item->surf->w;
-		double width = scale * (NICO_WIDTH + 38) + text_width;
+		double width = scale * (NICO_WIDTH + 36) + text_width;
 		//					//video_width + scale * 44 + text_width;
 		double speed = width / TEXT_SHOW_SEC;
 		item->speed = (float)speed;
@@ -170,7 +170,7 @@ void setspeed(int comment_speed,CHAT_SLOT_ITEM* item,int video_width,int nico_wi
 			return;
 		}
 		if(comment_speed==-20080401){	//reverse
-			item->speed = -speed;
+			item->speed = (float)-speed;
 			return;
 		}
 		if(comment_speed==20090401){	//3 times speed
@@ -179,7 +179,7 @@ void setspeed(int comment_speed,CHAT_SLOT_ITEM* item,int video_width,int nico_wi
 			speed = (double)comment_speed/(double)VPOS_FACTOR;
 		}
 		item->speed = (float)speed;
-		chat_item->vstart = (VPOS_T)(vpos - (width / speed) * 0.25);
-		chat_item->vend = (VPOS_T)(vpos + (width / speed) * 0.75);
+		chat_item->vstart = (VPOS_T)(vpos - (width / fabs(speed)) * 0.25);
+		chat_item->vend = (VPOS_T)(vpos + (width / fabs(speed)) * 0.75);
 	}
 }

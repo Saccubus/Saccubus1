@@ -1116,7 +1116,11 @@ public class Converter extends Thread {
 					return;
 				}
 				if (!client.getVideoInfo(Tag, WatchInfo, Time)) {
-					sendtext(Tag + "‚Ìî•ñ‚Ìæ“¾‚É¸”s " + client.getExtraError());
+					if(Tag==null || Tag.isEmpty()){
+						sendtext("URL/ID‚Ìw’è‚ª‚ ‚è‚Ü‚¹‚ñ " + client.getExtraError());
+					}else{
+						sendtext(Tag + "‚Ìî•ñ‚Ìæ“¾‚É¸”s " + client.getExtraError());
+					}
 					return;
 				}
 				if (stopFlagReturn()) {
@@ -1205,7 +1209,7 @@ public class Converter extends Thread {
 			Stopwatch.show();
 			Stopwatch.stop();
 			System.out.println("•ÏŠ·ŠÔ@" + Stopwatch.formatLatency());
-			System.out.println("LastStatus: " + Status.getText());
+			System.out.println("LastStatus:[" + result + "]" + Status.getText());
 			System.out.println("VideoInfo: " + MovieInfo.getText());
 			if(sbRet!=null){
 				sbRet.append("RESULT=" + result + "\n");

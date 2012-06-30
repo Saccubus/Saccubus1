@@ -29,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ƒƒO
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.32.5";
+	char *ver="1.32.r1";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -510,7 +510,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	}
 	if(!setting->CAfont_path[ARIALUNI_FONT]){
 		//setting->CAfont_path[ARIALUNI_FONT] = setting->CAfont_path[ARIAL_FONT];
-		fprintf(log,"[framehook/init]no ARIAL UNICODE Font path.\n",setting->CAfont_path[ARIALUNI_FONT]);
+		fprintf(log,"[framehook/init]no ARIAL UNICODE Font path.\n");
 	}
 	if(!setting->CAfont_path[DEVANAGARI]){
 		setting->CAfont_path[DEVANAGARI] = setting->CAfont_path[ARIAL_FONT];
