@@ -42,8 +42,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.32.r";
-	private static final String modefied = " (2012/05/09)";
+	public static final String rev = "1.33.1";
+	private static final String modefied = " (2012/06/30)";
 
 	String productHTML =
 		"<html>" +
@@ -63,6 +63,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 		"</table>" +
 		"ニコニコ動画の動画をコメントつきで保存</p>" +
 		"<p>本プログラムは<br/>" +
+		" <a href=\'http://sourceforge.jp/projects/saccubus/\'>" +
+		"さきゅばす2.0b1</a><br/>" +
 		" <a href=\'http://sourceforge.jp/projects/coroid/downloads/52981/inqubus1.7.2.zip/\'>"	+
 		"いんきゅばす1.7.2</a><br/>を参考にしています。</p>" +
 		"<p>関連リンク<br/>" +

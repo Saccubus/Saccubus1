@@ -793,7 +793,6 @@ public class ConvertingSetting {
 	}
 
 	public static Properties setProperty(ConvertingSetting setting){
-		Properties prop = new Properties();
 		String user = setting.getMailAddress();
 		String password = setting.getPassword();
 		String encrypt_pass = setting.getEncryptPass();
@@ -814,9 +813,22 @@ public class ConvertingSetting {
 		}else {
 			System.out.println("メールアドレスが無効なため、パスワードを暗号化しません");
 		}
+		return setProperty(user, password, encrypt_pass, setting);
+	}
+
+	public static Properties setProperty(boolean checkMailAddress, ConvertingSetting setting){
+		if (checkMailAddress){
+			return setProperty(setting);
+		}else{
+			return setProperty(setting.getMailAddress(), setting.getPassword(), setting.getEncryptPass(), setting);
+		}
+	}
+
+	public static Properties setProperty(String user, String pass, String encpass, ConvertingSetting setting){
+		Properties prop = new Properties();
 		prop.setProperty(PROP_MAILADDR, user);
-		prop.setProperty(PROP_PASSWORD, password);
-		prop.setProperty(PROP_ENCRYPT_PASS, encrypt_pass);
+		prop.setProperty(PROP_PASSWORD, pass);
+		prop.setProperty(PROP_ENCRYPT_PASS, encpass);
 		prop.setProperty(PROP_SAVE_VIDEO, Boolean.toString(setting
 			.isSaveVideo()));
 		prop.setProperty(PROP_VIDEO_FILE, setting.getVideoFile().getPath());
@@ -1046,6 +1058,10 @@ public class ConvertingSetting {
 				}
 			}
 		}
+		return initSetting(user,password,encrypt_pass,prop);
+	}
+
+	public static ConvertingSetting initSetting(String user, String password, String encrypt_pass, Properties prop){
 		String option_file_name = prop.getProperty(PROP_OPTION_FILE, null);
 		File option_file = null;
 		if (option_file_name != null) {

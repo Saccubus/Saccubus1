@@ -2,6 +2,7 @@ package saccubus;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -94,6 +95,7 @@ public class MainFrame extends JFrame {
 	JMenu jMenuDetail = new JMenu();
 	JMenuItem jMenuNGConfig = new JMenuItem();
 	JMenuItem jMenuAprilFool = new JMenuItem();
+	JMenuItem jMenuDetailPane = new JMenuItem();
 	public JLabel statusBar = new JLabel();
 	public JLabel elapsedTimeBar = new JLabel();
 	JLabel vhookInfoBar = new JLabel();
@@ -184,7 +186,7 @@ public class MainFrame extends JFrame {
 	JPanel additionalOptionPanel = new JPanel();
 	JTextField additionalOptionFiled = new JTextField();
 	JTextField wideAdditionalOptionFiled = new JTextField();
-
+	MainFrame mainFrame = null;
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -225,6 +227,7 @@ public class MainFrame extends JFrame {
 	 * @throws java.lang.Exception
 	 */
 	private void jbInit() throws Exception {
+		mainFrame = this;
 		GridBagConstraints grid8_x1_y6_73 = new GridBagConstraints();
 		grid8_x1_y6_73.fill = GridBagConstraints.HORIZONTAL;
 		grid8_x1_y6_73.gridy = 6;
@@ -607,6 +610,17 @@ public class MainFrame extends JFrame {
 		jMenuNGConfig.addActionListener(new MainFrame_LoadNGConfig(this));
 		jMenuAprilFool.setText("AprilFool再現");
 		jMenuAprilFool.addActionListener(new MainFrame_jMenuAfDialog(this));
+		jMenuDetailPane.setText("詳細設定を変更");
+		jMenuDetailPane.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				DetailSettingPane detail = new DetailSettingPane(mainFrame);
+				detail.init();
+				detail.setModalityType(ModalityType.APPLICATION_MODAL);
+				detail.setVisible(true);
+			}
+			
+		});
 		jMenuOpen.setText("開く(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
@@ -939,6 +953,7 @@ public class MainFrame extends JFrame {
 		jMenuBar1.add(jMenuDetail);
 		jMenuDetail.add(jMenuNGConfig);
 		jMenuDetail.add(jMenuAprilFool);
+		jMenuDetail.add(jMenuDetailPane);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
 		setJMenuBar(jMenuBar1);
@@ -1349,7 +1364,8 @@ public class MainFrame extends JFrame {
 				"実験的設定（仮）", TitledBorder.LEADING, TitledBorder.TOP,
 				getFont(), Color.blue));
 		fontWidthFixCheckBox.setText("フォント幅の調整（％）");
-		fontWidthFixCheckBox.setForeground(Color.blue);
+	//	fontWidthFixCheckBox.setForeground(Color.blue);
+		fontWidthFixCheckBox.setEnabled(false);
 		GridBagConstraints grid20_x0_y0 = new GridBagConstraints();
 		grid20_x0_y0.gridx = 0;
 		grid20_x0_y0.gridy = 0;
@@ -1362,7 +1378,8 @@ public class MainFrame extends JFrame {
 		grid20_x0_y0.insets = INSETS_0_5_0_5;
 		experimentPanel.add(fontWidthFixCheckBox, grid20_x0_y0);
 		fontWidthRatioTextField.setText("100");
-		fontWidthRatioTextField.setForeground(Color.blue);
+	//	fontWidthRatioTextField.setForeground(Color.blue);
+		fontWidthRatioTextField.setEditable(false);
 		GridBagConstraints grid20_x1_y0 = new GridBagConstraints();
 		grid20_x1_y0.gridx = 2;
 		grid20_x1_y0.gridy = 0;
@@ -1372,10 +1389,9 @@ public class MainFrame extends JFrame {
 		grid20_x1_y0.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x1_y0.insets = INSETS_0_5_0_5;
 		experimentPanel.add(fontWidthRatioTextField, grid20_x1_y0);
-		//fontHeightRatioLabel.setText("倍率（％）");
-		//fontHeightRatioLabel.setForeground(Color.blue);
 		fontHeightFixCheckBox.setText("フォント高の調整（％）");
-		fontHeightFixCheckBox.setForeground(Color.blue);
+	//	fontHeightFixCheckBox.setForeground(Color.blue);
+		fontHeightFixCheckBox.setEnabled(false);
 		GridBagConstraints grid20_x0_y1 = new GridBagConstraints();
 		grid20_x0_y1.gridx = 0;
 		grid20_x0_y1.gridy = 1;
@@ -1386,7 +1402,8 @@ public class MainFrame extends JFrame {
 		grid20_x0_y1.insets = INSETS_0_5_0_5;
 		experimentPanel.add(fontHeightFixCheckBox, grid20_x0_y1);
 		fontHeightRatioTextField.setText("100");
-		fontHeightRatioTextField.setForeground(Color.blue);
+	//	fontHeightRatioTextField.setForeground(Color.blue);
+		fontHeightRatioTextField.setEditable(false);
 		GridBagConstraints grid20_x1_y1 = new GridBagConstraints();
 		grid20_x1_y1.gridx = 2;
 		grid20_x1_y1.gridy = 1;
@@ -1397,9 +1414,10 @@ public class MainFrame extends JFrame {
 		grid20_x1_y1.insets = INSETS_0_5_0_5;
 		experimentPanel.add(fontHeightRatioTextField,grid20_x1_y1);
 		disableOriginalResizeCheckBox.setText("開発版を有効（従来のさきゅばすのリサイズを無効にする）");
-		disableOriginalResizeCheckBox.setForeground(Color.blue);
+	//	disableOriginalResizeCheckBox.setForeground(Color.blue);
 		disableOriginalResizeCheckBox.setToolTipText("コメントアート用に調整中。" +
 			"現在はオフの方がいいみたいです。安定したらオフの方に反映します。");
+		disableOriginalResizeCheckBox.setEnabled(false);
 		GridBagConstraints grid20_x0_y7 = new GridBagConstraints();
 		grid20_x0_y7.gridx = 0;
 		grid20_x0_y7.gridy = 7;
@@ -1412,8 +1430,9 @@ public class MainFrame extends JFrame {
 		grid20_x0_y7.insets = INSETS_0_5_0_5;
 		experimentPanel.add(disableOriginalResizeCheckBox, grid20_x0_y7);
 		enableCA_CheckBox.setText("ＣＡフォント暫定的対応：11種類のフォントを使う");
-		enableCA_CheckBox.setForeground(Color.blue);
+	//	enableCA_CheckBox.setForeground(Color.blue);
 		enableCA_CheckBox.setToolTipText("フォント変化を強制的に使用するようになります");
+		enableCA_CheckBox.setEnabled(false);
 		GridBagConstraints drid20_x0_y8 = new GridBagConstraints();
 		drid20_x0_y8.gridx = 0;
 		drid20_x0_y8.gridy = 8;
@@ -1435,8 +1454,9 @@ public class MainFrame extends JFrame {
 	//	grid20_x0_y9.insets = INSETS_0_5_0_5;
 	//	experimentPanel.add(useLineskipAsFontsizeCheckBox, grid20_x0_y9);
 		useExtraFontCheckBox.setText("追加フォント");
-		useExtraFontCheckBox.setForeground(Color.blue);
+	//	useExtraFontCheckBox.setForeground(Color.blue);
 		useExtraFontCheckBox.setToolTipText("追加フォントパス フォント番号 開始unicode16進4桁-終了16進4桁　と指定して下さい");
+		useExtraFontCheckBox.setEnabled(false);
 		GridBagConstraints grid20_x0_y10 = new GridBagConstraints();
 		grid20_x0_y10.gridx = 0;
 		grid20_x0_y10.gridy = 10;
@@ -1444,7 +1464,8 @@ public class MainFrame extends JFrame {
 		grid20_x0_y10.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x0_y10.insets = INSETS_0_5_0_5;
 		experimentPanel.add(useExtraFontCheckBox,grid20_x0_y10);
-		extraFontTextField.setForeground(Color.blue);
+	//	extraFontTextField.setForeground(Color.blue);
+		extraFontTextField.setEditable(false);
 		GridBagConstraints grid20_x1_y10 = new GridBagConstraints();
 		grid20_x1_y10.gridx = 1;
 		grid20_x1_y10.gridy = 10;
@@ -1455,7 +1476,7 @@ public class MainFrame extends JFrame {
 		grid20_x1_y10.insets = INSETS_0_5_0_5;
 		experimentPanel.add(extraFontTextField, grid20_x1_y10);
 		extraModeLabel.setText("追加モード");
-		extraModeLabel.setForeground(Color.blue);
+	//	extraModeLabel.setForeground(Color.blue);
 		extraModeLabel.setToolTipText("黄枠モード他の追加の動作を指定します");
 		GridBagConstraints grid20_x0_y12 = new GridBagConstraints();
 		grid20_x0_y12.gridx = 0;
@@ -1464,7 +1485,8 @@ public class MainFrame extends JFrame {
 		grid20_x0_y12.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x0_y12.insets = INSETS_0_5_0_5;
 		experimentPanel.add(extraModeLabel, grid20_x0_y12);
-		extraModeField.setForeground(Color.blue);
+	//	extraModeField.setForeground(Color.blue);
+		extraModeField.setEditable(false);
 		GridBagConstraints grid20_x1_y12 = new GridBagConstraints();
 		grid20_x1_y12.gridx = 1;
 		grid20_x1_y12.gridy = 12;
@@ -1654,6 +1676,12 @@ public class MainFrame extends JFrame {
 			ownercomment = comment.substring(0, index);
 		}
 		ownercomment += saccubus.Converter.OWNER_EXT;
+		int fontIndex;
+		try{
+			fontIndex = Integer.parseInt(FontIndexField.getText());
+		} catch(NumberFormatException e){
+			fontIndex = 0;
+		}
 		return new ConvertingSetting(
 			MailAddrField.getText(),
 			new String(PasswordField.getPassword()),
@@ -1677,7 +1705,7 @@ public class MainFrame extends JFrame {
 			CommandLineOutOptionField.getText(),
 			Integer.toString(back_comment),
 			FontPathField.getText(),
-			Integer.parseInt(FontIndexField.getText()),
+			fontIndex,
 			ShowConvVideoCheckBox.isSelected(),
 			DelVideoCheckBox.isSelected(),
 			Video_SaveFolderRadioButton.isSelected(),
@@ -1718,25 +1746,25 @@ public class MainFrame extends JFrame {
 			wideCommandLineInOptionField.getText(),
 			wideCommandLineOutOptionField.getText(),
 			OptionalTranslucentCheckBox.isSelected(),
-			fontHeightFixCheckBox.isSelected(),
-			fontHeightRatioTextField.getText(),
-			disableOriginalResizeCheckBox.isSelected(),
-			commentModeComboBox.getSelectedIndex(),
+			fontHeightFixCheckBox.isSelected(),			//experimental
+			fontHeightRatioTextField.getText(),			//experimental
+			disableOriginalResizeCheckBox.isSelected(),	//experimental
+			commentModeComboBox.getSelectedIndex(),	
 			commentSpeedCheckBox.isSelected(),
 			commentSpeedTextField.getText(),
 //			getDebugMode(),
-			enableCA_CheckBox.isSelected(),
+			enableCA_CheckBox.isSelected(),				//experimental
 			sharedNgScore.getScore(),
 			disableEcoCheckBox.isSelected(),
-			fontWidthFixCheckBox.isSelected(),
-			fontWidthRatioTextField.getText(),
-			useLineskipAsFontsizeCheckBox.isSelected(),
-			useExtraFontCheckBox.isSelected(),
-			extraFontTextField.getText(),
+			fontWidthFixCheckBox.isSelected(),			//experimental
+			fontWidthRatioTextField.getText(),			//experimental
+			useLineskipAsFontsizeCheckBox.isSelected(),	//depricated experimental
+			useExtraFontCheckBox.isSelected(),			//experimental
+			extraFontTextField.getText(),				//experimental
 			ngCommandField.getText(),
-			"",	//replaceCommandField.getText(),
+			"",	//replaceCommandField.getText(),		//experimental
 			encrypt_pass,
-			extraModeField.getText(),
+			extraModeField.getText(),					//experimental
 			additionalOptionFiled.getText(),
 			wideAdditionalOptionFiled.getText()
 		);
@@ -1752,7 +1780,7 @@ public class MainFrame extends JFrame {
 		return null;
 	}
 */
-	private void setSetting(ConvertingSetting setting) {
+	void setSetting(ConvertingSetting setting) {
 		MailAddrField.setText(setting.getMailAddress());
 		PasswordField.setText(setting.getPassword());
 		SavingVideoCheckBox.setSelected(setting.isSaveVideo());
@@ -1863,6 +1891,24 @@ public class MainFrame extends JFrame {
 		wideAdditionalOptionFiled.setText(setting.getWideAddOption());
 	}
 
+	void putSetting(String key, String str){
+		ConvertingSetting setting = getSetting();
+		Properties prop = ConvertingSetting.setProperty(false, setting);
+		prop.put(key, str);
+		setSetting(ConvertingSetting.loadSetting(setting.getMailAddress(), setting.getPassword(), prop));
+	}
+	void putSetting(String key, boolean bool){
+		ConvertingSetting setting = getSetting();
+		Properties prop = ConvertingSetting.setProperty(false, setting);
+		prop.put(key, Boolean.toString(bool));
+		setSetting(ConvertingSetting.loadSetting(setting.getMailAddress(), setting.getPassword(), prop));
+	}
+	void putSetting(String key, int value){
+		ConvertingSetting setting = getSetting();
+		Properties prop = ConvertingSetting.setProperty(false, setting);
+		prop.put(key, Integer.toString(value));
+		setSetting(ConvertingSetting.loadSetting(setting.getMailAddress(), setting.getPassword(), prop));
+	}
 	/**
 	 * [ファイル|終了] アクションが実行されました。
 	 *
@@ -3159,6 +3205,7 @@ class MainFrame_jMenuAfDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		AprilFool_Dioalog dialog = new AprilFool_Dioalog(mainFrame);
 		dialog.init();
+		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
 		dialog.setVisible(true);
 	}
 
@@ -3240,7 +3287,7 @@ class AprilFool_Dioalog extends JDialog {
 		add(panel);
 		pack();
 		setLocationRelativeTo(parent);
-		setVisible(true);
+	//	setVisible(true);
 	}
 
 	private void showSelectedYear(){
@@ -3290,26 +3337,3 @@ class AprilFool_Dioalog extends JDialog {
 		dispose();
 	}
 }
-/*
-class MainFrame_LoadViewHistory implements ActionListener {
-	MainFrame mainFrame;
-
-	MainFrame_LoadViewHistory(MainFrame adaptee){
-		mainFrame = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		JLabel status = mainFrame.statusBar;
-		JLabel watch = mainFrame.elapsedTimeBar;
-		status.setText("視聴履歴のロード");
-		Loader loader = new Loader(mainFrame.getSetting(), status, watch);
-		Path file = new Path("myhistory.html");
-		String url = "http://www.nicovideo.jp/my/history";
-		if (loader.load(url, file)){
-			status.setText("視聴履歴をロードしました：" + file.getRelativePath());
-		}
-	}
-}
-*/
-
