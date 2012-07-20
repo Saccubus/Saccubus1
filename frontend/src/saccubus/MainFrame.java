@@ -184,6 +184,9 @@ public class MainFrame extends JFrame {
 	JPanel additionalOptionPanel = new JPanel();
 	JTextField additionalOptionFiled = new JTextField();
 	JTextField wideAdditionalOptionFiled = new JTextField();
+	JCheckBox saveWatchPageInfoCheckBox = new JCheckBox();
+	JPanel watchPageSavingInfoPanel = new JPanel();
+	private JPanel watchPageSavingTabbedPanel = new JPanel();
 
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
@@ -211,7 +214,7 @@ public class MainFrame extends JFrame {
 				setting = ConvertingSetting.loadSetting(null, null);
 			} else {
 				setting = ConvertingSetting.loadSetting(null,
-					null, ".\\saccubus.ini", false);
+					null, "./accubus.ini", false);
 			}
 			this.setSetting(setting);
 		} catch (Exception exception) {
@@ -928,6 +931,15 @@ public class MainFrame extends JFrame {
 				.addActionListener(new MainFrame_ShowSavingConvertedVideoFolderDialogButton_actionAdapter(
 						this));
 		Conv_SaveFileRadioButton.setText("保存するファイル名を指定する");
+
+		saveWatchPageInfoCheckBox.setText("watchページの情報をテキストファイルに保存する");
+		saveWatchPageInfoCheckBox.setSelected(true);
+		watchPageSavingInfoPanel.setBorder(
+			BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+			"ページ保存設定"));
+		watchPageSavingInfoPanel.setLayout(new BorderLayout());
+		watchPageSavingInfoPanel.add(saveWatchPageInfoCheckBox, BorderLayout.NORTH);
+
 		BasicInfoTabPanel.setLayout(gridBagLayout12);
 		jMenuBar1.add(jMenuFile);
 		jMenuFile.add(jMenuOpen);
@@ -1738,7 +1750,8 @@ public class MainFrame extends JFrame {
 			encrypt_pass,
 			extraModeField.getText(),
 			additionalOptionFiled.getText(),
-			wideAdditionalOptionFiled.getText()
+			wideAdditionalOptionFiled.getText(),
+			saveWatchPageInfoCheckBox.isSelected()
 		);
 	}
 /*
@@ -1861,6 +1874,7 @@ public class MainFrame extends JFrame {
 		extraModeField.setText(setting.getExtraMode());
 		additionalOptionFiled.setText(setting.getAddOption());
 		wideAdditionalOptionFiled.setText(setting.getWideAddOption());
+		saveWatchPageInfoCheckBox.setSelected(setting.isSaveWatchPage());
 	}
 
 	/**
@@ -2606,6 +2620,8 @@ s	 * @return javax.swing.JPanel
 					getVideoSavingTabbedPanel(), null);
 			SaveInfoTabPaneEach.addTab("コメント付き動画", null,
 					getConvertedVideoSavingTabbedPanel(), null);
+			SaveInfoTabPaneEach.addTab("ページ情報", null,
+					getWatchPageSavingTabbedPanel(), null);
 		}
 		return SaveInfoTabPaneEach;
 	}
@@ -2685,6 +2701,25 @@ s	 * @return javax.swing.JPanel
 			ConvertedVideoSavingTabbedPanel.add(OptionalThreadInfoPanel, grid_x_y__);
 		}
 		return ConvertedVideoSavingTabbedPanel;
+	}
+
+	/**
+	 * getWatchPageSavingTabbedPanel
+	 * @return watchPageSavingTabbedPanel
+	 */
+	private JPanel getWatchPageSavingTabbedPanel() {
+		GridBagConstraints grid_x0_y0 = new GridBagConstraints();
+		grid_x0_y0.gridx = 0;
+		grid_x0_y0.gridy = 0;
+		grid_x0_y0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y0.fill = GridBagConstraints.HORIZONTAL;
+		grid_x0_y0.insets = INSETS_0_5_0_5;
+		grid_x0_y0.weightx = 1.0;
+		grid_x0_y0.weighty = 1.0;
+		watchPageSavingTabbedPanel = new JPanel();
+		watchPageSavingTabbedPanel.setLayout(new GridBagLayout());
+		watchPageSavingTabbedPanel.add(watchPageSavingInfoPanel, grid_x0_y0);
+		return watchPageSavingTabbedPanel;
 	}
 
 	/**

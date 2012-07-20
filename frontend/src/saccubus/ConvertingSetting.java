@@ -127,6 +127,7 @@ public class ConvertingSetting {
 	private String extraMode;
 	private String addOption;
 	private String wideAddOption;
+	private boolean saveWatchPage;
 
 	private Map<String, String> replaceOptions;
 
@@ -315,7 +316,8 @@ public class ConvertingSetting {
 			String encrypt_pass,
 			String extra_mode,
 			String add_option,
-			String wide_add_option
+			String wide_add_option,
+			boolean save_watch_page
 		)
 	{
 		this(	mailaddress,
@@ -413,6 +415,7 @@ public class ConvertingSetting {
 		extraMode = extra_mode;
 		addOption = add_option;
 		wideAddOption = wide_add_option;
+		saveWatchPage = save_watch_page;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -676,6 +679,9 @@ public class ConvertingSetting {
 	public String getWideAddOption(){
 		return wideAddOption;
 	}
+	public boolean isSaveWatchPage(){
+		return saveWatchPage;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -777,6 +783,7 @@ public class ConvertingSetting {
 	static final String PROP_EXTRA_MODE = "ExtraMode";
 	static final String PROP_ADD_OPTION = "AddOption";
 	static final String PROP_WIDE_ADD_OPTION = "WideAddOption";
+	static final String PROP_SAVE_WATCH_PAGE = "SaveWatchPage";
 
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -942,6 +949,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_EXTRA_MODE, setting.getExtraMode());
 		prop.setProperty(PROP_ADD_OPTION, setting.getAddOption());
 		prop.setProperty(PROP_WIDE_ADD_OPTION, setting.getWideAddOption());
+		prop.setProperty(PROP_SAVE_WATCH_PAGE, Boolean.toString(setting.isSaveWatchPage()));
 
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -1143,7 +1151,8 @@ public class ConvertingSetting {
 			encrypt_pass,
 			prop.getProperty(PROP_EXTRA_MODE, ""),
 			prop.getProperty(PROP_ADD_OPTION, ""),
-			prop.getProperty(PROP_WIDE_ADD_OPTION, "")
+			prop.getProperty(PROP_WIDE_ADD_OPTION, ""),
+			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_WATCH_PAGE, "true")) 
 		);
 	}
 
@@ -1175,50 +1184,6 @@ public class ConvertingSetting {
 		disableOriginalResize = b;
 	}
 
-/*
-	public void override(String prefix,
-			Map<String, String> settingMap,
-			Map<String, String> optionMap) {
-		override(prefix);
-		if(optionMap != null && !optionMap.isEmpty()){
-			replaceOptions = optionMap;
-		}
-		override(settingMap);
-	}
-
-	private void override(String prefix) {
-		if (prefix != null && !prefix.isEmpty()) {
-			setOptionFile(new File(OptionFile.getParentFile(), prefix
-					+ OptionFile.getName()));
-			setWideOptionFile(new File(wideOptionFile.getParentFile(), prefix
-					+ wideOptionFile.getName()));
-		}
-	}
-
-	void override(Map<String, String> map) {
-		if (map == null || map.isEmpty()) {
-			return;
-		}
-		if (map.containsKey(PROP_FONT_PATH))
-			FontPath = map.get(PROP_FONT_PATH);
-		if (map.containsKey(PROP_FONT_INDEX))
-			FontIndex = Integer.parseInt(map.get(PROP_FONT_INDEX));
-		if (map.containsKey(PROP_SAVE_VIDEO))
-			SaveVideo = Bool.parseBoolean(map.get(PROP_SAVE_VIDEO));
-		if (map.containsKey(PROP_SAVE_COMMENT)) {
-			SaveComment = Bool.parseBoolean(map.get(PROP_SAVE_COMMENT));
-			SaveOwnerComment = SaveComment;
-		}
-		if (map.containsKey(PROP_CMDLINE_EXT))
-			CmdLineOptionExt = map.get(PROP_CMDLINE_EXT);
-		if (map.containsKey(PROP_WIDE_CMDLINE_EXT))
-			wideCmdLineOptionExt = map.get(PROP_WIDE_CMDLINE_EXT);
-		if (map.containsKey(PROP_ENABLE_CA))
-			enableCA = Bool.parseBoolean(map.get(PROP_ENABLE_CA));
-		if (map.containsKey(PROP_SAVE_CONVERTED))
-			SaveConverted = Bool.parseBoolean(map.get(PROP_SAVE_CONVERTED));
-	}
-*/
 	/**
 	 * @param replaceOptions ÉZÉbÉgÇ∑ÇÈ replaceOptions
 	 */

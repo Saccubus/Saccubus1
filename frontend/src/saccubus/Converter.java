@@ -56,6 +56,7 @@ public class Converter extends Thread {
 	public static final String OPTIONAL_EXT = "{Optional}.xml";	// オプショナルスレッドサフィックス
 	private static final String TMP_COMBINED_XML = "_tmp_comment.xml";
 	private static final String TMP_COMBINED_XML2 = "_tmp_optional.xml";
+	private static final String WATCH_PAGE = "_watchPage.txt";
 	private String OtherVideo;
 	private final String WatchInfo;
 	private final JLabel MovieInfo;
@@ -88,6 +89,7 @@ public class Converter extends Thread {
 	 */
 	private String result = "0";
 	private String dateUserFirst = "";
+	private boolean saveWatchPage;
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -116,6 +118,7 @@ public class Converter extends Thread {
 		MovieInfo = movieInfo;
 		MovieInfo.setText(" ");
 		Stopwatch = new Stopwatch(watch);
+		saveWatchPage = Setting.isSaveWatchPage();
 	}
 
 	public Converter(String url, String time, ConvertingSetting setting,
@@ -157,6 +160,8 @@ public class Converter extends Thread {
 	private Pattern ngWordPat;
 	private Pattern ngIDPat;
 	private CommandReplace ngCmd;
+	private Path watchPage;
+	private File watchFile;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -692,6 +697,62 @@ public class Converter extends Thread {
 		return true;
 	}
 
+	private boolean saveWatchPage(NicoClient client) {
+		sendtext("ページの保存");
+		File folder = Setting.getVideoFixFileNameFolder();
+		/*ページの保存*/
+		if(Setting.isSaveWatchPage()){
+			if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()) {
+				folder = Setting.getVideoFixFileNameFolder();
+				if (isVideoFixFileName()) {
+					if (folder.mkdir()) {
+						System.out.println("Folder created: " + folder.getPath());
+					}
+					if (!folder.isDirectory()) {
+						sendtext("ページの保存先フォルダが作成できません。");
+						result = "A0";
+						return false;
+					}
+					watchFile = new File(folder,
+							VideoID + VideoTitle + ".txt");
+				} else {
+					watchFile = getWatchFileFrom(Setting.getVideoFile());
+				}
+				sendtext("ページの保存中");
+				if (client == null){
+					sendtext("ページを保存するには動画かコメントを保存して下さい");
+					result = "A1";
+					return false;
+				}
+				watchPage = client.getWatchPage();
+				if (stopFlagReturn()) {
+					result = "A3";
+					return false;
+				}
+				if (watchPage == null) {
+					sendtext("ページの取得に失敗" + client.getExtraError());
+					result = "A4";
+					return false;
+				}
+				Path.fileCopy(watchPage, watchFile);
+			}
+		}
+		sendtext("ページの保存終了：" + watchFile.getPath());
+		return true;
+	}
+
+	private File getWatchFileFrom(File file) {
+		if (file == null || !file.isFile() || file.getPath() == null) {
+			return mkTemp(WATCH_PAGE);
+		}
+		String path = file.getPath();
+		int index = path.lastIndexOf(".");
+		if (index > path.lastIndexOf(File.separator)) {
+			path = path.substring(0, index);		// 拡張子を削除
+		}
+		return new File(path + WATCH_PAGE);
+	}
+
 	private boolean makeNGPattern() {
 		sendtext("NGパターン作成中");
 		try{
@@ -1115,7 +1176,7 @@ public class Converter extends Thread {
 				if (!client.isLoggedIn()){
 					return;
 				}
-				if (!client.getVideoInfo(Tag, WatchInfo, Time)) {
+				if (!client.getVideoInfo(Tag, WatchInfo, Time, saveWatchPage)) {
 					if(Tag==null || Tag.isEmpty()){
 						sendtext("URL/IDの指定がありません " + client.getExtraError());
 					}else{
@@ -1142,6 +1203,11 @@ public class Converter extends Thread {
 
 			Stopwatch.show();
 			if (!saveOwnerComment(client) || stopFlagReturn()) {
+				return;
+			}
+
+			Stopwatch.show();
+			if(!saveWatchPage(client) || stopFlagReturn()){
 				return;
 			}
 

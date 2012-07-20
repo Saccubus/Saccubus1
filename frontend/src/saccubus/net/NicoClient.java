@@ -1,23 +1,30 @@
 package saccubus.net;
 
-import java.io.*;
-import java.net.URL;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.URL;
 import java.net.URLEncoder;
+import java.util.regex.Pattern;
+
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JLabel;
 
-import java.util.regex.Pattern;
-import javax.net.ssl.HttpsURLConnection;
-
-import com.sun.xml.internal.ws.util.ByteArrayBuffer;
-
 import saccubus.ConvertStopFlag;
-
 import saccubus.WayBackDate;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.util.Stopwatch;
+
+import com.sun.xml.internal.ws.util.ByteArrayBuffer;
 
 /**
  * <p>
@@ -47,6 +54,7 @@ public class NicoClient {
 	boolean Debug = false;
 	private final NicoMap nicomap;
 	private Stopwatch Stopwatch;
+	private Path titleHtml = null;
 
 	public static final String DEBUG_PROXY = "debug";	// debug paramerter end with '/'
 
@@ -370,7 +378,7 @@ public class NicoClient {
 	private static final String TITLE_END = "‐";
 	private static final String TITLE_ZERO_DIV = "<div class=\"videoDetailExpand\">";
 
-	public boolean getVideoHistoryAndTitle(String tag, String watchInfo) {
+	public boolean getVideoHistoryAndTitle(String tag, String watchInfo, boolean saveWatchPage) {
 		String url = "http://www.nicovideo.jp/watch/" + tag + watchInfo;
 		System.out.print("Getting video history...");
 		boolean found = false;
@@ -403,6 +411,7 @@ public class NicoClient {
 			while ((ret = br.readLine()) != null) {
 				Stopwatch.show();
 				sb.append(ret + "\n");
+				if(found) continue;
 				if ((index = ret.indexOf(TITLE_PARSE_STR_START)) >= 0) {
 					int index2 = ret.lastIndexOf(TITLE_END);
 					if (index2 < 0){
@@ -414,7 +423,7 @@ public class NicoClient {
 							ret.substring(index+TITLE_PARSE_STR_START.length(),
 							index2));
 					System.out.print("<" + VideoTitle + ">...");
-					break;
+					continue;
 				}
 				if(zero_title){
 					index = ret.indexOf(">") + 1;
@@ -426,7 +435,7 @@ public class NicoClient {
 					zero_title = false;
 					VideoTitle = safeFileName(ret.substring(index,index2));
 					System.out.print("<" + VideoTitle + ">...");
-					break;
+					continue;
 				}
 				if(ret.contains(TITLE_ZERO_DIV)){
 					zero_title = true;
@@ -435,13 +444,19 @@ public class NicoClient {
 			}
 			br.close();
 			con.disconnect();
-			if(!found){
-				Path titleHtml = Path.mkTemp(tag + "title.htm");
-				PrintWriter pw = new PrintWriter(titleHtml);
+			PrintWriter pw;
+			if(saveWatchPage || !found){
+				if(found){
+					titleHtml = Path.mkTemp(tag + "_" + VideoTitle + ".htm");
+				} else {
+					titleHtml = Path.mkTemp(tag + "title.htm");
+				}
+				pw = new PrintWriter(titleHtml, encoding);
 				pw.write(sb.toString());
 				pw.flush();
 				pw.close();
-				System.out.println(" Title not found. <" + Path.toUnixPath(titleHtml) + "> saved.");
+				if(!found)
+					System.out.println(" Title not found. <" + Path.toUnixPath(titleHtml) + "> saved.");
 			}
 			System.out.println("ok.");
 			Cookie += "; " + new_cookie;
@@ -456,8 +471,8 @@ public class NicoClient {
 	private String Premium = "";
 	private String OptionalThraedID = "";	// normal Comment ID when Community DOUGA
 	private boolean economy = false;
-	public boolean getVideoInfo(String tag, String watchInfo, String time) {
-		if (!getVideoHistoryAndTitle(tag, watchInfo)) {
+	public boolean getVideoInfo(String tag, String watchInfo, String time, boolean saveWatchPage) {
+		if (!getVideoHistoryAndTitle(tag, watchInfo, saveWatchPage)) {
 			return false;
 		}
 		try {
@@ -1077,5 +1092,119 @@ public class NicoClient {
 
 	public boolean isEco() {
 		return economy;
+	}
+
+	private String getKeyValue(String src, String keyword, char delimc){
+		String dest = null;
+		char escapec = '\\';
+		int index = src.indexOf(keyword);
+		index += keyword.length();
+		int endIx = src.indexOf(delimc, index);
+		if(index < 0 || endIx < 0)
+			return null;
+		dest = src.substring(index).trim();	//trim
+		return getUniValue(dest, delimc, escapec);
+	}
+	private String getUniValue(String src, char delimc, char escapec){
+		StringBuilder sb = new StringBuilder();
+		char stop = 0;
+		int p = 1;
+		for(int i = 0; i < src.length(); i+=p){
+			char c = src.charAt(i);
+			if(stop == 0){
+				if(c == '\''){
+					sb.append(c);
+					stop = c;
+					p = 1;
+					continue;
+				}
+				stop = delimc;
+			}
+			if( c == stop){
+				sb.append(c);
+				break;
+			}
+			if(c == escapec){
+				c = src.charAt(i+1);
+				if ( c == 'u'){
+					int v = -1;
+					try {
+						v = Integer.parseInt(src.substring(i+2, i+6),16);
+					} catch(NumberFormatException e){
+						e.printStackTrace();
+					}
+					sb.append((char)v);
+					p = 6;
+					continue;
+				}
+				// c was escaped, just append
+				sb.append(c);
+				p = 2;
+				continue;
+			}
+			sb.append(c);
+			p = 1;
+		}
+		return sb.toString();
+	}
+	private String getHtmlElement(String src, String keyword){
+		String dest;
+		int index = src.indexOf(keyword);
+		int endIx = src.indexOf("</", index);
+		if(index < 0 || endIx < 0)
+			return null;
+		index += keyword.length();
+		dest = src.substring(index, endIx).replace("\\", "");
+		return dest;
+	}
+	public Path getWatchPage() {
+		Path filePath = null;
+		if(titleHtml  == null)
+			return null;
+		try {
+			String text = Path.readAllText(titleHtml.getPath(),"UTF-8");
+			int index;
+			String threadId = getKeyValue(text, "v:", ',');
+			String videoId = getKeyValue(text, "id:\t", ',');
+			String titleStr = getKeyValue(text, "title:", ',');
+			String uploadComment = getKeyValue(text, "description:", ',');
+			String thumbnail  = getKeyValue(text, "thumbnail:", ',');
+			String postedAt  = getKeyValue(text, "postedAt:", ',');
+			String timeLength  = getKeyValue(text, "length:", ',');
+			String viewCount = getKeyValue(text, "viewCount:", ',');
+			String commentCount = getKeyValue(text, "commentCount:", ',');
+			String mylistCount = getKeyValue(text, "mylistCount:", ',');
+			String ownerName = getHtmlElement(text,"<p class=\"font12\"><a href=\"user/");
+			ownerName = ("user/" + ownerName).replace("\"><strong>", "' '");
+			String tags = getKeyValue(text, "tags:", ']');
+			//tags = convertUniList(tags);
+			String fileName = titleHtml.getPath();
+			index = fileName.lastIndexOf(".");
+			if (index >= titleHtml.getPath().lastIndexOf(File.separator)) {
+				fileName = fileName.substring(0, index);
+			}
+			fileName += ".txt";
+			filePath = new Path(fileName);
+			PrintWriter pw = new PrintWriter(filePath, "UTF-8");
+			pw.printf("Encode: UTF-8\n");
+			pw.printf("v:     %s\n", threadId);
+			pw.printf("ID:     %s\n", videoId);
+			pw.printf("タイトル:  %s\n", titleStr);
+			pw.printf("動画説明：   %s\n", uploadComment);
+			pw.printf("サムネ:    %s\n", thumbnail);
+			pw.printf("投稿日:   %s\n", postedAt);
+			pw.printf("時間(秒):  %s\n", timeLength);
+			pw.printf("再生数：    %s\n", viewCount);
+			pw.printf("コメント数：  %s\n", commentCount);
+			pw.printf("マイリスト数： %s\n", mylistCount);
+			pw.printf("投稿者:    '%s'\n", ownerName);
+			pw.printf("タグ:     %s\n", tags);
+			pw.flush();
+			pw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return filePath;
 	}
 }
