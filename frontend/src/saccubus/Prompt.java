@@ -41,6 +41,7 @@ import saccubus.util.DuplicatedOutput;
  */
 public class Prompt {
 	private static final String LOGFILE = ".\\log.txt";
+	private static final String LOGFILE2 = ".\\sacclog.txt";
 	private static DuplicatedOutput dout = null;
 	private static String logname = LOGFILE;
 	private static int maxsize = 1000000;
@@ -56,7 +57,9 @@ public class Prompt {
 
 	public static void main(String[] args) {
 		if(!setLog(logname)){
-			exit(1);
+			if(!setLog(LOGFILE2)){
+				exit(1);
+			}
 		}
 		System.out.println(WayBackDate.formatNow());
 		if (args.length < 3){

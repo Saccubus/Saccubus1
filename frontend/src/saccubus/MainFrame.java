@@ -3,6 +3,7 @@ package saccubus;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -185,9 +186,19 @@ public class MainFrame extends JFrame {
 	JTextField additionalOptionFiled = new JTextField();
 	JTextField wideAdditionalOptionFiled = new JTextField();
 	JCheckBox saveWatchPageInfoCheckBox = new JCheckBox();
+	JCheckBox saveThumbInfoCheckBox = new JCheckBox();
 	JPanel watchPageSavingInfoPanel = new JPanel();
 	private JPanel watchPageSavingTabbedPanel = new JPanel();
-
+	JCheckBox saveThumbUserCheckBox = new JCheckBox();
+	JLabel userFolderLabel = new JLabel();
+	JTextField userFolderTextField = new JTextField();
+	JRadioButton saveThumbInfoExtTxtRadioButton = new JRadioButton();
+	JRadioButton saveThumbInfoExtXmlRadioButton = new JRadioButton();
+	ButtonGroup thumbInfoExtButtonGroup = new ButtonGroup();
+	JPanel fileNameInfoPanel = new JPanel();
+	JCheckBox changeMp4ExtCheckBox = new JCheckBox();
+	JCheckBox changeTitleIdCheckBox = new JCheckBox();
+	JCheckBox saveThumbnailJpgCheckBox = new JCheckBox();
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -214,7 +225,7 @@ public class MainFrame extends JFrame {
 				setting = ConvertingSetting.loadSetting(null, null);
 			} else {
 				setting = ConvertingSetting.loadSetting(null,
-					null, "./accubus.ini", false);
+					null, "./saccubus.ini", false);
 			}
 			this.setSetting(setting);
 		} catch (Exception exception) {
@@ -932,14 +943,6 @@ public class MainFrame extends JFrame {
 						this));
 		Conv_SaveFileRadioButton.setText("保存するファイル名を指定する");
 
-		saveWatchPageInfoCheckBox.setText("watchページの情報をテキストファイルに保存する");
-		saveWatchPageInfoCheckBox.setSelected(true);
-		watchPageSavingInfoPanel.setBorder(
-			BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-			"ページ保存設定"));
-		watchPageSavingInfoPanel.setLayout(new BorderLayout());
-		watchPageSavingInfoPanel.add(saveWatchPageInfoCheckBox, BorderLayout.NORTH);
-
 		BasicInfoTabPanel.setLayout(gridBagLayout12);
 		jMenuBar1.add(jMenuFile);
 		jMenuFile.add(jMenuOpen);
@@ -963,6 +966,9 @@ public class MainFrame extends JFrame {
 
 		ConvSaveButtonGroup.add(Conv_SaveFileRadioButton);
 		ConvSaveButtonGroup.add(Conv_SaveFolderRadioButton);
+
+		thumbInfoExtButtonGroup.add(saveThumbInfoExtTxtRadioButton);
+		thumbInfoExtButtonGroup.add(saveThumbInfoExtXmlRadioButton);
 
 		StatusPanel.setLayout(new BorderLayout());
 		StatusPanel.add(elapsedTimeBar,BorderLayout.WEST);
@@ -1751,7 +1757,14 @@ public class MainFrame extends JFrame {
 			extraModeField.getText(),
 			additionalOptionFiled.getText(),
 			wideAdditionalOptionFiled.getText(),
-			saveWatchPageInfoCheckBox.isSelected()
+			saveWatchPageInfoCheckBox.isSelected(),
+			saveThumbInfoCheckBox.isSelected(),
+			userFolderTextField.getText(),
+			saveThumbUserCheckBox.isSelected(),
+			saveThumbInfoExtTxtRadioButton.isSelected(),
+			changeMp4ExtCheckBox.isSelected(),
+			changeTitleIdCheckBox.isSelected(),
+			saveThumbnailJpgCheckBox.isSelected()
 		);
 	}
 /*
@@ -1875,6 +1888,14 @@ public class MainFrame extends JFrame {
 		additionalOptionFiled.setText(setting.getAddOption());
 		wideAdditionalOptionFiled.setText(setting.getWideAddOption());
 		saveWatchPageInfoCheckBox.setSelected(setting.isSaveWatchPage());
+		saveThumbInfoCheckBox.setSelected(setting.isSaveThumbInfo());
+		userFolderTextField.setText(setting.getUserFolder());
+		saveThumbUserCheckBox.setSelected(setting.isSaveThumbUser());
+		saveThumbInfoExtTxtRadioButton.setSelected(setting.isSaveThumbInfoAsText());
+		saveThumbInfoExtXmlRadioButton.setSelected(!setting.isSaveThumbInfoAsText());
+		changeMp4ExtCheckBox.setSelected(setting.isChangeMp4Ext());
+		changeTitleIdCheckBox.setSelected(setting.isChangeTitleId());
+		saveThumbnailJpgCheckBox.setSelected(setting.isSaveThumbnailJpg());
 	}
 
 	/**
@@ -2715,11 +2736,179 @@ s	 * @return javax.swing.JPanel
 		grid_x0_y0.fill = GridBagConstraints.HORIZONTAL;
 		grid_x0_y0.insets = INSETS_0_5_0_5;
 		grid_x0_y0.weightx = 1.0;
-		grid_x0_y0.weighty = 1.0;
+		grid_x0_y0.weighty = 0.0;
 		watchPageSavingTabbedPanel = new JPanel();
 		watchPageSavingTabbedPanel.setLayout(new GridBagLayout());
-		watchPageSavingTabbedPanel.add(watchPageSavingInfoPanel, grid_x0_y0);
+		watchPageSavingTabbedPanel.add(getWatchPageSavingInfoPanel(), grid_x0_y0);
+
+		GridBagConstraints grid_x0_y1 = new GridBagConstraints();
+		grid_x0_y1.gridx = 0;
+		grid_x0_y1.gridy = 1;
+		grid_x0_y1.anchor = GridBagConstraints.NORTH;
+		grid_x0_y1.fill = GridBagConstraints.HORIZONTAL;
+		grid_x0_y1.insets = INSETS_0_5_0_5;
+		grid_x0_y1.weightx = 1.0;
+		grid_x0_y1.weighty = 1.0;
+		watchPageSavingTabbedPanel.add(getFileNameInfoPanel(),grid_x0_y1);
 		return watchPageSavingTabbedPanel;
+	}
+
+	/**
+	 * getWatchPageSavingInfoPanel
+	 * @return watchPageSavingTabbedPanel
+	 */
+	private JPanel getWatchPageSavingInfoPanel() {
+		watchPageSavingInfoPanel = new JPanel();
+		watchPageSavingInfoPanel.setLayout(new GridBagLayout());
+		watchPageSavingInfoPanel.setBorder(
+			BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+			"情報保存設定"));
+
+		saveThumbInfoCheckBox.setText("動画情報を保存する（Videoと同じフォルダ）");
+		saveThumbInfoCheckBox.setSelected(true);
+		GridBagConstraints grid_x0_y0 = new GridBagConstraints();
+		grid_x0_y0.gridx = 0;
+		grid_x0_y0.gridy = 0;
+		grid_x0_y0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y0.fill = GridBagConstraints.HORIZONTAL;
+		grid_x0_y0.insets = INSETS_0_0_0_5;
+		grid_x0_y0.weightx = 1.0;
+		grid_x0_y0.weighty = 1.0;
+		grid_x0_y0.gridwidth = 2;
+		watchPageSavingInfoPanel.add(saveThumbInfoCheckBox, grid_x0_y0);
+
+		saveThumbInfoExtTxtRadioButton.setText("拡張子.txt");
+		saveThumbInfoExtTxtRadioButton.setSelected(true);
+		GridBagConstraints grid_x0_y1 = new GridBagConstraints();
+		grid_x0_y1.gridx = 0;
+		grid_x0_y1.gridy = 1;
+		grid_x0_y1.anchor = GridBagConstraints.NORTH;
+		grid_x0_y1.fill = GridBagConstraints.HORIZONTAL;
+		grid_x0_y1.insets = INSETS_0_5_0_5;
+		grid_x0_y1.weightx = 0.0;
+		grid_x0_y1.weighty = 1.0;
+		watchPageSavingInfoPanel.add(saveThumbInfoExtTxtRadioButton, grid_x0_y1);
+
+		saveThumbInfoExtXmlRadioButton.setText("拡張子.xml");
+		saveThumbInfoExtXmlRadioButton.setSelected(false);
+		GridBagConstraints grid_x1_y1 = new GridBagConstraints();
+		grid_x1_y1.gridx = 1;
+		grid_x1_y1.gridy = 1;
+		grid_x1_y1.anchor = GridBagConstraints.NORTHWEST;
+		grid_x1_y1.fill = GridBagConstraints.HORIZONTAL;
+		grid_x1_y1.insets = INSETS_0_0_0_5;
+		grid_x1_y1.weightx = 1.0;
+		grid_x1_y1.weighty = 1.0;
+		watchPageSavingInfoPanel.add(saveThumbInfoExtXmlRadioButton, grid_x1_y1);
+
+		saveThumbUserCheckBox.setText("投稿者名を保存する(上の動画情報ファイル)");
+		GridBagConstraints grid_x0_y2 = new GridBagConstraints();
+		grid_x0_y2.gridx = 0;
+		grid_x0_y2.gridy = 2;
+		grid_x0_y2.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2.fill = GridBagConstraints.HORIZONTAL;
+		grid_x0_y2.insets = INSETS_0_0_0_5;
+		grid_x0_y2.weightx = 1.0;
+		grid_x0_y2.weighty = 1.0;
+		grid_x0_y2.gridwidth = 2;
+		watchPageSavingInfoPanel.add(saveThumbUserCheckBox, grid_x0_y2);
+
+		userFolderLabel.setText("ユーザーフォルダ");
+		GridBagConstraints grid_x0_y3 = new GridBagConstraints();
+		grid_x0_y3.gridx = 0;
+		grid_x0_y3.gridy = 3;
+		grid_x0_y3.anchor = GridBagConstraints.WEST;
+		grid_x0_y3.fill = GridBagConstraints.HORIZONTAL;
+		grid_x0_y3.insets = INSETS_0_5_0_5;
+		grid_x0_y3.weightx = 0.0;
+		grid_x0_y3.weighty = 1.0;
+		watchPageSavingInfoPanel.add(userFolderLabel, grid_x0_y3);
+
+		userFolderTextField.setText("."+File.separator+"user");
+		GridBagConstraints grid_x1_y3 = new GridBagConstraints();
+		grid_x1_y3.gridx = 1;
+		grid_x1_y3.gridy = 3;
+		grid_x1_y3.anchor = GridBagConstraints.NORTHWEST;
+		grid_x1_y3.fill = GridBagConstraints.HORIZONTAL;
+		grid_x1_y3.insets = INSETS_0_0_0_5;
+		grid_x1_y3.weightx = 1.0;
+		grid_x1_y3.weighty = 1.0;
+		watchPageSavingInfoPanel.add(userFolderTextField, grid_x1_y3);
+
+		saveThumbnailJpgCheckBox.setText("サムネイル画像を保存する(videoと同じフォルダ)");
+		GridBagConstraints grid_x0_y4 = new GridBagConstraints();
+		grid_x0_y4.gridx = 0;
+		grid_x0_y4.gridy = 4;
+		grid_x0_y4.anchor = GridBagConstraints.NORTHWEST;
+		grid_x0_y4.fill = GridBagConstraints.HORIZONTAL;
+		grid_x0_y4.insets = INSETS_0_0_0_5;
+		grid_x0_y4.weightx = 1.0;
+		grid_x0_y4.weighty = 1.0;
+		grid_x0_y4.gridwidth = 2;
+		watchPageSavingInfoPanel.add(saveThumbnailJpgCheckBox, grid_x0_y4);
+
+		saveWatchPageInfoCheckBox.setText("watchページをhtmlファイルに保存する（.\\temp下）");
+		GridBagConstraints grid_x0_y9 = new GridBagConstraints();
+		grid_x0_y9.gridx = 0;
+		grid_x0_y9.gridy = 9;
+		grid_x0_y9.anchor = GridBagConstraints.NORTH;
+		grid_x0_y9.fill = GridBagConstraints.HORIZONTAL;
+		grid_x0_y9.insets = INSETS_0_0_0_5;
+		grid_x0_y9.weightx = 1.0;
+		grid_x0_y9.weighty = 1.0;
+		grid_x0_y9.gridwidth = 2;
+		watchPageSavingInfoPanel.add(saveWatchPageInfoCheckBox, grid_x0_y9);
+
+		return watchPageSavingInfoPanel;
+	}
+
+	/**
+	 * getfileNameInfoPanel
+	 * @return
+	 */
+	private JPanel getFileNameInfoPanel(){
+		fileNameInfoPanel = new JPanel();
+		fileNameInfoPanel.setLayout(new GridBagLayout());
+		fileNameInfoPanel.setBorder(
+			BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"保存ファイル名設定（特殊）", TitledBorder.LEADING,
+				TitledBorder.TOP, getFont(), Color.red));
+/*
+		fileNameInfoPanel.setBorder(
+			BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+			"保存ファイル名設定（特殊）"));
+ */
+		GridBagConstraints gridbagc = new GridBagConstraints();
+		JLabel fileNameInfoLanel = new JLabel();
+		fileNameInfoLanel.setText("この設定を行うと自動で変換できない場合があります");
+		fileNameInfoLanel.setForeground(Color.red);
+		fileNameInfoLanel.setFont(new Font(Font.SERIF,Font.BOLD,new Font(null).getSize()+1));
+		gridbagc.gridx = 0;
+		gridbagc.gridy = 0;
+		gridbagc.anchor = GridBagConstraints.WEST;
+		gridbagc.fill = GridBagConstraints.HORIZONTAL;
+		gridbagc.insets = INSETS_0_0_0_5;
+		gridbagc.weightx = 1.0;
+		fileNameInfoPanel.add(fileNameInfoLanel, gridbagc);
+		
+		changeMp4ExtCheckBox.setText("mp4保存動画の拡張子を.mp4にする（既定は.flv）");
+		gridbagc.gridx = 0;
+		gridbagc.gridy = 1;
+		gridbagc.anchor = GridBagConstraints.WEST;
+		gridbagc.fill = GridBagConstraints.HORIZONTAL;
+		gridbagc.insets = INSETS_0_0_0_5;
+		gridbagc.weightx = 1.0;
+		fileNameInfoPanel.add(changeMp4ExtCheckBox, gridbagc);
+
+		changeTitleIdCheckBox.setText("保存動画のIDをタイトルの後ろにつける（既定はタイトルの前）");
+		gridbagc.gridx = 0;
+		gridbagc.gridy = 2;
+		gridbagc.anchor = GridBagConstraints.WEST;
+		gridbagc.fill = GridBagConstraints.HORIZONTAL;
+		gridbagc.insets = INSETS_0_0_0_5;
+		gridbagc.weightx = 1.0;
+		fileNameInfoPanel.add(changeTitleIdCheckBox, gridbagc);
+		return fileNameInfoPanel;
 	}
 
 	/**

@@ -45,6 +45,7 @@ public class Converter extends Thread {
 	private String Tag;
 	private String VideoID;
 	private String VideoTitle;
+	private String VideoBaseName;
 	private String Time;
 	private JLabel Status;
 	private final ConvertStopFlag StopFlag;
@@ -56,7 +57,7 @@ public class Converter extends Thread {
 	public static final String OPTIONAL_EXT = "{Optional}.xml";	// オプショナルスレッドサフィックス
 	private static final String TMP_COMBINED_XML = "_tmp_comment.xml";
 	private static final String TMP_COMBINED_XML2 = "_tmp_optional.xml";
-	private static final String WATCH_PAGE = "_watchPage.txt";
+	private static final String THUMB_INFO = "_thumb_info";
 	private String OtherVideo;
 	private final String WatchInfo;
 	private final JLabel MovieInfo;
@@ -89,7 +90,6 @@ public class Converter extends Thread {
 	 */
 	private String result = "0";
 	private String dateUserFirst = "";
-	private boolean saveWatchPage;
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -118,7 +118,6 @@ public class Converter extends Thread {
 		MovieInfo = movieInfo;
 		MovieInfo.setText(" ");
 		Stopwatch = new Stopwatch(watch);
-		saveWatchPage = Setting.isSaveWatchPage();
 	}
 
 	public Converter(String url, String time, ConvertingSetting setting,
@@ -160,11 +159,14 @@ public class Converter extends Thread {
 	private Pattern ngWordPat;
 	private Pattern ngIDPat;
 	private CommandReplace ngCmd;
-	private Path watchPage;
-	private File watchFile;
+	private Path thumbInfo = new Path("null");
+	private File thumbInfoFile;
 
 	public File getVideoFile() {
 		return VideoFile;
+	}
+	private String getVideoBaseName() {
+		return VideoBaseName;
 	}
 	public ConvertingSetting getSetting(){
 		return Setting;
@@ -228,7 +230,8 @@ public class Converter extends Thread {
 	private boolean checkOK() {
 		sendtext("チェックしています");
 		if (!isSaveConverted() && !isSaveVideo()
-			&& !isSaveComment() && !isSaveOwnerComment()){
+			&& !isSaveComment() && !isSaveOwnerComment()
+			&& !Setting.isSaveThumbInfo()){
 			sendtext("何もすることがありません");
 			result = "1";
 			return false;
@@ -400,8 +403,8 @@ public class Converter extends Thread {
 				return false;
 			}
 		}
-		if (isSaveVideo() ||
-				isSaveComment() || isSaveOwnerComment()) {
+		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
+			|| Setting.isSaveThumbInfo()) {
 			// ブラウザセッション共有の場合はここでセッションを読み込む
 			UserSession = BrowserInfo.getUserSession(Setting);
 			BrowserKind = BrowserInfo.getValidBrowser();
@@ -438,7 +441,8 @@ public class Converter extends Thread {
 	}
 
 	private NicoClient getNicoClient() {
-		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()) {
+		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
+			|| Setting.isSaveThumbInfo()) {
 			sendtext("ログイン中");
 			NicoClient client = null;
 			if (BrowserKind != BrowserCookieKind.NONE){
@@ -472,8 +476,7 @@ public class Converter extends Thread {
 					result = "40";
 					return false;
 				}
-				VideoFile = new File(folder,
-						VideoID + VideoTitle + ".flv");
+				VideoFile = new File(folder, getVideoBaseName() + ".flv");
 			} else {
 				VideoFile = Setting.getVideoFile();
 			}
@@ -488,7 +491,8 @@ public class Converter extends Thread {
 				result = "42";
 				return false;
 			}
-			VideoFile = client.getVideo(VideoFile, Status, StopFlag);
+			VideoFile = client.getVideo(VideoFile, Status, StopFlag,
+				isVideoFixFileName() && Setting.isChangeMp4Ext());
 			if (stopFlagReturn()) {
 				result = "43";
 				return false;
@@ -565,7 +569,8 @@ public class Converter extends Thread {
 						}
 					}
 				}
-				commentTitle = VideoID + VideoTitle + prefix;
+				commentTitle = getVideoBaseName() + prefix;
+			//	commentTitle = (Setting.isChangeTitleId()? VideoTitle + VideoID : VideoID + VideoTitle) + prefix;
 				CommentFile = new File(folder, commentTitle + ".xml");
 			} else {
 				CommentFile = Setting.getCommentFile();
@@ -597,7 +602,7 @@ public class Converter extends Thread {
 			sendtext("オプショナルスレッドの保存");
 			if (optionalThreadID != null && !optionalThreadID.isEmpty() ){
 				if (isCommentFixFileName()) {
-					OptionalThreadFile = new File(folder, VideoID + VideoTitle + prefix + OPTIONAL_EXT);
+					OptionalThreadFile = new File(folder, getVideoBaseName() + prefix + OPTIONAL_EXT);
 				} else {
 					OptionalThreadFile = getOptionalThreadFile(Setting.getCommentFile());
 				}
@@ -667,7 +672,7 @@ public class Converter extends Thread {
 					result = "60";
 					return false;
 				}
-				OwnerCommentFile = new File(folder, VideoID + VideoTitle + OWNER_EXT);
+				OwnerCommentFile = new File(folder, getVideoBaseName() + OWNER_EXT);
 			} else {
 				OwnerCommentFile = Setting.getOwnerCommentFile();
 			}
@@ -697,67 +702,210 @@ public class Converter extends Thread {
 		return true;
 	}
 
-	private boolean saveWatchPage(NicoClient client) {
-		sendtext("ページの保存");
+	private boolean saveThumbInfo(NicoClient client) {
+		sendtext("動画情報の保存");
 		File folder = Setting.getVideoFixFileNameFolder();
 		/*ページの保存*/
-		if(Setting.isSaveWatchPage()){
-			if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()) {
-				folder = Setting.getVideoFixFileNameFolder();
-				if (isVideoFixFileName()) {
-					if (folder.mkdir()) {
-						System.out.println("Folder created: " + folder.getPath());
-					}
-					if (!folder.isDirectory()) {
-						sendtext("ページの保存先フォルダが作成できません。");
-						result = "A0";
-						return false;
-					}
-					watchFile = new File(folder,
-							VideoID + VideoTitle + ".txt");
-				} else {
-					watchFile = getWatchFileFrom(Setting.getVideoFile());
+		if(Setting.isSaveThumbInfo()){
+			String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
+			folder = Setting.getVideoFixFileNameFolder();
+			if (isVideoFixFileName()) {
+				if (folder.mkdir()) {
+					System.out.println("Folder created: " + folder.getPath());
 				}
-				sendtext("ページの保存中");
-				if (client == null){
-					sendtext("ページを保存するには動画かコメントを保存して下さい");
-					result = "A1";
+				if (!folder.isDirectory()) {
+					sendtext("動画情報の保存先フォルダが作成できません。");
+					result = "A0";
 					return false;
 				}
-				watchPage = client.getWatchPage();
-				if (stopFlagReturn()) {
-					result = "A3";
-					return false;
-				}
-				if (watchPage == null) {
-					sendtext("ページの取得に失敗" + client.getExtraError());
-					result = "A4";
-					return false;
-				}
-				Path.fileCopy(watchPage, watchFile);
+				thumbInfoFile = new File(folder, getVideoBaseName() + ext);
+			} else {
+				thumbInfoFile = getThumbInfoFileFrom(Setting.getVideoFile(), ext);
+			}
+			if(thumbInfoFile==null){
+				sendtext("動画情報ファイルがnullです");
+				result = "A1";
+				return false;
+			}
+			sendtext("動画情報の保存中");
+			if (client == null){
+				sendtext("ログインしてないのに動画情報の保存になりました");
+				result = "A2";
+				return false;
+			}
+			thumbInfo = client.getThumbInfoFile(Tag);
+			if (stopFlagReturn()) {
+				result = "A3";
+				return false;
+			}
+			if (thumbInfo == null) {
+				sendtext("動画情報の取得に失敗" + client.getExtraError());
+				result = "A4";
+				return false;
+			}
+			System.out.println("reading:" + thumbInfo);
+			if(!saveThumbUser(thumbInfo, client)){
+				System.out.println("投稿者情報の取得に失敗");
+				return false;
+			}
+			if(!saveThumbnailJpg(thumbInfo, client)){
+				System.out.println("サムネイル画像の取得に失敗");
+				return false;
+			}
+			//Path.fileCopy(thumbInfo, thumbInfoFile);
+			String text = Path.readAllText(thumbInfo.getPath(), "UTF-8");
+			text = text.replace("\n", "\r\n");
+			PrintWriter pw;
+			try {
+				pw = new PrintWriter(thumbInfoFile, "UTF-8");
+				pw.write(text);
+				pw.flush();
+				pw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if(thumbInfo.delete()){
+				System.out.println("Deleted:" + thumbInfo);
 			}
 		}
-		sendtext("ページの保存終了：" + watchFile.getPath());
+		sendtext("動画情報の保存終了");
 		return true;
 	}
 
-	private File getWatchFileFrom(File file) {
+	private boolean saveThumbUser(Path infoFile, NicoClient client) {
+		sendtext("投稿者情報の保存");
+		Path userThumbFile = null;
+		if(Setting.isSaveThumbUser()){
+			String infoXml = Path.readAllText(infoFile.getPath(), "UTF-8");
+			String userID = NicoClient.getXmlElement(infoXml, "user_id");
+			if(userID==null || userID.isEmpty() || userID.equals("none")){
+				sendtext("投稿者の情報がありません");
+				result = "A5";
+				return false;
+			}
+			System.out.println("投稿者:"+userID);
+			File userFolder = new File(Setting.getUserFolder());
+			if (userFolder.mkdirs()){
+				System.out.println("Folder created: " + userFolder.getPath());
+			}
+			if(!userFolder.isDirectory()){
+				sendtext("ユーザーフォルダが作成できません");
+				result = "A6";
+				return false;
+			}
+			userThumbFile = new Path(userFolder, userID + ".htm");
+			String html = null;
+			String ownerName = null;
+			if(!userThumbFile.canRead()){
+				userThumbFile = client.getThumbUserFile(userID, userFolder);
+			}
+			if(userThumbFile != null && userThumbFile.canRead()){
+				html = Path.readAllText(userThumbFile.getPath(), "UTF-8");
+				ownerName = NicoClient.getXmlElement(html, "title");
+			}
+			if(ownerName == null || ownerName.contains("非公開プロフィール")){
+				ownerName = null;
+				userThumbFile = client.getUserInfoFile(userID, userFolder);
+				if(userThumbFile != null && userThumbFile.canRead()){
+					html = Path.readAllText(userThumbFile.getPath(), "UTF-8");
+					ownerName = NicoClient.getXmlElement(html, "title");
+				}
+				if(ownerName==null){
+					sendtext("投稿者の情報の入手に失敗");
+					result = "A7";
+					return false;
+				}
+			}
+			int index = ownerName.lastIndexOf("さんのプロフィール‐");
+			if(index > 0){
+				ownerName = ownerName.substring(0,index);
+			}
+			index = ownerName.lastIndexOf("さんのユーザーページ ‐");
+			if(index > 0){
+				ownerName = ownerName.substring(0,index) + "(ニコレポ非公開)";
+			}
+			infoXml = infoXml.replace("</user_id>",
+				"</user_id>\n<user>" + ownerName + "</user>");
+			try {
+				PrintWriter pw = new PrintWriter(infoFile, "UTF-8");
+				pw.write(infoXml);
+				pw.flush();
+				pw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		sendtext("投稿者情報の保存終了");
+		return true;
+	}
+
+	private boolean saveThumbnailJpg(Path infoFile, NicoClient client) {
+		sendtext("サムネイル画像の保存");
+		File thumbnailJpg = null;
+		if(Setting.isSaveThumbnailJpg()){
+			String infoXml = Path.readAllText(infoFile.getPath(), "UTF-8");
+			String url = NicoClient.getXmlElement(infoXml, "thumbnail_url");
+			if(url==null || url.isEmpty() || !url.startsWith("http")){
+				sendtext("サムネイル画像の情報がありません");
+				result = "A8";
+				return false;
+			}
+			if (isVideoFixFileName()) {
+				File folder = Setting.getVideoFixFileNameFolder();
+				if (folder.mkdir()) {
+					System.out.println("Folder created: " + folder.getPath());
+				}
+				if (!folder.isDirectory()) {
+					sendtext("サムネイル画像の保存先フォルダが作成できません。");
+					result = "A9";
+					return false;
+				}
+				thumbnailJpg = new File(folder, getVideoBaseName() + ".jpg");
+			} else {
+				File file = Setting.getVideoFile();
+				if (file == null || !file.isFile() || file.getPath() == null) {
+					thumbnailJpg = mkTemp(Tag + "_thumnail.jpg");
+				}else{
+					String path = file.getPath();
+					int index = path.lastIndexOf(".");
+					if (index > path.lastIndexOf(File.separator)) {
+						path = path.substring(0, index) + ".jpg";		// 拡張子を変更
+					}
+					thumbnailJpg = new File(path);
+				}
+			}
+			sendtext("サムネイル画像の保存中");
+			if (!client.getThumbnailJpg(url, thumbnailJpg)) {
+				sendtext("サムネイル画像の取得に失敗" + client.getExtraError());
+				result = "AA";
+				return false;
+			}
+		}
+		sendtext("サムネイル画像の保存終了");
+		return true;
+	}
+
+	private File getThumbInfoFileFrom(File file, String ext) {
 		if (file == null || !file.isFile() || file.getPath() == null) {
-			return mkTemp(WATCH_PAGE);
+			return mkTemp(THUMB_INFO + ext);
 		}
 		String path = file.getPath();
 		int index = path.lastIndexOf(".");
 		if (index > path.lastIndexOf(File.separator)) {
 			path = path.substring(0, index);		// 拡張子を削除
 		}
-		return new File(path + WATCH_PAGE);
+		return new File(path + THUMB_INFO + ext);
 	}
 
 	private boolean makeNGPattern() {
 		sendtext("NGパターン作成中");
 		try{
-			String all_regex = "/((docomo |iPhone )?.* 18[46])|(18[46]( docomo | iPhone)? .*( docomo | iPhone)?)/";
-			ngWordPat = NicoXMLReader.makePattern(Setting.getNG_Word().replaceFirst("all", all_regex));
+			String all_regex = "/((docomo|iPhone|softbank) (white )?)?.* 18[46]|18[46] .*/";
+			String def_regex = "/((docomo|iPhone|softbank) (white )?)?18[46]/";
+			String ngWord = Setting.getNG_Word().replaceFirst("^all", all_regex).replace(" all", all_regex);
+			ngWord = ngWord.replaceFirst("^default", def_regex).replace(" default", def_regex);
+			ngWordPat = NicoXMLReader.makePattern(ngWord);
 			ngIDPat = NicoXMLReader.makePattern(Setting.getNG_ID());
 			ngCmd = new CommandReplace(Setting.getNGCommand(), Setting.getReplaceCommand());
 		}catch (Exception e) {
@@ -1062,7 +1210,7 @@ public class Converter extends Thread {
 				conv_name = "";
 			}
 			if (!Setting.isNotAddVideoID_Conv()) {//付加するなら
-				conv_name = VideoID + conv_name;
+				conv_name = getVideoBaseName();
 			}
 			if (conv_name.isEmpty()) {
 				sendtext("変換後のビデオファイル名が確定できません。");
@@ -1176,7 +1324,7 @@ public class Converter extends Thread {
 				if (!client.isLoggedIn()){
 					return;
 				}
-				if (!client.getVideoInfo(Tag, WatchInfo, Time, saveWatchPage)) {
+				if (!client.getVideoInfo(Tag, WatchInfo, Time, Setting.isSaveWatchPage())) {
 					if(Tag==null || Tag.isEmpty()){
 						sendtext("URL/IDの指定がありません " + client.getExtraError());
 					}else{
@@ -1188,6 +1336,8 @@ public class Converter extends Thread {
 					return;
 				}
 				VideoTitle = client.getVideoTitle();
+				VideoBaseName = Setting.isChangeTitleId()?
+					VideoTitle + VideoID : VideoID + VideoTitle;
 				sendtext(Tag + "の情報の取得に成功");
 			}
 
@@ -1207,7 +1357,7 @@ public class Converter extends Thread {
 			}
 
 			Stopwatch.show();
-			if(!saveWatchPage(client) || stopFlagReturn()){
+			if(!saveThumbInfo(client) || stopFlagReturn()){
 				return;
 			}
 
@@ -1922,14 +2072,16 @@ public class Converter extends Thread {
 	}
 
 	private void setVideoTitleIfNull(String path) {
-		if (VideoTitle == null){
-			VideoTitle = getTitleFromPath(path, VideoID);
-			int index = VideoTitle.lastIndexOf("[");
+		String videoTitle = VideoTitle;
+		if (videoTitle == null){
+			videoTitle = getTitleFromPath(path, VideoID);
+			int index = videoTitle.lastIndexOf("[");
 				//過去ログは[YYYY/MM/DD_HH:MM:SS]が最後に付く
 			if (index >= 0){
-				VideoTitle = VideoTitle.substring(0, index);
+				videoTitle = videoTitle.substring(0, index);
 			}
-			System.out.println("Title<" + VideoTitle + ">");
+			System.out.println("Title<" + videoTitle + ">");
+			VideoTitle = videoTitle;
 		}
 	}
 
@@ -1940,12 +2092,13 @@ public class Converter extends Thread {
 		for (int i = 0; i < list.length; i++) {
 			if (list[i].startsWith(VideoID)) {
 				String path = list[i];
-				if(!path.endsWith(".flv")){
-					OtherVideo = path;
-					continue;
+				if(path.endsWith(".flv") || 
+				   path.endsWith(".mp4") && Setting.isChangeMp4Ext()){
+					setVideoTitleIfNull(path);
+					return path;
 				}
-				setVideoTitleIfNull(path);
-				return path;
+				OtherVideo = path;
+				continue;
 			}
 		}
 		return null;

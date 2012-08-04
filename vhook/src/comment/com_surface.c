@@ -128,7 +128,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	int double_resized = FALSE;
 	/*
 	 * 臨界幅は同倍率の動画で544(512～600)px  動画が4:3か16:9に無関係
-	 * 　　　　fullコマンドで672(640～?)
+	 *  fullコマンドで672(640～?)
 	 */
 	double nicolimit_width = (double)NICO_WIDTH;
 	if(item->full){
@@ -206,8 +206,11 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			/*
 			 * 臨界幅リサイズ
 			 * 臨界幅は同倍率の動画で544(512～600)px  動画が4:3か16:9に無関係
-			 * 　　　　fullコマンドで672(640～?)
+			 *  fullコマンドで672(640～?)
 			 * 文字の大きさで臨界幅は変動する←正確に合わせるのは現状では無理？
+			 *  dFS=(15,24,39),LW=(512,640)
+			 *  rFS=round(LW/width*dFS) によって新しいフォントサイズが決まる。
+			 *  但しWindowsではwFS=rFS+1（漢字の場合）である。
 			 * コメントの幅が動画の幅に収まるように倍率を調整
 			 * ダブルリサイズ　→　無条件にリサイズ（判定済み）
 			 * 改行リサイズ　→　無条件になし（再判定→フォント幅を縮小）
@@ -311,83 +314,79 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		 * 改行リサイズかつ改行後の倍率で改行臨界幅(nicolimit_width)を超えた場合 → 改行リサイズキャンセル
 		 */
 		double linefeed_zoom = linefeedResizeScale(size,nb_line,data->fontsize_fix);
+		int dfs = COMMENT_FONT_SIZE[size];
+		int rfs = (int)round(0.5*(double)dfs);
+		double rsRate = (double)(rfs+1)/(double)(dfs+1);
 		resized_w = zoom_w * linefeed_zoom;
+		double resize = resized_w / zoom_w;
+		fprintf(log,"[comsurface/LFresize]comment %d LFzoom %.0f%% LFrateFS %.0f%% %s rFS %d\n",
+			item->no,linefeed_zoom*100.0,rsRate*100.0,COM_FONTSIZE_NAME[size],rfs);
 		if(location != CMD_LOC_DEF && isDoubleResize(resized_w, nicolimit_width, size, nb_line, log)){
 			// ダブルリサイズあり
 			double_resized = TRUE;
 			//ダブルリサイズ時には動画幅の２倍にリサイズされる筈
-			nicolimit_width = nicolimit_width / linefeed_zoom;	//*= 2.0;
+			double double_limit_width = nicolimit_width / resize;	//*= 2.0;
 
-/*
-			int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
-			if(h!=ret->h){
-				ret = adjustComment(ret,data,h);
-				fprintf(log,"[comsurface/DRadjust]comment %d adjust(%d, %d) %s\n",
-					item->no,ret->w,ret->h,(data->fontsize_fix?" fix":""));
-			}
-*/
 			/*
 			 * ダブルリサイズの臨界幅リサイズ
 			 * 文字の大きさで臨界幅は変動する
 			 * コメントの幅が臨界幅の2倍に収まるように倍率を調整
 			 */
-			double resize;
-			if(zoom_w > nicolimit_width){
+			if(resized_w > nicolimit_width){
 				/*
-				 * h<=[(Limit/ref->w)*PIX_HEIGHT]切り上げ
-				 * resized_widrh = N * resize
-				 * M * reszie < limit  M=1..N
-				 * M < limit / resize
+				 *  dFS=(15,24,39),LW=(512,640)
+				 *  rFS=round(LW/width*dFS) によって新しいフォントサイズが決まる。
+				 *  但しWindowsではwFS=rFS+1（漢字の場合）である。
 				 */
-				resize = zoom_w / COMMENT_FONT_SIZE[size];
-				//resized_w = floor(nicolimit_width / resize) * resize;
-				resized_w = nicolimit_width;
-				fprintf(log,"[comsurface/DR limit1]comment %d previous width %.0f chars %.0f resized %.0f limit %.0f\n",
-					item->no,zoom_w,resize,resized_w,nicolimit_width);
-				//if(resized_w+resize < nicolimit_width+32){
-					resized_w += resize;
-				//}
+				rfs = (int)round(nicolimit_width/resized_w*(double)dfs);
+				rsRate = (double)(rfs+1)/(double)(dfs+1);
+				resized_w = zoom_w * rsRate;
+				fprintf(log,"[comsurface/DR limit1]comment %d default width %.0f dFS %d resized %.0f limit %.0f\n",
+					item->no,zoom_w,dfs,resized_w,nicolimit_width);
 				zoom_w = resized_w;
-				fprintf(log,"[comsurface/DR limit2]comment %d width %.0f chars %.0f limit+ %.0f\n",
-					item->no,zoom_w,resize,nicolimit_width+32);
+				fprintf(log,"[comsurface/DR limit2]comment %d %s width %.0f rFS %d wrate %.0f%%\n",
+					item->no,COM_FONTSIZE_NAME[size],zoom_w,rfs,rsRate*100.0);
 				zoom_h = (zoom_w/(double)ret->w / font_width_rate) * font_height_rate * (double)ret->h;
 				//zoomy = zoom_h/(double)ret->h;
 			}
 
 			//意図したダブルリサイズならば高さ基準でリサイズした方が良い？
-			double wrate = (nicolimit_width+32) / zoom_w;
+			//実際には高さを1行高くして見えない行を作ることもある
+			double wrate = double_limit_width / zoom_w;
 			double hrate = (double)NICO_HEIGHT / zoom_h;
-			fprintf(log,"[comsurface/DR detail]comment %d  w %.2f%% h %.2f%%%s\n",
+			fprintf(log,"[comsurface/DR detail]comment %d w %.1f%% h %.1f%%%s\n",
 				item->no,wrate*100.0,hrate*100.0,(data->fontsize_fix?" fix":""));
 			if(size == CMD_FONT_BIG && 8 < nb_line && nb_line < 16){
 				//コメント行数により矯正
 				double resized_h = COMMENT_BIG_DR_HEIGHT[nb_line];
 				hrate = (double)resized_h / zoom_h;
 				resized_w = zoom_w * hrate;
-				if(resized_w < zoom_w){
+				fprintf(log,"[comsurface/DR AdjByWiki]comment %d maybe(%.0f,%.0f) w %.2f%% h %.2f%% font_width %.2f%%\n",
+					item->no,resized_w,resized_h,wrate*100.0,hrate*100.0,font_width_rate*100.0);
+				//ダブルリサイズして画面内に表示が出るとは思えないとする
+				if(resized_w > nicolimit_width ){
 					zoom_w = resized_w;
-					zoom_h = resized_h;
-					wrate = hrate;
-					fprintf(log,"[comsurface/DR AdjByWiki]comment %d (%.0f,%.0f) w %.2f%% h %.2f%% font_width %.2f%%\n",
-						item->no,zoom_w,zoom_h,wrate*100.0,hrate*100.0,font_width_rate*100.0);
 				}
 			}
 			else {
 				double h2 = wrate / hrate;
-				if(385 < zoom_h && zoom_h < 512){
-					//コメント高が動画以上でありダブルリサイズにより動画高に合わせたと見る。
-					zoom_w *= hrate;
-					if(zoom_w > nicolimit_width+32){
-						//横幅が大きすぎ
-						font_width_rate *= (nicolimit_width+32) / zoom_w;
-						zoom_w = nicolimit_width+32;
+				if(385 < zoom_h && zoom_h < 768){
+					//コメント高が動画以上でありダブルリサイズにより動画高に合わせたと見る。?
+					resized_w = zoom_w * hrate;
+					if(resized_w > nicolimit_width && resized_w > zoom_w){
+						//横幅が大きいなら補正
+						fprintf(log,"[comsurface/DR hrate1]comment %d resized_width %.0f %.2f%% font_width %.2f%%\n",
+							item->no,resized_w,hrate*100.0,font_width_rate*100.0);
+						zoom_w = resized_w;
+					}else{
+						//元のママ
+						fprintf(log,"[comsurface/DR hrate0]comment %d resized_width %.0f %.2f%% font_width %.2f%%\n",
+								item->no,resized_w,hrate*100.0,font_width_rate*100.0);
+						//zoom_w = resized_w;
 					}
-					fprintf(log,"[comsurface/DR hrate]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
-						item->no,zoom_w,hrate*100.0,font_width_rate*100.0);
 				}else
 				if(zoom_h <= 385){
-					//コメント高が動画以下であり横幅で決めるしか手がないがこれはやらない。
-					//zoom_w *= wrate;
+					//コメント高が動画以下であり横幅で決めるしか手がないがこれは既に計算したはず。
 					fprintf(log,"[comsurface/DR wrate]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
 						item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
 				}
@@ -396,18 +395,13 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 				if(0.75 <= h2 && h2 <= 1.5){
 					//横幅基準で高さが動画より微妙になるなら動画高に合わせる 今はやらない
 					//zoom_w *= hrate;
-					//if(zoom_w > nicolimit_width+32){
-						//横幅が大きすぎ
-					//	font_width_rate *= (nicolimit_width+32) / zoom_w;
-					//	zoom_w = nicolimit_width+32;
-					//}
 					fprintf(log,"[comsurface/DR hrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
 						item->no,zoom_w,hrate*100.0,font_width_rate*100.0);
 				}
 				else
 				{
 					//高さとアス比が動画と全然違うので合わせられない
-					//zoom_w *= wrate;
+					//zoom_w *= hrate;
 					fprintf(log,"[comsurface/DR wrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
 						item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
 				}
@@ -421,17 +415,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			/* zoomx *= linefeedResizeScale(size,nb_line,data->fontsize_fix); */
 		}
 	}
-/*
-	//	コメント高さ補正
-	if(!linefeed_resized && !double_resized){
-		int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
-		if(h!=ret->h){
-			ret = adjustComment(ret,data,h);
-			fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
-				item->no,ret->w,ret->h,(data->fontsize_fix?" fix":""));
-		}
-	}
-*/
+
 	if(location != CMD_LOC_DEF){
 		// ue shitaコマンドのみリサイズあり
 
@@ -443,7 +427,6 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		 * ダブルリサイズ　→　nicolimit_widthは2倍済 で判定
 		 * 両方なし　→　今回判定
 		 */
-		double resize;
 		if(linefeed_resized && zoom_w > nicolimit_width){
 			fprintf(log,"[comsurface/AfterLF]comment %d previous width%.0f > limit%.0f, font_width %.2f%%%s\n",
 				item->no,zoom_w,nicolimit_width,font_width_rate * 100.0,(data->fontsize_fix?" fix":""));
@@ -451,23 +434,21 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		}
 		if(!linefeed_resized && !double_resized && zoom_w > nicolimit_width){
 			/*
-			 * h<=[(Limit/ref->w)*PIX_HEIGHT]切り上げ
-			 * resized_widrh = N * resize
-			 * M * reszie < limit  M=1..N
-			 * M < limit / resize
+			 *  dFS=(15,24,39),LW=(512,640)
+			 *  rFS=round(LW/width*dFS) によって新しいフォントサイズが決まる。
+			 *  但しWindowsではwFS=rFS+1（漢字の場合）である。
+			 *
 			 */
-			resize = zoom_w / COMMENT_FONT_SIZE[size];
-			resized_w = floor(nicolimit_width / resize) * resize;
-			//resized_w = nicolimit_width;
-			fprintf(log,"[comsurface/LWresize]comment %d previous width %.0f chars %.0f resized %.0f limit %.0f\n",
-				item->no,zoom_w,resize,resized_w,nicolimit_width);
-			//if(resized_w+resize < nicolimit_width+32){
-				resized_w += resize;
-			//}
+			int dfs = data->font_pixel_size[size]>>data->fontsize_fix;
+			double rsRate = (round(nicolimit_width/zoom_w*(double)dfs)+1.0)
+					/ (double)(dfs+1);
+			resized_w = zoom_w * rsRate;
+			fprintf(log,"[comsurface/LWresize]comment %d previous width %.0f dFS %d resize %.1f%% resized %.0f limit %.0f\n",
+				item->no,zoom_w,dfs,rsRate*100.0,resized_w,nicolimit_width);
 			limit_width_resized = TRUE;
 			zoom_w = resized_w;
-			fprintf(log,"[comsurface/LWresize]comment %d width %.0f chars %.0f limit+ %.0f\n",
-				item->no,zoom_w,resize,nicolimit_width+32);
+			fprintf(log,"[comsurface/LWresize]comment %d width %.0f dFS %d wrate %.1f%%\n",
+				item->no,zoom_w,dfs,rsRate*100.0);
 		}
 	}
 	// ue shitaコマンドのみリサイズ終わり

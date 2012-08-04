@@ -32,13 +32,15 @@ public class Path extends File{
 	Path(File file){
 		super(file.getAbsolutePath());
 	}
-	Path(File dir, String name){
+	public Path(File dir, String name){
 		super(dir, name);
 	}
 	Path(Path dirPath, String name){
 		super(dirPath, name);
 	}
-
+	Path(String dirName, String name) {
+		super(dirName, name);
+	}
 //	@Override
 //	public String getName(){
 //		return super.getName();

@@ -128,6 +128,13 @@ public class ConvertingSetting {
 	private String addOption;
 	private String wideAddOption;
 	private boolean saveWatchPage;
+	private boolean saveThumbInfo;
+	private String userFolder;
+	private boolean saveThumbUser;
+	private boolean saveThumbInfoAsText;
+	private boolean changeMp4Ext;
+	private boolean changeTitleId;
+	private boolean saveThumbnailJpg;
 
 	private Map<String, String> replaceOptions;
 
@@ -317,7 +324,14 @@ public class ConvertingSetting {
 			String extra_mode,
 			String add_option,
 			String wide_add_option,
-			boolean save_watch_page
+			boolean save_watch_page,
+			boolean save_thumb_info,
+			String user_folder,
+			boolean save_thumb_user,
+			boolean save_thumb_info_as_text,
+			boolean change_mp4_ext,
+			boolean change_text_id,
+			boolean save_thumbnail_jpg
 		)
 	{
 		this(	mailaddress,
@@ -416,6 +430,13 @@ public class ConvertingSetting {
 		addOption = add_option;
 		wideAddOption = wide_add_option;
 		saveWatchPage = save_watch_page;
+		saveThumbInfo = save_thumb_info;
+		userFolder = user_folder;
+		saveThumbUser = save_thumb_user;
+		saveThumbInfoAsText = save_thumb_info_as_text;
+		changeMp4Ext = change_mp4_ext;
+		changeTitleId = change_text_id;
+		saveThumbnailJpg = save_thumbnail_jpg;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -682,6 +703,27 @@ public class ConvertingSetting {
 	public boolean isSaveWatchPage(){
 		return saveWatchPage;
 	}
+	public boolean isSaveThumbInfo() {
+		return saveThumbInfo;
+	}
+	public String getUserFolder(){
+		return userFolder;
+	}
+	public boolean isSaveThumbUser() {
+		return saveThumbUser;
+	}
+	public boolean isSaveThumbInfoAsText(){
+		return saveThumbInfoAsText;
+	}
+	public boolean isChangeMp4Ext(){
+		return changeMp4Ext;
+	}
+	public boolean isChangeTitleId(){
+		return changeTitleId;
+	}
+	public boolean isSaveThumbnailJpg(){
+		return saveThumbnailJpg;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -784,7 +826,13 @@ public class ConvertingSetting {
 	static final String PROP_ADD_OPTION = "AddOption";
 	static final String PROP_WIDE_ADD_OPTION = "WideAddOption";
 	static final String PROP_SAVE_WATCH_PAGE = "SaveWatchPage";
-
+	static final String PROP_SAVE_THUMB_INFO = "SaveThumbInfo";
+	static final String PROP_USER_FOLDER = "UseFolder";
+	static final String PROP_SAVE_THUMB_USER = "SaveThumbUser";
+	static final String PROP_SAVE_THUMB_AS_TEXT = "SaveThumbAsText";
+	static final String PROP_CHANGE_MP4_EXT = "ChangeMp4Ext";
+	static final String PROP_CHANGE_TITLE_ID = "ChangeTitleId";
+	static final String PROP_SAVE_THUMBNAIL_JPG = "SaveThumbnailJpg";
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
 	 */
@@ -950,7 +998,13 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ADD_OPTION, setting.getAddOption());
 		prop.setProperty(PROP_WIDE_ADD_OPTION, setting.getWideAddOption());
 		prop.setProperty(PROP_SAVE_WATCH_PAGE, Boolean.toString(setting.isSaveWatchPage()));
-
+		prop.setProperty(PROP_SAVE_THUMB_INFO, Boolean.toString(setting.isSaveThumbInfo()));
+		prop.setProperty(PROP_USER_FOLDER, setting.getUserFolder());
+		prop.setProperty(PROP_SAVE_THUMB_USER, Boolean.toString(setting.isSaveThumbUser()));
+		prop.setProperty(PROP_SAVE_THUMB_AS_TEXT, Boolean.toString(setting.isSaveThumbInfoAsText()));
+		prop.setProperty(PROP_CHANGE_MP4_EXT, Boolean.toString(setting.isChangeMp4Ext()));
+		prop.setProperty(PROP_CHANGE_TITLE_ID, Boolean.toString(setting.isChangeTitleId()));
+		prop.setProperty(PROP_SAVE_THUMBNAIL_JPG, Boolean.toString(setting.isSaveThumbnailJpg()));
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1152,7 +1206,14 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_EXTRA_MODE, ""),
 			prop.getProperty(PROP_ADD_OPTION, ""),
 			prop.getProperty(PROP_WIDE_ADD_OPTION, ""),
-			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_WATCH_PAGE, "true")) 
+			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_WATCH_PAGE, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_THUMB_INFO, "false")),
+			prop.getProperty(PROP_USER_FOLDER, "."+File.separator+"user"),
+			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_THUMB_USER, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_THUMB_AS_TEXT, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_CHANGE_MP4_EXT, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_CHANGE_TITLE_ID, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_THUMBNAIL_JPG, "false"))
 		);
 	}
 

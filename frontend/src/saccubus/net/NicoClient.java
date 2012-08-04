@@ -444,13 +444,12 @@ public class NicoClient {
 			}
 			br.close();
 			con.disconnect();
+			if(getVideoTitle()==null||getVideoTitle().equals("null")){
+				found = getThumbInfoFile(tag) != null;
+			}
 			PrintWriter pw;
-			if(saveWatchPage || !found){
-				if(found){
-					titleHtml = Path.mkTemp(tag + "_" + VideoTitle + ".htm");
-				} else {
-					titleHtml = Path.mkTemp(tag + "title.htm");
-				}
+			if(!found || saveWatchPage){
+				titleHtml = Path.mkTemp(tag + "watch.htm");
 				pw = new PrintWriter(titleHtml, encoding);
 				pw.write(sb.toString());
 				pw.flush();
@@ -534,24 +533,17 @@ public class NicoClient {
 			ex.printStackTrace();
 			return false;
 		}
-		/*
-		if (time != null && !time.isEmpty()) {
-			if (!getWayBackKey(time)) { // WayBackKey
-				System.out.println("It may be wrong Date.");
-				return false;
-			}
-		}
-		*/
 		return true;
 	}
 
 	private byte[] buf = new byte[1024 * 1024];
 
 	private String VideoUrl = null;
-	private String ContentType;
+	private String ContentType = null;
 	private String ContentDisp;
 
-	public File getVideo(final File file, final JLabel status, final ConvertStopFlag flag) {
+	public File getVideo(File file, final JLabel status, final ConvertStopFlag flag,
+			boolean renameMp4) {
 		try {
 			System.out.print("Getting video size...");
 			if (VideoUrl == null) {
@@ -570,7 +562,6 @@ public class NicoClient {
 				return null;
 			}
 			InputStream is = con.getInputStream();
-			OutputStream os = new FileOutputStream(file);
 			if(Debug){
 				NicoMap videoMap = new NicoMap();
 				videoMap.putConnection(con);
@@ -578,11 +569,21 @@ public class NicoClient {
 			}
 
 			ContentType = con.getHeaderField("Content-Type");
+			if(ContentType == null) ContentType = "";
 			ContentDisp = con.getHeaderField("Content-Disposition");
 			int max_size = con.getContentLength();	// -1 when invalid
 			System.out.print("size="+(max_size/1000)+"Kbytes");
 			System.out.println(", type=" + ContentType + ", " + ContentDisp);
 			System.out.print("Downloading video...");
+			if(renameMp4 && ContentType.contains("mp4")){
+				String filepath = file.getPath();
+				int index = filepath.lastIndexOf(".");
+				if(filepath.lastIndexOf(File.separator) < index){
+					filepath = filepath.substring(0, index) + ".mp4";
+				}
+				file = new File(filepath);
+			}
+			OutputStream os = new FileOutputStream(file);
 			int size = 0;
 			int read = 0;
 			debugsInit();
@@ -1021,11 +1022,6 @@ public class NicoClient {
 		} else if (VideoLength >= 300 && VideoLength < 600) {
 			return "500";
 		} else {
-/*
-		} if (VideoLength < 600){		//↓数値計算では正しい数はでない。実際の分布による。
-			return Integer.toString((VideoLength+59)/60 * 100);
-		} else {
-*/
 			return "1000";
 		}
 	}
@@ -1094,6 +1090,7 @@ public class NicoClient {
 		return economy;
 	}
 
+/*
 	private String getKeyValue(String src, String keyword, char delimc){
 		String dest = null;
 		char escapec = '\\';
@@ -1159,10 +1156,10 @@ public class NicoClient {
 	}
 	public Path getWatchPage() {
 		Path filePath = null;
-		if(titleHtml  == null)
+		if(thumbxml  == null)
 			return null;
 		try {
-			String text = Path.readAllText(titleHtml.getPath(),"UTF-8");
+			String text = Path.readAllText(thumbxml.getPath(),"UTF-8");
 			int index;
 			String threadId = getKeyValue(text, "v:", ',');
 			String videoId = getKeyValue(text, "id:\t", ',');
@@ -1178,9 +1175,9 @@ public class NicoClient {
 			ownerName = ("user/" + ownerName).replace("\"><strong>", "' '");
 			String tags = getKeyValue(text, "tags:", ']');
 			//tags = convertUniList(tags);
-			String fileName = titleHtml.getPath();
+			String fileName = thumbxml.getPath();
 			index = fileName.lastIndexOf(".");
-			if (index >= titleHtml.getPath().lastIndexOf(File.separator)) {
+			if (index >= thumbxml.getPath().lastIndexOf(File.separator)) {
 				fileName = fileName.substring(0, index);
 			}
 			fileName += ".txt";
@@ -1206,5 +1203,213 @@ public class NicoClient {
 			return null;
 		}
 		return filePath;
+	}
+*/
+	public Path getThumbInfoFile(String tag){
+		final String THUMBINFO_URL = "http://ext.nicovideo.jp/api/getthumbinfo/"; 
+		String url = THUMBINFO_URL + tag;
+		System.out.print("Getting thumb Info...");
+		Path thumbXml = null;
+		try {
+			HttpURLConnection con = urlConnectGET(url);
+			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
+				System.out.println("ng.\nCan't getThumbInfo:" + url);
+				return null;
+			}
+			String new_cookie = detectCookie(con);
+			if (new_cookie == null || new_cookie.isEmpty()) {
+				System.out.println("ng.\nCan't getThumbInfo: cannot get cookie.");
+			}else{
+				Cookie += "; " + new_cookie;
+			}
+			String encoding = con.getContentEncoding();
+			if (encoding == null){
+				encoding = "UTF-8";
+			}
+			BufferedReader br = new BufferedReader(new InputStreamReader(con
+					.getInputStream(), encoding));
+			System.out.print("ok.\nSaving thumb Info...");
+			String ret;
+			StringBuilder sb = new StringBuilder();
+			while ((ret = br.readLine()) != null) {
+				Stopwatch.show();
+				sb.append(ret + "\n");
+			}
+			br.close();
+			con.disconnect();
+			String s = sb.toString();
+			String title = getVideoTitle();
+			if(title==null){
+				if(s!=null && s.contains("title")){
+					title = safeFileName(getXmlElement(s, "title"));
+				}else{
+					title = "DELETED";
+				}
+				VideoTitle = title;
+			}
+			PrintWriter pw;
+			thumbXml  = Path.mkTemp(tag + "_" + title + ".xml");
+			;
+			pw = new PrintWriter(thumbXml, encoding);
+			pw.write(sb.toString());
+			pw.flush();
+			pw.close();
+			if(thumbXml==null || sb.indexOf("status=\"ok\"") < 0){ 
+				System.out.println("ng.\nSee file:" + thumbXml);
+				return null;
+			}
+			System.out.println("ok.");
+			return thumbXml;
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
+	public static String getXmlElement(String xml, String tag){
+		String dest;
+		int index = xml.indexOf("<"+tag+">");
+		int endIx = xml.indexOf("</", index+2);
+		if(index < 0 || endIx < 0)
+			return null;
+		index += tag.length() + 2;
+		dest = xml.substring(index, endIx);
+		return dest;
+	}
+
+	public Path getThumbUserFile(String userID, File userFolder){
+		final String THUMBUSER_URL = "http://ext.nicovideo.jp/thumb_user/"; 
+		String url = THUMBUSER_URL + userID;
+		System.out.print("Getting thumb User...");
+		Path userHtml = null;
+		try {
+			HttpURLConnection con = urlConnectGET(url);
+			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
+				System.out.println("ng.\nCan't getThumbUser:" + url);
+				return null;
+			}
+			String new_cookie = detectCookie(con);
+			if (new_cookie == null || new_cookie.isEmpty()) {
+				System.out.println("ng.\nCan't getThumbUser: cannot get cookie.");
+			}else{
+				Cookie += "; " + new_cookie;
+			}
+			String encoding = con.getContentEncoding();
+			if (encoding == null){
+				encoding = "UTF-8";
+			}
+			BufferedReader br = new BufferedReader(new InputStreamReader(con
+					.getInputStream(), encoding));
+			System.out.print("ok.\nSaving thumb user...");
+			String ret;
+			StringBuilder sb = new StringBuilder();
+			while ((ret = br.readLine()) != null) {
+				Stopwatch.show();
+				sb.append(ret + "\n");
+			}
+			br.close();
+			con.disconnect();
+			PrintWriter pw;
+			userHtml  = new Path(userFolder,userID + ".htm");
+			pw = new PrintWriter(userHtml, encoding);
+			pw.write(sb.toString());
+			pw.flush();
+			pw.close();
+			System.out.println("ok.");
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		return userHtml;
+	}
+
+	public Path getUserInfoFile(String userID, File userFolder) {
+		final String USER_URL = "http://www.nicovideo.jp/user/"; 
+		String url = USER_URL + userID;
+		System.out.print("Getting User Info...");
+		Path userHtml = null;
+		try {
+			HttpURLConnection con = urlConnectGET(url);
+			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
+				System.out.println("ng.\nCan't getUserInfo:" + url);
+				return null;
+			}
+			String new_cookie = detectCookie(con);
+			if (new_cookie == null || new_cookie.isEmpty()) {
+				System.out.println("ng.\nCan't getUserInfo: cannot get cookie.");
+			}else{
+				Cookie += "; " + new_cookie;
+			}
+			String encoding = con.getContentEncoding();
+			if (encoding == null){
+				encoding = "UTF-8";
+			}
+			BufferedReader br = new BufferedReader(new InputStreamReader(con
+					.getInputStream(), encoding));
+			System.out.print("ok.\nSaving user info...");
+			String ret;
+			StringBuilder sb = new StringBuilder();
+			while ((ret = br.readLine()) != null) {
+				Stopwatch.show();
+				sb.append(ret + "\n");
+				if(ret.contains("</title>")){
+					break;
+				}
+			}
+			br.close();
+			con.disconnect();
+			String text = sb.toString();
+			int index = text.indexOf("<title");
+			if (index < 0){
+				index = 0;
+			}
+			text = text.substring(index);
+			PrintWriter pw;
+			userHtml  = new Path(userFolder,userID + ".htm");
+			pw = new PrintWriter(userHtml, encoding);
+			pw.write(text);
+			pw.flush();
+			pw.close();
+			System.out.println("ok.");
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		return userHtml;
+	}
+
+	public boolean getThumbnailJpg(String url, File thumbnalJpgFile) {
+		System.out.print("Getting thumbnail...");
+		try {
+			HttpURLConnection con = urlConnectGET(url);
+			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
+				System.out.println("ng.\nCan't getThumbnailJpg:" + url);
+				return false;
+			}
+			String new_cookie = detectCookie(con);
+			if (new_cookie == null || new_cookie.isEmpty()) {
+				System.out.println("ng.\nCan't getThumbnailJpg: cannot get cookie.");
+			}else{
+				Cookie += "; " + new_cookie;
+			}
+			InputStream is = con.getInputStream();
+			FileOutputStream fos = new FileOutputStream(thumbnalJpgFile);
+			byte[] buf = new byte[4096];
+			System.out.print("ok.\nSaving thumbnail...");
+			int len = 0;
+			while ((len = is.read(buf, 0, buf.length)) > 0) {
+				fos.write(buf, 0, len);
+				Stopwatch.show();
+			}
+			System.out.println("ok.");
+			is.close();
+			fos.flush();
+			fos.close();
+			con.disconnect();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 }
