@@ -11,4 +11,6 @@
 　http://saccubus.sourceforge.jp/
 
 ♪ライセンス
-　ライセンスは GPL v3以降です。同梱のLICENSE.txtをご覧ください。
+　ライセンスは GPL v3以降です。詳しくは公式サイトの該当ページ
+をご覧下さい。
+　http://saccubus.sourceforge.jp/%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9
