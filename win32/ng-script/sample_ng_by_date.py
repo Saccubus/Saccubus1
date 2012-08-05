@@ -20,12 +20,10 @@
 '''
 ここ三ヶ月のコメントだけ表示します
 '''
-
-import time
-
 def shouldCommentBeIgnored(*arg):
 	com = dict(arg) #おまじないです
-	
+	# 現在の日付を得るために、timeモジュールを使用します
+	import time
 	# コメントの投稿された時間（1970年１月１日０時からのミリ秒）を取り出します
 	comtime = int(com['date']);
 	# 今日の時間を取得します
