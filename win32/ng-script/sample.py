@@ -24,11 +24,14 @@
 def shouldCommentBeIgnored(*arg):
 	com = dict(arg)
 	'''
-	さきゅばす２では、ユーザーが自由にPythonスクリプトを用いた条件で
-	NGコメントを決定することができます。
+	さきゅばす２では、ユーザーがPythonスクリプトを用いることでNGコメントを柔軟に指定することができます。
+
+	＜セキュリティに注意＞
+	特にPythonにセキュリティ上の制限などは掛けていませんので、他人の書いたNGスクリプトなどを用いる時はご注意ください。
+	'''
+
+	'''
 	以下の情報が使えます。
-	特にPythonに制限はかけていません。
-	（つまり：　他のユーザーの書いたNGスクリプトを用いる場合は気をつけてください）
 	'''
 	int(com['thread']) #スレッドID
 	int(com['date']) # コメント投稿日時（1970年1月1日からのミリ秒）
@@ -39,8 +42,17 @@ def shouldCommentBeIgnored(*arg):
 	str(com["user_id"]) #ユーザーID
 	str(com["mail"]) #コマンド欄の内容
 	str(com["message"]) #メッセージ
-	str(com["anonymity"]) == 'true' #匿名コメントなら'true'
+	str(com["anonymity"]) == 'true' #匿名コメントならTrue
 	str(com["leaf"]) == 'true' #よくわからない
-	str(com["premium"]) == 'true' #プレミアム会員なら'true'
-	str(com["fork"]) == 'true' #投稿者コメントなら'true'
-	return False # Trueをreturnすると、そのコメントは削除され表示されません。Falseでは表示されます。
+	str(com["premium"]) == 'true' #プレミアム会員ならTrue
+	str(com["fork"]) == 'true' #投稿者コメントならTrue
+
+	'''
+	サンプル：何も無視しない
+	この関数がTrueを返すと、コメントが無視されます。Falseを返した場合は、無視されません。
+	この場合、どんな場合もFalseを返しているので、コメントは一切無視されません
+	'''
+	return False
+	
+	
+	
