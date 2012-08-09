@@ -56,6 +56,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		data->video_length = INTEGER_MAX;
 	}
 	data->nico_width_now = setting->nico_width_now;
+	data->aspect_mode = setting->aspect_mode;
 	data->font_w_fix_r = setting->font_w_fix_r;
 	data->font_h_fix_r = setting->font_h_fix_r;
 	data->original_resize = setting->original_resize;
@@ -353,7 +354,7 @@ int initCommentData(DATA* data, CDATA* cdata,FILE* log,const char* path, int max
 	if (cdata->enable_comment){
 		fprintf(log,"[main/init]%s comment is enabled.\n",com_type);
 		//コメントデータ
-		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length, data->nico_width_now)){
+		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length, data->nico_width_now, com_type)){
 			fprintf(log,"[main/init]initialized %s comment.\n",com_type);
 		}else{
 			fprintf(log,"[main/init]failed to initialize %s comment.",com_type);
@@ -453,7 +454,7 @@ int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 	if(!data->process_first_called){
 		data->width_scale = (double)(data->vout_width) / (double)(data->nico_width_now);
 		fprintf(log,"[main/process]screen size:%dx%d aspect:%.3f->%.3f scale:%.0f%%.\n",
-			surf->w,surf->h,data->nico_width_now==NICO_WIDTH_WIDE?1.7777:1.3333,
+			surf->w,surf->h,data->aspect_mode? 1.7777 : 1.3333,
 			(double)data->vout_width/(double)data->vout_height,data->width_scale*100.0);
 		fflush(log);
 	}

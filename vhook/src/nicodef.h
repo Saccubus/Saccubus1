@@ -28,7 +28,7 @@ static char* const COM_LOC_NAME[3] = {
 };
 
 #define GET_CMD_LOC(x)	((x) & 0x03)
-//#define GET_CMD_DURATION(x)	((x) >> 8 & 0xff)
+#define GET_CMD_DURATION(x)	((x) >> 16 & 0xffff)
 #define GET_CMD_FULL(x)	((x) & 4)
 //#define GET_CMD_COLOR24(x)	((x) & 0x0080)
 

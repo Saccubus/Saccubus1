@@ -35,12 +35,15 @@ public class Chat {
 
 	private static final int CMD_LOC_FULL = 4;
 
-	/**
-	 * Location bit 15-8 ’Ç‰Á
-	 * 0: ]—ˆA1`255: —•b”
-	 */
 	@SuppressWarnings("unused")
-	private static final int CMD_LOC_SECONDS_MASK = 0x0000ff00;
+	private static final int CMD_LOC_WAKU = 8;
+	/**
+	 * Location bit 31-16 ’Ç‰Á
+	 * 0: ]—ˆ(Šù’è’l)A1`65535: —•b”
+	 */
+	private static final int CMD_MAX_SECONDS = 0x0000ffff;
+	private static final int CMD_LOC_SECONDS_BITS = 16;
+	private static final int CMD_LOC_SECONDS_MASK = CMD_MAX_SECONDS << CMD_LOC_SECONDS_BITS;
 
 	@SuppressWarnings("unused")
 	private static final int CMD_SIZE_MAX = 3;
@@ -124,9 +127,10 @@ public class Chat {
 		Date = Integer.parseInt(date_str);
 		// System.out.println("date:" + date_str);
 	}
-	String strsec = "";
-	int sec = 0;
 */
+ 	String strsec = "";
+	int sec = 0;
+
 	public void setMail(String mail_str) {
 		// System.out.println("mail:" + mail_str);
 		Color = CMD_COLOR_DEF;
@@ -146,20 +150,18 @@ public class Chat {
 				Location |= CMD_LOC_BOTTOM;
 				isLocationAssigned = true;
 			}
-	/*
 			// —•b”
 			else if (str.startsWith("@") && strsec.isEmpty()) {
 				strsec = str.substring(1);
-				if (strsec != null && !strsec.isEmpty()){
+				if (!strsec.isEmpty()){
 					try {
 						sec = Integer.parseInt(strsec);
-						Location |= ((sec & 255) << 8) & CMD_LOC_SECONDS_MASK;
+						Location |= ((sec & CMD_MAX_SECONDS) << CMD_LOC_SECONDS_BITS) & CMD_LOC_SECONDS_MASK;
 					} catch(NumberFormatException e){
 						e.printStackTrace();
 					}
 				}
 			}
-	*/
 			// ƒtƒ‹ƒRƒ}ƒ“ƒh
 			else if (str.equals("full")){
 				Location |= CMD_LOC_FULL;

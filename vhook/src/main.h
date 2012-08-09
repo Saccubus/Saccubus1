@@ -43,6 +43,7 @@ struct DATA{
 	int video_length;
 //	int aspect100;		// アスペクト比*100	Not used now
 	int nico_width_now;	// 元動画の横幅
+	int aspect_mode;		// 0: 512, 1:640
 	int vout_width;
 	int vout_height;
 	int vout_x;
@@ -96,6 +97,7 @@ typedef struct SETTING{
 	int shadow_kind;
 	int nico_width_now;	// 元動画の横幅
 	//int nico_height_now = 384
+	int aspect_mode;		// 0: 512, 1:640
 	const char* input_size;
 	const char* set_size;
 	const char* pad_option;

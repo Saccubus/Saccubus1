@@ -17,4 +17,6 @@
 
 #define null NULL
 
+#define	ABS(a)	(((a)<0)?-(a):(a))
+
 #endif /*MYDEF_H_*/

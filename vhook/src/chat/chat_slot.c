@@ -16,6 +16,7 @@
 int initChatSlot(FILE* log,CHAT_SLOT* slot,int max_slot,CHAT* chat){
 	slot->max_item=max_slot;
 	slot->chat = chat;
+	slot->com_type = chat->com_type;
 	slot->item = malloc(sizeof(CHAT_SLOT_ITEM) * max_slot);
 	if(slot->item == NULL){
 		fputs("failed to malloc for comment slot.\n",log);
@@ -42,18 +43,26 @@ void closeChatSlot(CHAT_SLOT* slot){
 	free(slot->item);
 }
 
-void deleteChatSlot(CHAT_SLOT* slot,CHAT_SLOT_ITEM* item){
+void deleteChatSlot(CHAT_SLOT_ITEM* item,FILE* log){
+	CHAT_ITEM* citem = item->chat_item;
+	if(log){
+		fprintf(log,"[chat_slot/addChat]comment %d vpos:%d color:%d:#%06x %5s %6s  %d - %d(vpos:%d) erased.\n",
+			citem->no,citem->vstart-TEXT_AHEAD_SEC,citem->color,convSDLcolor(citem->color24),
+			COM_LOC_NAME[citem->location],COM_FONTSIZE_NAME[citem->size],
+			citem->vstart,citem->vend,citem->vpos);
+		fflush(log);
+	}
 	item->chat_item=NULL;
 	SDL_FreeSurface(item->surf);
 	item->surf = NULL;
 	item->used = FALSE;
 }
-
+/*
 void deleteChatSlotFromIndex(CHAT_SLOT* slot,int index){
 	CHAT_SLOT_ITEM* item = &slot->item[index];
 	deleteChatSlot(slot,item);
 }
-
+*/
 /*
  * スロットに追加する。
  */
@@ -83,16 +92,17 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	CHAT_SLOT_ITEM* slot_item = &slot->item[cnt];
 	/*空きが無ければ強制的に作る。*/
 	if(slot_item->used){
-		deleteChatSlotFromIndex(slot,cnt);
+		deleteChatSlot(slot_item,data->log);
 	}
 	//この時点で追加
 	slot_item->chat_item = item;
 	slot_item->surf = surf;
 	// 弾幕モードの高さの設定　16:9でオリジナルリサイズでない場合は上下にはみ出す
 	int limit_height = video_height;
+	double scale = data->width_scale;
 	if(!data->original_resize){
 		//comment area height is independent from video height
-		limit_height = NICO_HEIGHT * data->width_scale;
+		limit_height = NICO_HEIGHT * scale;
 	}
 	int y_min = (video_height>>1) - (limit_height>>1);
 	int y_max = y_min + limit_height +
@@ -105,21 +115,21 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 		y = y_min;
 	}
 	if(data->debug)
-	fprintf(data->log,"[chat_slot/add]width %d, height %d, widthscale %.3f, limitheight %d, y_min %d, y_max %d y %d\n",
-		video_width, video_height, data->width_scale, limit_height, y_min, y_max, y);
-	setspeed(data->comment_speed,slot_item,video_width,data->nico_width_now,data->width_scale);
+	fprintf(data->log,"[chat_slot/add speed0]width %d, height %d, widthscale %.3f, limitheight %d, y_min %d, y_max %d y %d\n",
+		video_width, video_height, scale, limit_height, y_min, y_max, y);
+	setspeed(data->comment_speed,slot_item,video_width,data->nico_width_now,scale);
 	if(data->debug){
-		fprintf(data->log,"[chat_slot/add speed]comment speed %.2fpix/sec.\n",slot_item->speed*100.0);
+		fprintf(data->log,"[chat_slot/add speed1]comment speed %.2fpix/sec.\n",slot_item->speed*100.0);
 		fprintf(data->log,"[chat_slot/add speed2]vpos %d..%d(%d) duration(%d)\n",
-			(int)item->vstart,(int)item->vend,(int)item->vpos,(int)(item->vend-item->vstart));
+			item->vstart,item->vend,item->vpos,(item->vend+1-item->vstart));
 	}
 	int running;
 	int first_comment=TRUE;
 	CHAT_SLOT_ITEM* bang_slot = NULL;
-	VPOS_T start = 0;
-	VPOS_T end = 0;
-	VPOS_T bang_vpos = 0;
-	VPOS_T bang_end = 0;
+	int start = 0;
+	int end = 0;
+	int bang_vpos = 0;
+	int bang_end = 0;
 	double bang_xpos[2];
 	do{
 		running = FALSE;
@@ -167,45 +177,65 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			}
 
 			//vendは最後の数vposは揺らぐので仮に17vposとして計算
-			end -= (VPOS_T)17;
-			int x_t1 = getX(start,slot_item,video_width,data->width_scale);
-			int x_t2 = getX(end,slot_item,video_width,data->width_scale);
-			int o_x_t1 = getX(start,other_slot,video_width,data->width_scale);
-			int o_x_t2 = getX(end,other_slot,video_width,data->width_scale);
-			double dxstart[2] = {(double)x_t1,(double)x_t1+(double)surf->w-1.0};
-			double dxend[2] = {(double)x_t2,(double)x_t2+(double)surf->w-1.0};
-			double o_dxstart[2] = {(double)o_x_t1,(double)o_x_t1+(double)other_slot->surf->w-1.0};
-			double o_dxend[2] = {(double)o_x_t2,(double)o_x_t2+(double)other_slot->surf->w-1.0};
+			end -= 3;
+			int aspect_mode = data->aspect_mode;
+			double x_t1 = getX(start,slot_item,video_width,scale,aspect_mode);
+			double x_t2 = getX(end,slot_item,video_width,scale,aspect_mode);
+			double o_x_t1 = getX(start,other_slot,video_width,scale,aspect_mode);
+			double o_x_t2 = getX(end,other_slot,video_width,scale,aspect_mode);
+			double dxstart[2] = {x_t1, x_t1 + surf->w};
+			double dxend[2] = {x_t2, x_t2 + surf->w};
+			double o_dxstart[2] = {o_x_t1, o_x_t1 + other_slot->surf->w};
+			double o_dxend[2] = {o_x_t2, o_x_t2 + other_slot->surf->w};
 			double dtmp[2];
-			int w_off = data->nico_width_now==NICO_WIDTH_WIDE? 64 : 0;
-			w_off *= data->width_scale;
-			double range[2] = {(double)(w_off + 1),(double)(video_width - 1 - w_off)};
-			//当たり判定　追い越し無し前提
-			if(data->debug)
-				fprintf(data->log,"at %d check (%.0f,%.0f) (%.0f,%.0f)\n",(int)end,dxend[0],dxend[1],o_dxend[0],o_dxend[1]);
-			if(set_crossed(dtmp,dxend,o_dxend) && set_crossed(bang_xpos,range,dtmp)){
-				y = other_y_next1;
-				running = TRUE;
-				if(data->debug){
-					fprintf(data->log,"--> (%.0f,%.0f)\n",dtmp[0],dtmp[1]);
-					bang_vpos = getVposItem(data,slot_item,0,dtmp[slot_item->speed>=0]);
-					bang_end = end;
-					bang_slot = other_slot;
-				}
-				break;
+			double range[2];
+			if(aspect_mode==0){
+				range[0] = (-16)*scale;
+				range[1] = video_width+(16)*scale;
+			}else{
+				range[0] = (-16+64)*scale;
+				range[1] = video_width+(16-64)*scale;
 			}
 			if(data->debug)
-				fprintf(data->log,"at %d check (%.0f,%.0f) (%.0f,%.0f)\n",(int)start,dxstart[0],dxstart[1],o_dxstart[0],o_dxstart[1]);
-			if(set_crossed(dtmp,dxstart,o_dxstart) && set_crossed(bang_xpos,range,dtmp)){
-				y = other_y_next1;
-				running = TRUE;
-				if(data->debug){
-					fprintf(data->log,"--> (%.0f,%.0f)\n",dtmp[0],dtmp[1]);
-					bang_vpos = start;
-					bang_end = end;
-					bang_slot = other_slot;
+				fprintf(data->log,"range (%.0f,%.0f)\n",range[0],range[1]);
+			//当たり判定　追い越し無し前提
+			if(data->debug)
+				fprintf(data->log,"at %d(end) check [%.1f,%.1f] [%.1f,%.1f]y[%d] item %d\n",
+					end,dxend[0],dxend[1],o_dxend[0],o_dxend[1],other_y,other_item->no);
+			if(set_crossed(dtmp,dxend,o_dxend) && d_width(dtmp)>=scale){
+				if(set_crossed(bang_xpos,range,dtmp)){
+					y = other_y_next1;
+					running = TRUE;
+					if(data->debug){
+						fprintf(data->log,"--> x[%.1f,%.1f]y[%d]\n",dtmp[0],dtmp[1],other_y);
+						bang_vpos = getVposItem(data,slot_item,0,dtmp[slot_item->speed>=0.0f]);
+						bang_end = end;
+						bang_slot = other_slot;
+					}
+					break;
 				}
-				break;
+				if(data->debug){
+					fprintf(data->log,"out of range [%.1f,%.1f]\n",dtmp[0],dtmp[1]);
+				}
+			}
+			if(data->debug)
+				fprintf(data->log,"at %d(start) check [%.1f,%.1f] [%.1f,%.1f]y[%d] item %d\n",
+					start,dxstart[0],dxstart[1],o_dxstart[0],o_dxstart[1],other_y,other_item->no);
+			if(set_crossed(dtmp,dxstart,o_dxstart) && d_width(dtmp)>=scale){
+				if(set_crossed(bang_xpos,range,dtmp)){
+					y = other_y_next1;
+					running = TRUE;
+					if(data->debug){
+						fprintf(data->log,"--> [%.1f,%.1f]y[%d]\n",dtmp[0],dtmp[1],other_y);
+						bang_vpos = start;
+						bang_end = end;
+						bang_slot = other_slot;
+					}
+					break;
+				}
+				if(data->debug){
+					fprintf(data->log,"out of range [%.1f,%.1f]\n",dtmp[0],dtmp[1]);
+				}
 			}
 		}
 	}while(running);
@@ -229,10 +259,10 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 		int bang_x1 = bang_xpos[0];
 		int bang_x2 = bang_xpos[1];
 		CHAT_ITEM* item = bang_slot->chat_item;
-		fprintf(data->log,"[chat_slot/add bang]bang_vpos:%d..%d(%d) with %d:%d..%d(vpos:%d %d) x:%d..%d y:%d\n",
-			(int)bang_vpos,(int)bang_end,(int)(bang_end-bang_vpos),
-			item->no,(int)item->vstart,(int)item->vend,(int)item->vpos,(int)(item->vend - item->vstart),
-			bang_x1,bang_x2,bang_slot->y);
+		fprintf(data->log,"[chat_slot/add bang]bang_vpos:%d..%d(%d) item %d x[%d,%d] y[%d] %d..%d(vpos:%d)\n",
+			bang_vpos,bang_end,(bang_end+1-bang_vpos),
+			item->no,bang_x1,bang_x2,bang_slot->y,
+			item->vstart,item->vend,item->vpos);
 	}
 	return y;
 }
@@ -245,7 +275,7 @@ void resetChatSlotIterator(CHAT_SLOT* slot){
 /*
  * イテレータを得る
  */
-CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,VPOS_T now_vpos){
+CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos){
 	int *i = &slot->iterator_index;
 	int max_item = slot->max_item;
 	CHAT_ITEM* item;
@@ -257,23 +287,20 @@ CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,VPOS_T now_vpos){
 		}
 		item = slot_item->chat_item;
 		if(item==NULL)continue;
-		if(now_vpos > item->vend &&
-			(item->location!=CMD_LOC_DEF||now_vpos > item->vend+TEXT_AHEAD_SEC)){
-		//if(now_vpos < item->vstart || now_vpos > item->vend){
-			return slot_item;
+		if(now_vpos < item->vstart || now_vpos > item->vend){
+			// slotから消す必要はない？
+			//return slot_item;
 		}
 	}
 	return NULL;
 }
-
-//min<=maxならばTRUE
-int is_valid_pair(double pair[2]){
-	return pair[0]<=pair[1];
-}
-
 //後ろ２つのpairの重なりを最初のpairに設定する。
 int set_crossed(double ret[2],double pair1[2],double pair2[2]){
 	ret[0] = MAX(pair1[0],pair2[0]);
 	ret[1] = MIN(pair1[1],pair2[1]);
-	return is_valid_pair(ret);
+	return ret[0] < ret[1];
+}
+//幅
+double d_width(double pair[2]){
+	return pair[1]-pair[0];
 }

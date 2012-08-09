@@ -21,6 +21,8 @@ struct CHAT_SLOT{
 	CHAT_SLOT_ITEM* item;
 	//リファレンス
 	CHAT* chat;
+	//コメントタイプ
+	const char* com_type;	//user owner optional
 };
 #include "../main.h"
 //初期化
@@ -28,13 +30,13 @@ int initChatSlot(FILE* log,CHAT_SLOT* slot,int max_slot,CHAT* chat);
 void closeChatSlot(CHAT_SLOT* slot);
 //追加、削除
 int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int video_height);
-void deleteChatSlot(CHAT_SLOT* slot,CHAT_SLOT_ITEM* item);
+void deleteChatSlot(CHAT_SLOT_ITEM* item,FILE* log);
 void deleteChatSlotFromIndex(CHAT_SLOT* slot,int index);
 //イテレータ
 void resetChatSlotIterator(CHAT_SLOT* slot);
-CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,VPOS_T now_vpos);
+CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos);
 //pair計算
-int is_valid_pair(double pair[2]);
 int set_crossed(double ret[2],double pair1[2],double pair2[2]);
+double d_width(double pair[2]);
 
 #endif /*CHAT_SLOT_H_*/

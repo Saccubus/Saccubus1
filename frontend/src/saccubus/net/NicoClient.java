@@ -376,12 +376,16 @@ public class NicoClient {
 	//RC2になってタイトルが変更、使わなくなった。
 	//private static final String TITLE_PARSE_STR_END = "</title>";
 	private static final String TITLE_END = "‐";
-	private static final String TITLE_ZERO_DIV = "<div class=\"videoDetailExpand\">";
+	private static final String TITLE_ZERO_DIV = "id=\"videoHeaderDetail\"";
+	private static final String TITLE_ZERO_DUMMY = "<title>ニコニコ動画:Zero</title>";
 
 	public boolean getVideoHistoryAndTitle(String tag, String watchInfo, boolean saveWatchPage) {
+		if(getThumbInfoFile(tag) != null && !saveWatchPage){
+			return true;
+		}
+		boolean found = false;
 		String url = "http://www.nicovideo.jp/watch/" + tag + watchInfo;
 		System.out.print("Getting video history...");
-		boolean found = false;
 		boolean zero_title = false;
 		try {
 			HttpURLConnection con = urlConnectGET(url);
@@ -412,41 +416,41 @@ public class NicoClient {
 				Stopwatch.show();
 				sb.append(ret + "\n");
 				if(found) continue;
-				if ((index = ret.indexOf(TITLE_PARSE_STR_START)) >= 0) {
-					int index2 = ret.lastIndexOf(TITLE_END);
-					if (index2 < 0){
-						debug("■readLine(" + encoding + "):" + ret + "\n");
-						continue;
-					}
-					found = true;
-					VideoTitle = safeFileName(
-							ret.substring(index+TITLE_PARSE_STR_START.length(),
-							index2));
-					System.out.print("<" + VideoTitle + ">...");
-					continue;
-				}
 				if(zero_title){
-					index = ret.indexOf(">") + 1;
-					int index2 = ret.indexOf("</");
-					if(index2 < index){
+					ret = getXmlElement(ret, "h2");
+					if(ret==null){
 						continue;
 					}
 					found = true;
 					zero_title = false;
-					VideoTitle = safeFileName(ret.substring(index,index2));
+					if(getVideoTitle()==null){
+						VideoTitle = safeFileName(ret);
+					}
 					System.out.print("<" + VideoTitle + ">...");
 					continue;
 				}
-				if(ret.contains(TITLE_ZERO_DIV)){
+				if(ret.contains(TITLE_ZERO_DIV) || ret.contains(TITLE_ZERO_DUMMY)){
 					zero_title = true;
+					continue;
+				}
+				if (ret.contains(TITLE_PARSE_STR_START)) {
+					ret = getXmlElement(ret, "title");
+					index = 0;
+					int index2 = ret.lastIndexOf(TITLE_END);
+					if (index2 < 0){
+						continue;
+					}
+					found = true;
+					if(getVideoTitle()==null){
+						VideoTitle = safeFileName(ret.substring(index,index2));
+					}
+					System.out.print("<" + VideoTitle + ">...");
 					continue;
 				}
 			}
 			br.close();
 			con.disconnect();
-			if(getVideoTitle()==null||getVideoTitle().equals("null")){
-				found = getThumbInfoFile(tag) != null;
-			}
+			found = getVideoTitle()==null;
 			PrintWriter pw;
 			if(!found || saveWatchPage){
 				titleHtml = Path.mkTemp(tag + "watch.htm");
@@ -455,7 +459,8 @@ public class NicoClient {
 				pw.flush();
 				pw.close();
 				if(!found)
-					System.out.println(" Title not found. <" + Path.toUnixPath(titleHtml) + "> saved.");
+					System.out.print(" Title not found.");
+				System.out.println(" <" + Path.toUnixPath(titleHtml) + "> saved.");
 			}
 			System.out.println("ok.");
 			Cookie += "; " + new_cookie;
@@ -568,8 +573,10 @@ public class NicoClient {
 				videoMap.printAll(System.out);
 			}
 
-			ContentType = con.getHeaderField("Content-Type");
-			if(ContentType == null) ContentType = "";
+			if(ContentType==null){
+				ContentType = con.getHeaderField("Content-Type");
+				if(ContentType == null) ContentType = "";
+			}
 			ContentDisp = con.getHeaderField("Content-Disposition");
 			int max_size = con.getContentLength();	// -1 when invalid
 			System.out.print("size="+(max_size/1000)+"Kbytes");
@@ -1242,10 +1249,11 @@ public class NicoClient {
 			if(title==null){
 				if(s!=null && s.contains("title")){
 					title = safeFileName(getXmlElement(s, "title"));
-				}else{
-					title = "DELETED";
 				}
 				VideoTitle = title;
+			}
+			if(ContentType==null){
+				ContentType = getXmlElement(s, "movie_type");
 			}
 			PrintWriter pw;
 			thumbXml  = Path.mkTemp(tag + "_" + title + ".xml");

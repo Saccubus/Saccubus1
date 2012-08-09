@@ -8,17 +8,17 @@
 int process(DATA* data,SDL_Surface* surf,const int now_vpos){
 	FILE* log = data->log;
 	//ユーザコメント
-	if(!process_chat(data,&data->user, "usr", surf,now_vpos)){
+	if(!process_chat(data,&data->user, surf,now_vpos)){
 		fprintf(log,"[process/process]failed to process %s comment.\n", "User");
 		return FALSE;
 	}
 	//オーナコメント
-	if(!process_chat(data,&data->owner, "own", surf,now_vpos)){
+	if(!process_chat(data,&data->owner, surf,now_vpos)){
 		fprintf(log,"[process/process]failed to process %s comment.\n", "Owner");
 		return FALSE;
 	}
 	//オプショナルコメント
-	if(!process_chat(data, &data->optional, "opt", surf, now_vpos)){
+	if(!process_chat(data, &data->optional, surf, now_vpos)){
 		fprintf(log,"[process/process]failed to process %s comment.\n", "Optional");
 		return FALSE;
 	}

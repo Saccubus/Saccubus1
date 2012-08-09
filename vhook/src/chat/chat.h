@@ -4,12 +4,12 @@
 #include <SDL/SDL.h>
 #include "../struct_define.h"
 
-typedef int VPOS_T;
+//typedef int VPOS_T;
 
 struct CHAT_ITEM{
 	//場所の特定
 	int no;
-	VPOS_T vpos;
+	int vpos;
 	int location;
 	int full;	// whether full ommand?
 	//文字の修飾
@@ -18,11 +18,12 @@ struct CHAT_ITEM{
 	SDL_Color color24;
 	Uint16* str;
 	//内部処理で使う
-	VPOS_T vstart;
-	VPOS_T vend;		//last vpos of ceheck y
-	//VPOS_T verase;	//last vpos of show
-	int showed;
-	// int duration;	// vend - vstart
+	int vstart;		//begin vpos of check y
+	int vend;		//last vpos of check y
+	int vappear;		//start display when wide(640x360)
+	int vvanish;		//end display when wide
+	int showed;			// whether checked y pos, 0: not showed, 1:showed and not finished, finished
+	int duration;	// vend - vstart
 	  // ＠秒数の場合  指定値
 	  // ue shitaの場合  300 vpos
 	  // 4:3の場合  400 vpos
@@ -40,6 +41,10 @@ struct CHAT{
 	CHAT_ITEM* item;
 	//リファレンス
 	CHAT_SLOT* slot;
+	//プール
+	CHAT_POOL* pool;
+	//コメントタイプ
+	const char* com_type;
 };
 
 #include "chat_slot.h"
@@ -49,11 +54,11 @@ struct CHAT_SET{
 };
 
 //初期化
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width);
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,const char* com_type);
 void closeChat();
 //イテレータ
 void resetChatIterator(CHAT* chat);
-CHAT_ITEM* getChatShowed(CHAT* chat,VPOS_T now_vpos);
+CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos);
 SDL_Color convColor24(int c);
 
 #endif /*CHAT_H_*/

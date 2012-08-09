@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include "chat.h"
+#include "chat_pool.h"
 #include "../mydef.h"
 #include "../nicodef.h"
 #include "../unicode/uniutil.h"
@@ -12,7 +13,7 @@ SDL_Color convColor24(int color);
  * 出力 CHAT chat 領域確保、項目設定
  * 出力 CHAT_SLOT chat->slot ← slot ポインタ設定のみ
  */
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width){
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,const char* com_type){
 	int i;
 	int max_no = INTEGER_MIN;
 	int min_no = INTEGER_MAX;
@@ -52,7 +53,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	int size;
 	int color;
 	int str_length;
-	// int duration;
+	int duration;
 	int full;
 	SDL_Color color24;
 	Uint16* str;
@@ -60,6 +61,14 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		item = &chat->item[i];
 		item->chat = chat;
 		item->showed = FALSE;
+		/*
+		 * +00 :32bit :no      :コメント番号
+		 * +04 :32bit :vpos    :Vodeo Position? (再生位置)
+		 * +08 :32bit :location:位置(コマンド ue shita naka、及びfullコマンドかどうか)
+		 * +0C :32bit :size    :大きさ(big small medium)
+		 * +10 :32bit :color   :色(0~15=カラー名,-1～-2^24:24bitカラーコートの補数)
+		 * +14 :32bit :str_len :文字バイト数(\0を含むバイト数)
+		 */
 		//コメント番号
 		if(fread(&no,sizeof(no),1,com_f) <= 0){
 			fputs("[chat/init]failed to read comment number.\n",log);
@@ -124,23 +133,16 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		}else{
 			color24 = COMMENT_COLOR[CMD_COLOR_DEF];
 		}
-		// bit 15-8 を＠秒数とみなす　saccubus1.26α1以降
-		//duration = GET_CMD_DURATION(location);
-		location = GET_CMD_LOC(location);
-	/*
-		if (duration == 0){	// 通常コメント
-			if (location != CMD_LOC_DEF){
-				duration = TEXT_SHOW_SEC - TEXT_AHEAD_SEC;
-			} else {
-				duration = TEXT_SHOW_SEC;
-			}
-		} else {	// @秒数
+		// bit 31-16 を＠秒数とみなす　saccubus1.37以降
+		duration = GET_CMD_DURATION(location);
+		if (duration != 0){	// @秒数
 			duration *= VPOS_FACTOR;
 		}
-	*/
+		location = GET_CMD_LOC(location);
+
 		//変数セット
 		item->no = no;
-		item->vpos = (VPOS_T)vpos;
+		item->vpos = vpos;
 		item->location = location;
 		item->size = size;
 		item->color = color;
@@ -148,30 +150,28 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		item->str = str;
 		/*内部処理より*/
 		if(location != CMD_LOC_DEF){
-			item->vstart = (VPOS_T)vpos;
-			item->vend = (VPOS_T)(vpos + TEXT_SHOW_SEC_S - 1);
+			item->vstart = vpos;
+			item->vend = (vpos + TEXT_SHOW_SEC_S - 1);
 			//vend is last tick of LIFE, so must be - 1 done.
 			// item->vend = vpos + duration - 1;
+			item->vappear = item->vstart;
+			item->vvanish = item->vend;
 		}else{
-			item->vstart = (VPOS_T)(vpos - TEXT_AHEAD_SEC);
-			item->vstart -= (VPOS_T)25;	//for debug
-			item->vend = (VPOS_T)(vpos + TEXT_SHOW_SEC_S - 1);
+			item->vstart = (vpos - TEXT_AHEAD_SEC);
+			item->vend = (vpos + TEXT_SHOW_SEC_S - 1);
 			//vend is last tick of LIFE, so must be - 1 done.
 			// item->vend = item->vstart + duration - 1;
-			if(nico_width==NICO_WIDTH_WIDE){
-				//TEXT_SHOW_SEC is 1.00sec (100vpos) longer. but reset after added to slot.
-				item->vstart -= (VPOS_T)25;	//100 * 1/4
-				item->vend += (VPOS_T)75;	//100 * 3/4
-			}
+			item->vappear = item->vstart - 50;
+			item->vvanish = item->vend + 50;
 		}
 		item->full = full;
-		// item->duration = duration;
+		item->duration = duration;
 		item->color24 = color24;
 		if (video_length > 0){
-			VPOS_T fix = item->vend - (VPOS_T)video_length;
+			int fix = item->vend - video_length;
 			if(fix > 0){
-				if(fix > (VPOS_T)4)
-					fix = (VPOS_T)4;
+				if(fix > 4)
+					fix = 4;
 				//item->verase -= fix;
 				item->vend -= fix;
 				item->vpos -= fix;
@@ -184,6 +184,18 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	fclose(com_f);
 	chat->max_no = max_no;
 	chat->min_no = min_no;
+	chat->com_type = com_type;
+
+	if (chat->max_item > 0){
+		//コメントプール（vposが更新された時に取り出したchat_itemを一時保管）
+		if(initChatPool(log, chat, chat->max_item)){
+			fprintf(log,"[main/init]initialized %s comment pool %d.\n",com_type,chat->max_item);
+		}else{
+			fprintf(log,"[main/init]failed to initialize %s comment pool.",com_type);
+			fflush(log);
+			return FALSE;
+		}
+	}
 	return TRUE;
 }
 //BE,LE共通
@@ -201,6 +213,7 @@ void closeChat(CHAT* chat){
 	for(i=0;i<max_item;i++){
 		free((void*)chat->item[i].str);
 	}
+	free(chat->pool);
 	free(chat->item);
 }
 
@@ -213,13 +226,14 @@ void resetChatIterator(CHAT* chat){
 /*
  * イテレータを得る
  */
-CHAT_ITEM* getChatShowed(CHAT* chat,VPOS_T now_vpos){
-	int *i = &chat->iterator_index;
-	int max_item = chat->max_item;
+CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos){
+	//int *i = &chat->iterator_index;
+	//int max_item = chat->max_item;
 	CHAT_ITEM* item;
-	for(;*i<max_item;(*i)++){
-		item = &chat->item[*i];
-		if(now_vpos >= item->vstart && now_vpos <= item->vend && !item->showed){
+	for(;chat->iterator_index<chat->max_item;chat->iterator_index++){
+		item = &chat->item[chat->iterator_index];
+		int vpos = now_vpos + TEXT_AHEAD_SEC;
+		if(vpos >= item->vstart && vpos <= item->vend && !item->showed){
 			return item;
 		}
 	}
