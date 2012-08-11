@@ -55,6 +55,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	int str_length;
 	int duration;
 	int full;
+	int script;
 	SDL_Color color24;
 	Uint16* str;
 	for(i=0;i<max_item;i++){
@@ -124,19 +125,35 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			full = 0;
 		}
 		// color24bit ?
-		if(color < 0){
-		//	color = color & 0x00ffffff;
-			color24 = convColor24(color & 0x00ffffff);
-			color = -24;
-		}else if(color < CMD_COLOR_MAX){
-			color24 = COMMENT_COLOR[color];
-		}else{
-			color24 = COMMENT_COLOR[CMD_COLOR_DEF];
-		}
+		color24 = getSDL_color(color);
 		// bit 31-16 を＠秒数とみなす　saccubus1.37以降
 		duration = GET_CMD_DURATION(location);
 		if (duration != 0){	// @秒数
 			duration *= VPOS_FACTOR;
+		}
+		// nico script
+		script = GET_CMD_SCRIPT(location);
+		if(script!=0){
+			//check str
+			int c1 = str[1];
+			if(c1 == UNICODE_GYAKU){
+				int c3 = str[3];
+				if(c3 == UNICODE_TOU){
+					script = SCRIPT_GYAKU|SCRIPT_OWNER;
+				}else if (c3 == UNICODE_DE){
+					script = SCRIPT_GYAKU|SCRIPT_USER;
+				}else{
+					script = SCRIPT_GYAKU|SCRIPT_OWNER|SCRIPT_USER;
+				}
+				if(duration == 0){
+					duration = 30 * VPOS_FACTOR;
+				}
+			}else if(c1 == UNICODE_DE){
+				script = SCRIPT_DEFAULT;
+				if(duration == 0){
+					duration = 0x7fffffff;
+				}
+			}
 		}
 		location = GET_CMD_LOC(location);
 
@@ -151,21 +168,22 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		/*内部処理より*/
 		if(location != CMD_LOC_DEF){
 			item->vstart = vpos;
-			item->vend = (vpos + TEXT_SHOW_SEC_S - 1);
+			item->vend = vpos + TEXT_SHOW_SEC_S - 1;
 			//vend is last tick of LIFE, so must be - 1 done.
 			// item->vend = vpos + duration - 1;
 			item->vappear = item->vstart;
 			item->vvanish = item->vend;
 		}else{
-			item->vstart = (vpos - TEXT_AHEAD_SEC);
-			item->vend = (vpos + TEXT_SHOW_SEC_S - 1);
+			item->vstart = vpos - TEXT_AHEAD_SEC;
+			item->vend = vpos + TEXT_SHOW_SEC_S - 1;
 			//vend is last tick of LIFE, so must be - 1 done.
 			// item->vend = item->vstart + duration - 1;
-			item->vappear = item->vstart - 50;
-			item->vvanish = item->vend + 50;
+			item->vappear = item->vstart - TEXT_AHEAD_SEC;
+			item->vvanish = item->vend + TEXT_AHEAD_SEC;
 		}
 		item->full = full;
 		item->duration = duration;
+		item->script = script;
 		item->color24 = color24;
 		if (video_length > 0){
 			int fix = item->vend - video_length;
@@ -185,7 +203,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	chat->max_no = max_no;
 	chat->min_no = min_no;
 	chat->com_type = com_type;
-
+	chat->to_left = 1;
 	if (chat->max_item > 0){
 		//コメントプール（vposが更新された時に取り出したchat_itemを一時保管）
 		if(initChatPool(log, chat, chat->max_item)){
@@ -206,6 +224,15 @@ SDL_Color convColor24(int c){
 	sc.b = (c & 0x000000ff) >> 0;
 	sc.unused = 0;
 	return sc;
+}
+//check & convColor24
+SDL_Color getSDL_color(int c){
+	if(c < 0)
+		return convColor24(c & 0x00ffffff);
+	if(c < CMD_COLOR_MAX)
+		return COMMENT_COLOR[c];
+	else
+		return COMMENT_COLOR[CMD_COLOR_DEF];
 }
 void closeChat(CHAT* chat){
 	int i;

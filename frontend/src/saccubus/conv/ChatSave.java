@@ -60,7 +60,7 @@ public class ChatSave {
 	public void printXML(PrintWriter pw)
 		throws UnsupportedEncodingException {
 		pw.print("<chat ");
-		pw.print(attributesStr);
+		pw.print(safeReference(attributesStr));
 		pw.print(">");
 		pw.print(safeReference(Comment));
 		pw.println("</chat>");
@@ -77,7 +77,7 @@ public class ChatSave {
 		ÅH	&reg;	ÅH	&#174;	ìoò^è§ïW
 	*/
 
-	private String safeReference(String str){
+	public static String safeReference(String str){
 		if (str == null){
 			return "";
 		}

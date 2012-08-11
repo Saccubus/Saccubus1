@@ -64,7 +64,9 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	data->enableCA = setting->enableCA;
 	data->use_lineskip_as_fontsize = setting->use_lineskip_as_fontsize;
 	data->debug = setting->debug;
-	data->defcolor = CMD_COLOR_DEF;
+	data->defcolor = CMD_COLOR_WHITE;
+	data->deflocation = CMD_LOC_NAKA;
+	data->defsize = CMD_FONT_MEDIUM;
 //	data->limit_height = NICO_HEIGHT;
 	int outw = setting->nico_width_now;
 	int outh = outw==NICO_WIDTH_WIDE ? NICO_HEIGHT_WIDE : NICO_HEIGHT;
@@ -109,8 +111,9 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	for (i=0;i<CMD_FONT_MAX;++i) {
 		data->font_pixel_size[i] = FONT_PIXEL_SIZE[i]<<isfontdoubled;
 	}
-	fprintf(log,"[main/init]Font height is DEF=%dpx, BIG=%dpx, SMALL=%dpx\n",
-		data->font_pixel_size[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_SMALL]
+	fprintf(log,"[main/init]Font height is DEF=%dpx, MEDIUM=%dpx, BIG=%dpx, SMALL=%dpx\n",
+		data->font_pixel_size[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_MEDIUM],
+		data->font_pixel_size[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_SMALL]
 	);
 	if(!setting->enableCA){
 		fputs("[main/init]initializing default Font...\n",log);
@@ -154,8 +157,8 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		if(isfontdoubled){
 			fputs("Double scaled ",log);
 		}
-		fprintf(log,"height is DEF=%d %dpx(%dpx), BIG=%d %dpx(%dpx), SMALL=%d %dpx(%dpx)\n",
-			data->fixed_font_height[CMD_FONT_DEF],line_skip[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_DEF],
+		fprintf(log,"height is MEDIUM=%d %dpx(%dpx), BIG=%d %dpx(%dpx), SMALL=%d %dpx(%dpx)\n",
+			data->fixed_font_height[CMD_FONT_MEDIUM],line_skip[CMD_FONT_MEDIUM],data->font_pixel_size[CMD_FONT_MEDIUM],
 			data->fixed_font_height[CMD_FONT_BIG],line_skip[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_BIG],
 			data->fixed_font_height[CMD_FONT_SMALL],line_skip[CMD_FONT_SMALL],data->font_pixel_size[CMD_FONT_SMALL]
 		);
@@ -264,9 +267,9 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 					printFontInfo(log,font,i,CA_FONT_NAME[f]);
 				}
 			}
-			fprintf(log,"CAfont[%s]%s height is DEF=%dpt %dpx(%dpx), BIG=%dpt %dpx(%dpx), SMALL=%dpt %dpx(%dpx)\n",
+			fprintf(log,"CAfont[%s]%s height is MEDIUM=%dpt %dpx(%dpx), BIG=%dpt %dpx(%dpx), SMALL=%dpt %dpx(%dpx)\n",
 				CA_FONT_NAME[f],(data->fontsize_fix?" Double scaled":""),
-				font_height[CMD_FONT_DEF],line_skip[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_DEF],
+				font_height[CMD_FONT_MEDIUM],line_skip[CMD_FONT_MEDIUM],data->font_pixel_size[CMD_FONT_MEDIUM],
 				font_height[CMD_FONT_BIG],line_skip[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_BIG],
 				font_height[CMD_FONT_SMALL],line_skip[CMD_FONT_SMALL],data->font_pixel_size[CMD_FONT_SMALL]
 			);

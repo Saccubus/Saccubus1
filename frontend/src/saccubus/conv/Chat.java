@@ -33,10 +33,11 @@ public class Chat {
 
 	private static final int CMD_LOC_BOTTOM = 2;
 
+	private static final int CMD_LOC_NAKA = 3;
+
 	private static final int CMD_LOC_FULL = 4;
 
-	@SuppressWarnings("unused")
-	private static final int CMD_LOC_WAKU = 8;
+	static final int CMD_LOC_SCRIPT = 16;
 	/**
 	 * Location bit 31-16 í«â¡
 	 * 0: è]óà(ä˘íËíl)ÅA1Å`65535: Åóïbêî
@@ -45,14 +46,13 @@ public class Chat {
 	private static final int CMD_LOC_SECONDS_BITS = 16;
 	private static final int CMD_LOC_SECONDS_MASK = CMD_MAX_SECONDS << CMD_LOC_SECONDS_BITS;
 
-	@SuppressWarnings("unused")
-	private static final int CMD_SIZE_MAX = 3;
-
 	private static final int CMD_SIZE_DEF = 0;
 
 	private static final int CMD_SIZE_BIG = 1;
 
 	private static final int CMD_SIZE_SMALL = 2;
+
+	private static final int CMD_SIZE_MEDIUM = 3;
 
 	@SuppressWarnings("unused")
 	private static final int COMMENT_FONT_SIZE[] = { 24, // DEF
@@ -93,6 +93,8 @@ public class Chat {
 	private static final int CMD_COLOR_TRUERED = 15;
 
 	private static final int CMD_COLOR_BLACK = 16;
+
+	private static final int CMD_COLOR_WHITE = 17;
 /*
 	// "date"
 	@SuppressWarnings("unused")
@@ -149,6 +151,9 @@ public class Chat {
 			} else if (str.equals("shita") && !isLocationAssigned) {
 				Location |= CMD_LOC_BOTTOM;
 				isLocationAssigned = true;
+			} else if (str.equals("naka") && !isLocationAssigned) {
+				Location |= CMD_LOC_NAKA;
+				isLocationAssigned = true;
 			}
 			// Åóïbêî
 			else if (str.startsWith("@") && strsec.isEmpty()) {
@@ -172,6 +177,9 @@ public class Chat {
 				isSizeAssigned = true;
 			} else if (str.equals("small") && !isSizeAssigned) {
 				Size = CMD_SIZE_SMALL;
+				isSizeAssigned = true;
+			} else if (str.equals("medium") && !isSizeAssigned) {
+				Size = CMD_SIZE_MEDIUM;
 				isSizeAssigned = true;
 			}
 			// êF
@@ -222,6 +230,9 @@ public class Chat {
 				isColorAssigned = true;
 			} else if (str.equals("black") && !isColorAssigned) {
 				Color = CMD_COLOR_BLACK;
+				isColorAssigned = true;
+			} else if (str.equals("white") && !isColorAssigned) {
+				Color = CMD_COLOR_WHITE;
 				isColorAssigned = true;
 			} else if (str.startsWith("#") && !isColorAssigned){
 				// color 24bit1
@@ -311,6 +322,10 @@ public class Chat {
 			ex1.printStackTrace();
 			throw new IOException("[Chat/write:2]Processing:"+No+"<"+Comment+">");
 		}
+	}
+
+	public void addCmd(int cmd) {
+		Location |= cmd;
 	}
 
 }

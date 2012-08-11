@@ -58,7 +58,9 @@ struct DATA{
 	int debug;
 	const char* extra_mode;
 	double width_scale;	//書き込み可　videowidth/nicowidth_now
-	int defcolor;	//デフォルトカラー24bit（エイプリルフール用、@defaultには今は未使用）
+	int defcolor;	//デフォルトカラー24bit（エイプリルフール用、@デフォルト）
+	int deflocation;
+	int defsize;
 	// CA用フォント
 	TTF_Font* CAfont[CA_FONT_MAX][CMD_FONT_MAX];
 	// CA切替用Unicode群

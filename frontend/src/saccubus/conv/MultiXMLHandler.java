@@ -44,7 +44,7 @@ public class MultiXMLHandler extends DefaultHandler {
 			for (int i = 0; i <attributes.getLength(); i++) {
 				sb.append(attributes.getQName(i));
 				sb.append("=\"");
-				sb.append(attributes.getValue(i));
+				sb.append(ChatSave.safeReference(attributes.getValue(i)));
 				sb.append("\" ");
 			}
 			chat.setAttributeString(sb.substring(0));

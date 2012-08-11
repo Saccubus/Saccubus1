@@ -4,7 +4,16 @@
 #include <SDL/SDL.h>
 #include "../struct_define.h"
 
-//typedef int VPOS_T;
+//ニコスクリプトでのキー ワードUnicode定義
+#define UNICODE_GYAKU	0x00009006	/*逆*/
+#define UNICODE_TOU		0x00006295	/*投　投コメ*/
+#define UNICODE_KO		0x000030b3	/*コ　コメ*/
+#define UNICODE_DE		0x000030c7	/*デ　デフォルト*/
+//ニコスクリプト　 ワード定義
+#define SCRIPT_GYAKU	0x00010000
+#define SCRIPT_OWNER	0x0001
+#define SCRIPT_USER		0x0002
+#define SCRIPT_DEFAULT	0x00020000
 
 struct CHAT_ITEM{
 	//場所の特定
@@ -12,6 +21,7 @@ struct CHAT_ITEM{
 	int vpos;
 	int location;
 	int full;	// whether full ommand?
+	int script;	// whether nico script?
 	//文字の修飾
 	int size;
 	int color;
@@ -45,6 +55,8 @@ struct CHAT{
 	CHAT_POOL* pool;
 	//コメントタイプ
 	const char* com_type;
+	//＠逆フラグ
+	int to_left;
 };
 
 #include "chat_slot.h"
@@ -60,5 +72,6 @@ void closeChat();
 void resetChatIterator(CHAT* chat);
 CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos);
 SDL_Color convColor24(int c);
+SDL_Color getSDL_color(int c);
 
 #endif /*CHAT_H_*/

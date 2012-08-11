@@ -20,27 +20,33 @@
 #define CMD_LOC_DEF		(0)
 #define CMD_LOC_TOP		(1)
 #define CMD_LOC_BOTTOM	(2)
+#define CMD_LOC_NAKA	(3)
+#define CMD_LOC_MAX		4
 
-static char* const COM_LOC_NAME[3] = {
+static char* const COM_LOC_NAME[CMD_LOC_MAX] = {
 	"naka",	//CMD_LOC_DEF
 	"ue",	//CMD_LOC_TOP
 	"shita",	//CMD_LOC_BOTTOM
+	"naka",	//CMD_LOC_NAKA
 };
 
 #define GET_CMD_LOC(x)	((x) & 0x03)
 #define GET_CMD_DURATION(x)	((x) >> 16 & 0xffff)
 #define GET_CMD_FULL(x)	((x) & 4)
-//#define GET_CMD_COLOR24(x)	((x) & 0x0080)
+#define GET_CMD_SCRIPT(x)	((x) & 16)
+//#define GET_CMD_WAKU(x)	((x) & 8)
 
-#define CMD_FONT_MAX	3
+#define CMD_FONT_MAX	4
 #define CMD_FONT_DEF	0
 #define CMD_FONT_BIG	1
 #define CMD_FONT_SMALL	2
+#define CMD_FONT_MEDIUM	3
 
 static char* const COM_FONTSIZE_NAME[CMD_FONT_MAX] = {
 	"medium",	//CMD_FONT_DEF
 	"big",
 	"small",
+	"medium",	//CMD_FONT_MEDIUM
 };
 
 static const int LINEFEED_RESIZE_LIMIT[CMD_FONT_MAX] = {
@@ -48,6 +54,7 @@ static const int LINEFEED_RESIZE_LIMIT[CMD_FONT_MAX] = {
 	5,//DEF
 	3,//BIG
 	7,//SMALL
+	5,//MEDIUM=DEF
 };
 /*
 !THIS LIMIT IS OF WINDOWS!!, MAC/LINUX DIFFERS!?
@@ -85,24 +92,28 @@ static const int FONT_PIXEL_SIZE[CMD_FONT_MAX] = {
 	29,//DEF
 	45,//BIG
 	18,//SMALL
+	29,//MEDIUM
 };
 //Line Skip (96dpi), Resized, without shadow, in Windows
 static const int LINEFEED_RESIZED_PIXEL_SIZE[CMD_FONT_MAX] = {
 	15,//DEF
 	24,//BIG
 	10,//SMALL
+	15,//MEDIUM
 };
 // Base is font size comparison by RAW EYES (using browser and notepad). [Gothic]
 static const float LINEFEED_RESIZE_FONT_SCALE[CMD_FONT_MAX] = {
 	0.500f,	// 12/24
 	0.513f,	// 20/39
 	0.533f,	//  8/15
+	0.500f,	// 12/24
 };
 // Base is Surface height after SDL rendering [Gothic?]
 static const float LINEFEED_RESIZE_SCALE[CMD_FONT_MAX] = {
 	0.517f,	// 0.517 15/29  0.518 378/730(25Lines)
 	0.533f,	// 0.533 24/45  0.534 387/725(16Lines)
 	0.556f,	// 0.556 10/18  0.556 383/689(38Lines)
+	0.517f,	// 0.517 15/29  0.518 378/730(25Lines)
 };
 /*
 LineFeed Resize Of FontSize(font_height surface_height/96dpi) [gothic]
@@ -117,12 +128,14 @@ static const int COMMENT_FONT_SIZE[CMD_FONT_MAX] = {
 	24,//DEF
 	39,//BIG
 	15,//SMALL
+	24,//MEDIUM
 };
 //points, i.e. pixel size in 72dpi
 static const int COMMENT_POINT_SIZE[CMD_FONT_MAX] = {
-	18,	//medium DEF
+	18,	//def DEF
 	29,	//big BIG
 	11,	//small SMALL
+	18,	//medium MEDIUM
 };
 //Big double resize height
 /*
@@ -145,7 +158,7 @@ static const int COMMENT_BIG_DR_HEIGHT[16] = {
 	384,		//15
 };
 
-#define CMD_COLOR_MAX	17
+#define CMD_COLOR_MAX	18
 #define CMD_COLOR_DEF	0
 #define CMD_COLOR_RED	1
 #define CMD_COLOR_ORANGE	2
@@ -163,6 +176,7 @@ static const int COMMENT_BIG_DR_HEIGHT[16] = {
 #define CMD_COLOR_ELEMENTALGREEN	14
 #define CMD_COLOR_TRUERED	15
 #define CMD_COLOR_BLACK	16
+#define CMD_COLOR_WHITE	17
 
 static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 	{0xff,0xff,0xff,0x00},//DEF
@@ -183,7 +197,8 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 	{0x00,0xCC,0x66,0x00},//ELEMENTALGREEN
 	{0xCC,0x00,0x33,0x00},//TRUERED
 	{0x00,0x00,0x00,0x00},//BLACK
-
+	//white spcified
+	{0xff,0xff,0xff,0x00},//DEF
 };
 
 // CA Font Set Index
@@ -238,47 +253,47 @@ static char* const CA_SPACE_NAME[] = {
 };
 static const int CA_FONT_SIZE_FIX[CA_FONT_MAX][CMD_FONT_MAX] = {
 //	DEF,BIG,SMALL
-	{0,-1,1},	//gothic
-	{0,-1,1},	//simsun
-	{0,-1,1},	//gulim
-	{0,1,0},	//arial
-	{-2,-2,-2},	//georgia
-	{0,0,0},	//arial unicode
-	{0,0,0},	//devanagari
-	{0,0,0},	//tahoma
-	{0,0,0},	//MingLiU
-	{0,0,0},	//new mincho, smsun or new_gulim
-	{0,0,0},	//estrangelo edessa
-	{0,0,0},	//gujarati
-	{0,0,0},	//extra
+	{0,-1,1,0},	//gothic
+	{0,-1,1,0},	//simsun
+	{0,-1,1,0},	//gulim
+	{0,1,0,0},	//arial
+	{-2,-2,-2,-2},	//georgia
+	{0,0,0,0},	//arial unicode
+	{0,0,0,0},	//devanagari
+	{0,0,0,0},	//tahoma
+	{0,0,0,0},	//MingLiU
+	{0,0,0,0},	//new mincho, smsun or new_gulim
+	{0,0,0,0},	//estrangelo edessa
+	{0,0,0,0},	//gujarati
+	{0,0,0,0},	//extra
 };
 
 static const int CA_FONT_HIGHT_TUNED[4][2][CMD_FONT_MAX] = {
-//	{{DEF,BIG,SMALL},{DEF,BIG,SMALL}for fontsize_fixed},
-	{{24,38,16},{47,74,31}},	//gothic glyph-advance width is {25,40,16}{50,80,33(>32)}
-								//setting SDL size is {23,37,15},{46,73,30}
+//	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}for fontsize_fixed},
+	{{24,38,16,24,},{47,74,31,47,}},	//gothic glyph-advance width is {25,40,16}{50,80,33(>32)}
+										//setting SDL size is {23,37,15},{46,73,30}
 	//specially 2000-200f,3000 is other definition
-	{{24,38,16},{47,74,31}},	//simsun
-	{{24,38,16},{47,74,31}},	//gulim
-	{{24,41,15},{46,78,30}},	//arial glyph-advance width of'a' is {13,22,8},{26,44,16}
-								//setting SDL size is {20,36,13},{40,69,26}
+	{{24,38,16,24,},{47,74,31,47,}},	//simsun
+	{{24,38,16,24,},{47,74,31,47,}},	//gulim
+	{{24,41,15,24,},{46,78,30,47,}},	//arial glyph-advance width of'a' is {13,22,8},{26,44,16}
+										//setting SDL size is {20,36,13},{40,69,26}
 	//specially 00A0 & 0020 is other definition
 };
 
 static const int CA_FONT_WIDTH_TUNED[4][2][CMD_FONT_MAX] = {
-//	{{DEF,BIG,SMALL},{DEF,BIG,SMALL}}
-	{{25,40,16},{50,80,32}},	//gothic
-	{{25,40,16},{50,80,32}},	//simsun
-	{{25,40,16},{50,80,32}},	//gulim
-	{{13,22, 8},{26,44,16}},	//arial 'a'
+//	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}}
+	{{25,40,16,25,},{50,80,32,50,}},	//gothic
+	{{25,40,16,25,},{50,80,32,50,}},	//simsun
+	{{25,40,16,25,},{50,80,32,50,}},	//gulim
+	{{13,22, 8,13,},{26,44,16,26,}},	//arial 'a'
 };
 
 static const int CA_FONT_SIZE_TUNED[4][2][CMD_FONT_MAX] = {
-//	{{DEF,BIG,SMALL},{DEF,BIG,SMALL}for fontsize_fixed},
-	{{23,37,15},{46,73,30}},	//gothic
-	{{23,37,15},{46,73,30}},	//simsun
-	{{23,37,15},{46,73,30}},	//gulim
-	{{20,36,13},{40,69,26}},	//arial
+//	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}for fontsize_fixed},
+	{{23,37,15,23,},{46,73,30,46,}},	//gothic
+	{{23,37,15,23,},{46,73,30,46,}},	//simsun
+	{{23,37,15,23,},{46,73,30,46,}},	//gulim
+	{{20,36,13,20,},{40,69,26,40,}},	//arial
 };
 
 /*
@@ -308,33 +323,33 @@ Win, Mac (b, m, s, br, mr, sr)
  */
 
 static const int CA_FONT_2000_WIDTH[16][CMD_FONT_MAX] = {
-//	DEF BIG SMALL msgothic.ttc#1
-	{13,21, 9},		//2000
-	{25,40,16},		//2001
-	{13,21, 9},		//2002
-	{25,40,16},		//2003
-	{ 9,14, 6},		//2004
-	{ 7,12, 5},		//2005
-	{ 5, 7, 3},		//2006
-	{16,25,10},		//2007
-	{ 9,13, 6},		//2008
-	{ 4, 6, 3},		//2009
-	{ 3, 3, 2},		//200a
-	{ 0, 0, 0},		//200b
-	{ 0, 0, 0},		//200c
-	{ 0, 0, 0},		//200d
-	{ 0, 0, 0},		//200e
-	{ 0, 0, 0},		//200f
+//	DEF BIG SMALL MEDIUM msgothic.ttc#1
+	{13,21, 9,13},		//2000
+	{25,40,16,25},		//2001
+	{13,21, 9,13},		//2002
+	{25,40,16,25},		//2003
+	{ 9,14, 6, 9},		//2004
+	{ 7,12, 5, 7},		//2005
+	{ 5, 7, 3, 5},		//2006
+	{16,25,10,16},		//2007
+	{ 9,13, 6, 9},		//2008
+	{ 4, 6, 3, 4},		//2009
+	{ 3, 3, 2, 3},		//200a
+	{ 0, 0, 0, 0},		//200b
+	{ 0, 0, 0, 0},		//200c
+	{ 0, 0, 0, 0},		//200d
+	{ 0, 0, 0, 0},		//200e
+	{ 0, 0, 0, 0},		//200f
 };
 static const int CA_FONT_SPACE_WIDTH[CMD_FONT_MAX] = {
 //ASCII SPACE 0020/00A0 arial.ttf
-	7,11,4	//2012.3.24ïœçX
+	7,11,4,7	//2012.3.24ïœçX
 };
 static const int CA_FONT_3000_WIDTH[3][CMD_FONT_MAX] = {
 //KANJI SPACE 3000 msgothic.ttc#1
-	{17,27,11},		//gothic
-	{25,40,16},		//simsun
-	{25,40,16},		//gulim
+	{17,27,11,17},		//gothic
+	{25,40,16,25},		//simsun
+	{25,40,16,25},		//gulim
 };
 
 #endif /*NICODEF_H_*/

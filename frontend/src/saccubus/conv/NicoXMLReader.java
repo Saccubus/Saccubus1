@@ -231,7 +231,24 @@ public class NicoXMLReader extends DefaultHandler {
 				}
 			}
 			String com = new String(ch, offset, length);
-			if (match(NG_Word, com)) {
+			boolean script = false;
+			//ニコスクリプト処理
+			if(com.startsWith("@")||com.startsWith("＠")){
+				if(item_fork){
+					String nicos = com.substring(1);
+					if(nicos.startsWith("逆")){
+						//逆走
+						item.addCmd(Chat.CMD_LOC_SCRIPT);
+						script = true;
+					}else if(nicos.startsWith("デフォルト")){
+						//デフォルト値設定
+						item.addCmd(Chat.CMD_LOC_SCRIPT);
+						script = true;
+					}
+				}
+			}
+			//NGワード
+			if (!script && match(NG_Word, com)) {
 				item_kicked = true;
 				countNG_Word++;
 				return;

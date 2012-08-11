@@ -24,7 +24,7 @@ int process_chat(DATA* data,CDATA* cdata,SDL_Surface* surf,const int now_vpos){
 		slot = &cdata->slot;
 		resetChatSlotIterator(slot);
 		while((slot_item = getChatSlotErased(slot,now_vpos)) != NULL){
-			deleteChatSlot(slot_item,log);
+			deleteChatSlot(slot_item,data);
 		}
 		/*見せるものをセット*/
 		chat = &cdata->chat;
@@ -69,10 +69,13 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 				continue;
 			}
 			if(now_vpos > item->chat_item->vvanish){
-				deleteChatSlot(item,data->log);
+				deleteChatSlot(item,data);
 				continue;
 			}
-			rect.x = lround(getX(now_vpos,item,data->vout_width,data->width_scale,data->aspect_mode) + x);
+			int normal_x = lround(getX(now_vpos,item,data->vout_width,data->width_scale,data->aspect_mode));
+			if(item->chat_item->chat->to_left < 0)
+				normal_x = data->vout_width - (normal_x + item->surf->w);
+			rect.x = normal_x + x;
 			rect.y = item->y + y;
 			SDL_BlitSurface(item->surf,NULL,surf,&rect);
 		}
@@ -115,11 +118,11 @@ double getXnaka(int vpos,CHAT_SLOT_ITEM* item,int aspect_mode,double scale){
 	//int vstart = item->chat_item->vstart;
 	double progress = (vpos - item->chat_item->vstart) * item->speed;
 	double xpos;
-	if(item->speed < 0.0f){
-		xpos = -progress - 16 * scale - item->surf->w;	//-16-text_width at vstart if 512
-	}else {
+//	if(item->speed < 0.0f){
+//		xpos = -progress - 16 * scale - item->surf->w;	//-16-text_width at vstart if 512
+//	}else {
 		xpos = (NICO_WIDTH + 15) * scale - progress;	//527 at vstart if 512
-	}
+//	}
 	if(aspect_mode){
 		xpos += 64 * scale;
 		//-16 -> 48 if 640
@@ -133,7 +136,7 @@ double getXnaka(int vpos,CHAT_SLOT_ITEM* item,int aspect_mode,double scale){
  */
 double getX(int vpos,CHAT_SLOT_ITEM* item,int video_width,double scale,int aspect_mode){
 	double text_width = item->surf->w;
-	if(item->chat_item->location != CMD_LOC_DEF){
+	if(item->slot_location == CMD_LOC_TOP||item->slot_location==CMD_LOC_BOTTOM){
 		return ((double)video_width - text_width) / 2.0;
 	}
 	//CMD_LOC_DEF (naka)
@@ -156,58 +159,78 @@ int getVposItem(DATA* data,CHAT_SLOT_ITEM* item,int n_xpos,double s_tpos){
 /**
  *
  */
-void setspeed(int comment_speed,CHAT_SLOT_ITEM* item,int video_width,int nico_width,double scale){
-	CHAT_ITEM* chat_item = item->chat_item;
-	int duration = chat_item->duration;
-	if(chat_item->location!=CMD_LOC_DEF){
-		item->speed = 0.0f;
-		if(duration!=0){
-			chat_item->vend = chat_item->vstart + duration - 1;
-		}
+void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_width,double scale){
+	int comment_speed = data->comment_speed;
+	CHAT_ITEM* item = slot_item->chat_item;
+	int vpos = item->vpos;
+	int location = item->location;
+	/*
+	 * default lcation 変更
+	 */
+	if(location == CMD_LOC_DEF){
+		location = data->deflocation;
+	}
+	slot_item->slot_location = location;
+	int duration = item->duration;
+	if(duration==0){
+		duration = TEXT_SHOW_SEC_S;
+	}
+	if(location == CMD_LOC_TOP||location==CMD_LOC_BOTTOM){
+		item->vstart = vpos;
+		item->vend = vpos + duration - 1;
+		item->vappear = vpos;
+		item->vvanish = item->vend;
+		slot_item->speed = 0.0f;
 	}else{
-		int vpos = chat_item->vpos;
-		int text_width = item->surf->w;
+		item->vstart = vpos - TEXT_AHEAD_SEC;
+		if(item->script!=0){
+			item->vstart = vpos;
+		}
+		item->vend = vpos + duration - 1;
+		int text_width = slot_item->surf->w;
 		double width = scale * (NICO_WIDTH + 32) + text_width;
 		//					//video_width + scale * 36 + text_width;
-		if(duration==0){
-			duration = TEXT_SHOW_SEC_S;
-		}
-		// set vstart, since vstart was set to vpos - 1.5 sec
-		chat_item->vstart = vpos - TEXT_AHEAD_SEC;
-		// set vend, since vend was set to vpos + 3.5 sec
-		chat_item->vend = vpos + (duration - 1);
 		double speed = width / (double)(duration + TEXT_AHEAD_SEC);
-		speed *= 1.006;	//特別補正
-		double time_add = scale * 64 / speed;
-		// comment appaers at x < 672 when wide mode(640x360)
-		chat_item->vappear = chat_item->vstart - lround(time_add);
-		// comment vanishes at x < 0 when wide mode(640x360)
-		chat_item->vvanish = chat_item->vend + lround(time_add);
+		speed *= 1.006;	//特別補正→ edge of video will be reached at vend-3
+		int itime_add = lround(scale * 64 / speed);
+		itime_add = MAX(itime_add,TEXT_AHEAD_SEC);
+		item->vappear = item->vstart - itime_add;
+		item->vvanish = item->vend + itime_add;
 		if(comment_speed==0){
-			item->speed = (float)speed;
-			return;
+			slot_item->speed = (float)speed;
 		}
-		if(comment_speed==-20080401){	//reverse
-			item->speed = (float)-speed;
-			return;
+		else if(comment_speed==-20080401){	//reverse
+			slot_item->speed = (float)speed;
+			slot_item->slot->chat->to_left = -slot_item->slot->chat->to_left;
 		}
-		if(comment_speed==20090401){	//3 times speed
-			item->speed = (float)(speed * 3.0);
-			chat_item->vstart = vpos - lround((double)TEXT_AHEAD_SEC / 3.0);
-			chat_item->vend = chat_item->vstart + lround((duration + TEXT_AHEAD_SEC) / 3.0) - 1;
-			chat_item->vappear = chat_item->vstart - lround(time_add / 3.0);
-			chat_item->vvanish = chat_item->vend + lround(time_add / 3.0);
-			return;
+		else if(comment_speed==20090401){	//3 times speed
+			slot_item->speed = (float)(speed * 3.0);
+			//item->vstart = vpos - lround((double)TEXT_AHEAD_SEC / 3.0);
+			item->vend = item->vstart + lround((duration + TEXT_AHEAD_SEC) / 3.0) - 1;
+			item->vappear = item->vstart - TEXT_AHEAD_SEC;
+			item->vvanish = item->vend + TEXT_AHEAD_SEC;
 		}
-		speed  = (double)comment_speed/(double)VPOS_FACTOR;
-		item->speed = (float)speed;
-		if(speed < 0.0)
-			speed = -speed;
-		//chat_item->vstart = (vpos - TEXT_AHEAD_SEC);
-		chat_item->vend = chat_item->vstart + lround(width / speed) - 1;
-		time_add = lround(scale * 64 / speed);
-		chat_item->vappear = chat_item->vstart - (int)time_add;
-		chat_item->vvanish = chat_item->vend + (int)time_add;
+		else {
+			speed  = (double)comment_speed/(double)VPOS_FACTOR;
+			slot_item->speed = (float)speed;
+			if(speed < 0.0){
+				speed = -speed;
+				slot_item->slot->chat->to_left = -slot_item->slot->chat->to_left;
+			}
+			//item->vstart = (vpos - TEXT_AHEAD_SEC);
+			item->vend = item->vstart + lround(width / speed) - 1;
+			itime_add = lround(scale * 64 / speed);
+			itime_add = MAX(itime_add,(TEXT_AHEAD_SEC>>1));
+			item->vappear = item->vstart - itime_add;
+			item->vvanish = item->vend + itime_add;
+		}
+		if(item->script!=0){
+			item->vappear = item->vstart;
+			item->vvanish = item->vend;
+		}
+		if(data->debug){
+			fprintf(data->log,"[process_chat/set_speed]comment speed %.2fpix/sec.\n",slot_item->speed*100.0);
+		}
 		return;
 	}
 }

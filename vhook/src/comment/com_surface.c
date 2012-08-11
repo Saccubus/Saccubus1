@@ -34,17 +34,52 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	double font_width_rate = data->font_w_fix_r;
 	double font_height_rate = data->font_h_fix_r;
 	int nico_width = data->nico_width_now;
+	int color = item->color;
 
+	if(item->script){
+		int cmd = item->script & 0xffff0000;
+		if(cmd == SCRIPT_DEFAULT){		//＠デフォルト
+			if(color != CMD_COLOR_DEF)
+				data->defcolor = color;
+			if(location != CMD_LOC_DEF)
+				data->deflocation = location;
+			if(size != CMD_FONT_DEF)
+				data->defsize = size;
+			return drawNullSurface(0,0);
+		}
+		if(cmd == SCRIPT_GYAKU){	//＠逆
+			int bits = item->script & 3;
+			if(bits & SCRIPT_OWNER){
+				data->owner.chat.to_left = -1;
+			}
+			if(bits & SCRIPT_USER){
+				data->user.chat.to_left = -1;
+				data->optional.chat.to_left = -1;
+			}
+			return drawNullSurface(0,0);
+		}
+	}
 	/*
 	 * default color変更
 	 */
-	int color = item->color;
 	if(data->defcolor>401){	//401 means April 01, i.e. force april fool
 		color = data->defcolor - 401;
-		SdlColor = COMMENT_COLOR[color];
+		SdlColor = getSDL_color(color);
 	}else if(color==CMD_COLOR_DEF){	//this may be @default
 		color = data->defcolor;
-		SdlColor = COMMENT_COLOR[color];
+		SdlColor = getSDL_color(color);
+	}
+	/*
+	 * default size 変更
+	 */
+	if(size == CMD_FONT_DEF){
+		size = data->defsize;
+	}
+	/*
+	 * default lcation 変更
+	 */
+	if(location == CMD_LOC_DEF){
+		location = data->deflocation;
 	}
 	/*
 	 * 影は置いておいて、とりあえず文字の描画
@@ -179,7 +214,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			// 改行リサイズ＆改行後の倍率で臨界幅を超えた場合 → 改行リサイズキャンセル
 			double linefeed_zoom = linefeedResizeScale(size,nb_line,data->fontsize_fix);
 			double resized_w = linefeed_zoom * zoomx * ret->w;
-			if(location != CMD_LOC_DEF
+			if((location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM)
 				&& isDoubleResize(resized_w, nicolimit_width, size, nb_line, log)){
 				//  ダブルリサイズあり → 改行リサイズキャンセル
 				nicolimit_width /= linefeed_zoom;	//*= 2.0;
@@ -201,7 +236,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			}
 		}
 */
-		if(location != CMD_LOC_DEF){
+		if(location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM){
 			/* ue shitaコマンドのみリサイズあり */
 			/*
 			 * 臨界幅リサイズ
@@ -321,7 +356,8 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		double resize = resized_w / zoom_w;
 		fprintf(log,"[comsurface/LFresize]comment %d LFzoom %.0f%% LFrateFS %.0f%% %s rFS %d\n",
 			item->no,linefeed_zoom*100.0,rsRate*100.0,COM_FONTSIZE_NAME[size],rfs);
-		if(location != CMD_LOC_DEF && isDoubleResize(resized_w, nicolimit_width, size, nb_line, log)){
+		if((location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM)
+			&& isDoubleResize(resized_w, nicolimit_width, size, nb_line, log)){
 			// ダブルリサイズあり
 			double_resized = TRUE;
 			//ダブルリサイズ時には動画幅の２倍にリサイズされる筈
@@ -416,7 +452,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		}
 	}
 
-	if(location != CMD_LOC_DEF){
+	if(location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM){
 		// ue shitaコマンドのみリサイズあり
 
 		/*
@@ -826,7 +862,7 @@ int isDoubleResize(double width, double limit_width, int size, int line, FILE* l
 		}
 		fprintf(log,"[isDoubleResize]found big16 but too wide.\n");
 	}
-	if(size==CMD_FONT_DEF && line>=25){
+	if((size==CMD_FONT_DEF || size==CMD_FONT_MEDIUM) && line>=25){
 		//高さ固定の可能性
 		if(width * 0.9 < limit_width){
 			return FALSE;
