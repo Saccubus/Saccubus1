@@ -65,15 +65,15 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 	for(i=0;i<max_item;i++){
 		item = &slot->item[i];
 		if(item->used){
-			if(now_vpos < item->chat_item->vappear){
+			if(now_vpos < item->vappear){
 				continue;
 			}
-			if(now_vpos > item->chat_item->vvanish){
+			if(now_vpos > item->vvanish){
 				deleteChatSlot(item,data);
 				continue;
 			}
 			int normal_x = lround(getX(now_vpos,item,data->vout_width,data->width_scale,data->aspect_mode));
-			if(item->chat_item->chat->to_left < 0)
+			if(slot->chat->to_left < 0)
 				normal_x = data->vout_width - (normal_x + item->surf->w);
 			rect.x = normal_x + x;
 			rect.y = item->y + y;
@@ -116,18 +116,15 @@ int getX_org(int now_vpos,const CHAT_SLOT_ITEM* item,int video_width,int nico_wi
 double getXnaka(int vpos,CHAT_SLOT_ITEM* item,int aspect_mode,double scale){
 	//int text_width = item->surf->w;
 	//int vstart = item->chat_item->vstart;
-	double progress = (vpos - item->chat_item->vstart) * item->speed;
-	double xpos;
-//	if(item->speed < 0.0f){
-//		xpos = -progress - 16 * scale - item->surf->w;	//-16-text_width at vstart if 512
-//	}else {
-		xpos = (NICO_WIDTH + 15) * scale - progress;	//527 at vstart if 512
-//	}
-	if(aspect_mode){
-		xpos += 64 * scale;
-		//-16 -> 48 if 640
-		//527 -> 591 if 640
-	}
+	// this meens getX=-width/(vend-vstart)*(vpos-vstart)+xstart(=NICO_WIDTH+16)+64_wide
+	//   vpos=vstart -> getX=width-16-text_width+64_wide=NICO_WIDTH+16+64_wide
+	//   vpos=vend   -> getX=-16-text_width+64_wide
+	double progress = item->speed * (vpos-item->chat_item->vstart);
+	double xstart = scale * (NICO_WIDTH+16);	//=512*(33/32)=640*(41/40)
+	double xpos = -progress + xstart + (aspect_mode? scale*64 : 0);	//528 when vpos=vstart if 512
+		//64=512*(1/8)=640*(1/10)
+		//-16-text if 512 -> 48-text if 640		-(1/32)-text : (3/40)-text
+		//528      if 512 -> 592 if 640			(33/32)      : (37/40)
 	return xpos;
 }
 
@@ -135,9 +132,9 @@ double getXnaka(int vpos,CHAT_SLOT_ITEM* item,int aspect_mode,double scale){
  * ˆÊ’u‚ð‹‚ß‚é
  */
 double getX(int vpos,CHAT_SLOT_ITEM* item,int video_width,double scale,int aspect_mode){
-	double text_width = item->surf->w;
+	//double text_width = item->surf->w;
 	if(item->slot_location == CMD_LOC_TOP||item->slot_location==CMD_LOC_BOTTOM){
-		return ((double)video_width - text_width) / 2.0;
+		return (double)((video_width >> 1) - (item->surf->w >> 1));
 	}
 	//CMD_LOC_DEF (naka)
 	return getXnaka(vpos,item,aspect_mode,scale);
@@ -164,6 +161,7 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 	CHAT_ITEM* item = slot_item->chat_item;
 	int vpos = item->vpos;
 	int location = item->location;
+	int itime_add = 0;
 	/*
 	 * default lcation •ÏX
 	 */
@@ -178,9 +176,9 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 	if(location == CMD_LOC_TOP||location==CMD_LOC_BOTTOM){
 		item->vstart = vpos;
 		item->vend = vpos + duration - 1;
-		item->vappear = vpos;
-		item->vvanish = item->vend;
 		slot_item->speed = 0.0f;
+		slot_item->vappear = item->vstart - itime_add;
+		slot_item->vvanish = item->vend + itime_add;
 	}else{
 		item->vstart = vpos - TEXT_AHEAD_SEC;
 		if(item->script!=0){
@@ -190,44 +188,41 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 		int text_width = slot_item->surf->w;
 		double width = scale * (NICO_WIDTH + 32) + text_width;
 		//					//video_width + scale * 36 + text_width;
-		double speed = width / (double)(duration + TEXT_AHEAD_SEC);
-		speed *= 1.006;	//“Á•Ê•â³¨ edge of video will be reached at vend-3
-		int itime_add = lround(scale * 64 / speed);
-		itime_add = MAX(itime_add,TEXT_AHEAD_SEC);
-		item->vappear = item->vstart - itime_add;
-		item->vvanish = item->vend + itime_add;
+		double speed = width / (double)(item->vend - item->vstart);
+		// this meens getX=-width/(vend-vstart)*(vpos-vstart)+xstart(=width-16-text_width)+64_wide
+		//   vpos=vstart -> getX=width-16-text_width+64_wide=NICO_WIDTH+16+64_wide
+		//   vpos=vend   -> getX=-16-text_width+64_wide
+		//speed *= 1.006;	//“Á•Ê•â³¨ edge of video will be reached at vend-3
+		itime_add = MAX(lround(scale * 64 / speed),TEXT_AHEAD_SEC);
 		if(comment_speed==0){
 			slot_item->speed = (float)speed;
 		}
 		else if(comment_speed==-20080401){	//reverse
 			slot_item->speed = (float)speed;
-			slot_item->slot->chat->to_left = -slot_item->slot->chat->to_left;
+			//slot_item->slot->chat->to_left = -1;	//this should be in initChat
 		}
 		else if(comment_speed==20090401){	//3 times speed
 			slot_item->speed = (float)(speed * 3.0);
 			//item->vstart = vpos - lround((double)TEXT_AHEAD_SEC / 3.0);
-			item->vend = item->vstart + lround((duration + TEXT_AHEAD_SEC) / 3.0) - 1;
-			item->vappear = item->vstart - TEXT_AHEAD_SEC;
-			item->vvanish = item->vend + TEXT_AHEAD_SEC;
+			item->vend = item->vstart + lround((duration + TEXT_AHEAD_SEC) / 3.0);
+			itime_add = TEXT_AHEAD_SEC;
 		}
 		else {
 			speed  = (double)comment_speed/(double)VPOS_FACTOR;
 			slot_item->speed = (float)speed;
 			if(speed < 0.0){
 				speed = -speed;
-				slot_item->slot->chat->to_left = -slot_item->slot->chat->to_left;
+				//slot_item->slot->chat->to_left = -1;	//this should be in initChat
 			}
 			//item->vstart = (vpos - TEXT_AHEAD_SEC);
-			item->vend = item->vstart + lround(width / speed) - 1;
-			itime_add = lround(scale * 64 / speed);
-			itime_add = MAX(itime_add,(TEXT_AHEAD_SEC>>1));
-			item->vappear = item->vstart - itime_add;
-			item->vvanish = item->vend + itime_add;
+			item->vend = item->vstart + lround(width / speed);
+			itime_add = MAX(lround(scale * 64 / speed),(TEXT_AHEAD_SEC>>1));
 		}
 		if(item->script!=0){
-			item->vappear = item->vstart;
-			item->vvanish = item->vend;
+			itime_add = 0;
 		}
+		slot_item->vappear = item->vstart - itime_add;
+		slot_item->vvanish = item->vend + itime_add;
 		if(data->debug){
 			fprintf(data->log,"[process_chat/set_speed]comment speed %.2fpix/sec.\n",slot_item->speed*100.0);
 		}

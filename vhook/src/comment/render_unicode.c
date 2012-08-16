@@ -94,11 +94,11 @@ SDL_Surface* pointsConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int fo
 	return ret;
 }
 
-SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,SDL_Surface* surf,SDL_Color col,int s){
+SDL_Surface* drawFrame(DATA* data,int location,SDL_Surface* surf,SDL_Color col,int s){
 
 	if(strstr(data->extra_mode,"-loc")!=NULL){
 		col.r = col.g = col.b = 0x00;
-		switch (item->location) {
+		switch (location) {
 			case CMD_LOC_TOP:
 			//	col.g = 0xff;
 				col.r = 0xff;	//red
@@ -107,6 +107,7 @@ SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,SDL_Surface* surf,SDL_Co
 				col.b = 0xff;	//blue
 				break;
 			case CMD_LOC_DEF:
+			case CMD_LOC_NAKA:
 				col.r = col.g = 0xff;	//yellow
 				break;
 		}

@@ -17,7 +17,7 @@
 int initChatSlot(FILE* log,CHAT_SLOT* slot,int max_slot,CHAT* chat){
 	slot->max_item=max_slot;
 	slot->chat = chat;
-	slot->com_type = chat->com_type;
+	//slot->com_type = chat->com_type;
 	slot->item = malloc(sizeof(CHAT_SLOT_ITEM) * max_slot);
 	if(slot->item == NULL){
 		fputs("failed to malloc for comment slot.\n",log);
@@ -47,9 +47,9 @@ void closeChatSlot(CHAT_SLOT* slot){
 void deleteChatSlot(CHAT_SLOT_ITEM* slot_item,DATA* data){
 	CHAT_ITEM* item = slot_item->chat_item;
 	if(data->log){
-		fprintf(data->log,"[chat_slot/delete]comment %d vpos:%d color:%d:#%06x %5s %6s  %d - %d(vpos:%d) erased.\n",
-			item->no,item->vstart-TEXT_AHEAD_SEC,item->color,convSDLcolor(item->color24),
-			COM_LOC_NAME[item->location],COM_FONTSIZE_NAME[item->size],
+		fprintf(data->log,"[chat_slot/delete]comment %d %s color:%d:#%06x %5s %6s  %d - %d(vpos:%d) erased.\n",
+			item->no,item->chat->com_type,item->color,convSDLcolor(item->color24),
+			COM_LOC_NAME[slot_item->slot_location],COM_FONTSIZE_NAME[item->size],
 			item->vstart,item->vend,item->vpos);
 		fflush(data->log);
 	}
@@ -82,8 +82,8 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	}
 	//コメント描画 size color 再設定
 	SDL_Surface* surf = makeCommentSurface(data,item,video_width,video_height);
-	if(surf == NULL){
-		return 0;
+	if((surf == NULL) && ((surf = getErrFont(data)) == NULL)){
+			return 0;
 	}
 	int size = (item->size == CMD_FONT_DEF)? data->defsize : item->size;
 	/*開きスロットル検索*/
@@ -99,7 +99,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			cnt = i;
 		}
 	}
-	CHAT_SLOT_ITEM* slot_item = &slot->item[cnt];
+	CHAT_SLOT_ITEM* slot_item = &slot->item[cnt];	//このスロットに追加
 	/*空きが無ければ強制的に作る。*/
 	if(slot_item->used){
 		deleteChatSlot(slot_item,data);
@@ -107,7 +107,6 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	//この時点で追加
 	slot_item->chat_item = item;
 	slot_item->surf = surf;
-	//slot_item->slot_size = size;
 	//speed vstart vend location 再設定
 	double scale = data->width_scale;
 	setspeed(data,slot_item,video_width,data->nico_width_now,scale);
@@ -117,7 +116,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	}
 	//location 取得
 	int location = slot_item->slot_location;
-	if(location==CMD_LOC_DEF && data->deflocation!=CMD_LOC_DEF){
+	if(location==CMD_LOC_DEF){
 		fprintf(data->log,"[chat_slot/add]***BUG*** comment %d vpos %d location %d def %d\n",
 			item->no,item->vpos,item->location,data->deflocation);
 	}
@@ -195,7 +194,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			}
 
 			//vendは最後の数vposは揺らぐので仮に17vposとして計算
-			end -= 3;
+			//end -= 3;
 			double x_t1 = getX(start,slot_item,video_width,scale,0);
 			double x_t2 = getX(end,slot_item,video_width,scale,0);
 			double o_x_t1 = getX(start,other_slot,video_width,scale,0);
@@ -205,7 +204,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			double o_dxstart[2] = {o_x_t1, o_x_t1 + other_slot->surf->w};
 			double o_dxend[2] = {o_x_t2, o_x_t2 + other_slot->surf->w};
 			double dtmp[2];
-			double range[2] = {-16*scale, video_width+16*scale};
+			double range[2] = {-16*scale, (NICO_WIDTH+16)*scale};
 			if(data->debug)
 				fprintf(data->log,"range (%.0f,%.0f)\n",range[0],range[1]);
 			//当たり判定　追い越し無し前提
@@ -225,7 +224,8 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 					break;
 				}
 				if(data->debug){
-					fprintf(data->log,"out of range [%.1f,%.1f]\n",dtmp[0],dtmp[1]);
+					fprintf(data->log,"out of range [%.1f,%.1f]&[%.1f,%.1f]=[%.1f,%.1f]\n",
+						dtmp[0],dtmp[1],range[0],range[1],bang_xpos[0],bang_xpos[1]);
 				}
 			}
 			if(data->debug)
@@ -244,7 +244,8 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 					break;
 				}
 				if(data->debug){
-					fprintf(data->log,"out of range [%.1f,%.1f]\n",dtmp[0],dtmp[1]);
+					fprintf(data->log,"out of range [%.1f,%.1f]&[%.1f,%.1f]=[%.1f,%.1f]\n",
+						dtmp[0],dtmp[1],range[0],range[1],bang_xpos[0],bang_xpos[1]);
 				}
 			}
 		}
@@ -308,7 +309,7 @@ CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos){
 int set_crossed(double ret[2],double pair1[2],double pair2[2]){
 	ret[0] = MAX(pair1[0],pair2[0]);
 	ret[1] = MIN(pair1[1],pair2[1]);
-	return ret[0] < ret[1];
+	return (int)(ret[1] - ret[0]) >= 0;
 }
 //幅
 double d_width(double pair[2]){

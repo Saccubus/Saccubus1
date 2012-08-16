@@ -1210,7 +1210,8 @@ public class Converter extends Thread {
 				conv_name = "";
 			}
 			if (!Setting.isNotAddVideoID_Conv()) {//付加するなら
-				conv_name = getVideoBaseName();
+				conv_name = Setting.isChangeTitleId()?
+						VideoTitle + VideoID : VideoID + VideoTitle;
 			}
 			if (conv_name.isEmpty()) {
 				sendtext("変換後のビデオファイル名が確定できません。");

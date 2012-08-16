@@ -304,9 +304,9 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		/*
 		 * ˜g‚ð‚Â‚¯‚éH
 		 */
-		if(strstr(data->extra_mode,"-frame")!=NULL){
+		if(strstr(data->extra_mode,"-frame")!=NULL||item->waku){
 			SDL_Surface* tmp = ret;
-			ret = drawFrame(data,item,tmp,RENDER_COLOR_BG,1);
+			ret = drawFrame(data,location,tmp,RENDER_COLOR_BG,1);
 			SDL_FreeSurface(tmp);
 		}
 
@@ -542,9 +542,9 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	/*
 	 * ˜g‚ð‚Â‚¯‚éH
 	 */
-	if(strstr(data->extra_mode,"-frame")!=NULL){
+	if(strstr(data->extra_mode,"-frame")!=NULL||item->waku){
 		SDL_Surface* tmp = ret;
-		ret = drawFrame(data,item,tmp,RENDER_COLOR_BG,1);
+		ret = drawFrame(data,location,tmp,RENDER_COLOR_BG,1);
 		SDL_FreeSurface(tmp);
 	}
 
@@ -880,4 +880,21 @@ int isDoubleResize(double width, double limit_width, int size, int line, FILE* l
 		return TRUE;
 	}
 	return FALSE;
+}
+
+SDL_Surface* getErrFont(DATA* data){
+	Uint16 errMark[2] = {0x2620, '\0'};
+	if(data->ErrFont == NULL){
+		TTF_Font* font =(data->enableCA)?
+			data->CAfont[GOTHIC_FONT][CMD_FONT_SMALL]
+			: data->font[CMD_FONT_SMALL];
+		data->ErrFont = drawText4(data,CMD_FONT_SMALL,COMMENT_COLOR[CMD_COLOR_PASSIONORANGE],font,errMark,-1);
+	}
+	return data->ErrFont;
+}
+
+void closeErrFont(DATA* data){
+	if(data->ErrFont != NULL){
+		SDL_FreeSurface(data->ErrFont);
+	}
 }

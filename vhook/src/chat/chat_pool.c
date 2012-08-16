@@ -23,7 +23,7 @@ int initChatPool(FILE* log,CHAT* chat,int max_pool){
 		pool->item[i] = NULL;
 	}
 	chat->pool = pool;
-	fprintf(log,"[chat_pool/init]pool %s\n",chat->com_type);
+	fprintf(log,"[chat_pool/init]initialized.\n");
 	return TRUE;
 }
 

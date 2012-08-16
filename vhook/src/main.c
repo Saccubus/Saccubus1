@@ -8,6 +8,8 @@
 #include "process.h"
 #include "unicode/uniutil.h"
 #include "april_fool.h"
+#include "comment/com_surface.h"
+
 int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, const char* com_type);
 
 /**
@@ -345,6 +347,8 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		return FALSE;
 	}
 
+	//エラー用フォント
+	data->ErrFont = NULL;
 	//終わり。
 	fputs("[main/init]initialized context.\n",log);
 	return TRUE;
@@ -354,10 +358,11 @@ int initData(DATA* data,FILE* log,SETTING* setting){
  * DATA data->user owner optional
  */
 int initCommentData(DATA* data, CDATA* cdata,FILE* log,const char* path, int max_slot, const char* com_type){
+	int tl = data->comment_speed<0? -1:1;
 	if (cdata->enable_comment){
 		fprintf(log,"[main/init]%s comment is enabled.\n",com_type);
 		//コメントデータ
-		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length, data->nico_width_now, com_type)){
+		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length, data->nico_width_now, com_type, tl)){
 			fprintf(log,"[main/init]initialized %s comment.\n",com_type);
 		}else{
 			fprintf(log,"[main/init]failed to initialize %s comment.",com_type);
@@ -505,6 +510,8 @@ int closeData(DATA* data){
 		closeChat(&data->optional.chat);
 		closeChatSlot(&data->optional.slot);
 	}
+	//エラー用フォント開放
+	closeErrFont(data);
 	//フォント開放
 	for(i=0;i<CMD_FONT_MAX;i++){
 		TTF_CloseFont(data->font[i]);

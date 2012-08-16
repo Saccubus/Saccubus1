@@ -7,6 +7,7 @@
 
 SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width,int video_height);
 SDL_Surface* drawNullSurface(int w,int h);
-
+SDL_Surface* getErrFont(DATA* data);
+void closeErrFont(DATA* data);
 
 #endif /*COM_SURFACE_H_*/

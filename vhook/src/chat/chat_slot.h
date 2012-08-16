@@ -13,6 +13,8 @@ struct CHAT_SLOT_ITEM{
 	SDL_Surface* surf;
 	int y;
 	float speed;
+	int vappear;		//start display when wide(640x360)
+	int vvanish;		//end display when wide
 	//リファレンス
 	CHAT_SLOT* slot;
 };
@@ -24,7 +26,7 @@ struct CHAT_SLOT{
 	//リファレンス
 	CHAT* chat;
 	//コメントタイプ
-	const char* com_type;	//user owner optional
+	//const char* com_type;	//user owner optional
 };
 #include "../main.h"
 //初期化

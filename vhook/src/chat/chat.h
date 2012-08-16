@@ -21,6 +21,7 @@ struct CHAT_ITEM{
 	int vpos;
 	int location;
 	int full;	// whether full ommand?
+	int waku;	// 黄枠付加
 	int script;	// whether nico script?
 	//文字の修飾
 	int size;
@@ -30,8 +31,8 @@ struct CHAT_ITEM{
 	//内部処理で使う
 	int vstart;		//begin vpos of check y
 	int vend;		//last vpos of check y
-	int vappear;		//start display when wide(640x360)
-	int vvanish;		//end display when wide
+	//int vappear;		//start display when wide(640x360)
+	//int vvanish;		//end display when wide
 	int showed;			// whether checked y pos, 0: not showed, 1:showed and not finished, finished
 	int duration;	// vend - vstart
 	  // ＠秒数の場合  指定値
@@ -66,7 +67,7 @@ struct CHAT_SET{
 };
 
 //初期化
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,const char* com_type);
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,const char* com_type,int tl);
 void closeChat();
 //イテレータ
 void resetChatIterator(CHAT* chat);

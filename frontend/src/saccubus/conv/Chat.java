@@ -37,6 +37,8 @@ public class Chat {
 
 	private static final int CMD_LOC_FULL = 4;
 
+	private static final int CMD_LOC_WAKU = 8;
+
 	static final int CMD_LOC_SCRIPT = 16;
 	/**
 	 * Location bit 31-16 追加
@@ -170,6 +172,10 @@ public class Chat {
 			// フルコマンド
 			else if (str.equals("full")){
 				Location |= CMD_LOC_FULL;
+			}
+			// フルコマンド
+			else if (str.equals("waku")){
+				Location |= CMD_LOC_WAKU;
 			}
 			// サイズ
 			else if (str.equals("big") && !isSizeAssigned) {

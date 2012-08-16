@@ -77,6 +77,7 @@ struct DATA{
 	//Uint16* zero_width;
 	//Uint16* spaceable;
 //	int limit_height;
+	SDL_Surface* ErrFont;
 	// 実験的設定↓
 	short font_pixel_size[CMD_FONT_MAX];
 	short fixed_font_height[CMD_FONT_MAX];	// 修正フォント指定(ポイント指定)

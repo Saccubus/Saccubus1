@@ -381,7 +381,7 @@ public class NicoClient {
 
 	public boolean getVideoHistoryAndTitle(String tag, String watchInfo, boolean saveWatchPage) {
 		if(getThumbInfoFile(tag) != null && !saveWatchPage){
-			return true;
+			//return true;
 		}
 		boolean found = false;
 		String url = "http://www.nicovideo.jp/watch/" + tag + watchInfo;

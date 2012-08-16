@@ -30,11 +30,11 @@ static char* const COM_LOC_NAME[CMD_LOC_MAX] = {
 	"naka",	//CMD_LOC_NAKA
 };
 
-#define GET_CMD_LOC(x)	((x) & 0x03)
-#define GET_CMD_DURATION(x)	((x) >> 16 & 0xffff)
+#define GET_CMD_LOC(x)	((x) & 3)
+#define GET_CMD_DURATION(x)	(((x) >> 16) & 0xffff)
 #define GET_CMD_FULL(x)	((x) & 4)
+#define GET_CMD_WAKU(x)	((x) & 8)
 #define GET_CMD_SCRIPT(x)	((x) & 16)
-//#define GET_CMD_WAKU(x)	((x) & 8)
 
 #define CMD_FONT_MAX	4
 #define CMD_FONT_DEF	0

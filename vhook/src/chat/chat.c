@@ -13,7 +13,7 @@ SDL_Color convColor24(int color);
  * 出力 CHAT chat 領域確保、項目設定
  * 出力 CHAT_SLOT chat->slot ← slot ポインタ設定のみ
  */
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,const char* com_type){
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,const char* com_type,int toLeft){
 	int i;
 	int max_no = INTEGER_MIN;
 	int min_no = INTEGER_MAX;
@@ -55,6 +55,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	int str_length;
 	int duration;
 	int full;
+	int waku;
 	int script;
 	SDL_Color color24;
 	Uint16* str;
@@ -124,6 +125,12 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		} else {
 			full = 0;
 		}
+		// full コマンド？
+		if(GET_CMD_WAKU(location)!= 0){
+			waku = 1;
+		} else {
+			waku = 0;
+		}
 		// color24bit ?
 		color24 = getSDL_color(color);
 		// bit 31-16 を＠秒数とみなす　saccubus1.37以降
@@ -166,30 +173,27 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		removeZeroWidth(str,str_length/sizeof(Uint16));
 		item->str = str;
 		/*内部処理より*/
-		if(location != CMD_LOC_DEF){
+		if(location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM){
 			item->vstart = vpos;
 			item->vend = vpos + TEXT_SHOW_SEC_S - 1;
 			//vend is last tick of LIFE, so must be - 1 done.
 			// item->vend = vpos + duration - 1;
-			item->vappear = item->vstart;
-			item->vvanish = item->vend;
 		}else{
 			item->vstart = vpos - TEXT_AHEAD_SEC;
 			item->vend = vpos + TEXT_SHOW_SEC_S - 1;
 			//vend is last tick of LIFE, so must be - 1 done.
 			// item->vend = item->vstart + duration - 1;
-			item->vappear = item->vstart - TEXT_AHEAD_SEC;
-			item->vvanish = item->vend + TEXT_AHEAD_SEC;
 		}
 		item->full = full;
+		item->waku = waku;
 		item->duration = duration;
 		item->script = script;
 		item->color24 = color24;
 		if (video_length > 0){
 			int fix = item->vend - video_length;
 			if(fix > 0){
-				if(fix > 4)
-					fix = 4;
+				if(fix > TEXT_SHOW_SEC)
+					fix = TEXT_SHOW_SEC;
 				//item->verase -= fix;
 				item->vend -= fix;
 				item->vpos -= fix;
@@ -203,7 +207,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	chat->max_no = max_no;
 	chat->min_no = min_no;
 	chat->com_type = com_type;
-	chat->to_left = 1;
+	chat->to_left = toLeft;
 	if (chat->max_item > 0){
 		//コメントプール（vposが更新された時に取り出したchat_itemを一時保管）
 		if(initChatPool(log, chat, chat->max_item)){
