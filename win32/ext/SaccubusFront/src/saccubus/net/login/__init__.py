@@ -26,20 +26,24 @@ from ..error import SaccubusError;
 ログインに失敗した場合はLoginErrorを送出します。
 '''
 def login(userid, password, method=None):
+	jar = login_impl(userid, password, method);
+	if not isLoggedIn(jar):
+		raise SaccubusError("Failed to login with {0}. Maybe browser's cookie was already outdated.".format(method));
+	return jar;
+
+def login_impl(userid, password, method):
 	if method == None:
 		for _method in LOGIN_METHOD:
 			try:
 				return LOGIN_METHOD[_method](userid, password)
 			except:
 				pass
-			raise SaccubusError("ログインできませんでした");
+			raise SaccubusError("Failed to login.");
 	else:
 		if method not in LOGIN_METHOD:
 			raise ValueError("Unknwon login method: {0}".format(method));
 		else:
 			return LOGIN_METHOD[method](userid, password)
-		
-
 
 '''
 クッキーを取得する各メソッド。

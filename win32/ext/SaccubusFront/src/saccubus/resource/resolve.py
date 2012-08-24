@@ -130,7 +130,9 @@ class Resolver(object):
 	def download(self, video_id, commentOpt, resolved):
 		no_video = 'video' not in resolved;
 		no_thread = 'thread' not in resolved or len(resolved['thread']) <= 0;
-		if no_video or no_thread or 'play_info' not in resolved or 'meta_info' not in resolved:
+		no_play_info = 'play_info' not in resolved;
+		no_meta_info =  'meta_info' not in resolved;
+		if no_video or no_thread or no_play_info or no_meta_info:
 			#どれか一つでも足りないなら
 			cjar = login.login(self.auth.get('user'), self.auth.get('password'), self.auth.get('cookie'))
 			play_info_path, play_info_dic = play_info.downloadPlayInfo(cjar, video_id, self.resource_path);
