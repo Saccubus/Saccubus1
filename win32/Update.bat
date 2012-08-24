@@ -11,7 +11,10 @@ if "%choice%" == "y" (
 	goto exit
 )
 :update
-	call %~dp0updater\init.bat
+	echo アップデータのコピー中
+	xcopy /S /E /Y %~dp0updater %TEMP%\updater\
+	echo 環境のセットアップ
+	call %TEMP%\updater\init.bat
 	svn update
 	echo アップデートが完了しました。
 	pause
