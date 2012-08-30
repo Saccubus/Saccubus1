@@ -254,7 +254,7 @@ public class NicoClient {
 			con.addRequestProperty("Connection", "close");
 			connect(con);
 			StringBuffer sb = new StringBuffer(4096);
-			sb.append("next_url=&");
+			sb.append("next_url=/&");
 			sb.append("mail=");
 			sb.append(URLEncoder.encode(User, "Shift_JIS"));
 			sb.append("&password=");
