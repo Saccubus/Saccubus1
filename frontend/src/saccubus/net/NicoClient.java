@@ -119,6 +119,7 @@ public class NicoClient {
 		nicomap = new NicoMap();
 		ConProxy = conProxy(proxy, proxy_port);
 		Cookie = "user_session=" + user_session;	// "user_session_12345..."
+		nicomap.add("Set-Cookie",Cookie);
 		if (user_session == null || user_session.isEmpty()){
 			System.out.println("Invalid user session" + browser_kind.toString());
 			setExtraError("セッションを取得出来ません");
@@ -229,12 +230,7 @@ public class NicoClient {
 		if (Debug){
 			nicomap.printAll(System.out);
 		}
-		String cookie = "";
-		String value = null;
-		if ((value = nicomap.get("Set-Cookie")) != null
-				&& value.indexOf(";") >= 0){
-			cookie = value.substring(0, value.indexOf(";"));
-		}
+		String cookie = nicomap.get("Set-Cookie");
 		debug("■<Set-Cookie><" + cookie + ">\n");
 		return cookie;
 	}
@@ -400,6 +396,7 @@ public class NicoClient {
 				con.disconnect();
 				return false;
 				*/
+				new_cookie = Cookie;	//recover
 			}
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
@@ -450,7 +447,7 @@ public class NicoClient {
 			}
 			br.close();
 			con.disconnect();
-			found = getVideoTitle()==null;
+			found = getVideoTitle()!=null;
 			PrintWriter pw;
 			if(!found || saveWatchPage){
 				titleHtml = Path.mkTemp(tag + "watch.htm");
@@ -463,7 +460,7 @@ public class NicoClient {
 				System.out.println(" <" + Path.toUnixPath(titleHtml) + "> saved.");
 			}
 			System.out.println("ok.");
-			Cookie += "; " + new_cookie;
+			Cookie = new_cookie;
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			return false;
@@ -866,7 +863,7 @@ public class NicoClient {
 				System.out.println("ng.\nNull response.");
 				return false;
 			}
-			nicomap.putArray(ret);
+			nicomap.splitAndPut(ret, "&");
 			threadKey = nicomap.get("threadkey");
 			force184 = nicomap.get("force_184");
 			if (threadKey == null || force184 == null) {
@@ -923,7 +920,7 @@ public class NicoClient {
 				System.out.println("ng.\nCannot find waybackkey from response.");
 				return false;
 			}
-			nicomap.putArray(ret);
+			nicomap.splitAndPut(ret, "&");
 			String waybackkey = nicomap.get("waybackkey");
 			if (waybackkey == null || waybackkey.isEmpty()) {
 				System.out.println("ng.\nCannot get wayback key. it's invalid");
@@ -1002,7 +999,7 @@ public class NicoClient {
 			}
 */
 			if (new_cookie != null && !new_cookie.isEmpty()) {
-				Cookie += "; " + new_cookie;
+				Cookie = new_cookie;
 			}
 			debug("\n■Now Cookie is<" + Cookie + ">\n");
 			System.out.println("ok.");
@@ -1223,12 +1220,14 @@ public class NicoClient {
 				System.out.println("ng.\nCan't getThumbInfo:" + url);
 				return null;
 			}
-			String new_cookie = detectCookie(con);
+			/*String new_cookie =*/ detectCookie(con);
+/*
 			if (new_cookie == null || new_cookie.isEmpty()) {
-				System.out.println("ng.\nCan't getThumbInfo: cannot get cookie.");
+				//System.out.println("ng.\nCan't getThumbInfo: cannot get cookie.");
 			}else{
-				Cookie += "; " + new_cookie;
+				Cookie = new_cookie;
 			}
+*/
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
 				encoding = "UTF-8";
@@ -1296,12 +1295,14 @@ public class NicoClient {
 				System.out.println("ng.\nCan't getThumbUser:" + url);
 				return null;
 			}
-			String new_cookie = detectCookie(con);
+			/*String new_cookie =*/ detectCookie(con);
+/*
 			if (new_cookie == null || new_cookie.isEmpty()) {
 				System.out.println("ng.\nCan't getThumbUser: cannot get cookie.");
 			}else{
-				Cookie += "; " + new_cookie;
+				Cookie = new_cookie;
 			}
+*/
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
 				encoding = "UTF-8";
@@ -1342,12 +1343,14 @@ public class NicoClient {
 				System.out.println("ng.\nCan't getUserInfo:" + url);
 				return null;
 			}
-			String new_cookie = detectCookie(con);
+			/*String new_cookie =*/ detectCookie(con);
+/*
 			if (new_cookie == null || new_cookie.isEmpty()) {
 				System.out.println("ng.\nCan't getUserInfo: cannot get cookie.");
 			}else{
-				Cookie += "; " + new_cookie;
+				Cookie = new_cookie;
 			}
+*/
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
 				encoding = "UTF-8";
@@ -1394,12 +1397,14 @@ public class NicoClient {
 				System.out.println("ng.\nCan't getThumbnailJpg:" + url);
 				return false;
 			}
-			String new_cookie = detectCookie(con);
+			/*String new_cookie =*/ detectCookie(con);
+/*
 			if (new_cookie == null || new_cookie.isEmpty()) {
 				System.out.println("ng.\nCan't getThumbnailJpg: cannot get cookie.");
 			}else{
-				Cookie += "; " + new_cookie;
+				Cookie = new_cookie;
 			}
+*/
 			InputStream is = con.getInputStream();
 			FileOutputStream fos = new FileOutputStream(thumbnalJpgFile);
 			byte[] buf = new byte[4096];
