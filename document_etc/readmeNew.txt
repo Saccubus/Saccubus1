@@ -6,11 +6,8 @@ readmeNew.txt
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-1.37r3 (2012/10/17)
-　1.37r2 cookie処理修正
-
-1.37r2 (2012/08/30)
-　1.37r 通常ログイン（ブラウザ情報不使用）で情報取得に失敗するのを修正
+1.37r4 (2012/12/05)
+　saccubus.exeをVC++2010ビルドに変更
 
 □改造部分について
 【ライセンス】GPLv3（添付してあります）
@@ -538,7 +535,7 @@ readmeNew.txt
 ・gpl.ja.txt 　　　　　　　 GPLライセンスの非公式日本語訳
 ・LGPL_LICENSE　　　　　　　LGPLライセンス
 ・agpl-3.0.txt　　　　　　　AGPLv3ライセンス
-・Saccubus.jar　　　　　　　本体　1.35
+・Saccubus.jar　　　　　　　本体　1.37r3
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
 ・bin フォルダ配下
 　　ffmpeg55686.exe ライセンスGPLV3
@@ -549,7 +546,7 @@ readmeNew.txt
 ・optionDev フォルダ配下 　 開発用ファイル
 ・optionVO フォルダ配下　　 変換オプションファイル
 　　　（N55686用 2012.07.20版）
-・readmeNew.txt(1.34)、readme.txt(1.22r)、readme+.txt(1.22r3)
+・readmeNew.txt(1.37)、readme.txt(1.22r)、readme+.txt(1.22r3)
 ・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
 ・AUTO2PROC.BAT　　　　　　 ２プロセス自動実行本体
@@ -579,6 +576,7 @@ readmeNew.txt
 　N55686(libfaac無し、libvo_aacencあり)+optionVO(古い)
 　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
 　改造版
+　1.37r3　　http://www1.axfc.net/uploader/Ne/so/141013.zip
 　1.37　　　http://www1.axfc.net/uploader/Ne/so/137858.zip
 　1.36r 　　http://www1.axfc.net/uploader/Ne/so/137048.zip
 　1.35　　　http://www1.axfc.net/uploader/Ne/so/136823.zip
@@ -625,6 +623,9 @@ readmeNew.txt
 
 
 変更履歴・修正・改変点
+1.37r4 (2012/12/05)
+　saccubus.exeをVC++2010ビルドに変更
+
 1.37r3 (2012/10/17)
 　1.372 cookie処理修正
 
