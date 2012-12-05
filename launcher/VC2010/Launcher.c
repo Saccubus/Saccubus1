@@ -106,7 +106,7 @@ int doCmd(char* command,int show_msg,const char* log_name){
 	if(code == 0){
 		ret = -1;
 		if(show_msg){
-			char msg[100];
+			char *msg;
 			int error_code = FormatMessageA(
 				FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,	// 動作フラグ
 				0,																// メッセージ定義位置
