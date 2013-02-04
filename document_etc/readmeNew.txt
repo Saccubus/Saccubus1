@@ -6,11 +6,8 @@ readmeNew.txt
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-1.37r5 (2012/12/05)
-　Saccubus.exe バグ修正と思ったらバグではないところを修正した(orz)ので戻す。
-
-1.37r4 (2012/12/05)
-　saccubus.exeをVC++2010ビルドに変更
+1.37r6 (2013/02/05)
+ブラウザ情報取得修正
 
 □改造部分について
 【ライセンス】GPLv3（添付してあります）
@@ -525,7 +522,7 @@ readmeNew.txt
 ■収録物
 　　ffmpeg55686同梱版
 □フォルダ構成
-　saccubud1.31.zip
+　saccubus1.37r6.zip
 　├ffmpeg55686同梱版  表示
 　├最初に必ず読んで.txt
 　└saccubus　　本体exe jar xml bat
@@ -538,7 +535,7 @@ readmeNew.txt
 ・gpl.ja.txt 　　　　　　　 GPLライセンスの非公式日本語訳
 ・LGPL_LICENSE　　　　　　　LGPLライセンス
 ・agpl-3.0.txt　　　　　　　AGPLv3ライセンス
-・Saccubus.jar　　　　　　　本体　1.37r3
+・Saccubus.jar　　　　　　　本体　1.37r6
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
 ・bin フォルダ配下
 　　ffmpeg55686.exe ライセンスGPLV3
@@ -549,7 +546,7 @@ readmeNew.txt
 ・optionDev フォルダ配下 　 開発用ファイル
 ・optionVO フォルダ配下　　 変換オプションファイル
 　　　（N55686用 2012.07.20版）
-・readmeNew.txt(1.37)、readme.txt(1.22r)、readme+.txt(1.22r3)
+・readmeNew.txt(1.37r6)、readme.txt(1.22r)、readme+.txt(1.22r3)
 ・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
 ・AUTO2PROC.BAT　　　　　　 ２プロセス自動実行本体
@@ -626,6 +623,9 @@ readmeNew.txt
 
 
 変更履歴・修正・改変点
+1.37r6 (2013/02/05)
+ブラウザ情報取得修正
+
 1.37r5 (2012/12/05)
 　Saccubus.exe バグ修正と思ったらバグではないところを修正した(orz)ので戻す。
 

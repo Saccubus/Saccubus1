@@ -118,14 +118,28 @@ public class NicoClient {
 		Stopwatch = stopwatch;
 		nicomap = new NicoMap();
 		ConProxy = conProxy(proxy, proxy_port);
-		Cookie = "user_session=" + user_session;	// "user_session_12345..."
-		nicomap.add("Set-Cookie",Cookie);
 		if (user_session == null || user_session.isEmpty()){
 			System.out.println("Invalid user session" + browser_kind.toString());
 			setExtraError("セッションを取得出来ません");
 			Logged_in = false;
 		} else {
-			Logged_in = loginCheck();					// ログイン済みのハズ
+			String[] sessions = user_session.split(" ");	// "user_session_12345..."+" "+...
+			for(String session: sessions){
+				if (session != null && !session.isEmpty()){
+					String this_session = "user_session=" + session;
+					Cookie = this_session;
+					if(loginCheck()){
+						nicomap.add("Set-Cookie",this_session);
+						Cookie = nicomap.get("Set-Cookie");
+						Logged_in = true;	// ログイン済みのハズ
+						return;
+					}
+					Cookie = "";
+					System.out.println("Fault user session" + browser_kind.toString());
+					setExtraError("セッションが無効です");
+				}
+			}
+			Logged_in = false;
 		}
 	}
 
@@ -944,10 +958,6 @@ public class NicoClient {
 		String url = "http://www.nicovideo.jp";
 		System.out.print("Checking login...");
 		// GET (NO_POST), UTF-8, AllowAutoRedirect,
-/*
-		BufferedReader br = null;
-		try {
-*/
 			HttpURLConnection con = urlConnectGET(url);
 			// response 200, 302 is OK
 			if (con == null){
@@ -965,55 +975,12 @@ public class NicoClient {
 				con.disconnect();
 				return false;
 			}
-/*
-			String encoding = con.getContentEncoding();
-			if (encoding == null){
-				encoding = "UTF-8";
-			}
-			br = new BufferedReader(new InputStreamReader(con
-					.getInputStream(), encoding));
-			System.out.print("  Checking TopPage...");
-			// debug("\n");
-			String ret;
-			boolean found = false;
-			while ((ret = br.readLine()) != null) {
-				Stopwatch.show();
-				// debug("■readLine(" + encoding + "):" + ret + "\n");
-				// NO_LOGIN_TAG = "var User = { id: false";
-				if (ret.indexOf("var User = { id: false") >= 0) {
-					System.out.println("ng. Not logged in.");
-					con.disconnect();
-					return false;
-				}
-				if (ret.indexOf("var User = { id:") >= 0){
-					// UserID is valid
-					found = true;
-					debug("\n■readLine(" + encoding + "):" + ret);
-					break;
-				}
-			}
-			con.disconnect();
-			if (!found){
-				System.out.println("ng. Can't found UserID Key. Is Niconico TopPage format ◆CHANGED?◆");
-				return false;
-			}
-*/
 			if (new_cookie != null && !new_cookie.isEmpty()) {
 				Cookie = new_cookie;
 			}
 			debug("\n■Now Cookie is<" + Cookie + ">\n");
 			System.out.println("ok.");
 			return true;
-/*
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			return false;
-		} finally {
-			if (br != null){
-				try { br.close(); } catch (IOException e) { }
-			}
-		}
-*/
 	}
 
 	public String getBackCommentFromLength(String def) {

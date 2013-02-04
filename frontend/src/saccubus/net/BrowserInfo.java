@@ -466,8 +466,9 @@ public class BrowserInfo {
     private String cutUserSession(String str, String filename)
     {
     	String ret = "";
+    	StringBuffer sb = new StringBuffer("");
         int start = str.indexOf("user_session_");
-        if (start >= 0)
+        while (start >= 0)
         {
             int index = start + "user_session_".length();
             while (index < str.length() && ('0' <= str.charAt(index) && str.charAt(index) <= '9'
@@ -477,12 +478,13 @@ public class BrowserInfo {
             }
             ret = str.substring(start, index);
             // C# ‚Ì string.SubString( , ) ‚Æ Java ‚Ì String.substring( , ) ‚Íˆá‚¤‚Ì‚Å’ˆÓI
+            start = str.indexOf("user_session_", index);
             if (!ret.isEmpty() && !filename.isEmpty()){
             	System.out.println("Cookie found: " + filename);
-                return ret;
+                sb.append(ret + " ");
             }
         }
-        return "";
+        return sb.toString();
     }
 
 }
