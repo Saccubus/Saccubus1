@@ -8,6 +8,7 @@
 #include "uniutil.h"
 #include "../mydef.h"
 #include "unitable.h"
+#include "../nicodef.h"
 
 int isMatchKanji(Uint16* u,Uint16* kanji){
 	if(kanji==NULL)
@@ -246,4 +247,8 @@ int uint16len(Uint16* u){
 	while(*u++!='\0')
 		l++;
 	return l;
+}
+
+int isKanjiWidth(Uint16* u){
+	return isMatchKanji(u,(Uint16*)&KANJI_WIDTH[0]);
 }

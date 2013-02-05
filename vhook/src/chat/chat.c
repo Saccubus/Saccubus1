@@ -13,11 +13,12 @@ SDL_Color convColor24(int color);
  * 出力 CHAT chat 領域確保、項目設定
  * 出力 CHAT_SLOT chat->slot ← slot ポインタ設定のみ
  */
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,const char* com_type,int toLeft){
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,int cid,const char* com_type,int toLeft){
 	int i;
 	int max_no = INTEGER_MIN;
 	int min_no = INTEGER_MAX;
 	int max_item;
+	chat->cid = cid;
 	chat->slot = slot;
 	FILE* com_f = fopen(file_path,"rb");
 	if(com_f == NULL){
@@ -45,6 +46,16 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	if (video_length == 0){
 		fprintf(log,"[chat/fix]cannot adjust end time since video_length UNKOWN\n");
 	}
+	// patissierコマンドチェック
+	int patissier_num = 1000;
+	if (video_length > 0){
+		if(video_length < (60 * VPOS_FACTOR))
+			patissier_num = 100;
+		else if(video_length < (300 * VPOS_FACTOR))
+			patissier_num = 250;
+		else if(video_length < (600 * VPOS_FACTOR))
+			patissier_num = 500;
+	}
 	/*個別要素の初期化*/
 	CHAT_ITEM* item;
 	int no;
@@ -54,8 +65,6 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	int color;
 	int str_length;
 	int duration;
-	int full;
-	int waku;
 	int script;
 	SDL_Color color24;
 	Uint16* str;
@@ -119,25 +128,21 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			fputs("[chat/init]failed to read comment text.\n",log);
 			return FALSE;
 		}
-		// full コマンド？
-		if(GET_CMD_FULL(location)!= 0){
-			full = 1;
-		} else {
-			full = 0;
-		}
-		// full コマンド？
-		if(GET_CMD_WAKU(location)!= 0){
-			waku = 1;
-		} else {
-			waku = 0;
-		}
-		// color24bit ?
+		// full コマンド
+		item->full = GET_CMD_FULL(location)!= 0;
+		// waku コマンド
+		item->waku = GET_CMD_WAKU(location)!= 0;
+		// patissier コマンド
+		item->patissier = GET_CMD_PATISSIER(location)!= 0;
+		// patissier コマンド
+		item->invisible = GET_CMD_INVISIBLE(location)!= 0;
+		// color24bit
 		color24 = getSDL_color(color);
 		// bit 31-16 を＠秒数とみなす　saccubus1.37以降
 		duration = GET_CMD_DURATION(location);
-		if (duration != 0){	// @秒数
-			duration *= VPOS_FACTOR;
-		}
+//		if (duration != 0){	// @秒数
+//			duration *= VPOS_FACTOR;
+//		}
 		// nico script
 		script = GET_CMD_SCRIPT(location);
 		if(script!=0){
@@ -153,12 +158,12 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 					script = SCRIPT_GYAKU|SCRIPT_OWNER|SCRIPT_USER;
 				}
 				if(duration == 0){
-					duration = 30 * VPOS_FACTOR;
+					duration = 30;
 				}
 			}else if(c1 == UNICODE_DE){
 				script = SCRIPT_DEFAULT;
 				if(duration == 0){
-					duration = 0x7fffffff;
+					duration = INTEGER_MAX;
 				}
 			}
 		}
@@ -184,8 +189,6 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			//vend is last tick of LIFE, so must be - 1 done.
 			// item->vend = item->vstart + duration - 1;
 		}
-		item->full = full;
-		item->waku = waku;
 		item->duration = duration;
 		item->script = script;
 		item->color24 = color24;
@@ -208,8 +211,10 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	chat->min_no = min_no;
 	chat->com_type = com_type;
 	chat->to_left = toLeft;
+	chat->patissier_ignore = max_no - patissier_num;
+	fprintf(log,"[main/init]patissier ignore no <= %d.\n",chat->patissier_ignore);
+	//コメントプール（vposが更新された時に取り出したchat_itemを一時保管）
 	if (chat->max_item > 0){
-		//コメントプール（vposが更新された時に取り出したchat_itemを一時保管）
 		if(initChatPool(log, chat, chat->max_item)){
 			fprintf(log,"[main/init]initialized %s comment pool %d.\n",com_type,chat->max_item);
 		}else{

@@ -122,4 +122,7 @@ void exitExtProcess();
 #define FRAMEHOOK_OPT_APRIL_FOOL	"--april-fool:"
 #define FRAMEHOOK_OPT_APRIL_FOOL_LEN	strlen(FRAMEHOOK_OPT_APRIL_FOOL)
 
+#define FRAMEHOOK_OPT_WAKUIRO	"--wakuiro:"
+#define FRAMEHOOK_OPT_WAKUIRO_LEN	strlen(FRAMEHOOK_OPT_WAKUIRO)
+
 #endif /*FRAMEHOOK_H_*/

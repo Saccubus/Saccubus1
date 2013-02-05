@@ -24,7 +24,7 @@
 #define CMD_LOC_MAX		4
 
 static char* const COM_LOC_NAME[CMD_LOC_MAX] = {
-	"naka",	//CMD_LOC_DEF
+	"def",	//CMD_LOC_DEF
 	"ue",	//CMD_LOC_TOP
 	"shita",	//CMD_LOC_BOTTOM
 	"naka",	//CMD_LOC_NAKA
@@ -35,6 +35,9 @@ static char* const COM_LOC_NAME[CMD_LOC_MAX] = {
 #define GET_CMD_FULL(x)	((x) & 4)
 #define GET_CMD_WAKU(x)	((x) & 8)
 #define GET_CMD_SCRIPT(x)	((x) & 16)
+#define GET_CMD_PATISSIER(x)	((x) & 32)
+#define GET_CMD_INVISIBLE(x)	((x) & 64)
+#define GET_CMD_IS_BUTTON(x)	((x) & 128)
 
 #define CMD_FONT_MAX	4
 #define CMD_FONT_DEF	0
@@ -201,6 +204,28 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 	{0xff,0xff,0xff,0x00},//DEF
 };
 
+//
+static char* const CMD_COLOR_NAME[CMD_COLOR_MAX] = {
+	"def",
+	"red",
+	"orange",
+	"yellow",
+	"pink",
+	"blue",
+	"purple",
+	"cyan",
+	"green",
+	"white2",	//nicowhite
+	"blue2",	//marineblue
+	"yellow2",	//madyellow
+	"orange2",	//passionorange
+	"violet2",	//nobleviolet
+	"green2",	//elementalgreen
+	"red2",		//truered
+	"black",
+	"white",
+};
+
 // CA Font Set Index
 #define GOTHIC_FONT	0
 #define	SIMSUN_FONT	1
@@ -296,6 +321,13 @@ static const int CA_FONT_SIZE_TUNED[4][2][CMD_FONT_MAX] = {
 	{{20,36,13,20,},{40,69,26,40,}},	//arial
 };
 
+//									[font_sel][SIZE]
+static const int CA_FONT_NICO_WIDTH[4][CMD_FONT_MAX] = {
+	{25,40,16,25},		//gothic
+	{25,40,16,25},		//simsun
+	{25,40,16,25},		//gulim
+	{25,40,16,25},		//arial
+};
 /*
 参照teacup掲示板　CA研究用1　http://8713.teacup.com/cas/bbs/t2/17
 
@@ -350,6 +382,25 @@ static const int CA_FONT_3000_WIDTH[3][CMD_FONT_MAX] = {
 	{17,27,11,17},		//gothic
 	{25,40,16,25},		//simsun
 	{25,40,16,25},		//gulim
+};
+
+/*
+ * CJKフォントの既定文字幅
+ * U+3400-D7FF	全角、漢字幅
+ * U+F900-FAFF	全角、漢字幅
+ */
+static const Uint16 KANJI_WIDTH[] =
+	{0x3400,0xd7ff,0xf900,0xfaff,0,0};
+
+/*
+ * コメントタイプ CID
+ */
+#define CID_USER 0
+#define CID_OWNER 1
+#define CID_OPTIONAL 2
+#define CID_MAX 3
+static char* const COM_TYPE[CID_MAX] = {
+	"user", "owner", "optional",
 };
 
 #endif /*NICODEF_H_*/

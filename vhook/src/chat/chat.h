@@ -23,6 +23,8 @@ struct CHAT_ITEM{
 	int full;	// whether full ommand?
 	int waku;	// 黄枠付加
 	int script;	// whether nico script?
+	int patissier;	//patissier command
+	int invisible;	//invisible command
 	//文字の修飾
 	int size;
 	int color;
@@ -44,6 +46,8 @@ struct CHAT_ITEM{
 };
 
 struct CHAT{
+	// コメントID	0:user, 1:owner, 2:oprional
+	int cid;
 	int max_no;
 	int min_no;
 	//アイテム
@@ -58,6 +62,8 @@ struct CHAT{
 	const char* com_type;
 	//＠逆フラグ
 	int to_left;
+	//patissierコマンドによる無視コメント番号最大値
+	int patissier_ignore;
 };
 
 #include "chat_slot.h"
@@ -67,7 +73,7 @@ struct CHAT_SET{
 };
 
 //初期化
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,const char* com_type,int tl);
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,int cid,const char* com_type,int toLeft);
 void closeChat();
 //イテレータ
 void resetChatIterator(CHAT* chat);

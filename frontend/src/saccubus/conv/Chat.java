@@ -40,9 +40,16 @@ public class Chat {
 	private static final int CMD_LOC_WAKU = 8;
 
 	static final int CMD_LOC_SCRIPT = 16;
+
+	private static final int CMD_LOC_PATISSIER = 32;
+
+	private static final int CMD_LOC_INVISIBLE = 64;
+
+	private static final int CMD_LOC_IS_BUSSON = 128;
+
 	/**
 	 * Location bit 31-16 追加
-	 * 0: 従来(既定値)、1～65535: ＠秒数
+	 * 0: 従来(既定値)、1～65535: ＠秒数 (数値=秒数+1)
 	 */
 	private static final int CMD_MAX_SECONDS = 0x0000ffff;
 	private static final int CMD_LOC_SECONDS_BITS = 16;
@@ -97,6 +104,10 @@ public class Chat {
 	private static final int CMD_COLOR_BLACK = 16;
 
 	private static final int CMD_COLOR_WHITE = 17;
+
+	private static final int CMD_COLOR_NONE = 99;
+
+	private static final int CMD_COLOR_ERROR = 100;
 /*
 	// "date"
 	@SuppressWarnings("unused")
@@ -143,7 +154,7 @@ public class Chat {
 		if (mail_str == null) {
 			return;
 		}
-		String element[] = mail_str.split(" ");
+		String element[] = mail_str.split(" +");
 		for (int i = 0; i < element.length; i++) {
 			String str = element[i].toLowerCase();
 			/* ロケーション */
@@ -162,7 +173,7 @@ public class Chat {
 				strsec = str.substring(1);
 				if (!strsec.isEmpty()){
 					try {
-						sec = Integer.parseInt(strsec);
+						sec = Integer.parseInt(strsec) + 1;	// @0 -> 1
 						Location |= ((sec & CMD_MAX_SECONDS) << CMD_LOC_SECONDS_BITS) & CMD_LOC_SECONDS_MASK;
 					} catch(NumberFormatException e){
 						e.printStackTrace();
@@ -173,9 +184,21 @@ public class Chat {
 			else if (str.equals("full")){
 				Location |= CMD_LOC_FULL;
 			}
-			// フルコマンド
+			// 枠コマンド
 			else if (str.equals("waku")){
 				Location |= CMD_LOC_WAKU;
+			}
+			// 菓子職人コマンド
+			else if (str.equals("patissier")){
+				Location |= CMD_LOC_PATISSIER;
+			}
+			// invisibleコマンド
+			else if (str.equals("invisible")){
+				Location |= CMD_LOC_INVISIBLE;
+			}
+			// is_buttonコマンド
+			else if (str.equals("is_button")){
+				Location |= CMD_LOC_IS_BUSSON;
 			}
 			// サイズ
 			else if (str.equals("big") && !isSizeAssigned) {
@@ -187,9 +210,9 @@ public class Chat {
 			} else if (str.equals("medium") && !isSizeAssigned) {
 				Size = CMD_SIZE_MEDIUM;
 				isSizeAssigned = true;
-			}
+/*			}
 			// 色
-			else if (str.equals("red") && !isColorAssigned) {
+ 			else if (str.equals("red") && !isColorAssigned) {
 				Color = CMD_COLOR_RED;
 				isColorAssigned = true;
 			} else if (str.equals("orange") && !isColorAssigned) {
@@ -262,8 +285,24 @@ public class Chat {
 				}
 				isColorAssigned = true;
 		// 		Color = simulateColor16(str.substr(1));
+*/
 			} else {
-				// System.out.println("Unknown command:" + str);
+				int color = getColorNumber(str);
+				if (color == CMD_COLOR_NONE){
+					// System.out.println("Unknown command:" + str);
+					continue;
+				}
+				if (isColorAssigned){
+					// color set more than twice
+					System.out.println("[Chat.java]COLOR twice=" + str + ",mail=" + mail_str);
+				} else if (color == CMD_COLOR_ERROR){
+					System.out.println("[Chat.java]COLOR warning str=" + str + ",mail=" + mail_str);
+					Color = CMD_COLOR_DEF;
+					isColorAssigned = true;
+				} else {
+					Color = color;
+					isColorAssigned = true;
+				}
 			}
 		}
 	}
@@ -334,4 +373,118 @@ public class Chat {
 		Location |= cmd;
 	}
 
+	public static String makeWakuiro(String wakuiro) {
+		//文字色[=:]枠色[,_;]〇〇繰り返し　で指定する。
+		//英字色名を色番号に色コードはそのまま指定する。
+		//一応defとwhiteは区別する。既定は「def=yellow」
+		int color;
+		if(!wakuiro.replaceAll("[=:,;]+", "-").contains("-")){
+			//全ての枠色を指定
+			color = getColorNumber(wakuiro);
+			if(color < 0){
+				color -= Integer.MIN_VALUE;
+				return "0x" + Integer.toString(color, 16); 
+			}
+			return Integer.toString(color);
+		}
+		//文字色と枠色のペアを出力
+		StringBuilder sb = new StringBuilder();
+		String[] list = wakuiro.split("[,;]+");
+		for (String pairstr : list){
+			String[] pair = pairstr.split("[=:]+");
+			if(pair.length < 2)
+				continue;
+			if(Character.isDigit(pair[0].charAt(0))){
+				//第1引数はコメント番号
+				sb.append(pair[0]);
+			}else{
+				//第1引数は色指定
+				sb.append("_");
+				color = getColorNumber(pair[0]);
+				if(color < 0){
+					color -= Integer.MIN_VALUE;
+					sb.append("0x" + Integer.toString(color, 16));
+				}else if(color == CMD_COLOR_NONE||color == CMD_COLOR_ERROR){
+					sb.append(Integer.toString(CMD_COLOR_DEF));
+				}else{
+					sb.append(Integer.toString(color));
+				}
+			}
+			sb.append("_");
+			color = getColorNumber(pair[1]);
+			if(color < 0){
+				color -= Integer.MIN_VALUE;
+				sb.append("0x" + Integer.toString(color, 16)); 
+			}else if(color == CMD_COLOR_NONE||color == CMD_COLOR_ERROR){
+				sb.append(Integer.toString(CMD_COLOR_YELLOW));
+			}else{
+				sb.append(Integer.toString(color));
+			}
+			sb.append("/");
+		}
+		return sb.toString();
+	}
+
+	private static int getColorNumber(String str) {
+		//色名をカラーコード整数値に変換して返す
+		//#rrggbbはマイナスの数にして返す
+		// 色
+		int color;
+		if (str.equals("def"))
+			return CMD_COLOR_DEF;
+		if (str.equals("red"))
+			return CMD_COLOR_RED;
+		if (str.equals("orange"))
+			return CMD_COLOR_ORANGE;
+		if (str.equals("yellow"))
+			return CMD_COLOR_YELLOW;
+		if (str.equals("pink"))
+			return CMD_COLOR_PINK;
+		if (str.equals("blue"))
+			return CMD_COLOR_BLUE;
+		if (str.equals("purple"))
+			return CMD_COLOR_PURPLE;
+		if (str.equals("cyan"))
+			return CMD_COLOR_CYAN;
+		if (str.equals("green"))
+			return CMD_COLOR_GREEN;
+		if (str.equals("niconicowhite") || str.equals("white2"))
+			return CMD_COLOR_NICOWHITE;
+		if (str.equals("arineblue") || str.equals("blue2"))
+			return CMD_COLOR_MARINEBLUE;
+		if (str.equals("madyellow") || str.equals("yellow2"))
+			return CMD_COLOR_MADYELLOW;
+		if (str.equals("passionorange") || str.equals("orange2"))
+			return CMD_COLOR_PASSIONORANGE;
+		if (str.equals("nobleviolet") || str.equals("purple2"))
+			return CMD_COLOR_NOBLEVIOLET;
+		if (str.equals("elementalgreen") || str.equals("green2"))
+			return CMD_COLOR_ELEMENTALGREEN;
+		if (str.equals("truered") || str.equals("red2"))
+			return CMD_COLOR_TRUERED;
+		if (str.equals("black"))
+			return CMD_COLOR_BLACK;
+		if (str.equals("white"))
+			return CMD_COLOR_WHITE;
+		if (!str.startsWith("#"))
+			return CMD_COLOR_NONE;	// not color
+		// color 24bit
+		if(str.length()<7){
+			// not converted
+			return CMD_COLOR_ERROR;	// default
+		}
+		try{
+			color = Integer.decode(str);
+			if(color < 0 || color > 0x00ffffff){
+				// error
+				return CMD_COLOR_ERROR;
+			} 
+			// 24bit Color is represeted as MINUS value;
+			return color + Integer.MIN_VALUE;
+		} catch(NumberFormatException e){
+			// error
+			//e.printStackTrace();
+			return CMD_COLOR_ERROR;	// error default
+		}
+	}
 }

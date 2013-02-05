@@ -42,8 +42,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.37r6";
-	private static final String modefied = " (2013/02/05)";
+	public static final String rev = "1.38.d10";
+	private static final String modefied = " (2013/02/05)";	//2012/10/17
 
 	String productHTML =
 		"<html>" +

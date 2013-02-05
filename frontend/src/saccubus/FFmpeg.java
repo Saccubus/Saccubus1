@@ -93,6 +93,7 @@ public class FFmpeg {
 	}
 
 	private StringBuffer errorLogging = null;
+	private int videoLength = 0;
 	public int exec(JLabel status, int abortedCode, ConvertStopFlag flag, Stopwatch watch) {
 
 		class FFmpegCallback implements CallbackInterface {
@@ -234,6 +235,33 @@ public class FFmpeg {
 			System.out.println("get aspect: " + getCmd());
 			exec(new GetAspectCallback());
 			String src = output.toString();
+			//
+			String duration = "Duration:";
+			if(src.contains(duration)){
+				int index = src.indexOf("Duration:");
+				duration = src.substring(index, src.indexOf(",", index)).trim();
+				String tms = "";
+				int it = 0;
+				index = duration.lastIndexOf(":");	//for min:sec
+				if(index < 0){
+					it = Integer.parseInt(duration);	//sec
+				}else{
+					tms = duration.substring(index+1);
+					duration = duration.substring(0, index);	//hour:min
+					it = Integer.parseInt(tms);	//sec
+					index = duration.lastIndexOf(":");	//for hour:min
+					if(index < 0){
+						it += Integer.parseInt(duration) * 60;	//min
+					}else{
+						tms = duration.substring(index+1);	//min
+						duration = duration.substring(0, index);	//hour
+						it += Integer.parseInt(tms) * 60;	//min
+						it += Integer.parseInt(duration) * 3600;	//hour
+					}
+				}
+				videoLength  = it;
+			}
+			//
 			src = src.replaceAll("[^0-9x]", "_");
 			String[] list = src.split("_+");
 			src = "1x1";	// prevent Exception
@@ -256,7 +284,12 @@ public class FFmpeg {
 		System.out.println(asp.explain());
 		return asp;
 	}
-//	public enum Aspect {
+
+	int getVideoLength(File videoFile) {
+		return videoLength;
+	}
+
+	//	public enum Aspect {
 //		NORMAL, WIDE,
 //	}
 	public static class Aspect {

@@ -18,7 +18,7 @@ SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right);
 SDL_Surface* drawText2(DATA* data,int size,SDL_Color color,Uint16* str);
 SDL_Surface* drawText3(DATA* data,int size,SDL_Color color,int fontsel,Uint16* from,Uint16* to);
 SDL_Surface* drawText4(DATA* data,int size,SDL_Color color,TTF_Font* font,Uint16* str,int fontsel);
-int cmpSDLColor(SDL_Color col1, SDL_Color col2);
+//int cmpSDLColor(SDL_Color col1, SDL_Color col2);
 int isDoubleResize(double width, double limit_width, int size, int line, FILE* log);
 
 SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width,int video_height){
@@ -304,9 +304,9 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		/*
 		 * 枠をつける？
 		 */
-		if(strstr(data->extra_mode,"-frame")!=NULL||item->waku){
+		if(strstr(data->extra_mode,"-frame")!=NULL||data->wakuiro_dat!=NULL||item->waku){
 			SDL_Surface* tmp = ret;
-			ret = drawFrame(data,location,tmp,RENDER_COLOR_BG,1);
+			ret = drawFrame(data,item,location,tmp,RENDER_COLOR_BG,1);
 			SDL_FreeSurface(tmp);
 		}
 
@@ -540,11 +540,11 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	fflush(log);
 
 	/*
-	 * 枠をつける？
+	 * 枠をつける
 	 */
-	if(strstr(data->extra_mode,"-frame")!=NULL||item->waku){
+	if(strstr(data->extra_mode,"-frame")!=NULL||data->wakuiro_dat!=NULL||item->waku){
 		SDL_Surface* tmp = ret;
-		ret = drawFrame(data,location,tmp,RENDER_COLOR_BG,1);
+		ret = drawFrame(data,item,location,tmp,RENDER_COLOR_BG,1);
 		SDL_FreeSurface(tmp);
 	}
 
@@ -625,6 +625,8 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 	int saved;
 	int foundAscii = FALSE;
 	int wasAscii = FALSE;
+	int isKanji = FALSE;
+	int wasKanji = FALSE;
 	while(*index != '\0'){
 		if(nextfont==UNDEFINED_FONT)
 			nextfont = GOTHIC_FONT;
@@ -634,12 +636,15 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 		newfont = getFontType(index,nextfont,data);
 		wasAscii = foundAscii;
 		foundAscii = isAscii(index);
+		wasKanji = isKanji;
+		isKanji = isKanjiWidth(index);
 		if(newfont==UNDEFINED_FONT||newfont==NULL_FONT)
 			newfont = nextfont;
 		if(debug)
-			fprintf(log," -->%s%s%s\n",CA_FONT_NAME[newfont & 15],
-				foundAscii?" foundAscii":"",wasAscii?" wasAscii":"");
-		if(newfont != fonttype){	//別のフォント出現
+			fprintf(log," -->%s%s%s%s%s\n",CA_FONT_NAME[newfont & 15],
+				foundAscii?" found_Ascii":"",wasAscii?" was_Ascii":"",
+				isKanji?" Kanji":"",isKanji!=wasKanji?" change_Kanji_width":"");
+		if(newfont != fonttype || (fonttype==GOTHIC_FONT && isKanji != wasKanji)){	//別のフォント出現、又は漢字幅チェック変化
 			if(index!=last){
 				ret = arrangeSurface(ret,drawText3(data,size,SdlColor,fonttype,last,index));
 				if(debug && ret!=NULL){
@@ -711,9 +716,11 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 	}
 	ret = arrangeSurface(ret,drawText3(data,size,SdlColor,fonttype,last,index));
 	if(ret==NULL){
-		fprintf(log,"[comsurface/drawText2]drawtext3 NULL last. make NullSurface.\n");
+		//fprintf(log,"[comsurface/drawText2]drawtext3 NULL last. make NullSurface.\n");
+		fprintf(log,"[comsurface/drawText2]***ERR*** drawtext3 NULL last. return Null.\n");
 		fflush(log);
-		return drawNullSurface(0,data->font_pixel_size[size]);
+		//return drawNullSurface(0,data->font_pixel_size[size]);	//~1.37r
+		return NULL;
 	}
 	if(debug){
 		fprintf(log,"[comsurface/drawText2]arrangeSurface surf(%d, %d) %s %d chars\n",
@@ -750,6 +757,8 @@ SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right){
 	}
 	//not make nor use alpha
 	SDL_Surface* ret = drawNullSurface(left->w+right->w, MAX(left->h,right->h));
+	if(ret == NULL)
+		return NULL;	//for Error
 	SDL_SetAlpha(left,SDL_RLEACCEL,0xff);	//not use alpha
 	SDL_SetAlpha(right,SDL_RLEACCEL,0xff);	//not use alpha
 	SDL_Rect rect = {left->w,0,0,0};		//use only x y
@@ -841,15 +850,28 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 		fprintf(log,"[comsurface/drawText4]TTF_RenderUNICODE surf(%d, %d) %s %d chars\n",
 			surf->w,surf->h,COM_FONTSIZE_NAME[size],uint16len(str));
 	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+	int difh = data->font_pixel_size[size] - surf->h;
+	if(difh==0){
+		return surf;
+	}
 	SDL_Surface* ret = drawNullSurface(surf->w,data->font_pixel_size[size]);
 	if(ret==NULL){
 		fprintf(log,"***ERROR*** [comsurface/drawText4]drawNullSurface : %s\n",SDL_GetError());
 		fflush(log);
 		return NULL;
 	}
+	if(difh > 0){
+		difh = (difh+1)>>1;
+	}else{
+		difh = 0;
+		if(debug)
+			fprintf(log,"[comsurface/drawText4]hight %d > font_pixel_size %d\n",
+				surf->h,data->font_pixel_size[size]);
+	}
 	SDL_Rect srcrect = {0,0,ret->w,ret->h};
+	SDL_Rect destrect = {0,difh,ret->w,ret->h};
 	//rect.y = 0;	// = (ret->h - surf->h)>>1
-	SDL_BlitSurface(surf,&srcrect,ret,NULL);
+	SDL_BlitSurface(surf,&srcrect,ret,&destrect);
 	SDL_FreeSurface(surf);
 	return ret;
 }
@@ -890,7 +912,13 @@ SDL_Surface* getErrFont(DATA* data){
 			: data->font[CMD_FONT_SMALL];
 		data->ErrFont = drawText4(data,CMD_FONT_SMALL,COMMENT_COLOR[CMD_COLOR_PASSIONORANGE],font,errMark,-1);
 	}
-	return data->ErrFont;
+	SDL_Surface* ret = NULL;
+	if(data->ErrFont!=NULL){
+		ret = drawNullSurface(data->ErrFont->w,data->ErrFont->h);
+		SDL_SetAlpha(ret,SDL_RLEACCEL,0xff);	//not use alpha
+		SDL_BlitSurface(data->ErrFont,NULL,ret,NULL);
+	}
+	return ret;	//copied ErrFont
 }
 
 void closeErrFont(DATA* data){

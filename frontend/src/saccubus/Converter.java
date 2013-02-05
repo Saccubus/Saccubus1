@@ -9,6 +9,7 @@ import saccubus.net.Path;
 
 import java.io.*;
 
+import saccubus.conv.Chat;
 import saccubus.conv.CombineXML;
 import saccubus.conv.CommandReplace;
 import saccubus.conv.ConvertToVideoHook;
@@ -140,7 +141,7 @@ public class Converter extends Thread {
 	private ArrayList<File> listOfCommentFile = new ArrayList<File>();
 	private String optionalThreadID = "";	// set in
 	private String errorLog = "";
-	// private int videoLength = 0;
+	private int videoLength = 0;
 	private int ownerCommentNum = 0;
 	private File fontDir;
 	private File gothicFont = null;
@@ -161,6 +162,7 @@ public class Converter extends Thread {
 	private CommandReplace ngCmd;
 	private Path thumbInfo = new Path("null");
 	private File thumbInfoFile;
+	private String wakuiro = "";
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -505,7 +507,7 @@ public class Converter extends Thread {
 			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
 				optionalThreadID = client.getOptionalThreadID();
 			}
-			//videoLength = client.getVideoLength();
+			videoLength = client.getVideoLength();
 		} else {
 			if (isSaveConverted()) {
 				if (isVideoFixFileName()) {
@@ -1472,6 +1474,9 @@ public class Converter extends Thread {
 			video = fwsFile;
 		}
 		videoAspect = ffmpeg.getAspect(video);
+		if(videoLength <= 0){
+			videoLength = ffmpeg.getVideoLength(video);
+		}
 		String str;
 		if (videoAspect == null){
 			str = "Analize Error   ";
@@ -1747,10 +1752,10 @@ public class Converter extends Thread {
 			if(outSize!=null){
 				ffmpeg.addCmd("|--out-size:" + outSize);
 			}
-		//	if (videoLength > 0){
-		//		ffmpeg.addCmd("|--video-length:");
-		//		ffmpeg.addCmd(Integer.toString(videoLength));
-		//	}
+			if (videoLength > 0){
+				ffmpeg.addCmd("|--video-length:");
+				ffmpeg.addCmd(Integer.toString(videoLength));
+			}
 			if (Setting.isFontHeightFix()){
 				ffmpeg.addCmd("|--font-height-fix-ratio:"
 						+ Setting.getFontHeightFixRaito());
@@ -1772,11 +1777,24 @@ public class Converter extends Thread {
 			if(aprilFool!=null){
 				ffmpeg.addCmd("|--april-fool:" + aprilFool);
 			}
+			if(extra.contains("-wakuiro=")){
+				//枠色指定：特殊　=から半角スペースまでを引数とする
+				int index = extra.indexOf("-wakuiro=");
+				wakuiro = extra.substring(index + "-wakuiro=".length());
+				index = (wakuiro + " ").indexOf(" ");
+				wakuiro = wakuiro.substring(0, index);
+				extra = extra.replace("-wakuiro=" + wakuiro, "");
+			}
+			if(wakuiro!=null && !wakuiro.isEmpty()){
+				wakuiro = Chat.makeWakuiro(wakuiro);
+				ffmpeg.addCmd("|--wakuiro:" + wakuiro);
+			}
 			if(extra.contains("debug")){
 				ffmpeg.addCmd("|--debug-print");
+				extra = extra.replace("-debug", "").replace("debug", "");
 			}
 			if(!extra.isEmpty()){
-				ffmpeg.addCmd("|--extra-mode:" + extra.replaceFirst("debug", ""));
+				ffmpeg.addCmd("|--extra-mode:" + extra);
 			}
 			if(Setting.isEnableCA()){
 				ffmpeg.addCmd("|--enable-CA");

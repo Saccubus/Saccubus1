@@ -5,6 +5,9 @@
 
 SDL_Surface* connectSurface(SDL_Surface* top,SDL_Surface* bottom){
 	//not make nor use alpha channel
+	//eather top or bottom may be NULL
+	if(top==NULL||bottom==NULL)
+		return NULL;
 	SDL_Surface* ret = drawNullSurface(MAX(top->w,bottom->w), top->h+bottom->h);
 /*
 	SDL_Surface* ret = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_HWACCEL,
@@ -179,4 +182,12 @@ void getRGBA(SDL_Surface* surf,int x,int y,char* r,char* g,char* b,char* a){
 
 int cmpSDLColor(SDL_Color col1, SDL_Color col2){
 	return (col1.r == col2.r && col1.g == col2.g && col1.b == col2.b);
+}
+
+char* getColorName(char* buf, int color){
+	if(color >= 0){
+		return CMD_COLOR_NAME[(color & 15)];
+	}
+	sprintf(buf,"#%06x",(color & 0x00ffffff));
+	return buf;
 }

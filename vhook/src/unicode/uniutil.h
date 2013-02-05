@@ -28,5 +28,6 @@ int convUint16(const char* unicode, Uint16** out);
 int convUint16Pair(const char** unicodep,Uint16* up);
 int getUint16(const char** unicodep);
 int uint16len(Uint16* u);
+int isKanjiWidth(Uint16* u);
 
 #endif /* UTIL_H_ */

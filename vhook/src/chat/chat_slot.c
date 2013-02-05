@@ -5,6 +5,7 @@
 #include "../comment/com_surface.h"
 #include "../nicodef.h"
 #include "../util.h"
+#include "../comment/surf_util.h"
 #include <SDL/SDL.h>
 #include <stdio.h>
 #include <string.h>
@@ -38,7 +39,8 @@ void closeChatSlot(CHAT_SLOT* slot){
 	CHAT_SLOT_ITEM* item;
 	for(i=0;i<slot->max_item;i++){
 		item = &slot->item[i];
-		SDL_FreeSurface(item->surf);
+		if(item->used && item->surf!=NULL)
+			SDL_FreeSurface(item->surf);
 	}
 	//アイテムを消去。
 	free(slot->item);
@@ -46,10 +48,11 @@ void closeChatSlot(CHAT_SLOT* slot){
 
 void deleteChatSlot(CHAT_SLOT_ITEM* slot_item,DATA* data){
 	CHAT_ITEM* item = slot_item->chat_item;
+	char buf[16];
 	if(data->log){
-		fprintf(data->log,"[chat_slot/delete]comment %d %s color:%d:#%06x %5s %6s  %d - %d(vpos:%d) erased.\n",
-			item->no,item->chat->com_type,item->color,convSDLcolor(item->color24),
-			COM_LOC_NAME[slot_item->slot_location],COM_FONTSIZE_NAME[item->size],
+		fprintf(data->log,"[chat_slot/delete]comment %d %s color:%s %s %s  %d - %d(vpos:%d) erased.\n",
+			item->no,item->chat->com_type,getColorName(buf,item->color),
+			COM_LOC_NAME[item->location],COM_FONTSIZE_NAME[item->size],
 			item->vstart,item->vend,item->vpos);
 		fflush(data->log);
 	}
@@ -78,6 +81,18 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	//もう見せられた。
 	item->showed = TRUE;
 	if(slot->max_item <= 0){
+		return 0;
+	}
+	//patissierコマンド
+	if(item->patissier && item->no <= item->chat->patissier_ignore){
+		fprintf(data->log,"[chat_slot/add]comment %d %s patissier vanish.\n",
+			item->no,item->chat->com_type);
+		return 0;
+	}
+	//invisibleコマンド
+	if(item->invisible){
+		fprintf(data->log,"[chat_slot/add]comment %d %s invisible.\n",
+			item->no,item->chat->com_type);
 		return 0;
 	}
 	//コメント描画 size color 再設定

@@ -7,4 +7,5 @@ void overrideAlpha(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Re
 void inline shadowBlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect);
 void setRGB(SDL_Surface* surf,Uint32 color);
 int cmpSDLColor(SDL_Color col1, SDL_Color col2);
+char* getColorName(char* buf, int color);
 #endif /*SURF_UTIL_H_*/

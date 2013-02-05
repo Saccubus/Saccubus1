@@ -29,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.37.5";
+	char *ver="1.38.9";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -99,7 +99,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	toolbox* tbox	:ffmpeg interface?
 	SETTING* setting:設定データ構造 出力
 	int argc		: argv[] size
-	argv[0]:プログラム
+	argv[0]:プログラム　（残しておくけどargvの説明は古い）
 	argv[1]:vhook
 	argv[2]:フォント
 	argv[3]:フォントインデックス
@@ -112,11 +112,12 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	--font-height-fix-ratio:%d ： フォント高さ自動変更の倍率（％）+ int
 	--disable-original-resize : さきゅばす独自リサイズを無効にする（実験的）
 	--comment-speed: コメント速度を指定する場合≠0
-	--deb : デバッグ出力を有効にする
+	--debug-print : デバッグ出力を有効にする
 */
 
 int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[]){
 	/* TOOLBOXのバージョンチェック */
+	fprintf(log,"[framehook/init]TOOLBOX version:%d.\n", tbox->version);
 	if (tbox->version != TOOLBOX_VERSION){
 		fprintf(log,"[framehook/init]TOOLBOX version(%d) is not %d.\n", tbox->version, TOOLBOX_VERSION);
 		fflush(log);
@@ -124,6 +125,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	}
 	/*videoの長さ*/
 	setting->video_length = (tbox->video_length * VPOS_FACTOR);
+	fprintf(log,"[framehook/init]video_length %d vpos.\n",setting->video_length);
 	if (setting->video_length<=0){
 		fprintf(log,"[framehook/init]video_length is less or equals 0.\n");
 		fflush(log);
@@ -164,6 +166,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->out_size = NULL;
 	setting->fontdir = "";
 	setting->april_fool = NULL;
+	setting->wakuiro = NULL;
 	// CA用フォント
 	//  MS UI GOTHIC は msgothic.ttc の index=2
 	int f;
@@ -345,6 +348,11 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		else if (strncmp(FRAMEHOOK_OPT_APRIL_FOOL,arg,FRAMEHOOK_OPT_APRIL_FOOL_LEN) == 0){
 			setting->april_fool = arg+FRAMEHOOK_OPT_APRIL_FOOL_LEN;
 			fprintf(log,"[framehook/init]april fool: %s\n",setting->april_fool);
+			fflush(log);
+		}
+		else if (strncmp(FRAMEHOOK_OPT_WAKUIRO,arg,FRAMEHOOK_OPT_WAKUIRO_LEN) == 0){
+			setting->wakuiro = arg+FRAMEHOOK_OPT_WAKUIRO_LEN;
+			fprintf(log,"[framehook/init]wakuiro: %s\n",setting->wakuiro);
 			fflush(log);
 		}
 		// CA用フォント

@@ -8,9 +8,10 @@
 #include "process.h"
 #include "unicode/uniutil.h"
 #include "april_fool.h"
+#include "wakuiro.h"
 #include "comment/com_surface.h"
 
-int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, const char* com_type);
+int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, int cid, const char* com_type);
 
 /**
  * ライブラリ初期化
@@ -58,7 +59,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		data->video_length = INTEGER_MAX;
 	}
 	data->nico_width_now = setting->nico_width_now;
-	data->aspect_mode = setting->aspect_mode;
+	data->aspect_mode = (data->nico_width_now > NICO_WIDTH);
 	data->font_w_fix_r = setting->font_w_fix_r;
 	data->font_h_fix_r = setting->font_h_fix_r;
 	data->original_resize = setting->original_resize;
@@ -91,6 +92,11 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	data->extra_mode = setting->extra_mode;
 	if(setting->april_fool != NULL){
 		set_aprilfool(setting,data);
+	}
+	//黄枠の色を設定
+	data->wakuiro_dat = NULL;
+	if(setting->wakuiro != NULL){
+		set_wakuiro(setting->wakuiro,data);
 	}
 	fputs("[main/init]initializing context...\n",log);
 	//フォント
@@ -322,6 +328,9 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		*/
 		fputs("[main/init]initialized CA(Comment Art) Feature.\n",log);
 	}
+	//エラーフォント
+	(void)getErrFont(data);
+	//
 	fprintf(log, "[main/init]font width fix ratio:%.0f%% (experimental)\n",(data->font_w_fix_r * 100));
 	fprintf(log, "[main/init]font height fix ratio:%.0f%% (experimental)\n",(data->font_h_fix_r * 100));
 	fflush(log);
@@ -329,21 +338,21 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	 * ユーザコメント
 	 */
 	if (!initCommentData(data, &data->user, log,
-			setting->data_user_path, setting->user_slot_max, "user")){
+			setting->data_user_path, setting->user_slot_max, CID_USER, COM_TYPE[CID_USER])){
 		return FALSE;
 	}
 	/*
 	 * オーナコメント
 	 */
 	if (!initCommentData(data, &data->owner, log,
-			setting->data_owner_path, setting->owner_slot_max, "owner")){
+			setting->data_owner_path, setting->owner_slot_max, CID_OWNER, COM_TYPE[CID_OWNER])){
 		return FALSE;
 	}
 	/*
 	 * オプショナルコメント
 	 */
 	if (!initCommentData(data, &data->optional, log,
-			setting->data_optional_path, setting->optional_slot_max, "optional")){
+			setting->data_optional_path, setting->optional_slot_max, CID_OPTIONAL, COM_TYPE[CID_OPTIONAL])){
 		return FALSE;
 	}
 
@@ -357,12 +366,13 @@ int initData(DATA* data,FILE* log,SETTING* setting){
  * コメントデータの初期化
  * DATA data->user owner optional
  */
-int initCommentData(DATA* data, CDATA* cdata,FILE* log,const char* path, int max_slot, const char* com_type){
+int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, int cid, const char* dummy_com_type){
+	const char* com_type = COM_TYPE[cid];
 	int tl = data->comment_speed<0? -1:1;
 	if (cdata->enable_comment){
 		fprintf(log,"[main/init]%s comment is enabled.\n",com_type);
 		//コメントデータ
-		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length, data->nico_width_now, com_type, tl)){
+		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length, data->nico_width_now, cid, com_type, tl)){
 			fprintf(log,"[main/init]initialized %s comment.\n",com_type);
 		}else{
 			fprintf(log,"[main/init]failed to initialize %s comment.",com_type);
@@ -510,8 +520,10 @@ int closeData(DATA* data){
 		closeChat(&data->optional.chat);
 		closeChatSlot(&data->optional.slot);
 	}
+	fprintf(data->log,"All Chat closed.\n");
 	//エラー用フォント開放
 	closeErrFont(data);
+	fprintf(data->log,"ErrFont closed.\n");
 	//フォント開放
 	for(i=0;i<CMD_FONT_MAX;i++){
 		TTF_CloseFont(data->font[i]);

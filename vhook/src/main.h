@@ -78,7 +78,9 @@ struct DATA{
 	//Uint16* spaceable;
 //	int limit_height;
 	SDL_Surface* ErrFont;
-	// 実験的設定↓
+	unsigned int * wakuiro_dat;
+	//char wstr[128];
+	// 実験的設定
 	short font_pixel_size[CMD_FONT_MAX];
 	short fixed_font_height[CMD_FONT_MAX];	// 修正フォント指定(ポイント指定)
 };
@@ -100,7 +102,7 @@ typedef struct SETTING{
 	int shadow_kind;
 	int nico_width_now;	// 元動画の横幅
 	//int nico_height_now = 384
-	int aspect_mode;		// 0: 512, 1:640
+	//int aspect_mode;		// 0: 512, 1:640
 	const char* input_size;
 	const char* set_size;
 	const char* pad_option;
@@ -135,6 +137,7 @@ typedef struct SETTING{
 	int debug;
 	const char* extra_mode;	// debugモード文字列
 	const char* april_fool;	// エイプリルフール文字列
+	const char* wakuiro;	// 黄枠色指定文字列
 }SETTING;
 
 int init(FILE* log);

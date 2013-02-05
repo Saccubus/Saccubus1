@@ -6,6 +6,7 @@
 #include "chat_pool.h"
 #include "../main.h"
 #include "../mydef.h"
+#include "../comment/surf_util.h"
 
 //このソース内でしか使わないメソッド
 void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos,int x,int y);
@@ -19,6 +20,7 @@ int process_chat(DATA* data,CDATA* cdata,SDL_Surface* surf,const int now_vpos){
 	CHAT_ITEM* chat_item;
 	CHAT_SLOT_ITEM* slot_item;
 	FILE* log = data->log;
+	char buf[16];
 	if (cdata->enable_comment){
 		/*見せないものを削除 */
 		slot = &cdata->slot;
@@ -37,11 +39,16 @@ int process_chat(DATA* data,CDATA* cdata,SDL_Surface* surf,const int now_vpos){
 			// プールをvposでソートし取り出す
 		while((chat_item = getChatPooled(data,chat->pool)) != NULL){
 			addChatSlot(data,slot,chat_item,data->vout_width,data->vout_height);
-			fprintf(log,"[process-chat/process]comment %d vpos:%d %s color:%d:#%06x %5s %6s  %d - %d(vpos:%d) added.\n",
-				chat_item->no,now_vpos,chat->com_type,chat_item->color,convSDLcolor(chat_item->color24),
+			fprintf(log,"[process-chat/process]comment %d %s vpos:%d color:%s %s %s  %d - %d(vpos:%d) added.\n",
+				chat_item->no,chat->com_type,now_vpos,getColorName(buf,chat_item->color),
 				COM_LOC_NAME[chat_item->location],COM_FONTSIZE_NAME[chat_item->size],
 				chat_item->vstart,chat_item->vend,chat_item->vpos);
 		}
+/* debug
+		fprintf(log,"[process-chat/process]drawComment(data,surf(%d,%d),slot,vpos%d,x%d,y%d) aspect%d scale%.1f w%d h%d\n",
+			surf->w,surf->h,now_vpos,data->vout_x,data->vout_y,
+			data->aspect_mode,data->width_scale,data->vout_width,data->vout_height);
+*/
 		drawComment(data,surf,slot,now_vpos,data->vout_x,data->vout_y);
 	}
 	return TRUE;
@@ -120,11 +127,16 @@ double getXnaka(int vpos,CHAT_SLOT_ITEM* item,int aspect_mode,double scale){
 	//   vpos=vstart -> getX=width-16-text_width+64_wide=NICO_WIDTH+16+64_wide
 	//   vpos=vend   -> getX=-16-text_width+64_wide
 	double progress = item->speed * (vpos-item->chat_item->vstart);
-	double xstart = scale * (NICO_WIDTH+16);	//=512*(33/32)=640*(41/40)
-	double xpos = -progress + xstart + (aspect_mode? scale*64 : 0);	//528 when vpos=vstart if 512
-		//64=512*(1/8)=640*(1/10)
-		//-16-text if 512 -> 48-text if 640		-(1/32)-text : (3/40)-text
-		//528      if 512 -> 592 if 640			(33/32)      : (37/40)
+	double xstart;
+	double xpos;
+		//-16-text if 512 -> 48-text if 640
+		//528      if 512 -> 592 if 640
+	if(aspect_mode){
+		xstart = scale * (NICO_WIDTH + 16 + 64);
+	}else{
+		xstart = scale * (NICO_WIDTH + 16);
+	}
+	xpos = -progress + xstart;
 	return xpos;
 }
 
@@ -172,7 +184,10 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 	int duration = item->duration;
 	if(duration==0){
 		duration = TEXT_SHOW_SEC_S;
+	}else{
+		duration = (duration-1)*VPOS_FACTOR;	//item->duration = @秒数 + 1
 	}
+	//slot_item->slot_duration = duration
 	if(location == CMD_LOC_TOP||location==CMD_LOC_BOTTOM){
 		item->vstart = vpos;
 		item->vend = vpos + duration - 1;
@@ -188,7 +203,8 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 		int text_width = slot_item->surf->w;
 		double width = scale * (NICO_WIDTH + 32) + text_width;
 		//					//video_width + scale * 36 + text_width;
-		double speed = width / (double)(item->vend - item->vstart);
+		double speed = width / (double)(item->vend + 1 - item->vstart);	//1.38
+		//double speed = width / (double)(item->vend - item->vstart);	//1.37r 分母は1少ない
 		// this meens getX=-width/(vend-vstart)*(vpos-vstart)+xstart(=width-16-text_width)+64_wide
 		//   vpos=vstart -> getX=width-16-text_width+64_wide=NICO_WIDTH+16+64_wide
 		//   vpos=vend   -> getX=-16-text_width+64_wide
