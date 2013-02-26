@@ -6,6 +6,7 @@
 #include "struct_define.h"
 #include "chat/chat.h"
 #include "chat/chat_slot.h"
+#include "unicode/unitable.h"
 
 struct CDATA{
 	int enable_comment;

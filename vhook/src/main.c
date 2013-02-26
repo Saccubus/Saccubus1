@@ -189,6 +189,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		int target_size;
 		int current_size;
 		int try = 1;
+		int direction = 0;
 		for(f = 0;f<CA_FONT_MAX;f++){
 			font = &data->CAfont[f][0];		//pointer2 set
 			font_path = setting->CAfont_path[f];
@@ -211,18 +212,13 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 				fontsize -= 1;
 				/* ターゲットを拡大した時にフォントが滑らかにするため２倍化する。 */
 				fontsize <<= isfontdoubled;
-				try = 1;
+				try = data->original_resize ? 100 : 1;
 				target_size = fontsize;
 				if(pointsizemode){
-					fontsize = COMMENT_POINT_SIZE[i];
-					fontsize <<= isfontdoubled;
+					fontsize = COMMENT_POINT_SIZE[i] << isfontdoubled;
 					target_size = fontsize;
-					if(!data->original_resize){
-						try = 10;
-					}
 				}else
 				if(!data->original_resize){
-					try = 10;
 					if(f <= ARIAL_FONT){	//gothic simsun gulim arial
 						fontsize = CA_FONT_SIZE_TUNED[f][isfontdoubled][i];
 						target_size = CA_FONT_HIGHT_TUNED[f][isfontdoubled][i];
@@ -231,20 +227,19 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 						target_size = fontsize;
 					}
 				}
-/*
-				if(!data->original_resize){
-					fontsize += CA_FONT_SIZE_FIX[f][i]<<isfontdoubled;	//文字間隔は合わないが文字サイズを合わせる
-					try = 10;
-				}
-				target_size = fontsize;
-*/
 				if(data->debug)
-					fprintf(log,"[main/init]loading CAfont[%s][%d]:%s size:%d index:%d target:%d\n",CA_FONT_NAME[f],i,font_path,fontsize,fixed_font_index,target_size);
+					fprintf(log,"[main/init]loading CAfont[%s][%d]:%s size:%d index:%d target:%d\n",getfontname(f),i,font_path,fontsize,fixed_font_index,target_size);
+				direction = 0;
 				while(try>0){
 					font[i] = TTF_OpenFontIndex(font_path,fontsize,fixed_font_index);
+					if(fixed_font_index!=0 && font[i] == NULL){
+						//try index 0
+						fixed_font_index = 0;
+						font[i] = TTF_OpenFontIndex(font_path,fontsize,fixed_font_index);
+					}
 					if(font[i] == NULL){
 						if(data->debug)
-							fprintf(log,"[main/init]failed to load CAfont[%s][%d]:%s size:%d index:%d.\n",CA_FONT_NAME[f],i,font_path,fontsize,fixed_font_index);
+							fprintf(log,"[main/init]failed to load CAfont[%s][%d]:%s size:%d index:%d.\n",getfontname(f),i,font_path,fontsize,fixed_font_index);
 						return FALSE;
 					}
 					TTF_SetFontStyle(font[i],TTF_STYLE_BOLD);
@@ -265,18 +260,23 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 					}
 					TTF_CloseFont(font[i]);
 					if(current_size>target_size){
+						direction++;
 						fontsize--;
 					}else{
+						direction--;
 						fontsize++;
 					}
+					if(direction==0)
+						break;
 				}
 				if(data->debug){
-					fprintf(log,"[main/init]loaded  CAfont[%s][%d]:%s size:%d index:%d.\n",CA_FONT_NAME[f],i,font_path,fontsize,fixed_font_index);
-					printFontInfo(log,font,i,CA_FONT_NAME[f]);
+					fprintf(log,"[main/init]loaded  CAfont[%s][%d]:%s size:%d index:%d.\n",
+						getfontname(f),i,font_path,current_size,fixed_font_index);
+					printFontInfo(log,font,i,getfontname(f));
 				}
 			}
-			fprintf(log,"CAfont[%s]%s height is MEDIUM=%dpt %dpx(%dpx), BIG=%dpt %dpx(%dpx), SMALL=%dpt %dpx(%dpx)\n",
-				CA_FONT_NAME[f],(data->fontsize_fix?" Double scaled":""),
+			fprintf(log,"CAfont[%s]%s height is MEDIUM=%dpx %dpx(%dpx), BIG=%dpx %dpx(%dpx), SMALL=%dpx %dpx(%dpx)\n",
+				getfontname(f),(data->fontsize_fix?" Double scaled":""),
 				font_height[CMD_FONT_MEDIUM],line_skip[CMD_FONT_MEDIUM],data->font_pixel_size[CMD_FONT_MEDIUM],
 				font_height[CMD_FONT_BIG],line_skip[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_BIG],
 				font_height[CMD_FONT_SMALL],line_skip[CMD_FONT_SMALL],data->font_pixel_size[CMD_FONT_SMALL]
@@ -305,7 +305,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 			fprintf(log,"[main/init]EXTRA Font use %d pairs.\n", i>>1);
 		}
 		Uint16* u = data->extra_change;
-		fprintf(log,"font change(%s)",CA_FONT_NAME[EXTRA_FONT]);
+		fprintf(log,"font change(%s)",getfontname(EXTRA_FONT));
 		if(u==NULL){
 			fprintf(log," is NULL.\n");
 		}else{

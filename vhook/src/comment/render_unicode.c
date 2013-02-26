@@ -26,10 +26,9 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 		case GOTHIC_FONT:	bg.r = 0xff; break;	//red
 		case SIMSUN_FONT:	bg.g = 0xff; break;	//green
 		case GULIM_FONT:	bg.b = 0xff; break;	//blue
-		case -1:
+		case UNDEFINED_FONT:
 		case ARIAL_FONT:	bg.r = bg.g = 0xff;	break;	//yellow
-		default:			bg.r = bg.g = bg.b = 0x80;	//gray
-			break;
+		default:			bg.r = bg.g = bg.b = 0x80; break;	//gray
 		}
 		if(strstr(mode,"-fg")!=NULL){	//use whith -font, -font-fg
 			fg = bg;
@@ -57,6 +56,8 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 		SDL_SetColorKey(tmp,SDL_RLEACCEL,0xff);	//reset color key
 		ret = tmp;
 	}
+//	if(data->original_resize)
+//		return ret;
 	if(strstr(mode,"-point")!=NULL || strstr(mode,"-tune")!=NULL){
 		ret = pointsConv(data,ret,str,size,fontsel);
 	}else if(strstr(mode,"-old")==NULL){
@@ -102,7 +103,7 @@ SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int 
 	FILE* log = data->log;
 	if(fontsel < GOTHIC_FONT || fontsel > ARIAL_FONT){
 		if(data->debug)
-			fprintf(log,"[render_unicode/widthFix]not change Font %s.\n",CA_FONT_NAME[(fontsel&15)]);
+			fprintf(log,"[render_unicode/widthFix]not change Font %s.\n",getfontname(fontsel));
 		return surf;
 	}
 	switch (fontsel) {
@@ -115,7 +116,7 @@ SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int 
 				break;
 			}
 			if(data->debug)
-				fprintf(log,"[render_unicode/widthFix]not change Font %s.\n",CA_FONT_NAME[fontsel]);
+				fprintf(log,"[render_unicode/widthFix]not change Font %s.\n",getfontname(fontsel));
 			return surf;
 		// asume MOMOSPACE when fontsel==GOTHIC and KanjiWidth
 		case GOTHIC_FONT:
@@ -123,12 +124,12 @@ SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int 
 				break;
 			}
 			if(data->debug)
-				fprintf(log,"[render_unicode/widthFix]not change Font %s.\n",CA_FONT_NAME[fontsel]);
+				fprintf(log,"[render_unicode/widthFix]not change Font %s.\n",getfontname(fontsel));
 			return surf;
 		case ARIAL_FONT:
 		default:
 			if(data->debug)
-				fprintf(log,"[render_unicode/widthFix]not change Font %s(defalut).\n",CA_FONT_NAME[fontsel&15]);
+				fprintf(log,"[render_unicode/widthFix]not change Font %s(defalut).\n",getfontname(fontsel));
 			return surf;
 	}
 	SDL_Surface* ret = NULL;
@@ -145,6 +146,8 @@ SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int 
 	}
 	ret = drawNullSurface(dfw,h);
 	if(w > dfw){
+		if(data->debug)
+			fprintf(log,"[render_unicode/widthFix]width shrinking %d to %d.\n",w,dfw);
 		int x = MIN(2,(w-dfw)>>1);
 		SDL_Rect src = {x,0,dfw,h};
 		SDL_Rect dest = {0,0,dfw,h};
@@ -153,9 +156,9 @@ SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int 
 		SDL_BlitSurface(surf,&src,ret,&dest);
 		SDL_SetClipRect(ret,&rect);
 		SDL_FreeSurface(surf);
-		if(data->debug)
-			fprintf(log,"[render_unicode/widthFix]width shrinked %d to %d.\n",w,dfw);
 	}else{
+		if(data->debug)
+			fprintf(data->log,"[render_unicode/widthFix]width expanding %d to %d.\n",w,dfw);
 		int x = MIN(2,(dfw-w)>>1);
 		SDL_Rect src = {0,0,w,h};
 		SDL_Rect dest = {x,0,w,h};
@@ -164,13 +167,9 @@ SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int 
 		SDL_BlitSurface(surf,&src,ret,&dest);
 		SDL_SetClipRect(ret,&rect);
 		SDL_FreeSurface(surf);
-		SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
-		SDL_BlitSurface(surf,&rect,ret,&dest);
-		SDL_SetClipRect(ret,&rect);
-		SDL_FreeSurface(surf);
-		if(data->debug)
-			fprintf(data->log,"[render_unicode/widthFix]width expanded %d to %d.\n",w,dfw);
 	}
+	if(data->debug)
+		fprintf(data->log,"[render_unicode/widthFix]width fixed done.\n");
 	return ret;
 }
 

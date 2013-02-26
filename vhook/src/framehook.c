@@ -29,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ƒƒO
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.38.9";
+	char *ver="1.38.11";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -305,7 +305,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			int com_speed = atoi(arg+FRAMEHOOK_OPT_COMMENT_SPEED_LEN);
 			if (com_speed != 0){
 				setting->comment_speed = com_speed;
-				fprintf(log,"[framehook/init]font height fix: %d pixel/sec.\n",com_speed);
+				fprintf(log,"[framehook/init]comment speed fix: %d pixel/sec.\n",com_speed);
 				fflush(log);
 			}
 		} else if(!setting->enableCA && strcmp("--enable-CA",arg) == 0){
@@ -448,6 +448,30 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			setting->CAfont_path[GUJARATI_FONT] = font;
 			fprintf(log,"[framehook/init]GUJARATI Font path:%s\n",setting->CAfont_path[GUJARATI_FONT]);
 			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_BENGAL_FONT,arg,FRAMEHOOK_OPT_BENGAL_FONT_LEN) == 0
+				&& setting->CAfont_path[BENGAL_FONT]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_BENGAL_FONT_LEN;
+			setting->CAfont_path[BENGAL_FONT] = font;
+			fprintf(log,"[framehook/init]BENGAL Font path:%s\n",setting->CAfont_path[BENGAL_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_TAMIL_FONT,arg,FRAMEHOOK_OPT_TAMIL_FONT_LEN) == 0
+				&& setting->CAfont_path[TAMIL_FONT]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_TAMIL_FONT_LEN;
+			setting->CAfont_path[TAMIL_FONT] = font;
+			fprintf(log,"[framehook/init]TAMIL Font path:%s\n",setting->CAfont_path[TAMIL_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_LAOO_FONT,arg,FRAMEHOOK_OPT_LAOO_FONT_LEN) == 0
+				&& setting->CAfont_path[LAOO_FONT]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_LAOO_FONT_LEN;
+			setting->CAfont_path[LAOO_FONT] = font;
+			fprintf(log,"[framehook/init]LAOO Font path:%s\n",setting->CAfont_path[LAOO_FONT]);
+			fflush(log);
+		}else if(strncmp(FRAMEHOOK_OPT_GURMUKHI_FONT,arg,FRAMEHOOK_OPT_GURMUKHI_FONT_LEN) == 0
+				&& setting->CAfont_path[GURMUKHI_FONT]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_GURMUKHI_FONT_LEN;
+			setting->CAfont_path[GURMUKHI_FONT] = font;
+			fprintf(log,"[framehook/init]GURMUKHI Font path:%s\n",setting->CAfont_path[GURMUKHI_FONT]);
+			fflush(log);
 		}else if(strncmp(FRAMEHOOK_OPT_EXTRA_FONT,arg,FRAMEHOOK_OPT_EXTRA_FONT_LEN) == 0
 				&& setting->extra_path==NULL){
 			char* font = arg+FRAMEHOOK_OPT_EXTRA_FONT_LEN;
@@ -543,6 +567,14 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	if(!setting->CAfont_path[GUJARATI_FONT]){
 		setting->CAfont_path[GUJARATI_FONT] = setting->CAfont_path[ARIAL_FONT];
 		fprintf(log,"[framehook/init]no GUJARATI Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
+	}
+	if(!setting->CAfont_path[BENGAL_FONT]){
+		setting->CAfont_path[BENGAL_FONT] = setting->CAfont_path[ARIAL_FONT];
+		fprintf(log,"[framehook/init]no BENGAL Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
+	}
+	if(!setting->CAfont_path[TAMIL_FONT]){
+		setting->CAfont_path[TAMIL_FONT] = setting->CAfont_path[ARIAL_FONT];
+		fprintf(log,"[framehook/init]no TAMIL Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
 	}
 	fflush(log);
 	return TRUE;

@@ -16,7 +16,7 @@
 SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right);
 //SDL_Surface* drawText(DATA* data,int size,int color,Uint16* str);
 SDL_Surface* drawText2(DATA* data,int size,SDL_Color color,Uint16* str);
-SDL_Surface* drawText3(DATA* data,int size,SDL_Color color,int fontsel,Uint16* from,Uint16* to);
+SDL_Surface* drawText3(DATA* data,int size,SDL_Color color,FontType fonttype,Uint16* from,Uint16* to);
 SDL_Surface* drawText4(DATA* data,int size,SDL_Color color,TTF_Font* font,Uint16* str,int fontsel);
 //int cmpSDLColor(SDL_Color col1, SDL_Color col2);
 int isDoubleResize(double width, double limit_width, int size, int line, FILE* log);
@@ -609,18 +609,19 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 	FILE* log = data->log;
 	int debug = data->debug;
 	if(!data->enableCA){
-		return drawText4(data,size,SdlColor,data->font[size],str,-1);
+		return drawText4(data,size,SdlColor,data->font[size],str,UNDEFINED_FONT);
 	}
 	SDL_Surface* ret = NULL;
 	Uint16* index = str;
 	Uint16* last = index;
 	int basefont = getFirstFont(last,UNDEFINED_FONT);	//第一基準フォント
+	// FontType is font_index(bit 4..0) + space-char-unicode(bit 31..16)
 	int secondBase = UNDEFINED_FONT;
 	if(debug){
-		fprintf(log,"[comsurface/drawText2]first base font %s\n",CA_FONT_NAME[basefont & 15]);
+		fprintf(log,"[comsurface/drawText2]first base font %s\n",getfontname(basefont));
 	}
-	int fonttype = basefont;
-	int newfont = basefont;
+	FontType fonttype = basefont;
+	FontType newfont = basefont;
 	int nextfont = basefont;
 	int saved;
 	int foundAscii = FALSE;
@@ -632,7 +633,8 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 			nextfont = GOTHIC_FONT;
 		if(debug)
 			fprintf(log,"[comsurface/drawText2]str[%d] U+%04hX try %s (base %s)",
-				index-str,*index,CA_FONT_NAME[nextfont],CA_FONT_NAME[basefont & 15]);
+				index-str,*index,getfontname(nextfont),getfontname(basefont));
+		//get FontType and spaced code
 		newfont = getFontType(index,nextfont,data);
 		wasAscii = foundAscii;
 		foundAscii = isAscii(index);
@@ -641,10 +643,10 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 		if(newfont==UNDEFINED_FONT||newfont==NULL_FONT)
 			newfont = nextfont;
 		if(debug)
-			fprintf(log," -->%s%s%s%s%s\n",CA_FONT_NAME[newfont & 15],
+			fprintf(log," -->%s%s%s%s%s\n",getfontname(newfont),
 				foundAscii?" found_Ascii":"",wasAscii?" was_Ascii":"",
 				isKanji?" Kanji":"",isKanji!=wasKanji?" change_Kanji_width":"");
-		if(newfont != fonttype || (fonttype==GOTHIC_FONT && isKanji != wasKanji)){	//別のフォント出現、又は漢字幅チェック変化
+		if(newfont != fonttype || (fonttype!=SIMSUN_FONT && isKanji != wasKanji)){	//別のフォント出現、又は漢字幅チェック変化
 			if(index!=last){
 				ret = arrangeSurface(ret,drawText3(data,size,SdlColor,fonttype,last,index));
 				if(debug && ret!=NULL){
@@ -652,10 +654,10 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 						ret->w,ret->h,COM_FONTSIZE_NAME[size],index-str);
 				}
 			}
-			fonttype = newfont;	//GOTHIC, SMSUN. GULIM, ARIAL, GEORGIA,…
+			fonttype = newfont;	//Spaced-char or GOTHIC, SMSUN. GULIM, ARIAL, GEORGIA,…
 			last = index;
 		}
-		newfont &= 15;
+		newfont &= CA_TYPE_MASK;	//here drop spaced attribute
 		//第２基準フォントの検査
 		if(secondBase==UNDEFINED_FONT){
 			if((foundAscii && !wasAscii && basefont<=GOTHIC_FONT)||
@@ -666,7 +668,7 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 				}
 				if(secondBase!=UNDEFINED_FONT && debug)
 					fprintf(log,"[somsurface/drawText2]second base font %s\n",
-						CA_FONT_NAME[secondBase & 15]);
+							getfontname(secondBase));
 			}
 		}
 		//隣接フォントの検査
@@ -710,7 +712,7 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 		}
 		if(nextfont!=saved && debug){
 			fprintf(log,"[somsurface/drawText2]nextfont %s-> %s\n",
-				CA_FONT_NAME[saved & 15],CA_FONT_NAME[nextfont & 15]);
+				getfontname(saved),getfontname(nextfont));
 		}
 		index++;
 	}
@@ -769,25 +771,35 @@ SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right){
 	return ret;
 }
 
-SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,int fontsel,Uint16* from,Uint16* to){
+SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,Uint16* from,Uint16* to){
 	int len = to-from;
 	FILE* log = data->log;
 	int debug = data->debug;
 	int h = data->font_pixel_size[size];
+	int fontsel = GET_TYPE(fonttype);	//get fonttype
 
-	if(fontsel>=CA_FONT_MAX){	//CA_FONT_MAX must be less than or equals 16
-		int code = fontsel & 0xfff0;
+	if(isSpaceFont(fonttype)){	//fonttype is one of space-char's
+		Uint16 code = GET_CODE(fonttype);	//get unicode0
 		int w = data->fontsize_fix;
-		if(code==0x0020 || code==0x00a0){
+		if(code==0x0020 || code==0x00A0){
 			w = (CA_FONT_SPACE_WIDTH[size] * len)<<w;
 		}else if(code==0x3000){
-			w = (CA_FONT_3000_WIDTH[fontsel&3][size] * len)<<w;
-		}else if((code & 0xff00)==0x2000){	//fontsel should belog to GOTHIC or fontsel is SIMSUN or GULIM
-			w = (CA_FONT_2000_WIDTH[(code & 0x00f0)>>4][size] * len)<<w;
-		}else{
-			fprintf(log,"[comsurface/drawText3]fontsel error %d\n",fontsel);
+			if(fontsel > GULIM_FONT){	//fonttype should be 0..2 (gothic,simsun,gulim)
+				fprintf(log,"[comsurface/drawText3]fontsel error %d\n",fonttype);
+				fflush(log);
+				return NULL;
+			}
+			w = (CA_FONT_3000_WIDTH[fontsel][size] * len)<<w;
+		}else if((code & 0xfff0)!=0x2000){
+			fprintf(log,"[comsurface/drawText3]fontsel error %d\n",fonttype);
 			fflush(log);
 			return NULL;
+		}else {
+			//code should be 2000..200f
+			//Here, it assumed fonttype should belog to GOTHIC
+			//but width of 2000 series DIFFERS when SIMSUN (or GULIM?) in Windows7
+			//futhermore it FAULTS (TOUFU) when ARIAL in XP
+			w = (CA_FONT_2000_WIDTH[code & 0x000f][size] * len)<<w;
 		}
 		SDL_Surface* ret = drawNullSurface(w,h);
 		if(debug){
@@ -806,12 +818,12 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,int fontsel,Uint16
 	}
 	if(*from=='\0' || len==0){
 		if(debug)
-			fprintf(log,"[comsurface/drawText3]return font %s NULL\n",CA_FONT_NAME[fontsel]);
+			fprintf(log,"[comsurface/drawText3]return font %s NULL\n",getfontname(fontsel));
 		return drawNullSurface(0,h);
 	}
 	Uint16* text = (Uint16*)malloc(sizeof(Uint16)*(len+1));
 	if(text==NULL){
-		fprintf(log,"[comsurface/drawText3]can't alloc memory font %s.\n",CA_FONT_NAME[fontsel]);
+		fprintf(log,"[comsurface/drawText3]can't alloc memory font %s.\n",getfontname(fontsel));
 		fflush(log);
 		return NULL;
 	}
@@ -824,7 +836,7 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,int fontsel,Uint16
 	text[l2]='\0';
 	if(debug)
 		fprintf(log,"[comsurface/drawText3]building U+%04hX %d chars. in %s %s\n",
-			text[0],l2,CA_FONT_NAME[fontsel],COM_FONTSIZE_NAME[size]);
+			text[0],l2,getfontname(fontsel),COM_FONTSIZE_NAME[size]);
 	if(l2==0){
 		free(text);
 		return drawNullSurface(0,h);
@@ -910,7 +922,7 @@ SDL_Surface* getErrFont(DATA* data){
 		TTF_Font* font =(data->enableCA)?
 			data->CAfont[GOTHIC_FONT][CMD_FONT_SMALL]
 			: data->font[CMD_FONT_SMALL];
-		data->ErrFont = drawText4(data,CMD_FONT_SMALL,COMMENT_COLOR[CMD_COLOR_PASSIONORANGE],font,errMark,-1);
+		data->ErrFont = drawText4(data,CMD_FONT_SMALL,COMMENT_COLOR[CMD_COLOR_PASSIONORANGE],font,errMark,GOTHIC_FONT);
 	}
 	SDL_Surface* ret = NULL;
 	if(data->ErrFont!=NULL){

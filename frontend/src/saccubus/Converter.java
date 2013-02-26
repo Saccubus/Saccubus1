@@ -157,6 +157,10 @@ public class Converter extends Thread {
 	private File estrangeloEdessaFont = null;
 	private File arialUnicodeFont = null;
 	private File gujaratiFont = null;
+	private File bengalFont = null;
+	private File tamilFont = null;
+	private File laooFont = null;
+	private File gurmukhiFont = null;
 	private Pattern ngWordPat;
 	private Pattern ngIDPat;
 	private CommandReplace ngCmd;
@@ -384,6 +388,46 @@ public class Converter extends Thread {
 					//return false;
 					System.out.println("CA用フォント" + gujaratiFont.getPath() + "を" + arialFont.getName() + "で代替します。");
 					gujaratiFont = arialFont;
+				}
+				gujaratiFont = new File(fontDir, "SHRUTI.TTF");
+				if (!gujaratiFont.canRead()) {
+					sendtext("警告　CA用フォントが見つかりません。" + gujaratiFont.getPath());
+					//retValue = "21";
+					//return false;
+					System.out.println("CA用フォント" + gujaratiFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					gujaratiFont = arialFont;
+				}
+				bengalFont = new File(fontDir, "VRINDA.TTF");
+				if (!bengalFont.canRead()) {
+					sendtext("警告　CA用フォントが見つかりません。" + bengalFont.getPath());
+					//retValue = "22";
+					//return false;
+					System.out.println("CA用フォント" + bengalFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					bengalFont = arialFont;
+				}
+				tamilFont = new File(fontDir, "LATHA.TTF");
+				if (!tamilFont.canRead()) {
+					sendtext("警告　CA用フォントが見つかりません。" + tamilFont.getPath());
+					//retValue = "23";
+					//return false;
+					System.out.println("CA用フォント" + tamilFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					tamilFont = arialFont;
+				}
+				laooFont = new File(fontDir, "LAOUI.TTF");
+				if (!laooFont.canRead()) {
+					sendtext("警告　CA用フォントが見つかりません。" + laooFont.getPath());
+					//retValue = "24";
+					//return false;
+					System.out.println("CA用フォント" + laooFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					laooFont = arialFont;
+				}
+				gurmukhiFont = new File(fontDir, "RAAVI.TTF");
+				if (!gurmukhiFont.canRead()) {
+					sendtext("警告　CA用フォントが見つかりません。" + gurmukhiFont.getPath());
+					//retValue = "25";
+					//return false;
+					System.out.println("CA用フォント" + gurmukhiFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					gurmukhiFont = arialFont;
 				}
 			}else{
 				a = new File(Setting.getFontPath());
@@ -1828,6 +1872,14 @@ public class Converter extends Thread {
 				ffmpeg.addCmd(getFontUrl(estrangeloEdessaFont, encoding));
 				ffmpeg.addCmd("|--gujarati-font:");
 				ffmpeg.addCmd(getFontUrl(gujaratiFont, encoding));
+				ffmpeg.addCmd("|--bengal-font:");
+				ffmpeg.addCmd(getFontUrl(bengalFont, encoding));
+				ffmpeg.addCmd("|--tamil-font:");
+				ffmpeg.addCmd(getFontUrl(tamilFont, encoding));
+				ffmpeg.addCmd("|--laoo-font:");
+				ffmpeg.addCmd(getFontUrl(laooFont, encoding));
+				ffmpeg.addCmd("|--gurmukhi-font:");
+				ffmpeg.addCmd(getFontUrl(gurmukhiFont, encoding));
 				if(arialUnicodeFont!=null){
 					ffmpeg.addCmd("|--arial-unicode-font:");
 					ffmpeg.addCmd(getFontUrl(arialUnicodeFont, encoding));

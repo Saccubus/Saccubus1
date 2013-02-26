@@ -226,57 +226,7 @@ static char* const CMD_COLOR_NAME[CMD_COLOR_MAX] = {
 	"white",
 };
 
-// CA Font Set Index
-#define GOTHIC_FONT	0
-#define	SIMSUN_FONT	1
-#define GULIM_FONT	2
-#define ARIAL_FONT	3
-#define GEORGIA_FONT	4
-//UI_GOTHIC is out of use
-//#define UI_GOTHIC_FONT 5
-#define ARIALUNI_FONT 5
-#define DEVANAGARI	6
-#define TAHOMA_FONT 7
-#define MINGLIU_FONT 8
-#define N_MINCHO_FONT 9
-#define ESTRANGELO_EDESSA_FONT 10
-#define GUJARATI_FONT 11
-#define EXTRA_FONT 12
-#define CA_FONT_MAX	13
-#define SPACE_0020 0
-#define SPACE_00A0 1
-#define SPACE_2000 2
-#define SPACE_3000 3
-#define UNDEFINED_FONT	(-1)
-#define NULL_FONT	(-2)
-
-static char* const CA_FONT_NAME[16] = {
-	"GOTHIC",
-	"SIMSUN",
-	"GULIM",
-	"ARIAL",
-	"GEORGIA",
-	//"UI GOTHIC",
-	"ARIAL UNICODE",
-	"DEVANAGARI",
-	"TAHOMA",
-	"MINGLIU",
-	"NEW MINCHO",
-	"ESTRANGELO EDESSA",
-	"GUJARATI",
-	"EXTRA",
-	//--end of font type---//
-	"NAME 13",
-	"NAME 14",
-	"UNDEFINED",	// -1 & 15
-};
-static char* const CA_SPACE_NAME[] = {
-		"SPACE",
-		"no-break-SPACE",
-		"U+2000 series",
-		"CJK SPACE",
-};
-static const int CA_FONT_SIZE_FIX[CA_FONT_MAX][CMD_FONT_MAX] = {
+static const int CA_FONT_SIZE_FIX[][CMD_FONT_MAX] = {
 //	DEF,BIG,SMALL
 	{0,-1,1,0},	//gothic
 	{0,-1,1,0},	//simsun
@@ -288,8 +238,12 @@ static const int CA_FONT_SIZE_FIX[CA_FONT_MAX][CMD_FONT_MAX] = {
 	{0,0,0,0},	//tahoma
 	{0,0,0,0},	//MingLiU
 	{0,0,0,0},	//new mincho, smsun or new_gulim
-	{0,0,0,0},	//estrangelo edessa
-	{0,0,0,0},	//gujarati
+	{0,0,2,0},	//estrangelo edessa
+	{0,0,2,0},	//gujarati
+	{0,0,2,0},	//bengal
+	{0,0,2,0},	//tamil
+	{0,0,2,0},	//laoo
+	{0,0,2,0},	//gurmukhi
 	{0,0,0,0},	//extra
 };
 

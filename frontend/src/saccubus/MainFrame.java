@@ -1429,7 +1429,7 @@ public class MainFrame extends JFrame {
 		grid20_x0_y7.fill = GridBagConstraints.HORIZONTAL;
 		grid20_x0_y7.insets = INSETS_0_5_0_5;
 		experimentPanel.add(disableOriginalResizeCheckBox, grid20_x0_y7);
-		enableCA_CheckBox.setText("ＣＡフォント暫定的対応：11種類のフォントを使う");
+		enableCA_CheckBox.setText("ＣＡフォント対応：多種類のフォントを使う");
 		enableCA_CheckBox.setForeground(Color.blue);
 		enableCA_CheckBox.setToolTipText("フォント変化を強制的に使用するようになります");
 		GridBagConstraints drid20_x0_y8 = new GridBagConstraints();

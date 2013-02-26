@@ -26,7 +26,11 @@
  L MINGLIU_FONT		(win=MingLiU) 繁字体、変化なし
  N N_MINCHO_FONT	(win7=SIMSUN XP=NGULIM) 明朝、変化なし
  E ESTRANGELO_EDESSA	シリア
- Z ZERO_WIDTH     	200b 2029-202f (No Font Griph)
+ B BENGAL_FONT   	(vrinda.ttf)Bangla lipi
+ C TAMIL_FONT 	 	(latha.ttf)Tamil
+ e LAOO_FONT		(laoui.ttf)laoo
+ f GURMKHI_FONT		(raavi.ttf)Gurmkhi
+ Z ZERO_WIDTH     	(200b-200f)2000series 2028-202f (No Font Griph)
 
  参考資料（Windows Vistaに基づく）
  http://haraise.web.fc2.com/hyou.htm
@@ -55,6 +59,11 @@
 #define MINGLIU_CHAR 'L'
 #define N_MINCHO_CHAR 'N'
 #define ESTRANGELO_EDESSA 'E'
+#define GUJARATI_CHAR 'j'
+#define BENGAL_CHAR 'B'
+#define TAMIL_CHAR 'C'
+#define LAOO_CHAR 'e'
+#define GURMUKHI_CHAR 'f'
 #define ZERO_WIDTH_CHAR 'Z'
 
 /* コメントアウトは参考資料による定義 */
@@ -70,12 +79,12 @@ static const Uint8 UNITABLE[] =
 /*0600*/ "AAAA.......AAAAAAAAAAA.....A..AA.AAAAAAAAAAAAAAAAAAAAAAAAAA.....AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 /*0700*/ "EEEEEEEEEEEEEE.EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE..EEEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.................................................................................................................................................."
 /*0800*/ "................................................................................................................................................................................................................................................................"
-/*0900*/ ".DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD..DDDDDDDDDDDDDDDDDD..DDDDD...DDDDDDDDDDDDDDDDDDDDDDDDDDD........DDDDD..................................................................................................................--............"
-/*0a00*/ "................................................................................................................................................................................................................................................................"
-/*0b00*/ "................................................................................................................................................................................................................................................................"
+/*0900*/ ".DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD..DDDDDDDDDDDDDDDDDD..DDDDD...DDDDDDDDDDDDDDDDDDDDDDDDDDD........DDDDD.BBB.BBBBBBBB..BB..BBBBBBBBBBBBBBBBBBBBBB.BBBBBBB.B...BBBB..BBBBBBBBB..BB..BBBB........B....BB.BBBBB..BBBBBBBBBBBBBBBBBBBBB....."
+/*0a00*/ ".fff.ffffff....ff..ffffffffffffffffffffff.fffffff.ff.ff.ff..f.fffff....ff..fff...f.......ffff.f.......ffffffffffffffff...........jjj.jjjjjjjjj.jjj.jjjjjjjjjjjjjjjjjjjjjj.jjjjjjj.jj.jjjjj..jjjjjjjjjj.jjj.jjj..j...............jjjj..jjjjjjjjjjjj.............."
+/*0b00*/ "..................................................................................................................................CC.CCCCCC...CCC.CCCC...CC...CC...CC...CCC...CCCCCCCCCCCC....CCCCC...CCC.CCCC..C......C..............CCCCCCCCCCCCCCCCCCCCC....."
 /*0c00*/ "................................................................................................................................................................................................................................................................"
 /*0d00*/ "................................................................................................................................................................................................................................................................"
-/*0e00*/ ".TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT....-TTTTTTTTTTTTTTTTTTTTTTTTTTTT...................................................................................................................................................................."
+/*0e00*/ ".TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT....-TTTTTTTTTTTTTTTTTTTTTTTTTTTT.....................................ee.e..ee.e..e......eeee.eeeeeee.eee.e.e..ee.eeeeeeeeeeeee.eee..eeeee.e.eeeeee..eeeeeeeeee..eeee................................"
 /*0f00*/ "................................................................................................................................................................................................................................................................"
 /*       "0               1               2               3               4               5               6               7               8               9               a               b               c               d               e               f               "*/
 /*       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"*/
@@ -356,7 +365,7 @@ static const Uint8 UNITABLE[] =
 0080-00ff ラテン１補助
 0100-024f ラテン拡張A,B IPA拡張 スペース調整
 0300-036f 結合分音記号		■check■
-0370-03ff ギリシャコプト	■check■
+0370-03ff ギリシャコプト	(arial)
 0400-052f キリル        	■check■
 0530-058f アルメニア    	■check■
 0590-05ff ヘブライ      	■check■
@@ -364,17 +373,17 @@ static const Uint8 UNITABLE[] =
 0700-077f シリア        estrangelo edessa
 0780-08ff ターナ        	■check■
 0900-097f テバナガリ    mangal.ttf
-0980-09ff ベンガル      	■check■
-0a00-0a7f グルムキー    	■check■
-0a80-0aff クジャラート  	■check■
+0980-09ff ベンガル      vrinda.ttf または　shonar.ttf
+0a00-0a7f グルムキー   raavi.ttf
+0a80-0aff クジャラート  shruti.ttf
 0b00-0b7f オリヤー      	■check■
-0b80-0bff タミール      	■check■
+0b80-0bff タミール      latha.ttf
 0c00-0c7f テルグ        	■check■
 0c80-0cff カナラ        	■check■
 0d00-0d7f マラヤラム    	■check■
 0d80-0dff シンハラ      	■check■
 0e00-0e7f タイ          tahoma.ttf
-0e80-0eff ラオス        	■check■
+0e80-0eff ラオス       laoui.ttf
 0f00-0fff チベット      	■check■
 1000-109f ミャンマーMSゴシック不可	■check■
 10a0-10ff グルジア		sylfaen.ttf
@@ -420,5 +429,96 @@ ff60-ff9f 半角カナ
 ffa0-ffdf 半角形／全角形2
 ffe0-ffff 特殊文字
 */
+// CA Font Set Index
+#define GOTHIC_FONT	0
+#define	SIMSUN_FONT	1
+#define GULIM_FONT	2
+#define ARIAL_FONT	3
+#define GEORGIA_FONT	4
+//UI_GOTHIC is out of use
+//#define UI_GOTHIC_FONT 5
+#define ARIALUNI_FONT 5
+#define DEVANAGARI	6
+#define TAHOMA_FONT 7
+#define MINGLIU_FONT 8
+#define N_MINCHO_FONT 9
+#define ESTRANGELO_EDESSA_FONT 10
+#define GUJARATI_FONT 11
+#define BENGAL_FONT 12
+#define TAMIL_FONT 13
+#define LAOO_FONT 14
+#define GURMUKHI_FONT 15
+#define EXTRA_FONT 16
+#define UNDEFINED_FONT	(EXTRA_FONT+1)
+#define NULL_FONT	(EXTRA_FONT+2)
+#define CA_FONT_MAX	(EXTRA_FONT+1)
+#define CA_FONT_NAME_MASK 0xff
+#define CA_TYPE_MASK 0xffff
+static char* const CA_FONT_NAME[] = {
+	"GOTHIC",
+	"SIMSUN",
+	"GULIM",
+	"ARIAL",
+	"GEORGIA",
+	//"UI GOTHIC",
+	"ARIAL UNICODE",
+	"DEVANAGARI",
+	"TAHOMA",
+	"MINGLIU",
+	"NEW MINCHO",
+	"ESTRANGELO EDESSA",
+	"GUJARATI",
+	"BENGAL",
+	"TAMIL",
+	"LAOO",
+	"GURMUKHI",
+	"EXTRA",
+	//--end of font type---//
+	"UNDEFINED",	//EXTRA_FONT+1
+	"NULL FONT",	//EXTRA_FONT+2
+};
+#define CA_FONT_NAME_SIZE (sizeof(CA_FONT_NAME)/sizeof(char* const))
+/*
+static const Uint8 UNI_FONTTYPE[][2] = {
+	{GOTHIC_CHAR, GOTHIC_FONT},	//g 0
+	{GOTHIC_NOT_PROTECT, GOTHIC_FONT},	//G 0
+	{WEAK_SIMSUN_CHAR, SIMSUN_FONT},	//w 1
+	{STRONG_SIMSUN_CHAR, SIMSUN_FONT},	//s 1
+	{SIMSUN_NOT_CHANGE_CHAR, SIMSUN_FONT},	//S 1
+	{GULIM_CHAR, GULIM_FONT},	//m 2
+	{ARIAL_CHAR, ARIAL_FONT},	//A 3
+	{GEORGIA_CHAR, GEORGIA_FONT},	//J 4
+	{DEVANAGARI_CHAR, DEVANAGARI},	//D 6
+	{TAHOMA_CHAR, TAHOMA_FONT},	//T 7
+	{MINGLIU_CHAR, MINGLIU_FONT},	//L 8
+	{N_MINCHO_CHAR, N_MINCHO_FONT},	//N 9
+	{ESTRANGELO_EDESSA, ESTRANGELO_EDESSA_FONT},	//E 10
+	{GUJARATI_CHAR, GUJARATI_FONT},	//j 11
+	{BENGAL_CHAR, BENGAL_FONT},	//B 12
+	{TAMIL_CHAR, TAMIL_FONT},	//C 13
+	{LAOO_CHAR, LAOO_FONT},	//e 14
+	{GURMUKHI_CHAR, GURMUKHI_FONT},	//f 14
+};
+*/
+
+#define CA_TYPE_SPACE_00A0 0x00A00000
+#define CA_TYPE_SPACE_0020 0x00200000
+#define CA_TYPE_SPACE_2000 0x20000000
+#define CA_TYPE_SPACE_3000 0x30000000
+#define isSpaceFont(ft) ((ft)>CA_TYPE_MASK)
+#define GET_CODE(ft)	((ft)>>16)
+#define GET_TYPE(ft)	((ft)&CA_TYPE_MASK)
+
+#define SPACE_0020 0
+#define SPACE_00A0 1
+#define SPACE_2000 2
+#define SPACE_3000 3
+static char* const CA_SPACE_NAME[] = {
+		"SPACE",
+		"no-break-SPACE",
+		"U+2000 series",
+		"CJK SPACE",
+};
+
 
 #endif /* UNITABLE_H_ */

@@ -23,7 +23,7 @@ int isMatchKanji(Uint16* u,Uint16* kanji){
 }
 
 int isAscii(Uint16* u){
-	return ((0x0000 < *u && *u < 0x0080) || *u==0x00a0);
+	return ((0x0000 < *u && *u < 0x0080) || *u==0x00a0 || *u==0x200c);
 }
 
 int getDetailType(int u){
@@ -59,18 +59,21 @@ int isZeroWidth(Uint16* u){
 	return (getDetailType(*u)==ZERO_WIDTH_CHAR);
 }
 
-int getFontType2(Uint16* u,int basefont,DATA* data){
+FontType getFontType2(Uint16* u,int basefont,DATA* data){
 	if(u==NULL || *u == '\0'){
 		return NULL_FONT;
 	}
-	if(*u==0x0020||*u==0x00a0){	//Ascii space -> fix fontsize w,h
-		return ARIAL_FONT|0x0000|(*u & 0x00f0);	//0020-> 0023 00a0-> 00a3
+	if(*u==0x0020){	//Ascii space -> fix fontsize w,h
+		return ARIAL_FONT|CA_TYPE_SPACE_0020;	//0020-> 00200003
+	}
+	if(*u==0x00a0){	//Ascii space -> fix fontsize w,h
+		return ARIAL_FONT|CA_TYPE_SPACE_00A0;	//00a0-> 00a00003
 	}
 	if(0x2000<=*u && *u<=0x200f){	//Various width Space -> fix fontsize w,h
-		return basefont|0x2000|(*u & 0x000f)<<4;	//2001->2010 200a->20a0;
+		return (basefont & CA_TYPE_MASK)|(*u<<16);	//2001..200f<<16+0000..0003;
 	}
 	if(*u==0x3000){	//‘SŠp‹ó”’->fix fontsize w,h
-		return basefont|0x3000;		//SIMSUN 3001 GULIM 3002
+		return (basefont & CA_TYPE_MASK)|CA_TYPE_SPACE_3000;		//SIMSUN 30000001 GULIM 30000002
 	}
 	switch(getDetailType(*u)){
 		case STRONG_SIMSUN_CHAR:
@@ -89,18 +92,27 @@ int getFontType2(Uint16* u,int basefont,DATA* data){
 			return GOTHIC_FONT;
 		case ARIAL_CHAR:
 			return ARIAL_FONT;
-		case GEORGIA_CHAR:	//use special
+		//use special font
+		case GEORGIA_CHAR:
 			return GEORGIA_FONT;
-//		case UI_GOTHIC_CHAR:	//use special
-//			return UI_GOTHIC_FONT;
-		case DEVANAGARI_CHAR:	//use special
+		case DEVANAGARI_CHAR:
 			return DEVANAGARI;
 		case TAHOMA_CHAR:
 			return TAHOMA_FONT;
 		case ESTRANGELO_EDESSA:
 			return ESTRANGELO_EDESSA_FONT;
+		case GUJARATI_CHAR:
+			return GUJARATI_FONT;
+		case BENGAL_CHAR:
+			return BENGAL_FONT;
+		case TAMIL_CHAR:
+			return TAMIL_FONT;
+		case LAOO_CHAR:
+			return LAOO_FONT;
+		case GURMUKHI_CHAR:
+			return GURMUKHI_FONT;
 		default:
-			//include UNDEFINED_CHAR
+		//include UNDEFINED_CHAR
 			if(isGlyphExist(data,basefont,*u))
 				return basefont;
 			else
@@ -108,7 +120,7 @@ int getFontType2(Uint16* u,int basefont,DATA* data){
 	}
 }
 
-int getFontType(Uint16* u,int basefont,DATA* data){
+FontType getFontType(Uint16* u,int basefont,DATA* data){
 	if(isMatchExtra(u,data->extra_change))
 		return EXTRA_FONT;
 	else
@@ -251,4 +263,9 @@ int uint16len(Uint16* u){
 
 int isKanjiWidth(Uint16* u){
 	return isMatchKanji(u,(Uint16*)&KANJI_WIDTH[0]);
+}
+
+const char *getfontname(FontType fonttype){
+	int i = fonttype & CA_FONT_NAME_MASK;
+	return CA_FONT_NAME[i];
 }
