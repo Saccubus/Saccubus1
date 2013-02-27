@@ -651,12 +651,15 @@ public class NicoClient {
 	// 2010年12月22日 18:00 動画のコメントが消えにくくなる対応について
 	private  enum CommentType {
 		USER{
+			@Override
 			public String dlmsg(){ return "コメント"; }
 		},
 		OWNER{
+			@Override
 			public String dlmsg(){ return "投稿者コメント"; }
 		},
 		OPTIONAL{
+			@Override
 			public String dlmsg(){ return "オプショナルスレッド"; }
 		};
 		public abstract String dlmsg();

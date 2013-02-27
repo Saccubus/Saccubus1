@@ -73,10 +73,12 @@ public class DuplicatedOutput extends OutputStream {
 	public void println(char[] x){
 		println(new String(x));
 	}
+	@Override
 	public void flush(){
 		ps.flush();
 		fos.flush();
 	}
+	@Override
 	public void close(){
 		ps.close();
 		fos.close();

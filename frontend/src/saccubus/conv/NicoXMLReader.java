@@ -130,6 +130,7 @@ public class NicoXMLReader extends DefaultHandler {
 	/**
 	 *
 	 */
+	@Override
 	public void startDocument() {
 		System.out.println("Start converting to intermediate file.");
 	}
@@ -145,6 +146,7 @@ public class NicoXMLReader extends DefaultHandler {
 	 * @param attributes
 	 *            Attributes
 	 */
+	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) {
 		if (qName.toLowerCase().equals("chat")) {
@@ -218,6 +220,7 @@ public class NicoXMLReader extends DefaultHandler {
 	 * @param length
 	 *            int
 	 */
+	@Override
 	public void characters(char[] ch, int offset, int length) {
 		if (item != null) {
 			if (item_fork && length > 0
@@ -266,6 +269,7 @@ public class NicoXMLReader extends DefaultHandler {
 	 * @param qName
 	 *            String
 	 */
+	@Override
 	public void endElement(String uri, String localName, String qName) {
 		if (qName.toLowerCase().equals("chat")) {
 			if (!item_kicked) {
@@ -278,6 +282,7 @@ public class NicoXMLReader extends DefaultHandler {
 	/**
 	 * ドキュメント終了
 	 */
+	@Override
 	public void endDocument() {
 		// System.out.println("----------");
 		System.out.println("Converting finished. "

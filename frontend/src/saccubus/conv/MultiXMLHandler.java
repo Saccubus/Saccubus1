@@ -19,10 +19,12 @@ public class MultiXMLHandler extends DefaultHandler {
 		this.chatArray = chatArray;
 	}
 
+	@Override
 	public void startDocument() {
 		// System.out.println("Starting Combining XML files.");
 	}
 
+	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) {
 		if (qName.toLowerCase().equals("thread")){
@@ -54,12 +56,14 @@ public class MultiXMLHandler extends DefaultHandler {
 		// System.out.print(qName + " ");
 	}
 
+	@Override
 	public void characters(char[] ch, int offset, int length) {
 		if (chat != null) {
 			chat.setComment(new String(ch, offset, length));
 		}
 	}
 
+	@Override
 	public void endElement(String uri, String localName, String qName) {
 		if (qName.equalsIgnoreCase("chat")) {
 			if (!chat_kicked) {
@@ -69,6 +73,7 @@ public class MultiXMLHandler extends DefaultHandler {
 		}
 	}
 
+	@Override
 	public void endDocument() {
 		System.out.print(".");
 	}

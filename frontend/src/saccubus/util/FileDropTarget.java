@@ -17,6 +17,7 @@ public class FileDropTarget extends DropTargetAdapter {
 		Field = field;
 	}
 
+	@Override
 	public void dragOver(DropTargetDragEvent dtde) {
 		if (dtde.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 			dtde.acceptDrag(DnDConstants.ACTION_COPY);
@@ -25,6 +26,7 @@ public class FileDropTarget extends DropTargetAdapter {
 		dtde.rejectDrag();
 	}
 
+	@Override
 	public void drop(DropTargetDropEvent dtde) {
 		try {
 			if (dtde.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {

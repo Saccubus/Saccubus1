@@ -57,6 +57,7 @@ public class NicoMap {
 	 * •¶Žš—ñ‚É•ÏŠ·
 	 * @return String 
 	 */
+	@Override
 	public String toString(){
 		if (this.isEmpty())
 			return null;

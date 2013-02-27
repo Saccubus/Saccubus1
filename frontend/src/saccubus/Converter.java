@@ -1578,11 +1578,11 @@ public class Converter extends Thread {
 			int height = videoAspect.getHeight();
 			double rate;
 			if(videoAspect.isWide()){
-				rate = 640.0 / (double)width;
+				rate = 640.0 / width;
 				width = 640;
 				height *= rate;
 			}else{
-				rate = 384.0 / (double)height;
+				rate = 384.0 / height;
 				width *= rate;
 				height = 384;
 			}
