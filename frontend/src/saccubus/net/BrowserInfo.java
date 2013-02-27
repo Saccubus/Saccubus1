@@ -138,6 +138,8 @@ public class BrowserInfo {
             case Opera:
             	user_session = getUserSessionOpera();
             	break;
+            default:
+            	break;
         }
         if (!user_session.isEmpty()){
         	validBrowser = browserKind;

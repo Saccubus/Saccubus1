@@ -696,9 +696,11 @@ public class Converter extends Thread {
 				begin = text.indexOf("date=\"") + "date=\"".length();
 				end = text.indexOf("\" ", begin);
 				if(end>0){
+					br.close();
 					return text.substring(begin, end);
 				}
 			}
+			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
