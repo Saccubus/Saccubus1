@@ -124,7 +124,8 @@ int doCmd(char* command,int show_msg,const char* log_name){
 			LocalFree(msg);
 		}
 	}else{
-		/* //戻り値を取得する場合はコメントアウト解除
+		/* 
+		//戻り値を取得する場合はコメントアウト解除
 		// 終了するまで待つ
 		WaitForSingleObject(process_info.hProcess,INFINITE);
 		//戻り値を取得
