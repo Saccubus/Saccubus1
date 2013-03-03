@@ -7,6 +7,7 @@
 #include "chat/chat.h"
 #include "chat/chat_slot.h"
 #include "unicode/unitable.h"
+#define CA_FONT_PATH_MAX 70
 
 struct CDATA{
 	int enable_comment;
@@ -63,7 +64,7 @@ struct DATA{
 	int deflocation;
 	int defsize;
 	// CA用フォント
-	TTF_Font* CAfont[CA_FONT_MAX][CMD_FONT_MAX];
+	TTF_Font* CAfont[CA_FONT_PATH_MAX][CMD_FONT_MAX];
 	// CA切替用Unicode群
 	//Uint16* font_change[CA_FONT_MAX];
 	// 0:*protect_gothic
@@ -95,7 +96,7 @@ typedef struct SETTING{
 	// 新しいffmpegからvideoの時間を貰うInterfaceが分かるまで代わりに
 	// さきゅばすから渡す（但し不明の場合は　0　or　-1）
 	// コメント表示の最後の調整だけなのでなくても我慢するように変更。
-	// ↑必要なくなった
+	// ↑必要なくなった→復活
 	int font_index;
 	int user_slot_max;
 	int owner_slot_max;
@@ -117,8 +118,8 @@ typedef struct SETTING{
 	int opaque_comment;
 	int optional_trunslucent;
 	// CA用フォント
-	const char* CAfont_path[CA_FONT_MAX];
-	int CAfont_index[CA_FONT_MAX];
+	const char* CAfont_path[CA_FONT_PATH_MAX];
+	int CAfont_index[CA_FONT_PATH_MAX];
 	const char* fontdir;
 	// CA切替用Unicode群
 	//const char* CAfont_change_uc[CA_FONT_MAX];
@@ -139,6 +140,7 @@ typedef struct SETTING{
 	const char* extra_mode;	// debugモード文字列
 	const char* april_fool;	// エイプリルフール文字列
 	const char* wakuiro;	// 黄枠色指定文字列
+	char* fontlist;	// フォントのリスト　999fontname ...（128個まで）
 }SETTING;
 
 int init(FILE* log);

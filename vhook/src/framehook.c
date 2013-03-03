@@ -29,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.38.11";
+	char *ver="1.38.13a";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -114,6 +114,8 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	--comment-speed: コメント速度を指定する場合≠0
 	--debug-print : デバッグ出力を有効にする
 */
+int extra_font(SETTING* setting,FILE* log);
+int parseFontList(SETTING* setting,FILE* log);
 
 int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[]){
 	/* TOOLBOXのバージョンチェック */
@@ -170,7 +172,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	// CA用フォント
 	//  MS UI GOTHIC は msgothic.ttc の index=2
 	int f;
-	for(f=0;f<CA_FONT_MAX;f++){
+	for(f=0;f<CA_FONT_PATH_MAX;f++){
 		setting->CAfont_path[f] = NULL;
 		setting->CAfont_index[f] = 0;
 	}
@@ -193,6 +195,8 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->extra_path = NULL;
 	//setting->extra_uc = NULL;
 	//setting->extra_fontindex = 0;
+	//フォントリスト
+	setting->fontlist = NULL;
 
 	int i;
 	char* arg;
@@ -472,6 +476,13 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			setting->CAfont_path[GURMUKHI_FONT] = font;
 			fprintf(log,"[framehook/init]GURMUKHI Font path:%s\n",setting->CAfont_path[GURMUKHI_FONT]);
 			fflush(log);
+
+		}else if(strncmp(FRAMEHOOK_OPT_FONT_LIST,arg,FRAMEHOOK_OPT_FONT_LIST_LEN) == 0
+				&& setting->fontlist==NULL){
+			char* font = arg+FRAMEHOOK_OPT_FONT_LIST_LEN;
+			setting->fontlist = font;
+			fprintf(log,"[framehook/init]Font List:<%s>\n",setting->fontlist);
+			fflush(log);
 		}else if(strncmp(FRAMEHOOK_OPT_EXTRA_FONT,arg,FRAMEHOOK_OPT_EXTRA_FONT_LEN) == 0
 				&& setting->extra_path==NULL){
 			char* font = arg+FRAMEHOOK_OPT_EXTRA_FONT_LEN;
@@ -479,33 +490,6 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			fprintf(log,"[framehook/init]Extra Font:%s\n",setting->extra_path);
 			fflush(log);
 		}
-		// CA切替用Unicode群
-		/*
-		else if(strncmp(FRAMEHOOK_OPT_CHANGE_SIMSUN_UNICODE,arg,FRAMEHOOK_OPT_CHANGE_SIMSUN_UNICODE_LEN) == 0){
-			char* unicode = arg+FRAMEHOOK_OPT_CHANGE_SIMSUN_UNICODE_LEN;
-			setting->CAfont_change_uc[SIMSUN_FONT] = unicode;
-			fprintf(log,"[framehook/init]Change to SIMSUN Font Unicode:%s\n",setting->CAfont_change_uc[SIMSUN_FONT]);
-			fflush(log);
-		}
-		else if(strncmp(FRAMEHOOK_OPT_CHANGE_GULIM_UNICODE,arg,FRAMEHOOK_OPT_CHANGE_GULIM_UNICODE_LEN) == 0){
-			char* unicode = arg+FRAMEHOOK_OPT_CHANGE_GULIM_UNICODE_LEN;
-			setting->CAfont_change_uc[GULIM_FONT] = unicode;
-			fprintf(log,"[framehook/init]Change to GULIM Font Unicode:%s\n",setting->CAfont_change_uc[GULIM_FONT]);
-			fflush(log);
-		}
-		else if(strncmp(FRAMEHOOK_OPT_PROTECT_GOTHIC_UNICODE,arg,FRAMEHOOK_OPT_PROTECT_GOTHIC_UNICODE_LEN) == 0){
-			char* unicode = arg+FRAMEHOOK_OPT_PROTECT_GOTHIC_UNICODE_LEN;
-			setting->CAfont_change_uc[GOTHIC_FONT] = unicode;
-			fprintf(log,"[framehook/init]Protect GOTHIC Font Unicode:%s\n",setting->CAfont_change_uc[GOTHIC_FONT]);
-			fflush(log);
-		}
-		else if(strncmp(FRAMEHOOK_OPT_ZERO_WIDTH_UNICODE,arg,FRAMEHOOK_OPT_ZERO_WIDTH_UNICODE_LEN) == 0){
-			char* unicode = arg+FRAMEHOOK_OPT_ZERO_WIDTH_UNICODE_LEN;
-			setting->zero_width_uc = unicode;
-			fprintf(log,"[framehook/init]Zero width Font Unicode:%s\n",setting->zero_width_uc);
-			fflush(log);
-		}
-		*/
 	}
 	//引数を正しく入力したか否かのチェック
 	//ここでチェックしているの以外は、デフォルト設定で逃げる。
@@ -518,9 +502,13 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		fflush(log);
 		return TRUE;
 	}
+	if(!parseFontList((SETTING*)setting,log)){
+		return FALSE;
+	}
+	if(!extra_font((SETTING*)setting,log)){
+		return FALSE;
+	}
 	if(!setting->CAfont_path[GOTHIC_FONT]){
-//		setting->CAfont_path[GOTHIC_FONT] = setting->font_path;
-//		fprintf(log,"[framehook/init]no GOTHIC Font path. Use Font path<%s>.\n",setting->font_path);
 		fprintf(log,"[framehook/init]no GOTHIC Font path.\n");
 		return FALSE;
 	}
@@ -536,12 +524,12 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		setting->CAfont_path[ARIAL_FONT] = setting->CAfont_path[GOTHIC_FONT];
 		fprintf(log,"[framehook/init]no ARIAL Font path. Use Font path<%s>.\n",setting->CAfont_path[GOTHIC_FONT]);
 	}
+
 	if(!setting->CAfont_path[GEORGIA_FONT]){
 		setting->CAfont_path[GEORGIA_FONT] = setting->CAfont_path[ARIAL_FONT];
 		fprintf(log,"[framehook/init]no GEORGIA Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
 	}
 	if(!setting->CAfont_path[ARIALUNI_FONT]){
-		//setting->CAfont_path[ARIALUNI_FONT] = setting->CAfont_path[ARIAL_FONT];
 		fprintf(log,"[framehook/init]no ARIAL UNICODE Font path.\n");
 	}
 	if(!setting->CAfont_path[DEVANAGARI]){
@@ -576,6 +564,15 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		setting->CAfont_path[TAMIL_FONT] = setting->CAfont_path[ARIAL_FONT];
 		fprintf(log,"[framehook/init]no TAMIL Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
 	}
+	if(!setting->CAfont_path[LAOO_FONT]){
+		setting->CAfont_path[LAOO_FONT] = setting->CAfont_path[ARIAL_FONT];
+		fprintf(log,"[framehook/init]no LAOO Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
+	}
+	if(!setting->CAfont_path[GURMUKHI_FONT]){
+		setting->CAfont_path[GURMUKHI_FONT] = setting->CAfont_path[ARIAL_FONT];
+		fprintf(log,"[framehook/init]no GURMUKHI Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
+	}
+
 	fflush(log);
 	return TRUE;
 }
@@ -609,6 +606,7 @@ FILE* changelog(FILE* log,SETTING* setting){
 	fflush(log);
 	filecopy(newlog,log);
 	fclose(log);
+	fflush(newlog);
 	return newlog;
 }
 /**
@@ -620,6 +618,85 @@ void filecopy(FILE*dst,FILE*src){
 	while((c = fgetc(src))!=EOF){
 		fputc(c,dst);
 	}
+}
+
+// extra font (experimental Windows Only)
+// expra_path="path index unicodeLow-unicodeHigh"
+int extra_font(SETTING* setting, FILE* log){
+	if(!setting->extra_path){
+		return TRUE;
+	}
+	const char* fontpath = setting->extra_path;
+	fprintf(log,"[main/extra_font]extra path is %s\n",fontpath);
+	char* next = strchr(fontpath,' ');
+	if(next==NULL){
+		fprintf(log,"[main/extra_font]error. separator' ' not found.\n");
+		return FALSE;
+	}
+	char* path = (char*)malloc(next-fontpath+1);
+	if(path==NULL){
+		fprintf(log,"[main/extra_font]malloc failed.\n");
+		return FALSE;
+	}
+	strncpy(path,fontpath,next-fontpath);
+	path[next-fontpath] = '\0';
+	int fontindex = MAX(0,atoi(next+1));
+	next= strchr(next+1,' ');
+	if(next==NULL){
+		fprintf(log,"[main/extra_font]range unicode can not parsed:%s.\n",next);
+		return FALSE;
+	}
+	setting->CAfont_path[EXTRA_FONT] = path;
+	setting->CAfont_index[EXTRA_FONT] = fontindex;
+	setting->extra_uc = next+1;
+	return TRUE;
+}
+
+// fontlistを変換する
+// fontlist="999:fontname ..."->fontnames[999]
+// return succeeded?
+int parseFontList(SETTING* setting,FILE* log){
+	if(setting->fontlist==NULL)
+		return TRUE;
+	size_t s = strlen(setting->fontlist);
+	char* fontname = (char*)malloc(s+1);
+	if(fontname==NULL){
+		fprintf(log,"[main/parseFontList]malloc failed.\n");
+		return FALSE;
+	}
+	strcpy(fontname,setting->fontlist);
+	setting->fontlist = fontname;	// prepare to free().
+	fprintf(log,"[main/parseFontList]fontlist is %s.\n",fontname);
+	int n;
+	int i;
+	char i999[4];
+	for(n=0; n<CA_FONT_PATH_MAX; n++){
+		for(i=0;i<3;i++){
+			i999[i] = fontname[i];
+			if(i999[i]==':')
+				break;
+		}
+		i999[i] = '\0';
+		fontname += i+1;
+		int fontindex = 0;
+		if(fontname[1]==' '){
+			fontindex = fontname[0]-'0';
+			fontname+=2;
+		}
+		i = (int)atoi(i999);
+		if(i<CA_FONT_PATH_MAX && !setting->CAfont_path[i]){
+			setting->CAfont_index[i] = fontindex;
+			setting->CAfont_path[i] = fontname;
+		}
+//		fprintf(log,"[main/parseFontList]n:%d i:%d fontname:0x%08x\n",n,i,(Uint32)fontname);
+		fontname = strchr(fontname,' ');
+		if(!fontname)
+			break;
+		*fontname++ = '\0';
+		fprintf(log,"[main/parseFontList]fontname[%d]:%s\n",i,setting->CAfont_path[i]);
+	}
+	fprintf(log,"[main/parseFontList]%d font names parsed.\n",n);
+	return TRUE;
 }
 
 /*

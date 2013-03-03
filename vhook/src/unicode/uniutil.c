@@ -267,5 +267,7 @@ int isKanjiWidth(Uint16* u){
 
 const char *getfontname(FontType fonttype){
 	int i = fonttype & CA_FONT_NAME_MASK;
-	return CA_FONT_NAME[i];
+	if(i<CA_FONT_NAME_SIZE)
+		return CA_FONT_NAME[i];
+	return "appended";
 }

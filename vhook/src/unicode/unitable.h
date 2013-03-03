@@ -24,12 +24,16 @@
  D DEVANAGARI		(win=mangal.ttf) India
  T TAHOMA_FONT		(win=Tahoma) Thai etc.
  L MINGLIU_FONT		(win=MingLiU) 繁字体、変化なし
- N N_MINCHO_FONT	(win7=SIMSUN XP=NGULIM) 明朝、変化なし
+ N N_MINCHO_FONT	(win=SIMSUN XP=NGULIM) 明朝、変化なし
  E ESTRANGELO_EDESSA	シリア
  B BENGAL_FONT   	(vrinda.ttf)Bangla lipi
  C TAMIL_FONT 	 	(latha.ttf)Tamil
  e LAOO_FONT		(laoui.ttf)laoo
  f GURMKHI_FONT		(raavi.ttf)Gurmkhi
+ k KANNADA_FONT		(tunga.ttf)カナラ
+ h THAANA_FONT		(mvboli.ttf)ターナ
+ i MALAYALAM_FONT	(kartika.ttf)マラヤラム
+ I TELUGU_CHAR		(gautami.ttf)テルグ
  Z ZERO_WIDTH     	(200b-200f)2000series 2028-202f (No Font Griph)
 
  参考資料（Windows Vistaに基づく）
@@ -64,6 +68,10 @@
 #define TAMIL_CHAR 'C'
 #define LAOO_CHAR 'e'
 #define GURMUKHI_CHAR 'f'
+#define KANNADA_CHAR 'k'
+#define THAANA_CHAR 'h'
+#define MALAYALAM_CHAR 'i'
+#define TELUGU_CHAR 'I'
 #define ZERO_WIDTH_CHAR 'Z'
 
 /* コメントアウトは参考資料による定義 */
@@ -77,13 +85,13 @@ static const Uint8 UNITABLE[] =
 /*0400*/ "A------------A------------------------------------------------------------------A------------A-----------------------------------------AAAAAAAAA-----------------------------------------------------AA--AA--AAA----------------------------AA--------AA--AAAAAA"
 /*0500*/ "AAAAAAAAAAAAAAAAAAAA......AAAA...................TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT..TTTTTTT.TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT.TT......AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA........AAAAAAAAAAAAAAAAAAAAAAAAAAA.....AAAAA..........."
 /*0600*/ "AAAA.......AAAAAAAAAAA.....A..AA.AAAAAAAAAAAAAAAAAAAAAAAAAA.....AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-/*0700*/ "EEEEEEEEEEEEEE.EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE..EEEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.................................................................................................................................................."
+/*0700*/ "EEEEEEEEEEEEEE.EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE..EEEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA..................hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh.............................................................................."
 /*0800*/ "................................................................................................................................................................................................................................................................"
 /*0900*/ ".DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD..DDDDDDDDDDDDDDDDDD..DDDDD...DDDDDDDDDDDDDDDDDDDDDDDDDDD........DDDDD.BBB.BBBBBBBB..BB..BBBBBBBBBBBBBBBBBBBBBB.BBBBBBB.B...BBBB..BBBBBBBBB..BB..BBBB........B....BB.BBBBB..BBBBBBBBBBBBBBBBBBBBB....."
 /*0a00*/ ".fff.ffffff....ff..ffffffffffffffffffffff.fffffff.ff.ff.ff..f.fffff....ff..fff...f.......ffff.f.......ffffffffffffffff...........jjj.jjjjjjjjj.jjj.jjjjjjjjjjjjjjjjjjjjjj.jjjjjjj.jj.jjjjj..jjjjjjjjjj.jjj.jjj..j...............jjjj..jjjjjjjjjjjj.............."
 /*0b00*/ "..................................................................................................................................CC.CCCCCC...CCC.CCCC...CC...CC...CC...CCC...CCCCCCCCCCCC....CCCCC...CCC.CCCC..C......C..............CCCCCCCCCCCCCCCCCCCCC....."
-/*0c00*/ "................................................................................................................................................................................................................................................................"
-/*0d00*/ "................................................................................................................................................................................................................................................................"
+/*0c00*/ ".III.IIIIIIII.III.IIIIIIIIIIIIIIIIIIIIIII.IIIIIIIIII.IIIII...IIIIIIII.III.IIII.......II.II......IIII..IIIIIIIIII........IIIIIIII..kk.kkkkkkkk.kkk.kkkkkkkkkkkkkkkkkkkkkkk.kkkkkkkkkk.kkkkk..kkkkkkkkk.kkk.kkkk.......kk.......k.kkkk..kkkkkkkkkk.kk............."
+/*0d00*/ "..ii.iiiiiiii.iii.iiiiiiiiiiiiiiiiiiiiiii.iiiiiiiiiiiiiiii...iiiiiiii.iii.iiii.........i........iiii..iiiiiiiiiiiiiiii...iiiiiii................................................................................................................................"
 /*0e00*/ ".TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT....-TTTTTTTTTTTTTTTTTTTTTTTTTTTT.....................................ee.e..ee.e..e......eeee.eeeeeee.eee.e.e..ee.eeeeeeeeeeeee.eee..eeeee.e.eeeeee..eeeeeeeeee..eeee................................"
 /*0f00*/ "................................................................................................................................................................................................................................................................"
 /*       "0               1               2               3               4               5               6               7               8               9               a               b               c               d               e               f               "*/
@@ -367,20 +375,20 @@ static const Uint8 UNITABLE[] =
 0300-036f 結合分音記号		■check■
 0370-03ff ギリシャコプト	(arial)
 0400-052f キリル        	■check■
-0530-058f アルメニア    	■check■
-0590-05ff ヘブライ      	■check■
-0600-06ff アラビア      (tahoma.ttf)
+0530-058f アルメニア   (tahoma.ttf)
+0590-05ff ヘブライ    (arial.ttf)
+0600-06ff アラビア     (arial.ttf)
 0700-077f シリア        estrangelo edessa
-0780-08ff ターナ        	■check■
+0780-08ff ターナ    mvboli.ttf
 0900-097f テバナガリ    mangal.ttf
 0980-09ff ベンガル      vrinda.ttf または　shonar.ttf
 0a00-0a7f グルムキー   raavi.ttf
 0a80-0aff クジャラート  shruti.ttf
 0b00-0b7f オリヤー      	■check■
-0b80-0bff タミール      latha.ttf
-0c00-0c7f テルグ        	■check■
-0c80-0cff カナラ        	■check■
-0d00-0d7f マラヤラム    	■check■
+0b80-0bff タミール     latha.ttf
+0c00-0c7f テルグ      gautami.ttf
+0c80-0cff カナラ      tunga.ttf
+0d00-0d7f マラヤラム    kartika.ttf
 0d80-0dff シンハラ      	■check■
 0e00-0e7f タイ          tahoma.ttf
 0e80-0eff ラオス       laoui.ttf
@@ -448,7 +456,11 @@ ffe0-ffff 特殊文字
 #define TAMIL_FONT 13
 #define LAOO_FONT 14
 #define GURMUKHI_FONT 15
-#define EXTRA_FONT 16
+#define KANNADA_FONT 16
+#define THAANA_FONT	17
+#define MALAYALAM_FONT 18
+#define TELUGU_FONT 19
+#define EXTRA_FONT 20
 #define UNDEFINED_FONT	(EXTRA_FONT+1)
 #define NULL_FONT	(EXTRA_FONT+2)
 #define CA_FONT_MAX	(EXTRA_FONT+1)
@@ -472,34 +484,37 @@ static char* const CA_FONT_NAME[] = {
 	"TAMIL",
 	"LAOO",
 	"GURMUKHI",
+	"KANNADA",
+	"THAANA",
+	"MALAYALAM",
+	"TELUGU",
 	"EXTRA",
 	//--end of font type---//
 	"UNDEFINED",	//EXTRA_FONT+1
 	"NULL FONT",	//EXTRA_FONT+2
 };
 #define CA_FONT_NAME_SIZE (sizeof(CA_FONT_NAME)/sizeof(char* const))
-/*
-static const Uint8 UNI_FONTTYPE[][2] = {
-	{GOTHIC_CHAR, GOTHIC_FONT},	//g 0
-	{GOTHIC_NOT_PROTECT, GOTHIC_FONT},	//G 0
-	{WEAK_SIMSUN_CHAR, SIMSUN_FONT},	//w 1
-	{STRONG_SIMSUN_CHAR, SIMSUN_FONT},	//s 1
-	{SIMSUN_NOT_CHANGE_CHAR, SIMSUN_FONT},	//S 1
-	{GULIM_CHAR, GULIM_FONT},	//m 2
-	{ARIAL_CHAR, ARIAL_FONT},	//A 3
-	{GEORGIA_CHAR, GEORGIA_FONT},	//J 4
-	{DEVANAGARI_CHAR, DEVANAGARI},	//D 6
-	{TAHOMA_CHAR, TAHOMA_FONT},	//T 7
-	{MINGLIU_CHAR, MINGLIU_FONT},	//L 8
-	{N_MINCHO_CHAR, N_MINCHO_FONT},	//N 9
-	{ESTRANGELO_EDESSA, ESTRANGELO_EDESSA_FONT},	//E 10
-	{GUJARATI_CHAR, GUJARATI_FONT},	//j 11
-	{BENGAL_CHAR, BENGAL_FONT},	//B 12
-	{TAMIL_CHAR, TAMIL_FONT},	//C 13
-	{LAOO_CHAR, LAOO_FONT},	//e 14
-	{GURMUKHI_CHAR, GURMUKHI_FONT},	//f 14
+
+static const int CA_FONT_SIZE_FIX[][CMD_FONT_MAX] = {
+//	DEF,BIG,SMALL
+	{0,-1,1,0},	//gothic
+	{0,-1,1,0},	//simsun
+	{0,-1,1,0},	//gulim
+	{0,1,0,0},	//arial
+	{-2,-2,-2,-2},	//georgia
+	{0,0,0,0},	//arial unicode
+	{0,0,0,0},	//devanagari
+	{0,0,0,0},	//tahoma
+	{0,0,0,0},	//MingLiU
+	{0,0,0,0},	//new mincho, smsun or new_gulim
+	{0,0,2,0},	//estrangelo edessa
+	{0,0,2,0},	//gujarati
+	{0,0,2,0},	//bengal
+	{0,0,2,0},	//tamil
+	{0,0,2,0},	//laoo
+	{0,0,2,0},	//gurmukhi
+	{0,0,0,0},	//extra
 };
-*/
 
 #define CA_TYPE_SPACE_00A0 0x00A00000
 #define CA_TYPE_SPACE_0020 0x00200000

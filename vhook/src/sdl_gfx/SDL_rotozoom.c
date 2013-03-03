@@ -112,7 +112,7 @@ Assumes dst surface was allocated with the correct dimensions.
 */
 int _shrinkSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int factorx, int factory)
 {
-	int x, y, dx, dy, sgap, dgap, ra, ga, ba, aa;
+	int x, y, dx, dy, /*sgap,*/ dgap, ra, ga, ba, aa;
 	int n_average;
 	tColorRGBA *sp, *osp, *oosp;
 	tColorRGBA *dp;
@@ -128,7 +128,7 @@ int _shrinkSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int factorx, int fa
 	* Scan destination
 	*/
 	sp = (tColorRGBA *) src->pixels;
-	sgap = src->pitch - src->w * 4;
+	//sgap = src->pitch - src->w * 4;
 
 	dp = (tColorRGBA *) dst->pixels;
 	dgap = dst->pitch - dst->w * 4;

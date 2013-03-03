@@ -226,27 +226,6 @@ static char* const CMD_COLOR_NAME[CMD_COLOR_MAX] = {
 	"white",
 };
 
-static const int CA_FONT_SIZE_FIX[][CMD_FONT_MAX] = {
-//	DEF,BIG,SMALL
-	{0,-1,1,0},	//gothic
-	{0,-1,1,0},	//simsun
-	{0,-1,1,0},	//gulim
-	{0,1,0,0},	//arial
-	{-2,-2,-2,-2},	//georgia
-	{0,0,0,0},	//arial unicode
-	{0,0,0,0},	//devanagari
-	{0,0,0,0},	//tahoma
-	{0,0,0,0},	//MingLiU
-	{0,0,0,0},	//new mincho, smsun or new_gulim
-	{0,0,2,0},	//estrangelo edessa
-	{0,0,2,0},	//gujarati
-	{0,0,2,0},	//bengal
-	{0,0,2,0},	//tamil
-	{0,0,2,0},	//laoo
-	{0,0,2,0},	//gurmukhi
-	{0,0,0,0},	//extra
-};
-
 static const int CA_FONT_HIGHT_TUNED[4][2][CMD_FONT_MAX] = {
 //	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}for fontsize_fixed},
 	{{24,38,16,24,},{47,74,31,47,}},	//gothic glyph-advance width is {25,40,16}{50,80,33(>32)}

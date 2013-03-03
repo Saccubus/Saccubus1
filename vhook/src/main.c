@@ -12,7 +12,7 @@
 #include "comment/com_surface.h"
 
 int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, int cid, const char* com_type);
-
+int isPathRelative(const char* path);
 /**
  * ライブラリ初期化
  */
@@ -37,7 +37,7 @@ int init(FILE* log){
 }
 
 int printFontInfo(FILE* log,TTF_Font** pfont,int size,const char* name);
-int extra_font(SETTING* setting, FILE* log);
+//int extra_font(SETTING* setting, FILE* log);
 /*
  * データの初期化
  * ContextInfo ci->DATA data ← SETTING setting
@@ -175,34 +175,37 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	int f;
 	char font_file_path[128];
 	if(data->enableCA){
-		// CAフォント
 		fputs("[main/init]initializing CA(Comment Art) Font...\n",log);
+		// CAフォント
 		for(f=0;f<CA_FONT_MAX;f++){
 			for(i=0;i<CMD_FONT_MAX;i++){
 				data->CAfont[f][i] = NULL;
 			}
 		}
-		if(!extra_font((SETTING*)setting,log)){
-			return FALSE;
-		}
+//		if(!extra_font((SETTING*)setting,log)){
+//			return FALSE;
+//		}
 		int font_height[CMD_FONT_MAX];
 		int target_size;
 		int current_size;
 		int try = 1;
 		int direction = 0;
-		for(f = 0;f<CA_FONT_MAX;f++){
+		for(f = 0;f<CA_FONT_PATH_MAX;f++){
 			font = &data->CAfont[f][0];		//pointer2 set
 			font_path = setting->CAfont_path[f];
 			if(font_path==NULL){
 				if(f==EXTRA_FONT || f==ARIALUNI_FONT){
 					continue;
 				}
-				fprintf(log,"[main/init]error. CA font path[%d] is NULL\n",f);
-				return FALSE;
+				if(f <= ARIAL_FONT){
+					fprintf(log,"[main/init]error. CA font path[%d:%s] is NULL\n",f,getfontname(f));
+					return FALSE;
+				}
+				continue;
 			}
 			strcpy(font_file_path,fontdir);
 			strcat(font_file_path,font_path);
-			if(f!=EXTRA_FONT){
+			if(isPathRelative(font_path)){
 				font_path = font_file_path;
 			}
 			fixed_font_index = setting->CAfont_index[f];
@@ -218,12 +221,15 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 					fontsize = COMMENT_POINT_SIZE[i] << isfontdoubled;
 					target_size = fontsize;
 				}else
-				if(!data->original_resize){
+				if(!data->original_resize){	//not point and CA mode
 					if(f <= ARIAL_FONT){	//gothic simsun gulim arial
 						fontsize = CA_FONT_SIZE_TUNED[f][isfontdoubled][i];
 						target_size = CA_FONT_HIGHT_TUNED[f][isfontdoubled][i];
-					}else{	//文字間隔は合わないが文字サイズを合わせる
+					}else if(f <= GURMUKHI_FONT){	//文字間隔は合わないが文字サイズを合わせる
 						fontsize += CA_FONT_SIZE_FIX[f][i]<<isfontdoubled;
+						target_size = fontsize;
+					}else{
+						//fontsize += 2<<isfontdoubled;
 						target_size = fontsize;
 					}
 				}
@@ -282,25 +288,9 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 				font_height[CMD_FONT_SMALL],line_skip[CMD_FONT_SMALL],data->font_pixel_size[CMD_FONT_SMALL]
 			);
 		}
-		fputs("[main/init]Initializing Font change Characters,\n",log);
-		/*
-		i = convUint16(setting->CAfont_change_uc[GOTHIC_FONT],&data->font_change[GOTHIC_FONT]);
-		fprintf(log, "[main/init]GOTHIC Font protect %d pairs.\n", i>>1);
-		i = convUint16(setting->CAfont_change_uc[SIMSUN_FONT],&data->font_change[SIMSUN_FONT]);
-		fprintf(log, "[main/init]SIMSUN Font change %d pairs.\n", i>>1);
-		i = convUint16(setting->CAfont_change_uc[GULIM_FONT],&data->font_change[GULIM_FONT]);
-		fprintf(log, "[main/init]GULIM Font change %d pairs.\n", i>>1);
-		data->font_change[ARIAL_FONT] = NULL;
-		i = convUint16(setting->CAfont_change_uc[GEORGIA_FONT],&data->font_change[GEORGIA_FONT]);
-		fprintf(log,"[main/init]GEORGIA Font use %d pairs.\n", i>>1);
-		i = convUint16(setting->zero_width_uc,&data->zero_width);
-		fprintf(log,"[main/init]Zero width char use %d pairs.\n", i>>1);
-		data->font_change[UI_GOTHIC_FONT] = NULL;
-		i = convUint16(setting->CAfont_change_uc[DEVANAGARI],&data->font_change[DEVANAGARI]);
-		fprintf(log,"[main/init]DEVANAGARI Font use %d pairs.\n", i>>1);
-		*/
+		fputs("[main/init]Initializing Font change Characters.\n",log);
 		data->extra_change = NULL;
-		if(setting->CAfont_path[EXTRA_FONT]){
+		if(setting->CAfont_path[EXTRA_FONT]!=NULL){
 			i = convUint16(setting->extra_uc,&data->extra_change);
 			fprintf(log,"[main/init]EXTRA Font use %d pairs.\n", i>>1);
 		}
@@ -329,6 +319,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		fputs("[main/init]initialized CA(Comment Art) Feature.\n",log);
 	}
 	//エラーフォント
+	fprintf(log, "[main/init]initialize ErrFont.\n");
 	(void)getErrFont(data);
 	//
 	fprintf(log, "[main/init]font width fix ratio:%.0f%% (experimental)\n",(data->font_w_fix_r * 100));
@@ -432,38 +423,19 @@ int printFontInfo(FILE* log, TTF_Font** font,int size,const char* name){
 	return TRUE;
 }
 
-// extra font (experimental Windows Only)
-// expra_path="path index unicodeLow-unicodeHigh"
-int extra_font(SETTING* setting, FILE* log){
-	if(!setting->extra_path){
-		return TRUE;
-	}
-	const char* fontpath = setting->extra_path;
-	fprintf(log,"[main/extra_font]extra path is %s\n",fontpath);
-	char* next = strchr(fontpath,' ');
-	if(next==NULL){
-		fprintf(log,"[main/extra_font]error. separator' ' not found.\n");
+/*
+ *
+ */
+int isPathRelative(const char* path){
+	char c0 = path[0];
+	char c1 = path[1];
+	if(c0 == '/'||c0=='\\')
 		return FALSE;
-	}
-	char* path = (char*)malloc(next-fontpath+1);
-	if(path==NULL){
-		fprintf(log,"[main/extra_font]malloc failed.\n");
+	c0 = toupper(c0);
+	if(c1 == ':' && ('A'<=c0 && c0<='Z'))
 		return FALSE;
-	}
-	strncpy(path,fontpath,next-fontpath);
-	path[next-fontpath] = '\0';
-	int fontindex = MAX(0,atoi(next+1));
-	next= strchr(next+1,' ');
-	if(next==NULL){
-		fprintf(log,"[main/extra_font]range unicode can not parsed:%s.\n",next);
-		return FALSE;
-	}
-	setting->CAfont_path[EXTRA_FONT] = path;
-	setting->CAfont_index[EXTRA_FONT] = fontindex;
-	setting->extra_uc = next+1;
 	return TRUE;
 }
-
 /*
  * 映像の変換
  */
