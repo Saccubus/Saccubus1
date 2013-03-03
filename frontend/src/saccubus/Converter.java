@@ -161,6 +161,10 @@ public class Converter extends Thread {
 	private File tamilFont = null;
 	private File laooFont = null;
 	private File gurmukhiFont = null;
+	private File kannadaFont = null;
+	private File thaanaFont = null;
+	private File malayalamFont = null;
+	private File teluguFont = null;
 	private Pattern ngWordPat;
 	private Pattern ngIDPat;
 	private CommandReplace ngCmd;
@@ -313,13 +317,13 @@ public class Converter extends Thread {
 					result = "11";
 					return false;
 				}
-				arialFont = new File(fontDir, "arial.ttf");
+				arialFont = new File(fontDir, "ARIAL.TTF");
 				if(!arialFont.canRead()){
 					sendtext("CA用フォントが見つかりません。" + arialFont.getPath());
 					result = "12";
 					return false;
 				}
-				gothicFont = new File(fontDir, "msgothic.ttc");
+				gothicFont = new File(fontDir, "MSGOTHIC.TTC");
 				if (!gothicFont.canRead()) {
 					sendtext("CA用フォントが見つかりません。" + gothicFont.getPath());
 					result = "13";
@@ -357,7 +361,7 @@ public class Converter extends Thread {
 					System.out.println("CA用フォント" + mingliuFont.getPath() + "を" + simsunFont.getName() + "で代替します。");
 					mingliuFont = simsunFont;
 				}
-				newMinchoFont = new File(fontDir, "NGULIM.TTF");
+				newMinchoFont = new File(fontDir, "SIMSUN.TTC");	//NGULIM.TTFが無かった
 				if (!newMinchoFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + newMinchoFont.getPath());
 					//retValue = "18";
@@ -373,61 +377,85 @@ public class Converter extends Thread {
 					System.out.println("CA用フォント" + estrangeloEdessaFont.getPath() + "を" + arialFont.getName() + "で代替します。");
 					estrangeloEdessaFont = arialFont;
 				}
-				arialUnicodeFont = new File(fontDir, "ARIALUNI.TTF");
+				arialUnicodeFont = new File(fontDir, "arialuni.ttf");
 				if (!arialUnicodeFont.canRead()) {
-					sendtext("CA用フォントが見つかりません。" + arialUnicodeFont.getPath());
+					sendtext("警告　CA用フォントが見つかりません。" + arialUnicodeFont.getPath());
 					//retValue = "20";
 					//return false;
-					System.out.println("警告　CA用フォントが見つかりません。" + arialUnicodeFont.getPath());
-					arialUnicodeFont = null;
+					System.out.println("CA用フォント" + arialUnicodeFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					arialUnicodeFont = arialFont;
 				}
-				gujaratiFont = new File(fontDir, "SHRUTI.TTF");
+				gujaratiFont = new File(fontDir, "shruti.ttf");
 				if (!gujaratiFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + gujaratiFont.getPath());
 					//retValue = "21";
 					//return false;
-					System.out.println("CA用フォント" + gujaratiFont.getPath() + "を" + arialFont.getName() + "で代替します。");
-					gujaratiFont = arialFont;
+					System.out.println("CA用フォント" + gujaratiFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					gujaratiFont = arialUnicodeFont;
 				}
-				gujaratiFont = new File(fontDir, "SHRUTI.TTF");
-				if (!gujaratiFont.canRead()) {
-					sendtext("警告　CA用フォントが見つかりません。" + gujaratiFont.getPath());
-					//retValue = "21";
-					//return false;
-					System.out.println("CA用フォント" + gujaratiFont.getPath() + "を" + arialFont.getName() + "で代替します。");
-					gujaratiFont = arialFont;
-				}
-				bengalFont = new File(fontDir, "VRINDA.TTF");
+				bengalFont = new File(fontDir, "vrinda.ttf");
 				if (!bengalFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + bengalFont.getPath());
 					//retValue = "22";
 					//return false;
-					System.out.println("CA用フォント" + bengalFont.getPath() + "を" + arialFont.getName() + "で代替します。");
-					bengalFont = arialFont;
+					System.out.println("CA用フォント" + bengalFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					bengalFont = arialUnicodeFont;
 				}
-				tamilFont = new File(fontDir, "LATHA.TTF");
+				tamilFont = new File(fontDir, "latha.ttf");
 				if (!tamilFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + tamilFont.getPath());
 					//retValue = "23";
 					//return false;
-					System.out.println("CA用フォント" + tamilFont.getPath() + "を" + arialFont.getName() + "で代替します。");
-					tamilFont = arialFont;
+					System.out.println("CA用フォント" + tamilFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					tamilFont = arialUnicodeFont;
 				}
-				laooFont = new File(fontDir, "LAOUI.TTF");
+				laooFont = new File(fontDir, "laoui.ttf");
 				if (!laooFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + laooFont.getPath());
 					//retValue = "24";
 					//return false;
-					System.out.println("CA用フォント" + laooFont.getPath() + "を" + arialFont.getName() + "で代替します。");
-					laooFont = arialFont;
+					System.out.println("CA用フォント" + laooFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					laooFont = arialUnicodeFont;
 				}
-				gurmukhiFont = new File(fontDir, "RAAVI.TTF");
+				gurmukhiFont = new File(fontDir, "raavi.ttf");
 				if (!gurmukhiFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + gurmukhiFont.getPath());
 					//retValue = "25";
 					//return false;
-					System.out.println("CA用フォント" + gurmukhiFont.getPath() + "を" + arialFont.getName() + "で代替します。");
-					gurmukhiFont = arialFont;
+					System.out.println("CA用フォント" + gurmukhiFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					gurmukhiFont = arialUnicodeFont;
+				}
+				kannadaFont = new File(fontDir, "tunga.ttf");
+				if (!kannadaFont.canRead()) {
+					sendtext("警告　CA用フォントが見つかりません。" + kannadaFont.getPath());
+					//retValue = "26";
+					//return false;
+					System.out.println("CA用フォント" + kannadaFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					kannadaFont = arialUnicodeFont;
+				}
+				thaanaFont = new File(fontDir, "mvboli.ttf");
+				if (!thaanaFont.canRead()) {
+					sendtext("警告　CA用フォントが見つかりません。" + thaanaFont.getPath());
+					//retValue = "27";
+					//return false;
+					System.out.println("CA用フォント" + thaanaFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					thaanaFont = arialUnicodeFont;
+				}
+				malayalamFont = new File(fontDir, "kartika.ttf");
+				if (!malayalamFont.canRead()) {
+					sendtext("警告　CA用フォントが見つかりません。" + malayalamFont.getPath());
+					//retValue = "28";
+					//return false;
+					System.out.println("CA用フォント" + malayalamFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					malayalamFont = arialUnicodeFont;
+				}
+				teluguFont = new File(fontDir, "gautami.ttf");
+				if (!teluguFont.canRead()) {
+					sendtext("警告　CA用フォントが見つかりません。" + teluguFont.getPath());
+					//retValue = "29";
+					//return false;
+					System.out.println("CA用フォント" + teluguFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					teluguFont = arialUnicodeFont;
 				}
 			}else{
 				a = new File(Setting.getFontPath());
@@ -1257,12 +1285,12 @@ public class Converter extends Thread {
 			if (conv_name == null){
 				conv_name = "";
 			}
-			if (!Setting.isNotAddVideoID_Conv()) {//付加するなら
+			if (!Setting.isNotAddVideoID_Conv()||conv_name.isEmpty()) {//付加するなら
 				conv_name = Setting.isChangeTitleId()?
 						VideoTitle + VideoID : VideoID + VideoTitle;
 			}
 			if (conv_name.isEmpty()) {
-				sendtext("変換後のビデオファイル名が確定できません。");
+				sendtext("変換後のタイトルがありません(ビデオファイル名が確定できません)。");
 				result = "93";
 				return false;
 			}
@@ -1562,7 +1590,7 @@ public class Converter extends Thread {
 			sendtext("追加オプションの設定に失敗しました。");
 			return false;
 		}
-		
+
 		//replaceチェック
 		if(Setting.getReplaceOptions()!=null){
 			replace3option(Setting.getReplaceOptions());
@@ -1846,46 +1874,69 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--enable-CA");
 				ffmpeg.addCmd("|--font-dir:"
 					+ URLEncoder.encode(Path.toUnixPath(fontDir) + "/", encoding));
-				ffmpeg.addCmd("|--gothic-font:");
+				ffmpeg.addCmd("|--font-list:");
+	//			ffmpeg.addCmd("|--gothic-font:");
+				ffmpeg.addCmd("0:");
 				ffmpeg.addCmd(getFontUrl(gothicFont, encoding));
-				ffmpeg.addCmd("|--simsun-font:");
+	//			ffmpeg.addCmd("|--simsun-font:");
+				ffmpeg.addCmd("+1:");
 				ffmpeg.addCmd(getFontUrl(simsunFont, encoding));
-				ffmpeg.addCmd("|--gulim-font:");
+	//			ffmpeg.addCmd("|--gulim-font:");
+				ffmpeg.addCmd("+2:");
 				ffmpeg.addCmd(getFontUrl(gulimFont, encoding));
-				ffmpeg.addCmd("|--arial-font:");
+	//			ffmpeg.addCmd("|--arial-font:");
+				ffmpeg.addCmd("+3:");
 				ffmpeg.addCmd(getFontUrl(arialFont, encoding));
-				ffmpeg.addCmd("|--georgia-font:");
+	//			ffmpeg.addCmd("|--georgia-font:");
+				ffmpeg.addCmd("+4:");
 				ffmpeg.addCmd(getFontUrl(georgiaFont, encoding));
 //				ffmpeg.addCmd("|--msui-font:");
 //				ffmpeg.addCmd(getFontUrl(msuigothicFont, encoding));
-				ffmpeg.addCmd("|--devanagari-font:");
+	//			ffmpeg.addCmd("|--arial-unicode-font:");
+				ffmpeg.addCmd("+5:");
+				ffmpeg.addCmd(getFontUrl(arialUnicodeFont, encoding));
+	//			ffmpeg.addCmd("|--devanagari-font:");
+				ffmpeg.addCmd("+6:");
 				ffmpeg.addCmd(getFontUrl(devabagariFont, encoding));
-				ffmpeg.addCmd("|--tahoma-font:");
+	//			ffmpeg.addCmd("|--tahoma-font:");
+				ffmpeg.addCmd("+7:");
 				ffmpeg.addCmd(getFontUrl(tahomaFont, encoding));
-				ffmpeg.addCmd("|--mingliu-font:");
+	//			ffmpeg.addCmd("|--mingliu-font:");
+				ffmpeg.addCmd("+8:");
 				ffmpeg.addCmd(getFontUrl(mingliuFont, encoding));
-				String newMinchoPath = newMinchoFont.getName();
-				if(newMinchoFont==simsunFont){
-					newMinchoPath = "1 " + newMinchoPath;	//NSIMSUN is index 1 of simsun.ttc
+				String newMinchoPath = getFontUrl(newMinchoFont, encoding);
+				if(newMinchoFont.equals(simsunFont)){
+					newMinchoPath = "1+" + newMinchoPath;	//NSIMSUN is index 1 of simsun.ttc
 				}
-				ffmpeg.addCmd("|--new-mincho-font:");
-				ffmpeg.addCmd(URLEncoder.encode(newMinchoPath, encoding));
-				ffmpeg.addCmd("|--estrangelo-edessa-font:");
+	//			ffmpeg.addCmd("|--new-mincho-font:");
+				ffmpeg.addCmd("+9:");
+				ffmpeg.addCmd(newMinchoPath);
+	//			ffmpeg.addCmd("|--estrangelo-edessa-font:");
+				ffmpeg.addCmd("+10:");
 				ffmpeg.addCmd(getFontUrl(estrangeloEdessaFont, encoding));
-				ffmpeg.addCmd("|--gujarati-font:");
+	//			ffmpeg.addCmd("|--gujarati-font:");
+				ffmpeg.addCmd("+11:");
 				ffmpeg.addCmd(getFontUrl(gujaratiFont, encoding));
-				ffmpeg.addCmd("|--bengal-font:");
+	//			ffmpeg.addCmd("|--bengal-font:");
+				ffmpeg.addCmd("+12:");
 				ffmpeg.addCmd(getFontUrl(bengalFont, encoding));
-				ffmpeg.addCmd("|--tamil-font:");
+	//			ffmpeg.addCmd("|--tamil-font:");
+				ffmpeg.addCmd("+13:");
 				ffmpeg.addCmd(getFontUrl(tamilFont, encoding));
-				ffmpeg.addCmd("|--laoo-font:");
+	//			ffmpeg.addCmd("|--laoo-font:");
+				ffmpeg.addCmd("+14:");
 				ffmpeg.addCmd(getFontUrl(laooFont, encoding));
-				ffmpeg.addCmd("|--gurmukhi-font:");
+	//			ffmpeg.addCmd("|--gurmukhi-font:");
+				ffmpeg.addCmd("+15:");
 				ffmpeg.addCmd(getFontUrl(gurmukhiFont, encoding));
-				if(arialUnicodeFont!=null){
-					ffmpeg.addCmd("|--arial-unicode-font:");
-					ffmpeg.addCmd(getFontUrl(arialUnicodeFont, encoding));
-				}
+				ffmpeg.addCmd("+16:");
+				ffmpeg.addCmd(getFontUrl(kannadaFont, encoding));
+				ffmpeg.addCmd("+17:");
+				ffmpeg.addCmd(getFontUrl(thaanaFont, encoding));
+				ffmpeg.addCmd("+18:");
+				ffmpeg.addCmd(getFontUrl(malayalamFont, encoding));
+				ffmpeg.addCmd("+19:");
+				ffmpeg.addCmd(getFontUrl(teluguFont, encoding));
 				if(Setting.isUseLineSkip()){
 					ffmpeg.addCmd("|--use-lineskip-as-fontsize");
 				}
@@ -2165,7 +2216,7 @@ public class Converter extends Thread {
 		for (int i = 0; i < list.length; i++) {
 			if (list[i].startsWith(VideoID)) {
 				String path = list[i];
-				if(path.endsWith(".flv") || 
+				if(path.endsWith(".flv") ||
 				   path.endsWith(".mp4") && Setting.isChangeMp4Ext()){
 					setVideoTitleIfNull(path);
 					return path;

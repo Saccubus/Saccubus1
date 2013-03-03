@@ -168,6 +168,7 @@ public class MainFrame extends JFrame {
 	JCheckBox fontHeightFixCheckBox = new JCheckBox();
 	JTextField fontHeightRatioTextField = new JTextField();
 	JCheckBox disableOriginalResizeCheckBox = new JCheckBox();
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	JComboBox commentModeComboBox = new JComboBox(commentModeArray);
 	JCheckBox commentSpeedCheckBox = new JCheckBox();
 	JTextField commentSpeedTextField = new JTextField();
@@ -1988,7 +1989,9 @@ public class MainFrame extends JFrame {
 	private JPanel VideoSavingTabbedPanel = null;
 	private JPanel ConvertedVideoSavingTabbedPanel = null;
 	private JCheckBox NotAddVideoID_ConvVideoCheckBox = null;
+	@SuppressWarnings("rawtypes")
 	private JComboBox FFmpegOptionComboBox = null;
+	@SuppressWarnings("rawtypes")
 	private JComboBox WideFFmpegOptionComboBox = null;
 	private JButton FFmpegOptionReloadButton = null;
 	private JButton WideFFmpegOptionReloadButton = null;
@@ -2940,12 +2943,14 @@ s	 * @return javax.swing.JPanel
 	private JTextField ViewCommentField = null;
 	private JLabel ViewCommentLabel = null;
 	private JLabel ShadowKindLabel = null;
+	@SuppressWarnings("rawtypes")
 	private JComboBox ShadowComboBox = null;
 
 	/**
 	 * Initialize FFmpegOptionComboBox
 	 * @return
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private JComboBox getFFmpegOptionComboBox() {
 		if (FFmpegOptionComboBox == null) {
 			FFmpegOptionComboBox = new JComboBox(FFmpegOptionModel);
@@ -2985,6 +2990,7 @@ s	 * @return javax.swing.JPanel
 	 * Initialize WideFFmpegOptionComboBox
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JComboBox getWideFFmpegOptionComboBox() {
 		if (WideFFmpegOptionComboBox == null) {
 			WideFFmpegOptionComboBox = new JComboBox(WideFFmpegOptionModel);
@@ -3184,6 +3190,7 @@ s	 * @return javax.swing.JPanel
 	 * @return javax.swing.JComboBox
 	 */
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JComboBox getShadowComboBox() {
 		if (ShadowComboBox == null) {
 			ShadowComboBox = new JComboBox(ConvertingSetting.ShadowKindArray);

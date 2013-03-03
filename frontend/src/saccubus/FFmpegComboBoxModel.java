@@ -12,6 +12,7 @@ import javax.swing.DefaultComboBoxModel;
  * @author Account01
  *
  */
+@SuppressWarnings("rawtypes")
 public class FFmpegComboBoxModel extends DefaultComboBoxModel {
 	/**
 	 *
