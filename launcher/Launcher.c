@@ -57,7 +57,6 @@ int WINAPI WinMain (HINSTANCE hInstance,
 
 int doCmd(char* command,int show_msg,const char* log_name){
 	int ret = 0;
-	int code;
 
 	STARTUPINFOA startup_info;
 	PROCESS_INFORMATION process_info;
@@ -88,7 +87,7 @@ int doCmd(char* command,int show_msg,const char* log_name){
 			}
 		}
 	}
-	code = CreateProcessA(
+	int code = CreateProcessA(
 	    NULL,						// 実行ファイル名
 	    command,					// コマンドラインパラメータ
 	    NULL,						// プロセスの保護属性
@@ -106,7 +105,7 @@ int doCmd(char* command,int show_msg,const char* log_name){
 	if(code == 0){
 		ret = -1;
 		if(show_msg){
-			char *msg;
+			char msg[100];
 			int error_code = FormatMessageA(
 				FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,	// 動作フラグ
 				0,																// メッセージ定義位置

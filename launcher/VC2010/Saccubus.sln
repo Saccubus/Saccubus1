@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Saccubus", "Saccubus.vcxproj", "{E6965600-03C2-42AD-BC3F-7CED0F45E27A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E6965600-03C2-42AD-BC3F-7CED0F45E27A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E6965600-03C2-42AD-BC3F-7CED0F45E27A}.Debug|Win32.Build.0 = Debug|Win32
+		{E6965600-03C2-42AD-BC3F-7CED0F45E27A}.Release|Win32.ActiveCfg = Release|Win32
+		{E6965600-03C2-42AD-BC3F-7CED0F45E27A}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

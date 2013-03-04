@@ -3,6 +3,7 @@
 	<name>launcher</name>
 	<comment></comment>
 	<projects>
+		<project>icon</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -67,4 +68,10 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<variableList>
+		<variable>
+			<name>ICON</name>
+			<value>file:/C:/juno/workspace/icon/Saccubus_res.o</value>
+		</variable>
+	</variableList>
 </projectDescription>
