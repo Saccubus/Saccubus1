@@ -25,6 +25,7 @@ public class WayBackDate {
 	private Date date;
 	private String time;
 	public final static String STR_FMT = "yyyyÅ^MMÅ^dd_HHÅFmmÅFss";
+	public final static String STR_FMT_REGEX = "[0-9]{4}(Å^[0-3][0-9]){2}_[0-2][0-9](ÅF[0-5][0-9]){2}";
 	private final static SimpleDateFormat MyDateFmt
 		= new SimpleDateFormat(STR_FMT);
 

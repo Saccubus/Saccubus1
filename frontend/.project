@@ -3,6 +3,7 @@
 	<name>frontend</name>
 	<comment></comment>
 	<projects>
+		<project>launcher</project>
 		<project>vhook</project>
 	</projects>
 	<buildSpec>

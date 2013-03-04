@@ -1,20 +1,13 @@
 package saccubus;
 
-import javax.swing.JLabel;
-
-import saccubus.net.BrowserInfo;
-import saccubus.net.BrowserInfo.BrowserCookieKind;
-import saccubus.net.NicoClient;
-import saccubus.net.Path;
-
-import java.io.*;
-
-import saccubus.conv.Chat;
-import saccubus.conv.CombineXML;
-import saccubus.conv.CommandReplace;
-import saccubus.conv.ConvertToVideoHook;
-import saccubus.conv.NicoXMLReader;
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,11 +16,21 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import javax.swing.JLabel;
+
+import saccubus.FFmpeg.Aspect;
+import saccubus.conv.Chat;
+import saccubus.conv.CombineXML;
+import saccubus.conv.CommandReplace;
+import saccubus.conv.ConvertToVideoHook;
+import saccubus.conv.NicoXMLReader;
+import saccubus.net.BrowserInfo;
+import saccubus.net.BrowserInfo.BrowserCookieKind;
+import saccubus.net.NicoClient;
+import saccubus.net.Path;
 import saccubus.util.Cws2Fws;
 import saccubus.util.Stopwatch;
 import saccubus.util.Util;
-import saccubus.ConvertingSetting;
-import saccubus.FFmpeg.Aspect;
 
 /**
  * <p>タイトル: さきゅばす</p>
@@ -2199,11 +2202,14 @@ public class Converter extends Thread {
 		String videoTitle = VideoTitle;
 		if (videoTitle == null){
 			videoTitle = getTitleFromPath(path, VideoID);
-			int index = videoTitle.lastIndexOf("[");
-				//過去ログは[YYYY/MM/DD_HH:MM:SS]が最後に付く
-			if (index >= 0){
-				videoTitle = videoTitle.substring(0, index);
-			}
+			// 過去ログ時刻を削除
+			String regex = "\\[" + WayBackDate.STR_FMT_REGEX + "\\]";
+			videoTitle = videoTitle.replaceAll(regex, "");
+		//	int index = videoTitle.lastIndexOf("[");
+		//		//過去ログは[YYYY/MM/DD_HH:MM:SS]が最後に付く
+		//	if (index >= 0){
+		//		videoTitle = videoTitle.substring(0, index);
+		//	}
 			System.out.println("Title<" + videoTitle + ">");
 			VideoTitle = videoTitle;
 		}
