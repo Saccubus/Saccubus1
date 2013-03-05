@@ -89,10 +89,13 @@
 								<option id="gnu.c.compiler.option.misc.verbose.1885446819" name="詳細 (-v)" superClass="gnu.c.compiler.option.misc.verbose" value="false" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.misc.other.621761671" name="その他のフラグ" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -march=i686 -mtune=athlon64 -mfpmath=sse -msse" valueType="string"/>
 								<option id="gnu.c.compiler.option.misc.ansi.2038979850" name="ANSI プログラムのサポート (-ansi)" superClass="gnu.c.compiler.option.misc.ansi" value="false" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.include.paths.823636633" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="c:/mingw/include"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1820224181" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.base.2059504077" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base">
-								<option id="gnu.c.link.option.libs.1334386361" name="ライブラリー (-l)" superClass="gnu.c.link.option.libs" valueType="libs"/>
+								<option id="gnu.c.link.option.libs.1334386361" name="ライブラリー (-l)" superClass="gnu.c.link.option.libs"/>
 								<option id="gnu.c.link.option.noshared.832101093" name="共用ライブラリーなし (-static)" superClass="gnu.c.link.option.noshared" value="true" valueType="boolean"/>
 								<option id="gnu.c.link.option.strip.1344266945" name="シンボル情報の除去 (-s)" superClass="gnu.c.link.option.strip" value="false" valueType="boolean"/>
 								<option id="gnu.c.link.option.nodeflibs.1274094929" name="デフォルト・ライブラリーを使用しない (-nodefaultlibs)" superClass="gnu.c.link.option.nodeflibs" value="false" valueType="boolean"/>
@@ -101,8 +104,11 @@
 								<option id="gnu.c.link.option.userobjs.366602466" name="その他のオブジェクト" superClass="gnu.c.link.option.userobjs" valueType="userObjs">
 									<listOptionValue builtIn="false" value="&quot;${PACKAGE}_res.o&quot;"/>
 								</option>
-								<option id="gnu.c.link.option.other.1482333530" name="その他のオプション (-Xlinker [option])" superClass="gnu.c.link.option.other" valueType="stringList"/>
+								<option id="gnu.c.link.option.other.1482333530" name="その他のオプション (-Xlinker [option])" superClass="gnu.c.link.option.other"/>
 								<option id="gnu.c.link.option.ldflags.67483077" name="リンカー・フラグ" superClass="gnu.c.link.option.ldflags" value="-mwindows" valueType="string"/>
+								<option id="gnu.c.link.option.paths.1965697901" name="ライブラリー検索パス (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="c:/mingw/lib"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.851871543" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -130,40 +136,46 @@
 				<extensions>
 					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.VCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 				<configuration artifactName="${PACKAGE}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.VCErrorParser" id="cdt.managedbuild.config.gnu.mingw.exe.debug.1576728923.986534556" name="VC" parent="cdt.managedbuild.config.gnu.mingw.exe.debug" prebuildStep="cp &quot;${ICON}&quot; &quot;${res}&quot;">
 					<folderInfo id="cdt.managedbuild.config.gnu.mingw.exe.debug.1576728923.986534556." name="/" resourcePath="">
-						<toolChain errorParsers="" id="org.eclipse.cdt.msvc.toolchain.dll.debug.729066660" name="Microsoft Visual C++" superClass="org.eclipse.cdt.msvc.toolchain.dll.debug" unusedChildren="org.eclipse.cdt.msvc.rc.dll.debug">
-							<targetPlatform id="org.eclipse.cdt.msvc.targetPlatform.dll.debug.460012707" superClass="org.eclipse.cdt.msvc.targetPlatform.dll.debug"/>
-							<builder buildPath="${workspace_loc:/launcher}/VC" errorParsers="" id="org.eclipse.cdt.msvc.builder.1838040826" keepEnvironmentInBuildfile="false" name="CDT 内部ビルダー" superClass="org.eclipse.cdt.msvc.builder"/>
-							<tool errorParsers="org.eclipse.cdt.core.VCErrorParser" id="org.eclipse.cdt.msvc.link.dll.debug.2084734426" name="Linker (link)" superClass="org.eclipse.cdt.msvc.link.dll.debug">
-								<option id="org.eclipse.cdt.msvc.link.option.debug.820039495" name="Generate Debug Info (/debug)" superClass="org.eclipse.cdt.msvc.link.option.debug" value="false" valueType="boolean"/>
-								<option id="org.eclipse.cdt.msvc.link.option.libraries.180089051" name="Libraries" superClass="org.eclipse.cdt.msvc.link.option.libraries" valueType="libs">
-									<listOptionValue builtIn="false" value="LIBCMT.LIB"/>
-								</option>
-								<inputType id="org.eclipse.cdt.msvc.link.inputType.799016944" superClass="org.eclipse.cdt.msvc.link.inputType"/>
+						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.1199447209" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.base.698912064" name="デバッグ・プラットフォーム" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
+							<builder buildPath="${workspace_loc:/launcher}/VC" id="cdt.managedbuild.tool.gnu.builder.mingw.base.1597958925" keepEnvironmentInBuildfile="false" name="CDT 内部ビルダー" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
+							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.base.1837038743" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.901880899" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
-							<tool id="org.eclipse.cdt.msvc.cl.dll.debug.1475808015" name="C++ コンパイラー (cl)" superClass="org.eclipse.cdt.msvc.cl.dll.debug">
-								<option id="org.eclipse.cdt.msvc.cl.option.optimization.1018018833" name="Optimization" superClass="org.eclipse.cdt.msvc.cl.option.optimization" value="org.eclipse.cdt.msvc.cl.option.optimization.default" valueType="enumerated"/>
-								<option id="org.eclipse.cdt.msvc.cl.option.debugFormat.1872083353" name="Debug Information Format" superClass="org.eclipse.cdt.msvc.cl.option.debugFormat" value="org.eclipse.cdt.msvc.cl.option.debugFormat.complete" valueType="enumerated"/>
+							<tool id="cdt.managedbuild.tool.gnu.archiver.mingw.base.1170083605" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.mingw.base"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.2012490221" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base">
+								<option id="gnu.cpp.compiler.option.optimization.level.711964001" name="最適化レベル" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.debugging.level.1992291033" name="デバッグ・レベル" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 							</tool>
-							<tool id="org.eclipse.cdt.msvc.lib.1193735220" name="Library Manager (lib)" superClass="org.eclipse.cdt.msvc.lib"/>
-							<tool errorParsers="org.eclipse.cdt.core.VCErrorParser" id="org.eclipse.cdt.msvc.cl.c.dll.debug.702575475" name="C コンパイラー (cl)" superClass="org.eclipse.cdt.msvc.cl.c.dll.debug">
-								<option id="org.eclipse.cdt.msvc.cl.option.optimization.1657522173" name="Optimization" superClass="org.eclipse.cdt.msvc.cl.option.optimization" value="org.eclipse.cdt.msvc.cl.option.optimization.1" valueType="enumerated"/>
-								<option id="org.eclipse.cdt.msvc.cl.option.debugFormat.467174153" name="Debug Information Format" superClass="org.eclipse.cdt.msvc.cl.option.debugFormat" value="org.eclipse.cdt.msvc.cl.option.debugFormat.complete" valueType="enumerated"/>
-								<option id="org.eclipse.cdt.msvc.cl.option.arch.213619538" name="Minimum CPU Architecture" superClass="org.eclipse.cdt.msvc.cl.option.arch" value="org.eclipse.cdt.msvc.cl.option.arch.sse" valueType="enumerated"/>
-								<option id="org.eclipse.cdt.msvc.cl.option.runtime.1133304420" name="Run-Time Library" superClass="org.eclipse.cdt.msvc.cl.option.runtime" value="org.eclipse.cdt.msvc.cl.option.runtime.mt" valueType="enumerated"/>
-								<option id="org.eclipse.cdt.msvc.cl.option.macros.1343660326" name="定義 (/D)" superClass="org.eclipse.cdt.msvc.cl.option.macros" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="_MT"/>
-								</option>
-								<option id="org.eclipse.cdt.msvc.cl.option.others.57088419" name="その他のオプション" superClass="org.eclipse.cdt.msvc.cl.option.others" valueType="stringList"/>
-								<option id="org.eclipse.cdt.msvc.cl.option.includes.55709597" superClass="org.eclipse.cdt.msvc.cl.option.includes" valueType="includePath">
+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.base.1440540237" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.base">
+								<option id="gnu.c.compiler.option.include.paths.92963872" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include&quot;"/>
 								</option>
-								<inputType id="org.eclipse.cdt.msvc.cl.inputType.c.665424501" superClass="org.eclipse.cdt.msvc.cl.inputType.c"/>
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1880069157" name="定義済みのシンボル (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="_MT"/>
+								</option>
+								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.1795558212" name="最適化レベル" superClass="gnu.c.compiler.option.optimization.level" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.debugging.level.2095303786" name="デバッグ・レベル" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.499768846" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.base.1708216649" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base">
+								<option id="gnu.c.link.option.libs.1625194436" name="ライブラリー (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="LIBCMT.LIB"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.796145709" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base.152789789" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base"/>
 						</toolChain>
 					</folderInfo>
 				</configuration>

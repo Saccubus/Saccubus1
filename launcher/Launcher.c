@@ -57,6 +57,7 @@ int WINAPI WinMain (HINSTANCE hInstance,
 
 int doCmd(char* command,int show_msg,const char* log_name){
 	int ret = 0;
+	int code;
 
 	STARTUPINFOA startup_info;
 	PROCESS_INFORMATION process_info;
@@ -87,7 +88,7 @@ int doCmd(char* command,int show_msg,const char* log_name){
 			}
 		}
 	}
-	int code = CreateProcessA(
+	code = CreateProcessA(
 	    NULL,						// 実行ファイル名
 	    command,					// コマンドラインパラメータ
 	    NULL,						// プロセスの保護属性
@@ -105,7 +106,7 @@ int doCmd(char* command,int show_msg,const char* log_name){
 	if(code == 0){
 		ret = -1;
 		if(show_msg){
-			char msg[100];
+			char *msg;
 			int error_code = FormatMessageA(
 				FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,	// 動作フラグ
 				0,																// メッセージ定義位置
@@ -123,7 +124,8 @@ int doCmd(char* command,int show_msg,const char* log_name){
 			LocalFree(msg);
 		}
 	}else{
-		/* //戻り値を取得する場合はコメントアウト解除
+		/* 
+		//戻り値を取得する場合はコメントアウト解除
 		// 終了するまで待つ
 		WaitForSingleObject(process_info.hProcess,INFINITE);
 		//戻り値を取得
