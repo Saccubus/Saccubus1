@@ -6,8 +6,10 @@ readmeNew.txt
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-1.37r6 (2013/02/05)
-ブラウザ情報取得修正
+1.38r1 (2013/03/06)
+CAフォントのゴシックのfontindex指定ミス修正
+1.38 (2013/03/05)
+タイトルの'['文字の扱い修正
 
 □改造部分について
 【ライセンス】GPLv3（添付してあります）
@@ -22,10 +24,26 @@ readmeNew.txt
 　　http://anago.2ch.net/test/read.cgi/software/1310301611/
 
 □動作環境
-　Windows XP/7　（多分Vistaも動くはず）
-　javaランタイム（Java6 - JRE6 または JDK6）が必要です。
-　　　　　　　　（Java7 - JRE7 または JDK7　でも確認済みです。）
-　　　　　　　　（JRE1.5 JDK5はテストしていません。）
+　Windows XP/7/8desktop　（多分Vistaも動くはず）
+
+●注意●
+　javaランタイム Java7 - JRE7 または JDK1.7が必要です。
+　Java6 - JRE6 または JDK1.6　でも可能ですが、
+　セキュリティアップデートの関係からJava7を推奨します。
+　最近アップデートしていない場合は必ず更新して下さい。
+　JRE5 JDK1.5はテストしていません。
+　　http://java.com/ja/
+　からインストールして下さい。通常は32ｂｉｔ版です。
+　64bit版をダウンロードするには説明を読んで従って下さい。
+
+◆注意◆16:9黒枠なしの（PSPなどの）動画について
+　　初期化した後の既定では原宿プレイヤーと同じくコメントは動画より1/30上下に
+　　はみ出します。はみ出さないためには[変換設定]の下の方の[開発版を有効]の
+　　チェックボックスを外して下さい。
+
+●注意●
+　　Windows8はデスクトップUIでのIE10で確認しました。Windows8スタイルUIでは
+　　IEとのブラウザ共有は出来ませんでした。Firefox、Chromeは未確認です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
@@ -52,6 +70,7 @@ readmeNew.txt
 　　ffmpegを設定します。使用しない場合は■削除■して下さい。
 
 　◆拡張機能（概要）追加分
+　・CA対応実験的設定でフォント19種類(+8)newを強制選択可能になりました。
 　・投稿者コメント@秒数、@デフォルト、@逆機能追加
 　・サムネイル画像保存追加
 　・投稿者名保存のバグ修正
@@ -61,7 +80,7 @@ readmeNew.txt
 　・動画情報、投稿者ページ、watchページの保存機能追加
 　・オプションファイル初期値変更([PC])
 　・[iPod][iPod touch]オプション修正(4096→4096k)
-　・watchページ動画情報の保存追加new
+　・watchページ動画情報の保存追加
 　・ZeroWatch(5/1から)でログイン後ストールしていたのを修正
 　・CUIで@SETの不具合修正、@DLCと@ADDを追加
 　・ニコニコ動画エイプリルフールを再現出来ます。
@@ -71,18 +90,17 @@ readmeNew.txt
 　・NGコマンドでコメントのコマンドを無効に出来ます。
 　・NG共有レベルを設定できます。
 　・NGワードの指定に all キーワードを使えます。
-　　既定でないコマンドのコメントを全てNGします。
+　　既定でないコマンドのコメントを全て非表示にします。
 　・ニコニコ動画のNG設定をダウンロード・ファイルに保存できます。
 　　（さきゅばすへの自動設定は未実装）
 　・パスワードを簡易暗号化します。
-　・設定ファイルの読み込み・追加(new)・保存・別名保存・初期化が出来ます。
-　・CA対応実験的設定でフォント11種類を強制選択可能になりました。
+　・設定ファイルの読み込み・追加・保存・別名保存・初期化が出来ます。
 　・CUI引数を追加しました。
 　・エコノミーモード時に中止する設定が可能になりました。
 　・1.26.1～2でフォントサイズ自動調整時の拡大機能を削除しましたが元に戻しました。
-　・コメント速度を独自に指定可能になりました。
-　・コメント表示モードが新表示(最新100件ｘ分)・旧表示（最大1000件まで）を選択可能になりました。
-　・動画アスペクト比によるオプション自動判定ができるようになりました。
+　・コメント速度を独自に指定可能です。
+　・コメント表示モードが新表示(最新100件ｘ分)・旧表示（最大1000件まで）を選択可能です。
+　・動画アスペクト比によるオプション自動判定ができます。
 　　「動画設定」「変換オプション設定」「FFmpegの設定１」と「FFmpegの設定２」に
 　　自動判定の結果選択するオプションを設定します。
 　・拡張Vhookライブラリ指定は、「動画設定」画面の2つある拡張Vhook
@@ -101,7 +119,7 @@ readmeNew.txt
 　XPの場合はドライブ直下の\saccubusを推奨。
 
 □起動までの準備について
-　http://java.com/ja/download/index.jsp
+　http://java.com/ja/
 　Javaのサイトから各自最新のJRE(Java実行環境)を
 　ダウンロードしてインストールしてください。（32ビット版推奨）
 
@@ -125,9 +143,9 @@ readmeNew.txt
 
 ■動作が変なときは
 　・通常の Saccubus.exe の起動では、
-　　[log]frontend.txtにログが出力されていますので参照して下さい。
+　　[log]frontend.txt　にログが出力されていますので参照して下さい。
 　・debug.batをダブルクリックして起動すると実行中にログを画面表示します。
-　　（Bin.jarが無いとエラーになります。）
+　　Javaにパスが通っていないとエラーになります。（Bin.jarが無い時もエラーになります。）
 　　本体が起動するので後は同じです。
 　　終了後ログがフォルダ直下の log.txt に出力されるので参考にして下さい。
 　・作業ファイルは直下のtempフォルダの下に作成しますが実行が終了すると削除します。
@@ -149,6 +167,10 @@ readmeNew.txt
 　　役に立つかも）
 
 □拡張機能（変更点）説明
+●CA（コメントアート）フォント暫定的対応　その7
+　・CAフォント8種類追加　（計１9種）
+　
+
 ●投稿者コメントのニコスクリプト機能追加
 　投コメのニコスクリプト@秒数、@デフォルト、@逆　を反映します。
 　これまでの＠などのNGワードを変更する必要は有りません。
@@ -504,12 +526,12 @@ readmeNew.txt
 
 ■機能確認
 　・ブラウザのセッション共有機能確認は
-　　Win7 Home 32bit + IE9, Firefox5.0-10, Chrome13-16, SRware 及び
-　　XP SP3 Home 32bit + IE8, Firefox5.0-10, Chrome13-16, SRware
+　　Win8 pro desktop 64bit + IE10,
+　　Win7 Home 64bit + IE9, Firefox19.0, Chrome25, SRware 及び
+　　XP SP3 Home 32bit + IE8, Firefox19.0, Chrome25, SRware
 　　で行いました。
-　・動画変換確認は、ffmpeg55686とSVN-r21400で行いました。
-　　（optionは異なります）
-　　Win7 32bit Core2Duo, WinXP 32bit CeleronD
+　・動画変換確認は、ffmpeg55686で行いました。
+　　Win7 64 Corei7, Win7 32 Core2Duo, WinXP 32 CeleronD
 　・但し再生確認はPC上だけで、携帯その他では未確認
 　・前スレ>>670(SVN-25041) は変換エラーする動画(Decoder not found)がありました。
 　・前スレ>>481(SVN-23386)は livx264でのマルチスレッドオプション
@@ -535,18 +557,18 @@ readmeNew.txt
 ・gpl.ja.txt 　　　　　　　 GPLライセンスの非公式日本語訳
 ・LGPL_LICENSE　　　　　　　LGPLライセンス
 ・agpl-3.0.txt　　　　　　　AGPLv3ライセンス
-・Saccubus.jar　　　　　　　本体　1.37r6
+・Saccubus.jar　　　　　　　本体　1.38
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
 ・bin フォルダ配下
 　　ffmpeg55686.exe ライセンスGPLV3
-　　nicovideoE.dll(2012.07.20版)統合版拡張Vhookライブラリ
+　　nicovideoE.dll(2013.03.04版)統合版拡張Vhookライブラリ
 　　SDL.dll(2011.11.02ビルド)、README-SDL.txt
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYNG
 　　　グラフィックライブラリ、ライセンスはLGPL
 ・optionDev フォルダ配下 　 開発用ファイル
 ・optionVO フォルダ配下　　 変換オプションファイル
 　　　（N55686用 2012.07.20版）
-・readmeNew.txt(1.37r6)、readme.txt(1.22r)、readme+.txt(1.22r3)
+・readmeNew.txt(1.38)、readme.txt(1.22r)、readme+.txt(1.22r3)
 ・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
 ・AUTO2PROC.BAT　　　　　　 ２プロセス自動実行本体
@@ -554,6 +576,7 @@ readmeNew.txt
 ・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
 ・saccubus.ini　　　　　　　N55686向け初期設定
 ・オプションファイル見本.xml　　　　　　（1.22rの物）
+・変換リストが起動しない場合.txt
 ・saccubus_src.zip
 　　Saccubus.jar　のjavaソースファイル、eclipseプロジェクトファイル
 　　nicovideoE.dll　のソースファイル、eclipseプロジェクトファイル
@@ -562,8 +585,8 @@ readmeNew.txt
 
 関連リンク
 ・ソースコード
-　http://sourceforge.jp/projects/saccubus/svn/view/trunk
-　SVN：svn checkout http://svn.sourceforge.jp/svnroot/saccubus/trunk
+　http://sourceforge.jp/projects/saccubus/svn/view/branches/dev_branch
+　SVN：svn checkout http://svn.sourceforge.jp/svnroot/branches/dev_branch
 
 ・ダウンロード
 　公式最新(Vista・Win7では追加ファイルが必要。公式ユーザーページ参照)
@@ -576,6 +599,7 @@ readmeNew.txt
 　N55686(libfaac無し、libvo_aacencあり)+optionVO(古い)
 　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
 　改造版
+　1.37r6　　http://www1.axfc.net/uploader/so/2781459.zip 
 　1.37r3　　http://www1.axfc.net/uploader/Ne/so/141013.zip
 　1.37　　　http://www1.axfc.net/uploader/Ne/so/137858.zip
 　1.36r 　　http://www1.axfc.net/uploader/Ne/so/137048.zip

@@ -8,5 +8,5 @@
 	<entry key="EXT">.3g2</entry>
 	<entry key="MAIN"></entry>
 	<entry key="IN"></entry>
-	<entry key="OUT">-flags +bitexact+aic -vcodec libxvid -mbd 2 -s 320x240 -r 29.97 -b 768k -acodec libvo_aacenc -ac 2 -ar 44100 -ab 192k -f 3g2 -aspect 4:3</entry>
+	<entry key="OUT">-threads 0 -flags +bitexact+aic -vcodec libxvid -mbd 2 -s 320x240 -r 29.97 -b 768k -acodec libvo_aacenc -ac 2 -ar 44100 -ab 192k -f 3g2 -aspect 4:3</entry>
 </properties>
