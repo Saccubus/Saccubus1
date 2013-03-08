@@ -1879,7 +1879,7 @@ public class Converter extends Thread {
 					+ URLEncoder.encode(Path.toUnixPath(fontDir) + "/", encoding));
 				ffmpeg.addCmd("|--font-list:");
 	//			ffmpeg.addCmd("|--gothic-font:");
-				ffmpeg.addCmd("0:");
+				ffmpeg.addCmd("0:1+");
 				ffmpeg.addCmd(getFontUrl(gothicFont, encoding));
 	//			ffmpeg.addCmd("|--simsun-font:");
 				ffmpeg.addCmd("+1:");
