@@ -1,8 +1,10 @@
 package saccubus.conv;
 
-import java.util.LinkedList;
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import saccubus.util.Util;
 
@@ -28,6 +30,7 @@ import saccubus.util.Util;
  */
 public class Packet {
 	LinkedList<Chat> ChatList = new LinkedList<Chat>();
+	ArrayList<CommentReplace> ReplaceList = new ArrayList<CommentReplace>();
 
 	public Packet() {
 	}
@@ -41,11 +44,18 @@ public class Packet {
 		Iterator<Chat> it = ChatList.iterator();
 		while (it.hasNext()) {
 			Chat chat = it.next();
+			for(CommentReplace cr: ReplaceList){
+				cr.replace(chat);
+			}
 			chat.write(os);
 		}
 	}
 
 	public int size() {
 		return ChatList.size();
+	}
+
+	public void addReplace(CommentReplace comrpl){
+		ReplaceList.add(comrpl);
 	}
 }

@@ -39,7 +39,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -92,6 +91,11 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuInit = new JMenuItem();
 	JMenu jMenuHelp = new JMenu();
 	JMenuItem jMenuHelpAbout = new JMenuItem();
+	JMenuItem jMenuHelpFF = new JMenuItem();
+	JMenuItem jMenuHelpFormats = new JMenuItem();
+	JMenuItem jMenuHelpCodecs = new JMenuItem();
+	JMenuItem jMenuHelpProtocols = new JMenuItem();
+	JMenuItem jMenuHelpFilters = new JMenuItem();
 	JMenu jMenuDetail = new JMenu();
 	JMenuItem jMenuNGConfig = new JMenuItem();
 	JMenuItem jMenuAprilFool = new JMenuItem();
@@ -148,7 +152,7 @@ public class MainFrame extends JFrame {
 	JPanel CheckFFmpegFunctionPanel = new JPanel();
 	JButton CheckFFmpegVersionButton = new JButton();
 	JLabel CheckFFmpegVersionLabel = new JLabel();
-	JTextArea TextFFmpegOutput = new JTextArea();
+//	JTextArea TextFFmpegOutput = new JTextArea();
 	JButton CheckDownloadVideoButton = new JButton();
 	JLabel CheckDownloadVideoLabel = new JLabel();
 	JPanel BrowserInfoPanel = new JPanel();
@@ -380,7 +384,7 @@ public class MainFrame extends JFrame {
 		grid9_x0_y1_55.gridy = 1;
 		GridBagConstraints grid9_x1_y5_53 = new GridBagConstraints(1, 3,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, INSETS_0_0_0_5, 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_0_5_5, 0, 0);
 		grid9_x1_y5_53.gridy = 5;
 		grid9_x1_y5_53.gridheight = 1;
 		grid9_x1_y5_53.weightx = 1.0;
@@ -617,6 +621,31 @@ public class MainFrame extends JFrame {
 		jMenuHelpAbout
 				.addActionListener(new MainFrame_jMenuHelpAbout_ActionAdapter(
 						this));
+		jMenuHelpFF.setText("FFmpegヘルプ表示");
+		jMenuHelpFF.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){ FFhelp_actionPerformed("-h"); }
+		});
+		jMenuHelpFormats.setText("　FFmpegフォーマット");
+		jMenuHelpFormats.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){ FFhelp_actionPerformed("-formats"); }
+		});
+		jMenuHelpCodecs.setText("　FFmpegコーデック");
+		jMenuHelpCodecs.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){ FFhelp_actionPerformed("-codecs"); }
+		});
+		jMenuHelpProtocols.setText("　FFmpegプロトコル");
+		jMenuHelpProtocols.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){ FFhelp_actionPerformed("-protocols"); }
+		});
+		jMenuHelpFilters.setText("　FFmpegフィルター");
+		jMenuHelpFilters.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){ FFhelp_actionPerformed("-filters"); }
+		});
 		jMenuDetail.setText("詳細設定");
 		jMenuNGConfig.setText("ニコニコ動画のNG設定保存");
 		jMenuNGConfig.addActionListener(new MainFrame_LoadNGConfig(this));
@@ -873,7 +902,7 @@ public class MainFrame extends JFrame {
 				BorderFactory.createEtchedBorder(), "FFmpegの位置の設定"));
 		FFmpegPathSettingPanel.setLayout(new GridBagLayout());
 		FFmpegPathLabel.setText("FFmpeg");
-		CheckFFmpegVersionLabel.setText("バージョンを表示する⇒ ");
+		CheckFFmpegVersionLabel.setText("FFmpegのバージョンを表示する");
 		CheckFFmpegVersionLabel.setForeground(Color.blue);
 		CheckFFmpegVersionButton.setText("表示");
 		CheckFFmpegVersionButton.setToolTipText("指定されたFFmpegのバージョンを表示する");
@@ -958,6 +987,11 @@ public class MainFrame extends JFrame {
 		jMenuDetail.add(jMenuAprilFool);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
+		jMenuHelp.add(jMenuHelpFF);
+		jMenuHelp.add(jMenuHelpFormats);
+		jMenuHelp.add(jMenuHelpCodecs);
+		jMenuHelp.add(jMenuHelpProtocols);
+		jMenuHelp.add(jMenuHelpFilters);
 		setJMenuBar(jMenuBar1);
 		/* ビデオグループ */
 		VideoSaveButtonGroup.add(Video_SaveFileRadioButton);
@@ -1125,24 +1159,9 @@ public class MainFrame extends JFrame {
 		grid90_x1_y1_.insets = INSETS_0_5_0_5;
 		additionalOptionPanel.add(wideAdditionalOptionFiled, grid90_x1_y1_);
 // Added FFmpegPathSettingPanel form here
-		FFmpegPathSettingPanel.add(FFmpegPathLabel, new GridBagConstraints(0, 0, 1,
-				1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
-				INSETS_0_5_0_5, 0, 0));
-		GridBagConstraints grid__x1_y0_106 = new GridBagConstraints();
-		grid__x1_y0_106.gridx = 1;
-		grid__x1_y0_106.gridy = 0;
-		grid__x1_y0_106.weightx = 1.0;
-		grid__x1_y0_106.anchor = GridBagConstraints.EAST;
-		grid__x1_y0_106.insets = INSETS_0_0_0_0;
-		FFmpegPathSettingPanel.add(CheckFFmpegVersionLabel, grid__x1_y0_106);
-		GridBagConstraints grid__x2_y0_107 = new GridBagConstraints();
-		grid__x2_y0_107.gridx = 2;
-		grid__x2_y0_107.gridy = 0;
-		grid__x2_y0_107.weightx = 0.0;
-		grid__x2_y0_107.anchor = GridBagConstraints.WEST;
-		grid__x2_y0_107.fill = GridBagConstraints.HORIZONTAL;
-		grid__x2_y0_107.insets = INSETS_0_5_5_5;
-		FFmpegPathSettingPanel.add(CheckFFmpegVersionButton, grid__x2_y0_107);
+//		FFmpegPathSettingPanel.add(FFmpegPathLabel, new GridBagConstraints(0, 0, 1,
+//				1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+//				INSETS_0_5_0_5, 0, 0));
 		FFmpegPathSettingPanel.add(FFmpegPathField, new GridBagConstraints(0, 1, 2,
 				1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_5_0_0, 0, 0));
@@ -1164,8 +1183,8 @@ public class MainFrame extends JFrame {
 		MainTabbedPane.add(FFMpegInfoTabPanel, "動画設定");
 		MainTabbedPane.addTab("変換設定", null, getConvertingSettingPanel(), null);
 		SavingInfoTabPanel.add(getSaveInfoTabPaneEach(), grid2_x__y__35);
-		FFmpegInfoTabPaneEach.addTab("変換オプション設定", null, FFMpegTabPanel, null);
-		FFmpegInfoTabPaneEach.addTab("FFMpegの位置と機能", null, FFMpegTab2Panel, null);
+		FFmpegInfoTabPaneEach.addTab("変換オプション設定(共通)", null, FFMpegTab2Panel, null);
+		FFmpegInfoTabPaneEach.addTab("変換オプション設定(従来)", null, FFMpegTabPanel, null);
 		FFMpegInfoTabPanel.setLayout(new GridBagLayout());
 		GridBagConstraints grid__x__y__105 = new GridBagConstraints();
 		grid__x__y__105.fill = GridBagConstraints.BOTH;
@@ -1302,6 +1321,114 @@ public class MainFrame extends JFrame {
 		grid__x0_y0_109.fill = GridBagConstraints.BOTH;
 		grid__x0_y0_109.insets = INSETS_0_5_0_5;
 		FFMpegTab2Panel.add(FFmpegPathSettingPanel, grid__x0_y0_109);
+		zqPlayerModePanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(), "拡張Vhookライブラリーの設定",
+				TitledBorder.LEADING, TitledBorder.TOP,
+				getFont(), Color.blue));
+		zqPlayerModePanel.setForeground(Color.blue);
+		zqPlayerModePanel.setLayout(new GridBagLayout());
+		zqPlayerModePanel.setToolTipText("");
+		zqPlayerModeCheckBox.setText("共通画面を使う　(使わない→従来画面を使う)");
+		//zqPlayerModeCheckBox.setToolTipText("以下の設定が4:3と16:9が共通に使えます。");
+		zqPlayerModeCheckBox.setForeground(Color.blue);
+		GridBagConstraints gird_x0_y2_0 = new GridBagConstraints();
+		gird_x0_y2_0 = new GridBagConstraints();
+		gird_x0_y2_0.gridx = 0;
+		gird_x0_y2_0.gridy = 0;
+		gird_x0_y2_0.weightx = 1.0;
+		gird_x0_y2_0.weighty = 0.0;
+		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
+		gird_x0_y2_0.insets = INSETS_0_5_0_5;
+		zqPlayerModePanel.add(zqPlayerModeCheckBox, gird_x0_y2_0);
+		zqVhookSettingLavel.setText("拡張Vhookの位置を設定する(アスペクト比共通)");
+		gird_x0_y2_0 = new GridBagConstraints();
+		gird_x0_y2_0.gridx = 0;
+		gird_x0_y2_0.gridy = 1;
+		gird_x0_y2_0.weightx = 1.0;
+		gird_x0_y2_0.weighty = 0.0;
+		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
+		gird_x0_y2_0.insets = INSETS_0_5_5_5;
+		zqPlayerModePanel.add(zqVhookSettingLavel,gird_x0_y2_0);
+		gird_x0_y2_0 = new GridBagConstraints();
+		gird_x0_y2_0.gridx = 0;
+		gird_x0_y2_0.gridy = 2;
+		gird_x0_y2_0.weightx = 1.0;
+		gird_x0_y2_0.weighty = 0.0;
+		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
+		gird_x0_y2_0.insets = INSETS_0_5_0_5;
+		zqPlayerModePanel.add(zqVhookPathField, gird_x0_y2_0);
+		zqSettingVhookPathButton.setText("参照");
+		zqSettingVhookPathButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SettingVhookZqPathButton_actionPerformed(e); }
+		});
+		gird_x0_y2_0 = new GridBagConstraints();
+		gird_x0_y2_0.gridx = 1;
+		gird_x0_y2_0.gridy = 2;
+		gird_x0_y2_0.weightx = 0.0;
+		gird_x0_y2_0.weighty = 0.0;
+		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
+		gird_x0_y2_0.insets = INSETS_0_5_0_5;
+		zqPlayerModePanel.add(zqSettingVhookPathButton, gird_x0_y2_0);
+		gird_x0_y2_0 = new GridBagConstraints();
+		gird_x0_y2_0.gridx = 0;
+		gird_x0_y2_0.gridy = 2;
+		gird_x0_y2_0.weightx = 1.0;
+		gird_x0_y2_0.weighty = 0.0;
+		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
+		gird_x0_y2_0.insets = INSETS_0_5_0_5;
+		FFMpegTab2Panel.add(zqPlayerModePanel,gird_x0_y2_0);
+// option Q
+		zqFFmpegSettingPanel.setBorder(BorderFactory.createTitledBorder(
+			BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+			"共通FFmpegの設定",TitledBorder.LEADING,
+			TitledBorder.TOP, getFont(), Color.blue));
+		zqFFmpegSettingPanel.setLayout(new GridBagLayout());
+		zqFFmpegSettingPanel.add(getZqFFmpegOptionComboBoxPanel(),grid9_x0_y1_55);
+		zqFFmpegSettingPanel.add(new JLabel(ExtOptionLabel.getText()), grid9_x0_y2_56);
+		zqFFmpegSettingPanel.add(zqExtOptionField, grid9_x1_y2_57);
+		zqFFmpegSettingPanel.add(new JLabel(MainOptionLabel.getText()), grid9_x0_y3_48);
+		zqFFmpegSettingPanel.add(zqMainOptionField, grid9_x1_y3_51);
+		zqFFmpegSettingPanel.add(new JLabel(InLabel.getText()), grid9_x0_y4_49);
+		zqFFmpegSettingPanel.add(zqCommandLineInOptionField, grid9_x1_y4_52);
+		zqFFmpegSettingPanel.add(new JLabel(OutLabel.getText()), grid9_x0_y5_50);
+		zqFFmpegSettingPanel.add(zqCommandLineOutOptionField, grid9_x1_y5_53);
+		gird_x0_y2_0 = new GridBagConstraints();
+		gird_x0_y2_0.gridx = 0;
+		gird_x0_y2_0.gridy = 6;
+		gird_x0_y2_0.weightx = 0.0;
+		gird_x0_y2_0.weighty = 0.0;
+		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
+		gird_x0_y2_0.insets = INSETS_0_5_0_5;
+		zqFFmpegSettingPanel.add(new JLabel("追加オプション"), gird_x0_y2_0);
+		gird_x0_y2_0 = new GridBagConstraints();
+		gird_x0_y2_0.gridx = 1;
+		gird_x0_y2_0.gridy = 6;
+		gird_x0_y2_0.weightx = 1.0;
+		gird_x0_y2_0.weighty = 0.0;
+		gird_x0_y2_0.gridwidth =3;
+		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
+		gird_x0_y2_0.insets = INSETS_0_0_0_5;
+		zqFFmpegSettingPanel.add(zqAdditionalOptionFiled, gird_x0_y2_0);
+		zqFFmpegSettingPanel.setForeground(Color.blue);
+		gird_x0_y2_0 = new GridBagConstraints();
+		gird_x0_y2_0.gridx = 0;
+		gird_x0_y2_0.gridy = 4;
+		gird_x0_y2_0.weightx = 1.0;
+		gird_x0_y2_0.weighty = 0.0;
+		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
+		gird_x0_y2_0.insets = INSETS_0_5_0_5;
+		FFMpegTab2Panel.add(zqFFmpegSettingPanel,gird_x0_y2_0);
+
 		CheckFFmpegFunctionPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(), "FFmpeg機能チェック",
 				TitledBorder.LEADING, TitledBorder.TOP,
@@ -1309,7 +1436,25 @@ public class MainFrame extends JFrame {
 				getFont(), Color.blue));
 		CheckFFmpegFunctionPanel.setForeground(Color.blue);
 		CheckFFmpegFunctionPanel.setLayout(new GridBagLayout());
-		CheckDownloadVideoButton.setText("DL動画");
+		GridBagConstraints grid__x0_y0_107 = new GridBagConstraints();
+		grid__x0_y0_107.gridx = 0;
+		grid__x0_y0_107.gridy = 0;
+		grid__x0_y0_107.weightx = 0.0;
+		grid__x0_y0_107.weightx = 0.0;
+		grid__x0_y0_107.anchor = GridBagConstraints.NORTHWEST;
+		grid__x0_y0_107.fill = GridBagConstraints.NONE;
+		grid__x0_y0_107.insets = INSETS_0_5_0_5;
+		CheckFFmpegFunctionPanel.add(CheckFFmpegVersionButton, grid__x0_y0_107);
+		GridBagConstraints grid__x1_y0_106 = new GridBagConstraints();
+		grid__x1_y0_106.gridx = 1;
+		grid__x1_y0_106.gridy = 0;
+		grid__x1_y0_106.weightx = 1.0;
+		grid__x1_y0_106.weighty = 0.0;
+		grid__x1_y0_106.anchor = GridBagConstraints.WEST;
+		grid__x1_y0_106.fill = GridBagConstraints.HORIZONTAL;
+		grid__x1_y0_106.insets = INSETS_0_5_0_5;
+		CheckFFmpegFunctionPanel.add(CheckFFmpegVersionLabel, grid__x1_y0_106);
+		CheckDownloadVideoButton.setText("表示");
 		CheckDownloadVideoButton.setToolTipText(
 			"ダウンロード動画をチェック：幅x高さ　fps　映像codec　音声codec");
 		CheckDownloadVideoButton.setForeground(Color.blue);
@@ -1324,23 +1469,25 @@ public class MainFrame extends JFrame {
 		grid_x0_y1_85.gridx = 0;
 		grid_x0_y1_85.gridy = 1;
 		grid_x0_y1_85.weightx = 0.0;
-		grid_x0_y1_85.anchor = GridBagConstraints.WEST;
-		grid_x0_y1_85.fill = GridBagConstraints.HORIZONTAL;
-		grid_x0_y1_85.insets = INSETS_0_0_5_5;
+		grid_x0_y1_85.weighty = 0.0;
+		grid_x0_y1_85.anchor = GridBagConstraints.NORTHWEST;
+		grid_x0_y1_85.fill = GridBagConstraints.NONE;
+		grid_x0_y1_85.insets = INSETS_0_5_0_5;
 		CheckFFmpegFunctionPanel.add(CheckDownloadVideoButton, grid_x0_y1_85);
 		CheckDownloadVideoLabel.setText("ダウンロードした動画をチェックする");
 		CheckDownloadVideoLabel.setForeground(Color.blue);
 		GridBagConstraints grid_x1_y1_88 = new GridBagConstraints();
 		grid_x1_y1_88.gridx = 1;
 		grid_x1_y1_88.gridy = 1;
-		grid_x0_y1_85.weightx = 1.0;
+		grid_x1_y1_88.weightx = 1.0;
 		grid_x1_y1_88.weighty = 0.0;
 		grid_x1_y1_88.anchor = GridBagConstraints.WEST;
 		grid_x1_y1_88.fill = GridBagConstraints.HORIZONTAL;
-		grid_x1_y1_88.insets = INSETS_0_5_5_5;
+		grid_x1_y1_88.insets = INSETS_0_5_0_5;
 		CheckFFmpegFunctionPanel.add(CheckDownloadVideoLabel,grid_x1_y1_88);
+/*
 		GridBagConstraints grid_x0_y2_87 = new GridBagConstraints();
-		grid_x0_y2_87.gridx = 0;
+ 		grid_x0_y2_87.gridx = 0;
 		grid_x0_y2_87.gridy = 2;
 		grid_x0_y2_87.gridwidth = 2;
 		grid_x0_y2_87.gridheight = 4;
@@ -1354,13 +1501,14 @@ public class MainFrame extends JFrame {
 		TextFFmpegOutput.setOpaque(false);
 		CheckFFmpegFunctionPanel.add(
 				new JScrollPane(TextFFmpegOutput), grid_x0_y2_87);
+*/
 		GridBagConstraints grid6_x0_y2_82 = new GridBagConstraints();
 		grid6_x0_y2_82.gridx = 0;
-		grid6_x0_y2_82.gridy = 3;
+		grid6_x0_y2_82.gridy = 6;
 		grid6_x0_y2_82.weightx = 1.0;
 		grid6_x0_y2_82.weighty = 1.0;
 		grid6_x0_y2_82.anchor = GridBagConstraints.NORTHWEST;
-		grid6_x0_y2_82.fill = GridBagConstraints.BOTH;
+		grid6_x0_y2_82.fill = GridBagConstraints.HORIZONTAL;
 		grid6_x0_y2_82.insets = INSETS_0_5_5_5;
 		FFMpegTab2Panel.add(CheckFFmpegFunctionPanel, grid6_x0_y2_82);
 
@@ -1549,8 +1697,8 @@ public class MainFrame extends JFrame {
 				this.NGWordTextField));
 		NGIDTextField.addMouseListener(new PopupRightClick(this.NGIDTextField));
 
-		TextFFmpegOutput.addMouseListener(
-				new PopupRightClick(this.TextFFmpegOutput));
+	//	TextFFmpegOutput.addMouseListener(
+	//			new PopupRightClick(this.TextFFmpegOutput));
 		BrowserCookieField.addMouseListener(
 				new PopupRightClick(this.BrowserCookieField));
 	}
@@ -1605,6 +1753,22 @@ public class MainFrame extends JFrame {
 	JPanel FFmpegSettingPanel = new JPanel();
 	JPanel WideFFmpegSettingPanel = new JPanel();
 	GridBagLayout gridBagLayout9 = new GridBagLayout();
+	private JPanel zqPlayerModePanel = new JPanel();
+	private JLabel zqVhookSettingLavel = new JLabel();
+	private JCheckBox zqPlayerModeCheckBox = new JCheckBox();
+	private JTextField zqAdditionalOptionFiled = new JTextField();
+	private JTextField zqExtOptionField = new JTextField();
+	private JTextField zqMainOptionField = new JTextField();
+	private JTextField zqCommandLineInOptionField = new JTextField();
+	private JTextField zqCommandLineOutOptionField = new JTextField();
+	private JTextField zqVhookPathField = new JTextField();
+	private JButton zqSettingVhookPathButton = new JButton();
+	private JPanel zqFFmpegSettingPanel = new JPanel();
+	@SuppressWarnings("rawtypes")
+	private JComboBox zqFFmpegOptionComboBox = null;
+	private JButton zqFFmpegOptionReloadButton = null;
+	private JPanel zqFFmpegOptionComboBoxPanel = null;
+
 	JLabel FontPathLabel = new JLabel();
 	JTextField FontPathField = new JTextField();
 	JButton SettingFontPathButton = new JButton();
@@ -1767,7 +1931,15 @@ public class MainFrame extends JFrame {
 			saveThumbInfoExtTxtRadioButton.isSelected(),
 			changeMp4ExtCheckBox.isSelected(),
 			changeTitleIdCheckBox.isSelected(),
-			saveThumbnailJpgCheckBox.isSelected()
+			saveThumbnailJpgCheckBox.isSelected(),
+			zqPlayerModeCheckBox.isSelected(),
+			zqVhookPathField.getText(),
+			zqFFmpegOptionModel.getSelectedFile(),
+			zqExtOptionField.getText(),
+			zqMainOptionField.getText(),
+			zqCommandLineInOptionField.getText(),
+			zqCommandLineOutOptionField.getText(),
+			zqAdditionalOptionFiled.getText()
 		);
 	}
 /*
@@ -1899,6 +2071,15 @@ public class MainFrame extends JFrame {
 		changeMp4ExtCheckBox.setSelected(setting.isChangeMp4Ext());
 		changeTitleIdCheckBox.setSelected(setting.isChangeTitleId());
 		saveThumbnailJpgCheckBox.setSelected(setting.isSaveThumbnailJpg());
+		zqPlayerModeCheckBox.setSelected(setting.isZqPlayer());
+		zqVhookPathField.setText(setting.getZqVhookPath());
+		zqFFmpegOptionModel.setOptionFolder(setting.getOptionFolder());
+		zqFFmpegOptionModel.reload(setting.getZqOptionFile());
+		zqExtOptionField.setText(setting.getZqCmdLineOptionExt());
+		zqMainOptionField.setText(setting.getZqCmdLineOptionMain());
+		zqCommandLineOutOptionField.setText(setting.getZqCmdLineOptionOut());
+		zqCommandLineInOptionField.setText(setting.getZqCmdLineOptionIn());
+		zqAdditionalOptionFiled.setText(setting.getZqAddOption());
 	}
 
 	/**
@@ -2010,10 +2191,14 @@ public class MainFrame extends JFrame {
 
 	public void DoButton_actionPerformed(ActionEvent e) {
 		if (converter == null || converter.isConverted()) {
-			converter = new Converter(VideoID_TextField.getText(),
-					WayBackField.getText(), getSetting(), statusBar,
-					new ConvertStopFlag(DoButton, DoButtonStopString, DoButtonWaitString, DoButtonDefString),
-					vhookInfoBar, elapsedTimeBar);
+			converter = new Converter(
+				VideoID_TextField.getText(),
+				WayBackField.getText(),
+				getSetting(),
+				statusBar,
+				new ConvertStopFlag(DoButton, DoButtonStopString, DoButtonWaitString, DoButtonDefString),
+				vhookInfoBar,
+				elapsedTimeBar);
 			converter.start();
 		} else { /* 開始しているので、ストップする。 */
 			final ConvertStopFlag flag = converter.getStopFlag();
@@ -2024,77 +2209,107 @@ public class MainFrame extends JFrame {
 	}
 
 	/* FFmpeg versionチェック実行 */
-
 	public void FFVersionButton_actionPerformed(ActionEvent e){
+		//JTextArea textout = TextFFmpegOutput;
+		JTextArea textout = null;
 		try{
-			if (converter != null && !converter.isConverted()){
-				TextFFmpegOutput.setText("変換実施中。お待ちください。");
-				return;
-			}
-			TextFFmpegOutput.setText(null);
+			textout = new MainFrame_TextView(
+				this,"FFmpegバージョン情報", 0.8).getTextArea();
+//			if (converter != null && !converter.isConverted()){
+//				textout.setText("変換実施中。お待ちください。");
+//				return;
+//			}
+			textout.setText(null);
 			ArrayList<String> list = execFFmpeg("-version");
-			TextFFmpegOutput.append(list.get(0));
-			if (list.size() >= 1){
-				TextFFmpegOutput.append(list.get(1));
+			for(String line:list){
+				textout.append(line);
 			}
 		} catch(NullPointerException ex){
-			TextFFmpegOutput.setText("(´∀｀)＜ぬるぽ\nガッ\n");
+			statusBar.setText("(´∀｀)＜ぬるぽ\nガッ\n");
 			ex.printStackTrace();
 		} catch (FileNotFoundException ex) {
-			TextFFmpegOutput.setText(ex.getMessage());
+			textout.setText(ex.getMessage());
+			ex.printStackTrace();
 		}
 	}
+
+	/* FFmpeg help 表示 */
+	public void FFhelp_actionPerformed(String s){
+		JTextArea textout = null;
+		try{
+			textout = new MainFrame_TextView(
+				this,"FFmpegヘルプ情報", 0.9).getTextArea();
+			textout.setText(null);
+			ArrayList<String> list = execFFmpeg(s);
+			for(String line:list){
+				textout.append(line);
+			}
+		} catch(NullPointerException ex){
+			statusBar.setText("(´∀｀)＜ぬるぽ\nガッ\n");
+			ex.printStackTrace();
+		} catch (FileNotFoundException ex) {
+			textout.setText(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+
+	/* 動画情報 表示 */
 	public void CheckDownloadVideoButton_actionPerformed(ActionEvent e){
-		boolean needStop = true;
+	//	boolean needStop = true;
+	//	JTextArea textout = TextFFmpegOutput;
+		JTextArea textout = null;
 		try {
+			textout = new MainFrame_TextView(this,"ダウンロード動画情報").getTextArea();
 			File inputVideo = null;
-			if (converter == null || converter.isConverted()){
-				ConvertingSetting setting = getSetting();
-				converter = new Converter(
-						VideoID_TextField.getText(),
-						WayBackField.getText(), setting, statusBar,
-						new ConvertStopFlag(null, null, null, null),
-						vhookInfoBar, new JLabel());
-				if (setting.isVideoFixFileName()) {
-					File folder = setting.getVideoFixFileNameFolder();
-					String path = converter.detectTitleFromVideo(folder);
-					if (path == null || path.isEmpty()){
-						TextFFmpegOutput.setText(
-								"検索しましたが動画が見つかりません。");
-						return;
-					}
-					inputVideo = new File(folder, path);
-				} else {
-					inputVideo = setting.getVideoFile();
+			ConvertingSetting setting = getSetting();
+			Converter conv = new Converter(
+					VideoID_TextField.getText(),
+					WayBackField.getText(),
+					setting,
+					statusBar,
+					new ConvertStopFlag(null, null, null, null),
+					new JLabel(),
+					new JLabel());
+			if (setting.isVideoFixFileName()) {
+				File folder = setting.getVideoFixFileNameFolder();
+				String path = conv.detectTitleFromVideo(folder);
+				if (path == null || path.isEmpty()){
+					textout.setText("検索しましたが動画が見つかりません。");
+					return;
 				}
-		//	} else if (converter.isConverted()){
-		//		inputVideo = converter.getVideoFile();
+				inputVideo = new File(folder, path);
 			} else {
-				TextFFmpegOutput.setText("変換実施中。お待ちください。");
-				needStop = false;
-				return;
+				inputVideo = setting.getVideoFile();
 			}
+//			} else {
+//				textout.setText("変換実施中。お待ちください。");
+//				needStop = false;
+//				return;
+//			}
 			if (inputVideo == null || !inputVideo.canRead()){
-				TextFFmpegOutput.setText("ダウンロード動画がありません。");
+				textout.setText("ダウンロード動画がありません。");
 				return;
 			}
-			TextFFmpegOutput.setText(inputVideo.getName() + "\n");
-			ArrayList<String> list = execFFmpeg("-y "
-				+ "-i \"" + inputVideo.getPath() + "\"");
+			textout.setText(inputVideo.getName() + "\n");
+			ArrayList<String> list = execFFmpeg("-y -i \"" + inputVideo.getPath() + "\"");
 			for (String line : list){
-				if (line.indexOf("Stream #") >= 0){
-					TextFFmpegOutput.append(line.replace("Stream ", "").trim() + "\n");
+				if (line.contains("Stream ")){
+					textout.append(line.replace("Stream ", "").trim() + "\n");
+				}
+				else if(line.contains("Duration:")){
+					textout.append(line.trim() + "\n");
 				}
 			}
 		} catch(NullPointerException ex){
-			TextFFmpegOutput.setText("(´∀｀)＜ぬるぽ\nガッ\n");
+			statusBar.setText("(´∀｀)＜ぬるぽ\nガッ");
 			ex.printStackTrace();
 		} catch (FileNotFoundException ex) {
-			TextFFmpegOutput.setText(ex.getMessage());
-		} finally {
-			if (needStop) {
-				converter.getStopFlag().finished();
-			}
+			textout.setText(ex.getMessage());
+			ex.printStackTrace();
+	//	} finally {
+	//		if (needStop) {
+	//			converter.getStopFlag().finished();
+	//		}
 		}
 	}
 
@@ -2111,17 +2326,42 @@ public class MainFrame extends JFrame {
 		}
 		FFmpeg ffmpeg = new FFmpeg(path);
 		ffmpeg.setCmd(parameter);
-		System.out.println("execute:" + ffmpeg.getCmd());
+	//	System.out.println("execute:" + ffmpeg.getCmd());
 		ffmpeg.exec(new FFmpeg.Callback() {
 				@Override
 				public void doEveryLoop(String e) {
-					System.out.println(e);
+				//	System.out.println(e);
 					output.add(e.trim() + "\n");
 				}
 		});
 		return output;
 	}
 
+/*
+ 	private ArrayList<String> execOutFFmpeg(String parameter)
+			throws FileNotFoundException {
+		final ArrayList<String> output = new ArrayList<String>();
+
+		if (parameter == null) {
+			parameter = "";
+		}
+		String path = getSetting().getFFmpegPath();
+		if (!new File(path).canRead()) {
+			throw new FileNotFoundException("FFmpegが見つかりません");
+		}
+		FFmpeg ffmpeg = new FFmpeg(path);
+		ffmpeg.setCmd(parameter);
+	//	System.out.println("execute:" + ffmpeg.getCmd());
+		ffmpeg.exec(new FFmpeg.Callback() {
+				@Override
+				public void doEveryLoop(String e) {
+				//	System.out.println(e);
+					output.add(e.trim() + "\n");
+				}
+		});
+		return output;
+	}
+*/
 
 	/* ビデオ・セーブダイアログ */
 	public void ShowSavingVideoDialogButton_actionPerformed(ActionEvent e) {
@@ -2149,6 +2389,7 @@ public class MainFrame extends JFrame {
 		showSaveDialog("オプションフォルダ", OptionPathField, true, true);
 		FFmpegOptionModel.setOptionFolder(OptionPathField.getText());
 		WideFFmpegOptionModel.setOptionFolder(OptionPathField.getText());
+		zqFFmpegOptionModel.setOptionFolder(OptionPathField.getText());
 	}
 
 	public void SettingVhookPathButton_actionPerformed(ActionEvent e) {
@@ -2157,6 +2398,10 @@ public class MainFrame extends JFrame {
 
 	public void SettingVhookWidePathButton_actionPerformed(ActionEvent e) {
 		showSaveDialog("拡張vhookワイドへのパス", VhookWidePathField, false, false);
+	}
+
+	public void SettingVhookZqPathButton_actionPerformed(ActionEvent e) {
+		showSaveDialog("Q拡張vhookライブラリへのパス", zqVhookPathField, false, false);
 	}
 
 	public void SettingFontPathButton_actionPerformed(ActionEvent e) {
@@ -2895,7 +3140,7 @@ s	 * @return javax.swing.JPanel
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
 		fileNameInfoPanel.add(fileNameInfoLanel, gridbagc);
-		
+
 		changeMp4ExtCheckBox.setText("mp4保存動画の拡張子を.mp4にする（既定は.flv）");
 		gridbagc.gridx = 0;
 		gridbagc.gridy = 1;
@@ -2936,6 +3181,7 @@ s	 * @return javax.swing.JPanel
 	 */
 	private final FFmpegComboBoxModel FFmpegOptionModel = new FFmpegComboBoxModel();
 	private final FFmpegComboBoxModel WideFFmpegOptionModel = new FFmpegComboBoxModel();
+	private final FFmpegComboBoxModel zqFFmpegOptionModel = new FFmpegComboBoxModel();
 
 	private JLabel ExtOptionLabel = null;
 	private JTextField ExtOptionField = null;
@@ -3029,6 +3275,48 @@ s	 * @return javax.swing.JPanel
 	}
 
 	/**
+	 * Initialize WideFFmpegOptionComboBox
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private JComboBox getZqFFmpegOptionComboBox() {
+		if (zqFFmpegOptionComboBox == null) {
+			zqFFmpegOptionComboBox = new JComboBox(zqFFmpegOptionModel);
+			zqFFmpegOptionComboBox
+					.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							if (zqFFmpegOptionModel.isFile()) {// ファイル
+								Properties prop = new Properties();
+								try {
+									prop.loadFromXML(new FileInputStream(
+										zqFFmpegOptionModel.getSelectedFile()));
+								} catch (IOException ex) {
+									statusBar.setText("Qwatchのオプションファイルが表示できません。");
+									ex.printStackTrace();
+								}
+								zqExtOptionField.setText(prop.getProperty("EXT", ""));
+								zqMainOptionField.setText(prop.getProperty("MAIN", ""));
+								zqCommandLineInOptionField.setText(prop.getProperty("IN", ""));
+								zqCommandLineOutOptionField.setText(prop.getProperty("OUT", ""));
+								zqExtOptionField.setEnabled(false);
+								zqMainOptionField.setEnabled(false);
+								zqCommandLineInOptionField.setEnabled(false);
+								zqCommandLineOutOptionField.setEnabled(false);
+								return;
+							} else {// ファイルでない
+								zqExtOptionField.setEnabled(true);
+								zqMainOptionField.setEnabled(true);
+								zqCommandLineInOptionField.setEnabled(true);
+								zqCommandLineOutOptionField.setEnabled(true);
+							}
+						}
+					});
+		}
+		return zqFFmpegOptionComboBox;
+	}
+
+	/**
 	 * This method initializes FFmpegOptionReloadButton
 	 *
 	 * @return javax.swing.JButton
@@ -3098,6 +3386,42 @@ s	 * @return javax.swing.JPanel
 	}
 
 	/**
+	 * This method initializes WideFFmpegOptionReloadButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getZqFFmpegOptionReloadButton() {
+		if (zqFFmpegOptionReloadButton == null) {
+			zqFFmpegOptionReloadButton = new JButton();
+			zqFFmpegOptionReloadButton.setText("更新");
+			zqFFmpegOptionReloadButton.setForeground(Color.blue);
+			zqFFmpegOptionReloadButton
+					.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							zqFFmpegOptionModel.reload();
+							if (!zqFFmpegOptionModel.isFile()) {// ファイルでない
+								Properties prop = new Properties();
+								try {
+									prop.loadFromXML(new FileInputStream(
+										ConvertingSetting.PROP_FILE));
+								} catch (IOException ex) {
+									statusBar.setText("Qwatchのオプションファイルが更新できません。");
+									ex.printStackTrace();
+									return;
+								}
+								zqExtOptionField.setText(prop.getProperty("QCMD_EXT", ""));
+								zqMainOptionField.setText(prop.getProperty("QCMD_MAIN", ""));
+								zqCommandLineInOptionField.setText(prop.getProperty("QCMD_IN", ""));
+								zqCommandLineOutOptionField.setText(prop.getProperty("QCMD_OUT", ""));
+							}
+						}
+					});
+		}
+		return zqFFmpegOptionReloadButton;
+	}
+
+	/**
 	 * This method initializes FFmpegOptionComboBoxPanel
 	 *
 	 * @return javax.swing.JPanel
@@ -3145,6 +3469,31 @@ s	 * @return javax.swing.JPanel
 					grid_x_y_1_);
 		}
 		return WideFFmpegOptionComboBoxPanel;
+	}
+
+	/**
+	 * This method initializes FFmpegOptionComboBoxPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getZqFFmpegOptionComboBoxPanel() {
+		if (zqFFmpegOptionComboBoxPanel == null) {
+			GridBagConstraints grid_x_y_1_ = new GridBagConstraints();
+			grid_x_y_1_.fill = GridBagConstraints.NONE;
+			grid_x_y_1_.insets = INSETS_0_0_5_5;
+			GridBagConstraints grid_x_y_2_ = new GridBagConstraints();
+			grid_x_y_2_.fill = GridBagConstraints.HORIZONTAL;
+			grid_x_y_2_.gridwidth = 3;
+			grid_x_y_2_.weightx = 1.0;
+			grid_x_y_2_.insets = INSETS_0_5_5_5;
+			zqFFmpegOptionComboBoxPanel = new JPanel();
+			zqFFmpegOptionComboBoxPanel.setLayout(new GridBagLayout());
+			zqFFmpegOptionComboBoxPanel.add(getZqFFmpegOptionComboBox(),
+					grid_x_y_2_);
+			zqFFmpegOptionComboBoxPanel.add(getZqFFmpegOptionReloadButton(),
+					grid_x_y_1_);
+		}
+		return zqFFmpegOptionComboBoxPanel;
 	}
 
 	/**

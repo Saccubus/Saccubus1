@@ -22,6 +22,7 @@ import saccubus.FFmpeg.Aspect;
 import saccubus.conv.Chat;
 import saccubus.conv.CombineXML;
 import saccubus.conv.CommandReplace;
+import saccubus.conv.CommentReplace;
 import saccubus.conv.ConvertToVideoHook;
 import saccubus.conv.NicoXMLReader;
 import saccubus.net.BrowserInfo;
@@ -71,6 +72,7 @@ public class Converter extends Thread {
 	private final Stopwatch Stopwatch;
 	private File selectedVhook;
 	private Aspect videoAspect;
+	private boolean isPlayerWide;
 	private File fwsFile = null;
 	private VideoIDFilter DefaultVideoIDFilter;
 	private String proxy;
@@ -94,6 +96,7 @@ public class Converter extends Thread {
 	 */
 	private String result = "0";
 	private String dateUserFirst = "";
+	private ArrayList<CommentReplace> commentReplaceSet = new ArrayList<CommentReplace>();
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -140,6 +143,7 @@ public class Converter extends Thread {
 	private FFmpeg ffmpeg = null;
 	private File VhookNormal = null;
 	private File VhookWide = null;
+	private File VhookQ = null;
 	private int wayOfVhook = 0;
 	private ArrayList<File> listOfCommentFile = new ArrayList<File>();
 	private String optionalThreadID = "";	// set in
@@ -239,6 +243,12 @@ public class Converter extends Thread {
 	private boolean useProxy(){
 		return Setting.useProxy();
 	}
+	ArrayList<CommentReplace> getCommentReplaceSet(){
+		return commentReplaceSet;
+	}
+	void addCommentReplace(CommentReplace cmrpl){
+		commentReplaceSet.add(cmrpl);
+	}
 
 	private boolean checkOK() {
 		sendtext("チェックしています");
@@ -257,38 +267,53 @@ public class Converter extends Thread {
 				return false;
 			}
 			this.ffmpeg = new FFmpeg(Setting.getFFmpegPath());
-			if (Setting.isUseVhookNormal()){
-				if(Setting.getVhookPath().indexOf(' ') >= 0) {
+			if (Setting.isZqPlayer()) {
+				if(Setting.getZqVhookPath().indexOf(' ') >= 0){
 					sendtext("すいません。現在vhookライブラリには半角空白は使えません。");
 					result = "3";
 					return false;
 				}
-				VhookNormal = new File(Setting.getVhookPath());
-				if (!VhookNormal.canRead()) {
-					sendtext("Vhookライブラリが見つかりません。");
+				VhookQ = new File(Setting.getZqVhookPath());
+				if(!VhookQ.canRead()){
+					sendtext("Q拡張Vhookライブラリが見つかりません。");
 					result = "4";
 					return false;
 				}
-				wayOfVhook++;
-			}
-			if (Setting.isUseVhookWide()){
-				if(Setting.getVhookWidePath().isEmpty()){
-					VhookWide = VhookNormal;
-				}
-				else {
-					if(Setting.getVhookWidePath().indexOf(' ') >= 0) {
-						sendtext("すいません。現在vhookファイル名には半角空白は使えません。");
-						result = "5";
+				wayOfVhook = 3;
+			} else {
+				if (Setting.isUseVhookNormal()){
+					if(Setting.getVhookPath().indexOf(' ') >= 0) {
+						sendtext("すいません。現在vhookライブラリには半角空白は使えません。");
+						result = "3";
 						return false;
 					}
-					VhookWide = new File(Setting.getVhookWidePath());
+					VhookNormal = new File(Setting.getVhookPath());
+					if (!VhookNormal.canRead()) {
+						sendtext("Vhookライブラリが見つかりません。");
+						result = "4";
+						return false;
+					}
+					wayOfVhook++;
 				}
-				if (!VhookWide.canRead()) {
-					sendtext("Vhookライブラリ（ワイド）が見つかりません。");
-					result = "6";
-					return false;
+				if (Setting.isUseVhookWide()){
+					if(Setting.getVhookWidePath().isEmpty()){
+						VhookWide = VhookNormal;
+					}
+					else {
+						if(Setting.getVhookWidePath().indexOf(' ') >= 0) {
+							sendtext("すいません。現在vhookファイル名には半角空白は使えません。");
+							result = "5";
+							return false;
+						}
+						VhookWide = new File(Setting.getVhookWidePath());
+					}
+					if (!VhookWide.canRead()) {
+						sendtext("Vhookライブラリ（ワイド）が見つかりません。");
+						result = "6";
+						return false;
+					}
+					wayOfVhook++;
 				}
-				wayOfVhook++;
 			}
 			if (wayOfVhook == 0){
 				sendtext("使用できるVhookライブラリがありません。");
@@ -1198,6 +1223,7 @@ public class Converter extends Thread {
 				}
 			}
 			OwnerMiddleFile = mkTemp(TMP_OWNERCOMMENT);
+			//ここで commentReplaceが作られる
 			if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile)){
 				sendtext("投稿者コメント変換に失敗");
 				OwnerMiddleFile = null;
@@ -1317,7 +1343,7 @@ public class Converter extends Thread {
 				}
 				conv_name = MainOption + InOption + OutOption;
 				if (!getFFmpegVfOption().isEmpty()){
-					conv_name = VFILTER_FLAG + " " + getFFmpegVfOption() + conv_name;
+					conv_name = vfilter_flag + " " + getFFmpegVfOption() + conv_name;
 				}
 				conv_name = getFFmpegOptionName() + safeAsciiFileName(conv_name);
 				dirName = new File(folder, conv_name).getAbsolutePath().getBytes("Shift_JIS");
@@ -1356,10 +1382,10 @@ public class Converter extends Thread {
 		File video_vhext = Path.mkTemp(Tag+"[log]vhext.txt");
 		if(video_vhext.exists()){
 			if(log_vhext.delete()){
-				Path.fileCopy(video_vhext, log_vhext);
 			}
-		}else{
 			Path.fileCopy(video_vhext, log_vhext);
+		}else{
+			System.out.println(Tag+"[log]vhext.txt が有りません.");
 		}
 		if (code == 0) {
 			sendtext("変換が正常に終了しました。");
@@ -1561,35 +1587,46 @@ public class Converter extends Thread {
 		} else {
 			str = videoAspect.explain() + "  ";
 		}
-		if (way == 1){
-			if (VhookNormal == null){
-				if (!videoAspect.isWide()){
-					str = "≠" + str;
+		isPlayerWide = videoAspect.isWide();
+		if (Setting.isZqPlayer()){
+			//
+		} else {
+			if (way == 1){
+				if (VhookNormal == null){
+					if (!isPlayerWide){
+						str = "≠" + str;
+					}
+					isPlayerWide = true;
+				} else {
+					if (isPlayerWide){
+						str = "≠" + str;
+					}
+					isPlayerWide = false;
 				}
-				videoAspect = Aspect.WIDE;
-			} else {
-				if (videoAspect.isWide()){
-					str = "≠" + str;
-				}
-				videoAspect = Aspect.NORMAL;
 			}
 		}
 		String auto = "";
+		if (way==3){
+			auto = "共通";
+		}
 		if (way==2) {
 			auto = "自動選択 ";
 		}
-		if (videoAspect.isWide()){
+		if (Setting.isZqPlayer()){
+			selectedVhook = VhookQ;
+			MovieInfo.setText(auto + "拡張Vhook Q " + str);
+		} else if (isPlayerWide){
 			selectedVhook = VhookWide;
 			MovieInfo.setText(auto + "拡張Vhook ワイド " + str);
 		} else {
 			selectedVhook = VhookNormal;
 			MovieInfo.setText(auto + "拡張Vhook 従来 " + str);
 		}
-		if (!detectOption(videoAspect.isWide())){
+		if (!detectOption(isPlayerWide,Setting.isZqPlayer())){
 			sendtext("変換オプションファイルの読み込みに失敗しました。");
 			return false;
 		}
-		if(!addAdditionalOption(videoAspect.isWide())){
+		if(!addAdditionalOption(isPlayerWide,Setting.isZqPlayer())){
 			sendtext("追加オプションの設定に失敗しました。");
 			return false;
 		}
@@ -1603,39 +1640,121 @@ public class Converter extends Thread {
 		inSize = videoAspect.getSize();
 		setSize = getSetSize();	//videoSetSize="width"x"height"
 		padOption = getPadOption();		//padOption=width:height:x:y
-		if((outSize = getOutSize())==null){
-			//outSize=width:height in -vfilters outs=w:h
-			int width = videoAspect.getWidth();
-			int height = videoAspect.getHeight();
-			double rate;
-			if(videoAspect.isWide()){
-				rate = 640.0 / width;
-				width = 640;
-				height *= rate;
-			}else{
-				rate = 384.0 / height;
-				width *= rate;
-				height = 384;
-			}
-			if(setSize != null){
-				String[] list = setSize.split(":");
-				try{
-					width = Integer.parseInt(list[0]);
-					height = Integer.parseInt(list[1]);
-				}catch(Exception e){
-					e.printStackTrace();
-				}
-			}
-		//	outSize = "" + width + ":" + height;
-			System.out.println("Output Commetnt Area " + width + ":" + height);
-		}else{
-			System.out.println("Output Commetnt Area " + outSize);
+		outSize = getOutSize();
+		Aspect outAspect = videoAspect;
+		if (setSize != null){
+			//setSize=width:height in -s WIDTHxHEIGHT
+			outAspect = toAspect(setSize,outAspect);
 		}
-		return true;
+		if (outSize != null){
+			//outSize=width:height in -vfilters outs=w:h
+			outAspect = toAspect(outSize, outAspect);
+			setSize = outSize;
+			printOutputSize(setSize,outAspect);
+			replaceSetSize();
+			return true;
+		}
+		if (getSameAspectMaxFlag()){
+			//Outoption contains "-samx"
+			//check and set outAspect & setSize to be same as input video
+			if(!outAspect.equals(videoAspect)){
+				double out_aspect = outAspect.getValue();
+				int outw = outAspect.getWidth();
+				int outh = outAspect.getHeight();
+				double video_aspect = videoAspect.getValue();
+				if(out_aspect < video_aspect){
+					// ow / oh < w / h -> oh を変更
+					outh = toMod4(outw / video_aspect);
+				}else if(out_aspect > video_aspect){
+					// ow / oh > w / h -> ow を変更
+					outw = toMod4(outh * video_aspect);
+				}
+				outAspect = new Aspect(outw, outh);
+				setSize = outAspect.getSize();
+				printOutputSize(setSize,outAspect);
+				replaceSetSize();
+				return true;
+			}
+		}
+		if (padOption != null){
+			//padOption=width:height:videox:videoy in -vfilters pad=w:h:x:y
+			printOutputSize(padOption,outAspect);
+			return true;
+		}
+		if (setSize != null){
+			//setSize=width:height in -s WIDTHxHEIGHT
+			printOutputSize(setSize,outAspect);
+			return true;
+		} else {
+			//inSize=width:height
+			printOutputSize(inSize,outAspect);
+			return true;
+		}
+	}
+
+	void printOutputSize(String sizestr, Aspect aspect){
+		int commentWidth = 640;		//原宿
+		int commentHeight = 384;	//原宿
+		if(Setting.isZqPlayer()){
+			commentWidth = 800;		//Qwatch大画面
+			commentHeight = 480;
+		}
+		aspect = toAspect(sizestr, aspect);
+		int width = aspect.getWidth();
+		int height = aspect.getHeight();
+		System.out.println("Output Video Area " + width + ":" + height);
+		//width heightは出力動画の大きさ(outs指定時はそのサイズ)
+		System.out.println("Video "+aspect.getSize());
+		double rate;
+		if (Setting.isZqPlayer()){
+			if(aspect.isQWide()){
+				rate = (double)width / commentWidth;
+				height = toMod4(commentHeight * rate);
+			}else{
+				rate = (double)height / commentHeight;
+				width = toMod4(commentWidth * rate);
+			}
+		} else {
+			if(isPlayerWide){
+				rate = (double)width / commentWidth;
+				height = toMod4(commentHeight * rate);
+			}else{
+				rate = (double)height / commentHeight;
+				width = toMod4(commentWidth * rate);
+			}
+		}
+		System.out.println("Output Commetnt Area " + width + ":" + height + " Wide? " + isPlayerWide);
+		//width heightは出力コメントの大きさ（動画をはみ出さない）
+		return;
+	}
+
+	private int toMod4(double d){
+		return ((int)(d / 4.0 + 0.5)) * 4;
+	}
+
+	private Aspect toAspect(String str,Aspect defaultAspect){
+		String[] list = str.split(":");
+		int width = defaultAspect.getWidth();
+		if(list.length>=1 && !list[0].equals("0")){
+			try {
+				width = Integer.parseInt(list[0]);
+			} catch (NumberFormatException e){
+				e.printStackTrace();
+			}
+		}
+		int height = defaultAspect.getHeight();
+		if(list.length>=2 && !list[1].equals("0")){
+			try {
+				height = Integer.parseInt(list[1]);
+			} catch(NumberFormatException e){
+				e.printStackTrace();
+			}
+		}
+		return new Aspect(width, height);
 	}
 
 	private String getSetSize() {
-		String[] list = OutOption.split(" +");
+ 		String[] list = OutOption.split(" +");
 		for(int i=0;i<list.length;i++){
 			String arg = list[i];
 			if(arg.equals("-s") && i+1 < list.length){
@@ -1646,6 +1765,10 @@ public class Converter extends Thread {
 			}
 		}
 		return null;
+	}
+
+	private void replaceSetSize(){
+		OutOption = replaceOption(OutOption, "-s", setSize.replace(':', 'x'));
 	}
 
 	private String getPadOption() {
@@ -1668,11 +1791,23 @@ public class Converter extends Thread {
 		return outs;
 	}
 
+	private boolean getSameAspectMaxFlag(){
+		//-samx
+		if(OutOption.contains("-samx")){
+			OutOption = OutOption.replaceAll("-samx", "");
+			return true;
+		}
+		return false;
+	}
+
 	private String getFromVfOpotion(String prefix){
-		String option = getFFmpegVfOption();
+/*
+ 		String option = getFFmpegVfOption();
 		String[] list = option.split(",");
 		for(int i=0; i<list.length; i++){
 			String arg = list[i];
+ */
+		for(String arg: getFFmpegVfOption().split(",")){
 			if(arg.startsWith(prefix)){
 				return arg.substring(prefix.length());
 			}
@@ -1680,9 +1815,11 @@ public class Converter extends Thread {
 		return null;
 	}
 
-	private boolean addAdditionalOption(boolean wide) {
+	boolean addAdditionalOption(boolean wide, boolean isQ) {
 		String addOption = "";
-		if(wide){
+		if(isQ){
+			addOption = Setting.getZqAddOption();
+		} else if(wide){
 			addOption = Setting.getWideAddOption();
 		}else{
 			addOption = Setting.getAddOption();
@@ -1694,23 +1831,23 @@ public class Converter extends Thread {
 		HashMap<String,String> optionMap = new HashMap<String, String>(16);
 		String key = "";
 		String value = "";
-		for(int i=0;i<list.length;i++){
-			String arg = list[i];
-			if(arg.startsWith("-")){
-				if(!key.isEmpty()){
-					optionMap.put(key, value);
+			for(int i=0;i<list.length;i++){
+				String arg = list[i];
+				if(arg.startsWith("-")){
+					if(!key.isEmpty()){
+						optionMap.put(key, value);
+					}
+					key = arg;
+					value = "";
+				}else{
+					value = arg;
 				}
-				key = arg;
-				value = "";
-			}else{
-				value = arg;
 			}
-		}
-		if(!key.isEmpty()){
-			optionMap.put(key, value);
-		}
-		replace3option(optionMap);
-		return true;
+			if(!key.isEmpty()){
+				optionMap.put(key, value);
+			}
+			replace3option(optionMap);
+			return true;
 	}
 
 	private static final int CODE_CONVERTING_ABORTED = 100;
@@ -1729,7 +1866,7 @@ public class Converter extends Thread {
 		ffmpeg.addCmd(" ");
 		ffmpeg.addCmd(OutOption);
 		if (!Setting.isVhookDisabled()) {
-			if(!addVhookSetting(ffmpeg, selectedVhook, videoAspect.isWide())){
+			if(!addVhookSetting(ffmpeg, selectedVhook, isPlayerWide)){
 				return -1;
 			}
 		} else if (!getFFmpegVfOption().isEmpty()){
@@ -1815,6 +1952,9 @@ public class Converter extends Thread {
 			}
 			if (Setting.isOpaqueComment()) {
 				ffmpeg.addCmd("|--enable-opaque-comment");
+			}
+			if (Setting.isZqPlayer()){
+				ffmpeg.addCmd("|--enable-Qwatch");
 			}
 			if (isWide){
 				ffmpeg.addCmd("|--nico-width-wide");
@@ -2034,16 +2174,37 @@ public class Converter extends Thread {
 
 	private String MainOption;
 
-	private String ffmpegOptionName = "直接入力";
+	private String ffmpegOptionName;
 
 	private String ffmpegVfOption = "";
 
-	boolean detectOption(boolean isWide) {
+	boolean detectOption(boolean isWide, boolean isQ) {
 		File option_file = null;
-		if (!isWide) {
+		ffmpegOptionName = "直接入力";
+		if(isQ){
+			option_file = Setting.getZqOptionFile();
+			if(option_file == null){
+				ExtOption = Setting.getZqCmdLineOptionExt();
+				InOption = Setting.getZqCmdLineOptionIn();
+				OutOption = Setting.getZqCmdLineOptionOut();
+				MainOption = Setting.getZqCmdLineOptionMain();
+			}
+		} else if (!isWide) {
 			option_file = Setting.getOptionFile();
+			if(option_file == null){
+				ExtOption = Setting.getCmdLineOptionExt();
+				InOption = Setting.getCmdLineOptionIn();
+				OutOption = Setting.getCmdLineOptionOut();
+				MainOption = Setting.getCmdLineOptionMain();
+			}
 		} else {
 			option_file = Setting.getWideOptionFile();
+			if(option_file == null){
+				ExtOption = Setting.getWideCmdLineOptionExt();
+				InOption = Setting.getWideCmdLineOptionIn();
+				OutOption = Setting.getWideCmdLineOptionOut();
+				MainOption = Setting.getWideCmdLineOptionMain();
+			}
 		}
 		if (option_file != null) {
 			try {
@@ -2061,18 +2222,6 @@ public class Converter extends Thread {
 			} catch (IOException ex) {
 				ex.printStackTrace();
 				return false;
-			}
-		} else {
-			if (!isWide){
-				ExtOption = Setting.getCmdLineOptionExt();
-				InOption = Setting.getCmdLineOptionIn();
-				OutOption = Setting.getCmdLineOptionOut();
-				MainOption = Setting.getCmdLineOptionMain();
-			} else {
-				ExtOption = Setting.getWideCmdLineOptionExt();
-				InOption = Setting.getWideCmdLineOptionIn();
-				OutOption = Setting.getWideCmdLineOptionOut();
-				MainOption = Setting.getWideCmdLineOptionMain();
 			}
 		}
 		//オプションに拡張子を含んでしまった場合にも対応☆
@@ -2144,15 +2293,21 @@ public class Converter extends Thread {
 		return vfIn;
 	}
 	private static final String VFILTER_FLAG = "-vfilters";
+	private static final String VFILTER_FLAG2 = "-vf";
+	private String vfilter_flag = VFILTER_FLAG;
 	private String getvfOption(String option){
 		if (option == null){
 			return "";
 		}
 		int index;
-		if ((index = option.indexOf(VFILTER_FLAG)) < 0){
+		if ((index = option.indexOf(VFILTER_FLAG)) >= 0){
+			vfilter_flag = VFILTER_FLAG;
+		}else if ((index = option.indexOf(VFILTER_FLAG2)) >= 0){
+			vfilter_flag = VFILTER_FLAG2;
+		}else{
 			return "";
 		}
-		option = option.substring(index + VFILTER_FLAG.length());
+		option = option.substring(index + vfilter_flag.length());
 		option = option.trim();
 		if ((index = option.indexOf(" ")) < 0){
 			return option;
@@ -2164,7 +2319,7 @@ public class Converter extends Thread {
 		if (option == null){
 			return "";
 		}
-		return option.replace(VFILTER_FLAG,"").replace(vfoption, "")
+		return option.replace(vfilter_flag,"").replace(vfoption, "")
 			.replaceAll(" +", " ");
 	}
 	public String getInOption(){

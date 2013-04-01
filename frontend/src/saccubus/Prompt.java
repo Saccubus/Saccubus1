@@ -171,6 +171,8 @@ public class Prompt {
 				optionFilePrefix+ConvertingSetting.PROP_OPTION_FILE);
 			prop.setProperty(ConvertingSetting.PROP_WIDE_OPTION_FILE,
 				optionFilePrefix+ConvertingSetting.PROP_WIDE_OPTION_FILE);
+			prop.setProperty(ConvertingSetting.PROP_ZQ_OPTION_FILE,
+				optionFilePrefix + ConvertingSetting.PROP_ZQ_OPTION_FILE);
 		}
 		//settingMap ê›íË
 		for(Entry<String, String> e : settingMap.entrySet()){

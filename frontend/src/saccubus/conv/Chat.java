@@ -45,7 +45,11 @@ public class Chat {
 
 	private static final int CMD_LOC_INVISIBLE = 64;
 
-	private static final int CMD_LOC_IS_BUSSON = 128;
+	private static final int CMD_LOC_IS_BUTTON = 128;
+
+	static final int CMD_LOC_SCRIPT_FOR_OWNER = 256;
+
+	static final int CMD_LOC_SCRIPT_FOR_USER = 512;
 
 	/**
 	 * Location bit 31-16 追加
@@ -133,6 +137,9 @@ public class Chat {
 	// "vpos"
 	private int Vpos = 0;
 
+	// "is Owner?"
+	private boolean IsOwner = false;
+
 	private String Comment = "";
 
 	public Chat() {
@@ -198,7 +205,7 @@ public class Chat {
 			}
 			// is_buttonコマンド
 			else if (str.equals("is_button")){
-				Location |= CMD_LOC_IS_BUSSON;
+				Location |= CMD_LOC_IS_BUTTON;
 			}
 			// サイズ
 			else if (str.equals("big") && !isSizeAssigned) {
@@ -210,82 +217,6 @@ public class Chat {
 			} else if (str.equals("medium") && !isSizeAssigned) {
 				Size = CMD_SIZE_MEDIUM;
 				isSizeAssigned = true;
-/*			}
-			// 色
- 			else if (str.equals("red") && !isColorAssigned) {
-				Color = CMD_COLOR_RED;
-				isColorAssigned = true;
-			} else if (str.equals("orange") && !isColorAssigned) {
-				Color = CMD_COLOR_ORANGE;
-				isColorAssigned = true;
-			} else if (str.equals("yellow") && !isColorAssigned) {
-				Color = CMD_COLOR_YELLOW;
-				isColorAssigned = true;
-			} else if (str.equals("pink") && !isColorAssigned) {
-				Color = CMD_COLOR_PINK;
-				isColorAssigned = true;
-			} else if (str.equals("blue") && !isColorAssigned) {
-				Color = CMD_COLOR_BLUE;
-				isColorAssigned = true;
-			} else if (str.equals("purple") && !isColorAssigned) {
-				Color = CMD_COLOR_PURPLE;
-				isColorAssigned = true;
-			} else if (str.equals("cyan") && !isColorAssigned) {
-				Color = CMD_COLOR_CYAN;
-				isColorAssigned = true;
-			} else if (str.equals("green") && !isColorAssigned) {
-				Color = CMD_COLOR_GREEN;
-				isColorAssigned = true;
-			} else if ((str.equals("niconicowhite") || str.equals("white2")) && !isColorAssigned) {
-				Color = CMD_COLOR_NICOWHITE;
-				isColorAssigned = true;
-			} else if ((str.equals("arineblue") || str.equals("blue2")) && !isColorAssigned) {
-				Color = CMD_COLOR_MARINEBLUE;
-				isColorAssigned = true;
-			} else if ((str.equals("madyellow") || str.equals("yellow2")) && !isColorAssigned) {
-				Color = CMD_COLOR_MADYELLOW;
-				isColorAssigned = true;
-			} else if ((str.equals("passionorange") || str.equals("orange2")) && !isColorAssigned) {
-				Color = CMD_COLOR_PASSIONORANGE;
-				isColorAssigned = true;
-			} else if ((str.equals("nobleviolet") || str.equals("purple2")) && !isColorAssigned) {
-				Color = CMD_COLOR_NOBLEVIOLET;
-				isColorAssigned = true;
-			} else if ((str.equals("elementalgreen") || str.equals("green2")) && !isColorAssigned) {
-				Color = CMD_COLOR_ELEMENTALGREEN;
-				isColorAssigned = true;
-			} else if ((str.equals("truered") || str.equals("red2")) && !isColorAssigned) {
-				Color = CMD_COLOR_TRUERED;
-				isColorAssigned = true;
-			} else if (str.equals("black") && !isColorAssigned) {
-				Color = CMD_COLOR_BLACK;
-				isColorAssigned = true;
-			} else if (str.equals("white") && !isColorAssigned) {
-				Color = CMD_COLOR_WHITE;
-				isColorAssigned = true;
-			} else if (str.startsWith("#") && !isColorAssigned){
-				// color 24bit1
-				if(str.length()<7){
-					Color = CMD_COLOR_DEF;	// default
-					System.out.println("[Chat.java]waring str=" + str + ",mail=" + mail_str);
-				}else{
-					try{
-						Color = Integer.decode(str);
-						if(Color < 0 || Color > 0x00ffffff){
-							Color = CMD_COLOR_DEF;
-						} else{
-							// 24bit Color is represeted as MINUS value;
-							Color += Integer.MIN_VALUE;
-						}
-					} catch(NumberFormatException e){
-						System.out.println("[Chat.java]error str=" + str + ",mail=" + mail_str);
-						//e.printStackTrace();
-						Color = CMD_COLOR_DEF;	// default
-					}
-				}
-				isColorAssigned = true;
-		// 		Color = simulateColor16(str.substr(1));
-*/
 			} else {
 				int color = getColorNumber(str);
 				if (color == CMD_COLOR_NONE){
@@ -343,8 +274,9 @@ public class Chat {
 
 	public void setComment(String com_str) {
 		// System.out.println("Comment[" + com_str.length() + "]:" + com_str);
-		Comment += com_str.replace("\t", "\u2001\u2001");
+		//Comment += com_str.replace("\t", "\u2001\u2001");
 		//Comment += com_str.replace("\t", "      ");	//0x20 6文字
+		Comment += com_str;
 	}
 
 	public void write(OutputStream os) throws IOException {
@@ -383,7 +315,7 @@ public class Chat {
 			color = getColorNumber(wakuiro);
 			if(color < 0){
 				color -= Integer.MIN_VALUE;
-				return "0x" + Integer.toString(color, 16); 
+				return "0x" + Integer.toString(color, 16);
 			}
 			return Integer.toString(color);
 		}
@@ -414,7 +346,7 @@ public class Chat {
 			color = getColorNumber(pair[1]);
 			if(color < 0){
 				color -= Integer.MIN_VALUE;
-				sb.append("0x" + Integer.toString(color, 16)); 
+				sb.append("0x" + Integer.toString(color, 16));
 			}else if(color == CMD_COLOR_NONE||color == CMD_COLOR_ERROR){
 				sb.append(Integer.toString(CMD_COLOR_YELLOW));
 			}else{
@@ -425,7 +357,7 @@ public class Chat {
 		return sb.toString();
 	}
 
-	private static int getColorNumber(String str) {
+	static int getColorNumber(String str) {
 		//色名をカラーコード整数値に変換して返す
 		//#rrggbbはマイナスの数にして返す
 		// 色
@@ -478,7 +410,7 @@ public class Chat {
 			if(color < 0 || color > 0x00ffffff){
 				// error
 				return CMD_COLOR_ERROR;
-			} 
+			}
 			// 24bit Color is represeted as MINUS value;
 			return color + Integer.MIN_VALUE;
 		} catch(NumberFormatException e){
@@ -486,5 +418,24 @@ public class Chat {
 			//e.printStackTrace();
 			return CMD_COLOR_ERROR;	// error default
 		}
+	}
+
+	int getVpos() {
+		return Vpos;
+	}
+
+	void process(CommentReplace cr){
+		Comment = cr.replace(Comment);
+	}
+
+	boolean isScript(){
+		return (Location & CMD_LOC_SCRIPT)!=0;
+	}
+	void setOwner(boolean is_owner) {
+		IsOwner = is_owner;
+	}
+
+	boolean isOwner(){
+		return IsOwner;
 	}
 }

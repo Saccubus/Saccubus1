@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.swing.JLabel;
 
 import saccubus.util.BitReader;
@@ -18,6 +22,7 @@ public class FFmpeg {
 
 	private final String exePath;
 	private StringBuffer sb;
+	private ArrayList<String> sa;
 	private String LastFrame = "";
 	private String LastError = "";
 
@@ -52,18 +57,38 @@ public class FFmpeg {
 		return sb.substring(0);
 	}
 
+	public ArrayList<String> getCmdArrayList() {
+		sa = parse(getCmd());
+		return sa;
+	}
+
+	private ArrayList<String> parse(String cmd) {
+		String reg = "(\"[^\"]*\")|([^ ]+)";
+		Pattern p = Pattern.compile(reg);
+		Matcher m = p.matcher(cmd);
+		sa = new ArrayList<String>();
+		while (m.find()) {
+			sa.add(m.group());
+		}
+		return sa;
+	}
+
 	public interface CallbackInterface extends Callback {
 		public boolean checkStop();
 		public void doAbort(String text);
 	}
 
 	public int exec(int abortedCode, CallbackInterface callback) {
+		ProcessBuilder pb = null;
 		Process process = null;
 		BufferedReader ebr = null;
 		try {
-		//	System.out.println("\n\n----\nProcessing FFmpeg...\n----\n\n");
-			process = Runtime.getRuntime().exec(getCmd());
-			ebr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+	//		System.out.println("\n\n----\nProcessing FFmpeg...\n----\n\n");
+	//		process = Runtime.getRuntime().exec(getCmd());
+			pb = new ProcessBuilder(getCmdArrayList());
+			pb.redirectErrorStream(true);
+			process = pb.start();
+			ebr = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String e;
 			while ((e = ebr.readLine()) != null) {
 				callback.doEveryLoop(e);
@@ -85,7 +110,7 @@ public class FFmpeg {
 		} finally {
 			try {
 				ebr.close();
-				process.getErrorStream().close();
+				process.getInputStream().close();
 			} catch(Exception ex){
 				ex.printStackTrace();
 			}
@@ -159,12 +184,15 @@ public class FFmpeg {
 	 * @return
 	 */
 	public int exec(Callback callback){
-
+		ProcessBuilder pb = null;
 		Process process = null;
 		BufferedReader ebr = null;
 		try {
-			process = Runtime.getRuntime().exec(getCmd());
-			ebr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+	//		process = Runtime.getRuntime().exec(getCmd());
+			pb = new ProcessBuilder(getCmdArrayList());
+			pb.redirectErrorStream(true);
+			process = pb.start();
+			ebr = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String e;
 			while ((e = ebr.readLine()) != null) {
 				callback.doEveryLoop(e);
@@ -180,7 +208,8 @@ public class FFmpeg {
 		} finally {
 			try {
 				ebr.close();
-				process.getErrorStream().close();
+	//			process.getErrorStream().close();
+				process.getInputStream().close();
 			} catch(Exception ex){
 				ex.printStackTrace();
 			}
@@ -289,7 +318,7 @@ public class FFmpeg {
 		return videoLength;
 	}
 
-	//	public enum Aspect {
+//	public enum Aspect {
 //		NORMAL, WIDE,
 //	}
 	public static class Aspect {
@@ -315,11 +344,21 @@ public class FFmpeg {
 				return false;
 			}
 		}
+		public boolean isQWide(){
+			if (aspect >= 1.777) {	// 640x360 < 854x480=1.779
+				return true;
+			} else {
+				return false;
+			}
+		}
 		public String explain(){
 			return "(" + width + "x" + height + ")" + String.format("%.3f", aspect);
 		}
 		public String getSize(){
 			return "" + width + ":" + height;
+		}
+		public boolean equals(Aspect a){
+			return aspect == a.aspect;
 		}
 		public static final Aspect NORMAL = new Aspect(4, 3);
 		public static final Aspect WIDE = new Aspect(16, 9);

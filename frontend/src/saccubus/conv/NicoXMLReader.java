@@ -3,8 +3,8 @@ package saccubus.conv;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
 
 import saccubus.SharedNgScore;
 
@@ -44,6 +44,8 @@ public class NicoXMLReader extends DefaultHandler {
 	private final CommandReplace NG_Cmd;
 
 	private boolean item_fork;
+
+	private boolean is_button;
 
 	private final int ng_Score;
 	private int countNG_Score = 0;
@@ -154,6 +156,7 @@ public class NicoXMLReader extends DefaultHandler {
 			item = new Chat();
 			item_kicked = false;
 			item_fork = false;
+			is_button = false;
 			//マイメモリ削除対象
 			//運営削除対象
 			String deleted = attributes.getValue("deleted");
@@ -186,6 +189,9 @@ public class NicoXMLReader extends DefaultHandler {
 			}else if(!mail.contains("184")){
 				mail += " 186";
 			}
+			if(mail.contains("is_button")){
+				is_button = true;
+			}
 			if (match(NG_Word, mail)) {
 				item_kicked = true;
 				countNG_Word++;
@@ -204,12 +210,12 @@ public class NicoXMLReader extends DefaultHandler {
 			if (forkval != null && forkval.equals("1")) {
 				item_fork = true;
 			}
+			item.setOwner(item_fork);
 			// item.setUserID(user_id);
 			item.setVpos(attributes.getValue("vpos"));
 
 		}
 	}
-
 
 	/**
 	 *
@@ -223,11 +229,6 @@ public class NicoXMLReader extends DefaultHandler {
 	@Override
 	public void characters(char[] ch, int offset, int length) {
 		if (item != null) {
-			if (item_fork && length > 0
-					&& ch[offset] == '/'){	//ignore NIWANGO temporary
-				item_kicked = true;
-				return;
-			}
 			for (int i = offset; i < offset + length; i++) {
 				if (!Character.isDefined(ch[i])) {
 					ch[i] = '?';
@@ -235,20 +236,109 @@ public class NicoXMLReader extends DefaultHandler {
 			}
 			String com = new String(ch, offset, length);
 			boolean script = false;
+			//ニワン語処理
+			if (item_fork && com.startsWith("/")){
+				String[] lines = com.substring(1).split(";");
+				for(String nicos: lines){
+					if(nicos.startsWith("replace")){
+						com = "/" + nicos;
+						break;
+					}
+				}
+				if(!com.startsWith("/")){
+					item_kicked = true;
+					return;
+				}
+				if(com.startsWith("replace(",1) && com.endsWith(")")){
+					// /replace実装 コメントは /replace()だけの場合
+					System.out.println("Converting: " + com);
+					item.addCmd(Chat.CMD_LOC_SCRIPT);
+					script = true;
+					com = com.replaceFirst("^/replace\\(", "").replaceFirst("\\)[ 　]*$", "");
+					String[] terms = com.split(",");
+					if(terms.length<2){
+						item_kicked = true;
+						return;
+					}
+					String src = "";
+					String dest = "";
+					String target = "";
+					String enabled = "T";
+					String fill = "F";
+					String partial = "T";
+					String rcolor = "";
+					String rsize = "";
+					String rpos = "";
+					String ret;
+					for(String term:terms){
+			//			System.out.println("Converting3: " + term);
+						if ((ret = niwango(term,"src:"))!=null){
+							src = ret;
+						}
+						else if((ret = niwango(term, "dest:"))!=null){
+							dest = ret;
+						}
+						else if((ret = niwango(term, "enabled:"))!=null){
+							enabled = CommentReplace.encodeBoolean(ret);
+						}
+						else if((ret = niwango(term, "target:"))!=null){
+							target = ret;
+							if(target.contains("owner"))
+								item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_OWNER);
+							if(target.contains("user"))
+								item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_USER);
+						}
+						else if((ret = niwango(term, "fill:"))!=null){
+							fill = CommentReplace.encodeBoolean(ret);
+						}
+						else if((ret = niwango(term, "partial:"))!=null){
+							partial = CommentReplace.encodeBoolean(ret);
+						}
+						else if((ret = niwango(term, "color:"))!=null){
+							rcolor = ret;
+						}
+						else if((ret = niwango(term, "size:"))!=null){
+							rsize = ret;
+						}
+						else if((ret = niwango(term, "pos:"))!=null){
+							rpos = ret;
+						}
+						else{
+							System.out.println("Warning: /replace() contains " + term);
+						}
+					}
+					int vpos = item.getVpos();
+					System.out.println("Converted:" +vpos +":/replace(src:"+src +",dest:"+dest
+						+",enabled:"+enabled +",target:"+target +",fill:"+fill +",partial:"+partial
+						+",color:"+rcolor +",size:" +rsize+",pos:" +rpos+").");
+					com = "/r," + src + "," + dest + "," + fill;
+					System.out.println("Converted-Comment: " + com);
+					CommentReplace comrpl = new CommentReplace(item, src, dest, enabled, partial,
+						target, fill, item.getVpos(), rcolor, rsize, rpos);
+					packet.addReplace(comrpl);
+				}else{
+					//ignore NIWANGO temporary
+					item_kicked = true;
+					return;
+				}
+			}
 			//ニコスクリプト処理
 			if(com.startsWith("@")||com.startsWith("＠")){
 				if(item_fork){
-					String nicos = com.substring(1);
-					if(nicos.startsWith("逆")){
+					if(com.startsWith("逆",1)){
 						//逆走
 						item.addCmd(Chat.CMD_LOC_SCRIPT);
 						script = true;
-					}else if(nicos.startsWith("デフォルト")){
+					}else if(com.startsWith("デフォルト",1)){
 						//デフォルト値設定
 						item.addCmd(Chat.CMD_LOC_SCRIPT);
 						script = true;
 					}
 				}
+			}
+			if(is_button){
+				item.addCmd(Chat.CMD_LOC_SCRIPT);
+				script = true;
 			}
 			//NGワード
 			if (!script && match(NG_Word, com)) {
@@ -260,6 +350,28 @@ public class NicoXMLReader extends DefaultHandler {
 		}
 	}
 
+	private String niwango(String str, String key){
+		if(str==null) return null;
+		int len = str.length();
+		if(str.startsWith(key)){
+			int index = key.length();
+			if(len<=index){
+				return null;
+			}
+			char c1 = str.charAt(index);
+			if(c1=='\''|| c1=='\"'){
+				index++;
+				if(str.charAt(len-1)!=c1){
+					return null;
+				}
+				len--;
+			}
+			str = str.substring(index,len);
+			str = str.replace("\\r", "\n").replace("\\n", "\n").replace("\\t", "\t");
+			return str;
+		}
+		return null;
+	}
 	/**
 	 *
 	 * @param uri

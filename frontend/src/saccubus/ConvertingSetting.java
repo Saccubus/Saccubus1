@@ -2,6 +2,7 @@ package saccubus;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Key;
@@ -135,6 +136,14 @@ public class ConvertingSetting {
 	private boolean changeMp4Ext;
 	private boolean changeTitleId;
 	private boolean saveThumbnailJpg;
+	private boolean zqPlayer;
+	private String zqVhookPath;
+	private File zqOptionFile;
+	private String zqCmdLineOptionExt;
+	private String zqCmdLineOptionIn;
+	private String zqCmdLineOptionOut;
+	private String zqCmdLineOptionMain;
+	private String zqAddOption;
 
 	private Map<String, String> replaceOptions;
 
@@ -331,7 +340,15 @@ public class ConvertingSetting {
 			boolean save_thumb_info_as_text,
 			boolean change_mp4_ext,
 			boolean change_text_id,
-			boolean save_thumbnail_jpg
+			boolean save_thumbnail_jpg,
+			boolean zq_player,
+			String zq_vhook_path,
+			File zq_option_file,
+			String zq_cmdlineoption_ext,
+			String zq_cmdlineoption_main,
+			String zq_cmdlineoption_in,
+			String zq_cmdlineoption_out,
+			String zq_add_option
 		)
 	{
 		this(	mailaddress,
@@ -437,6 +454,14 @@ public class ConvertingSetting {
 		changeMp4Ext = change_mp4_ext;
 		changeTitleId = change_text_id;
 		saveThumbnailJpg = save_thumbnail_jpg;
+		zqPlayer = zq_player;
+		zqVhookPath = zq_vhook_path;
+		zqOptionFile = zq_option_file;
+		zqCmdLineOptionExt = zq_cmdlineoption_ext;
+		zqCmdLineOptionMain = zq_cmdlineoption_main;
+		zqCmdLineOptionIn = zq_cmdlineoption_in;
+		zqCmdLineOptionOut = zq_cmdlineoption_out;
+		zqAddOption = zq_add_option;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -724,6 +749,30 @@ public class ConvertingSetting {
 	public boolean isSaveThumbnailJpg(){
 		return saveThumbnailJpg;
 	}
+	public boolean isZqPlayer(){
+		return zqPlayer;
+	}
+	public String getZqVhookPath(){
+		return zqVhookPath;
+	}
+	public File getZqOptionFile(){
+		return zqOptionFile;
+	}
+	public String getZqCmdLineOptionIn() {
+		return zqCmdLineOptionIn;
+	}
+	public String getZqCmdLineOptionOut() {
+		return zqCmdLineOptionOut;
+	}
+	public String getZqCmdLineOptionExt() {
+		return zqCmdLineOptionExt;
+	}
+	public String getZqCmdLineOptionMain() {
+		return zqCmdLineOptionMain;
+	}
+	public String getZqAddOption() {
+		return zqAddOption;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -833,6 +882,14 @@ public class ConvertingSetting {
 	static final String PROP_CHANGE_MP4_EXT = "ChangeMp4Ext";
 	static final String PROP_CHANGE_TITLE_ID = "ChangeTitleId";
 	static final String PROP_SAVE_THUMBNAIL_JPG = "SaveThumbnailJpg";
+	static final String PROP_ZQ_PLAYER = "QPlayerMode";
+	static final String PROP_ZQ_VHOOK_PATH = "QVhookPath";
+	static final String PROP_ZQ_OPTION_FILE = "QOptionFile";
+	static final String PROP_ZQ_CMDLINE_EXT = "QCMD_EXT";
+	static final String PROP_ZQ_CMDLINE_MAIN = "QCMD_MAIN";
+	static final String PROP_ZQ_CMDLINE_IN = "QCMD_IN";
+	static final String PROP_ZQ_CMDLINE_OUT = "QCMD_OUT";
+	static final String PROP_ZQ_ADD_OPTION = "QAddOption";
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
 	 */
@@ -1005,6 +1062,17 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_CHANGE_MP4_EXT, Boolean.toString(setting.isChangeMp4Ext()));
 		prop.setProperty(PROP_CHANGE_TITLE_ID, Boolean.toString(setting.isChangeTitleId()));
 		prop.setProperty(PROP_SAVE_THUMBNAIL_JPG, Boolean.toString(setting.isSaveThumbnailJpg()));
+		prop.setProperty(PROP_ZQ_PLAYER, Boolean.toString(setting.isZqPlayer()));
+		prop.setProperty(PROP_ZQ_VHOOK_PATH, setting.getZqVhookPath());
+		if (setting.getZqOptionFile() != null) {
+			prop.setProperty(PROP_ZQ_OPTION_FILE, setting.getZqOptionFile()
+				.getPath());
+		}
+		prop.setProperty(PROP_ZQ_CMDLINE_EXT, setting.getZqCmdLineOptionExt());
+		prop.setProperty(PROP_ZQ_CMDLINE_MAIN, setting.getZqCmdLineOptionMain());
+		prop.setProperty(PROP_ZQ_CMDLINE_IN, setting.getZqCmdLineOptionIn());
+		prop.setProperty(PROP_ZQ_CMDLINE_OUT, setting.getZqCmdLineOptionOut());
+		prop.setProperty(PROP_ZQ_ADD_OPTION, setting.getZqAddOption());
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1015,14 +1083,16 @@ public class ConvertingSetting {
 		saveSetting(setting, PROP_FILE);
 	}
 
-	public static Properties loadProperty(String propFile,boolean traceError){
+	public static Properties loadProperty(String propFile,boolean warnFileNotFind){
 		Properties prop = new Properties();
 		try {
 			prop.loadFromXML(new FileInputStream(propFile));
-		} catch (IOException ex) {
-			if(traceError){
-				ex.printStackTrace();
+		} catch(FileNotFoundException e1){
+			if(warnFileNotFind){
+				e1.printStackTrace();
 			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 		return prop;
 	}
@@ -1044,14 +1114,16 @@ public class ConvertingSetting {
 	}
 
 	public static ConvertingSetting loadSetting(String user,
-			String password, String propFile, boolean logingError) {
+			String password, String propFile, boolean warnFileNotFind) {
 		Properties prop = new Properties();
 		try {
 			prop.loadFromXML(new FileInputStream(propFile));
-		} catch (IOException ex) {
-			if(logingError){
-				ex.printStackTrace();
+		} catch(FileNotFoundException e1){
+			if(warnFileNotFind){
+				e1.printStackTrace();
 			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 		return loadSetting(user, password, prop);
 	}
@@ -1117,6 +1189,11 @@ public class ConvertingSetting {
 		File wide_option_file = null;
 		if (option_file_name != null) {
 			wide_option_file = new File(option_file_name);
+		}
+		File zq_option_file = null;
+		option_file_name = prop.getProperty(PROP_ZQ_OPTION_FILE, null);
+		if (option_file_name != null) {
+			zq_option_file = new File(option_file_name);
 		}
 		String win_dir = System.getenv("windir");
 		if(!win_dir.endsWith(File.separator)){
@@ -1184,7 +1261,7 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_WIDE_CMDLINE_EXT, "mp4"),
 			prop.getProperty(PROP_WIDE_CMDLINE_MAIN,""),
 			prop.getProperty(PROP_WIDE_CMDLINE_IN, ""),
-			prop.getProperty(PROP_WIDE_CMDLINE_OUT,"-threads 0 -s 640x360 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 16:9"),
+			prop.getProperty(PROP_WIDE_CMDLINE_OUT,"-threads 0 -s 640x360 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -cqp 23 -async 1 -aspect 16:9"),
 			Boolean.parseBoolean(prop.getProperty(PROP_OPTIONAL_TRANSLUCENT, "true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_FONT_HEIGHT_FIX,"false")),
 			prop.getProperty(PROP_FONT_HEIGHT_FIX_RAITO,""),
@@ -1213,7 +1290,15 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_THUMB_AS_TEXT, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_CHANGE_MP4_EXT, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_CHANGE_TITLE_ID, "false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_THUMBNAIL_JPG, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_THUMBNAIL_JPG, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_ZQ_PLAYER, "false")),
+			prop.getProperty(PROP_ZQ_VHOOK_PATH,"./bin/nicovideoE.dll"),
+			zq_option_file,
+			prop.getProperty(PROP_ZQ_CMDLINE_EXT, "mp4"),
+			prop.getProperty(PROP_ZQ_CMDLINE_MAIN,""),
+			prop.getProperty(PROP_ZQ_CMDLINE_IN, ""),
+			prop.getProperty(PROP_ZQ_CMDLINE_OUT,"-threads 0 -s 854x480 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -cqp 23 -async 1 -aspect 16:9"),
+			prop.getProperty(PROP_ZQ_ADD_OPTION, "")
 		);
 	}
 

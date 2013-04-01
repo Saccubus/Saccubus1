@@ -2,6 +2,7 @@ package saccubus.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.swing.JLabel;
 
 /**
@@ -55,7 +56,8 @@ public class Stopwatch {
 
 	private static String FMT1 = "s•bSSSƒ~ƒŠ";
 	private static String FMT2 = "m•ªss•bSSSƒ~ƒŠ";
-	private static String FMT3 = "HŽžŠÔmm•ªss•bSSSƒ~ƒŠ";
+//	private static String FMT3 = "HŽžŠÔmm•ªss•bSSSƒ~ƒŠ";
+	private static String FMT3 = "%dŽžŠÔ%02d•ª%02d•b%03dƒ~ƒŠ";
 	private static long LONG_MINUIT = 60 * 1000;
 	private static long LONG_HOUR = 60 * LONG_MINUIT;
 
@@ -68,7 +70,14 @@ public class Stopwatch {
 		} else if (time < LONG_HOUR){
 			return new SimpleDateFormat(FMT2).format(date);
 		} else {
-			return new SimpleDateFormat(FMT3).format(date);
+		//	return new SimpleDateFormat(FMT3).format(date);
+			long h = time / LONG_HOUR;
+			time %= LONG_HOUR;
+			long m = time / LONG_MINUIT;
+			time %= LONG_MINUIT;
+			long s = time / 1000;
+			time %= 1000;
+			return String.format(FMT3, h, m, s, time);
 		}
 	}
 

@@ -21,9 +21,9 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel {
 	private static final File FILE_DEFAULT_FOLDER = new File(".\\option\\");
 
 	private File optionFoler = FILE_DEFAULT_FOLDER;
-
+	private static final int COMBOBOX_LIST_FILES = 30;
 	private final ArrayList<FFmpegSelectedItem> List = new ArrayList<FFmpegSelectedItem>(
-			20);
+			COMBOBOX_LIST_FILES);
 
 	private int Size = 0;
 
@@ -59,8 +59,10 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel {
 		// ファイルリスト更新
 		File[] file_array = optionFoler.listFiles();
 		if(file_array != null){
-			for (int i = 0; i < file_array.length; i++) {
+/*			for (int i = 0; i < file_array.length; i++) {
 				File file = file_array[i];
+ */
+			for(File file:file_array){
 				if (file.getName().endsWith(".xml")) {
 					List.add(new FFmpegSelectedItem(index, file, null));
 					// 前回示していたのと同じファイルを発見。
