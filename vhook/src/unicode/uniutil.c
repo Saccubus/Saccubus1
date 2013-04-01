@@ -22,8 +22,9 @@ int isMatchKanji(Uint16* u,Uint16* kanji){
 	return FALSE;
 }
 
-int isAscii(Uint16* u){
-	return ((0x0000 < *u && *u < 0x0080) || *u==0x00a0 || *u==0x200c);
+int isAscii(Uint16* up){
+	Uint16 u = *up;
+	return ((0x0000 < u && u < 0x0080) || u==0x00a0 || u==0x200c);
 }
 
 int getDetailType(int u){
@@ -55,27 +56,40 @@ int isZeroWidth(Uint16* u){
 	return FALSE;
 }
 */
-int isZeroWidth(Uint16* u){
-	return (getDetailType(*u)==ZERO_WIDTH_CHAR);
+int isZeroWidthP(Uint16* u){
+	return isZeroWidth(*u);
 }
 
-FontType getFontType2(Uint16* u,int basefont,DATA* data){
-	if(u==NULL || *u == '\0'){
+int isZeroWidth(Uint16 u){
+	return (getDetailType(u)==ZERO_WIDTH_CHAR);
+}
+
+FontType getFontType2(Uint16* up,int basefont,DATA* data){
+	Uint16 u = *up;
+	if(up==NULL || u == '\0'){
 		return NULL_FONT;
 	}
+/*
 	if(*u==0x0020){	//Ascii space -> fix fontsize w,h
 		return ARIAL_FONT|CA_TYPE_SPACE_0020;	//0020-> 00200003
 	}
 	if(*u==0x00a0){	//Ascii space -> fix fontsize w,h
 		return ARIAL_FONT|CA_TYPE_SPACE_00A0;	//00a0-> 00a00003
 	}
-	if(0x2000<=*u && *u<=0x200f){	//Various width Space -> fix fontsize w,h
-		return (basefont & CA_TYPE_MASK)|(*u<<16);	//2001..200f<<16+0000..0003;
+*/
+	FontType uft = u<<16;
+	if(uft==CA_TYPE_SPACE_3000){	//‘SŠp‹ó”’->fix fontsize w,h
+		return (basefont & 3)|uft;		//SIMSUN 30000001 GULIM 30000002
 	}
-	if(*u==0x3000){	//‘SŠp‹ó”’->fix fontsize w,h
-		return (basefont & CA_TYPE_MASK)|CA_TYPE_SPACE_3000;		//SIMSUN 30000001 GULIM 30000002
+	if(uft==CA_TYPE_SPACE_0020||uft==CA_TYPE_SPACE_00A0
+		||uft==CA_TYPE_SPACE_200C||uft==CA_TYPE_SPACE_0009){
+		//Ascii space -> fix fontsize w,h
+		return ARIAL_FONT|uft;		//uuuu -> uuuu0003
 	}
-	switch(getDetailType(*u)){
+	if(0x2000<=u && u<=0x200f){	//Various width Space -> fix fontsize w,h
+		return basefont|uft;	//2001..200f<<16+0000..0003;
+	}
+	switch(getDetailType(u)){
 		case STRONG_SIMSUN_CHAR:
 		case WEAK_SIMSUN_CHAR:
 		case SIMSUN_NOT_CHANGE_CHAR:
@@ -90,6 +104,8 @@ FontType getFontType2(Uint16* u,int basefont,DATA* data){
 		case GOTHIC_CHAR:	//ƒSƒVƒbƒN•ÛŒì
 		case GOTHIC_NOT_PROTECT:	//•ÛŒì‚È‚µƒSƒVƒbƒN
 			return GOTHIC_FONT;
+		case ZERO_WIDTH_CHAR:
+			return basefont|uft;
 		case ARIAL_CHAR:
 			return ARIAL_FONT;
 		//use special font
@@ -113,31 +129,31 @@ FontType getFontType2(Uint16* u,int basefont,DATA* data){
 			return GURMUKHI_FONT;
 		default:
 		//include UNDEFINED_CHAR
-			if(isGlyphExist(data,basefont,*u))
+			if(isGlyphExist(data,basefont,u))
 				return basefont;
 			else
-				return getGlyphExist(data,*u);
+				return getGlyphExist(data,u);
 	}
 }
 
-FontType getFontType(Uint16* u,int basefont,DATA* data){
-	if(isMatchExtra(u,data->extra_change))
+FontType getFontType(Uint16* up,int basefont,DATA* data){
+	if(isMatchExtra(up,data->extra_change))
 		return EXTRA_FONT;
 	else
-		return getFontType2(u,basefont,data);
+		return getFontType2(up,basefont,data);
 }
 
-int getFirstFont(Uint16* u,int basefont){
-	if(u==NULL || *u == '\0'){
+int getFirstFont(Uint16* up,int basefont){
+	if(up==NULL || *up == '\0'){
 		return basefont;
 	}
 	int foundBase = FALSE;
-	while(*u!='\0'){
-		if(!isAscii(u))
+	while(*up!='\0'){
+		if(!isAscii(up))
 			foundBase = TRUE;
 		else if(foundBase)
 			return basefont;
-		switch (getDetailType(*u)) {
+		switch (getDetailType(*up)) {
 			case STRONG_SIMSUN_CHAR:
 				return SIMSUN_FONT;
 			case GULIM_CHAR:
@@ -150,7 +166,7 @@ int getFirstFont(Uint16* u,int basefont){
 			default:
 				break;
 		}
-		u++;
+		up++;
 	}
 	return basefont;
 }
@@ -164,12 +180,12 @@ Uint16 replaceSpace(Uint16 u){
 	}
 }
 */
-
+/*
 void removeZeroWidth(Uint16* str,int len){
 	int i;
 	Uint16* dst = str;
 	for(i=0;i<len;i++){
-		if(!isZeroWidth(str)){
+		if(!isZeroWidthP(str)){
 			*dst++ = *str++;
 		}else{
 			str++;
@@ -177,7 +193,7 @@ void removeZeroWidth(Uint16* str,int len){
 	}
 	return;
 }
-
+*/
 int convUint16Pair(const char** unicodep,Uint16* up);
 int getUint16(const char** unicodep);
 
@@ -270,4 +286,26 @@ const char *getfontname(FontType fonttype){
 	if(i<CA_FONT_NAME_SIZE)
 		return CA_FONT_NAME[i];
 	return "appended";
+}
+
+int indexOf(Uint16* src, Uint16 key){
+	if(key=='\0')
+		return 0;
+	int index = 0;
+	for(index=0;src[index]!='\0';index++){
+		if(src[index]==key)
+			return index;
+	}
+	return -1;
+}
+
+void moveUint16(Uint16* from, Uint16* to){
+	if(from > to){
+		do{
+			*to++ = *from++;
+		}while(*from!='\0');
+	}else{
+		//error->do nothing
+		return;
+	}
 }

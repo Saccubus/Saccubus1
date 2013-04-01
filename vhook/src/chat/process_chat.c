@@ -145,10 +145,10 @@ double getXnaka(int vpos,CHAT_SLOT_ITEM* item,int aspect_mode,double scale){
  */
 double getX(int vpos,CHAT_SLOT_ITEM* item,int video_width,double scale,int aspect_mode){
 	//double text_width = item->surf->w;
-	if(item->slot_location == CMD_LOC_TOP||item->slot_location==CMD_LOC_BOTTOM){
+	if(item->slot_location != CMD_LOC_NAKA){
 		return (double)((video_width >> 1) - (item->surf->w >> 1));
 	}
-	//CMD_LOC_DEF (naka)
+	//CMD_LOC_NAKA
 	return getXnaka(vpos,item,aspect_mode,scale);
 }
 
@@ -196,15 +196,15 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 		slot_item->vvanish = item->vend + itime_add;
 	}else{
 		item->vstart = vpos - TEXT_AHEAD_SEC;
-		if(item->script!=0){
+		if(item->script==SCRIPT_GYAKU||item->script==SCRIPT_DEFAULT){
 			item->vstart = vpos;
 		}
 		item->vend = vpos + duration - 1;
 		int text_width = slot_item->surf->w;
 		double width = scale * (NICO_WIDTH + 32) + text_width;
 		//					//video_width + scale * 36 + text_width;
-		double speed = width / (double)(item->vend + 1 - item->vstart);	//1.38
-		//double speed = width / (double)(item->vend - item->vstart);	//1.37r •ª•ê‚Í1­‚È‚¢
+		//double speed = width / (double)(item->vend + 1 - item->vstart);	//1.38
+		double speed = width / (double)(item->vend - item->vstart);	//1.37r,1.39 •ª•ê‚Í1­‚È‚¢
 		// this meens getX=-width/(vend-vstart)*(vpos-vstart)+xstart(=width-16-text_width)+64_wide
 		//   vpos=vstart -> getX=width-16-text_width+64_wide=NICO_WIDTH+16+64_wide
 		//   vpos=vend   -> getX=-16-text_width+64_wide
@@ -234,7 +234,7 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 			item->vend = item->vstart + lround(width / speed);
 			itime_add = MAX(lround(scale * 64 / speed),(TEXT_AHEAD_SEC>>1));
 		}
-		if(item->script!=0){
+		if(item->script==SCRIPT_GYAKU || item->script==SCRIPT_DEFAULT){
 			itime_add = 0;
 		}
 		slot_item->vappear = item->vstart - itime_add;

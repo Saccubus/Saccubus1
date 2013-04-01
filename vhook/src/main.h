@@ -2,6 +2,7 @@
 #define MAIN_H_
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
+#include <math.h>
 #include "nicodef.h"
 #include "struct_define.h"
 #include "chat/chat.h"
@@ -46,10 +47,16 @@ struct DATA{
 //	int aspect100;		// アスペクト比*100	Not used now
 	int nico_width_now;	// 元動画の横幅
 	int aspect_mode;		// 0: 512, 1:640
+	float aspect_rate;		// w/h
 	int vout_width;
 	int vout_height;
 	int vout_x;
 	int vout_y;
+	int pad_w;
+	int pad_h;
+	int limit_height;
+	int y_min;
+	int y_max;
 	float font_w_fix_r;	// フォントの幅をnicoplayer.swfに合わせる倍率(0< <2)（実験的）
 	float font_h_fix_r;	// フォントの高さをnicoplayer.swfに合わせる倍率(0< <2)（実験的）
 	int original_resize;	// さきゅばす独自リサイズが有効（デフォルト有効）
@@ -81,6 +88,7 @@ struct DATA{
 //	int limit_height;
 	SDL_Surface* ErrFont;
 	unsigned int * wakuiro_dat;
+	int q_player;
 	//char wstr[128];
 	// 実験的設定
 	short font_pixel_size[CMD_FONT_MAX];
@@ -117,6 +125,7 @@ typedef struct SETTING{
 	int fontsize_fix;
 	int opaque_comment;
 	int optional_trunslucent;
+	int q_player;		//コメントが動画の高さ以下になるか？
 	// CA用フォント
 	const char* CAfont_path[CA_FONT_PATH_MAX];
 	int CAfont_index[CA_FONT_PATH_MAX];

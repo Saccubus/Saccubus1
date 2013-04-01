@@ -135,25 +135,20 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 		fprintf(data->log,"[chat_slot/add]***BUG*** comment %d vpos %d location %d def %d\n",
 			item->no,item->vpos,item->location,data->deflocation);
 	}
-	// 弾幕モードの高さの設定　16:9でオリジナルリサイズでない場合は上下にはみ出す
-	int limit_height = video_height;
-	if(!data->original_resize){
-		//comment area height is independent from video height
-		limit_height = lround(scale * NICO_HEIGHT);
-	}
-	int y_min = (video_height>>1) - (limit_height>>1);
-	int y_max = y_min + limit_height +
-		limit_height/NICO_HEIGHT;	//コメントの高さは385=384+1 下にはみ出す
 	/*ロケーションで分岐*/
 	int y;
+	int y_min = data->y_min;
+	int y_max = data->y_max;
+	int limit_height = data->limit_height;
+	int surf_h = surf->h;
 	if(location == CMD_LOC_BOTTOM){
-		y = y_max - surf->h;
+		y = y_max - surf_h;
 	}else{
 		y = y_min;
 	}
 	if(data->debug)
-	fprintf(data->log,"[chat_slot/add limit]w %d, h %d, scale %.3f, limit_height %d, y_min %d, y_max %d y %d\n",
-		video_width, video_height, scale, limit_height, y_min, y_max, y);
+	fprintf(data->log,"[chat_slot/add limit]w %d, h %d, scale %.3f, y_min %d, y_max %d y %d\n",
+		video_width, video_height, scale, y_min, y_max, y);
 	int running;
 	int first_comment=TRUE;
 	CHAT_SLOT_ITEM* bang_slot = NULL;
@@ -161,48 +156,54 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	int end = 0;
 	int bang_vpos = 0;
 	int bang_end = 0;
-	double bang_xpos[2];
+	int y_bottom = y + surf_h;
+	double bang_xpos[2] = {0.0, 0.0};
 	do{
+		y_bottom = y + surf_h;
 		running = FALSE;
 		first_comment=TRUE;
-		for(i=0;i<slot_max;i++){
-			CHAT_SLOT_ITEM* other_slot = &slot->item[i];
+		CHAT_SLOT_ITEM* other_slot = &slot->item[0];
+		CHAT_SLOT_ITEM* slot_max_slot = &slot->item[slot_max];
+		for(other_slot = &slot->item[0]; other_slot < slot_max_slot; other_slot++){
 			if(!other_slot->used){
 				continue;
 			}
 			const CHAT_ITEM* other_item = other_slot->chat_item;
 			int other_y = other_slot->y;
-			int other_y_next1 = other_y + other_slot->surf->h;
+			int other_y_bottom = other_y + other_slot->surf->h;
 			/*無視する条件*/
 			if(other_slot->slot_location != location){	//別ロケーション
-				continue;
-			}
-			//同一ロケーション発見→第1コメントではない
-			first_comment=FALSE;
-			//第2コメント以後で画面以上の高さは調べるまでもなく弾幕化
-			if(surf->h >= limit_height){
-				y = other_y_next1;
-				break;
-			}
-			//高さの判定
-			if(other_y_next1 <= y){
-				continue;
-			}
-			if(y + surf->h <= other_y){
 				continue;
 			}
 			//チェックの開始と終了
 			start = MAX(other_item->vstart,item->vstart);
 			end = MIN(other_item->vend,item->vend);
+			if(location != CMD_LOC_NAKA){
+				end -= 12;	// 17vpos は重なってもいい?
+			}
 			if(start > end){
+				continue;
+			}
+			//同一ロケーション発見→第1コメントではない
+			first_comment=FALSE;
+			//第2コメント以後で画面以上の高さは調べるまでもなく弾幕化
+			if(surf_h >= limit_height){
+				y = other_y_bottom;
+				break;
+			}
+			//高さの判定
+			if(other_y_bottom <= y){
+				continue;
+			}
+			if(y_bottom <= other_y){
 				continue;
 			}
 			if(location != CMD_LOC_NAKA){
 				//ue shita は X を調べる必要なく重なる
 				if(location == CMD_LOC_BOTTOM){
-					y = other_y - surf->h;
+					y = other_y - surf_h;
 				}else{
-					y = other_y_next1;
+					y = other_y_bottom;
 				}
 				running = TRUE;
 				break;
@@ -228,7 +229,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 					end,dxend[0],dxend[1],o_dxend[0],o_dxend[1],other_y,other_item->no);
 			if(set_crossed(dtmp,dxend,o_dxend) && d_width(dtmp)>=scale){
 				if(set_crossed(bang_xpos,range,dtmp)){
-					y = other_y_next1;
+					y = other_y_bottom;
 					running = TRUE;
 					if(data->debug){
 						fprintf(data->log,"--> x[%.1f,%.1f]y[%d]\n",dtmp[0],dtmp[1],other_y);
@@ -248,7 +249,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 					start,dxstart[0],dxstart[1],o_dxstart[0],o_dxstart[1],other_y,other_item->no);
 			if(set_crossed(dtmp,dxstart,o_dxstart) && d_width(dtmp)>=scale){
 				if(set_crossed(bang_xpos,range,dtmp)){
-					y = other_y_next1;
+					y = other_y_bottom;
 					running = TRUE;
 					if(data->debug){
 						fprintf(data->log,"--> [%.1f,%.1f]y[%d]\n",dtmp[0],dtmp[1],other_y);
@@ -271,10 +272,10 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 		fprintf(data->log,"[chat_slot/add first]comment %d %s %s y=%d\n",
 			item->no,COM_LOC_NAME[location],COM_FONTSIZE_NAME[size],y);
 	}else
-	if(y < y_min || y+surf->h > y_max){	// 範囲を超えてるので、ランダムに配置。
+	if(y < y_min || y + surf_h > y_max){	// 範囲を超えてるので、ランダムに配置。
 		fprintf(data->log,"[chat_slot/add random]comment %d %s %s y=%d -> random\n",
 			item->no,COM_LOC_NAME[location],COM_FONTSIZE_NAME[size],y);
-		y = y_min + ((rnd() & 0xffff) * (limit_height - surf->h)) / 0xffff;
+		y = y_min + ((rnd() & 0xffff) * (limit_height - surf_h)) / 0xffff;
 	}
 	//追加
 	slot_item->used = TRUE;
@@ -314,8 +315,9 @@ CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos){
 		item = slot_item->chat_item;
 		if(item==NULL)continue;
 		if(now_vpos < item->vstart || now_vpos > item->vend){
-			// slotから消す必要はない？
-			//return slot_item;
+			// nakaはslotから消す必要はない？
+			//if(slot_item->slot_location != CMD_LOC_NAKA)
+			//	return slot_item;
 		}
 	}
 	return NULL;

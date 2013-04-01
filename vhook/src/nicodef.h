@@ -38,6 +38,8 @@ static char* const COM_LOC_NAME[CMD_LOC_MAX] = {
 #define GET_CMD_PATISSIER(x)	((x) & 32)
 #define GET_CMD_INVISIBLE(x)	((x) & 64)
 #define GET_CMD_IS_BUTTON(x)	((x) & 128)
+#define GET_CMD_REPLACE_USER(x)	((x) & 256)
+#define GET_CMD_REPLACE_OWNER(x)	((x) & 512)
 
 #define CMD_FONT_MAX	4
 #define CMD_FONT_DEF	0
@@ -316,7 +318,10 @@ static const int CA_FONT_3000_WIDTH[3][CMD_FONT_MAX] = {
 	{25,40,16,25},		//simsun
 	{25,40,16,25},		//gulim
 };
-
+static const int CA_FONT_TAB_WIDTH[CMD_FONT_MAX] = {
+//TAB SPACE 0009
+	44,76,28,44,
+};
 /*
  * CJKフォントの既定文字幅
  * U+3400-D7FF	全角、漢字幅

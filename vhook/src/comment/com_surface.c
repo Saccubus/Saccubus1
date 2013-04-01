@@ -17,7 +17,7 @@ SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right);
 //SDL_Surface* drawText(DATA* data,int size,int color,Uint16* str);
 SDL_Surface* drawText2(DATA* data,int size,SDL_Color color,Uint16* str);
 SDL_Surface* drawText3(DATA* data,int size,SDL_Color color,FontType fonttype,Uint16* from,Uint16* to);
-SDL_Surface* drawText4(DATA* data,int size,SDL_Color color,TTF_Font* font,Uint16* str,int fontsel);
+SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel);
 //int cmpSDLColor(SDL_Color col1, SDL_Color col2);
 int isDoubleResize(double width, double limit_width, int size, int line, FILE* log);
 
@@ -35,9 +35,11 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	double font_height_rate = data->font_h_fix_r;
 	int nico_width = data->nico_width_now;
 	int color = item->color;
+	int is_button = FALSE;
 
 	if(item->script){
 		int cmd = item->script & 0xffff0000;
+		fprintf(log,"[comsurface/make script]%04x\n",cmd>>16);
 		if(cmd == SCRIPT_DEFAULT){		//＠デフォルト
 			if(color != CMD_COLOR_DEF)
 				data->defcolor = color;
@@ -57,6 +59,16 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 				data->optional.chat.to_left = -1;
 			}
 			return drawNullSurface(0,0);
+		}
+		if(cmd == SCRIPT_REPLACE){
+			//process comment
+			return drawNullSurface(0,0);
+		}
+		if(cmd == SCRIPT_BUTTON){
+			//@ボタン
+			is_button = 1;
+			fprintf(log,"[comsurface/make script]vpos:%d vstart:%d vend%d\n",
+				item->vpos, item->vstart, item->vend);
 		}
 	}
 	/*
@@ -84,8 +96,58 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	/*
 	 * 影は置いておいて、とりあえず文字の描画
 	 */
+	SDL_Surface* surf = NULL;
+	SDL_Surface* before_button = NULL;
+	// last == index == item->str;
 	while(*index != '\0'){
-		if(*index == '\n'){
+		if(*index=='[' && is_button==1){
+			*index = '\0';//ここで一旦切る
+			surf = drawText2(data,size,SdlColor,last);
+			if(surf!=NULL && debug)
+				fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d) %s\n",surf->w,surf->h,COM_FONTSIZE_NAME[size]);
+			if(ret != null){
+				//改行後のボタン開始
+				surf = connectSurface(ret,surf);
+				nb_line++;
+				if(surf!=NULL && debug)
+					fprintf(log,"[comsurface/make.1]connectSurface surf(%d, %d) %s line %d\n",surf->w,surf->h,COM_FONTSIZE_NAME[size],nb_line);
+			}
+			*index = '[';//ここで一旦切る
+			last = index+1;
+			before_button = surf;
+			ret = NULL;
+			is_button = 2;
+		}
+		else if(*index==']' && is_button==2){
+			*index = '\0';//ここで一旦切る
+			surf = drawText2(data,size,SdlColor,last);
+			if(surf!=NULL && debug)
+				fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d)\n",surf->w,surf->h);
+			if(ret != NULL){
+				//複数行のボタン終了
+				surf = connectSurface(ret,surf);
+				nb_line++;
+				if(surf!=NULL && debug)
+					fprintf(log,"[comsurface/make.1]connectSurface surf(%d, %d) line %d\n",surf->w,surf->h,nb_line);
+			}
+			ret = drawButton(data,surf);
+			SDL_FreeSurface(surf);
+			if(ret!=NULL && debug)
+				fprintf(log,"[comsurface/make.1]drawButton surf(%d, %d)\n",ret->w,ret->h);
+			*index = ']';//ここで一旦切る
+			last = index+1;
+			// ボタン描画終了 ボタン前とボタン後をつなげる
+			if(before_button!=NULL){
+				// 左右にくっつける
+				ret = arrangeSurface(before_button,ret);
+				if(ret!=NULL && debug)
+					fprintf(log,"[comsurface/make.1]arrange surf(%d, %d)\n",ret->w,ret->h);
+			}
+			before_button = ret;
+			ret = NULL;
+			is_button = 3;
+		}
+		else if(*index == '\n'){
 			*index = '\0';//ここで一旦切る
 			if(ret == null){//最初の改行
 				ret = drawText2(data,size,SdlColor,last);
@@ -103,18 +165,41 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		index++;
 	}
 	if(ret == null){//結局改行は無い
-		ret = drawText2(data,size,SdlColor,item->str);
-		if(ret==NULL)
-			return NULL;
-		if(debug)
+		ret = drawText2(data,size,SdlColor,last);
+		if(debug && ret!=NULL)
 			fprintf(log,"[comsurface/make.2]drawText2 surf(%d, %d) %s\n",ret->w,ret->h,COM_FONTSIZE_NAME[size]);
 	}else{/*改行あり*/
 		ret = connectSurface(ret,drawText2(data,size,SdlColor,last));
-		if(ret==NULL)
-			return NULL;
 		nb_line++;
-		if(debug)
+		if(debug && ret!=NULL)
 			fprintf(log,"[comsurface/make.3]connectSurface surf(%d, %d) %s line %d\n",ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
+
+	}
+	//ret = surf;
+	if(is_button){
+		if(is_button==1){
+			// [は来なかった
+			// ret全体がボタン
+			surf = ret;
+			ret = drawButton(data,surf);
+			SDL_FreeSurface(surf);
+			if(ret!=NULL && debug)
+				fprintf(log,"[comsurface/make.3]drawButton surf(%d, %d)\n",ret->w,ret->h);
+		}
+		else if(is_button==2){
+			// [来た後で]の前に終了
+			surf = ret;
+			ret = drawButton(data,surf);
+			SDL_FreeSurface(surf);
+			if(ret!=NULL && debug)
+				fprintf(log,"[comsurface/make.3]drawButton surf(%d, %d)\n",ret->w,ret->h);
+		}
+		if(before_button!=NULL){
+			ret = arrangeSurface(before_button,ret);
+			if(ret!=NULL && debug)
+				fprintf(log,"[comsurface/make.3]arranged surf(%d, %d)\n",ret->w,ret->h);
+		}
+		is_button = 0;
 	}
 
 	if(ret==NULL || ret->h == 0){
@@ -352,12 +437,15 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		int dfs = COMMENT_FONT_SIZE[size];
 		int rfs = (int)round(0.5*(double)dfs);
 		double rsRate = (double)(rfs+1)/(double)(dfs+1);
-		resized_w = zoom_w * linefeed_zoom;
-		double resize = resized_w / zoom_w;
-		fprintf(log,"[comsurface/LFresize]comment %d LFzoom %.0f%% LFrateFS %.0f%% %s rFS %d\n",
+		double resize = linefeed_zoom;
+		//double resize = rsRate;
+		resized_w = zoom_w * resize;
+		//resized_w = zoom_w * linefeed_zoom;
+		//resized_w = zoom_w * rsRate;
+		fprintf(log,"[comsurface/LFresize]comment %d LFzoom %.2f%% LFrateFS %.2f%% %s rFS %d\n",
 			item->no,linefeed_zoom*100.0,rsRate*100.0,COM_FONTSIZE_NAME[size],rfs);
 		if((location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM)
-			&& isDoubleResize(resized_w, nicolimit_width, size, nb_line, log)){
+			&& isDoubleResize(zoom_w * linefeed_zoom, nicolimit_width, size, nb_line, log)){
 			// ダブルリサイズあり
 			double_resized = TRUE;
 			//ダブルリサイズ時には動画幅の２倍にリサイズされる筈
@@ -378,7 +466,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 				rsRate = (double)(rfs+1)/(double)(dfs+1);
 				resized_w = zoom_w * rsRate;
 				fprintf(log,"[comsurface/DR limit1]comment %d default width %.0f dFS %d resized %.0f limit %.0f\n",
-					item->no,zoom_w,dfs,resized_w,nicolimit_width);
+					item->no,zoom_w,dfs,resized_w,double_limit_width);
 				zoom_w = resized_w;
 				fprintf(log,"[comsurface/DR limit2]comment %d %s width %.0f rFS %d wrate %.0f%%\n",
 					item->no,COM_FONTSIZE_NAME[size],zoom_w,rfs,rsRate*100.0);
@@ -392,54 +480,57 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			double hrate = (double)NICO_HEIGHT / zoom_h;
 			fprintf(log,"[comsurface/DR detail]comment %d w %.1f%% h %.1f%%%s\n",
 				item->no,wrate*100.0,hrate*100.0,(data->fontsize_fix?" fix":""));
-			if(size == CMD_FONT_BIG && 8 < nb_line && nb_line < 16){
-				//コメント行数により矯正
-				double resized_h = COMMENT_BIG_DR_HEIGHT[nb_line];
-				hrate = (double)resized_h / zoom_h;
-				resized_w = zoom_w * hrate;
-				fprintf(log,"[comsurface/DR AdjByWiki]comment %d maybe(%.0f,%.0f) w %.2f%% h %.2f%% font_width %.2f%%\n",
-					item->no,resized_w,resized_h,wrate*100.0,hrate*100.0,font_width_rate*100.0);
-				//ダブルリサイズして画面内に表示が出るとは思えないとする
-				if(resized_w > nicolimit_width ){
-					zoom_w = resized_w;
-				}
-			}
-			else {
-				double h2 = wrate / hrate;
-				if(385 < zoom_h && zoom_h < 768){
-					//コメント高が動画以上でありダブルリサイズにより動画高に合わせたと見る。?
+			if(strstr(data->extra_mode,"-old")!=NULL){
+				//意図したダブルリサイズならば高さ基準でリサイズ -oldモード
+				if(size == CMD_FONT_BIG && 8 < nb_line && nb_line < 16){
+					//コメント行数により矯正
+					double resized_h = COMMENT_BIG_DR_HEIGHT[nb_line];
+					hrate = (double)resized_h / zoom_h;
 					resized_w = zoom_w * hrate;
-					if(resized_w > nicolimit_width && resized_w > zoom_w){
-						//横幅が大きいなら補正
-						fprintf(log,"[comsurface/DR hrate1]comment %d resized_width %.0f %.2f%% font_width %.2f%%\n",
-							item->no,resized_w,hrate*100.0,font_width_rate*100.0);
+					fprintf(log,"[comsurface/DR AdjByWiki]comment %d maybe(%.0f,%.0f) w %.2f%% h %.2f%% font_width %.2f%%\n",
+						item->no,resized_w,resized_h,wrate*100.0,hrate*100.0,font_width_rate*100.0);
+					//ダブルリサイズして画面内に表示が出るとは思えないとする
+					if(resized_w > nicolimit_width ){
 						zoom_w = resized_w;
-					}else{
-						//元のママ
-						fprintf(log,"[comsurface/DR hrate0]comment %d resized_width %.0f %.2f%% font_width %.2f%%\n",
-								item->no,resized_w,hrate*100.0,font_width_rate*100.0);
-						//zoom_w = resized_w;
 					}
-				}else
-				if(zoom_h <= 385){
-					//コメント高が動画以下であり横幅で決めるしか手がないがこれは既に計算したはず。
-					fprintf(log,"[comsurface/DR wrate]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
-						item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
 				}
-				//以下は動画よりコメント高が凄く高い
-				else
-				if(0.75 <= h2 && h2 <= 1.5){
-					//横幅基準で高さが動画より微妙になるなら動画高に合わせる 今はやらない
-					//zoom_w *= hrate;
-					fprintf(log,"[comsurface/DR hrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
-						item->no,zoom_w,hrate*100.0,font_width_rate*100.0);
-				}
-				else
-				{
-					//高さとアス比が動画と全然違うので合わせられない
-					//zoom_w *= hrate;
-					fprintf(log,"[comsurface/DR wrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
-						item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
+				else {
+					double h2 = wrate / hrate;
+					if(385 < zoom_h && zoom_h < 768){
+						//コメント高が動画以上でありダブルリサイズにより動画高に合わせたと見る。?
+						resized_w = zoom_w * hrate;
+						if(resized_w > nicolimit_width && resized_w > zoom_w){
+							//横幅が大きいなら補正
+							fprintf(log,"[comsurface/DR hrate1]comment %d resized_width %.0f %.2f%% font_width %.2f%%\n",
+								item->no,resized_w,hrate*100.0,font_width_rate*100.0);
+							zoom_w = resized_w;
+						}else{
+							//元のママ
+							fprintf(log,"[comsurface/DR hrate0]comment %d resized_width %.0f %.2f%% font_width %.2f%%\n",
+									item->no,resized_w,hrate*100.0,font_width_rate*100.0);
+							//zoom_w = resized_w;
+						}
+					}else
+					if(zoom_h <= 385){
+						//コメント高が動画以下であり横幅で決めるしか手がないがこれは既に計算したはず。
+						fprintf(log,"[comsurface/DR wrate]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
+							item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
+					}
+					//以下は動画よりコメント高が凄く高い
+					else
+					if(0.9 <= h2 && h2 <= 1.1){
+						//横幅基準で高さが動画より微妙になるなら動画高に合わせる 今はやらない
+						//zoom_w *= hrate;
+						fprintf(log,"[comsurface/DR hrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
+							item->no,zoom_w,hrate*100.0,font_width_rate*100.0);
+					}
+					else
+					{
+						//高さとアス比が動画と全然違うので合わせられない
+						//zoom_w *= hrate;
+						fprintf(log,"[comsurface/DR wrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
+							item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
+					}
 				}
 			}
 
@@ -475,7 +566,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			 *  但しWindowsではwFS=rFS+1（漢字の場合）である。
 			 *
 			 */
-			int dfs = data->font_pixel_size[size]>>data->fontsize_fix;
+			int dfs = COMMENT_FONT_SIZE[size];
 			double rsRate = (round(nicolimit_width/zoom_w*(double)dfs)+1.0)
 					/ (double)(dfs+1);
 			resized_w = zoom_w * rsRate;
@@ -494,7 +585,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	 * 動画幅とニコニコ動画の幅のスケール
 	 */
 	if(data->fontsize_fix || data->enableCA){
-		if(video_width != nico_width){
+		if(autoscale != 1.0f){
 			zoom_w *= autoscale;
 			//zoom_h *= autoscale;
 			// zoomx *= autoscale
@@ -782,32 +873,42 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,
 		Uint16 code = GET_CODE(fonttype);	//get unicode0
 		int w = data->fontsize_fix;
 		if(code==0x0020 || code==0x00A0){
+			// half space
 			w = (CA_FONT_SPACE_WIDTH[size] * len)<<w;
 		}else if(code==0x3000){
+			// full space
 			if(fontsel > GULIM_FONT){	//fonttype should be 0..2 (gothic,simsun,gulim)
 				fprintf(log,"[comsurface/drawText3]fontsel error %d\n",fonttype);
 				fflush(log);
 				return NULL;
 			}
 			w = (CA_FONT_3000_WIDTH[fontsel][size] * len)<<w;
-		}else if((code & 0xfff0)!=0x2000){
-			fprintf(log,"[comsurface/drawText3]fontsel error %d\n",fonttype);
-			fflush(log);
-			return NULL;
-		}else {
-			//code should be 2000..200f
+		}else if(isZeroWidth(code)){
+			// zero width
+			w = 0;
+			fprintf(log,"[comsurface/drawText3]found ZERO width char %0x04x\n",code);
+		}else if((code & 0xfff0)==0x2000){
+			//code should be 2000..200a 200c
 			//Here, it assumed fonttype should belog to GOTHIC
 			//but width of 2000 series DIFFERS when SIMSUN (or GULIM?) in Windows7
 			//futhermore it FAULTS (TOUFU) when ARIAL in XP
 			w = (CA_FONT_2000_WIDTH[code & 0x000f][size] * len)<<w;
+		}else if(code==0x0009){
+			// code 0009 TAB
+			w = (CA_FONT_TAB_WIDTH[size] * len)<<w;
+		}else {
+			fprintf(log,"[comsurface/drawText3]fontsel error %d\n",fonttype);
+			fflush(log);
+			return NULL;
 		}
 		SDL_Surface* ret = drawNullSurface(w,h);
 		if(debug){
 			int codeno;
-			switch (code & 0xfff0) {
+			switch (code) {
 				case 0x0020:	codeno = 0; break;
 				case 0x00a0:	codeno = 1; break;
 				case 0x3000:	codeno = 3; break;
+				case 0x0009:	codeno = 4; break;
 				default:		codeno = 2; break;
 			}
 			fprintf(log,"[comsurface/drawText3]return %s font %04X %s %d chars.(%d,%d)\n"
@@ -827,20 +928,15 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,
 		fflush(log);
 		return NULL;
 	}
-	int l2 = 0;
-	for(;from<to;from++){
-		if(!isZeroWidth(from)){
-			text[l2++] = *from;
-		}
+	Uint16* text2 = text;
+	while(from < to){
+		//if(!isZeroWidth())
+		*text2++ = *from++;
 	}
-	text[l2]='\0';
+	*text2 ='\0';
 	if(debug)
 		fprintf(log,"[comsurface/drawText3]building U+%04hX %d chars. in %s %s\n",
-			text[0],l2,getfontname(fontsel),COM_FONTSIZE_NAME[size]);
-	if(l2==0){
-		free(text);
-		return drawNullSurface(0,h);
-	}
+			text[0],len,getfontname(fontsel),COM_FONTSIZE_NAME[size]);
 	SDL_Surface* ret = drawText4(data,size,SdlColor,data->CAfont[fontsel][size],text,fontsel);
 	free(text);
 	return ret;
@@ -889,31 +985,53 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 }
 
 int isDoubleResize(double width, double limit_width, int size, int line, FILE* log){
-	if(size==CMD_FONT_BIG && line>=16){
-		//高さ固定,big16の可能性
-		if(width * 0.9 < limit_width){
-			return FALSE;
+	if(size==CMD_FONT_BIG){
+		if(line>=16){
+			//高さ固定,big16の可能性
+			if(width * 0.95 < limit_width){
+				fprintf(log,"[isDoubleResize]found a little wider then big16 but ok.\n");
+				return FALSE;
+			}
+			fprintf(log,"[isDoubleResize]found big16 but too wide.\n");
 		}
-		fprintf(log,"[isDoubleResize]found big16 but too wide.\n");
+		if(line<=7 && line<=14){
+			//ダブルリサイズの可能性
+		}
+		if(line<7 && (int)limit_width>545){
+			//高さ固定？
+			if(width * 0.95 < limit_width){
+				fprintf(log,"[isDoubleResize]found a little wider then linefeed but ok.\n");
+				return FALSE;
+			}
+		}
+		if(width * 0.9 < limit_width && width * 1.05 > limit_width)
+			fprintf(log,"[isDoubleResize]found big is NOT SURE WIDTH. line:%d width:%.1f\n",line, width);
+		return width > limit_width;
+	}
+	if(width <= limit_width){
+		return FALSE;
 	}
 	if((size==CMD_FONT_DEF || size==CMD_FONT_MEDIUM) && line>=25){
 		//高さ固定の可能性
-		if(width * 0.9 < limit_width){
+		if(width * 0.95 < limit_width){
+			fprintf(log,"[isDoubleResize]found a little wider then medium25 but ok.\n");
 			return FALSE;
 		}
 		fprintf(log,"[isDoubleResize]found medium25 but too wide.\n");
 	}
 	if(size==CMD_FONT_SMALL && line>=38){
 		//高さ固定の可能性
-		if(width * 0.9 < limit_width){
+		if(width * 0.95 < limit_width){
+			fprintf(log,"[isDoubleResize]found a little wider then small38 but ok.\n");
 			return FALSE;
 		}
 		fprintf(log,"[isDoubleResize]found small38 but too wide.\n");
 	}
-	if(width > limit_width){
-		return TRUE;
+	if(width * 0.95 < limit_width){
+		fprintf(log,"[isDoubleResize]found a little wide for linefeed resize. line:%d width:%.1f \n",
+			line, width);
 	}
-	return FALSE;
+	return TRUE;
 }
 
 SDL_Surface* getErrFont(DATA* data){

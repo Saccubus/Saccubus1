@@ -9,11 +9,15 @@
 #define UNICODE_TOU		0x00006295	/*投　投コメ*/
 #define UNICODE_KO		0x000030b3	/*コ　コメ*/
 #define UNICODE_DE		0x000030c7	/*デ　デフォルト*/
+#define UNICODE_BO		0x000030dc	/*ボ　ボタン */
+#define UNICODE_KAKKO	0x0000300c	/*「　括弧 */
 //ニコスクリプト　 ワード定義
 #define SCRIPT_GYAKU	0x00010000
 #define SCRIPT_OWNER	0x0001
 #define SCRIPT_USER		0x0002
 #define SCRIPT_DEFAULT	0x00020000
+#define SCRIPT_REPLACE	0x00040000
+#define SCRIPT_BUTTON	0x00080000
 
 struct CHAT_ITEM{
 	//場所の特定
@@ -25,6 +29,9 @@ struct CHAT_ITEM{
 	int script;	// whether nico script?
 	int patissier;	//patissier command
 	int invisible;	//invisible command
+	int replace_user;	// /replace target:user
+	int replace_owner;	//	/replace target:owner
+	int is_button;	// ボタン
 	//文字の修飾
 	int size;
 	int color;

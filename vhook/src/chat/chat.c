@@ -134,8 +134,14 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		item->waku = GET_CMD_WAKU(location)!= 0;
 		// patissier コマンド
 		item->patissier = GET_CMD_PATISSIER(location)!= 0;
-		// patissier コマンド
+		// invisible コマンド
 		item->invisible = GET_CMD_INVISIBLE(location)!= 0;
+		// replace target:user saccubus1.39以降
+		item->replace_user = GET_CMD_REPLACE_USER(location)!=0;
+		// replace target:user saccubus1.39以降
+		item->replace_owner = GET_CMD_REPLACE_OWNER(location)!=0;
+		// is_button コマンド
+		item->is_button = GET_CMD_IS_BUTTON(location)!=0;
 		// color24bit
 		color24 = getSDL_color(color);
 		// bit 31-16 を＠秒数とみなす　saccubus1.37以降
@@ -143,12 +149,13 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 //		if (duration != 0){	// @秒数
 //			duration *= VPOS_FACTOR;
 //		}
-		// nico script
+		// nico script & niwango
 		script = GET_CMD_SCRIPT(location);
 		if(script!=0){
 			//check str
 			int c1 = str[1];
 			if(c1 == UNICODE_GYAKU){
+				// @逆
 				int c3 = str[3];
 				if(c3 == UNICODE_TOU){
 					script = SCRIPT_GYAKU|SCRIPT_OWNER;
@@ -161,10 +168,21 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 					duration = 30;
 				}
 			}else if(c1 == UNICODE_DE){
+				// @デフォルト
 				script = SCRIPT_DEFAULT;
 				if(duration == 0){
 					duration = INTEGER_MAX;
 				}
+			}else if(c1 == 'r'){
+				// /replace
+				script = SCRIPT_REPLACE;
+				if(duration == 0){
+					duration = INTEGER_MAX;
+				}
+			}
+			if(item->is_button){
+				// @ボタン
+				script = SCRIPT_BUTTON;
 			}
 		}
 		location = GET_CMD_LOC(location);
@@ -175,7 +193,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		item->location = location;
 		item->size = size;
 		item->color = color;
-		removeZeroWidth(str,str_length/sizeof(Uint16));
+		//removeZeroWidth(str,str_length/sizeof(Uint16));
 		item->str = str;
 		/*内部処理より*/
 		if(location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM){

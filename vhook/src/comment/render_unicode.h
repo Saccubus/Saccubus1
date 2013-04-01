@@ -15,4 +15,6 @@
 
 SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color SdlColor,int size,int fontsel);
 SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,int location,SDL_Surface* surf,SDL_Color col,int s);
+SDL_Surface* drawButton(DATA* data,SDL_Surface* surf);
+
 #endif /* TTF_UNICODE_H_ */

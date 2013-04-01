@@ -114,7 +114,7 @@ static const Uint8 UNITABLE[] =
 /*1f00*/ "AAAAAAAAAAAAAAAAAAAAAA..AAAAAA..AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA..AAAAAA..AAAAAAAA.A.A.A.AAAAAAAAAAAAAAAAA----AAAAAAAAAA..AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.AAAAAAAAAAAAAAA.AAAAAAAAAAAAAA..AAAAAA.AAAAAAAAAAAAAAAAAAA..AAAAAAAAAAAAA."
 /*       "0               1               2               3               4               5               6               7               8               9               a               b               c               d               e               f               "*/
 /*       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"*/
-/*2000*/ "-----------ZZZZZ------s-----------------ZZZZZZZZ-----s--------------------.......-............A...........AAAAAA----m----------m-mmmm----------.AAAAA...........------------------AAAA..AA......................................................A..............."
+/*2000*/ "-----------ZAZZZ------s-----------------ZZZZZZZZ-----s--------------------.......-............A...........AAAAAA----m----------m-mmmm----------.AAAAA...........------------------AAAA..AA......................................................A..............."
 /*2100*/ "-----s---s---------m-------------------------------------....................AA....mm-------mmm-----------ss-----------------------.A...........----mmwwww---------------------------------------------------------------------------------....................."
 /*2200*/ "---------------w-----w-------------s------------------ss----m-----------w---s-----------------------ww--------ss-------------------------------------s---w----------------------------------------------------------------------------------------.............."
 /*2300*/ "..-..--L........-.-.....-.......--............................................................................................................................................................---------------.-...........--...................................."
@@ -519,7 +519,9 @@ static const int CA_FONT_SIZE_FIX[][CMD_FONT_MAX] = {
 #define CA_TYPE_SPACE_00A0 0x00A00000
 #define CA_TYPE_SPACE_0020 0x00200000
 #define CA_TYPE_SPACE_2000 0x20000000
+#define CA_TYPE_SPACE_200C 0x2000000C
 #define CA_TYPE_SPACE_3000 0x30000000
+#define CA_TYPE_SPACE_0009 0x00090000
 #define isSpaceFont(ft) ((ft)>CA_TYPE_MASK)
 #define GET_CODE(ft)	((ft)>>16)
 #define GET_TYPE(ft)	((ft)&CA_TYPE_MASK)
@@ -533,6 +535,7 @@ static char* const CA_SPACE_NAME[] = {
 		"no-break-SPACE",
 		"U+2000 series",
 		"CJK SPACE",
+		"TAB"
 };
 
 

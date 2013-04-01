@@ -18,19 +18,22 @@ int isMatchKanji(Uint16* u,Uint16* kanji);
 int isAscii(Uint16* u);
 int isMincho(Uint16* u);
 int isHANKAKU(Uint16* u);
-int isZeroWidth(Uint16* u);
+int isZeroWidthP(Uint16* u);
 #define isMatchExtra(u, extra) isMatchKanji(u, extra)
 int getDetailType(int u);
 FontType getFontType2(Uint16* u,int fonttype,DATA* data);
 FontType getFontType(Uint16* u,int fonttype,DATA* data);
 FontType getFirstFont(Uint16* u,int fonttype);
 Uint16 replaceSpace(Uint16 u);
-void removeZeroWidth(Uint16* str,int len);
+//void removeZeroWidth(Uint16* str,int len);
 int convUint16(const char* unicode, Uint16** out);
 int convUint16Pair(const char** unicodep,Uint16* up);
 int getUint16(const char** unicodep);
 int uint16len(Uint16* u);
 int isKanjiWidth(Uint16* u);
 const char *getfontname(int fonttype);
+int isZeroWidth(Uint16 u);
+int indexOf(Uint16* src, Uint16 key);
+void moveUint16(Uint16* from, Uint16* to);
 
 #endif /* UTIL_H_ */

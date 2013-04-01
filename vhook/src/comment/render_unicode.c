@@ -254,3 +254,25 @@ SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,int location,SDL_Surface
 	SDL_SetClipRect(tmp,&rect);
 	return tmp;
 }
+
+SDL_Surface* drawButton(DATA* data,SDL_Surface* surf){
+	if(data->debug)
+		fprintf(data->log,"[render_unicode/drawButton]waku(%d,%d)\n",surf->w,surf->h);
+	//@ボタン（視聴者）
+	//frame is not drawn yet,draw of width 3*lines line as frame.
+	// s should be set to frame width
+	int s = MAX(surf->h / 20,1);
+	SDL_Color col = COMMENT_COLOR[CMD_COLOR_WHITE];
+	SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);
+	SDL_Rect rect = {0,0,tmp->w,tmp->h};
+//	SDL_Rect rect2 = {2,0,tmp->w-4,tmp->h-(s<<1)};
+	SDL_Rect rect3 = {2,s,tmp->w-4,tmp->h-(s<<1)};
+	Uint32 col32 = SDL_MapRGB(tmp->format,col.r,col.g,col.b);
+	if(data->debug)
+		fprintf(data->log,"[render_unicode/drawButton]waku(%d,%d) color#%06x w%d\n",tmp->w,tmp->h,col32,s);
+	SDL_FillRect(tmp,&rect,col32);
+	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+	SDL_BlitSurface(surf,&rect3,tmp,&rect3);
+	SDL_SetClipRect(tmp,&rect);
+	return tmp;
+}

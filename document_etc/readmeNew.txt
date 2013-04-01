@@ -6,10 +6,15 @@ readmeNew.txt
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-1.38r1 (2013/03/06)
-CAフォントのゴシックのfontindex指定ミス修正
-1.38 (2013/03/05)
-タイトルの'['文字の扱い修正
+1.39 (2013/04/01)
+FFmpeg設定にアス比共通画面追加
+変換時 -samx オプションにより動画アス比保持可能
+オプションファイル追加　５　PCx3,PSPx2
+＠ボタン(視聴者コメント)　対応
+/replace(投稿者ニワン語)　対応
+ヘルプメニューからffmpegヘルプを実行可能
+1時間超えのstatus表示内部変更
+
 
 □改造部分について
 【ライセンス】GPLv3（添付してあります）
@@ -70,7 +75,14 @@ CAフォントのゴシックのfontindex指定ミス修正
 　　ffmpegを設定します。使用しない場合は■削除■して下さい。
 
 　◆拡張機能（概要）追加分
-　・CA対応実験的設定でフォント19種類(+8)newを強制選択可能になりました。
+　・FFmpeg設定にアス比共通画面追加
+　・変換時 -samx オプションにより動画アス比保持可能
+　・オプションファイル追加　５　PCx3,PSPx2
+　・＠ボタン(視聴者コメント)　対応
+　・/replace(投稿者ニワン語)　対応
+　・ヘルプメニューからffmpegヘルプを実行可能
+　・1時間超えのstatus表示内部変更
+　・CA対応実験的設定でフォント19種類(+8)を強制選択可能になりました。
 　・投稿者コメント@秒数、@デフォルト、@逆機能追加
 　・サムネイル画像保存追加
 　・投稿者名保存のバグ修正
@@ -167,6 +179,29 @@ CAフォントのゴシックのfontindex指定ミス修正
 　　役に立つかも）
 
 □拡張機能（変更点）説明
+●FFmpeg設定にアス比共通画面追加
+　PCの方はアス比共通画面でいいと思います
+　PSPや携帯などの方は申し訳ありませんが従来画面から。
+　移行はご自分でオプションファイルを修正して下さい。
+
+●変換時 -samx オプションにより動画アス比保持可能
+　アス比共通画面のために動画アス比を保持するオプションを
+　追加しました。FFmpegは-sオプションの変更として見えます。
+
+●オプションファイル５つ追加　　PCx3,PSPx2
+　PC_640x360アス比共通_avi　　アス比共通です
+　PC_640x360アス比共通_mp4　アス比共通です
+　PC_854x480アス比共通_mp4　アス比共通です
+　[PSP][16：3]480x272 -b 256k　272を追加しましたが未評価です
+　[PSP][ 4：3]480x272 -b 256k　272を追加しましたが未評価です
+
+●＠ボタン(視聴者コメント)に対応しました
+
+●/replace(投稿者ニワン語)に対応しました
+
+●ヘルプメニューからffmpegヘルプを実行可能です。
+　押してみて下さい。
+
 ●CA（コメントアート）フォント暫定的対応　その7
 　・CAフォント8種類追加　（計１9種）
 　
@@ -250,7 +285,7 @@ CAフォントのゴシックのfontindex指定ミス修正
 　@DLO 
 　　動画・コメントを強制ダウンロードし、変換を行わない。
 　@DLC 
-　　コメントのみを強制ダウンロードし、変換を行わない。new
+　　コメントのみを強制ダウンロードし、変換を行わない。
 　@PUP
 　　PC画面の左上にauto.bat中止用のボタン・ステータスを表示する。
 　@SET=設定ファイルパス.xml （修正）
@@ -557,18 +592,18 @@ CAフォントのゴシックのfontindex指定ミス修正
 ・gpl.ja.txt 　　　　　　　 GPLライセンスの非公式日本語訳
 ・LGPL_LICENSE　　　　　　　LGPLライセンス
 ・agpl-3.0.txt　　　　　　　AGPLv3ライセンス
-・Saccubus.jar　　　　　　　本体　1.38
+・Saccubus.jar　　　　　　　本体　1.39
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
 ・bin フォルダ配下
 　　ffmpeg55686.exe ライセンスGPLV3
-　　nicovideoE.dll(2013.03.04版)統合版拡張Vhookライブラリ
+　　nicovideoE.dll(2013.04.01版)統合版拡張Vhookライブラリ
 　　SDL.dll(2011.11.02ビルド)、README-SDL.txt
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYNG
 　　　グラフィックライブラリ、ライセンスはLGPL
 ・optionDev フォルダ配下 　 開発用ファイル
 ・optionVO フォルダ配下　　 変換オプションファイル
 　　　（N55686用 2012.07.20版）
-・readmeNew.txt(1.38)、readme.txt(1.22r)、readme+.txt(1.22r3)
+・readmeNew.txt(1.39)、readme.txt(1.22r)、readme+.txt(1.22r3)
 ・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
 ・AUTO2PROC.BAT　　　　　　 ２プロセス自動実行本体
@@ -599,6 +634,7 @@ CAフォントのゴシックのfontindex指定ミス修正
 　N55686(libfaac無し、libvo_aacencあり)+optionVO(古い)
 　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
 　改造版
+　1.38r1　　http://www1.axfc.net/uploader/so/2818777.zip
 　1.37r6　　http://www1.axfc.net/uploader/so/2781459.zip 
 　1.37r3　　http://www1.axfc.net/uploader/Ne/so/141013.zip
 　1.37　　　http://www1.axfc.net/uploader/Ne/so/137858.zip
@@ -617,10 +653,10 @@ CAフォントのゴシックのfontindex指定ミス修正
 　1.28　　　http://www1.axfc.net/uploader/File/so/72010.zip
 　1.26.2　　http://www1.axfc.net/uploader/File/so/71481.zip
 　1.26.1　　http://www1.axfc.net/uploader/File/so/71270.zip
-　1.26α4 　http://www1.axfc.net/uploader/File/so/71171.zip
-　1.26α3 　http://www1.axfc.net/uploader/File/so/70049.zip
-　1.26α2 　http://www1.axfc.net/uploader/File/so/69997.zip
-　1.26α1 　http://www1.axfc.net/uploader/File/so/69922.zip
+　1.26α4　http://www1.axfc.net/uploader/File/so/71171.zip
+　1.26α3　http://www1.axfc.net/uploader/File/so/70049.zip
+　1.26α2　http://www1.axfc.net/uploader/File/so/69997.zip
+　1.26α1　http://www1.axfc.net/uploader/File/so/69922.zip
 　1.26α　　http://www1.axfc.net/uploader/File/so/69016.zip
 　1.25r 　　http://www1.axfc.net/uploader/File/so/68720.zip
 　1.24　　　http://www1.axfc.net/uploader/File/so/68541.zip
@@ -647,8 +683,21 @@ CAフォントのゴシックのfontindex指定ミス修正
 
 
 変更履歴・修正・改変点
+1.39 (2013/04/01)
+　FFmpeg設定にアス比共通画面追加
+　変換時 -samx オプションにより動画アス比保持可能
+　オプションファイル追加　５　PCx3,PSPx2
+　＠ボタン(視聴者コメント)　対応
+　/replace(投稿者ニワン語)　対応
+　ヘルプメニューからffmpegヘルプを実行可能
+　1時間超えのstatus表示内部変更
+
+1.38r1 (2013/03/06)
+　CAフォントのゴシックのfontindex指定ミス修正
+　タイトルの'['文字の扱い修正
+
 1.37r6 (2013/02/05)
-ブラウザ情報取得修正
+　ブラウザ情報取得修正
 
 1.37r5 (2012/12/05)
 　Saccubus.exe バグ修正と思ったらバグではないところを修正した(orz)ので戻す。

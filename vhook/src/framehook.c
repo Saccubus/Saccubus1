@@ -29,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.38.13a";
+	char *ver="1.39.6";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -169,6 +169,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->fontdir = "";
 	setting->april_fool = NULL;
 	setting->wakuiro = NULL;
+	setting->q_player = FALSE;
 	// CA用フォント
 	//  MS UI GOTHIC は msgothic.ttc の index=2
 	int f;
@@ -265,6 +266,10 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			fputs("[framehook/init]use wide player.\n",log);
 			fflush(log);
 			setting->nico_width_now = NICO_WIDTH_WIDE;
+		}else if(strcmp(arg,"--enable-Qwatch")==0){
+			fputs("[framehook/init]use Qwatch player.\n",log);
+			fflush(log);
+			setting->q_player = TRUE;
 		}else if(setting->video_length <= 0 && strncmp(FRAMEHOOK_OPT_VIDEO_LENGTH,arg,FRAMEHOOK_OPT_VIDEO_LENGTH_LEN) == 0){
 			setting->video_length = MAX(0,atoi(arg+FRAMEHOOK_OPT_VIDEO_LENGTH_LEN)) * VPOS_FACTOR;
 			fprintf(log,"[framehook/init]video length (to assist ffmpeg):%d\n",setting->video_length);
@@ -585,6 +590,9 @@ FILE* changelog(FILE* log,SETTING* setting){
 	const char *path = setting->data_user_path;
 	if(path == NULL ){
 		path = setting->data_owner_path;
+	}
+	if(path == NULL ){
+		path = setting->data_optional_path;
 	}
 	if(path == NULL){
 		return log;

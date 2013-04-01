@@ -71,24 +71,39 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	data->deflocation = CMD_LOC_NAKA;
 	data->defsize = CMD_FONT_MEDIUM;
 //	data->limit_height = NICO_HEIGHT;
+	data->q_player = setting->q_player;
+	data->pad_w = 0;
+	data->pad_h = 0;
 	int outw = setting->nico_width_now;
 	int outh = outw==NICO_WIDTH_WIDE ? NICO_HEIGHT_WIDE : NICO_HEIGHT;
-	if(setting->out_size!=NULL){	//-vfilters outs=width:hieight
-		sscanf(setting->out_size,"%d:%d",&outw,&outh);
-	}else if(setting->set_size!=NULL){	//-s "width"x"height" in ffmpeg OUT OPTION
-		sscanf(setting->set_size,"%d:%d",&outw,&outh);
-	}else if(setting->input_size!=NULL){
+	int w;
+	int h;
+	int outx = 0;
+	int outy = 0;
+	if(setting->input_size!=NULL){
+		//input size
 		sscanf(setting->input_size,"%d:%d",&outw,&outh);
+	}
+	if(setting->set_size!=NULL){
+		//-s "width"x"height" in ffmpeg OUT OPTION
+		sscanf(setting->set_size,"%d:%d",&outw,&outh);
+	}
+	//outw outh is video output
+	if(setting->out_size!=NULL){
+		//-vfilters outs=width:hieight
+		//sscanf(setting->out_size,"%d:%d",&coutw,&couth);
+	}else if(setting->pad_option!=NULL){
+		//-vfilters pad=w:h:x:y
+		sscanf(setting->pad_option,"%d:%d:%d:%d",&w,&h,&outx,&outy);
+		data->pad_w = w>0 && w!=outw ? w : 0;
+		data->pad_h = h>0 && h!=outh ? h : 0;
 	}
 	data->vout_width = outw;
 	data->vout_height = outh;
-	data->vout_x = 0;
-	data->vout_y = 0;
-	if(setting->pad_option!=NULL){
-		sscanf(setting->pad_option,"%*d:%*d:%d:%d",&data->vout_x,&data->vout_y);
-	}
-	fprintf(log,"[main/init]output: %dx%d @(%d,%d)\n",
-		data->vout_width,data->vout_height,data->vout_x,data->vout_y);
+	data->vout_x = outx;
+	data->vout_y = outy;
+	fprintf(log,"[main/init]output: %dx%d @(%d,%d)of %d:%d\n",
+		data->vout_width,data->vout_height,data->vout_x,data->vout_y,data->pad_w,data->pad_h);
 	data->extra_mode = setting->extra_mode;
 	if(setting->april_fool != NULL){
 		set_aprilfool(setting,data);
@@ -98,6 +113,63 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	if(setting->wakuiro != NULL){
 		set_wakuiro(setting->wakuiro,data);
 	}
+	// 弾幕モードの高さの設定　16:9でオリジナルリサイズでない場合は上下にはみ出す
+	// Qwatchのときは、はみ出さない
+	//comment area height is independent from video height
+	data->width_scale = (double)data->vout_width / (double)data->nico_width_now;
+	double height_scale = (double)data->vout_height / (double)NICO_HEIGHT;
+	int comment_height = lround(data->width_scale * NICO_HEIGHT);
+	int limit_height = data->vout_height;
+	if(data->q_player){
+		// Qwatch
+		if(data->vout_height >= comment_height){
+			//data->width_scale = width_scale;
+			//limit_height = data->vout_height+1;
+			// scale縮小 limitそのまま
+		}else if(data->pad_h >= comment_height){
+			//padがあればpad以下ならlimit_heightだけ変更
+			// scale そのまま limit 変更
+			limit_height = comment_height;
+			fprintf(log,"[main/process]limit_height %d.\n",limit_height);
+		}else{
+			//pad以上かつ動画の高さ以上
+			data->width_scale = MAX(data->pad_h,data->vout_height) / (double)NICO_HEIGHT;
+			fprintf(log,"[main/process]width scale is set-again by height. %.3f%%\n", data->width_scale * 100.0);
+			limit_height = lround(data->width_scale * NICO_HEIGHT);
+			fprintf(log,"[main/process]limit_height %d.\n",limit_height);
+		}
+	} else if(data->original_resize){
+		// 原宿 旧リサイズ
+		// scale そのまま limit そのまま(起点ははみ出さない、終点ははみだすかも)
+		//data->width_scale = width_scale;
+		//data->limit_height = data->vout_height+1;
+	} else if(data->pad_h==0){
+		// 原宿 padなし
+		if(data->vout_height < comment_height){
+			// scale縮小 limitそのまま
+			data->width_scale = height_scale;
+			fprintf(log,"[main/process]width scale is set-again by height. %.3f%%\n", data->width_scale * 100.0);
+		}else{
+			// scale そのまま limit そのまま
+			//data->width_scale = width_scale;
+		}
+		//limit_height = data->vout_height+1;
+	} else {
+		// 原宿 padあり
+		// scale そのまま limit拡大
+		//data->width_scale = width_scale;
+		limit_height = comment_height;
+		fprintf(log,"[main/process]limit_height %d.\n",limit_height);
+	}
+	limit_height += limit_height / NICO_HEIGHT;
+		//コメントの高さは385=384+1 下にはみ出す
+	data->limit_height = limit_height;
+	fprintf(data->log,"[chat_slot/add]video height %d  limit height %d\n",data->vout_height,data->limit_height);
+	int y_min = (data->vout_height>>1) - (limit_height>>1);
+	int y_max = y_min + limit_height;
+	data->y_min = y_min;
+	data->y_max = y_max;
+	fprintf(data->log,"[chat_slot/add]height min %d  max %d\n",y_min,y_max);
 	fputs("[main/init]initializing context...\n",log);
 	//フォント
 	TTF_Font** font = data->font;
@@ -203,9 +275,9 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 				}
 				continue;
 			}
-			strcpy(font_file_path,fontdir);
-			strcat(font_file_path,font_path);
 			if(isPathRelative(font_path)){
+				strcpy(font_file_path,fontdir);
+				strcat(font_file_path,font_path);
 				font_path = font_file_path;
 			}
 			fixed_font_index = setting->CAfont_index[f];
@@ -316,6 +388,8 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 			fputs("\n",log);
 		}
 		*/
+		if(setting->fontlist!=NULL)
+			free(setting->fontlist);
 		fputs("[main/init]initialized CA(Comment Art) Feature.\n",log);
 	}
 	//エラーフォント
@@ -432,7 +506,7 @@ int isPathRelative(const char* path){
 	if(c0 == '/'||c0=='\\')
 		return FALSE;
 	c0 = toupper(c0);
-	if(c1 == ':' && ('A'<=c0 && c0<='Z'))
+	if(c1 == ':' && ('A'<=c0 && c0<='Z') && path[2] == '\\')
 		return FALSE;
 	return TRUE;
 }
@@ -442,10 +516,19 @@ int isPathRelative(const char* path){
 int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 	FILE* log = data->log;
 	if(!data->process_first_called){
-		data->width_scale = (double)(data->vout_width) / (double)(data->nico_width_now);
-		fprintf(log,"[main/process]screen size:%dx%d aspect:%.3f->%.3f scale:%.0f%%.\n",
-			surf->w,surf->h,data->aspect_mode? 1.7777 : 1.3333,
-			(double)data->vout_width/(double)data->vout_height,data->width_scale*100.0);
+		// 弾幕モードの高さの設定　16:9でオリジナルリサイズでない場合は上下にはみ出す
+		// Qwatchのときは、はみ出さない
+		//comment area height is independent from video height
+		if(surf->w!=data->vout_width||surf->h!=data->vout_height){
+			fprintf(log,"[main/process]screen size != video size\n");
+		}
+		fprintf(log,"[main/process]screen %dx%d, video %dx%d, comment %.0fx%.0f\n",
+			surf->w,surf->h,data->vout_width,data->vout_height,
+			data->width_scale*data->nico_width_now,data->width_scale*NICO_HEIGHT);
+		data->aspect_rate = (float)data->vout_width/(float)data->vout_height;
+		fprintf(log,"[main/process]screen aspect:%.3f->%.3f scale:%.2f%%.\n",
+			(float)surf->w / (float)surf->h,
+			data->aspect_rate,data->width_scale*100.0);
 		fflush(log);
 	}
 	/*フィルタをかける*/
