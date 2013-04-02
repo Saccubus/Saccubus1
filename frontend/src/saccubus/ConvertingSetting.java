@@ -1297,7 +1297,7 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_ZQ_CMDLINE_EXT, "mp4"),
 			prop.getProperty(PROP_ZQ_CMDLINE_MAIN,""),
 			prop.getProperty(PROP_ZQ_CMDLINE_IN, ""),
-			prop.getProperty(PROP_ZQ_CMDLINE_OUT,"-threads 0 -s 854x480 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -cqp 23 -async 1 -aspect 16:9"),
+			prop.getProperty(PROP_ZQ_CMDLINE_OUT,"-threads 0 -s 640x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -samx"),
 			prop.getProperty(PROP_ZQ_ADD_OPTION, "")
 		);
 	}
