@@ -161,7 +161,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		limit_height = comment_height;
 		fprintf(log,"[main/process]limit_height %d.\n",limit_height);
 	}
-	limit_height += limit_height / NICO_HEIGHT;
+	limit_height += lround(((double)limit_height / (double)NICO_HEIGHT));
 		//ƒRƒƒ“ƒg‚Ì‚‚³‚Í385=384+1 ‰º‚É‚Í‚İo‚·
 	data->limit_height = limit_height;
 	fprintf(data->log,"[chat_slot/add]video height %d  limit height %d\n",data->vout_height,data->limit_height);

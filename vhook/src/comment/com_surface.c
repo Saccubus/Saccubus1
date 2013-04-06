@@ -19,7 +19,7 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color color,Uint16* str);
 SDL_Surface* drawText3(DATA* data,int size,SDL_Color color,FontType fonttype,Uint16* from,Uint16* to);
 SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel);
 //int cmpSDLColor(SDL_Color col1, SDL_Color col2);
-int isDoubleResize(double width, double limit_width, int size, int line, FILE* log);
+int isDoubleResize(double width, double limit_width, int size, int line, FILE* log, int is_full);
 
 SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width,int video_height){
 	Uint16* index = item->str;
@@ -294,13 +294,13 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		}
 		// 改行リサイズ
 		// コメントの画像の高さがニコニコ動画基準の高さの１／３より大きいと倍率を１／２にする
-		if((int)(ret->h * zoomx) > (NICO_HEIGHT/3) * autoscale + 1){
+		if(zoomx * 3 * ret->h > autoscale * NICO_HEIGHT){
 			// ダブルリサイズ検査
 			// 改行リサイズ＆改行後の倍率で臨界幅を超えた場合 → 改行リサイズキャンセル
 			double linefeed_zoom = linefeedResizeScale(size,nb_line,data->fontsize_fix);
 			double resized_w = linefeed_zoom * zoomx * ret->w;
 			if((location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM)
-				&& isDoubleResize(resized_w, nicolimit_width, size, nb_line, log)){
+				&& isDoubleResize(resized_w, nicolimit_width, size, nb_line, log, item->full)){
 				//  ダブルリサイズあり → 改行リサイズキャンセル
 				nicolimit_width /= linefeed_zoom;	//*= 2.0;
 				double_resized = TRUE;
@@ -440,12 +440,10 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		double resize = linefeed_zoom;
 		//double resize = rsRate;
 		resized_w = zoom_w * resize;
-		//resized_w = zoom_w * linefeed_zoom;
-		//resized_w = zoom_w * rsRate;
-		fprintf(log,"[comsurface/LFresize]comment %d LFzoom %.2f%% LFrateFS %.2f%% %s rFS %d\n",
-			item->no,linefeed_zoom*100.0,rsRate*100.0,COM_FONTSIZE_NAME[size],rfs);
+		fprintf(log,"[comsurface/LFresize]comment %d LFzoom %.2f%% RSrate %.2f%% %s resized %.0f\n",
+			item->no,linefeed_zoom*100.0,rsRate*100.0,COM_FONTSIZE_NAME[size],resized_w);
 		if((location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM)
-			&& isDoubleResize(zoom_w * linefeed_zoom, nicolimit_width, size, nb_line, log)){
+			&& isDoubleResize(resized_w, nicolimit_width, size, nb_line, log, item->full)){
 			// ダブルリサイズあり
 			double_resized = TRUE;
 			//ダブルリサイズ時には動画幅の２倍にリサイズされる筈
@@ -468,7 +466,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 				fprintf(log,"[comsurface/DR limit1]comment %d default width %.0f dFS %d resized %.0f limit %.0f\n",
 					item->no,zoom_w,dfs,resized_w,double_limit_width);
 				zoom_w = resized_w;
-				fprintf(log,"[comsurface/DR limit2]comment %d %s width %.0f rFS %d wrate %.0f%%\n",
+				fprintf(log,"[comsurface/DR limit2]comment %d %s width %.0f rFS %d wRate %.1f%%\n",
 					item->no,COM_FONTSIZE_NAME[size],zoom_w,rfs,rsRate*100.0);
 				zoom_h = (zoom_w/(double)ret->w / font_width_rate) * font_height_rate * (double)ret->h;
 				//zoomy = zoom_h/(double)ret->h;
@@ -984,54 +982,68 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 	return ret;
 }
 
-int isDoubleResize(double width, double limit_width, int size, int line, FILE* log){
+int isDoubleResize(double width, double limit_width, int size, int line, FILE* log, int is_full){
+	if(width < limit_width  * 0.9 || width > limit_width * 1.1)
+		return width > limit_width;	//10% is abviously ok
 	if(size==CMD_FONT_BIG){
+		if(8<=line && line<=14){
+			//ダブルリサイズの可能性
+			if(!is_full && width > limit_width * 0.99){
+				if(width < limit_width)
+					fprintf(log,"[isDoubleResize]found NotFull and shorter then DR but ok. line:%d width:%.1f\n",line,width);
+				return TRUE;
+			}
+		}
+		if(width <= limit_width)
+			return FALSE;
 		if(line>=16){
 			//高さ固定,big16の可能性
 			if(width * 0.95 < limit_width){
-				fprintf(log,"[isDoubleResize]found a little wider then big16 but ok.\n");
+				if(limit_width<width)
+					fprintf(log,"[isDoubleResize]found a little wider then big16 but ok. line:%d width:%.1f %s\n",
+						line,width,is_full? "Full":"NotFull");
 				return FALSE;
 			}
-			fprintf(log,"[isDoubleResize]found big16 but too wide.\n");
+		//	fprintf(log,"[isDoubleResize]found big16 but too wide.\n");
 		}
-		if(line<=7 && line<=14){
-			//ダブルリサイズの可能性
-		}
-		if(line<7 && (int)limit_width>545){
-			//高さ固定？
+		if(is_full){
+			//full
 			if(width * 0.95 < limit_width){
-				fprintf(log,"[isDoubleResize]found a little wider then linefeed but ok.\n");
+				if(limit_width<width)
+					fprintf(log,"[isDoubleResize]found big is wider, but linefeed resize. line:%d width:%.1f Full\n",line,width);
 				return FALSE;
 			}
 		}
-		if(width * 0.9 < limit_width && width * 1.05 > limit_width)
-			fprintf(log,"[isDoubleResize]found big is NOT SURE WIDTH. line:%d width:%.1f\n",line, width);
+		else {
+			fprintf(log,"[isDoubleResize]found bigDR not linefeed resize. line:%d width:%.1f NotFull\n",
+				line,width);
+			return TRUE;
+		}
+		fprintf(log,"[isDoubleResize]found big is wider for linefeed resize. line:%d width:%.1f \n",
+			line, width);
 		return width > limit_width;
 	}
-	if(width <= limit_width){
+	if(width <= limit_width)
 		return FALSE;
-	}
 	if((size==CMD_FONT_DEF || size==CMD_FONT_MEDIUM) && line>=25){
 		//高さ固定の可能性
 		if(width * 0.95 < limit_width){
-			fprintf(log,"[isDoubleResize]found a little wider then medium25 but ok.\n");
+			fprintf(log,"[isDoubleResize]found wider then medium25 but ok.\n");
 			return FALSE;
 		}
-		fprintf(log,"[isDoubleResize]found medium25 but too wide.\n");
 	}
 	if(size==CMD_FONT_SMALL && line>=38){
 		//高さ固定の可能性
 		if(width * 0.95 < limit_width){
-			fprintf(log,"[isDoubleResize]found a little wider then small38 but ok.\n");
+			fprintf(log,"[isDoubleResize]found wider then small38 but ok.\n");
 			return FALSE;
 		}
-		fprintf(log,"[isDoubleResize]found small38 but too wide.\n");
 	}
 	if(width * 0.95 < limit_width){
 		fprintf(log,"[isDoubleResize]found a little wide for linefeed resize. line:%d width:%.1f \n",
 			line, width);
 	}
-	return TRUE;
+	return width > limit_width;
 }
 
 SDL_Surface* getErrFont(DATA* data){
