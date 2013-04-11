@@ -45,7 +45,7 @@ public class WayBackDate {
 	 * @return
 	 * 　変換結果の可否
 	 */
-	public boolean parse(String time) {
+	synchronized public boolean parse(String time) {
 		Date tmpdate = null;
 		if (time == null || time.isEmpty() || time.equals("0")){
 			return false;
@@ -129,7 +129,7 @@ public class WayBackDate {
 	 * @return
 	 * 　過去ログ日時のパース結果の文字列
 	 */
-	public String format(){
+	synchronized public String format(){
 		if (date != null){
 			return MyDateFmt.format(date);
 		} else {
@@ -141,7 +141,7 @@ public class WayBackDate {
 	 * @return
 	 * 現在時刻をフォーマットして返す
 	 */
-	public static String formatNow(){
+	synchronized public static String formatNow(){
 		return MyDateFmt.format(new Date());
 	}
 

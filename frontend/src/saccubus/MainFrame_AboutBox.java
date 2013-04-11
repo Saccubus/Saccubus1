@@ -52,8 +52,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.39r";
-	private static final String modefied = " (2013/04/02)";
+	public static final String rev = "1.40.d2";
+	private static final String modefied = " (2013/04/09)";
 
 	String productHTML =
 		"<html>" +
@@ -65,7 +65,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 	//	" orz " + rev + " " + modefied + "<br/>"+
 	//	"本プログラムのオリジナルは以下の通りです。<br/><br/>"+
 		"<p><a href=\'http://sourceforge.jp/projects/saccubus/\'>" +
-		"さきゅばす　"+ rev + modefied + "</a><br/><br/>"+
+		"さきゅばす "+ rev + modefied + "</a><br/><br/>"+
 		"<table border=0>" +
 		"<tr><td>Copyright (C) <td>2008 Saccubus Developers Team"+
 		"<tr><td><td>2007-2008 2012-2013(FFmpeg) PSI"+
@@ -73,12 +73,12 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 		"</table>" +
 		"ニコニコ動画の動画をコメントつきで保存</p>" +
 		"<p>本プログラムは<br/>" +
-		" <a href=\'http://sourceforge.jp/projects/coroid/downloads/52981/inqubus1.7.2.zip/\'>"	+
-		"いんきゅばす1.7.2</a><br/>を参考にしています。</p>" +
+		" <a href=\'http://sourceforge.jp/projects/coroid/downloads/52981/\'>"	+
+		"いんきゅばす</a>/inqubus1.7.2.zip<br/>を参考にしています。</p>" +
 		"<p>関連リンク<br/>" +
 		"さきゅばす <a href=\'http://sourceforge.jp/projects/saccubus/\'>sourceforge.jp/projects/saccubus</a><br/>" +
 		"coroid いんきゅばす<a href=\'http://sourceforge.jp/projects/coroid/\'>sourceforge.jp/projects/coroid</a>  雪羽氏<br/>" +
-		"<a href=\'http://anago.2ch.net/test/read.cgi/software/1310301611/\'>2chさきゅばすスレ</a>" +
+		"<a href=\'http://anago.2ch.net/test/read.cgi/software/1346798166/l50\'>2chさきゅばすスレ 最新50</a>" +
 		"</p></html>";
 
 	JPanel panel1 = new JPanel();

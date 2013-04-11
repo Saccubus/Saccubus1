@@ -137,14 +137,18 @@ public class FFmpeg {
 			}
 			@Override
 			public void doAbort(String e) {
-				status.setText("ffmpegの実行を中止しました。");
+				synchronized (status) {
+					status.setText("ffmpegの実行を中止しました。");
+				}
 			}
 			@Override
 			public void doEveryLoop(String e) {
 				stopwatch.show();
 				if (e.startsWith("frame=")) { //
 					LastFrame = e;
-					status.setText(e);
+					synchronized (status) {
+						status.setText(e);
+					}
 				} else {
 					LastError = e;
 					errorLogging.append(LastError + "\n");

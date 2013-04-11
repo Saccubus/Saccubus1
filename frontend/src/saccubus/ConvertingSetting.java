@@ -144,6 +144,7 @@ public class ConvertingSetting {
 	private String zqCmdLineOptionOut;
 	private String zqCmdLineOptionMain;
 	private String zqAddOption;
+	private StringBuffer retBuffer;
 
 	private Map<String, String> replaceOptions;
 
@@ -348,7 +349,8 @@ public class ConvertingSetting {
 			String zq_cmdlineoption_main,
 			String zq_cmdlineoption_in,
 			String zq_cmdlineoption_out,
-			String zq_add_option
+			String zq_add_option,
+			StringBuffer return_buffer
 		)
 	{
 		this(	mailaddress,
@@ -462,6 +464,7 @@ public class ConvertingSetting {
 		zqCmdLineOptionIn = zq_cmdlineoption_in;
 		zqCmdLineOptionOut = zq_cmdlineoption_out;
 		zqAddOption = zq_add_option;
+		retBuffer = return_buffer;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -772,6 +775,9 @@ public class ConvertingSetting {
 	}
 	public String getZqAddOption() {
 		return zqAddOption;
+	}
+	public StringBuffer getReturnBuffer(){
+		return retBuffer;
 	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
@@ -1298,7 +1304,8 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_ZQ_CMDLINE_MAIN,""),
 			prop.getProperty(PROP_ZQ_CMDLINE_IN, ""),
 			prop.getProperty(PROP_ZQ_CMDLINE_OUT,"-threads 0 -s 640x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -samx"),
-			prop.getProperty(PROP_ZQ_ADD_OPTION, "")
+			prop.getProperty(PROP_ZQ_ADD_OPTION, ""),
+			new StringBuffer()
 		);
 	}
 

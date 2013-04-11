@@ -42,6 +42,12 @@ public class Loader {
 		stopwatch = new Stopwatch(watch);
 	}
 
+	void sendtext(String text){
+		synchronized (status) {
+			status.setText(text);
+		}
+	}
+
 	/**
 	 * Load url to file, eather use browser session or login by mail-address and password.
 	 * @param url : String
@@ -73,11 +79,11 @@ public class Loader {
 			password = setting.getPassword();
 			if (mailAddress == null || mailAddress.isEmpty()
 				|| password == null || password.isEmpty()) {
-				status.setText("メールアドレスかパスワードが空白です。");
+				sendtext("メールアドレスかパスワードが空白です。");
 				return false;
 			}
 		} else if (userSession.isEmpty()){
-			status.setText("ブラウザ" + browserKind.getName() + "のセッション取得に失敗");
+			sendtext("ブラウザ" + browserKind.getName() + "のセッション取得に失敗");
 			return false;
 		}
 		if (setting.useProxy()){
@@ -85,7 +91,7 @@ public class Loader {
 			proxyPort = setting.getProxyPort();
 			if (   proxy == null || proxy.isEmpty()
 				|| proxyPort < 0 || proxyPort > 65535   ){
-				status.setText("プロキシの設定が不正です。");
+				sendtext("プロキシの設定が不正です。");
 				return false;
 			}
 		} else {
@@ -96,7 +102,7 @@ public class Loader {
 	}
 
 	private NicoClient getNicoClient(){
-		status.setText("ログイン中");
+		sendtext("ログイン中");
 		NicoClient client = null;
 		if (browserKind != BrowserCookieKind.NONE){
 			// セッション共有、ログイン済みのNicoClientをclientに返す
@@ -105,11 +111,11 @@ public class Loader {
 			client = new NicoClient(mailAddress, password, proxy, proxyPort, stopwatch);
 		}
 		if (!client.isLoggedIn()) {
-			status.setText("ログイン失敗 " + browserKind.getName() + " " + client.getExtraError());
+			sendtext("ログイン失敗 " + browserKind.getName() + " " + client.getExtraError());
 			System.out.println("\nLogin failed.");
 			return null;
 		} else {
-			status.setText("ログイン成功 " + browserKind.getName());
+			sendtext("ログイン成功 " + browserKind.getName());
 			return client;
 		}
 	}

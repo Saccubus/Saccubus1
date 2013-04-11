@@ -3,10 +3,14 @@ package saccubus.net;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
+import java.util.Properties;
 
 /**
  * <p>
@@ -372,5 +376,38 @@ public class Path extends File{
 			if (destch != null) try { destch.close(); } catch (IOException e) {}
 			if (srcch != null) try { srcch.close(); } catch (IOException e) {}
 		}
+	}
+	/**
+	 * unescape Unicode-Escape like "\u0061"
+	 */
+	public static boolean unescapeUEtoXml(Path input, Path xml){
+		String path = input.getPath();
+		String text = readAllText(path, "UTF-8");
+		return unescapeStoreXml(xml, text, Path.toUnixPath(input));
+	}
+
+	public static boolean unescapeStoreXml(Path xml, String json, String comment) {
+		try {
+			PrintStream ps = new PrintStream(new FileOutputStream(xml), true, "UTF-8");
+			ps.println("# ");
+			ps.print("json = ");
+			ps.println(json);
+			ps.flush();
+			ps.close();
+			Properties prop = new Properties();
+			prop.load(new FileInputStream(xml));
+			// load ISO-8859-1 decoding Unicode-Escape
+			prop.storeToXML(new FileOutputStream(xml), comment, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return false;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 }

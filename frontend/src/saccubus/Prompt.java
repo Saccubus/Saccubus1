@@ -265,7 +265,7 @@ public class Prompt {
 			System.out.println(ret[l]);
 			String[] s = ret[l].split("=");
 			if("RESULT".equals(s[0]) && !"0".equals(s[1])){
-				exit(decode(s[1]));
+				exit(Integer.parseInt(s[1],16));
 			}
 		}
 		exit(0);

@@ -91,6 +91,10 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuInit = new JMenuItem();
 	JMenu jMenuHelp = new JMenu();
 	JMenuItem jMenuHelpAbout = new JMenuItem();
+	JMenuItem jMenuHelpReadme = new JMenuItem();
+	JMenuItem jMenuHelpReadmeNew = new JMenuItem();
+	JMenuItem jMenuHelpReadmePlus = new JMenuItem();
+	JMenuItem jMenuHelpReadmeFirst = new JMenuItem();
 	JMenuItem jMenuHelpFF = new JMenuItem();
 	JMenuItem jMenuHelpFormats = new JMenuItem();
 	JMenuItem jMenuHelpCodecs = new JMenuItem();
@@ -204,6 +208,10 @@ public class MainFrame extends JFrame {
 	JCheckBox changeMp4ExtCheckBox = new JCheckBox();
 	JCheckBox changeTitleIdCheckBox = new JCheckBox();
 	JCheckBox saveThumbnailJpgCheckBox = new JCheckBox();
+	@SuppressWarnings("unused")
+	private StringBuffer resultBuffer;
+	private JButton showDownloadListButton = new JButton();
+	private JLabel showDownloadListLabel = new JLabel();
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -233,6 +241,7 @@ public class MainFrame extends JFrame {
 					null, "./saccubus.ini", false);
 			}
 			this.setSetting(setting);
+			resultBuffer = new StringBuffer();
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
@@ -621,6 +630,34 @@ public class MainFrame extends JFrame {
 		jMenuHelpAbout
 				.addActionListener(new MainFrame_jMenuHelpAbout_ActionAdapter(
 						this));
+		jMenuHelpReadme.setText("　reame(オリジナル)表示");
+		jMenuHelpReadme.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showReadme_actionPerformed("./readme.txt");
+			}
+		});
+		jMenuHelpReadmeNew.setText("reameNew(最新)表示");
+		jMenuHelpReadmeNew.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showReadme_actionPerformed("./readmeNew.txt");
+			}
+		});
+		jMenuHelpReadmePlus.setText("　reame+表示");
+		jMenuHelpReadmePlus.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showReadme_actionPerformed("./readme+.txt");
+			}
+		});
+		jMenuHelpReadmeFirst.setText("　最初に必ず読んで　表示");
+		jMenuHelpReadmeFirst.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showReadme_actionPerformed("./最初に必ず読んで - コピー.txt");
+			}
+		});
 		jMenuHelpFF.setText("FFmpegヘルプ表示");
 		jMenuHelpFF.addActionListener(new ActionListener(){
 			@Override
@@ -987,6 +1024,10 @@ public class MainFrame extends JFrame {
 		jMenuDetail.add(jMenuAprilFool);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
+		jMenuHelp.add(jMenuHelpReadmeNew);
+		jMenuHelp.add(jMenuHelpReadme);
+		jMenuHelp.add(jMenuHelpReadmePlus);
+		jMenuHelp.add(jMenuHelpReadmeFirst);
 		jMenuHelp.add(jMenuHelpFF);
 		jMenuHelp.add(jMenuHelpFormats);
 		jMenuHelp.add(jMenuHelpCodecs);
@@ -1485,6 +1526,32 @@ public class MainFrame extends JFrame {
 		grid_x1_y1_88.fill = GridBagConstraints.HORIZONTAL;
 		grid_x1_y1_88.insets = INSETS_0_5_0_5;
 		CheckFFmpegFunctionPanel.add(CheckDownloadVideoLabel,grid_x1_y1_88);
+		showDownloadListButton.setText("表示");
+		showDownloadListButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showDownloadList_actionPerformed(e);
+			}
+		});
+		GridBagConstraints grid_x1_y3_x = new GridBagConstraints();
+		grid_x1_y3_x.gridx = 0;
+		grid_x1_y3_x.gridy = 3;
+		grid_x1_y3_x.weightx = 0.0;
+		grid_x1_y3_x.weighty = 0.0;
+		grid_x1_y3_x.anchor = GridBagConstraints.NORTHWEST;
+		grid_x1_y3_x.fill = GridBagConstraints.NONE;
+		grid_x1_y3_x.insets = INSETS_0_5_0_5;
+		CheckFFmpegFunctionPanel.add(showDownloadListButton, grid_x1_y3_x);
+		showDownloadListLabel.setText("ダウンロードリストを表示する");
+		grid_x1_y3_x = new GridBagConstraints();
+		grid_x1_y3_x.gridx = 1;
+		grid_x1_y3_x.gridy = 3;
+		grid_x1_y3_x.weightx = 1.0;
+		grid_x1_y3_x.weighty = 0.0;
+		grid_x1_y3_x.anchor = GridBagConstraints.WEST;
+		grid_x1_y3_x.fill = GridBagConstraints.HORIZONTAL;
+		grid_x1_y3_x.insets = INSETS_0_5_0_5;
+		CheckFFmpegFunctionPanel.add(showDownloadListLabel, grid_x1_y3_x);
 /*
 		GridBagConstraints grid_x0_y2_87 = new GridBagConstraints();
  		grid_x0_y2_87.gridx = 0;
@@ -1939,7 +2006,8 @@ public class MainFrame extends JFrame {
 			zqMainOptionField.getText(),
 			zqCommandLineInOptionField.getText(),
 			zqCommandLineOutOptionField.getText(),
-			zqAdditionalOptionFiled.getText()
+			zqAdditionalOptionFiled.getText(),
+			history
 		);
 	}
 /*
@@ -2189,22 +2257,58 @@ public class MainFrame extends JFrame {
 	private JLabel sharedNgLabel;
 	private JPanel sharedNgPanel;
 
+	public static StringBuffer history = new StringBuffer("");
+
 	public void DoButton_actionPerformed(ActionEvent e) {
-		if (converter == null || converter.isConverted()) {
-			converter = new Converter(
-				VideoID_TextField.getText(),
-				WayBackField.getText(),
-				getSetting(),
-				statusBar,
-				new ConvertStopFlag(DoButton, DoButtonStopString, DoButtonWaitString, DoButtonDefString),
-				vhookInfoBar,
-				elapsedTimeBar);
-			converter.start();
-		} else { /* 開始しているので、ストップする。 */
-			final ConvertStopFlag flag = converter.getStopFlag();
-			if (!flag.needStop()) { /* まだストップしていない。 */
-				flag.stop();
+		ConvertStopFlag stopFlag;
+		try{
+			String url = VideoID_TextField.getText();
+			if (converter != null && !converter.isFinished()) {
+				//converter実行中→converter中止
+				final ConvertStopFlag flag = converter.getStopFlag();
+				if(flag!=null && !flag.needStop() && !flag.isFinished()){ /* まだストップしていない。 */
+					flag.stop();
+				}
+			}else
+			if(url!=null && url.contains("mylist")){
+				//converter worker start
+				stopFlag = new ConvertStopFlag(DoButton, DoButtonStopString, DoButtonWaitString, DoButtonDefString);
+				converter = new Converter(
+						url,
+						WayBackField.getText(),
+						getSetting(),
+						statusBar,
+						stopFlag,
+						vhookInfoBar,
+						elapsedTimeBar,
+						this);
+				converter.start();
+				// return to dispatch
+			}else
+			{
+				//通常変換
+				stopFlag = new ConvertStopFlag(DoButton, DoButtonStopString, DoButtonWaitString, DoButtonDefString);
+				converter = new Converter(
+					url,
+					WayBackField.getText(),
+					getSetting(),
+					statusBar,
+					stopFlag,
+					vhookInfoBar,
+					elapsedTimeBar
+					);
+				converter.start();
 			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+			sendtext("MainFrame error");
+			System.out.println("MainFrame error");
+		}
+	}
+
+	void sendtext(String text) {
+		synchronized (statusBar) {
+			statusBar.setText(text);
 		}
 	}
 
@@ -2213,19 +2317,16 @@ public class MainFrame extends JFrame {
 		//JTextArea textout = TextFFmpegOutput;
 		JTextArea textout = null;
 		try{
-			textout = new MainFrame_TextView(
-				this,"FFmpegバージョン情報", 0.8).getTextArea();
-//			if (converter != null && !converter.isConverted()){
-//				textout.setText("変換実施中。お待ちください。");
-//				return;
-//			}
+			textout = new TextView(
+				this,"FFmpegバージョン情報").getTextArea();
 			textout.setText(null);
 			ArrayList<String> list = execFFmpeg("-version");
 			for(String line:list){
 				textout.append(line);
 			}
+			textout.setCaretPosition(0);
 		} catch(NullPointerException ex){
-			statusBar.setText("(´∀｀)＜ぬるぽ\nガッ\n");
+			sendtext("(´∀｀)＜ぬるぽ\nガッ\n");
 			ex.printStackTrace();
 		} catch (FileNotFoundException ex) {
 			textout.setText(ex.getMessage());
@@ -2237,19 +2338,44 @@ public class MainFrame extends JFrame {
 	public void FFhelp_actionPerformed(String s){
 		JTextArea textout = null;
 		try{
-			textout = new MainFrame_TextView(
-				this,"FFmpegヘルプ情報", 0.9).getTextArea();
+			textout = new TextView(
+				this,"FFmpegヘルプ情報").getTextArea();
 			textout.setText(null);
 			ArrayList<String> list = execFFmpeg(s);
 			for(String line:list){
 				textout.append(line);
 			}
+			textout.setCaretPosition(0);
 		} catch(NullPointerException ex){
-			statusBar.setText("(´∀｀)＜ぬるぽ\nガッ\n");
+			sendtext("(´∀｀)＜ぬるぽ\nガッ\n");
 			ex.printStackTrace();
 		} catch (FileNotFoundException ex) {
 			textout.setText(ex.getMessage());
 			ex.printStackTrace();
+		}
+	}
+
+	/* ダウンロードリスト表示 */
+	public void showDownloadList_actionPerformed(ActionEvent s){
+		JTextArea textout = null;
+		textout = new TextView(
+			this, "ダウンロードリスト").getTextArea();
+		textout.setText(history.toString());
+	//	textout.setCaretPosition(0);
+	}
+
+	/* readme表示 */
+	public void showReadme_actionPerformed(String readmePath){
+		HtmlView hv;
+		try{
+			String text = Path.readAllText(readmePath, "MS932");
+			if(text.isEmpty()){
+				text = "ファイルが見つかりません.";
+			}
+			hv = new HtmlView(this, "readme表示", "");
+			hv.setText(HtmlView.markupHtml(text));
+	}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 
@@ -2259,7 +2385,8 @@ public class MainFrame extends JFrame {
 	//	JTextArea textout = TextFFmpegOutput;
 		JTextArea textout = null;
 		try {
-			textout = new MainFrame_TextView(this,"ダウンロード動画情報").getTextArea();
+			textout = new TextView(this,
+				"ダウンロード動画情報").getTextArea();
 			File inputVideo = null;
 			ConvertingSetting setting = getSetting();
 			Converter conv = new Converter(
@@ -2300,8 +2427,9 @@ public class MainFrame extends JFrame {
 					textout.append(line.trim() + "\n");
 				}
 			}
+			textout.setCaretPosition(0);
 		} catch(NullPointerException ex){
-			statusBar.setText("(´∀｀)＜ぬるぽ\nガッ");
+			sendtext("(´∀｀)＜ぬるぽ\nガッ");
 			ex.printStackTrace();
 		} catch (FileNotFoundException ex) {
 			textout.setText(ex.getMessage());
@@ -3210,7 +3338,7 @@ s	 * @return javax.swing.JPanel
 									prop.loadFromXML(new FileInputStream(
 										FFmpegOptionModel.getSelectedFile()));
 								} catch (IOException ex) {
-									statusBar.setText("設定2のオプションファイルが表示できません。");
+									sendtext("設定2のオプションファイルが表示できません。");
 									ex.printStackTrace();
 								}
 								ExtOptionField.setText(prop.getProperty("EXT", ""));
@@ -3250,7 +3378,7 @@ s	 * @return javax.swing.JPanel
 									prop.loadFromXML(new FileInputStream(
 										WideFFmpegOptionModel.getSelectedFile()));
 								} catch (IOException ex) {
-									statusBar.setText("設定2のオプションファイルが表示できません。");
+									sendtext("設定2のオプションファイルが表示できません。");
 									ex.printStackTrace();
 								}
 								wideExtOptionField.setText(prop.getProperty("EXT", ""));
@@ -3292,7 +3420,7 @@ s	 * @return javax.swing.JPanel
 									prop.loadFromXML(new FileInputStream(
 										zqFFmpegOptionModel.getSelectedFile()));
 								} catch (IOException ex) {
-									statusBar.setText("Qwatchのオプションファイルが表示できません。");
+									sendtext("Qwatchのオプションファイルが表示できません。");
 									ex.printStackTrace();
 								}
 								zqExtOptionField.setText(prop.getProperty("EXT", ""));
@@ -3335,7 +3463,7 @@ s	 * @return javax.swing.JPanel
 								try {
 									prop.loadFromXML(new FileInputStream(ConvertingSetting.PROP_FILE));
 								} catch (IOException ex) {
-									statusBar.setText("設定1のオプションファイルが更新できません。");
+									sendtext("設定1のオプションファイルが更新できません。");
 									ex.printStackTrace();
 									return;
 								}
@@ -3370,7 +3498,7 @@ s	 * @return javax.swing.JPanel
 									prop.loadFromXML(new FileInputStream(
 										ConvertingSetting.PROP_FILE));
 								} catch (IOException ex) {
-									statusBar.setText("設定2のオプションファイルが更新できません。");
+									sendtext("設定2のオプションファイルが更新できません。");
 									ex.printStackTrace();
 									return;
 								}
@@ -3406,7 +3534,7 @@ s	 * @return javax.swing.JPanel
 									prop.loadFromXML(new FileInputStream(
 										ConvertingSetting.PROP_FILE));
 								} catch (IOException ex) {
-									statusBar.setText("Qwatchのオプションファイルが更新できません。");
+									sendtext("Qwatchのオプションファイルが更新できません。");
 									ex.printStackTrace();
 									return;
 								}
@@ -3736,14 +3864,13 @@ class MainFrame_LoadNGConfig implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JLabel status = mainFrame.statusBar;
 		JLabel watch = mainFrame.elapsedTimeBar;
-		status.setText("ニコニコ動画のNG設定保存");
-		Loader loader = new Loader(mainFrame.getSetting(), status, watch);
+		mainFrame.sendtext("ニコニコ動画のNG設定保存");
+		Loader loader = new Loader(mainFrame.getSetting(), mainFrame.statusBar, watch);
 		Path file = new Path("configNG.xml");
 		String url = "http://ext.nicovideo.jp/api/configurengclient?mode=get";
 		if (loader.load(url, file)){
-			status.setText("ニコニコ動画のNG設定を保存しました：" + file.getRelativePath());
+			mainFrame.sendtext("ニコニコ動画のNG設定を保存しました：" + file.getRelativePath());
 		}
 	}
 }

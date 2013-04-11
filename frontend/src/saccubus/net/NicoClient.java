@@ -1037,10 +1037,14 @@ public class NicoClient {
 					/ max_size);
 			per = per.substring(0, Math.min(per.indexOf(".") + 3, per
 					.length()));
-			status.setText(msg + "ダウンロード：" + per + "パーセント完了");
+			synchronized (status) {
+				status.setText(msg + "ダウンロード：" + per + "パーセント完了");
+			}
 		} else {
-			status.setText(msg + "ダウンロード中：" + Integer.toString(size >> 10)
-					+ "kbytesダウンロード");
+			synchronized (status) {
+				status.setText(msg + "ダウンロード中：" + Integer.toString(size >> 10)
+						+ "kbytesダウンロード");
+			}
 		}
 	}
 
