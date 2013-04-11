@@ -270,7 +270,8 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		double zoomy;
 		//縮小
 
-		if(data->fontsize_fix || data->enableCA){
+		//if(data->fontsize_fix || data->enableCA){
+		if(data->fontsize_fix){
 			zoomx *= autoscale;
 			if(data->fontsize_fix){
 				zoomx *= 0.5;
@@ -582,7 +583,8 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	 * フォントサイズ自動調整
 	 * 動画幅とニコニコ動画の幅のスケール
 	 */
-	if(data->fontsize_fix || data->enableCA){
+	//if(data->fontsize_fix || data->enableCA){
+	if(data->fontsize_fix){
 		if(autoscale != 1.0f){
 			zoom_w *= autoscale;
 			//zoom_h *= autoscale;
