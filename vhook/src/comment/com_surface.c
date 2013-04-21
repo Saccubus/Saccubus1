@@ -20,6 +20,7 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color color,FontType fonttype,Uin
 SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel);
 //int cmpSDLColor(SDL_Color col1, SDL_Color col2);
 int isDoubleResize(double width, double limit_width, int size, int line, FILE* log, int is_full);
+int deleteLastLF(Uint16* index);
 
 SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width,int video_height){
 	Uint16* index = item->str;
@@ -99,6 +100,8 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	SDL_Surface* surf = NULL;
 	SDL_Surface* before_button = NULL;
 	// last == index == item->str;
+	if(deleteLastLF(index)<=0)
+		return NULL;
 	while(*index != '\0'){
 		if(*index=='[' && is_button==1){
 			*index = '\0';//‚±‚±‚Åˆê’UØ‚é
@@ -1046,6 +1049,18 @@ int isDoubleResize(double width, double limit_width, int size, int line, FILE* l
 			line, width);
 	}
 	return width > limit_width;
+}
+
+int deleteLastLF(Uint16* index){
+	Uint16* p = NULL;
+	int l = 1028;
+	while(*index != '\0' && l-->0){
+		p = index++;
+	}
+	if(p!=NULL && *p=='\n'){
+		*p = '\0';
+	}
+	return l;
 }
 
 SDL_Surface* getErrFont(DATA* data){

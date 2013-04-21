@@ -145,12 +145,7 @@ public class Converter extends Thread {
 		}
 		VideoID = "[" + Tag + "]";
 		DefaultVideoIDFilter = new VideoIDFilter(VideoID);
-		long t = 0;
-		try{
-			t = Long.parseLong(time);
-		}catch(NumberFormatException e){
-		}
-		if (time.equals("000000") || time.equals("0") || t==0){		// for auto.bat
+		if (time.equals("000000") || time.equals("0")){		// for auto.bat
 			Time = "";
 		} else {
 			Time = time;
@@ -1516,159 +1511,159 @@ public class Converter extends Thread {
 			if(StopFlag.needStop()) {
 				return;
 			}
-			if(!url.contains("mylist")) {
-				return;	//終り
-			}
-			String json_start = "Mylist.preload(";
-			int start = text.indexOf(json_start);
-			if(start < 0){
-				sendtext("JSON not found "+url);
-				return;	//JSON not found
-			}
-			start += json_start.length();
-			int end = (text+");\n").indexOf(");\n", start);	// end of JSON
-			text = (text+");\n").substring(start, end);
-			start = text.indexOf(",");
-			mylistID = text.substring(0, start);
-			text = text.substring(start+1).trim();
-			file = new Path(file.getRelativePath().replace(".html", ".xml"));
-			Path.unescapeStoreXml(file, text, url);	//xml is property key:json val:JSON
-			Properties prop = new Properties();
-			prop.loadFromXML(new FileInputStream(file));	//read JSON xml
-			text = prop.getProperty("json", "0");
-			file = new Path(file.getRelativePath().replace(".html", ".xml"));
-			//
-			if(DLDEBUG && parent!=null){
-				resultText = HtmlView.markupHtml(text);
-				HtmlView hv2 = new HtmlView(parent, "マイリスト mson", "mson");
-				hv2.setText(resultText);
-			}
-			//
-			System.out.println("get mylist/"+mylistID);
-			System.out.println("mson: "+text.length());
-			if(StopFlag.needStop()) {
-				return;
-			}
-			// parse mson
-			sendtext("パース実行中");
-			Mson mson = null;
-			try{
-				mson = Mson.parse(text);
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-			if(mson==null){
-				sendtext("パース失敗");
-				return;
-			}
-			sendtext("パース成功 "+mylistID);
-			if(StopFlag.needStop()) {
-				return;
-			}
-			//rename to .txt
-			file = new Path(file.getRelativePath().replace(".xml", ".txt"));
-			mson.prettyPrint(new PrintStream(file));	//pretty print
-			sendtext("リスト成功 "+mylistID);
-			if(StopFlag.needStop()) {
-				return;
-			}
-			String[] keys = {"watch_id","title"};
-			ArrayList<String[]> id_title_list = mson.getListString(keys);	// List of id & title
-			for(String[] vals:id_title_list){
-				System.out.println("Getting ["+ vals[0] + "]"+ vals[1]);
-				plist.add(0, vals);
-			}
-			//
-			sendtext("抽出成功 "+mylistID);
-			int sz = plist.size();
-			System.out.println("Success mylist/"+mylistID+" item:"+sz);
-			if(sz == 0){
-				sendtext("動画がありません。"+mylistID);
-				return;
-			}
-			if(StopFlag.needStop()) {
-				return;
-			}
-			if(DLDEBUG && parent!=null){
-				TextView dlg = new TextView(parent, "mylist/"+mylistID);
-				JTextArea textout = dlg.getTextArea();
-				for(String[] idts:plist){
-					textout.append("["+idts[0]+"]"+idts[1]+"\n");
+			if(url.contains("mylist")) {
+				//mylist処理
+				String json_start = "Mylist.preload(";
+				int start = text.indexOf(json_start);
+				if(start < 0){
+					sendtext("JSON not found "+url);
+					return;	//JSON not found
 				}
-				textout.setCaretPosition(0);
-			}
-			if(StopFlag.needStop()) {
-				return;
-			}
-			//start dowloader
-			if(Stopwatch.getSource()!=null){
-				watchArea = Stopwatch.getSource();
-			}
-			StringBuffer sb = new StringBuffer();
-			for(String[] ds: plist){
-				String vid = ds[0];
-				String vtitle = ds[1];
-				System.out.println("Converting ["+ vid +"]" + vtitle);
-				//converterを呼ぶ
+				start += json_start.length();
+				int end = (text+");\n").indexOf(");\n", start);	// end of JSON
+				text = (text+");\n").substring(start, end);
+				start = text.indexOf(",");
+				mylistID = text.substring(0, start);
+				text = text.substring(start+1).trim();
+				file = new Path(file.getRelativePath().replace(".html", ".xml"));
+				Path.unescapeStoreXml(file, text, url);	//xml is property key:json val:JSON
+				Properties prop = new Properties();
+				prop.loadFromXML(new FileInputStream(file));	//read JSON xml
+				text = prop.getProperty("json", "0");
+				file = new Path(file.getRelativePath().replace(".html", ".xml"));
+				//
+				if(DLDEBUG && parent!=null){
+					resultText = HtmlView.markupHtml(text);
+					HtmlView hv2 = new HtmlView(parent, "マイリスト mson", "mson");
+					hv2.setText(resultText);
+				}
+				//
+				System.out.println("get mylist/"+mylistID);
+				System.out.println("mson: "+text.length());
 				if(StopFlag.needStop()) {
 					return;
 				}
-				ConvertingSetting mySetting = getSetting();
-				if(parent!=null && parent instanceof MainFrame){
-					MainFrame mainFrame = (MainFrame)parent;
-					mySetting = mainFrame.getSetting();
+				// parse mson
+				sendtext("パース実行中");
+				Mson mson = null;
+				try{
+					mson = Mson.parse(text);
+				}catch(Exception e){
+					e.printStackTrace();
 				}
-				sb = new StringBuffer();
-				converter = new Converter(
-						vid,
-						Time,
-						mySetting,
-						Status,
-						new ConvertStopFlag(new JButton(),null,null,null),
-						MovieInfo,
-						watchArea,
-						sb);
-				converter.start();
-				while(converter!=null && !converter.isFinished()){
-					if(StopFlag.needStop()){
-						//子供を止めて
-						final ConvertStopFlag stopFlag = converter.getStopFlag();
-						if(stopFlag!=null && !stopFlag.isFinished()){
-							stopFlag.stop();
-						}
-						return;
-					}
-					try {
-						converter.join(1000);
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-				}
-				if(!sb.toString().contains("RESULT=0\n")){
-					result=sb.toString();
-					ngn++;
-				}
-				Long t = new Date().getTime();
-				watchArea.setText("待機中");
-				System.out.println("Sleep start." + WayBackDate.formatNow());
-				//ウェイト10秒
-				int wt = 10;
-				while(!StopFlag.needStop() && wt-->0){
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-						System.out.println("Sleep stop.");
-						wt = 0;
-					}
-				}
-				System.out.println("Sleep end. " + (new Date().getTime() - t)/1000 + "sec.");
-				if(StopFlag.needStop()){
+				if(mson==null){
+					sendtext("パース失敗");
 					return;
 				}
-			}//end for()
-			sendtext("マイリスト"+mylistID+" 全件終了, 失敗:"+ngn);
-			return;
+				sendtext("パース成功 "+mylistID);
+				if(StopFlag.needStop()) {
+					return;
+				}
+				//rename to .txt
+				file = new Path(file.getRelativePath().replace(".xml", ".txt"));
+				mson.prettyPrint(new PrintStream(file));	//pretty print
+				sendtext("リスト成功 "+mylistID);
+				if(StopFlag.needStop()) {
+					return;
+				}
+				String[] keys = {"watch_id","title"};
+				ArrayList<String[]> id_title_list = mson.getListString(keys);	// List of id & title
+				for(String[] vals:id_title_list){
+					System.out.println("Getting ["+ vals[0] + "]"+ vals[1]);
+					plist.add(0, vals);
+				}
+				//
+				sendtext("抽出成功 "+mylistID);
+				int sz = plist.size();
+				System.out.println("Success mylist/"+mylistID+" item:"+sz);
+				if(sz == 0){
+					sendtext("動画がありません。"+mylistID);
+					return;
+				}
+				if(StopFlag.needStop()) {
+					return;
+				}
+				if(DLDEBUG && parent!=null){
+					TextView dlg = new TextView(parent, "mylist/"+mylistID);
+					JTextArea textout = dlg.getTextArea();
+					for(String[] idts:plist){
+						textout.append("["+idts[0]+"]"+idts[1]+"\n");
+					}
+					textout.setCaretPosition(0);
+				}
+				if(StopFlag.needStop()) {
+					return;
+				}
+				//start dowloader
+				if(Stopwatch.getSource()!=null){
+					watchArea = Stopwatch.getSource();
+				}
+				StringBuffer sb = new StringBuffer();
+				for(String[] ds: plist){
+					String vid = ds[0];
+					String vtitle = ds[1];
+					System.out.println("Converting ["+ vid +"]" + vtitle);
+					//converterを呼ぶ
+					if(StopFlag.needStop()) {
+						return;
+					}
+					ConvertingSetting mySetting = getSetting();
+					if(parent!=null && parent instanceof MainFrame){
+						MainFrame mainFrame = (MainFrame)parent;
+						mySetting = mainFrame.getSetting();
+					}
+					sb = new StringBuffer();
+					converter = new Converter(
+							vid,
+							Time,
+							mySetting,
+							Status,
+							new ConvertStopFlag(new JButton(),null,null,null),
+							MovieInfo,
+							watchArea,
+							sb);
+					converter.start();
+					while(converter!=null && !converter.isFinished()){
+						if(StopFlag.needStop()){
+							//子供を止めて
+							final ConvertStopFlag stopFlag = converter.getStopFlag();
+							if(stopFlag!=null && !stopFlag.isFinished()){
+								stopFlag.stop();
+							}
+							return;
+						}
+						try {
+							converter.join(1000);
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
+					}
+					if(!sb.toString().contains("RESULT=0\n")){
+						result=sb.toString();
+						ngn++;
+					}
+					Long t = new Date().getTime();
+					watchArea.setText("待機中");
+					System.out.println("Sleep start." + WayBackDate.formatNow());
+					//ウェイト10秒
+					int wt = 10;
+					while(!StopFlag.needStop() && wt-->0){
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+							System.out.println("Sleep stop.");
+							wt = 0;
+						}
+					}
+					System.out.println("Sleep end. " + (new Date().getTime() - t)/1000 + "sec.");
+					if(StopFlag.needStop()){
+						return;
+					}
+				}//end for()
+				sendtext("マイリスト"+mylistID+" 全件終了, 失敗:"+ngn+"/"+plist.size()+"件中");
+				return;
+			}
 		}catch(InterruptedException e){
 		}catch (IOException e) {
 			e.printStackTrace();
@@ -1949,7 +1944,7 @@ public class Converter extends Thread {
 					outh = toMod4(outw / video_aspect);
 				}else if(out_aspect > video_aspect){
 					// ow / oh > w / h -> ow を変更
-					outw = toMod4(outh * video_aspect);
+					outw = toMod2(outh * video_aspect);
 				}
 				outAspect = new Aspect(outw, outh);
 				setSize = outAspect.getSize();
@@ -1994,7 +1989,7 @@ public class Converter extends Thread {
 				height = toMod4(commentHeight * rate);
 			}else{
 				rate = (double)height / commentHeight;
-				width = toMod4(commentWidth * rate);
+				width = toMod2(commentWidth * rate);
 			}
 		} else {
 			if(isPlayerWide){
@@ -2002,7 +1997,7 @@ public class Converter extends Thread {
 				height = toMod4(commentHeight * rate);
 			}else{
 				rate = (double)height / commentHeight;
-				width = toMod4(commentWidth * rate);
+				width = toMod2(commentWidth * rate);
 			}
 		}
 		System.out.println("Output Commetnt Area " + width + ":" + height + " Wide? " + isPlayerWide);
@@ -2012,6 +2007,10 @@ public class Converter extends Thread {
 
 	private int toMod4(double d){
 		return ((int)(d / 4.0 + 0.5)) * 4;
+	}
+
+	private int toMod2(double d){
+		return ((int)(d / 2.0 + 0.5)) * 2;
 	}
 
 	private Aspect toAspect(String str,Aspect defaultAspect){

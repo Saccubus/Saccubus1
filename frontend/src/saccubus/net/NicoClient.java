@@ -669,8 +669,8 @@ public class NicoClient {
 			final String time, final ConvertStopFlag flag, final int comment_mode) {
 		if (time != null && !time.isEmpty() && "0".equals(WayBackKey)){
 			if (!getWayBackKey(time)) { // WayBackKey
-				// System.out.println("It may be wrong Date.");
-				return null;
+				System.out.println("It may be wrong Date.");
+				//return null;
 			}
 		}
 		boolean useNewComment = true;
@@ -693,7 +693,8 @@ public class NicoClient {
 		if (time != null && !time.isEmpty()){
 		 	WayBackKey = "0";
 			if (!getWayBackKey(time)) { // WayBackKey
-				return null;
+				System.out.println("It may be wrong Date.");
+				//return null;
 			}
 		}
 		boolean useNewComment = true;
