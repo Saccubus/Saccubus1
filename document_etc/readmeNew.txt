@@ -6,20 +6,17 @@ readmeNew.txt
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-1.39r(2013/04/02)
-　初期値変更、オプションファイル追加
-1.39 (2013/04/01)
-FFmpeg設定にアス比共通画面追加
-変換時 -samx オプションにより動画アス比保持可能
-オプションファイル追加　５　PCx3,PSPx2
-＠ボタン(視聴者コメント)　対応
-/replace(投稿者ニワン語)　対応
-ヘルプメニューからffmpegヘルプを実行可能
-1時間超えのstatus表示内部変更
+1.40.d2(2013/04/11) 開発中
+マイリストurlを指定可能
+readmeメニュー表示追加
+フォント自動調整無しの条件を変更
+
 
 
 □改造部分について
-【ライセンス】GPLv3（添付してあります）
+【ライセンス】GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)と、
+　二条項BSDライセンス(http://opensource.org/licenses/BSD-2-Clause)のデュアルライセンスです。
+　(2013/5/1変更：さきゅばすの非ffmpegのライセンス変更に合わせて)
 
 □サポート解説など
 　さきゅばすの使い方などに関しては、
@@ -28,7 +25,7 @@ FFmpeg設定にアス比共通画面追加
 　1.22r3のreadme+.txtをご覧下さい。
 　1.22r3e、1.23以降の不具合報告等は2chさきゅばすスレでお願いします。
 　2ch【ニコニコ】コメント付動画作成ツール さきゅばす
-　　http://anago.2ch.net/test/read.cgi/software/1310301611/
+　　http://anago.2ch.net/test/read.cgi/software/1346798166/
 
 □動作環境
 　Windows XP/7/8desktop　（多分Vistaも動くはず）
@@ -590,11 +587,7 @@ FFmpeg設定にアス比共通画面追加
 　　└optionVO   オプションフォルダ(55686用)
 
 □内容
-・LICENSE.txt　　　　　　　 GPLライセンス
-・gpl.ja.txt 　　　　　　　 GPLライセンスの非公式日本語訳
-・LGPL_LICENSE　　　　　　　LGPLライセンス
-・agpl-3.0.txt　　　　　　　AGPLv3ライセンス
-・Saccubus.jar　　　　　　　本体　1.39
+・Saccubus.jar　　　　　　　本体　1.40.d2
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
 ・bin フォルダ配下
 　　ffmpeg55686.exe ライセンスGPLV3
