@@ -58,10 +58,23 @@ void deleteChatSlot(CHAT_SLOT_ITEM* slot_item,DATA* data){
 	}
 	if(item->script){
 		int bits = item->script & 3;
-		if(bits & 1)
-			data->owner.chat.to_left = 1;
-		if(bits & 2)
-			data->user.chat.to_left = 1;
+		if(bits & SCRIPT_OWNER){
+			if(item->vpos==data->owner.chat.reverse_vpos){
+				data->owner.chat.to_left = 1;
+				data->owner.chat.reverse_vpos = 0;
+				data->owner.chat.reverse_duration = -1;
+			}
+		}
+		if(bits & SCRIPT_USER){
+			if(item->vpos==data->user.chat.reverse_vpos){
+				data->user.chat.to_left = 1;
+				data->user.chat.reverse_vpos = 0;
+				data->user.chat.reverse_duration = -1;
+				data->optional.chat.to_left = 1;
+				data->optional.chat.reverse_vpos = 0;
+				data->optional.chat.reverse_duration = -1;
+			}
+		}
 	}
 	slot_item->chat_item=NULL;
 	SDL_FreeSurface(slot_item->surf);

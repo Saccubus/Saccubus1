@@ -38,9 +38,11 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	int color = item->color;
 	int is_button = FALSE;
 
+	//Script処理
 	if(item->script){
 		int cmd = item->script & 0xffff0000;
-		fprintf(log,"[comsurface/make script]%04x\n",cmd>>16);
+		fprintf(log,"[comsurface/make script]%04x vpos:%d vstart:%d vend%d\n",
+			cmd>>16, item->vpos, item->vstart, item->vend);
 		if(cmd == SCRIPT_DEFAULT){		//＠デフォルト
 			if(color != CMD_COLOR_DEF)
 				data->defcolor = color;
@@ -48,28 +50,41 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 				data->deflocation = location;
 			if(size != CMD_FONT_DEF)
 				data->defsize = size;
+			fprintf(log,"[comsurface/make script]@DEFAULT(color:%d location:%d size:%d) done\n",
+				color,location,size);
+			//nullコメントを表示
 			return drawNullSurface(0,0);
 		}
 		if(cmd == SCRIPT_GYAKU){	//＠逆
 			int bits = item->script & 3;
+			int vpos = item->vpos;
+			int duration = item->duration;
 			if(bits & SCRIPT_OWNER){
 				data->owner.chat.to_left = -1;
+				data->owner.chat.reverse_vpos = vpos;
+				data->owner.chat.reverse_duration = duration;
 			}
 			if(bits & SCRIPT_USER){
 				data->user.chat.to_left = -1;
+				data->user.chat.reverse_vpos = vpos;
+				data->user.chat.reverse_duration = duration;
 				data->optional.chat.to_left = -1;
+				data->optional.chat.reverse_vpos = vpos;
+				data->optional.chat.reverse_duration = duration;
 			}
+			fprintf(log,"[comsurface/make script]@GYAKU done vpos:%d duration:%d start:%d end:%d\n",
+				vpos,duration,item->vstart,item->vend);
 			return drawNullSurface(0,0);
 		}
 		if(cmd == SCRIPT_REPLACE){
 			//process comment
+			fprintf(log,"[comsurface/make script]@REPLACE done\n");
 			return drawNullSurface(0,0);
 		}
 		if(cmd == SCRIPT_BUTTON){
 			//@ボタン
 			is_button = 1;
-			fprintf(log,"[comsurface/make script]vpos:%d vstart:%d vend%d\n",
-				item->vpos, item->vstart, item->vend);
+			fprintf(log,"[comsurface/make script]@BUTTON rendering...\n");
 		}
 	}
 	/*

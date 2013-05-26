@@ -80,8 +80,18 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 				continue;
 			}
 			int normal_x = lround(getX(now_vpos,item,data->vout_width,data->width_scale,data->aspect_mode));
-			if(slot->chat->to_left < 0)
-				normal_x = data->vout_width - (normal_x + item->surf->w);
+			if(slot->chat->to_left < 0){
+				//debug
+//				CHAT_ITEM* citem = item->chat_item;
+//				fprintf(data->log,"[drawcomment/script GYAKU]now:%d appear:%d vanish:%d vpos:%d start:%d end:%d duration:%d\n",
+//					now_vpos,item->vappear, item->vvanish,citem->vpos,citem->vstart,citem->vend,citem->duration);
+//				fprintf(data->log,"[drawcomment/script GYAKU]now:%d reverse_vpos:%d reverse_duration:%d \n",
+//					now_vpos,slot->chat->reverse_vpos, slot->chat->reverse_duration);
+				//debug end
+				if(slot->chat->reverse_vpos <= now_vpos && slot->chat->reverse_vpos + slot->chat->reverse_duration > now_vpos){
+					normal_x = data->vout_width - (normal_x + item->surf->w);
+				}
+			}
 			rect.x = normal_x + x;
 			rect.y = item->y + y;
 			SDL_BlitSurface(item->surf,NULL,surf,&rect);
@@ -182,11 +192,6 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 	}
 	slot_item->slot_location = location;
 	int duration = item->duration;
-	if(duration==0){
-		duration = TEXT_SHOW_SEC_S;
-	}else{
-		duration = (duration-1)*VPOS_FACTOR;	//item->duration = @•b” + 1
-	}
 	//slot_item->slot_duration = duration
 	if(location == CMD_LOC_TOP||location==CMD_LOC_BOTTOM){
 		item->vstart = vpos;
@@ -196,9 +201,9 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 		slot_item->vvanish = item->vend + itime_add;
 	}else{
 		item->vstart = vpos - TEXT_AHEAD_SEC;
-		if(item->script==SCRIPT_GYAKU||item->script==SCRIPT_DEFAULT){
-			item->vstart = vpos;
-		}
+		//if(item->script==SCRIPT_GYAKU||item->script==SCRIPT_DEFAULT){
+		//	item->vstart = vpos;
+		//}
 		item->vend = vpos + duration - 1;
 		int text_width = slot_item->surf->w;
 		double width = scale * (NICO_WIDTH + 32) + text_width;
@@ -234,9 +239,9 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 			item->vend = item->vstart + lround(width / speed);
 			itime_add = MAX(lround(scale * 64 / speed),(TEXT_AHEAD_SEC>>1));
 		}
-		if(item->script==SCRIPT_GYAKU || item->script==SCRIPT_DEFAULT){
-			itime_add = 0;
-		}
+		//if(item->script==SCRIPT_GYAKU || item->script==SCRIPT_DEFAULT){
+		//	itime_add = 0;
+		//}
 		slot_item->vappear = item->vstart - itime_add;
 		slot_item->vvanish = item->vend + itime_add;
 		if(data->debug){

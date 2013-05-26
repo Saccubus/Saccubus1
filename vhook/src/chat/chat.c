@@ -144,11 +144,8 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		item->is_button = GET_CMD_IS_BUTTON(location)!=0;
 		// color24bit
 		color24 = getSDL_color(color);
-		// bit 31-16 を＠秒数とみなす　saccubus1.37以降
+		// bit 31-16 を＠秒数+1とみなす　saccubus1.37以降
 		duration = GET_CMD_DURATION(location);
-//		if (duration != 0){	// @秒数
-//			duration *= VPOS_FACTOR;
-//		}
 		// nico script & niwango
 		script = GET_CMD_SCRIPT(location);
 		if(script!=0){
@@ -165,7 +162,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 					script = SCRIPT_GYAKU|SCRIPT_OWNER|SCRIPT_USER;
 				}
 				if(duration == 0){
-					duration = 30;
+					duration = 30+1;	//デフォルトは30秒
 				}
 			}else if(c1 == UNICODE_DE){
 				// @デフォルト
@@ -207,6 +204,12 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			//vend is last tick of LIFE, so must be - 1 done.
 			// item->vend = item->vstart + duration - 1;
 		}
+		//upto here duration is seconds, item->duration is VPOS
+		if(duration==0){
+			duration = TEXT_SHOW_SEC_S;
+		}else if(duration != INTEGER_MAX){
+			duration = (duration-1)*VPOS_FACTOR;	//duration field = @秒数 + 1
+		}
 		item->duration = duration;
 		item->script = script;
 		item->color24 = color24;
@@ -229,6 +232,11 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	chat->min_no = min_no;
 	chat->com_type = com_type;
 	chat->to_left = toLeft;
+	chat->reverse_vpos = 0;
+	chat->reverse_duration = -1;
+	if(toLeft < 0){
+		chat->reverse_duration = INT32_MAX;
+	}
 	chat->patissier_ignore = max_no - patissier_num;
 	fprintf(log,"[main/init]patissier ignore no <= %d.\n",chat->patissier_ignore);
 	//コメントプール（vposが更新された時に取り出したchat_itemを一時保管）

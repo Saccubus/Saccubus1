@@ -69,6 +69,8 @@ struct CHAT{
 	const char* com_type;
 	//＠逆フラグ
 	int to_left;
+	int reverse_vpos;	// VPOS
+	int reverse_duration;	// VPOS
 	//patissierコマンドによる無視コメント番号最大値
 	int patissier_ignore;
 };
