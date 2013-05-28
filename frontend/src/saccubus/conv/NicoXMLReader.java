@@ -312,9 +312,9 @@ public class NicoXMLReader extends DefaultHandler {
 						+",enabled:"+enabled +",target:"+target +",fill:"+fill +",partial:"+partial
 						+",color:"+rcolor +",size:" +rsize+",pos:" +rpos+").");
 					com = "/r," + src + "," + dest + "," + fill;
-					System.out.println("Converted-Comment: " + com);
-					CommentReplace comrpl = new CommentReplace(item, src, dest, enabled, partial,
-						target, fill, item.getVpos(), rcolor, rsize, rpos);
+					item.setMail(rcolor + " " + rsize + " " + rpos);
+					//System.out.println("Converted-Comment: " + com);
+					CommentReplace comrpl = new CommentReplace(item,src,dest,enabled,partial,target,fill);
 					packet.addReplace(comrpl);
 				}else{
 					//ignore NIWANGO temporary
@@ -325,6 +325,125 @@ public class NicoXMLReader extends DefaultHandler {
 			//ニコスクリプト処理
 			if(com.startsWith("@")||com.startsWith("＠")){
 				if(item_fork){
+					if(com.startsWith("置換",1)){
+						//置換
+						item.addCmd(Chat.CMD_LOC_SCRIPT);
+						script = true;
+						System.out.println("Converting＠置換: " + com);
+						com = com.replaceFirst("^[@＠]置換[ 　]", "");
+						String src = "";
+						String dest = "";
+						String fill = "F";
+						String target = "user";
+						item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_USER);
+						String partial = "T";
+						int index1 = -2;
+						char c0 = com.charAt(0);
+						if(c0=='「')
+							index1 = com.indexOf('」',1);
+						else if(c0=='"')
+							index1 = com.indexOf('"',1);
+						//
+						if(index1 > 0){
+							src = com.substring(1,index1);
+							index1++;
+						}else if(index1 == -1){
+							src = com.substring(1);
+							index1 = com.length();
+						} else {
+							index1 = com.indexOf(' ');
+							if(index1 < 0){
+								item_kicked = true;
+								return;
+							}
+							src = com.substring(0, index1);
+						}
+						com = com.substring(index1);
+						if(!com.isEmpty() && com.charAt(0)==' '){
+							com = com.substring(1);
+						}
+						if(!com.isEmpty()){
+							//dest
+							c0 = com.charAt(0);
+							index1 = -2;
+							if(c0=='「')
+								index1 = com.indexOf('」',1);
+							else if(c0=='"')
+								index1 = com.indexOf('"',1);
+							//
+							if(index1 > 0){
+								dest = com.substring(1,index1);
+								index1++;
+							}else if(index1 == -1){
+								dest = com.substring(1);
+								index1 = com.length();
+							} else {
+								index1 = com.indexOf(' ');
+								if(index1 >= 0)
+									dest = com.substring(0, index1);
+								else{
+									dest = com.substring(0);
+									index1 = com.length();
+								}
+							}
+							com = com.substring(index1);
+							if(!com.isEmpty() && com.charAt(0)==' '){
+								com = com.substring(1);
+							}
+							if(!com.isEmpty()){
+								//fill
+								if(com.startsWith("全")){
+									fill = "T";
+									com = com.substring(1);
+								}else if(com.startsWith("単")){
+									fill = "F";
+									com = com.substring(1);
+								}else{
+									item_kicked = true;
+									return;
+								}
+								if(!com.isEmpty() && com.charAt(0)==' '){
+									com = com.substring(1);
+								}
+								if(!com.isEmpty()){
+									//target
+									if(com.startsWith("含む")){
+										target = "user owner";
+										item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_OWNER);
+										com = com.substring(2);
+									}else if(com.startsWith("含まない")){
+										com = com.substring(4);
+									}else{
+										item_kicked = true;
+										return;
+									}
+									if(!com.isEmpty() && com.charAt(0)==' '){
+										com = com.substring(1);
+									}
+									if(!com.isEmpty()){
+										//partial
+										if(com.startsWith("部分一致")){
+											partial = "T";
+											com = com.substring(4);
+										}else if(com.startsWith("完全一致")){
+											partial = "F";
+											com = com.substring(4);
+										}else{
+											item_kicked = true;
+											return;
+										}
+									}
+								}
+							}
+						}
+						int vpos = item.getVpos();
+						System.out.println("Converted:" +vpos +":＠置換 「"+src +"」「 "+dest
+							+"」 "+target +" fill:"+fill +" partial:"+partial+").");
+						com = "/r," + src + "," + dest + "," + fill;
+						// System.out.println("Converted-Comment: " + com);
+						CommentReplace comrpl = new CommentReplace(item,src,dest,"T",partial,target,fill);
+						packet.addReplace(comrpl);
+					}
 					if(com.startsWith("逆",1)){
 						//逆走
 						item.addCmd(Chat.CMD_LOC_SCRIPT);
@@ -333,9 +452,34 @@ public class NicoXMLReader extends DefaultHandler {
 						//デフォルト値設定
 						item.addCmd(Chat.CMD_LOC_SCRIPT);
 						script = true;
+					}else if(com.startsWith("ボタン",1)){
+						//ボタン（投稿者用）
+						item.addCmd(Chat.CMD_LOC_SCRIPT);
+						is_button = true;
+						//itemに追加
+						item.addCmd(Chat.CMD_LOC_IS_BUTTON);
+						com = com.replaceFirst("^.ボタン[ 　]+", "");
+						char c0 = com.charAt(0);
+						int index1 = -2;
+						if(c0=='「')
+							index1 = com.indexOf('」');
+						else if(c0=='"')
+							index1 = com.indexOf('"');
+						if(index1 > 0)
+							com = com.substring(1,index1);
+						else if(index1 == -1)
+							com = com.substring(1);
+						else
+							com = com.replaceFirst("[ 　].*$", "");
+						if(!com.contains("[")){
+							//文字列全体をボタン表示するには[]で全体を囲む
+							com = "[" + com + "]";
+						}
+						script = true;
 					}
 				}
 			}
+			//ボタン　視聴者、投稿者共
 			if(is_button){
 				item.addCmd(Chat.CMD_LOC_SCRIPT);
 				script = true;

@@ -45,7 +45,7 @@ public class Chat {
 
 	private static final int CMD_LOC_INVISIBLE = 64;
 
-	private static final int CMD_LOC_IS_BUTTON = 128;
+	static final int CMD_LOC_IS_BUTTON = 128;
 
 	static final int CMD_LOC_SCRIPT_FOR_OWNER = 256;
 
@@ -176,7 +176,7 @@ public class Chat {
 				isLocationAssigned = true;
 			}
 			// ＠秒数
-			else if (str.startsWith("@") && strsec.isEmpty()) {
+			else if ((str.startsWith("@") || str.startsWith("＠")) && strsec.isEmpty()) {
 				strsec = str.substring(1);
 				if (!strsec.isEmpty()){
 					try {
@@ -205,7 +205,7 @@ public class Chat {
 			}
 			// is_buttonコマンド
 			else if (str.equals("is_button")){
-				Location |= CMD_LOC_IS_BUTTON;
+				Location |= CMD_LOC_IS_BUTTON;		//setButton(true)
 			}
 			// サイズ
 			else if (str.equals("big") && !isSizeAssigned) {
@@ -426,6 +426,10 @@ public class Chat {
 
 	void process(CommentReplace cr){
 		Comment = cr.replace(Comment);
+		Chat item = cr.getChat();
+		Color = item.Color;
+		Size = item.Size;
+		Location = (Location & ~3) | (item.Location & 3);
 	}
 
 	boolean isScript(){

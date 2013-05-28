@@ -15,9 +15,9 @@
 
 SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right);
 //SDL_Surface* drawText(DATA* data,int size,int color,Uint16* str);
-SDL_Surface* drawText2(DATA* data,int size,SDL_Color color,Uint16* str);
-SDL_Surface* drawText3(DATA* data,int size,SDL_Color color,FontType fonttype,Uint16* from,Uint16* to);
-SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel);
+SDL_Surface* drawText2(DATA* data,int size,SDL_Color color,Uint16* str,int fill_bg);
+SDL_Surface* drawText3(DATA* data,int size,SDL_Color color,FontType fonttype,Uint16* from,Uint16* to,int fill_bg);
+SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel,int fill_bg);
 //int cmpSDLColor(SDL_Color col1, SDL_Color col2);
 int isDoubleResize(double width, double limit_width, int size, int line, FILE* log, int is_full);
 int deleteLastLF(Uint16* index);
@@ -36,7 +36,8 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	double font_height_rate = data->font_h_fix_r;
 	int nico_width = data->nico_width_now;
 	int color = item->color;
-	int is_button = FALSE;
+	int is_button = 0;
+	int is_owner = item->chat->cid == CID_OWNER;
 
 	//Script処理
 	if(item->script){
@@ -120,7 +121,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	while(*index != '\0'){
 		if(*index=='[' && is_button==1){
 			*index = '\0';//ここで一旦切る
-			surf = drawText2(data,size,SdlColor,last);
+			surf = drawText2(data,size,SdlColor,last,FALSE);
 			if(surf!=NULL && debug)
 				fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d) %s\n",surf->w,surf->h,COM_FONTSIZE_NAME[size]);
 			if(ret != null){
@@ -138,7 +139,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		}
 		else if(*index==']' && is_button==2){
 			*index = '\0';//ここで一旦切る
-			surf = drawText2(data,size,SdlColor,last);
+			surf = drawText2(data,size,SdlColor,last,is_owner);
 			if(surf!=NULL && debug)
 				fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d)\n",surf->w,surf->h);
 			if(ret != NULL){
@@ -148,7 +149,13 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 				if(surf!=NULL && debug)
 					fprintf(log,"[comsurface/make.1]connectSurface surf(%d, %d) line %d\n",surf->w,surf->h,nb_line);
 			}
-			ret = drawButton(data,surf);
+			if(is_owner)
+				//投稿者ボタンを塗る
+				ret = drawOwnerButton(data,surf,SdlColor);
+			else
+				//視聴者ボタン
+				ret = drawButton(data,surf);
+
 			SDL_FreeSurface(surf);
 			if(ret!=NULL && debug)
 				fprintf(log,"[comsurface/make.1]drawButton surf(%d, %d)\n",ret->w,ret->h);
@@ -167,12 +174,13 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		}
 		else if(*index == '\n'){
 			*index = '\0';//ここで一旦切る
+			int fill_bg = is_owner && is_button==2;
 			if(ret == null){//最初の改行
-				ret = drawText2(data,size,SdlColor,last);
+				ret = drawText2(data,size,SdlColor,last,fill_bg);
 				if(ret!=NULL && debug)
 					fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d) %s\n",ret->w,ret->h,COM_FONTSIZE_NAME[size]);
 			}else{/*改行あり*/
-				ret = connectSurface(ret,drawText2(data,size,SdlColor,last));
+				ret = connectSurface(ret,drawText2(data,size,SdlColor,last,fill_bg));
 				nb_line++;
 				if(ret!=NULL && debug)
 					fprintf(log,"[comsurface/make.1]connectSurface surf(%d, %d) %s line %d\n",ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
@@ -182,12 +190,13 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		}
 		index++;
 	}
+	int fill_bg = is_owner && is_button!=0;
 	if(ret == null){//結局改行は無い
-		ret = drawText2(data,size,SdlColor,last);
+		ret = drawText2(data,size,SdlColor,last,fill_bg);
 		if(debug && ret!=NULL)
 			fprintf(log,"[comsurface/make.2]drawText2 surf(%d, %d) %s\n",ret->w,ret->h,COM_FONTSIZE_NAME[size]);
 	}else{/*改行あり*/
-		ret = connectSurface(ret,drawText2(data,size,SdlColor,last));
+		ret = connectSurface(ret,drawText2(data,size,SdlColor,last,fill_bg));
 		nb_line++;
 		if(debug && ret!=NULL)
 			fprintf(log,"[comsurface/make.3]connectSurface surf(%d, %d) %s line %d\n",ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
@@ -199,7 +208,11 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			// [は来なかった
 			// ret全体がボタン
 			surf = ret;
-			ret = drawButton(data,surf);
+			if(is_owner)
+				ret = drawOwnerButton(data,surf,SdlColor);
+			else
+				ret = drawButton(data,surf);
+
 			SDL_FreeSurface(surf);
 			if(ret!=NULL && debug)
 				fprintf(log,"[comsurface/make.3]drawButton surf(%d, %d)\n",ret->w,ret->h);
@@ -207,12 +220,16 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		else if(is_button==2){
 			// [来た後で]の前に終了
 			surf = ret;
-			ret = drawButton(data,surf);
+			if(is_owner)
+				ret = drawOwnerButton(data,surf,SdlColor);
+			else
+				ret = drawButton(data,surf);
 			SDL_FreeSurface(surf);
 			if(ret!=NULL && debug)
 				fprintf(log,"[comsurface/make.3]drawButton surf(%d, %d)\n",ret->w,ret->h);
 		}
 		if(before_button!=NULL){
+			//1つ前が残ってる
 			ret = arrangeSurface(before_button,ret);
 			if(ret!=NULL && debug)
 				fprintf(log,"[comsurface/make.3]arranged surf(%d, %d)\n",ret->w,ret->h);
@@ -711,14 +728,14 @@ SDL_Surface* drawText(DATA* data,int size,int color,Uint16* str){
 */
 
 // this function should not return NULL, except fatal error.
-SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
+SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill_bg){
 	if(str == NULL || str[0] == '\0'){
 		return drawNullSurface(0,data->font_pixel_size[size]);
 	}
 	FILE* log = data->log;
 	int debug = data->debug;
 	if(!data->enableCA){
-		return drawText4(data,size,SdlColor,data->font[size],str,UNDEFINED_FONT);
+		return drawText4(data,size,SdlColor,data->font[size],str,UNDEFINED_FONT,fill_bg);
 	}
 	SDL_Surface* ret = NULL;
 	Uint16* index = str;
@@ -757,7 +774,7 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 				isKanji?" Kanji":"",isKanji!=wasKanji?" change_Kanji_width":"");
 		if(newfont != fonttype || (fonttype!=SIMSUN_FONT && isKanji != wasKanji)){	//別のフォント出現、又は漢字幅チェック変化
 			if(index!=last){
-				ret = arrangeSurface(ret,drawText3(data,size,SdlColor,fonttype,last,index));
+				ret = arrangeSurface(ret,drawText3(data,size,SdlColor,fonttype,last,index,fill_bg));
 				if(debug && ret!=NULL){
 					fprintf(log,"[comsurface/drawText2]arrangeSurface surf(%d, %d) %s %d chars.\n",
 						ret->w,ret->h,COM_FONTSIZE_NAME[size],index-str);
@@ -825,7 +842,7 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str){
 		}
 		index++;
 	}
-	ret = arrangeSurface(ret,drawText3(data,size,SdlColor,fonttype,last,index));
+	ret = arrangeSurface(ret,drawText3(data,size,SdlColor,fonttype,last,index,fill_bg));
 	if(ret==NULL){
 		//fprintf(log,"[comsurface/drawText2]drawtext3 NULL last. make NullSurface.\n");
 		fprintf(log,"[comsurface/drawText2]***ERR*** drawtext3 NULL last. return Null.\n");
@@ -880,7 +897,7 @@ SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right){
 	return ret;
 }
 
-SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,Uint16* from,Uint16* to){
+SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,Uint16* from,Uint16* to,int fill_bg){
 	int len = to-from;
 	FILE* log = data->log;
 	int debug = data->debug;
@@ -955,17 +972,17 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,
 	if(debug)
 		fprintf(log,"[comsurface/drawText3]building U+%04hX %d chars. in %s %s\n",
 			text[0],len,getfontname(fontsel),COM_FONTSIZE_NAME[size]);
-	SDL_Surface* ret = drawText4(data,size,SdlColor,data->CAfont[fontsel][size],text,fontsel);
+	SDL_Surface* ret = drawText4(data,size,SdlColor,data->CAfont[fontsel][size],text,fontsel,fill_bg);
 	free(text);
 	return ret;
 }
 
-SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel){
+SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel,int fill_bg){
 	FILE* log = data->log;
 	int debug = data->debug;
 	//SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
 	//SDL_Color bgc = COMMENT_COLOR[CMD_COLOR_YELLOW];
-	SDL_Surface* surf = render_unicode(data,font,str,SdlColor,size,fontsel);
+	SDL_Surface* surf = render_unicode(data,font,str,SdlColor,size,fontsel,fill_bg);
 
 	if(surf==NULL){
 		fprintf(log,"***ERROR*** [comsurface/drawText4]TTF_RenderUNICODE : %s\n",TTF_GetError());
@@ -975,6 +992,7 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 	if(debug)
 		fprintf(log,"[comsurface/drawText4]TTF_RenderUNICODE surf(%d, %d) %s %d chars\n",
 			surf->w,surf->h,COM_FONTSIZE_NAME[size],uint16len(str));
+	//高さ補正
 	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
 	int difh = data->font_pixel_size[size] - surf->h;
 	if(difh==0){
@@ -1084,7 +1102,7 @@ SDL_Surface* getErrFont(DATA* data){
 		TTF_Font* font =(data->enableCA)?
 			data->CAfont[GOTHIC_FONT][CMD_FONT_SMALL]
 			: data->font[CMD_FONT_SMALL];
-		data->ErrFont = drawText4(data,CMD_FONT_SMALL,COMMENT_COLOR[CMD_COLOR_PASSIONORANGE],font,errMark,GOTHIC_FONT);
+		data->ErrFont = drawText4(data,CMD_FONT_SMALL,COMMENT_COLOR[CMD_COLOR_PASSIONORANGE],font,errMark,GOTHIC_FONT,FALSE);
 	}
 	SDL_Surface* ret = NULL;
 	if(data->ErrFont!=NULL){

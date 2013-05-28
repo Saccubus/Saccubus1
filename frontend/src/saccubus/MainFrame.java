@@ -655,7 +655,7 @@ public class MainFrame extends JFrame {
 		jMenuHelpReadmeFirst.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("./最初に必ず読んで - コピー.txt");
+				showReadme_actionPerformed("./最初に必ず読んで.txt");
 			}
 		});
 		jMenuHelpFF.setText("FFmpegヘルプ表示");

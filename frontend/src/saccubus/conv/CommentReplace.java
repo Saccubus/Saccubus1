@@ -9,13 +9,8 @@ public class CommentReplace {
 	private final boolean replace_user;
 	private final boolean replace_owner;
 	private final boolean fill;
-	private final int vpos;
-	private final String color;
-	private final String size;
-	private final String pos;
 
-	public CommentReplace(Chat item, String ssrc, String sdest, String senabled, String spartial, String starget, String sfill, int svpos,
-			String scolor, String ssize, String spos){
+	public CommentReplace(Chat item, String ssrc, String sdest, String senabled, String spartial, String starget, String sfill){
 		chat = item;
 		src = ssrc;
 		dest = sdest;
@@ -24,14 +19,9 @@ public class CommentReplace {
 		replace_user = contains(starget,"user");
 		replace_owner = contains(starget,"owner");
 		fill = isEquals(sfill,"true");
-		color = scolor;
-		size = ssize;
-		pos = spos;
-		vpos = svpos;
-		System.out.println("Final:" +vpos +":/replace(src:"+src +",dest:"+dest
+		System.out.println("Final-converted:" +chat.getVpos() +":/replace(src:"+src +",dest:"+dest
 				+",enabled:"+enabled +",targetOU:"+replace_owner+"+"+replace_user
-				+",fill:"+fill +",partial:"+partial
-				+",color:"+color +",size:" +size+",pos:" +pos+").");
+				+",fill:"+fill +",partial:"+partial+").");
 	}
 
 	Chat getChat(){
@@ -90,22 +80,6 @@ public class CommentReplace {
 		return partial;
 	}
 
-	public int getVpos(){
-		return vpos;
-	}
-
-	public String getColor(){
-		return color;
-	}
-
-	public String getSize(){
-		return size;
-	}
-
-	public String getPos(){
-		return pos;
-	}
-
 	public String replace(String com){
 		if(partial){
 			//部分一致
@@ -127,7 +101,7 @@ public class CommentReplace {
 	}
 
 	void replace(Chat chat) {
-		if(isEnabled() && this.getVpos() <= chat.getVpos()){
+		if(isEnabled() && this.chat.getVpos() <= chat.getVpos()){
 			if(!chat.isOwner()){
 				//ユーザーコメント
 				if(isUsers())
