@@ -63,6 +63,7 @@
 									<listOptionValue builtIn="false" value="SDLmain"/>
 									<listOptionValue builtIn="false" value="freetype"/>
 									<listOptionValue builtIn="false" value="SDL_ttf"/>
+									<listOptionValue builtIn="false" value="SDL_gfx"/>
 								</option>
 								<option defaultValue="true" id="gnu.c.link.option.shared.651983291" name="共用 (-shared)" superClass="gnu.c.link.option.shared" valueType="boolean"/>
 								<option id="gnu.c.link.option.strip.1548957663" name="シンボル情報の除去 (-s)" superClass="gnu.c.link.option.strip" value="true" valueType="boolean"/>
@@ -90,8 +91,10 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="Saccubus.cdt.managedbuild.target.gnu.cygwin.so.102180245" name="共有ライブラリー (Gnu on Windows)" projectType="cdt.managedbuild.target.gnu.cygwin.so"/>
 	</storageModule>
-	<storageModule moduleId="refreshScope" versionNumber="1">
-		<resource resourceType="PROJECT" workspacePath="/vhook"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/vhook"/>
+		</configuration>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
