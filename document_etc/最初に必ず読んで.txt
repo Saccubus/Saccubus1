@@ -9,6 +9,10 @@
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
+1.41a(2013/05/29)
+　ライセンス変更
+　SDL_gfx.dll追加
+
 1.41(2013/05/28)
 　投稿者用＠ボタン（背景塗りつぶし）、ニコスクリプト＠置換　追加
 　ニコスクリプト＠逆のタイミング修正
@@ -20,10 +24,17 @@
 　フォント自動調整無しの条件を変更
 
 
-□改造部分について(changed)
-【ライセンス】GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
-※　二条項BSDライセンス(http://opensource.org/licenses/BSD-2-Clause)
-　　とのデュアルライセンス化については他ソフト参照について調査後に報告します。
+□改造部分について(changed+)
+【ライセンス】
+１．ffmpeg55686.exe（ソースはGithubレポジトリ）、Saccubus.jar（ソース同梱）は
+GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
+２．nicovideoE.dll、Bin.jar、Saccubus.exe（全てソース同梱）は
+GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)と
+二条項BSDライセンス(http://opensource.org/licenses/BSD-2-Clause)のデュアルライセンスです。
+３．SDL.dll(LGPL)、SDL_ttf.dll(zlibライセンス)、
+SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
+
+　(2013/5/1変更：さきゅばすの非ffmpegのライセンス変更に合わせて)
 
 
 □サポート解説など

@@ -6,6 +6,10 @@ readmeNew.txt
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
+1.41a(2013/05/29)
+　ライセンス変更
+　SDL_gfx.dll追加
+
 1.41(2013/05/28)
 　投稿者用＠ボタン（背景塗りつぶし）、ニコスクリプト＠置換　追加
 　ニコスクリプト＠逆のタイミング修正
@@ -17,10 +21,17 @@ readmeNew.txt
 　フォント自動調整無しの条件を変更
 
 
-□改造部分について(changed)
-【ライセンス】GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
-※　二条項BSDライセンス(http://opensource.org/licenses/BSD-2-Clause)
-　　とのデュアルライセンス化については他ソフト参照について調査後に報告します。
+□改造部分について(changed+)
+【ライセンス】
+１．ffmpeg55686.exe（ソースはGithubレポジトリ）、Saccubus.jar（ソース同梱）は
+GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
+２．nicovideoE.dll、Bin.jar、Saccubus.exe（全てソース同梱）は
+GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)と
+二条項BSDライセンス(http://opensource.org/licenses/BSD-2-Clause)のデュアルライセンスです。
+３．SDL.dll(LGPL)、SDL_ttf.dll(zlibライセンス)、
+SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
+
+　(2013/5/1変更：さきゅばすの非ffmpegのライセンス変更に合わせて)
 
 
 □サポート解説など
@@ -610,14 +621,17 @@ readmeNew.txt
 ・License.txt　　　　　　　 さきゅばすライセンス（プロジェクト）
 ・2-clause BSD License.txt　さきゅばす２条項BSDライセンス
 ・GPL v3.txt 　　　　　　　 さきゅばすGPLライセンス
-・Saccubus.jar　　　　　　　本体　1.41
+・Saccubus.jar　　　　　　　本体
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
 ・bin フォルダ配下
 　　ffmpeg55686.exe ライセンスGPLV3
 　　nicovideoE.dll(2013.04.01版)統合版拡張Vhookライブラリ
-　　SDL.dll(2011.11.02ビルド)、README-SDL.txt
-　　SDL_ttf.dll(2011.11.02ビルド)、COPYNG
-　　　グラフィックライブラリ、ライセンスはLGPL
+　　SDL.dll(2011.11.02ビルド)、COPYNG、README-SDL.txt
+　　　ライセンスはLGPL
+　　SDL_ttf.dll(2011.11.02ビルド)、COPYING.sdl_ttf
+　　　ライセンスはzlib
+　　SDL_gfx.dll(2013.05.29ビルド)、LICENSE.gfx
+　　　グラフィックライブラリ、ライセンスはzlib
 ・optionDev フォルダ配下 　 開発用ファイル
 ・optionVO フォルダ配下　　 変換オプションファイル
 　　　（N55686用 2013.04.02版）
@@ -640,7 +654,8 @@ readmeNew.txt
 関連リンク
 ・ソースコード
 　http://sourceforge.jp/projects/saccubus/svn/view/branches/dev_branch
-　SVN：svn checkout http://svn.sourceforge.jp/svnroot/branches/dev_branch
+　(SVN：svn checkout http://svn.sourceforge.jp/svnroot/branches/dev_branch )
+　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1
 
 ・ダウンロード
 　公式最新(Vista・Win7では追加ファイルが必要。公式ユーザーページ参照)
@@ -696,7 +711,7 @@ readmeNew.txt
 　さきゅばす公式
 　　http://saccubus.sourceforge.jp/
 　2ch【ニコニコ】コメント付動画作成ツール さきゅばす
-　　http://anago.2ch.net/test/read.cgi/software/1310301611/
+　　http://anago.2ch.net/test/read.cgi/software/1346798166/
 　coroid project　「いんきゅばす」を含む
 　　http://sourceforge.jp/projects/coroid/
 　ニコニコランキングメーカー(nicorank)配布サイト
@@ -704,6 +719,20 @@ readmeNew.txt
 
 
 変更履歴・修正・改変点
+1.41a(2013/05/29)
+　ライセンス変更
+　SDL_gfx.dll追加
+
+1.41(2013/05/28)
+　投稿者用＠ボタン（背景塗りつぶし）、ニコスクリプト＠置換　追加
+　ニコスクリプト＠逆のタイミング修正
+　U+2014（―ぽい文字）幅修正
+
+1.40.d2(2013/04/11)
+　マイリストurlを指定可能
+　readmeメニュー表示追加
+　フォント自動調整無しの条件を変更
+
 1.39 (2013/04/01)
 　FFmpeg設定にアス比共通画面追加
 　変換時 -samx オプションにより動画アス比保持可能
