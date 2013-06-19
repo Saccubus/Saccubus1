@@ -427,9 +427,12 @@ public class Chat {
 	void process(CommentReplace cr){
 		Comment = cr.replace(Comment);
 		Chat item = cr.getChat();
-		Color = item.Color;
-		Size = item.Size;
-		Location = (Location & ~3) | (item.Location & 3);
+		if(item.Color != CMD_COLOR_DEF)
+			Color = item.Color;
+		if(item.Size != CMD_SIZE_DEF)
+			Size = item.Size;
+		if((item.Location & 3) != CMD_LOC_DEF)
+			Location = (Location & ~3) | (item.Location & 3);
 	}
 
 	boolean isScript(){
