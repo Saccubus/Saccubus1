@@ -1,0 +1,28 @@
+更新
+nasm 2.10.09
+vo-aacenc-0.1.3
+vo-amrwbenc-0.1.3
+libvorbis-1.3.3
+x264 core:133 r2339
+
+
+新規追加？
+openjpeg-1.5.1
+
+
+前と同一
+yasm-1.2.0
+zlib1.2.8
+bzip2-1.0.6
+gsm-1.0-pl13
+opencore-amr-0.1.3
+libogg-1.3.1
+libtheora-1.1.1
+speex-1.2rc1
+libvpx-v1.2.0
+xvidcore-1.3.2
+libmodplug-0.8.8.4
+
+
+使用中止
+lame-3.99

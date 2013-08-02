@@ -29,10 +29,11 @@ import saccubus.util.Util;
  * @version 1.0
  */
 public class Packet {
-	LinkedList<Chat> ChatList = new LinkedList<Chat>();
-	ArrayList<CommentReplace> ReplaceList = new ArrayList<CommentReplace>();
+	private final LinkedList<Chat> ChatList = new LinkedList<Chat>();
+	private final ArrayList<CommentReplace> ReplaceList;
 
-	public Packet() {
+	public Packet(ArrayList<CommentReplace> list) {
+		ReplaceList = list;
 	}
 
 	public void addChat(Chat chat) {

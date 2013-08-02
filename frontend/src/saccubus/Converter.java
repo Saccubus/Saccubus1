@@ -1315,7 +1315,7 @@ public class Converter extends Thread {
 
 	private boolean convertToCommentMiddle(File commentfile, File middlefile) {
 		if(!ConvertToVideoHook.convert(
-				commentfile, middlefile,
+				commentfile, middlefile, CommentReplaceList,
 				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit())){
 			return false;
 		}
@@ -1431,6 +1431,9 @@ public class Converter extends Thread {
 			if(ConvertedVideoFile.renameTo(new File(ConvertedVideoFile.getParentFile(),otherFilename))){
 				sendtext("同名のファイルをリネームしました");
 				System.out.println("同名のファイルをリネームしました"+otherFilename);
+			}else{
+				sendtext("同名のファイルをリネーム出来ませんでした。上書きします");
+				System.out.println("同名のファイルをリネーム出来ませんでした。上書きします");
 			}
 		}
 		int code = converting_video();
@@ -1485,6 +1488,7 @@ public class Converter extends Thread {
 	private Converter converter;
 	private String mylistID;
 	private JLabel watchArea = new JLabel();
+	private ArrayList<CommentReplace> CommentReplaceList = new ArrayList<CommentReplace>();
 
 	void downloadPage(String url){
 		ArrayList<String[]> plist = new ArrayList<String[]>();
@@ -1758,12 +1762,12 @@ public class Converter extends Thread {
 			}
 
 			Stopwatch.show();
-			if (!convertComment() || stopFlagReturn()) {
+			if (!convertOwnerComment() || stopFlagReturn()){
 				return;
 			}
 
 			Stopwatch.show();
-			if (!convertOwnerComment() || stopFlagReturn()){
+			if (!convertComment() || stopFlagReturn()) {
 				return;
 			}
 
@@ -2286,65 +2290,48 @@ public class Converter extends Thread {
 				extra = extra.replace("-debug", "").replace("debug", "");
 			}
 			if(!extra.isEmpty()){
-				ffmpeg.addCmd("|--extra-mode:" + extra);
+				ffmpeg.addCmd("|--extra-mode:" + extra.replaceAll(" +", " ").trim().replace(' ', '+'));
 			}
 			if(Setting.isEnableCA()){
 				ffmpeg.addCmd("|--enable-CA");
 				ffmpeg.addCmd("|--font-dir:"
 					+ URLEncoder.encode(Path.toUnixPath(fontDir) + "/", encoding));
 				ffmpeg.addCmd("|--font-list:");
-	//			ffmpeg.addCmd("|--gothic-font:");
 				ffmpeg.addCmd("0:1+");
 				ffmpeg.addCmd(getFontUrl(gothicFont, encoding));
-	//			ffmpeg.addCmd("|--simsun-font:");
 				ffmpeg.addCmd("+1:");
 				ffmpeg.addCmd(getFontUrl(simsunFont, encoding));
-	//			ffmpeg.addCmd("|--gulim-font:");
 				ffmpeg.addCmd("+2:");
 				ffmpeg.addCmd(getFontUrl(gulimFont, encoding));
-	//			ffmpeg.addCmd("|--arial-font:");
 				ffmpeg.addCmd("+3:");
 				ffmpeg.addCmd(getFontUrl(arialFont, encoding));
-	//			ffmpeg.addCmd("|--georgia-font:");
 				ffmpeg.addCmd("+4:");
 				ffmpeg.addCmd(getFontUrl(georgiaFont, encoding));
-//				ffmpeg.addCmd("|--msui-font:");
 //				ffmpeg.addCmd(getFontUrl(msuigothicFont, encoding));
-	//			ffmpeg.addCmd("|--arial-unicode-font:");
 				ffmpeg.addCmd("+5:");
 				ffmpeg.addCmd(getFontUrl(arialUnicodeFont, encoding));
-	//			ffmpeg.addCmd("|--devanagari-font:");
 				ffmpeg.addCmd("+6:");
 				ffmpeg.addCmd(getFontUrl(devabagariFont, encoding));
-	//			ffmpeg.addCmd("|--tahoma-font:");
 				ffmpeg.addCmd("+7:");
 				ffmpeg.addCmd(getFontUrl(tahomaFont, encoding));
-	//			ffmpeg.addCmd("|--mingliu-font:");
 				ffmpeg.addCmd("+8:");
 				ffmpeg.addCmd(getFontUrl(mingliuFont, encoding));
 				String newMinchoPath = getFontUrl(newMinchoFont, encoding);
 				if(newMinchoFont.equals(simsunFont)){
 					newMinchoPath = "1+" + newMinchoPath;	//NSIMSUN is index 1 of simsun.ttc
 				}
-	//			ffmpeg.addCmd("|--new-mincho-font:");
 				ffmpeg.addCmd("+9:");
 				ffmpeg.addCmd(newMinchoPath);
-	//			ffmpeg.addCmd("|--estrangelo-edessa-font:");
 				ffmpeg.addCmd("+10:");
 				ffmpeg.addCmd(getFontUrl(estrangeloEdessaFont, encoding));
-	//			ffmpeg.addCmd("|--gujarati-font:");
 				ffmpeg.addCmd("+11:");
 				ffmpeg.addCmd(getFontUrl(gujaratiFont, encoding));
-	//			ffmpeg.addCmd("|--bengal-font:");
 				ffmpeg.addCmd("+12:");
 				ffmpeg.addCmd(getFontUrl(bengalFont, encoding));
-	//			ffmpeg.addCmd("|--tamil-font:");
 				ffmpeg.addCmd("+13:");
 				ffmpeg.addCmd(getFontUrl(tamilFont, encoding));
-	//			ffmpeg.addCmd("|--laoo-font:");
 				ffmpeg.addCmd("+14:");
 				ffmpeg.addCmd(getFontUrl(laooFont, encoding));
-	//			ffmpeg.addCmd("|--gurmukhi-font:");
 				ffmpeg.addCmd("+15:");
 				ffmpeg.addCmd(getFontUrl(gurmukhiFont, encoding));
 				ffmpeg.addCmd("+16:");
@@ -2371,7 +2358,7 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--font-width-fix-ratio:"
 					+ Setting.getFontWidthFixRaito());
 			}
-			ffmpeg.addCmd("|--end-of-loooooooooooooooooooooong-argument1|--end-of-argument2\"");
+			ffmpeg.addCmd("|--end-of-argument\"");
 			return true;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

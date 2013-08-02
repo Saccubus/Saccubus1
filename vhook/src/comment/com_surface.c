@@ -330,7 +330,8 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		}
 		// 改行リサイズ
 		// コメントの画像の高さがニコニコ動画基準の高さの１／３より大きいと倍率を１／２にする
-		if(zoomx * 3 * ret->h > autoscale * NICO_HEIGHT){
+		// コマンドenderでは改行リサイズなし
+		if(zoomx * 3 * ret->h > autoscale * NICO_HEIGHT && !item->ender){
 			// ダブルリサイズ検査
 			// 改行リサイズ＆改行後の倍率で臨界幅を超えた場合 → 改行リサイズキャンセル
 			double linefeed_zoom = linefeedResizeScale(size,nb_line,data->fontsize_fix);
@@ -463,8 +464,9 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
 			item->no,ret->w,ret->h,(data->fontsize_fix?" fix":""));
 	}
+	// コマンドenderでは改行リサイズなし
 	double resized_w;
-	if (nb_line >= LINEFEED_RESIZE_LIMIT[size]){
+	if (nb_line >= LINEFEED_RESIZE_LIMIT[size] && !item->ender){
 		/*
 		 * 改行リサイズあり ダブルリサイズ検査
 		 * 改行リサイズかつ改行後の倍率で改行臨界幅(nicolimit_width)を超えた場合 → 改行リサイズキャンセル
@@ -921,7 +923,7 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,
 		}else if(isZeroWidth(code)){
 			// zero width
 			w = 0;
-			fprintf(log,"[comsurface/drawText3]found ZERO width char %0x04x\n",code);
+			fprintf(log,"[comsurface/drawText3]found ZERO width char 0x%04x\n",code);
 		}else if((code & 0xfff0)==0x2000){
 			//code should be 2000..200a 200c
 			//Here, it assumed fonttype should belog to GOTHIC

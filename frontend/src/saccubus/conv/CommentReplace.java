@@ -18,7 +18,7 @@ public class CommentReplace {
 		partial = toBoolean(spartial);
 		replace_user = contains(starget,"user");
 		replace_owner = contains(starget,"owner");
-		fill = isEquals(sfill,"true");
+		fill = toBoolean(sfill);
 		System.out.println("Final-converted:" +chat.getVpos() +":/replace(src:"+src +",dest:"+dest
 				+",enabled:"+enabled +",targetOU:"+replace_owner+"+"+replace_user
 				+",fill:"+fill +",partial:"+partial+").");
@@ -51,7 +51,7 @@ public class CommentReplace {
 		else
 			return "false";
 	}
-	private boolean isEquals(String str,String key){
+	boolean isEquals(String str,String key){
 		if(str==null)
 			return false;
 		else

@@ -1,12 +1,14 @@
 package saccubus.net;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
@@ -320,6 +322,27 @@ public class Path extends File{
 				catch (IOException e) { }
 			}
 		}
+	}
+	public boolean writeAllText(String text, String encoding) {
+		BufferedWriter bw = null;
+		try{
+			
+			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this, false), encoding));
+			bw.write(text);
+			bw.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}finally{
+			try {	bw.close();	}
+			catch (IOException e) {
+				return false;
+			}
+		}
+		return true;
+	}
+	public static boolean writeAllText(String filename, String text, String encoding){
+		return new Path(filename).writeAllText(text, encoding);
 	}
 	/**
 	 *

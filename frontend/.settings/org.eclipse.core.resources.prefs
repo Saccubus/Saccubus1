@@ -1,5 +1,7 @@
 eclipse.preferences.version=1
-encoding/<project>=MS932
+encoding//temp/temp.log=MS932
 encoding/font.ini=UTF-8
+encoding/readmeNew.txt=MS932
 encoding/saccubus.ini=UTF-8
 encoding/src=MS932
+separateDerivedEncodings=true

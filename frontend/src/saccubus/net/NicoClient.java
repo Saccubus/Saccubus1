@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 
 import saccubus.ConvertStopFlag;
 import saccubus.WayBackDate;
+import saccubus.conv.ChatSave;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.util.Stopwatch;
 
@@ -486,6 +487,7 @@ public class NicoClient {
 	private String Premium = "";
 	private String OptionalThraedID = "";	// normal Comment ID when Community DOUGA
 	private boolean economy = false;
+	private String ownerFilter = "";			// video owner filterÅireplaceÅj
 	public boolean getVideoInfo(String tag, String watchInfo, String time, boolean saveWatchPage) {
 		if (!getVideoHistoryAndTitle(tag, watchInfo, saveWatchPage)) {
 			return false;
@@ -530,6 +532,7 @@ public class NicoClient {
 			} catch (NumberFormatException e) {
 				VideoLength = -1;
 			}
+			ownerFilter = nicomap.get("ng_up");
 			if (ThreadID == null || VideoUrl == null
 				|| MsgUrl == null || UserID == null) {
 				System.out.println("ng.\nCan't get video information keys.");
@@ -839,6 +842,21 @@ public class NicoClient {
 			System.out.println("ok.");
 			is.close();
 			fos.flush();
+			if(ownerFilter!=null && commentType==CommentType.OWNER){
+				// add OwnerFilter to the end of owner comment file before </packet>
+				fos.close();
+				String ownerText = Path.readAllText(file.getAbsolutePath(), "UTF-8");
+				if(!ownerText.isEmpty()){
+					int lastIndex = ownerText.toLowerCase().lastIndexOf("</packet>");
+					ownerFilter = "<chat filter=\"1\">" + ChatSave.safeReference(ownerFilter) + "</chat>";
+					if(lastIndex>=0){
+						ownerText = ownerText.substring(0, lastIndex) + ownerFilter + ownerText.substring(lastIndex);
+					}else{
+						ownerText = ownerText + ownerFilter + "</packet>\n";
+					}
+					new Path(file).writeAllText(ownerText, "UTF-8");
+				}
+			}
 			// fos.close();
 			con.disconnect();
 			return file;

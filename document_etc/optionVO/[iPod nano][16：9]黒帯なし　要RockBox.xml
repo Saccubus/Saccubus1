@@ -8,5 +8,5 @@ iPod nanoにROCKbox入れてる人用（※コメントはやや見づらいで�
 	<entry key="EXT">mpg</entry>
 	<entry key="MAIN"></entry>
 	<entry key="IN"></entry>
-	<entry key="OUT">-acodec libmp3lame -ab 128k -ar 44100 -vcodec mpeg2video -s 176x100 -b 256k -strict -1 -aspect 16:9</entry>
+	<entry key="OUT">-acodec mp2 -ab 128k -ar 44100 -vcodec mpeg2video -s 176x100 -b 256k -strict -1 -aspect 16:9</entry>
 </properties>

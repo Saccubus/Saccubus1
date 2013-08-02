@@ -51,6 +51,8 @@ public class Chat {
 
 	static final int CMD_LOC_SCRIPT_FOR_USER = 512;
 
+	private static final int CMD_LOC_ENDER = 1024;
+
 	/**
 	 * Location bit 31-16 追加
 	 * 0: 従来(既定値)、1～65535: ＠秒数 (数値=秒数+1)
@@ -206,6 +208,10 @@ public class Chat {
 			// is_buttonコマンド
 			else if (str.equals("is_button")){
 				Location |= CMD_LOC_IS_BUTTON;		//setButton(true)
+			}
+			// enderコマンド
+			else if (str.equals("ender")){
+				Location |= CMD_LOC_ENDER;
 			}
 			// サイズ
 			else if (str.equals("big") && !isSizeAssigned) {

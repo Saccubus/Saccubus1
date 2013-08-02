@@ -81,7 +81,7 @@ static const Uint8 UNITABLE[] =
 /*0000*/ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA--------------------------------G-----------------------------------------------------------------------------------------------"
 /*0100*/ "--------------------------------------mm----------mm----m------mm--------mmm--------------------------mm------------------------AAAAAAAAAAAAAAAAAA--AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-AAAAAAAAAA-s-s-s-s-s-s-s-sAAAAAAAAAAAAAAAAAAAAAAAA-AA--------"
 /*0200*/ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-s---------------s-----------------------------------------------------------------------AAAAAAAAAAAAAAAAAAAAAAAAAAAAA---wss-AAAm-AAAAAA--m----AAAAAA-----AAAAAAAAAAAAAAAAAAAAAA"
-/*0300*/ "-----A-A-AA--AA-AAAAAAAA---A-----AAZ--AAA--A-AA--AAA-AAAA-----AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-AAAAAAAAAAAAAA....--....-AAA-.....-------.-.--------------------.--------------------------------------------.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+/*0300*/ "----ZA-A-AA--AA-AAAAAAAA---A----ZAAZ--AAA--A-AA--AAA-AAAA-----AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-AAAAAAAAAAAAAA....--....-AAA-.....-------.-.--------------------.--------------------------------------------.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 /*0400*/ "A------------A------------------------------------------------------------------A------------A-----------------------------------------AAAAAAAAA-----------------------------------------------------AA--AA--AAA----------------------------AA--------AA--AAAAAA"
 /*0500*/ "AAAAAAAAAAAAAAAAAAAA......AAAA...................TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT..TTTTTTT.TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT.TT......AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA........AAAAAAAAAAAAAAAAAAAAAAAAAAA.....AAAAA..........."
 /*0600*/ "AAAA.......AAAAAAAAAAA.....A..AA.AAAAAAAAAAAAAAAAAAAAAAAAAA.....AAAAAAAAAAAAAAAAAAAAAZAAAAAAAAA.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -372,7 +372,7 @@ static const Uint8 UNITABLE[] =
 0020-007f 基本ラテン
 0080-00ff ラテン１補助
 0100-024f ラテン拡張A,B IPA拡張 スペース調整
-0300-036f 結合分音記号		■check■ 0323はゼロ幅文字扱い（暫定）
+0300-036f 結合分音記号		■check■ 0304,0320,0323はゼロ幅文字扱い（暫定）
 0370-03ff ギリシャコプト	(arial)
 0400-052f キリル        	■check■
 0530-058f アルメニア   (tahoma.ttf)

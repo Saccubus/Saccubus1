@@ -1,5 +1,7 @@
 package saccubus.conv;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -46,6 +48,8 @@ public class NicoXMLReader extends DefaultHandler {
 	private boolean item_fork;
 
 	private boolean is_button;
+
+	private String owner_filter;
 
 	private final int ng_Score;
 	private int countNG_Score = 0;
@@ -157,6 +161,12 @@ public class NicoXMLReader extends DefaultHandler {
 			item_kicked = false;
 			item_fork = false;
 			is_button = false;
+			//投稿者フィルター
+			owner_filter = attributes.getValue("filter");
+			if(owner_filter!=null){
+				item_fork = true;
+				return;
+			}
 			//マイメモリ削除対象
 			//運営削除対象
 			String deleted = attributes.getValue("deleted");
@@ -327,6 +337,7 @@ public class NicoXMLReader extends DefaultHandler {
 				if(item_fork){
 					if(com.startsWith("置換",1)){
 						//置換
+						item.setMail("");	//リセットサイズ、ロケーション、色
 						item.addCmd(Chat.CMD_LOC_SCRIPT);
 						script = true;
 						System.out.println("Converting＠置換: " + com);
@@ -337,110 +348,40 @@ public class NicoXMLReader extends DefaultHandler {
 						String target = "user";
 						item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_USER);
 						String partial = "T";
-						int index1 = -2;
-						char c0 = com.charAt(0);
-						if(c0=='「')
-							index1 = com.indexOf('」',1);
-						else if(c0=='"')
-							index1 = com.indexOf('"',1);
-						//
-						if(index1 > 0){
-							src = com.substring(1,index1);
-							index1++;
-						}else if(index1 == -1){
-							src = com.substring(1);
-							index1 = com.length();
-						} else {
-							index1 = com.indexOf(' ');
-							if(index1 < 0){
-								item_kicked = true;
-								return;
-							}
-							src = com.substring(0, index1);
+						String[] list = spsplit(com,6);
+						src = list[0];
+						dest = list[1];
+						int p = 2;
+						if(list[p].startsWith("全")){
+							fill = "T";
+							p++;
 						}
-						com = com.substring(index1);
-						if(!com.isEmpty() && com.charAt(0)==' '){
-							com = com.substring(1);
+						if(list[p].startsWith("単")){
+							fill = "F";
+							p++;
 						}
-						if(!com.isEmpty()){
-							//dest
-							c0 = com.charAt(0);
-							index1 = -2;
-							if(c0=='「')
-								index1 = com.indexOf('」',1);
-							else if(c0=='"')
-								index1 = com.indexOf('"',1);
-							//
-							if(index1 > 0){
-								dest = com.substring(1,index1);
-								index1++;
-							}else if(index1 == -1){
-								dest = com.substring(1);
-								index1 = com.length();
-							} else {
-								index1 = com.indexOf(' ');
-								if(index1 >= 0)
-									dest = com.substring(0, index1);
-								else{
-									dest = com.substring(0);
-									index1 = com.length();
-								}
-							}
-							com = com.substring(index1);
-							if(!com.isEmpty() && com.charAt(0)==' '){
-								com = com.substring(1);
-							}
-							if(!com.isEmpty()){
-								//fill
-								if(com.startsWith("全")){
-									fill = "T";
-									com = com.substring(1);
-								}else if(com.startsWith("単")){
-									fill = "F";
-									com = com.substring(1);
-								}else{
-									item_kicked = true;
-									return;
-								}
-								if(!com.isEmpty() && com.charAt(0)==' '){
-									com = com.substring(1);
-								}
-								if(!com.isEmpty()){
-									//target
-									if(com.startsWith("含む")){
-										target = "user owner";
-										item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_OWNER);
-										com = com.substring(2);
-									}else if(com.startsWith("含まない")){
-										com = com.substring(4);
-									}else{
-										item_kicked = true;
-										return;
-									}
-									if(!com.isEmpty() && com.charAt(0)==' '){
-										com = com.substring(1);
-									}
-									if(!com.isEmpty()){
-										//partial
-										if(com.startsWith("部分一致")){
-											partial = "T";
-											com = com.substring(4);
-										}else if(com.startsWith("完全一致")){
-											partial = "F";
-											com = com.substring(4);
-										}else{
-											item_kicked = true;
-											return;
-										}
-									}
-								}
-							}
+						if(list[p].startsWith("含む")){
+							item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_OWNER);
+							target = "user owner";
+							p++;
+						}
+						if(list[p].startsWith("含まない")){
+							target = "user";
+							p++;
+						}
+						if(list[p].startsWith("部分一致")){
+							partial = "T";
+							p++;
+						}
+						if(list[p].startsWith("完全一致")){
+							partial = "F";
 						}
 						int vpos = item.getVpos();
+						item.setMail("");	//リセットサイズ、ロケーション、色
+						item.addCmd(Chat.CMD_LOC_SCRIPT);
 						System.out.println("Converted:" +vpos +":＠置換 「"+src +"」「 "+dest
 							+"」 "+target +" fill:"+fill +" partial:"+partial+").");
 						com = "/r," + src + "," + dest + "," + fill;
-						// System.out.println("Converted-Comment: " + com);
 						CommentReplace comrpl = new CommentReplace(item,src,dest,"T",partial,target,fill);
 						packet.addReplace(comrpl);
 					}
@@ -484,6 +425,39 @@ public class NicoXMLReader extends DefaultHandler {
 				item.addCmd(Chat.CMD_LOC_SCRIPT);
 				script = true;
 			}
+			//投稿者フィルター
+			if (owner_filter!=null){
+				item.setVpos("0");
+				item.setMail("");	//リセットサイズ、ロケーション、色
+				item.addCmd(Chat.CMD_LOC_SCRIPT);
+				item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_USER);
+				item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_OWNER);
+				script = true;
+				String[] list = com.split("&");
+				for(String pair:list){
+					if(pair.contains("=")){
+						String src = pair.substring(0, pair.indexOf("="));
+						String dest = pair.substring(pair.indexOf("=")+1);
+						try {
+							src = URLDecoder.decode(src, "UTF-8");
+							dest = URLDecoder.decode(dest, "UTF-8");
+						} catch (UnsupportedEncodingException e) {
+							continue;
+						}
+						String target = "user owner";
+						String fill = "F";
+						if(src.charAt(0)=='*'){
+							fill = "T";
+							src = src.substring(1);
+						}
+						System.out.println("Converted:0" +":フィルター \""+src +"\" \""+dest
+								+"\" "+target +" fill:"+fill +" partial:T).");
+						com = "/r," + src + "," + dest + "," + fill;
+						CommentReplace comrpl = new CommentReplace(item, src, dest, "T", "T", target, fill);
+						packet.addReplace(comrpl);
+					}
+				}
+			}
 			//NGワード
 			if (!script && match(NG_Word, com)) {
 				item_kicked = true;
@@ -492,6 +466,50 @@ public class NicoXMLReader extends DefaultHandler {
 			}
 			item.setComment(com);
 		}
+	}
+
+	private String[] spsplit(String intext, int max){
+		String[] ret = new String[max];
+		for(int i = 0; i < ret.length; i++){
+			ret[i] = "";
+		}
+		if(intext==null || intext.isEmpty()){
+			return ret;
+		}
+		for(int i = 0; i < ret.length; i++){
+			int index = 0;
+			int index1 = 0;
+			if(intext.isEmpty())
+				return ret;
+			char h = intext.charAt(0);
+			if(intext.length() > 1 && (h=='"'||h=='「')){
+				if(h=='「')
+					h = '」';
+				index = intext.indexOf(h,1);
+				if(index >= 1){
+					ret[i] = intext.substring(1, index);
+					intext = intext.substring(index+1);
+					if(!intext.isEmpty())
+						if(intext.charAt(0)==' '||intext.charAt(0)=='　')
+							intext = intext.substring(1);
+					continue;
+				}
+			}
+			index = intext.indexOf(' ');
+			index1 = intext.indexOf('　');
+			if(index < 0 || (index1 >= 0 && index1 < index))
+				index = index1;
+			if(index < 0) {
+				ret[i] = intext;
+				return ret;
+			}
+			ret[i] = intext.substring(0, index);
+			intext = intext.substring(index+1);
+		}
+		if(!intext.isEmpty()){
+			ret[max-1] = ret[max-1] + intext;
+		}
+		return ret;
 	}
 
 	private String niwango(String str, String key){

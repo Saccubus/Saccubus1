@@ -40,6 +40,7 @@ static char* const COM_LOC_NAME[CMD_LOC_MAX] = {
 #define GET_CMD_IS_BUTTON(x)	((x) & 128)
 #define GET_CMD_REPLACE_USER(x)	((x) & 256)
 #define GET_CMD_REPLACE_OWNER(x)	((x) & 512)
+#define GET_CMD_ENDER(x)	((x) & 1024)
 
 #define CMD_FONT_MAX	4
 #define CMD_FONT_DEF	0

@@ -1,9 +1,8 @@
 package saccubus.conv;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.SAXParser;
 import org.xml.sax.*;
 import javax.xml.parsers.*;
 
@@ -28,10 +27,10 @@ import javax.xml.parsers.*;
  * @version 1.0
  */
 public class ConvertToVideoHook {
-	public static boolean convert(File file, File out, Pattern ng_id,
+	public static boolean convert(File file, File out, ArrayList<CommentReplace> list, Pattern ng_id,
 			Pattern ng_word, CommandReplace ng_cmd, int score_limit) {
 		try {
-			Packet packet = new Packet();
+			Packet packet = new Packet(list);
 			// SAXパーサーファクトリを生成
 			SAXParserFactory spfactory = SAXParserFactory.newInstance();
 			// SAXパーサーを生成

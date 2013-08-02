@@ -32,6 +32,7 @@ struct CHAT_ITEM{
 	int replace_user;	// /replace target:user
 	int replace_owner;	//	/replace target:owner
 	int is_button;	// ボタン
+	int ender;	//enderコマンド 改行リサイズキャンセル
 	//文字の修飾
 	int size;
 	int color;
