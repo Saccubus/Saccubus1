@@ -461,7 +461,7 @@ public class BrowserInfo {
     }
 
     /// <summary>
-    /// 文字列から user_session_ で始まる文字列を切り出して返す。数字とアンダーバー以外の文字で切れる。
+    /// 文字列から user_session_ で始まる文字列を切り出して返す。英数字とアンダーバー以外の文字で切れる。
     /// </summary>
     /// <param name="str">切り出す対象文字列</param>
     /// <returns>user_session 文字列。見つからなければ空文字を返す</returns>
@@ -473,7 +473,8 @@ public class BrowserInfo {
         while (start >= 0)
         {
             int index = start + "user_session_".length();
-            while (index < str.length() && ('0' <= str.charAt(index) && str.charAt(index) <= '9'
+            while (index < str.length() && (('0' <= str.charAt(index) && str.charAt(index) <= '9')
+            	|| ('a' <= str.charAt(index) && str.charAt(index) <= 'z')
             	|| str.charAt(index) == '_'))
             {
                 ++index;

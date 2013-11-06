@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -1960,17 +1960,21 @@ public class Converter extends Thread {
 		if (padOption != null){
 			//padOption=width:height:videox:videoy in -vfilters pad=w:h:x:y
 			printOutputSize(padOption,outAspect);
-			return true;
-		}
+			printOutputSize(inSize,outAspect);
+		}else
 		if (setSize != null){
 			//setSize=width:height in -s WIDTHxHEIGHT
 			printOutputSize(setSize,outAspect);
-			return true;
 		} else {
 			//inSize=width:height
 			printOutputSize(inSize,outAspect);
-			return true;
 		}
+		// framerate
+		String framerate = getFramerete();
+		if(!framerate.isEmpty()){
+			System.out.println(" framerate="+framerate);
+		}
+		return true;
 	}
 
 	void printOutputSize(String sizestr, Aspect aspect){
@@ -2085,6 +2089,32 @@ public class Converter extends Thread {
 		return false;
 	}
 
+	private String getFramerete(){
+		//-r or -r:v
+		String str = "";
+		if(OutOption.contains("-r ")||OutOption.contains("-r:v ")){
+			str = OutOption;
+		}else if(MainOption.contains("-r ")||MainOption.contains("-r:v ")){
+			str = MainOption;
+		}
+		if(str.isEmpty()){
+			return str;
+		}
+		int index = str.indexOf("-r");
+		if(index < 0){
+			return "";
+		}
+		int index2 = str.indexOf(" ", index+1);
+		if(index2 < 0){
+			return "";
+		}
+		index2 = str.indexOf(" ", index2+1);
+		if(index2 < 0){
+			return "";
+		}
+		return str.substring(index, index2);
+	}
+
 	private String getFromVfOpotion(String prefix){
 		for(String arg: getFFmpegVfOption().split(",")){
 			if(arg.startsWith(prefix)){
@@ -2107,7 +2137,7 @@ public class Converter extends Thread {
 			return true;
 		}
 		String[] list = addOption.split(" +");
-		HashMap<String,String> optionMap = new HashMap<String, String>(16);
+		LinkedHashMap<String,String> optionMap = new LinkedHashMap<String, String>(16);
 		String key = "";
 		String value = "";
 			for(int i=0;i<list.length;i++){
@@ -2291,6 +2321,9 @@ public class Converter extends Thread {
 			}
 			if(!extra.isEmpty()){
 				ffmpeg.addCmd("|--extra-mode:" + extra.replaceAll(" +", " ").trim().replace(' ', '+'));
+			}
+			if(!getFramerete().isEmpty()){
+				ffmpeg.addCmd("|--fr:" + getFramerete());
 			}
 			if(Setting.isEnableCA()){
 				ffmpeg.addCmd("|--enable-CA");
@@ -2506,6 +2539,7 @@ public class Converter extends Thread {
 				OutOption = optOut;
 			if(optIn==null && optOut==null && optMain==null){
 				OutOption = pair.getKey() + " " + pair.getValue() + " " + OutOption;
+				// V‚µ‚¢key‚Í OuOption‚Ìæ“ª‚É’Ç‰Á
 			}
 		}
 	}

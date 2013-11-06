@@ -497,10 +497,13 @@ public class NicoClient {
 			if (tag.startsWith("nm")) {
 				url += "?as3=1";
 			}
+			if (url.contains("?") && !watchInfo.isEmpty()){
+				watchInfo = "&" + watchInfo.substring(1);
+			}
 			System.out.print("Getting video informations...");
-			HttpURLConnection con = urlConnectGET(url);
+			HttpURLConnection con = urlConnectGET(url + watchInfo);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-				System.out.println("ng.\nCan't getVideoInfo:" + url);
+				System.out.println("ng.\nCan't getVideoInfo:" + url + watchInfo);
 				return false;
 			}
 			String encoding = con.getContentEncoding();
