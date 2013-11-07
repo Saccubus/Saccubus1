@@ -90,6 +90,11 @@ struct DATA{
 	unsigned int * wakuiro_dat;
 	int q_player;
 	//char wstr[128];
+#ifdef VHOOKDEBUG
+//	float dts_rate;	// フレームレート
+//	float dts;		// DTS
+//	int last_vpos;
+#endif
 	// 実験的設定
 	short font_pixel_size[CMD_FONT_MAX];
 	short fixed_font_height[CMD_FONT_MAX];	// 修正フォント指定(ポイント指定)
@@ -149,9 +154,11 @@ typedef struct SETTING{
 	const char* extra_mode;	// debugモード文字列
 	const char* april_fool;	// エイプリルフール文字列
 	const char* wakuiro;	// 黄枠色指定文字列
+//	const char* framerate;	// フレームレート
 	char* fontlist;	// フォントのリスト　999fontname ...（128個まで）
 }SETTING;
 
+#include "struct_define.h"
 int init(FILE* log);
 int initData(DATA* data,FILE* log,SETTING* setting);
 int main_process(DATA* data,SDL_Surface* surf,const int now_vpos);

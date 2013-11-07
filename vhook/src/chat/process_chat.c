@@ -69,9 +69,17 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 	SDL_Rect rect;
 	int max_item = slot->max_item;
 	CHAT_SLOT_ITEM* item;
+#ifdef VHOOKDEBUG
+		fprintf(data->log,"[drawcomment/debug1]args:surf %p (x y):(%d %d) vpos:%d slot:%p->%p->%8p\n",
+				surf, x, y,now_vpos,slot,slot->chat, slot->chat->item);
+#endif
 	for(i=0;i<max_item;i++){
 		item = &slot->item[i];
 		if(item->used){
+#ifdef VHOOKDEBUG
+			fprintf(data->log,"[drawcomment/debug2]slot:%8p->%8p->%px item(%d):%8p\n",
+					slot,slot->chat, slot->chat->item, i, item);
+#endif
 			if(now_vpos < item->vappear){
 				continue;
 			}
@@ -81,19 +89,23 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 			}
 			int normal_x = lround(getX(now_vpos,item,data->vout_width,data->width_scale,data->aspect_mode));
 			if(slot->chat->to_left < 0){
-				//debug
+#ifdef VHOOKDEBUG
 //				CHAT_ITEM* citem = item->chat_item;
 //				fprintf(data->log,"[drawcomment/script GYAKU]now:%d appear:%d vanish:%d vpos:%d start:%d end:%d duration:%d\n",
 //					now_vpos,item->vappear, item->vvanish,citem->vpos,citem->vstart,citem->vend,citem->duration);
 //				fprintf(data->log,"[drawcomment/script GYAKU]now:%d reverse_vpos:%d reverse_duration:%d \n",
 //					now_vpos,slot->chat->reverse_vpos, slot->chat->reverse_duration);
-				//debug end
+#endif
 				if(slot->chat->reverse_vpos <= now_vpos && slot->chat->reverse_vpos + slot->chat->reverse_duration > now_vpos){
 					normal_x = data->vout_width - (normal_x + item->surf->w);
 				}
 			}
 			rect.x = normal_x + x;
 			rect.y = item->y + y;
+#ifdef VHOOKDEBUG
+			fprintf(data->log,"[drawcomment/debug3]SDL_BlitSurface(item->surf:%p,NULL:%p,surf:%p,&rect:%p)\n",
+					item->surf,NULL,surf,&rect);
+#endif
 			SDL_BlitSurface(item->surf,NULL,surf,&rect);
 		}
 	}

@@ -29,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.42.1";
+	char *ver="1.43.1";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -169,6 +169,9 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->fontdir = "";
 	setting->april_fool = NULL;
 	setting->wakuiro = NULL;
+#ifdef VHOOKDEBUG
+//	setting->framerate = NULL;
+#endif
 	setting->q_player = FALSE;
 	// CA用フォント
 	//  MS UI GOTHIC は msgothic.ttc の index=2
@@ -364,6 +367,13 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 			fprintf(log,"[framehook/init]wakuiro: %s\n",setting->wakuiro);
 			fflush(log);
 		}
+#ifdef VHOOKDEBUG
+//		else if (strncmp(FRAMEHOOK_OPT_FRAMERATE,arg,FRAMEHOOK_OPT_FRAMERATE_LEN) == 0){
+//			setting->framerate = arg+FRAMEHOOK_OPT_FRAMERATE_LEN;
+//			fprintf(log,"[framehook/init]framerate: %s\n",setting->framerate);
+//			fflush(log);
+//		}
+#endif
 		// CA用フォント
 		else if(strncmp(FRAMEHOOK_OPT_FONT_DIR,arg,FRAMEHOOK_OPT_FONT_DIR_LEN)==0){
 			setting->fontdir = arg+FRAMEHOOK_OPT_FONT_DIR_LEN;

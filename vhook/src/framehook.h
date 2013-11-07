@@ -140,4 +140,7 @@ void exitExtProcess();
 #define FRAMEHOOK_OPT_WAKUIRO	"--wakuiro:"
 #define FRAMEHOOK_OPT_WAKUIRO_LEN	strlen(FRAMEHOOK_OPT_WAKUIRO)
 
+#define FRAMEHOOK_OPT_FRAMERATE	"--fr:"
+#define FRAMEHOOK_OPT_FRAMERATE_LEN	strlen(FRAMEHOOK_OPT_WAKUIRO)
+
 #endif /*FRAMEHOOK_H_*/

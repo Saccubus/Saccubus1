@@ -70,6 +70,28 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	data->defcolor = CMD_COLOR_WHITE;
 	data->deflocation = CMD_LOC_NAKA;
 	data->defsize = CMD_FONT_MEDIUM;
+	//フレームレート
+#ifdef VHOOKDEBUG
+//	char* fr = setting->framerate;
+//	double dfr = 0.0;
+//	if (fr){
+//		char* fr1 = strchr(fr,'/');
+//		if(fr1!=NULL){
+//			// 分数形式
+//			double dfr1 = strtod(fr,&fr1);
+//			fr1++;
+//			double dfr2 = strtod(fr1,NULL);
+//			if(dfr2!=0.0){
+//				dfr = dfr1 / dfr2;
+//			}
+//		}else{
+//			// 整数または少数
+//			dfr = strtod(fr,NULL);
+//		}
+//	}
+//	data->dts_rate = dfr;
+//	data->dts = 0.0;
+#endif
 //	data->limit_height = NICO_HEIGHT;
 	data->q_player = setting->q_player;
 	data->pad_w = 0;
@@ -515,6 +537,16 @@ int isPathRelative(const char* path){
  */
 int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 	FILE* log = data->log;
+/*
+	int now_dts = now_vpos;
+	if(now_dts <= data->last_vpos) {
+		now_dts = data->dts + (float)VPOS_FACTOR / data->dts_rate;
+		data->dts += 1.0 / data->dts_rate;
+	}else{
+		data->last_vpos = now_dts;
+		data->dts = (float)now_dts / (float)VPOS_FACTOR;
+	}
+*/
 	if(!data->process_first_called){
 		// 弾幕モードの高さの設定　16:9でオリジナルリサイズでない場合は上下にはみ出す
 		// Qwatchのときは、はみ出さない
@@ -529,6 +561,7 @@ int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 		fprintf(log,"[main/process]screen aspect:%.3f->%.3f scale:%.2f%%.\n",
 			(float)surf->w / (float)surf->h,
 			data->aspect_rate,data->width_scale*100.0);
+//		fprintf(log,"[main/process]framerate:%.2f\n",data->dts_rate);
 		fflush(log);
 	}
 	/*フィルタをかける*/

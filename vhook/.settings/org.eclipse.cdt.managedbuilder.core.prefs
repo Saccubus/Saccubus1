@@ -1,4 +1,3 @@
-#Tue Sep 27 08:13:02 JST 2011
 eclipse.preferences.version=1
 environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1024454771/CPATH/delimiter=;
 environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1024454771/CPATH/operation=remove
@@ -6,6 +5,12 @@ environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.releas
 environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1024454771/C_INCLUDE_PATH/operation=remove
 environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1024454771/append=true
 environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1024454771/appendContributed=true
+environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162/CPATH/delimiter=;
+environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162/CPATH/operation=remove
+environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162/C_INCLUDE_PATH/delimiter=;
+environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162/C_INCLUDE_PATH/operation=remove
+environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162/append=true
+environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162/appendContributed=true
 environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1929914977/CPATH/delimiter=;
 environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1929914977/CPATH/operation=remove
 environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1929914977/C_INCLUDE_PATH/delimiter=;
@@ -58,6 +63,10 @@ environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.cygwin.so.releas
 environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1024454771/LIBRARY_PATH/operation=remove
 environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1024454771/append=true
 environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1024454771/appendContributed=true
+environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162/LIBRARY_PATH/delimiter=;
+environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162/LIBRARY_PATH/operation=remove
+environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162/append=true
+environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162/appendContributed=true
 environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1929914977/LIBRARY_PATH/delimiter=;
 environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1929914977/LIBRARY_PATH/operation=remove
 environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1929914977/append=true

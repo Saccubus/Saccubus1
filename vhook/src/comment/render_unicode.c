@@ -19,6 +19,11 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 	const char* mode=data->extra_mode;
 	if(strstr(mode,"-font")==NULL && !fill_bg){
 		ret = TTF_RenderUNICODE_Blended(font,str,fg);	//default original mode
+		if(ret==NULL){
+			fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]TTF_RenderUNICODE_Blended : %s\n",TTF_GetError());
+			fflush(data->log);
+			return NULL;
+		}
 	}else{
 		SDL_Color bg = {0,0,0,0};
 		int fontfg = FALSE;
@@ -45,8 +50,18 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 		Uint32 colkey;
 		SDL_Color black = COMMENT_COLOR[CMD_COLOR_BLACK];
 		surf = TTF_RenderUNICODE_Shaded(font,str,fg,black);
+		if(surf==NULL){
+			fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]TTF_RenderUNICODE_Shaded : %s\n",TTF_GetError());
+			fflush(data->log);
+			return NULL;
+		}
 		colkey = 0;		//it must be black
 		SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);	//surface for background
+		if(tmp==NULL){
+			fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]drawNullSurface/SDL_CreateRGBSurface: %s\n",SDL_GetError());
+			fflush(data->log);
+			return NULL;
+		}
 		if (!fontfg){
 			if(cmpSDLColor(fg,bg)){
 				bg.r = fg.r ^ 0xff;
@@ -62,8 +77,8 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 		SDL_SetColorKey(tmp,SDL_RLEACCEL,0xff);	//reset color key
 		ret = tmp;
 	}
-//	if(data->original_resize)
-//		return ret;
+	if(data->original_resize)
+		return ret;
 	if(strstr(mode,"-point")!=NULL || strstr(mode,"-tune")!=NULL){
 		ret = pointsConv(data,ret,str,size,fontsel);
 	}else if(strstr(mode,"-old")==NULL){
