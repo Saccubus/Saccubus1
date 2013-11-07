@@ -6,12 +6,36 @@ readmeNew.txt
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
+1.43r(2013/11/07)
+　nicovideoE.dll　フォント描画エラー処理修正
 
-1.43(2013/11/06)
-　臨時変更 cookieの判定条件変更
+■動作が変なときは
+　・通常の Saccubus.exe の起動では、
+　　[log]frontend.txt　にログが出力されていますので参照して下さい。
+　・debug.batをダブルクリックして起動すると実行中にログを画面表示します。
+　　Javaにパスが通っていないとエラーになります。（Bin.jarが無い時もエラーになります。）
+　　本体が起動するので後は同じです。
+　　終了後ログがフォルダ直下の log.txt に出力されるので参考にして下さい。
+　・作業ファイルは直下のtempフォルダの下に作成しますが実行が終了すると削除します。
+　　（時々削除し忘れるので、手動で削除する必要が有ります）
+　・nicovideoE.dllは[log]vhext.txtを tempフォルダの下に 動画ID[log]vhext.txtとして保存します。
+　　エラー終了した場合はtemp\動画ID[log]vhext.txtを調べて下さい。
+　・色々設定を変更した時は、設定を初期化してみて下さい。
+
+■auto.batで動作が変な時は
+　・auto.batの記述を確かめます。
+　　auto.batが実行して終了するまで待ちます。
+　　途中でエラーが起きても、最後の動画まで実行してから終了します。
+　　log.txtにログが記録されます。（１MBまで）
+　・autodebug.batは必要ありません。
+
+■設定を初期化するには
+　・ファイルメニューの初期化をクリックします。(1.29以降)
+　　（初期化する前に現在の設定をファイル→別名保存しておくと
+　　役に立つかも）
 
 
-□改造部分について(changed+)
+□改造部分について
 【ライセンス】
 １．ffmpeg55686.exe（ソースはGithubレポジトリ）、Saccubus.jar（ソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
@@ -44,7 +68,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　最近アップデートしていない場合は必ず更新して下さい。
 　JRE5 JDK1.5はテストしていません。
 　　http://java.com/ja/
-　からインストールして下さい。通常は32ｂｉｔ版です。
+　からインストールして下さい。通常は32bit版です。
 　64bit版をダウンロードするには説明を読んで従って下さい。
 
 ◆注意◆16:9黒枠なしの（PSPなどの）動画について
@@ -62,14 +86,14 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　・配布形態　　ffmpeg55686同梱版
 　・本Rev.は確定版SDLライブラリ（2011/11/02版）を同梱しています。（binフォルダ内）
 　・本Rev.はffmpeg 21400用optionファイルを削除しました。
-　・optionVo（ffmpeg55686用、2012/07/20版）optionDev（実験用2011/3/30版）を同梱。
+　・optionVo（ffmpeg56884w用、2013/08/01版）optionDev（実験用2011/3/30版）を同梱。
 
 □インストール方法と拡張機能設定
 　◆1.22r2以前のさきゅばすを使用中の方
 　　「初めてさきゅばすを使う方」を実行して下さい。
 
 　◆1.22r3以降をご使用中の方
-　【注意】今回の変更は主にffmpeg55686専用となるため
+　【注意】今回の変更は主にffmpeg56884w/ffmpeg55686用となるため
 　他のffmpegでは使用出来ない可能性があります。ご了承ください。
 　・自分で修正したオプションファイル(optionVOファルダ)をお持ちの方は
 　　自分が使用するオプションファイルだけ別の場所に移動して下さい。
@@ -82,6 +106,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ffmpegを設定します。使用しない場合は■削除■して下さい。
 
 　◆拡張機能（概要）追加分
+　・投稿者フィルター追加（投稿者コメント無しでオフ）
+　・enderコマンド実装
 　・＠ボタン(投稿者コメント)スクリプト　対応
 　・＠置換スクリプト　対応
 　・マイリスト処理追加（実験的）
@@ -163,32 +189,15 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 　　右上の「変換」ボタンをクリックするとダウンロードと変換が開始します。
 
-■動作が変なときは
-　・通常の Saccubus.exe の起動では、
-　　[log]frontend.txt　にログが出力されていますので参照して下さい。
-　・debug.batをダブルクリックして起動すると実行中にログを画面表示します。
-　　Javaにパスが通っていないとエラーになります。（Bin.jarが無い時もエラーになります。）
-　　本体が起動するので後は同じです。
-　　終了後ログがフォルダ直下の log.txt に出力されるので参考にして下さい。
-　・作業ファイルは直下のtempフォルダの下に作成しますが実行が終了すると削除します。
-　　（時々削除し忘れるので、手動で削除する必要が有ります）
-　・nicovideoE.dllは[log]vhext.txtを tempフォルダの下に 動画ID[log]vhext.txtとして保存します。
-　　エラー終了した場合はtemp\動画ID[log]vhext.txtを調べて下さい。
-　・色々設定を変更した時は、設定を初期化してみて下さい。
-
-■auto.batで動作が変な時は
-　・auto.batの記述を確かめます。
-　　auto.batが実行して終了するまで待ちます。
-　　途中でエラーが起きても、最後の動画まで実行してから終了します。
-　　log.txtにログが記録されます。（１MBまで）
-　・autodebug.batは必要ありません。
-
-■設定を初期化するには
-　・ファイルメニューの初期化をクリックします。(1.29以降)
-　　（初期化する前に現在の設定をファイル→別名保存しておくと
-　　役に立つかも）
-
 □拡張機能（変更点）説明
+●投稿者フィルター追加しました。
+　投稿者コメントを無しにすることでオフになります。
+
+●enderコマンド（リサイズしない新コマンド）を実装しました。
+
+●mp3エンコードを行うオプションを変更及び削除しました。
+　デコードは可能です。
+
 ●＠ボタン(投稿者コメント)スクリプト　対応しました。
 
 ●＠置換スクリプト　対応しました。
@@ -605,7 +614,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　└saccubus　　本体exe jar xml bat
 　　├bin        実行ファイルフォルダ exe dll
 　　├optionDev  オプションフォルダ(開発用)　CA用設定サンプル５種
-　　└optionVO   オプションフォルダ(55686用)
+　　└optionVO   オプションフォルダ(56884w/55686用)
 
 □内容
 ・License.txt　　　　　　　 さきゅばすライセンス（プロジェクト）
@@ -614,8 +623,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・Saccubus.jar　　　　　　　本体
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
 ・bin フォルダ配下
-　　ffmpeg55686.exe ライセンスGPLV3
-　　nicovideoE.dll(2013.04.01版)統合版拡張Vhookライブラリ
+　　ffmpeg56884w.exe ライセンスGPLV3
+　　nicovideoE.dll(2013.07.31版)統合版拡張Vhookライブラリ
 　　SDL.dll(2011.11.02ビルド)、COPYNG、README-SDL.txt
 　　　ライセンスはLGPL
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYING.sdl_ttf
@@ -624,7 +633,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　　グラフィックライブラリ、ライセンスはzlib
 ・optionDev フォルダ配下 　 開発用ファイル
 ・optionVO フォルダ配下　　 変換オプションファイル
-　　　（N55686用 2013.04.02版）
+　　　（N56884w用 2013.08.01版）
 ・readmeNew.txt(最新)、readme.txt(1.22r)、readme+.txt(1.22r3)
 ・最初に必ず読んで.txt
 ・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
@@ -645,7 +654,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・ソースコード
 　http://sourceforge.jp/projects/saccubus/svn/view/branches/dev_branch
 　(SVN：svn checkout http://svn.sourceforge.jp/svnroot/branches/dev_branch )
-　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1
+　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1 (未更新)
 
 ・ダウンロード
 　公式最新(Vista・Win7では追加ファイルが必要。公式ユーザーページ参照)
@@ -657,7 +666,12 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　r23386(libfaacあり)　http://www1.axfc.net/uploader/Ne/so/82882.zip
 　N55686(libfaac無し、libvo_aacencあり)+optionVO(古い)
 　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
+　FFmpeg評価用(2013/6/16)　http://www1.axfc.net/uploader/so/2936495.zip
+
 　改造版
+　1.43　　　http://www1.axfc.net/u/3080418.zip
+　1.42　　　http://www1.axfc.net/uploader/so/2981487.zip
+　1.41a 　　http://www1.axfc.net/uploader/so/2917900.zip
 　1.40d2　　http://www1.axfc.net/uploader/so/2865306.zip
 　1.39r1　　http://www1.axfc.net/uploader/so/2853963.zip
 　1.38r1　　http://www1.axfc.net/uploader/so/2818777.zip
@@ -709,6 +723,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 変更履歴・修正・改変点
+1.43(2013/11/06)
+　臨時変更 cookieの判定条件変更
+
 1.42(2013/08/01)
 　投稿者フィルター追加（投稿者コメント無しでオフ）
 　enderコマンド実装
