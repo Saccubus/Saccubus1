@@ -92,7 +92,7 @@ void deleteChatSlotFromIndex(CHAT_SLOT* slot,int index){
  */
 int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int video_height){
 	//もう見せられた。
-	item->showed = TRUE;
+	//item->showed = TRUE;
 	if(slot->max_item <= 0){
 		return 0;
 	}
@@ -192,7 +192,12 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			start = MAX(other_item->vstart,item->vstart);
 			end = MIN(other_item->vend,item->vend);
 			if(location != CMD_LOC_NAKA){
-				end -= 12;	// 17vpos は重なってもいい?
+				//vendは最後の数vposは揺らぐ
+				end -= 12;	// 12vpos は重なってもいい?
+			}else{
+				//nakaコメントの場合は5sec→4secに直す
+				end -= TEXT_AHEAD_SEC;
+				//end -= 3;
 			}
 			if(start > end){
 				continue;
@@ -222,8 +227,6 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 				break;
 			}
 
-			//vendは最後の数vposは揺らぐので仮に17vposとして計算
-			//end -= 3;
 			double x_t1 = getX(start,slot_item,video_width,scale,0);
 			double x_t2 = getX(end,slot_item,video_width,scale,0);
 			double o_x_t1 = getX(start,other_slot,video_width,scale,0);
@@ -327,10 +330,8 @@ CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos){
 		}
 		item = slot_item->chat_item;
 		if(item==NULL)continue;
-		if(now_vpos < item->vstart || now_vpos > item->vend){
-			// nakaはslotから消す必要はない？
-			//if(slot_item->slot_location != CMD_LOC_NAKA)
-			//	return slot_item;
+		if(now_vpos > item->vend){
+			return slot_item;
 		}
 	}
 	return NULL;

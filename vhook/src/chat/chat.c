@@ -71,7 +71,8 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	for(i=0;i<max_item;i++){
 		item = &chat->item[i];
 		item->chat = chat;
-		item->showed = FALSE;
+		//item->showed = FALSE;
+		item->pooled = FALSE;
 		/*
 		 * +00 :32bit :no      :ƒRƒƒ“ƒg”Ô†
 		 * +04 :32bit :vpos    :Vodeo Position? (Ä¶ˆÊ’u)
@@ -195,22 +196,24 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		//removeZeroWidth(str,str_length/sizeof(Uint16));
 		item->str = str;
 		/*“à•”ˆ—‚æ‚è*/
-		if(location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM){
-			item->vstart = vpos;
-			item->vend = vpos + TEXT_SHOW_SEC_S - 1;
-			//vend is last tick of LIFE, so must be - 1 done.
-			// item->vend = vpos + duration - 1;
-		}else{
-			item->vstart = vpos - TEXT_AHEAD_SEC;
-			item->vend = vpos + TEXT_SHOW_SEC_S - 1;
-			//vend is last tick of LIFE, so must be - 1 done.
-			// item->vend = item->vstart + duration - 1;
-		}
 		//upto here duration is seconds, item->duration is VPOS
 		if(duration==0){
 			duration = TEXT_SHOW_SEC_S;
 		}else if(duration != INTEGER_MAX){
 			duration = (duration-1)*VPOS_FACTOR;	//duration field = @•b” + 1
+		}
+		if(location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM){
+			//ue shita
+			item->vstart = vpos;
+			//vend is last tick of LIFE, so must be - 1 done.
+			item->vend = vpos + duration - 1;
+			item->vappear = vpos;
+		}else{
+			//naka
+			item->vstart = vpos - TEXT_AHEAD_SEC;	//‚P•b‘O‚©‚ç
+			// item->vend = vpos + TEXT_SHOW_SEC_S - 1;
+			item->vend = vpos + duration - 1 + TEXT_AHEAD_SEC;	//‚P•bŒã‚Ü‚Å•\Ž¦;
+			item->vappear = vpos - TEXT_AHEAD_SEC - TEXT_AHEAD_SEC;	//•\Ž¦‚Í‚Q•b‘O‚©‚ç
 		}
 		item->duration = duration;
 		item->script = script;
@@ -224,6 +227,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 				item->vend -= fix;
 				item->vpos -= fix;
 				item->vstart -= fix;
+				item->vappear -= fix;
 				fprintf(log,"[chat/fix]comment %d<index:%d> time adjusted : %5.2f Sec.\n",no,i,(double)fix/(double)VPOS_FACTOR);
 			}
 		}
@@ -296,8 +300,8 @@ CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos){
 	CHAT_ITEM* item;
 	for(;chat->iterator_index<chat->max_item;chat->iterator_index++){
 		item = &chat->item[chat->iterator_index];
-		int vpos = now_vpos + TEXT_AHEAD_SEC;
-		if(vpos >= item->vstart && vpos <= item->vend && !item->showed){
+		//1•bæ“Ç‚Ý
+		if((now_vpos+TEXT_AHEAD_SEC)>= item->vstart && now_vpos <= item->vend && !item->pooled){
 			return item;
 		}
 	}

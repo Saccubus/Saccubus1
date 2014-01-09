@@ -13,8 +13,8 @@ struct CHAT_SLOT_ITEM{
 	SDL_Surface* surf;
 	int y;
 	float speed;
-	int vappear;		//start display when wide(640x360)
-	int vvanish;		//end display when wide
+	//int vappear;		//start display when wide(640x360)
+	//int vvanish;		//end display when wide
 	//ƒŠƒtƒ@ƒŒƒ“ƒX
 	CHAT_SLOT* slot;
 };

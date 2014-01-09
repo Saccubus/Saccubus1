@@ -41,9 +41,10 @@ struct CHAT_ITEM{
 	//“à•”ˆ—‚Åg‚¤
 	int vstart;		//begin vpos of check y
 	int vend;		//last vpos of check y
-	//int vappear;		//start display when wide(640x360)
+	int vappear;	//start display of comment
 	//int vvanish;		//end display when wide
-	int showed;			// whether checked y pos, 0: not showed, 1:showed and not finished, finished
+	//int showed;			// whether checked y pos, 0: not showed, 1:showed and not finished, finished
+	int pooled;			// wheather item is pooled?
 	int duration;	// vend - vstart
 	  // —•b”‚Ìê‡  w’è’l
 	  // ue shita‚Ìê‡  300 vpos

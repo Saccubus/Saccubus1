@@ -31,13 +31,18 @@ int process_chat(DATA* data,CDATA* cdata,SDL_Surface* surf,const int now_vpos){
 		/*見せるものをセット*/
 		chat = &cdata->chat;
 		resetChatIterator(chat);
-		resetPoolIterator(chat->pool);
-			// vposを超えたものをプール
+		//プールは以前からのが残っているのでリセットしてはいけない
+		//resetPoolIterator(chat->pool);
+		// now_vposを1秒先読みしてvstartからvendまでのコメントをプール
 		while((chat_item = getChatShowed(chat,now_vpos)) != NULL){
+			// debug
+			fprintf(log,"[process-chat/process]getChatShowed(chat,%d) comment %d.\n",now_vpos,chat_item->no);
 			addChatPool(data,chat->pool,chat_item);
+			// debug
+			fprintf(log,"[process-chat/process]addChatPool(data,pool,%d).\n",chat_item->no);
 		}
-			// プールをvposでソートし取り出す
-		while((chat_item = getChatPooled(data,chat->pool)) != NULL){
+		// プールをvstart,noでソートし取り出す
+		while((chat_item = getChatPooled(data,chat->pool,now_vpos)) != NULL){
 			addChatSlot(data,slot,chat_item,data->vout_width,data->vout_height);
 			fprintf(log,"[process-chat/process]comment %d %s vpos:%d color:%s %s %s  %d - %d(vpos:%d) added.\n",
 				chat_item->no,chat->com_type,now_vpos,getColorName(buf,chat_item->color),
@@ -80,13 +85,12 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 			fprintf(data->log,"[drawcomment/debug2]slot:%8p->%8p->%px item(%d):%8p\n",
 					slot,slot->chat, slot->chat->item, i, item);
 #endif
-			if(now_vpos < item->vappear){
-				continue;
-			}
-			if(now_vpos > item->vvanish){
+/*
+			if(now_vpos > item->chat_item->vend){
 				deleteChatSlot(item,data);
 				continue;
 			}
+*/
 			int normal_x = lround(getX(now_vpos,item,data->vout_width,data->width_scale,data->aspect_mode));
 			if(slot->chat->to_left < 0){
 #ifdef VHOOKDEBUG
@@ -114,40 +118,16 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 /*
  * 位置を求める
  */
-/*
-int getX_org(int now_vpos,const CHAT_SLOT_ITEM* item,int video_width,int nico_width,double scale){
-	int text_width = item->surf->w;
-	int width = video_width;
-	if(item->chat_item->location != CMD_LOC_DEF){
-		return (width - text_width) >>1;
-	}else{
-		int vstart = item->chat_item->vpos - TEXT_AHEAD_SEC;
-		//if 4:3, vstart is chat_item->vstart;
-		//but 16:9, vstart is later than chat_item->vstart.
-		double xstart = (NICO_WIDTH + 44/2) * scale;
-		if(nico_width==NICO_WIDTH_WIDE){
-			xstart += 64.0 * scale;
-		}
-		double tmp = now_vpos - vstart;
-		if(item->speed < 0.0f){
-			return (xstart - tmp * item->speed
-				- (video_width + text_width));
-		}
-		return (xstart - tmp * item->speed);
+double getX(int vpos,CHAT_SLOT_ITEM* item,int video_width,double scale,int aspect_mode){
+	if(item->slot_location != CMD_LOC_NAKA){
+		return (double)((video_width >> 1) - (item->surf->w >> 1));
 	}
-	return -1;
-}
-*/
-
+	//CMD_LOC_NAKA
 /*
  * naka 位置を求める
  */
-double getXnaka(int vpos,CHAT_SLOT_ITEM* item,int aspect_mode,double scale){
-	//int text_width = item->surf->w;
-	//int vstart = item->chat_item->vstart;
-	// this meens getX=-width/(vend-vstart)*(vpos-vstart)+xstart(=NICO_WIDTH+16)+64_wide
-	//   vpos=vstart -> getX=width-16-text_width+64_wide=NICO_WIDTH+16+64_wide
-	//   vpos=vend   -> getX=-16-text_width+64_wide
+	// 現時刻now_vposのコメントvstartからの相対値
+	// vpos - item->chat_item->vstart;
 	double progress = item->speed * (vpos-item->chat_item->vstart);
 	double xstart;
 	double xpos;
@@ -160,18 +140,6 @@ double getXnaka(int vpos,CHAT_SLOT_ITEM* item,int aspect_mode,double scale){
 	}
 	xpos = -progress + xstart;
 	return xpos;
-}
-
-/*
- * 位置を求める
- */
-double getX(int vpos,CHAT_SLOT_ITEM* item,int video_width,double scale,int aspect_mode){
-	//double text_width = item->surf->w;
-	if(item->slot_location != CMD_LOC_NAKA){
-		return (double)((video_width >> 1) - (item->surf->w >> 1));
-	}
-	//CMD_LOC_NAKA
-	return getXnaka(vpos,item,aspect_mode,scale);
 }
 
 int getVposItem(DATA* data,CHAT_SLOT_ITEM* item,int n_xpos,double s_tpos){
@@ -195,7 +163,6 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 	CHAT_ITEM* item = slot_item->chat_item;
 	int vpos = item->vpos;
 	int location = item->location;
-	int itime_add = 0;
 	/*
 	 * default lcation 変更
 	 */
@@ -209,56 +176,39 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 		item->vstart = vpos;
 		item->vend = vpos + duration - 1;
 		slot_item->speed = 0.0f;
-		slot_item->vappear = item->vstart - itime_add;
-		slot_item->vvanish = item->vend + itime_add;
+		item->vappear = vpos;
 	}else{
 		item->vstart = vpos - TEXT_AHEAD_SEC;
 		//if(item->script==SCRIPT_GYAKU||item->script==SCRIPT_DEFAULT){
 		//	item->vstart = vpos;
 		//}
-		item->vend = vpos + duration - 1;
+		item->vend = vpos + duration - 1 + TEXT_AHEAD_SEC;
+		item->vappear = item->vstart -TEXT_AHEAD_SEC;
 		int text_width = slot_item->surf->w;
 		double width = scale * (NICO_WIDTH + 32) + text_width;
-		//					//video_width + scale * 36 + text_width;
-		//double speed = width / (double)(item->vend + 1 - item->vstart);	//1.38
-		double speed = width / (double)(item->vend - item->vstart);	//1.37r,1.39 分母は1少ない
-		// this meens getX=-width/(vend-vstart)*(vpos-vstart)+xstart(=width-16-text_width)+64_wide
-		//   vpos=vstart -> getX=width-16-text_width+64_wide=NICO_WIDTH+16+64_wide
-		//   vpos=vend   -> getX=-16-text_width+64_wide
+		double speed = width / (double)(duration + TEXT_AHEAD_SEC);
 		//speed *= 1.006;	//特別補正→ edge of video will be reached at vend-3
-		itime_add = MAX(lround(scale * 64 / speed),TEXT_AHEAD_SEC);
 		if(comment_speed==0){
+			//speed = speed * 1.02 - 0.04;	//特別補正
 			slot_item->speed = (float)speed;
 		}
 		else if(comment_speed==-20080401){	//reverse
 			slot_item->speed = (float)speed;
-			//slot_item->slot->chat->to_left = -1;	//this should be in initChat
 		}
 		else if(comment_speed==20090401){	//3 times speed
 			slot_item->speed = (float)(speed * 3.0);
-			//item->vstart = vpos - lround((double)TEXT_AHEAD_SEC / 3.0);
 			item->vend = item->vstart + lround((duration + TEXT_AHEAD_SEC) / 3.0);
-			itime_add = TEXT_AHEAD_SEC;
 		}
 		else {
 			speed  = (double)comment_speed/(double)VPOS_FACTOR;
 			slot_item->speed = (float)speed;
 			if(speed < 0.0){
 				speed = -speed;
-				//slot_item->slot->chat->to_left = -1;	//this should be in initChat
 			}
-			//item->vstart = (vpos - TEXT_AHEAD_SEC);
 			item->vend = item->vstart + lround(width / speed);
-			itime_add = MAX(lround(scale * 64 / speed),(TEXT_AHEAD_SEC>>1));
 		}
-		//if(item->script==SCRIPT_GYAKU || item->script==SCRIPT_DEFAULT){
-		//	itime_add = 0;
-		//}
-		slot_item->vappear = item->vstart - itime_add;
-		slot_item->vvanish = item->vend + itime_add;
 		if(data->debug){
 			fprintf(data->log,"[process_chat/set_speed]comment speed %.2fpix/sec.\n",slot_item->speed*100.0);
 		}
-		return;
 	}
 }
