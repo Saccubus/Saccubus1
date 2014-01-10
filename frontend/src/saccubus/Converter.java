@@ -2229,9 +2229,18 @@ public class Converter extends Thread {
 				ffmpeg.addCmd("|--data-owner:");
 				ffmpeg.addCmd(URLEncoder.encode(
 					Path.toUnixPath(OwnerMiddleFile), encoding));
+				int usershowcomment = 0;
+				try {
+				usershowcomment = Integer.parseInt(Setting.getVideoShowNum());
+				} catch (NumberFormatException e1){
+					usershowcomment = 0;
+				}
 				int ownershowcomment = Integer.parseInt(NicoClient.STR_OWNER_COMMENT);
 				if(ownershowcomment > ownerCommentNum){
 					ownershowcomment = ownerCommentNum;
+				}
+				if(usershowcomment > 0 && usershowcomment < ownershowcomment){
+					ownershowcomment = usershowcomment;
 				}
 				ffmpeg.addCmd("|--show-owner:" + ownershowcomment);
 			}

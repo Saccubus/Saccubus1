@@ -66,7 +66,7 @@ CHAT_ITEM* getChatPooled(DATA* data,CHAT_POOL* pool,int now_vpos){
 	// not sorted?
 	if(!pool->is_sorted){
 		//debug
-		fprintf(data->log,"[chat_pool/get]sort(index=%d,num=%d)\n",pool->index,pool->num_item);
+		fprintf(data->log,"[chat_pool/get]sort(index=%d,num=%d) vpos=%d \n",pool->index,pool->num_item,now_vpos);
 		//start sorting
 		//first: by vstart, second: by no.
 		int min_vstart;
@@ -96,7 +96,7 @@ CHAT_ITEM* getChatPooled(DATA* data,CHAT_POOL* pool,int now_vpos){
 		pool->num_item = new_num;
 		pool->index = 0;
 		//debug
-		fprintf(data->log,"[chat_pool/get]sorted(index=%d,num=%d)\n",pool->index,pool->num_item);
+		//fprintf(data->log,"[chat_pool/get]sorted(index=%d,num=%d)\n",pool->index,pool->num_item);
 	}
 	// sorted
 	if(item[pool->index]->vappear <= now_vpos){
@@ -108,6 +108,6 @@ CHAT_ITEM* getChatPooled(DATA* data,CHAT_POOL* pool,int now_vpos){
 	//‚à‚µ vappear > now_vpos‚Ì‚à‚Ì‚ªæ“ª‚É‚ ‚ê‚Îæ“Ç‚İ‚³‚ê‚½‚¾‚¯‚¾‚©‚ç
 	//Ÿ‚Ì“Ç‚İ‚İ‚Ü‚Åƒv[ƒ‹‚µ‚Ä‚¨‚­
 	//debug
-	fprintf(data->log,"[chat_pool/get]last(index=%d,num=%d), return NULL\n",pool->index,pool->num_item);
+	//fprintf(data->log,"[chat_pool/get]last(index=%d,num=%d), return NULL\n",pool->index,pool->num_item);
 	return NULL;
 }

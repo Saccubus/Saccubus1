@@ -116,15 +116,21 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	int size = (item->size == CMD_FONT_DEF)? data->defsize : item->size;
 	/*開きスロットル検索*/
 	int i;
-	int cnt = -1;
+	int cnt = 0;
 	int slot_max = slot->max_item;
+	int min_vstart = item->vstart;
 	for(i=0;i<slot_max;i++){
 		if(!slot->item[i].used){
 			cnt = i;
 			break;
 		}
-		if(cnt < 0 || slot->item[cnt].chat_item->vend > slot->item[i].chat_item->vend){
+		if(slot->item[i].chat_item->vend < item->vstart){	//連結 (used=falseの筈だが)
 			cnt = i;
+			break;
+		}
+		if(slot->item[i].chat_item->vstart < min_vstart) {
+			cnt = i;
+			min_vstart = slot->item[i].chat_item->vstart;
 		}
 	}
 	CHAT_SLOT_ITEM* slot_item = &slot->item[cnt];	//このスロットに追加

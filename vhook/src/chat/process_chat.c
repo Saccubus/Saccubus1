@@ -36,10 +36,8 @@ int process_chat(DATA* data,CDATA* cdata,SDL_Surface* surf,const int now_vpos){
 		// now_vposを1秒先読みしてvstartからvendまでのコメントをプール
 		while((chat_item = getChatShowed(chat,now_vpos)) != NULL){
 			// debug
-			fprintf(log,"[process-chat/process]getChatShowed(chat,%d) comment %d.\n",now_vpos,chat_item->no);
+			fprintf(log,"[process-chat/process]getChatShowed(chat,vpos=%d) comment %d.\n",now_vpos,chat_item->no);
 			addChatPool(data,chat->pool,chat_item);
-			// debug
-			fprintf(log,"[process-chat/process]addChatPool(data,pool,%d).\n",chat_item->no);
 		}
 		// プールをvstart,noでソートし取り出す
 		while((chat_item = getChatPooled(data,chat->pool,now_vpos)) != NULL){
