@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.PatternSyntaxException;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.SAXException;
 
 /**
@@ -19,7 +21,7 @@ public class CombineXML {
 
 	public static boolean combineXML(
 			ArrayList<File> filelist, File output){
-			System.out.print("Starting Combining XML files.");
+			System.out.print("Starting Combining XML files. ");
 		try {
 			if (filelist == null || filelist.isEmpty()){
 				return false;
@@ -29,6 +31,17 @@ public class CombineXML {
 			SAXParser saxparser = spfactory.newSAXParser();
 			MultiXMLHandler xmlhandler = new MultiXMLHandler(chatArray);
 			for (File file : filelist){
+				String filename = file.getName();
+				if (filename == null)
+					break;
+				int index = filename.lastIndexOf("[");
+				if(index>0){
+					int index2 = filename.lastIndexOf("]");
+					if (index2<index)
+						index2 = filename.length();
+					filename = filename.substring(index+1,index2);
+				}
+				System.out.print(filename + ". ");
 				saxparser.parse(file, xmlhandler);
 			}
 			// •ÏŠ·Œ‹‰Ê‚Ì‘‚«ž‚Ý
