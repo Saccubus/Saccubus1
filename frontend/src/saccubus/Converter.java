@@ -2270,6 +2270,7 @@ public class Converter extends Thread {
 			}
 			if (Setting.isOpaqueComment()) {
 				ffmpeg.addCmd("|--enable-opaque-comment");
+				ffmpeg.addCmd("|--opaque:" + Setting.getOpaqueRate());
 			}
 			if (Setting.isZqPlayer()){
 				ffmpeg.addCmd("|--enable-Qwatch");

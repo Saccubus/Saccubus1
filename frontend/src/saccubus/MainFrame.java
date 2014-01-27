@@ -208,6 +208,7 @@ public class MainFrame extends JFrame {
 	JCheckBox changeMp4ExtCheckBox = new JCheckBox();
 	JCheckBox changeTitleIdCheckBox = new JCheckBox();
 	JCheckBox saveThumbnailJpgCheckBox = new JCheckBox();
+	JTextField opaqueRateTextField = new JTextField();
 	@SuppressWarnings("unused")
 	private StringBuffer resultBuffer;
 	private JButton showDownloadListButton = new JButton();
@@ -504,9 +505,26 @@ public class MainFrame extends JFrame {
 		grid8_x0_y9_33.gridx = 0;
 		grid8_x0_y9_33.fill = GridBagConstraints.HORIZONTAL;
 		grid8_x0_y9_33.weightx = 1.0;
+		grid8_x0_y9_33.anchor = GridBagConstraints.WEST;
 		grid8_x0_y9_33.insets = INSETS_0_5_0_5;
-		grid8_x0_y9_33.gridwidth = 5;
+		grid8_x0_y9_33.gridwidth = 3;
 		grid8_x0_y9_33.gridy = 9;
+		GridBagConstraints grid8_x2_y9_101 = new GridBagConstraints();
+		grid8_x2_y9_101.gridx = 3;
+		grid8_x2_y9_101.gridy = 9;
+		grid8_x2_y9_101.gridwidth = 1;
+		grid8_x2_y9_101.weightx = 0.0;
+		grid8_x2_y9_101.anchor = GridBagConstraints.WEST;
+		grid8_x2_y9_101.fill = GridBagConstraints.HORIZONTAL;
+		grid8_x2_y9_101.insets = INSETS_0_5_0_5;
+		GridBagConstraints grid8_x3_y9_103 = new GridBagConstraints();
+		grid8_x3_y9_103.gridx = 4;
+		grid8_x3_y9_103.gridy = 9;
+		grid8_x3_y9_103.gridwidth = 1;
+//		grid8_x3_y9_103.weightx = 1.0;
+		grid8_x3_y9_103.anchor = GridBagConstraints.WEST;
+		grid8_x3_y9_103.fill = GridBagConstraints.HORIZONTAL;
+		grid8_x3_y9_103.insets = INSETS_0_5_0_5;
 		GridBagConstraints grid4_x0_y9_26 = new GridBagConstraints();
 		grid4_x0_y9_26.gridx = 0;
 		grid4_x0_y9_26.gridwidth = 4;
@@ -1251,6 +1269,10 @@ public class MainFrame extends JFrame {
 		VhookSettingPanel.add(ShowConvVideoCheckBox, grid8_x0_y7_63);
 		VhookSettingPanel.add(getFixFontSizeCheckBox(), grid8_x0_y8_14);
 		VhookSettingPanel.add(getOpaqueCommentCheckBox(), grid8_x0_y9_33);
+		opaqueRateTextField.setForeground(Color.blue);
+		opaqueRateTextField.setToolTipText("不透明度（既定 オフ 0.0-0.3/オン 1.0）");
+		VhookSettingPanel.add(opaqueRateTextField, grid8_x2_y9_101);
+		VhookSettingPanel.add(new JLabel("設定 0～1"),grid8_x3_y9_103);
 		commentSpeedCheckBox.setText("コメント速度（Pixel/Sec）");
 		commentSpeedCheckBox.setForeground(Color.blue);
 		VhookSettingPanel.add(commentSpeedCheckBox, grid8_x0_y10_0);
@@ -2007,7 +2029,8 @@ public class MainFrame extends JFrame {
 			zqCommandLineInOptionField.getText(),
 			zqCommandLineOutOptionField.getText(),
 			zqAdditionalOptionFiled.getText(),
-			history
+			history,
+			opaqueRateTextField.getText()
 		);
 	}
 /*
@@ -2148,6 +2171,7 @@ public class MainFrame extends JFrame {
 		zqCommandLineOutOptionField.setText(setting.getZqCmdLineOptionOut());
 		zqCommandLineInOptionField.setText(setting.getZqCmdLineOptionIn());
 		zqAdditionalOptionFiled.setText(setting.getZqAddOption());
+		opaqueRateTextField.setText(setting.getOpaqueRate());
 	}
 
 	/**

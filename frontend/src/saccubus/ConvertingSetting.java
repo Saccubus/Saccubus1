@@ -145,6 +145,7 @@ public class ConvertingSetting {
 	private String zqCmdLineOptionMain;
 	private String zqAddOption;
 	private StringBuffer retBuffer;
+	private String opaqueRate;
 
 	private Map<String, String> replaceOptions;
 
@@ -350,7 +351,8 @@ public class ConvertingSetting {
 			String zq_cmdlineoption_in,
 			String zq_cmdlineoption_out,
 			String zq_add_option,
-			StringBuffer return_buffer
+			StringBuffer return_buffer,
+			String opaque_rate
 		)
 	{
 		this(	mailaddress,
@@ -465,6 +467,7 @@ public class ConvertingSetting {
 		zqCmdLineOptionOut = zq_cmdlineoption_out;
 		zqAddOption = zq_add_option;
 		retBuffer = return_buffer;
+		opaqueRate = opaque_rate;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -779,6 +782,9 @@ public class ConvertingSetting {
 	public StringBuffer getReturnBuffer(){
 		return retBuffer;
 	}
+	public String getOpaqueRate(){
+		return opaqueRate;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -896,6 +902,7 @@ public class ConvertingSetting {
 	static final String PROP_ZQ_CMDLINE_IN = "QCMD_IN";
 	static final String PROP_ZQ_CMDLINE_OUT = "QCMD_OUT";
 	static final String PROP_ZQ_ADD_OPTION = "QAddOption";
+	static final String PROP_OPAQUE_RATE = "OpaqueRate";
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
 	 */
@@ -1079,6 +1086,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ZQ_CMDLINE_IN, setting.getZqCmdLineOptionIn());
 		prop.setProperty(PROP_ZQ_CMDLINE_OUT, setting.getZqCmdLineOptionOut());
 		prop.setProperty(PROP_ZQ_ADD_OPTION, setting.getZqAddOption());
+		prop.setProperty(PROP_OPAQUE_RATE,setting.getOpaqueRate());
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1305,7 +1313,8 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_ZQ_CMDLINE_IN, ""),
 			prop.getProperty(PROP_ZQ_CMDLINE_OUT,"-threads 0 -s 640x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -samx"),
 			prop.getProperty(PROP_ZQ_ADD_OPTION, ""),
-			new StringBuffer()
+			new StringBuffer(),
+			prop.getProperty(PROP_OPAQUE_RATE, "1.0")
 		);
 	}
 
