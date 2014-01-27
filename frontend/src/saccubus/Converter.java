@@ -2174,6 +2174,10 @@ public class Converter extends Thread {
 		ffmpeg.addFile(VideoFile);
 		ffmpeg.addCmd(" ");
 		ffmpeg.addCmd(OutOption);
+		ffmpeg.addCmd(" -metadata");
+		ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
+		ffmpeg.addCmd(" -metadata");
+		ffmpeg.addCmd(" \"comment="+VideoID+"\"");
 		if (!Setting.isVhookDisabled()) {
 			if(!addVhookSetting(ffmpeg, selectedVhook, isPlayerWide)){
 				return -1;
