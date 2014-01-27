@@ -389,11 +389,14 @@ public class NicoClient {
 	private static final String TITLE_END = "‐";
 	private static final String TITLE_ZERO_DIV = "id=\"videoHeaderDetail\"";
 	private static final String TITLE_ZERO_DUMMY = "<title>ニコニコ動画:Zero</title>";
-
+	private static final String TITLE_GINZA_DIV = "DataContainer\"";
+	private static final String TITLE_GINZA_DUMMY = "<title>ニコニコ動画:GINZA</title>";
 	public boolean getVideoHistoryAndTitle(String tag, String watchInfo, boolean saveWatchPage) {
 		if(getThumbInfoFile(tag) != null && !saveWatchPage){
 			//return true;
 		}
+		String thumbTitle = getVideoTitle();
+		VideoTitle = null;
 		boolean found = false;
 		String url = "http://www.nicovideo.jp/watch/" + tag + watchInfo;
 		System.out.print("Getting video history...");
@@ -428,10 +431,23 @@ public class NicoClient {
 				Stopwatch.show();
 				sb.append(ret + "\n");
 				if(found) continue;
+				if(ret.contains(TITLE_ZERO_DUMMY) || ret.contains(TITLE_GINZA_DIV) || ret.contains(TITLE_GINZA_DUMMY)){
+					zero_title = true;
+					continue;
+				}
+				if(ret.contains(TITLE_ZERO_DIV)){
+					zero_title = true;
+				}
 				if(zero_title){
 					ret = getXmlElement(ret, "h2");
 					if(ret==null){
 						continue;
+					}
+					String tmp = ret;
+					if (tmp.contains("span"))
+						ret = getXmlElement2(tmp, "span");
+					if(ret==null){
+						ret = tmp;
 					}
 					found = true;
 					zero_title = false;
@@ -439,10 +455,6 @@ public class NicoClient {
 						VideoTitle = safeFileName(ret);
 					}
 					System.out.print("<" + VideoTitle + ">...");
-					continue;
-				}
-				if(ret.contains(TITLE_ZERO_DIV) || ret.contains(TITLE_ZERO_DUMMY)){
-					zero_title = true;
 					continue;
 				}
 				if (ret.contains(TITLE_PARSE_STR_START)) {
@@ -463,6 +475,10 @@ public class NicoClient {
 			br.close();
 			con.disconnect();
 			found = getVideoTitle()!=null;
+			if(!found){
+				VideoTitle = thumbTitle;
+				found = getVideoTitle()!=null;
+			}
 			PrintWriter pw;
 			if(!found || saveWatchPage){
 				titleHtml = Path.mkTemp(tag + "watch.htm");
@@ -1206,7 +1222,7 @@ public class NicoClient {
 	}
 */
 	public Path getThumbInfoFile(String tag){
-		final String THUMBINFO_URL = "http://ext.nicovideo.jp/api/getthumbinfo/"; 
+		final String THUMBINFO_URL = "http://ext.nicovideo.jp/api/getthumbinfo/";
 		String url = THUMBINFO_URL + tag;
 		System.out.print("Getting thumb Info...");
 		Path thumbXml = null;
@@ -1257,7 +1273,7 @@ public class NicoClient {
 			pw.write(sb.toString());
 			pw.flush();
 			pw.close();
-			if(thumbXml==null || sb.indexOf("status=\"ok\"") < 0){ 
+			if(thumbXml==null || sb.indexOf("status=\"ok\"") < 0){
 				System.out.println("ng.\nSee file:" + thumbXml);
 				return null;
 			}
@@ -1280,8 +1296,24 @@ public class NicoClient {
 		return dest;
 	}
 
+	public static String getXmlElement2(String xml, String tag){
+		String dest;
+		int index = xml.indexOf("<"+tag);
+		if(index < 0)
+			return null;
+		index += tag.length() + 1;
+		index = xml.indexOf(">", index);
+		if(index < 0)
+			return null;
+		int endIx = xml.indexOf("</", index+1);
+		if(endIx < 0)
+			endIx = xml.length();
+		dest = xml.substring(index+1, endIx);
+		return dest;
+	}
+
 	public Path getThumbUserFile(String userID, File userFolder){
-		final String THUMBUSER_URL = "http://ext.nicovideo.jp/thumb_user/"; 
+		final String THUMBUSER_URL = "http://ext.nicovideo.jp/thumb_user/";
 		String url = THUMBUSER_URL + userID;
 		System.out.print("Getting thumb User...");
 		Path userHtml = null;
@@ -1329,7 +1361,7 @@ public class NicoClient {
 	}
 
 	public Path getUserInfoFile(String userID, File userFolder) {
-		final String USER_URL = "http://www.nicovideo.jp/user/"; 
+		final String USER_URL = "http://www.nicovideo.jp/user/";
 		String url = USER_URL + userID;
 		System.out.print("Getting User Info...");
 		Path userHtml = null;
