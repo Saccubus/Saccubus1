@@ -266,11 +266,13 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 	 * アルファ値の設定
 	 */
 	float alpha_t = 1.0;
-	if(!data->opaque_comment){
+	if(data->opaque_rate > 0.0){
+		alpha_t = data->opaque_rate;
+	}else{
 		alpha_t = (((float)(item->no)/(item->chat->max_no)) * 0.4) + 0.6;
-	}
-	if(&item->chat->max_no == &data->optional.chat.max_no && data->optional_trunslucent){
-		if(alpha_t>0.3) alpha_t = 0.3;			// これでいいのかな？適当なんだが。
+		if(item->chat->cid == CID_OPTIONAL && data->optional_trunslucent){
+			if(alpha_t>0.3) alpha_t = 0.3;			// これでいいのかな？適当なんだが。
+		}
 	}
 	if(alpha_t<1.0){
 		if(debug)

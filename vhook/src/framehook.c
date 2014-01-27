@@ -29,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ƒƒO
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.45.2";
+	char *ver="1.45.3";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -169,6 +169,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 	setting->fontdir = "";
 	setting->april_fool = NULL;
 	setting->wakuiro = NULL;
+	setting->opaque_rate = NULL;
 #ifdef VHOOKDEBUG
 //	setting->framerate = NULL;
 #endif
@@ -365,6 +366,11 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		else if (strncmp(FRAMEHOOK_OPT_WAKUIRO,arg,FRAMEHOOK_OPT_WAKUIRO_LEN) == 0){
 			setting->wakuiro = arg+FRAMEHOOK_OPT_WAKUIRO_LEN;
 			fprintf(log,"[framehook/init]wakuiro: %s\n",setting->wakuiro);
+			fflush(log);
+		}
+		else if (strncmp(FRAMEHOOK_OPT_OPAQUE,arg,FRAMEHOOK_OPT_OPAQUE_LEN) == 0){
+			setting->opaque_rate = arg+FRAMEHOOK_OPT_OPAQUE_LEN;
+			fprintf(log,"[framehook/init]opaque_rate: %s\n",setting->opaque_rate);
 			fflush(log);
 		}
 #ifdef VHOOKDEBUG

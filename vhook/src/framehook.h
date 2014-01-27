@@ -143,4 +143,7 @@ void exitExtProcess();
 #define FRAMEHOOK_OPT_FRAMERATE	"--fr:"
 #define FRAMEHOOK_OPT_FRAMERATE_LEN	strlen(FRAMEHOOK_OPT_WAKUIRO)
 
+#define FRAMEHOOK_OPT_OPAQUE	"--opaque:"
+#define FRAMEHOOK_OPT_OPAQUE_LEN	strlen(FRAMEHOOK_OPT_OPAQUE)
+
 #endif /*FRAMEHOOK_H_*/

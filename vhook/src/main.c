@@ -70,6 +70,16 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	data->defcolor = CMD_COLOR_WHITE;
 	data->deflocation = CMD_LOC_NAKA;
 	data->defsize = CMD_FONT_MEDIUM;
+	data->opaque_rate = -1.0;
+	if(data->opaque_comment){
+		data->opaque_rate = 1.0;
+		if(setting->opaque_rate != NULL){
+			float opaq = (float)strtod(setting->opaque_rate,NULL);
+			if(opaq>=0.0f || opaq<=1.0f){
+				data->opaque_rate = opaq;
+			}
+		}
+	}
 	//フレームレート
 #ifdef VHOOKDEBUG
 //	char* fr = setting->framerate;

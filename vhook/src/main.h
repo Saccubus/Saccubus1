@@ -41,6 +41,7 @@ struct DATA{
 	int show_video;
 	int fontsize_fix;
 	int opaque_comment;
+	float opaque_rate;
 	int optional_trunslucent;
 	int process_first_called;
 	int video_length;
@@ -129,6 +130,7 @@ typedef struct SETTING{
 	int show_video;
 	int fontsize_fix;
 	int opaque_comment;
+	const char* opaque_rate;
 	int optional_trunslucent;
 	int q_player;		//コメントが動画の高さ以下になるか？
 	// CA用フォント
