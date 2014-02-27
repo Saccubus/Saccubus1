@@ -146,6 +146,8 @@ public class ConvertingSetting {
 	private String zqAddOption;
 	private StringBuffer retBuffer;
 	private String opaqueRate;
+	private boolean swfTo3path;
+	private String fpsMin;
 
 	private Map<String, String> replaceOptions;
 
@@ -352,7 +354,9 @@ public class ConvertingSetting {
 			String zq_cmdlineoption_out,
 			String zq_add_option,
 			StringBuffer return_buffer,
-			String opaque_rate
+			String opaque_rate,
+			boolean swf_3path,
+			String fps_up
 		)
 	{
 		this(	mailaddress,
@@ -468,6 +472,8 @@ public class ConvertingSetting {
 		zqAddOption = zq_add_option;
 		retBuffer = return_buffer;
 		opaqueRate = opaque_rate;
+		swfTo3path = swf_3path;
+		fpsMin = fps_up;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -785,6 +791,12 @@ public class ConvertingSetting {
 	public String getOpaqueRate(){
 		return opaqueRate;
 	}
+	public boolean isSwfTo3Path(){
+		return swfTo3path;
+	}
+	public String getFpsMin() {
+		return fpsMin;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -903,6 +915,8 @@ public class ConvertingSetting {
 	static final String PROP_ZQ_CMDLINE_OUT = "QCMD_OUT";
 	static final String PROP_ZQ_ADD_OPTION = "QAddOption";
 	static final String PROP_OPAQUE_RATE = "OpaqueRate";
+	static final String PROP_SWF_3PATH = "SwfTo3Path";
+	static final String PROP_FPS_Min = "FpsMin";
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
 	 */
@@ -1087,6 +1101,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ZQ_CMDLINE_OUT, setting.getZqCmdLineOptionOut());
 		prop.setProperty(PROP_ZQ_ADD_OPTION, setting.getZqAddOption());
 		prop.setProperty(PROP_OPAQUE_RATE,setting.getOpaqueRate());
+		prop.setProperty(PROP_SWF_3PATH, Boolean.toString(setting.isSwfTo3Path()));
+		//prop.setProperty(PROP_FPS_Min, setting.getFpsMin());
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1314,7 +1330,9 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_ZQ_CMDLINE_OUT,"-threads 0 -s 640x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -samx"),
 			prop.getProperty(PROP_ZQ_ADD_OPTION, ""),
 			new StringBuffer(),
-			prop.getProperty(PROP_OPAQUE_RATE, "1.0")
+			prop.getProperty(PROP_OPAQUE_RATE, "1.0"),
+			Boolean.parseBoolean(prop.getProperty(PROP_SWF_3PATH, "false")),
+			prop.getProperty(PROP_FPS_Min, "25")
 		);
 	}
 

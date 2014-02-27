@@ -2,7 +2,6 @@ package saccubus;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -11,8 +10,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 
-import saccubus.util.BitReader;
-import saccubus.util.Cws2Fws;
 import saccubus.util.Stopwatch;
 
 /**
@@ -118,7 +115,7 @@ public class FFmpeg {
 	}
 
 	private StringBuffer errorLogging = null;
-	private int videoLength = 0;
+//	private int videoLength = 0;
 	public int exec(JLabel status, int abortedCode, ConvertStopFlag flag, Stopwatch watch) {
 
 		class FFmpegCallback implements CallbackInterface {
@@ -220,107 +217,13 @@ public class FFmpeg {
 		}
 	}
 
-	public Aspect getAspect(File videoFile) {
-		final StringBuffer output = new StringBuffer();
+//	public Aspect getAspect(File videoFile) {
+//		return new VideofileInfo(videoFile, this).getAspect();
+//	}
 
-		class GetAspectCallback implements Callback {
-			@Override
-			public void doEveryLoop(String e) {
-				if (e.indexOf("Video:") >= 0) {
-					System.out.println(" " + e.trim());
-					output.append(e.trim() + "\n");
-				}
-			}
-		}
-
-		long width;
-		long height;
-		if (Cws2Fws.isFws(videoFile)){	// swf, maybe NMM
-			FileInputStream fis = null;
-			System.out.println("get aspect from FWS(swf)");
-			try {
-				fis = new FileInputStream(videoFile);
-				BitReader br = new BitReader(fis);
-				int bit = (int)br.readBit(32);	// "FWS" + version, dummy
-					bit = (int)br.readBit(32);	// file size, dummy
-					bit = (int)br.readBit(5);	// RECT bits spec
-				width =	 br.readBit(bit);		// xmin is 0
-				width =  br.readBit(bit);		// xmax is width
-				width /= 20;	// From swip to pixel
-				height = br.readBit(bit);		// ymin is 0
-				height = br.readBit(bit);		// ymax is height
-				height /= 20;	// From swip to pixel
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			} finally {
-				if (fis != null){
-					try {
-						fis.close();
-					} catch (IOException e) { }
-				}
-			}
-		} else {
-			// check by ffmpeg
-			// ffmpeg.exe -y -i file
-			setCmd("-y -i ");
-			addFile(videoFile);
-			System.out.println("get aspect: " + getCmd());
-			exec(new GetAspectCallback());
-			String src = output.toString();
-			//
-			String duration = "Duration:";
-			if(src.contains(duration)){
-				int index = src.indexOf("Duration:");
-				duration = src.substring(index, src.indexOf(",", index)).trim();
-				String tms = "";
-				int it = 0;
-				index = duration.lastIndexOf(":");	//for min:sec
-				if(index < 0){
-					it = Integer.parseInt(duration);	//sec
-				}else{
-					tms = duration.substring(index+1);
-					duration = duration.substring(0, index);	//hour:min
-					it = Integer.parseInt(tms);	//sec
-					index = duration.lastIndexOf(":");	//for hour:min
-					if(index < 0){
-						it += Integer.parseInt(duration) * 60;	//min
-					}else{
-						tms = duration.substring(index+1);	//min
-						duration = duration.substring(0, index);	//hour
-						it += Integer.parseInt(tms) * 60;	//min
-						it += Integer.parseInt(duration) * 3600;	//hour
-					}
-				}
-				videoLength  = it;
-			}
-			//
-			src = src.replaceAll("[^0-9x]", "_");
-			String[] list = src.split("_+");
-			src = "1x1";	// prevent Exception
-			for (String s : list){
-				if (!s.startsWith("0x") && s.indexOf('x') > 0){
-					src = s;
-					break;
-				}
-			}
-			list = src.split("x");
-			try {
-				width = Long.parseLong(list[0]);
-				height = Long.parseLong(list[1]);
-			} catch(NumberFormatException e){
-				e.printStackTrace();
-				return null;
-			}
-		}
-		Aspect asp = new Aspect((int)width, (int)height);
-		System.out.println(asp.explain());
-		return asp;
-	}
-
-	int getVideoLength(File videoFile) {
-		return videoLength;
-	}
+//	int getVideoLength(File videoFile) {
+//		return videoLength;
+//	}
 
 //	public enum Aspect {
 //		NORMAL, WIDE,

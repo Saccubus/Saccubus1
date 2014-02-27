@@ -213,6 +213,13 @@ public class MainFrame extends JFrame {
 	private StringBuffer resultBuffer;
 	private JButton showDownloadListButton = new JButton();
 	private JLabel showDownloadListLabel = new JLabel();
+	private JPanel updateInfoPanel = new JPanel();
+	private JLabel updateInfoLabel = new JLabel();
+	private JLabel updateInfoLabel1 = new JLabel();
+	private JCheckBox nmmNewEnableCheckBox = new JCheckBox();
+	private JCheckBox fpsUpCheckBox = new JCheckBox();
+	private JTextField fpsMinTextField = new JTextField();
+
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -621,7 +628,7 @@ public class MainFrame extends JFrame {
 		grid12_x0_y2_95.gridx = 0;
 		grid12_x0_y2_95.gridy = 2;
 		grid12_x0_y2_95.weightx = 1.0;
-		grid12_x0_y2_95.weighty = 1.0;
+		grid12_x0_y2_95.weighty = 0.0;
 		grid12_x0_y2_95.insets = new Insets(5, 5, 0, 5);
 		grid12_x0_y2_95.fill = GridBagConstraints.HORIZONTAL;
 		grid12_x0_y2_95.anchor = GridBagConstraints.NORTH;
@@ -874,6 +881,70 @@ public class MainFrame extends JFrame {
 		grid13_x1_y7_104.fill = GridBagConstraints.NONE;
 		grid13_x1_y7_104.insets = INSETS_0_0_0_5;
 		BrowserInfoPanel.add(BrowserCookieDialogButton, grid13_x1_y7_104);
+
+		GridBagLayout gridBagLayout14 = new GridBagLayout();
+		updateInfoPanel.setLayout(gridBagLayout14);
+		updateInfoPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"新機能情報", TitledBorder.LEADING, TitledBorder.TOP,
+				getFont(), Color.blue));
+		updateInfoLabel.setText("NM動画に少し対応（主に1枚絵。画面の切替はズレが有る）");
+		updateInfoLabel.setForeground(Color.blue);
+		updateInfoLabel.setToolTipText("手書き漫画の動画などは画面か音声かがネタバレになるので注意。");
+		GridBagConstraints grid14_x0_y0 = new GridBagConstraints();
+		grid14_x0_y0.gridx = 0;
+		grid14_x0_y0.gridy = 0;
+		grid14_x0_y0.weightx = 1.0;
+		grid14_x0_y0.anchor = GridBagConstraints.NORTH;
+		grid14_x0_y0.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x0_y0.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(updateInfoLabel, grid14_x0_y0);
+		nmmNewEnableCheckBox.setText("NM動画に少し対応");
+		nmmNewEnableCheckBox.setForeground(Color.blue);
+		nmmNewEnableCheckBox.setToolTipText("フォント、ビデオクリップ、テキスト、アクションスクリプト未対応");
+		nmmNewEnableCheckBox.setEnabled(true);
+		GridBagConstraints grid14_x0_y1 = new GridBagConstraints();
+		grid14_x0_y1.gridx = 0;
+		grid14_x0_y1.gridy = 1;
+		grid14_x0_y1.weightx = 1.0;
+		grid14_x0_y1.anchor = GridBagConstraints.NORTH;
+		grid14_x0_y1.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x0_y1.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(nmmNewEnableCheckBox, grid14_x0_y1);
+		updateInfoLabel1.setText("フレームレートが低い動画のfps変更");
+		updateInfoLabel1.setForeground(Color.blue);
+		updateInfoLabel1.setToolTipText("変換時間が長くなります");
+		GridBagConstraints grid14_x0_y2 = new GridBagConstraints();
+		grid14_x0_y2.gridx = 0;
+		grid14_x0_y2.gridy = 2;
+		grid14_x0_y2.weightx = 1.0;
+		grid14_x0_y2.anchor = GridBagConstraints.NORTH;
+		grid14_x0_y2.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x0_y2.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(updateInfoLabel1, grid14_x0_y2);
+		fpsUpCheckBox.setText("fps変更");
+		fpsUpCheckBox.setForeground(Color.blue);
+		fpsUpCheckBox.setEnabled(true);
+		GridBagConstraints grid14_x0_y3 = new GridBagConstraints();
+		grid14_x0_y3.gridx = 0;
+		grid14_x0_y3.gridy = 3;
+		grid14_x0_y3.weightx = 0.0;
+		grid14_x0_y3.anchor = GridBagConstraints.NORTH;
+		grid14_x0_y3.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x0_y3.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(fpsUpCheckBox, grid14_x0_y3);
+		fpsMinTextField = new JTextField();
+		fpsMinTextField.setText("25");
+		fpsMinTextField.setEditable(false);
+		fpsMinTextField.setForeground(Color.blue);
+		GridBagConstraints grid14_x1_y3 = new GridBagConstraints();
+		grid14_x1_y3.gridx = 1;
+		grid14_x1_y3.gridy = 3;
+		grid14_x1_y3.weightx = 1.0;
+		grid14_x1_y3.anchor = GridBagConstraints.NORTHWEST;
+		grid14_x1_y3.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x1_y3.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(fpsMinTextField, grid14_x1_y3);
 
 		SavingVideoCheckBox.setText("動画をダウンロードする");
 		disableEcoCheckBox.setText("エコノミー時は中止");
@@ -1253,6 +1324,15 @@ public class MainFrame extends JFrame {
 		BasicInfoTabPanel.add(UserInfoPanel, grid12_x0_y0_7);
 		BasicInfoTabPanel.add(getProxyInfoPanel(), grid12_x0_y1_6);
 		BasicInfoTabPanel.add(BrowserInfoPanel, grid12_x0_y2_95);
+		GridBagConstraints grid12_x0_y3 = new GridBagConstraints();
+		grid12_x0_y3.gridx = 0;
+		grid12_x0_y3.gridy = 3;
+		grid12_x0_y3.weightx = 1.0;
+		grid12_x0_y3.weighty = 1.0;
+		grid12_x0_y3.insets = new Insets(5, 5, 0, 5);
+		grid12_x0_y3.fill = GridBagConstraints.HORIZONTAL;
+		grid12_x0_y3.anchor = GridBagConstraints.NORTH;
+		BasicInfoTabPanel.add(updateInfoPanel,grid12_x0_y3);
 		VhookSettingPanel.setLayout(gridBagLayout8);
 		VhookSettingPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(), "拡張vhookライブラリの設定"));
@@ -1928,6 +2008,10 @@ public class MainFrame extends JFrame {
 			ownercomment = comment.substring(0, index);
 		}
 		ownercomment += saccubus.Converter.OWNER_EXT;
+		String fpsSetting = "0";
+		if(fpsUpCheckBox.isEnabled()){
+			fpsSetting = fpsMinTextField.getText();
+		}
 		return new ConvertingSetting(
 			MailAddrField.getText(),
 			new String(PasswordField.getPassword()),
@@ -2030,7 +2114,9 @@ public class MainFrame extends JFrame {
 			zqCommandLineOutOptionField.getText(),
 			zqAdditionalOptionFiled.getText(),
 			history,
-			opaqueRateTextField.getText()
+			opaqueRateTextField.getText(),
+			nmmNewEnableCheckBox.isEnabled(),
+			fpsSetting
 		);
 	}
 /*
@@ -2172,6 +2258,9 @@ public class MainFrame extends JFrame {
 		zqCommandLineInOptionField.setText(setting.getZqCmdLineOptionIn());
 		zqAdditionalOptionFiled.setText(setting.getZqAddOption());
 		opaqueRateTextField.setText(setting.getOpaqueRate());
+		nmmNewEnableCheckBox.setSelected(setting.isSwfTo3Path());
+		fpsMinTextField.setText(setting.getFpsMin());
+		fpsUpCheckBox.setSelected(true);
 	}
 
 	/**
