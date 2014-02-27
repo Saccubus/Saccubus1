@@ -6,8 +6,10 @@ readmeNew.txt
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-1.43r(2013/11/07)
-　nicovideoE.dll　フォント描画エラー処理修正
+1.46r(2014/02/27)
+　NM動画に少しだけ対応
+　フレームレートの低い動画のfps変換する。
+
 
 ■動作が変なときは
 　・通常の Saccubus.exe の起動では、
@@ -37,7 +39,7 @@ readmeNew.txt
 
 □改造部分について
 【ライセンス】
-１．ffmpeg55686.exe（ソースはGithubレポジトリ）、Saccubus.jar（ソース同梱）は
+１．ffmpeg56884w.exe（ソースはGithubレポジトリ）、Saccubus.jar（ソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
 ２．nicovideoE.dll、Bin.jar、Saccubus.exe（全てソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)と
@@ -59,7 +61,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　http://anago.2ch.net/test/read.cgi/software/1346798166/
 
 □動作環境
-　Windows XP/7/8desktop　（多分Vistaも動くはず）
+　Windows XP/7/8/8.1desktop　（多分Vistaも動くはず）
 
 ●注意●
 　javaランタイム Java7 - JRE7 または JDK1.7が必要です。
@@ -83,7 +85,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
-　・配布形態　　ffmpeg55686同梱版
+　・配布形態　　ffmpeg56884w同梱版
 　・本Rev.は確定版SDLライブラリ（2011/11/02版）を同梱しています。（binフォルダ内）
 　・本Rev.はffmpeg 21400用optionファイルを削除しました。
 　・optionVo（ffmpeg56884w用、2013/08/01版）optionDev（実験用2011/3/30版）を同梱。
@@ -102,10 +104,13 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　・移動したオプションファイルをコピーして戻して下さい。
 　・初期化用にsaccubus.iniが入っています。
 　　saccubus.xmlがない時とメニューから初期化を実行した時に
-　　saccubus.iniを読み込んでffmpeg55686用にoptionフォルダと
+　　saccubus.iniを読み込んでffmpeg56884w用にoptionフォルダと
 　　ffmpegを設定します。使用しない場合は■削除■して下さい。
 
 　◆拡張機能（概要）追加分
+　・NM動画に少しだけ対応
+　・フレームレート変換
+　・コメント不透明時にアルファ値（不透明度）を0.0～1.0で指定可能
 　・投稿者フィルター追加（投稿者コメント無しでオフ）
 　・enderコマンド実装
 　・＠ボタン(投稿者コメント)スクリプト　対応
@@ -189,7 +194,25 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 　　右上の「変換」ボタンをクリックするとダウンロードと変換が開始します。
 
+
+
 □拡張機能（変更点）説明
+●NM動画に少しだけ対応
+　主に１枚絵と音声のNMM動画に対応しました。
+　紙芝居タイプの動画も変換しますが画像切り替えのタイミングが合いません。
+　（画像がネタバレになりますので注意）
+　コメントは音声にあわせています。
+　テキスト、ムービークリップ、フォント、アクションスクリプトには未対応です。
+　またFFmpegが対応していない(古い?)タイプのSWFも変換に失敗します。
+
+●フレームレート変換
+　最小値以下のフレームレートの場合に指定fps値に変換します。
+
+●コメント不透明時のアルファ値（不透明度）を小数点数で指定できます。
+　[変換設定タブ]から「コメントを不透明にする」にチェック　0.0:透明、 1.0:不透明
+　（既定では コメント番号の若いものから0.6～1.0、
+　　またコミュ動画で通常コメントは0.3です）
+
 ●投稿者フィルター追加しました。
 　投稿者コメントを無しにすることでオフになります。
 
@@ -591,9 +614,11 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ■機能確認
 　・ブラウザのセッション共有機能確認は
 　　Win8 pro desktop 64bit + IE10,
-　　Win7 Home 64bit + IE9, Firefox19.0, Chrome25, SRware 及び
-　　XP SP3 Home 32bit + IE8, Firefox19.0, Chrome25, SRware
+　　Win7 Home 64bit + IE9, Firefox19.0, SRware 及び
+　　XP SP3 Home 32bit + IE8, Firefox19.0, SRware
 　　で行いました。
+　（GoogleChromeは Ver.33.0.xxからクッキーが暗号化されて保存されるため
+　　ファイルからセッションを検索できないので共有できません。）
 　・動画変換確認は、ffmpeg55686で行いました。
 　　Win7 64 Corei7, Win7 32 Core2Duo, WinXP 32 CeleronD
 　・但し再生確認はPC上だけで、携帯その他では未確認
@@ -611,6 +636,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　saccubus1.37r6.zip
 　├ffmpeg55686同梱版  表示
 　├最初に必ず読んで.txt
+　├Done.txt
+　├ToDO.txt
 　└saccubus　　本体exe jar xml bat
 　　├bin        実行ファイルフォルダ exe dll
 　　├optionDev  オプションフォルダ(開発用)　CA用設定サンプル５種
@@ -669,6 +696,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　FFmpeg評価用(2013/6/16)　http://www1.axfc.net/uploader/so/2936495.zip
 
 　改造版
+　1.43r 　　http://www1.axfc.net/u/3081418.zip
 　1.43　　　http://www1.axfc.net/u/3080418.zip
 　1.42　　　http://www1.axfc.net/uploader/so/2981487.zip
 　1.41a 　　http://www1.axfc.net/uploader/so/2917900.zip
@@ -723,6 +751,16 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 変更履歴・修正・改変点
+1.45(2014/01/28)
+　コメントレイヤー表示順、コメント消去順など修正
+　コミュニティ動画コミュ限定動画マイメモリーのタイトル化け修正
+　コメント結合時にログにファイル名が表示されるように変更（エラー対策）
+　コメント不透明時のアルファ値指定追加
+　-metadata タイトル ID追加（暫定）
+
+1.43r(2013/11/07)
+　nicovideoE.dll　フォント描画エラー処理修正
+
 1.43(2013/11/06)
 　臨時変更 cookieの判定条件変更
 

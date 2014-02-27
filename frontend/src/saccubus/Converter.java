@@ -109,6 +109,7 @@ public class Converter extends Thread {
 	private final boolean watchvideo;
 	private double frameRate = 0.0;
 	private double fpsUp = 0.0;
+	private double fpsMin = 0.0;
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -1870,15 +1871,8 @@ public class Converter extends Thread {
 			videoLength = info.getDuration();
 		}
 		frameRate = info.getFrameRate();
-		String fpsMins = Setting.getFpsMin();
-		if (fpsMins!=null && !fpsMins.isEmpty()) {
-			try {
-				fpsUp = Double.parseDouble(fpsMins);
-			}
-			catch (NumberFormatException e){
-				fpsUp = 0.0;
-			}
-		}
+		fpsUp = Setting.getFpsUp();
+		fpsMin = Setting.getFpsMin();
 		String str;
 		if (videoAspect == null){
 			str = "Analize Error   ";
@@ -2184,13 +2178,15 @@ public class Converter extends Thread {
 		/*
 		 * ffmpeg -r fpsUp
 		 */
+		Double fps = fpsUp;
+		if(fps < fpsMin)
+			fps = fpsMin;
 		System.out.println("FLV FpsUp");
 		String txt = MovieInfo.getText();
 		MovieInfo.setText("FLV FpsUp," + txt);
 		ffmpeg.setCmd("-y  -i ");
 		ffmpeg.addFile(videoin);
-		ffmpeg.addCmd(" -r ");
-		ffmpeg.addCmd("" + fpsUp);
+		ffmpeg.addCmd(" -r " + fps);
 		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -f mp4 ");
 		//ffmpeg.addCmd(" -acodec copy -vcodec mpeg4 -crf 16 -pix_fmt yuv420p -f mp4 ");
 		ffmpeg.addFile(videoout);
@@ -2303,7 +2299,7 @@ public class Converter extends Thread {
 		String txt = MovieInfo.getText();
 		if (!Cws2Fws.isFws(VideoFile)) {
 			// fps up check
-			if(fpsUp > frameRate){
+			if(fpsMin > frameRate){
 				File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
 				code = convFLV_fpsUp(input, outputFps);
 				if (code != 0)

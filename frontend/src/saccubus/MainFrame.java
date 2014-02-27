@@ -218,6 +218,7 @@ public class MainFrame extends JFrame {
 	private JLabel updateInfoLabel1 = new JLabel();
 	private JCheckBox nmmNewEnableCheckBox = new JCheckBox();
 	private JCheckBox fpsUpCheckBox = new JCheckBox();
+	private JTextField fpsUpTextFiled = new JTextField();
 	private JTextField fpsMinTextField = new JTextField();
 
 //                                                   (up left down right)
@@ -894,6 +895,7 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid14_x0_y0 = new GridBagConstraints();
 		grid14_x0_y0.gridx = 0;
 		grid14_x0_y0.gridy = 0;
+		grid14_x0_y0.gridwidth = 5;
 		grid14_x0_y0.weightx = 1.0;
 		grid14_x0_y0.anchor = GridBagConstraints.NORTH;
 		grid14_x0_y0.fill = GridBagConstraints.HORIZONTAL;
@@ -906,6 +908,7 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid14_x0_y1 = new GridBagConstraints();
 		grid14_x0_y1.gridx = 0;
 		grid14_x0_y1.gridy = 1;
+		grid14_x0_y1.gridwidth = 5;
 		grid14_x0_y1.weightx = 1.0;
 		grid14_x0_y1.anchor = GridBagConstraints.NORTH;
 		grid14_x0_y1.fill = GridBagConstraints.HORIZONTAL;
@@ -917,6 +920,7 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid14_x0_y2 = new GridBagConstraints();
 		grid14_x0_y2.gridx = 0;
 		grid14_x0_y2.gridy = 2;
+		grid14_x0_y2.gridwidth = 5;
 		grid14_x0_y2.weightx = 1.0;
 		grid14_x0_y2.anchor = GridBagConstraints.NORTH;
 		grid14_x0_y2.fill = GridBagConstraints.HORIZONTAL;
@@ -933,18 +937,48 @@ public class MainFrame extends JFrame {
 		grid14_x0_y3.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x0_y3.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(fpsUpCheckBox, grid14_x0_y3);
-		fpsMinTextField = new JTextField();
-		fpsMinTextField.setText("25");
-		fpsMinTextField.setEditable(false);
-		fpsMinTextField.setForeground(Color.blue);
 		GridBagConstraints grid14_x1_y3 = new GridBagConstraints();
 		grid14_x1_y3.gridx = 1;
 		grid14_x1_y3.gridy = 3;
-		grid14_x1_y3.weightx = 1.0;
-		grid14_x1_y3.anchor = GridBagConstraints.NORTHWEST;
+		grid14_x1_y3.gridwidth = 1;
+		grid14_x1_y3.weightx = 0.0;
+		grid14_x1_y3.anchor = GridBagConstraints.CENTER;
 		grid14_x1_y3.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x1_y3.insets = INSETS_0_5_0_5;
-		updateInfoPanel.add(fpsMinTextField, grid14_x1_y3);
+		updateInfoPanel.add(new JLabel("最小(fps)"), grid14_x1_y3);
+		fpsMinTextField = new JTextField();
+		fpsMinTextField.setText("23");
+		fpsMinTextField.setForeground(Color.blue);
+		GridBagConstraints grid14_x2_y3 = new GridBagConstraints();
+		grid14_x2_y3.gridx = 2;
+		grid14_x2_y3.gridy = 3;
+		grid14_x2_y3.gridwidth = 1;
+		grid14_x2_y3.weightx = 0.5;
+		grid14_x2_y3.anchor = GridBagConstraints.NORTH;
+		grid14_x2_y3.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x2_y3.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(fpsMinTextField, grid14_x2_y3);
+		GridBagConstraints grid14_x3_y3 = new GridBagConstraints();
+		grid14_x3_y3.gridx = 3;
+		grid14_x3_y3.gridy = 3;
+		grid14_x3_y3.gridwidth = 1;
+		grid14_x3_y3.weightx = 0.0;
+		grid14_x3_y3.anchor = GridBagConstraints.CENTER;
+		grid14_x3_y3.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x3_y3.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(new JLabel("変換(fps)"), grid14_x3_y3);
+		fpsUpTextFiled = new JTextField();
+		fpsUpTextFiled.setText("25");
+		fpsUpTextFiled.setForeground(Color.blue);
+		GridBagConstraints grid14_x4_y3 = new GridBagConstraints();
+		grid14_x4_y3.gridx = 4;
+		grid14_x4_y3.gridy = 3;
+		grid14_x4_y3.gridwidth = 1;
+		grid14_x4_y3.weightx = 0.5;
+		grid14_x4_y3.anchor = GridBagConstraints.NORTH;
+		grid14_x4_y3.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x4_y3.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(fpsUpTextFiled, grid14_x4_y3);
 
 		SavingVideoCheckBox.setText("動画をダウンロードする");
 		disableEcoCheckBox.setText("エコノミー時は中止");
@@ -2008,9 +2042,15 @@ public class MainFrame extends JFrame {
 			ownercomment = comment.substring(0, index);
 		}
 		ownercomment += saccubus.Converter.OWNER_EXT;
-		String fpsSetting = "0";
-		if(fpsUpCheckBox.isEnabled()){
-			fpsSetting = fpsMinTextField.getText();
+		Double fpsUp = 0.0;
+		Double fpsMin = 0.0;
+		if(fpsUpCheckBox.isSelected()){
+			try{
+				fpsUp = Double.parseDouble(fpsUpTextFiled.getText());
+				fpsMin = Double.parseDouble(fpsMinTextField.getText());
+			}catch(NumberFormatException e){
+				//
+			}
 		}
 		return new ConvertingSetting(
 			MailAddrField.getText(),
@@ -2116,7 +2156,8 @@ public class MainFrame extends JFrame {
 			history,
 			opaqueRateTextField.getText(),
 			nmmNewEnableCheckBox.isEnabled(),
-			fpsSetting
+			fpsUp,
+			fpsMin
 		);
 	}
 /*
@@ -2259,8 +2300,9 @@ public class MainFrame extends JFrame {
 		zqAdditionalOptionFiled.setText(setting.getZqAddOption());
 		opaqueRateTextField.setText(setting.getOpaqueRate());
 		nmmNewEnableCheckBox.setSelected(setting.isSwfTo3Path());
-		fpsMinTextField.setText(setting.getFpsMin());
-		fpsUpCheckBox.setSelected(true);
+		fpsMinTextField.setText(""+setting.getFpsMin());
+		fpsUpTextFiled.setText(""+setting.getFpsUp());
+		fpsUpCheckBox.setSelected(setting.getFpsMin()>=0.0);
 	}
 
 	/**
