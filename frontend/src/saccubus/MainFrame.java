@@ -220,6 +220,8 @@ public class MainFrame extends JFrame {
 	private JCheckBox fpsUpCheckBox = new JCheckBox();
 	private JTextField fpsUpTextFiled = new JTextField();
 	private JTextField fpsMinTextField = new JTextField();
+	private JButton playConvertedVideoButton = new JButton();
+	private JLabel playConvertedVideoLabel = new JLabel();
 
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
@@ -810,7 +812,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y2_98.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y2_98.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserFFCheckBox, grid13_x0_y2_98);
-		BrowserChromeCheckBox.setText("Google Chrome");
+		BrowserChromeCheckBox.setText("Google Chrome(ver 33.0.x.x以降は暗号化のため不可)");
 		BrowserChromeCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y3_99 = new GridBagConstraints();
 		grid13_x0_y3_99.gridx = 0;
@@ -1688,6 +1690,34 @@ public class MainFrame extends JFrame {
 		grid_x1_y3_x.fill = GridBagConstraints.HORIZONTAL;
 		grid_x1_y3_x.insets = INSETS_0_5_0_5;
 		CheckFFmpegFunctionPanel.add(showDownloadListLabel, grid_x1_y3_x);
+		playConvertedVideoButton.setText("再生");
+		playConvertedVideoButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				playConvertedVideo_actionPerformed(e);
+			}
+		});
+		playConvertedVideoButton.setForeground(Color.blue);
+		GridBagConstraints grid_x1_y4_x = new GridBagConstraints();
+		grid_x1_y4_x.gridx = 0;
+		grid_x1_y4_x.gridy = 4;
+		grid_x1_y4_x.weightx = 0.0;
+		grid_x1_y4_x.weighty = 0.0;
+		grid_x1_y4_x.anchor = GridBagConstraints.NORTHWEST;
+		grid_x1_y4_x.fill = GridBagConstraints.NONE;
+		grid_x1_y4_x.insets = INSETS_0_5_0_5;
+		CheckFFmpegFunctionPanel.add(playConvertedVideoButton, grid_x1_y4_x);
+		playConvertedVideoLabel.setText("変換後の動画を再生する(拡張子の既定ソフト)");
+		playConvertedVideoLabel.setForeground(Color.blue);
+		grid_x1_y4_x = new GridBagConstraints();
+		grid_x1_y4_x.gridx = 1;
+		grid_x1_y4_x.gridy = 4;
+		grid_x1_y4_x.weightx = 1.0;
+		grid_x1_y4_x.weighty = 0.0;
+		grid_x1_y4_x.anchor = GridBagConstraints.WEST;
+		grid_x1_y4_x.fill = GridBagConstraints.HORIZONTAL;
+		grid_x1_y4_x.insets = INSETS_0_5_0_5;
+		CheckFFmpegFunctionPanel.add(playConvertedVideoLabel, grid_x1_y4_x);
 /*
 		GridBagConstraints grid_x0_y2_87 = new GridBagConstraints();
  		grid_x0_y2_87.gridx = 0;
@@ -2517,6 +2547,52 @@ public class MainFrame extends JFrame {
 			this, "ダウンロードリスト").getTextArea();
 		textout.setText(history.toString());
 	//	textout.setCaretPosition(0);
+	}
+
+	// 変換動画再生
+	private void playConvertedVideo_actionPerformed(ActionEvent e) {
+		try {
+			File convertedVideo = null;
+			ConvertingSetting setting = getSetting();
+			Converter conv = new Converter(
+					VideoID_TextField.getText(),
+					WayBackField.getText(),
+					setting,
+					statusBar,
+					new ConvertStopFlag(null, null, null, null),
+					new JLabel(),
+					new JLabel());
+			if (setting.isVideoFixFileName()) {
+				File folder = setting.getConvFixFileNameFolder();
+				String path = conv.detectTitleFromConvertedVideo(folder);
+				if (path == null || path.isEmpty()){
+					sendtext("検索しましたが動画が見つかりません。");
+					return;
+				}
+				convertedVideo = new File(folder, path);
+			} else {
+				convertedVideo = setting.getConvertedVideoFile();
+			}
+			if (convertedVideo == null || !convertedVideo.canRead()){
+				sendtext("変換後の動画がありません。");
+				return;
+			}
+			ArrayList<String> cmd = new ArrayList<String>();
+			cmd.add("cmd.exe");
+			cmd.add("/C");
+			cmd.add(convertedVideo.getAbsolutePath());
+			ProcessBuilder pb = new ProcessBuilder(cmd);
+			pb.start();
+			return ;
+		} catch(NullPointerException ex){
+			sendtext("(´∀｀)＜ぬるぽ\nガッ");
+			ex.printStackTrace();
+		} catch (FileNotFoundException ex) {
+			sendtext(ex.getMessage());
+			ex.printStackTrace();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	/* readme表示 */

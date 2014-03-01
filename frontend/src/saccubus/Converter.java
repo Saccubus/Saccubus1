@@ -2975,6 +2975,24 @@ public class Converter extends Thread {
 		return null;
 	}
 
+	public String detectTitleFromConvertedVideo(File dir){
+		if (dir == null){ return null; }
+		String list[] = dir.list(DefaultVideoIDFilter);
+		if(list == null){ return null; }
+		for (int i = 0; i < list.length; i++) {
+			if (list[i].startsWith(VideoID)) {
+				String path = list[i];
+				int index = path.lastIndexOf(".");
+				if (index < 0) continue;
+				String ext = path.substring(index).toLowerCase();
+				if(ext.equals(".flv") || ext.equals(".mp4")  || ext.equals(".avi")  || ext.equals(".mpg") ){
+					return path;
+				}
+			}
+		}
+		return null;
+	}
+
 	private String detectTitleFromComment(File dir){
 		String list[] = dir.list(DefaultVideoIDFilter);
 		if(list == null){ return null; }
