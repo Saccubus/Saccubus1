@@ -9,54 +9,77 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.swing.JLabel;
+
 import saccubus.FFmpeg.Aspect;
-import saccubus.FFmpeg.Callback;
+import saccubus.FFmpeg.CallbackInterface;
 import saccubus.util.BitReader;
 import saccubus.util.Cws2Fws;
+import saccubus.util.Stopwatch;
 
 /**
  * @author orz
  *
  */
 public class VideofileInfo {
-	final File videoFile;
+	private final File videoFile;
 	private FFmpeg ffmpeg;
-	final HashMap<String,LinkedList<String>> videoInfoMap = new HashMap<String, LinkedList<String>>(0);
+	private final HashMap<String,LinkedList<String>> videoInfoMap = new HashMap<String, LinkedList<String>>(0);
 	public static final String[] VIDEOINFO_KEYS = {"Duration:","Video:","Audio:"};
 	private final StringBuffer output;
 	private String src = null;
 	private Aspect aspect = null;
 	private int duration = -1;
-	private double frameRate = 0.0;
+	private double frameRate = -1.0;
+	private final JLabel status;
+	private final ConvertStopFlag flag;
+	private final Stopwatch watch;
 
-	public VideofileInfo(File videofile,FFmpeg ffmpeg){
+	public VideofileInfo(File videofile,FFmpeg ffmpeg, JLabel status, ConvertStopFlag flag, Stopwatch watch){
 		this.videoFile = videofile;
 		this.ffmpeg = ffmpeg;
+		this.status = status;
+		this.flag = flag;
+		this.watch = watch;
 		this.output = new StringBuffer();
 		initInfoMap(VIDEOINFO_KEYS);
 	}
 
 	public void initInfoMap(final String[] infokeys) {
-		class GetInfoCallback implements Callback {
+		class InfoMapCallback implements CallbackInterface {
 			@Override
 			public void doEveryLoop(String e) {
+				watch.show();
 				for(String key : infokeys){
 					if (e.contains(key)){
 						System.out.println(" " + e.trim());
 						output.append(e.trim() + "\n");
 						e = e.replace(key, "").trim();
 						LinkedList<String> list = new LinkedList<String>();
-						for(String v:e.split(",+")) if(!v.isEmpty()) list.add(v);
+						for(String v:e.split(",+"))
+							if(!v.isEmpty()) list.add(v.trim());
 						videoInfoMap.put(key, list);
 					}
+				}
+			}
+			@Override
+			public boolean checkStop() {
+				return flag.needStop();
+			}
+			@Override
+			public void doAbort(String e) {
+				synchronized (status) {
+					status.setText("ffmpegÇÃé¿çsÇíÜé~ÇµÇ‹ÇµÇΩÅB");
 				}
 			}
 		}
 
 		ffmpeg.setCmd("-y -i ");
 		ffmpeg.addFile(videoFile);
-		System.out.println("get Info:" + VIDEOINFO_KEYS.toString() + " " + ffmpeg.getCmd());
-		ffmpeg.exec(new GetInfoCallback());
+		System.out.println("get Info:" + ffmpeg.getCmd());
+		
+		int abortedCode = 0;
+		ffmpeg.exec(abortedCode, new InfoMapCallback());
 		src = output.toString();
 	}
 
@@ -87,7 +110,7 @@ public class VideofileInfo {
 				height /= 20;	// From swip to pixel
 			} catch (IOException e) {
 				e.printStackTrace();
-				return null;
+				return Aspect.ERROR;
 			} finally {
 				if (fis != null){
 					try {
@@ -100,7 +123,7 @@ public class VideofileInfo {
 			// ffmpeg.exe -y -i file
 			LinkedList<String> strs = videoInfoMap.get("Video:");
 			if (strs==null)
-				return null;
+				return Aspect.ERROR;
 			for(String str:strs){
 				if(!str.contains("x")) continue;
 				str = str.replaceAll("[^0-9x]", "_");
@@ -118,7 +141,7 @@ public class VideofileInfo {
 							e.printStackTrace();
 							//return null;
 						}
-						if(width!=0 && height!=0) break;
+						if(width!=0L && height!=0L) break;
 					}
 				}
 			}
@@ -169,7 +192,7 @@ public class VideofileInfo {
 	}
 
 	public double getFrameRate() {
-		if(frameRate<=0.0){
+		if(frameRate==-1.0){
 			frameRate = getFramerate0();
 		}
 		return frameRate ;
@@ -177,18 +200,22 @@ public class VideofileInfo {
 
 	private double getFramerate0() {
 		LinkedList<String> strs = videoInfoMap.get("Video:");
-		if (strs==null)
-			return 0.0;
 		double r = 0.0;
-		for(String str:strs){
-			if(!str.contains("tbr")) continue;
-			str = str.replace("tbr", "").trim();
-			try {
+		if (strs==null)
+			return r;
+		System.out.println("getFramerate: videoInfoMap");
+		try {
+			for(String str:strs){
+				System.out.print(str+",");
+				if(!str.contains("tbr")) continue;
+				str = str.replace("tbr", "").trim();
 				r = Double.parseDouble(str);
-			}catch (NumberFormatException e){
-				r = 0.0;
+				break;
 			}
-			break;
+		}catch (NumberFormatException e){
+			r = 0.0;
+		}catch (NullPointerException e){
+			r = 0.0;
 		}
 		return r;
 	}

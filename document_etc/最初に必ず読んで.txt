@@ -262,6 +262,12 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　http://java.com/ja/
 　Javaのサイトから各自最新のJRE(Java実行環境)を
 　ダウンロードしてインストールしてください。（32ビット版推奨）
+　Javaがパスに設定されない時は次の手順でパスを設定して下さい。
+参考：Windows 7 にパス(Path)を設定する
+　http://blog.cnu.jp/2009/11/06/windows-7-path/
+　http://blog.cnu.jp/2010/11/10/shortcut-environment/
+参考：Windows8にjava7を入れてみたよ（Windows 8以降）
+　http://javatechnology.net/tool/windows8-java7-install/
 
 □起動
 　　Saccubus.exe をダブルクリックします。

@@ -688,6 +688,7 @@ public class Converter extends Thread {
 					}
 				}
 			}
+			setVideoTitleIfNull(VideoFile.getName());
 		}
 		sendtext("ìÆâÊÇÃï€ë∂ÇèIóπ");
 		return true;
@@ -1411,6 +1412,7 @@ public class Converter extends Thread {
 				}
 				conv_name = conv_name.trim();
 			}
+			conv_name = safeAsciiFileName(conv_name);
 			ConvertedVideoFile = new File(folder, conv_name + ExtOption);
 		} else {
 			String filename = Setting.getConvertedVideoFile().getPath();
@@ -1865,7 +1867,7 @@ public class Converter extends Thread {
 				return false;
 			}
 		}
-		VideofileInfo info = new VideofileInfo(video, ffmpeg);
+		VideofileInfo info = new VideofileInfo(video, ffmpeg, Status, StopFlag, Stopwatch);
 		videoAspect = info.getAspect();
 		if(videoLength <= 0){
 			videoLength = info.getDuration();
@@ -1873,8 +1875,9 @@ public class Converter extends Thread {
 		frameRate = info.getFrameRate();
 		fpsUp = Setting.getFpsUp();
 		fpsMin = Setting.getFpsMin();
+		System.out.println("frameRate:"+frameRate+",fpsUp:"+fpsUp+",fpsMin:"+fpsMin);
 		String str;
-		if (videoAspect == null){
+		if (videoAspect == null || videoAspect == Aspect.ERROR){
 			str = "Analize Error   ";
 			videoAspect = Aspect.NORMAL;
 		} else {

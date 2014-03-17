@@ -269,5 +269,6 @@ public class FFmpeg {
 		}
 		public static final Aspect NORMAL = new Aspect(4, 3);
 		public static final Aspect WIDE = new Aspect(16, 9);
+		public static final Aspect ERROR = new Aspect(0,0);
 	}
 }
