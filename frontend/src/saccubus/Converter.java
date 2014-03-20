@@ -127,7 +127,7 @@ public class Converter extends Thread {
 			}else if(url.startsWith("lv")){
 				url = "http://live.nicovideo.jp/watch/"+ url;	//may not work
 			}else if(url.startsWith("co")){
-				url = "http://com.nicovideo.jp/watch" + url;	//may not work
+				url = "http://com.nicovideo.jp/watch/" + url;	//may not work
 			}
 		}
 		Url = url;
@@ -143,7 +143,7 @@ public class Converter extends Thread {
 			WatchInfo = "";
 		}
 		if(Tag.contains("/")||Tag.contains(":")){
-			Tag = Tag.replace("/","").replace(":","");
+			Tag = Tag.replace("/","_").replace(":","_");
 			System.out.println("BUG Tag changed: "+Tag);
 		}
 		VideoID = "[" + Tag + "]";
@@ -2296,10 +2296,53 @@ public class Converter extends Thread {
 		return code;
 	}
 
+	private int convFLV_audio(File input, File output) {
+		int code = -1;
+		String txt = MovieInfo.getText();
+		MovieInfo.setText("SoundOnly," + txt);
+		/*
+		 * ffmpeg -y mainoption -loop 1 -shortest -i ./bin/b32.png -i input
+		 * outoption -map 0:0 -map 1:a [vhookOption]  output
+		 */
+		ffmpeg.setCmd("-y ");
+		ffmpeg.addCmd(MainOption);
+		ffmpeg.addCmd(" -loop 1 -shortest -i ./bin/b32.png ");
+		ffmpeg.addCmd(" -i ");
+		ffmpeg.addFile(input);
+		ffmpeg.addCmd(" ");
+		ffmpeg.addCmd(OutOption);
+		ffmpeg.addCmd(" -r 25 -map 0:0 -map 1:a ");
+		ffmpeg.addCmd(" -metadata");
+		ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
+		ffmpeg.addCmd(" -metadata");
+		ffmpeg.addCmd(" \"comment=SoundOnly_"+VideoID+"\"");
+		if (!Setting.isVhookDisabled()) {
+			if(!addVhookSetting(ffmpeg, selectedVhook, isPlayerWide)){
+				return -1;
+			}
+		} else if (!getFFmpegVfOption().isEmpty()){
+			ffmpeg.addCmd(" -vfilters ");
+			ffmpeg.addCmd(getFFmpegVfOption());
+		}
+		ffmpeg.addCmd(" ");
+		ffmpeg.addFile(ConvertedVideoFile);
+
+		System.out.println("arg:" + ffmpeg.getCmd());
+		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
+		errorLog = ffmpeg.getErrotLog().toString();
+		MovieInfo.setText(txt);
+		return code;
+	}
+
 	private int converting_video() {
 		int code = -1;
 		File input = VideoFile;
 		String txt = MovieInfo.getText();
+		if(frameRate == 0.0){
+			System.out.println("映像ストリームのデコードに失敗しました\nコメントと音声だけを合成します");
+			code = convFLV_audio(input, ConvertedVideoFile);
+			return code;
+		}
 		if (!Cws2Fws.isFws(VideoFile)) {
 			// fps up check
 			if(fpsMin > frameRate){
@@ -2889,9 +2932,9 @@ public class Converter extends Thread {
 			return "";
 		}
 		int index;
-		if ((index = option.indexOf(VFILTER_FLAG)) >= 0){
+		if ((index = option.indexOf(VFILTER_FLAG+" ")) >= 0){
 			vfilter_flag = VFILTER_FLAG;
-		}else if ((index = option.indexOf(VFILTER_FLAG2)) >= 0){
+		}else if ((index = option.indexOf(VFILTER_FLAG2+" ")) >= 0){
 			vfilter_flag = VFILTER_FLAG2;
 		}else{
 			return "";
