@@ -216,12 +216,17 @@ public class MainFrame extends JFrame {
 	private JPanel updateInfoPanel = new JPanel();
 	private JLabel updateInfoLabel = new JLabel();
 	private JLabel updateInfoLabel1 = new JLabel();
+	private JLabel updateInfoLabel2 = new JLabel();
 	private JCheckBox nmmNewEnableCheckBox = new JCheckBox();
 	private JCheckBox fpsUpCheckBox = new JCheckBox();
+	private JCheckBox soundOnlyCheckBox = new JCheckBox();
 	private JTextField fpsUpTextFiled = new JTextField();
 	private JTextField fpsMinTextField = new JTextField();
+	private JTextField thumbTextFiled = new JTextField();
 	private JButton playConvertedVideoButton = new JButton();
 	private JLabel playConvertedVideoLabel = new JLabel();
+
+
 
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
@@ -237,6 +242,8 @@ public class MainFrame extends JFrame {
 		"1：新コメント表示（毎分最新100コメント＋旧表示）",
 		"2：旧コメント表示（最大10分以上で1000コメント表示）",
 	};
+
+	public static final String THUMB_DEFALT_STRING = "<自動>";
 
 	public MainFrame() {
 		try {
@@ -981,6 +988,49 @@ public class MainFrame extends JFrame {
 		grid14_x4_y3.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x4_y3.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(fpsUpTextFiled, grid14_x4_y3);
+		updateInfoLabel2.setText("映像が認識できない時音声のみの変換を行う");
+		updateInfoLabel2.setForeground(Color.blue);
+		updateInfoLabel2.setToolTipText("SoundOnly");
+		GridBagConstraints grid14_x0_y4 = new GridBagConstraints();
+		grid14_x0_y4.gridx = 0;
+		grid14_x0_y4.gridy = 4;
+		grid14_x0_y4.gridwidth = 5;
+		grid14_x0_y4.weightx = 1.0;
+		grid14_x0_y4.anchor = GridBagConstraints.NORTH;
+		grid14_x0_y4.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x0_y4.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(updateInfoLabel2, grid14_x0_y4);
+		soundOnlyCheckBox.setText("映像なし許可");
+		soundOnlyCheckBox.setForeground(Color.blue);
+		GridBagConstraints grid14_x0_y5 = new GridBagConstraints();
+		grid14_x0_y5.gridx = 0;
+		grid14_x0_y5.gridy = 5;
+		grid14_x0_y5.weightx = 0.0;
+		grid14_x0_y5.anchor = GridBagConstraints.NORTH;
+		grid14_x0_y5.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x0_y5.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(soundOnlyCheckBox, grid14_x0_y5);
+		GridBagConstraints grid14_x1_y5 = new GridBagConstraints();
+		grid14_x1_y5.gridx = 1;
+		grid14_x1_y5.gridy = 5;
+		grid14_x1_y5.gridwidth = 1;
+		grid14_x1_y5.weightx = 0.0;
+		grid14_x1_y5.anchor = GridBagConstraints.CENTER;
+		grid14_x1_y5.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x1_y5.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(new JLabel("代替サムネ"), grid14_x1_y5);
+		thumbTextFiled = new JTextField();
+		thumbTextFiled.setText(THUMB_DEFALT_STRING);
+		thumbTextFiled.setForeground(Color.blue);
+		GridBagConstraints grid14_x2_y5 = new GridBagConstraints();
+		grid14_x2_y5.gridx = 2;
+		grid14_x2_y5.gridy = 5;
+		grid14_x2_y5.gridwidth = 2;
+		grid14_x2_y5.weightx = 0.5;
+		grid14_x2_y5.anchor = GridBagConstraints.NORTH;
+		grid14_x2_y5.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x2_y5.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(thumbTextFiled, grid14_x2_y5);
 
 		SavingVideoCheckBox.setText("動画をダウンロードする");
 		disableEcoCheckBox.setText("エコノミー時は中止");
@@ -2185,9 +2235,11 @@ public class MainFrame extends JFrame {
 			zqAdditionalOptionFiled.getText(),
 			history,
 			opaqueRateTextField.getText(),
-			nmmNewEnableCheckBox.isEnabled(),
+			nmmNewEnableCheckBox.isSelected(),
 			fpsUp,
-			fpsMin
+			fpsMin,
+			soundOnlyCheckBox.isSelected(),
+			thumbTextFiled.getText()
 		);
 	}
 /*
@@ -2333,6 +2385,8 @@ public class MainFrame extends JFrame {
 		fpsMinTextField.setText(""+setting.getFpsMin());
 		fpsUpTextFiled.setText(""+setting.getFpsUp());
 		fpsUpCheckBox.setSelected(setting.getFpsMin()>=0.0);
+		soundOnlyCheckBox.setSelected(setting.canSoundOnly());
+		thumbTextFiled.setText(setting.getDefaultThumbnail());
 	}
 
 	/**

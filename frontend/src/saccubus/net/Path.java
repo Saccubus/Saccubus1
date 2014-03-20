@@ -35,7 +35,7 @@ public class Path extends File{
 		// 注意　pathが相対パス名でも絶対パス名でもない時は
 		// カレントディレクトリにあるファイルを意味する
 	}
-	Path(File file){
+	public Path(File file){
 		super(file.getAbsolutePath());
 	}
 	public Path(File dir, String name){
@@ -362,7 +362,13 @@ public class Path extends File{
 		return getRelativePath().replace(old, rep);
 	}
 	public String getUnixPath(){
-		return replace(File.separator, "/");
+		String path = replace(File.separator, "/");
+		if(path!=null){
+			if(path.startsWith("./")||path.contains("/./")){
+				path = path.replace("./", "");
+			}
+		}
+		return path;
 	}
 	public static String toUnixPath(String path){
 		return new Path(path).getUnixPath();

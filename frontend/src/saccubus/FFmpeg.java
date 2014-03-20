@@ -41,13 +41,13 @@ public class FFmpeg {
 
 	public void addFile(File file) {
 		String path = file.getPath().replace(File.separator, "/");
-		if (path.indexOf(' ') >= 0 || path.indexOf("@") >= 0){
+//		if (path.indexOf(' ') >= 0 || path.indexOf("@") >= 0){
 			sb.append(" \"");
 			sb.append(path);
 			sb.append("\"");
-		} else {
-			sb.append(path);
-		}
+//		} else {
+//			sb.append(path);
+//		}
 	}
 
 	public String getCmd() {
