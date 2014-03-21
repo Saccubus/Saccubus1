@@ -149,6 +149,8 @@ public class ConvertingSetting {
 	private boolean swfTo3path;
 	private Double fpsUp;
 	private Double fpsMin;
+	private boolean enableSoundOnly;
+	private String thumbnailFile;
 
 	private Map<String, String> replaceOptions;
 
@@ -358,7 +360,9 @@ public class ConvertingSetting {
 			String opaque_rate,
 			boolean swf_3path,
 			double fps_up,
-			double fps_min
+			double fps_min,
+			boolean en_soundonly,
+			String thumb_file
 		)
 	{
 		this(	mailaddress,
@@ -477,6 +481,8 @@ public class ConvertingSetting {
 		swfTo3path = swf_3path;
 		fpsUp = fps_up;
 		fpsMin = fps_min;
+		enableSoundOnly = en_soundonly;
+		thumbnailFile = thumb_file;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -803,6 +809,12 @@ public class ConvertingSetting {
 	public double getFpsMin() {
 		return fpsMin;
 	}
+	public boolean canSoundOnly() {
+		return enableSoundOnly;
+	}
+	public String getDefaultThumbnail() {
+		return thumbnailFile;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -924,6 +936,8 @@ public class ConvertingSetting {
 	static final String PROP_SWF_3PATH = "SwfTo3Path";
 	static final String PROP_FPS_UP = "FpsUp";
 	static final String PROP_FPS_MIN = "FpsMin";
+	static final String PROP_SOUNDONLY = "SoundOnly";
+	static final String PROP_THUMBNIAL = "DefaultThumbFile";
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
 	 */
@@ -1111,6 +1125,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_SWF_3PATH, Boolean.toString(setting.isSwfTo3Path()));
 		prop.setProperty(PROP_FPS_UP, Double.toString(setting.getFpsUp()));
 		prop.setProperty(PROP_FPS_MIN, Double.toString(setting.getFpsMin()));
+		prop.setProperty(PROP_SOUNDONLY, Boolean.toString(setting.canSoundOnly()));
+		prop.setProperty(PROP_THUMBNIAL, setting.getDefaultThumbnail());
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1341,7 +1357,9 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_OPAQUE_RATE, "1.0"),
 			Boolean.parseBoolean(prop.getProperty(PROP_SWF_3PATH, "true")),
 			Double.parseDouble(prop.getProperty(PROP_FPS_UP, "25.0")),
-			Double.parseDouble(prop.getProperty(PROP_FPS_MIN, "23.0"))
+			Double.parseDouble(prop.getProperty(PROP_FPS_MIN, "23.0")),
+			Boolean.parseBoolean(prop.getProperty(PROP_SOUNDONLY, "false")),
+			prop.getProperty(PROP_THUMBNIAL, "<é©ìÆ>")
 		);
 	}
 

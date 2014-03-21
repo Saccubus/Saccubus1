@@ -215,11 +215,14 @@ public class MainFrame extends JFrame {
 	private JLabel showDownloadListLabel = new JLabel();
 	private JPanel updateInfoPanel = new JPanel();
 	private JLabel updateInfoLabel = new JLabel();
-	private JLabel updateInfoLabel1 = new JLabel();
+//	private JLabel updateInfoLabel1 = new JLabel();
+//	private JLabel updateInfoLabel2 = new JLabel();
 	private JCheckBox nmmNewEnableCheckBox = new JCheckBox();
 	private JCheckBox fpsUpCheckBox = new JCheckBox();
+	private JCheckBox soundOnlyCheckBox = new JCheckBox();
 	private JTextField fpsUpTextFiled = new JTextField();
 	private JTextField fpsMinTextField = new JTextField();
+	private JTextField thumbTextFiled = new JTextField();
 	private JButton playConvertedVideoButton = new JButton();
 	private JLabel playConvertedVideoLabel = new JLabel();
 
@@ -237,6 +240,8 @@ public class MainFrame extends JFrame {
 		"1：新コメント表示（毎分最新100コメント＋旧表示）",
 		"2：旧コメント表示（最大10分以上で1000コメント表示）",
 	};
+
+	public static final String THUMB_DEFALT_STRING = "<自動>";
 
 	public MainFrame() {
 		try {
@@ -790,7 +795,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y0_96.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y0_96.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserInfoLabel, grid13_x0_y0_96);
-		BrowserIECheckBox.setText("Interner Eplorer (IE7/IE8/IE9)");
+		BrowserIECheckBox.setText("Interner Eplorer (IE7/IE8/IE9～11)");
 		BrowserIECheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y1_97 = new GridBagConstraints();
 		grid13_x0_y1_97.gridx = 0;
@@ -801,7 +806,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y1_97.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y1_97.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserIECheckBox, grid13_x0_y1_97);
-		BrowserFFCheckBox.setText("Firefox (FF3/FF4～10)");
+		BrowserFFCheckBox.setText("Firefox (FF3/FF4～28)");
 		BrowserFFCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y2_98 = new GridBagConstraints();
 		grid13_x0_y2_98.gridx = 0;
@@ -823,7 +828,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y3_99.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y3_99.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserChromeCheckBox, grid13_x0_y3_99);
-		BrowserOperaCheckBox.setText("Opera");
+		BrowserOperaCheckBox.setText("Opera(ver 20.0以降は暗号化のため不可)");
 		BrowserOperaCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y4_100 = new GridBagConstraints();
 		grid13_x0_y4_100.gridx = 0;
@@ -891,18 +896,6 @@ public class MainFrame extends JFrame {
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"新機能情報", TitledBorder.LEADING, TitledBorder.TOP,
 				getFont(), Color.blue));
-		updateInfoLabel.setText("NM動画に少し対応（主に1枚絵。画面の切替はズレが有る）");
-		updateInfoLabel.setForeground(Color.blue);
-		updateInfoLabel.setToolTipText("手書き漫画の動画などは画面か音声かがネタバレになるので注意。");
-		GridBagConstraints grid14_x0_y0 = new GridBagConstraints();
-		grid14_x0_y0.gridx = 0;
-		grid14_x0_y0.gridy = 0;
-		grid14_x0_y0.gridwidth = 5;
-		grid14_x0_y0.weightx = 1.0;
-		grid14_x0_y0.anchor = GridBagConstraints.NORTH;
-		grid14_x0_y0.fill = GridBagConstraints.HORIZONTAL;
-		grid14_x0_y0.insets = INSETS_0_5_0_5;
-		updateInfoPanel.add(updateInfoLabel, grid14_x0_y0);
 		nmmNewEnableCheckBox.setText("NM動画に少し対応");
 		nmmNewEnableCheckBox.setForeground(Color.blue);
 		nmmNewEnableCheckBox.setToolTipText("フォント、ビデオクリップ、テキスト、アクションスクリプト未対応");
@@ -910,13 +903,26 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid14_x0_y1 = new GridBagConstraints();
 		grid14_x0_y1.gridx = 0;
 		grid14_x0_y1.gridy = 1;
-		grid14_x0_y1.gridwidth = 5;
-		grid14_x0_y1.weightx = 1.0;
+		grid14_x0_y1.gridwidth = 1;
+//		grid14_x0_y1.weightx = 1.0;
 		grid14_x0_y1.anchor = GridBagConstraints.NORTH;
 		grid14_x0_y1.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x0_y1.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(nmmNewEnableCheckBox, grid14_x0_y1);
-		updateInfoLabel1.setText("フレームレートが低い動画のfps変更");
+		updateInfoLabel.setText("（主に1枚絵。画面の切替はズレが有る）");
+		updateInfoLabel.setForeground(Color.blue);
+		updateInfoLabel.setToolTipText("手書き漫画の動画などは画面か音声かがネタバレになるので注意。");
+		GridBagConstraints grid14_x1_y1 = new GridBagConstraints();
+		grid14_x1_y1.gridx = 1;
+		grid14_x1_y1.gridy = 1;
+		grid14_x1_y1.gridwidth = 4;
+		grid14_x1_y1.weightx = 1.0;
+		grid14_x1_y1.anchor = GridBagConstraints.CENTER;
+		grid14_x1_y1.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x1_y1.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(updateInfoLabel, grid14_x1_y1);
+/*
+ 		updateInfoLabel1.setText("フレームレートが低い動画のfps変更。変換時間が長くなります");
 		updateInfoLabel1.setForeground(Color.blue);
 		updateInfoLabel1.setToolTipText("変換時間が長くなります");
 		GridBagConstraints grid14_x0_y2 = new GridBagConstraints();
@@ -928,9 +934,11 @@ public class MainFrame extends JFrame {
 		grid14_x0_y2.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x0_y2.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(updateInfoLabel1, grid14_x0_y2);
+*/
 		fpsUpCheckBox.setText("fps変更");
 		fpsUpCheckBox.setForeground(Color.blue);
 		fpsUpCheckBox.setEnabled(true);
+		fpsUpCheckBox.setToolTipText("フレームレートが低い動画のfps変更。変換時間が長くなります");
 		GridBagConstraints grid14_x0_y3 = new GridBagConstraints();
 		grid14_x0_y3.gridx = 0;
 		grid14_x0_y3.gridy = 3;
@@ -981,6 +989,38 @@ public class MainFrame extends JFrame {
 		grid14_x4_y3.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x4_y3.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(fpsUpTextFiled, grid14_x4_y3);
+		soundOnlyCheckBox.setText("映像なし許可");
+		soundOnlyCheckBox.setForeground(Color.blue);
+		soundOnlyCheckBox.setToolTipText("映像が認識できない時音声のみコメント付きに変換する");
+		GridBagConstraints grid14_x0_y5 = new GridBagConstraints();
+		grid14_x0_y5.gridx = 0;
+		grid14_x0_y5.gridy = 5;
+		grid14_x0_y5.weightx = 0.0;
+		grid14_x0_y5.anchor = GridBagConstraints.NORTH;
+		grid14_x0_y5.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x0_y5.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(soundOnlyCheckBox, grid14_x0_y5);
+		GridBagConstraints grid14_x1_y5 = new GridBagConstraints();
+		grid14_x1_y5.gridx = 1;
+		grid14_x1_y5.gridy = 5;
+		grid14_x1_y5.gridwidth = 1;
+		grid14_x1_y5.weightx = 0.0;
+		grid14_x1_y5.anchor = GridBagConstraints.CENTER;
+		grid14_x1_y5.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x1_y5.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(new JLabel("代替サムネ"), grid14_x1_y5);
+		thumbTextFiled = new JTextField();
+		thumbTextFiled.setText(THUMB_DEFALT_STRING);
+		thumbTextFiled.setForeground(Color.blue);
+		GridBagConstraints grid14_x2_y5 = new GridBagConstraints();
+		grid14_x2_y5.gridx = 2;
+		grid14_x2_y5.gridy = 5;
+		grid14_x2_y5.gridwidth = 2;
+		grid14_x2_y5.weightx = 0.5;
+		grid14_x2_y5.anchor = GridBagConstraints.NORTH;
+		grid14_x2_y5.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x2_y5.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(thumbTextFiled, grid14_x2_y5);
 
 		SavingVideoCheckBox.setText("動画をダウンロードする");
 		disableEcoCheckBox.setText("エコノミー時は中止");
@@ -2185,9 +2225,11 @@ public class MainFrame extends JFrame {
 			zqAdditionalOptionFiled.getText(),
 			history,
 			opaqueRateTextField.getText(),
-			nmmNewEnableCheckBox.isEnabled(),
+			nmmNewEnableCheckBox.isSelected(),
 			fpsUp,
-			fpsMin
+			fpsMin,
+			soundOnlyCheckBox.isSelected(),
+			thumbTextFiled.getText()
 		);
 	}
 /*
@@ -2333,6 +2375,8 @@ public class MainFrame extends JFrame {
 		fpsMinTextField.setText(""+setting.getFpsMin());
 		fpsUpTextFiled.setText(""+setting.getFpsUp());
 		fpsUpCheckBox.setSelected(setting.getFpsMin()>=0.0);
+		soundOnlyCheckBox.setSelected(setting.canSoundOnly());
+		thumbTextFiled.setText(setting.getDefaultThumbnail());
 	}
 
 	/**

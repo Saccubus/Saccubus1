@@ -3,6 +3,7 @@ package saccubus;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -220,6 +221,7 @@ public class Converter extends Thread {
 	private File thumbInfoFile;
 	private String wakuiro = "";
 	private StringBuffer resultBuffer;
+	private File thumbnailJpg;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -232,6 +234,33 @@ public class Converter extends Thread {
 	}
 	public String getErrorLog() {
 		return errorLog;
+	}
+	public String getLastError() {
+		if (errorLog==null)
+			return "";
+		errorLog = errorLog.trim();
+		int index = errorLog.lastIndexOf("\n");
+		String lasterror = errorLog.substring(index+1);
+		if(index >= 0){
+			errorLog = errorLog.substring(0, index);
+		}else{
+			errorLog = null;
+		}
+		return lasterror;
+	}
+	public String getLastValidError(){
+		if (errorLog==null)
+			return "";
+		errorLog = errorLog.trim();
+		int index = errorLog.lastIndexOf(":");
+		index = Math.max(index, errorLog.lastIndexOf("\n"));
+		String lasterror = errorLog.substring(index+1);
+		if(index >= 0){
+			errorLog = errorLog.substring(0, index);
+		}else{
+			errorLog = null;
+		}
+		return lasterror;
 	}
 
 	private void sendtext(String text){
@@ -859,74 +888,78 @@ public class Converter extends Thread {
 		return true;
 	}
 
-	private boolean saveThumbInfo(NicoClient client) {
+	private boolean saveThumbInfo0(NicoClient client) {
 		sendtext("動画情報の保存");
-		File folder = Setting.getVideoFixFileNameFolder();
 		/*ページの保存*/
-		if(Setting.isSaveThumbInfo()){
-			String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
-			folder = Setting.getVideoFixFileNameFolder();
-			if (isVideoFixFileName()) {
-				if (folder.mkdir()) {
-					System.out.println("Folder created: " + folder.getPath());
-				}
-				if (!folder.isDirectory()) {
-					sendtext("動画情報の保存先フォルダが作成できません。");
-					result = "A0";
-					return false;
-				}
-				thumbInfoFile = new File(folder, getVideoBaseName() + ext);
-			} else {
-				thumbInfoFile = getThumbInfoFileFrom(Setting.getVideoFile(), ext);
+		String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
+		File folder = Setting.getVideoFixFileNameFolder();
+		if (isVideoFixFileName()) {
+			if (folder.mkdir()) {
+				System.out.println("Folder created: " + folder.getPath());
 			}
-			if(thumbInfoFile==null){
-				sendtext("動画情報ファイルがnullです");
-				result = "A1";
+			if (!folder.isDirectory()) {
+				sendtext("動画情報の保存先フォルダが作成できません。");
+				result = "A0";
 				return false;
 			}
-			sendtext("動画情報の保存中");
-			if (client == null){
-				sendtext("ログインしてないのに動画情報の保存になりました");
-				result = "A2";
-				return false;
-			}
-			thumbInfo = client.getThumbInfoFile(Tag);
-			if (stopFlagReturn()) {
-				result = "A3";
-				return false;
-			}
-			if (thumbInfo == null) {
-				sendtext("動画情報の取得に失敗" + client.getExtraError());
-				result = "A4";
-				return false;
-			}
-			System.out.println("reading:" + thumbInfo);
-			if(!saveThumbUser(thumbInfo, client)){
-				System.out.println("投稿者情報の取得に失敗");
-				return false;
-			}
-			if(!saveThumbnailJpg(thumbInfo, client)){
-				System.out.println("サムネイル画像の取得に失敗");
-				return false;
-			}
-			//Path.fileCopy(thumbInfo, thumbInfoFile);
-			String text = Path.readAllText(thumbInfo.getPath(), "UTF-8");
-			text = text.replace("\n", "\r\n");
-			PrintWriter pw;
-			try {
-				pw = new PrintWriter(thumbInfoFile, "UTF-8");
-				pw.write(text);
-				pw.flush();
-				pw.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			if(thumbInfo.delete()){
-				System.out.println("Deleted:" + thumbInfo);
-			}
+			thumbInfoFile = new File(folder, getVideoBaseName() + ext);
+		} else {
+			thumbInfoFile = getThumbInfoFileFrom(Setting.getVideoFile(), ext);
+		}
+		if(thumbInfoFile==null){
+			sendtext("動画情報ファイルがnullです");
+			result = "A1";
+			return false;
+		}
+		sendtext("動画情報の保存中");
+		if (client == null){
+			sendtext("ログインしてないのに動画情報の保存になりました");
+			result = "A2";
+			return false;
+		}
+		thumbInfo = client.getThumbInfoFile(Tag);
+		if (stopFlagReturn()) {
+			result = "A3";
+			return false;
+		}
+		if (thumbInfo == null) {
+			sendtext("動画情報の取得に失敗" + client.getExtraError());
+			result = "A4";
+			return false;
+		}
+		System.out.println("reading:" + thumbInfo);
+		if(!saveThumbUser(thumbInfo, client)){
+			System.out.println("投稿者情報の取得に失敗");
+			return false;
+		}
+		if(!saveThumbnailJpg(thumbInfo, client)){
+			System.out.println("サムネイル画像の取得に失敗");
+			return false;
+		}
+		//Path.fileCopy(thumbInfo, thumbInfoFile);
+		String text = Path.readAllText(thumbInfo.getPath(), "UTF-8");
+		text = text.replace("\n", "\r\n");
+		PrintWriter pw;
+		try {
+			pw = new PrintWriter(thumbInfoFile, "UTF-8");
+			pw.write(text);
+			pw.flush();
+			pw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if(thumbInfo.delete()){
+			System.out.println("Deleted:" + thumbInfo);
 		}
 		sendtext("動画情報の保存終了");
 		return true;
+	}
+
+	private boolean saveThumbInfo(NicoClient client) {
+		if(Setting.isSaveThumbInfo())
+			return saveThumbInfo0(client);
+		else
+			return true;
 	}
 
 	private boolean saveThumbUser(Path infoFile, NicoClient client) {
@@ -999,7 +1032,7 @@ public class Converter extends Thread {
 
 	private boolean saveThumbnailJpg(Path infoFile, NicoClient client) {
 		sendtext("サムネイル画像の保存");
-		File thumbnailJpg = null;
+		thumbnailJpg = null;
 		if(Setting.isSaveThumbnailJpg()){
 			String infoXml = Path.readAllText(infoFile.getPath(), "UTF-8");
 			String url = NicoClient.getXmlElement(infoXml, "thumbnail_url");
@@ -1033,7 +1066,8 @@ public class Converter extends Thread {
 				}
 			}
 			sendtext("サムネイル画像の保存中");
-			if (!client.getThumbnailJpg(url, thumbnailJpg)) {
+			if (!client.getThumbnailJpg(url+".L", thumbnailJpg)
+				&& !client.getThumbnailJpg(url, thumbnailJpg)) {
 				sendtext("サムネイル画像の取得に失敗" + client.getExtraError());
 				result = "AA";
 				return false;
@@ -1460,7 +1494,9 @@ public class Converter extends Thread {
 		} else if (code == CODE_CONVERTING_ABORTED) { /*中断*/
 
 		} else {
-			sendtext("変換エラー：(" + code + ") "+ ffmpeg.getLastError());
+			if(errorLog==null||errorLog.isEmpty())
+				errorLog = ffmpeg.getLastError().toString();
+			sendtext("変換エラー：(" + code + ") "+ getLastValidError());
 		}
 		result = "97";
 		return false;
@@ -2296,17 +2332,87 @@ public class Converter extends Thread {
 		return code;
 	}
 
-	private int convFLV_audio(File input, File output) {
+	private int convFLV_audio(File input, File output){
+		return convFLV_audio(input,output,".\\bin\\b32.jpg");
+	}
+
+	private int convFLV_audio(File input, File output, String thumbname) {
 		int code = -1;
+		File thumbfile;
+		if(thumbname==null||thumbname.isEmpty()||thumbname.equals(MainFrame.THUMB_DEFALT_STRING)){
+			//サムネイル選択,検索
+			thumbfile = new File(Setting.getVideoFixFileNameFolder(),getVideoBaseName()+".jpg");
+			if(!thumbfile.isFile()){
+				if(thumbnailJpg!=null && thumbnailJpg.isFile()){
+					thumbfile = thumbnailJpg;
+				}else{
+					thumbfile = new File(".\\bin\\b32.jpg");
+				}
+			}
+		}else{
+			String currect_dir = System.getenv("CD");
+			System.out.println("CD:"+currect_dir);
+			thumbfile = new File(currect_dir, thumbname);
+		}
+		if(!thumbfile.canRead()){
+			System.out.println("サムネイルが読めません："+thumbfile.getPath());
+			sendtext("サムネイルが読めません");
+			thumbfile = new Path(".\\bin\\b32.jpg");
+		}else{
+			// サムネイルをテンポラリーにコピー（javaは読めるのになぜかffmpegが読めないので）
+			File tempthumb = Path.mkTemp("t.jpg");
+			FileInputStream fis = null;
+			FileOutputStream fos = null;
+			boolean copyok = false;
+			try{
+				byte[] buf = new byte[4096];
+				fis = new FileInputStream(thumbfile);
+				fos = new FileOutputStream(tempthumb);
+				int len = 0;
+				while ((len = fis.read(buf, 0, buf.length)) > 0) {
+					fos.write(buf, 0, len);
+					Stopwatch.show();
+				}
+				copyok = true;
+			}catch(IOException e){
+				e.printStackTrace();
+			}finally{
+				try{
+					if(fis!=null){
+						fis.close();
+					}
+					if(fis!=null){
+						fos.flush();
+						fos.close();
+					}
+				}catch(Exception e){
+				}
+			}
+			if(copyok){
+				thumbfile = tempthumb;
+			}
+		}
+		if(!thumbfile.canRead()){
+			//どうしても読めない場合
+			System.out.println("サムネイルが読めません："+thumbfile.getPath());
+			sendtext("代替サムネイルが読めません");
+			errorLog = "代替サムネイルが読めません";
+			code = 198;
+			return code;
+		}
+		// サムネイルのアスペクト比は無視
 		String txt = MovieInfo.getText();
 		MovieInfo.setText("SoundOnly," + txt);
 		/*
-		 * ffmpeg -y mainoption -loop 1 -shortest -i ./bin/b32.png -i input
+		 * ffmpeg -y mainoption -loop 1 -shortest -i thmbnail_picture -i input
 		 * outoption -map 0:0 -map 1:a [vhookOption]  output
 		 */
 		ffmpeg.setCmd("-y ");
 		ffmpeg.addCmd(MainOption);
-		ffmpeg.addCmd(" -loop 1 -shortest -i ./bin/b32.png ");
+		ffmpeg.addCmd(" -loop 1 -shortest -i ");
+		ffmpeg.addFile(thumbfile);
+		ffmpeg.addCmd(" ");
+		ffmpeg.addCmd(InOption);
 		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(input);
 		ffmpeg.addCmd(" ");
@@ -2339,8 +2445,15 @@ public class Converter extends Thread {
 		File input = VideoFile;
 		String txt = MovieInfo.getText();
 		if(frameRate == 0.0){
-			System.out.println("映像ストリームのデコードに失敗しました\nコメントと音声だけを合成します");
-			code = convFLV_audio(input, ConvertedVideoFile);
+			System.out.println("映像ストリームのデコードに失敗しました");
+			if(!Setting.canSoundOnly()){
+				errorLog = "映像ストリームのデコードに失敗しました";
+				code = 199;
+				return code;
+			}
+			System.out.println("コメントと音声だけを合成します");
+			code = convFLV_audio(input, ConvertedVideoFile, Setting.getDefaultThumbnail());
+			errorLog = ffmpeg.getErrotLog().toString();
 			return code;
 		}
 		if (!Cws2Fws.isFws(VideoFile)) {
@@ -2443,8 +2556,11 @@ public class Converter extends Thread {
 					System.out.println("Created folder - " + imgDir);
 				File outputImg = new File(imgDir,"%d.jpg");
 				code = convSWF_JPG(input, outputImg);
-				if (code != 0)
+				if (code != 0){
+					// jpegに変換できない場合は音声のみにする
+					code = convFLV_audio(input, ConvertedVideoFile);
 					return code;
+				}
 				// frame check
 				String frames = ffmpeg.getLastFrame();
 				int frame = 0;
@@ -2472,8 +2588,11 @@ public class Converter extends Thread {
 				//出力
 				File outputAvi = new File(imgDir,"huffyuv.mp4");
 				code = convJPG_MP4(outputImg, outputAvi, inputCmd);
-				if (code != 0)
+				if (code != 0){
+					// jpegがmp4に変換できない場合は音声のみにする
+					code = convFLV_audio(input, ConvertedVideoFile);
 					return code;
+				}
 				/*
 				 * 音声を合成
 				 * ffmpeg.exe -y -i fws_tmp.swf -itsoffset 1.0 -i avi4.avi
@@ -2490,8 +2609,11 @@ public class Converter extends Thread {
 				int l = videoLength + toffset + 1;
 				offset = " -t " + l + offset;
 				code = convMix(outputAvi, input, outputMix,offset);
-				if (code != 0)
+				if (code != 0){
+					// 合成できない場合は音声のみにする
+					code = convFLV_audio(input, ConvertedVideoFile);
 					return code;
+				}
 				/*
 				 * コメントを合成
 				 * ffmpeg.exe -y -i fws_tmp.swf -itsoffset 1.0 -i avi4.avi
@@ -2525,6 +2647,11 @@ public class Converter extends Thread {
 				System.out.println("arg:" + ffmpeg.getCmd());
 				code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 				errorLog = ffmpeg.getErrotLog().toString();
+				if (code != 0){
+					// 変換できない場合は音声のみにする
+					code = convFLV_audio(input, ConvertedVideoFile);
+					return code;
+				}
 			}
 		}
 		MovieInfo.setText(txt);
