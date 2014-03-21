@@ -642,84 +642,90 @@ public class Converter extends Thread {
 		File folder = Setting.getVideoFixFileNameFolder();
 		sendtext("動画の保存");
 		/*動画の保存*/
-		if (isSaveVideo()) {
-			if (isVideoFixFileName()) {
-				if (folder.mkdir()) {
-					System.out.println("Folder created: " + folder.getPath());
-				}
-				if (!folder.isDirectory()) {
-					sendtext("動画の保存先フォルダが作成できません。");
-					result = "40";
-					return false;
-				}
-				VideoFile = new File(folder, getVideoBaseName() + ".flv");
-			} else {
-				VideoFile = Setting.getVideoFile();
-			}
-			if(VideoFile.isFile() && VideoFile.canRead()){
-				sendtext("動画は既に存在します");
-				System.out.println("動画は既に存在します。ダウンロードをスキップします");
-			}else{
-				sendtext("動画のダウンロード開始中");
-				if (client == null){
-					sendtext("ログインしてないのに動画の保存になりました");
-					result = "41";
-					return false;
-				}
-				if(Setting.isDisableEco() &&  client.isEco()){
-					sendtext("エコノミーモードなので中止します");
-					result = "42";
-					return false;
-				}
-				VideoFile = client.getVideo(VideoFile, Status, StopFlag,
-					isVideoFixFileName() && Setting.isChangeMp4Ext());
-				if (stopFlagReturn()) {
-					result = "43";
-					return false;
-				}
-				if (VideoFile == null) {
-					sendtext("動画のダウンロードに失敗" + client.getExtraError());
-					result = "44";
-					return false;
-				}
-				resultBuffer.append("video: "+VideoFile.getName()+"\n");
-			}
-			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
-				optionalThreadID = client.getOptionalThreadID();
-			}
-			videoLength = client.getVideoLength();
-		} else {
-			if (isSaveConverted()) {
+		try {
+			if (isSaveVideo()) {
 				if (isVideoFixFileName()) {
-					String videoFilename;
-					if((videoFilename = detectTitleFromVideo(folder)) == null){
-						if (OtherVideo == null){
-							sendtext("動画ファイルがフォルダに存在しません。");
-							result = "45";
-						} else {
-							sendtext("動画ファイルが.flvでありません：" + OtherVideo);
-							result = "46";
-						}
+					if (folder.mkdir()) {
+						System.out.println("Folder created: " + folder.getPath());
+					}
+					if (!folder.isDirectory()) {
+						sendtext("動画の保存先フォルダが作成できません。");
+						result = "40";
 						return false;
 					}
-					VideoFile = new File(folder, videoFilename);
-					if (!VideoFile.canRead()) {
-						sendtext("動画ファイルが読み込めません。");
-						result = "47";
-						return false;
-					}
+					VideoFile = new File(folder, getVideoBaseName() + ".flv");
 				} else {
 					VideoFile = Setting.getVideoFile();
-					if (!VideoFile.exists()) {
-						sendtext("動画ファイルが存在しません。");
-						result = "48";
+				}
+				if(VideoFile.isFile() && VideoFile.canRead()){
+					sendtext("動画は既に存在します");
+					System.out.println("動画は既に存在します。ダウンロードをスキップします");
+				}else{
+					sendtext("動画のダウンロード開始中");
+					if (client == null){
+						sendtext("ログインしてないのに動画の保存になりました");
+						result = "41";
 						return false;
 					}
+					if(Setting.isDisableEco() &&  client.isEco()){
+						sendtext("エコノミーモードなので中止します");
+						result = "42";
+						return false;
+					}
+					VideoFile = client.getVideo(VideoFile, Status, StopFlag,
+						isVideoFixFileName() && Setting.isChangeMp4Ext());
+					if (stopFlagReturn()) {
+						result = "43";
+						return false;
+					}
+					if (VideoFile == null) {
+						sendtext("動画のダウンロードに失敗" + client.getExtraError());
+						result = "44";
+						return false;
+					}
+					resultBuffer.append("video: "+VideoFile.getName()+"\n");
+				}
+				if (optionalThreadID == null || optionalThreadID.isEmpty()) {
+					optionalThreadID = client.getOptionalThreadID();
+				}
+				videoLength = client.getVideoLength();
+				setVideoTitleIfNull(VideoFile.getName());
+			} else {
+				if (isSaveConverted()) {
+					if (isVideoFixFileName()) {
+						String videoFilename;
+						if((videoFilename = detectTitleFromVideo(folder)) == null){
+							if (OtherVideo == null){
+								sendtext("動画ファイルがフォルダに存在しません。");
+								result = "45";
+							} else {
+								sendtext("動画ファイルが.flvでありません：" + OtherVideo);
+								result = "46";
+							}
+							return false;
+						}
+						VideoFile = new File(folder, videoFilename);
+						if (!VideoFile.canRead()) {
+							sendtext("動画ファイルが読み込めません。");
+							result = "47";
+							return false;
+						}
+					} else {
+						VideoFile = Setting.getVideoFile();
+						if (!VideoFile.exists()) {
+							sendtext("動画ファイルが存在しません。");
+							result = "48";
+							return false;
+						}
+					}
+					setVideoTitleIfNull(VideoFile.getName());
 				}
 			}
-			setVideoTitleIfNull(VideoFile.getName());
+			sendtext("動画の保存を終了");
+		}catch(NullPointerException e){
+			e.printStackTrace();
+			sendtext("ぬるぽ：バグってるよ：動画の保存");
 		}
-		sendtext("動画の保存を終了");
 		return true;
 	}
 
@@ -1030,6 +1036,34 @@ public class Converter extends Thread {
 		return true;
 	}
 
+	private boolean setThumbnailJpg() {
+		if (isVideoFixFileName()) {
+			File folder = Setting.getVideoFixFileNameFolder();
+			if (folder.mkdir()) {
+				System.out.println("Folder created: " + folder.getPath());
+			}
+			if (!folder.isDirectory()) {
+				sendtext("サムネイル画像の保存先フォルダが作成できません。");
+				result = "A9";
+				return false;
+			}
+			thumbnailJpg = new File(folder, getVideoBaseName() + ".jpg");
+		} else {
+			File file = Setting.getVideoFile();
+			if (file == null || !file.isFile() || file.getPath() == null) {
+				thumbnailJpg = mkTemp(Tag + "_thumnail.jpg");
+			}else{
+				String path = file.getPath();
+				int index = path.lastIndexOf(".");
+				if (index > path.lastIndexOf(File.separator)) {
+					path = path.substring(0, index) + ".jpg";		// 拡張子を変更
+				}
+				thumbnailJpg = new File(path);
+			}
+		}
+		return true;
+	}
+
 	private boolean saveThumbnailJpg(Path infoFile, NicoClient client) {
 		sendtext("サムネイル画像の保存");
 		thumbnailJpg = null;
@@ -1041,30 +1075,8 @@ public class Converter extends Thread {
 				result = "A8";
 				return false;
 			}
-			if (isVideoFixFileName()) {
-				File folder = Setting.getVideoFixFileNameFolder();
-				if (folder.mkdir()) {
-					System.out.println("Folder created: " + folder.getPath());
-				}
-				if (!folder.isDirectory()) {
-					sendtext("サムネイル画像の保存先フォルダが作成できません。");
-					result = "A9";
-					return false;
-				}
-				thumbnailJpg = new File(folder, getVideoBaseName() + ".jpg");
-			} else {
-				File file = Setting.getVideoFile();
-				if (file == null || !file.isFile() || file.getPath() == null) {
-					thumbnailJpg = mkTemp(Tag + "_thumnail.jpg");
-				}else{
-					String path = file.getPath();
-					int index = path.lastIndexOf(".");
-					if (index > path.lastIndexOf(File.separator)) {
-						path = path.substring(0, index) + ".jpg";		// 拡張子を変更
-					}
-					thumbnailJpg = new File(path);
-				}
-			}
+			if(!setThumbnailJpg())
+				return false;
 			sendtext("サムネイル画像の保存中");
 			if (!client.getThumbnailJpg(url+".L", thumbnailJpg)
 				&& !client.getThumbnailJpg(url, thumbnailJpg)) {
@@ -2343,10 +2355,17 @@ public class Converter extends Thread {
 			//サムネイル選択,検索
 			thumbfile = new File(Setting.getVideoFixFileNameFolder(),getVideoBaseName()+".jpg");
 			if(!thumbfile.isFile()){
-				if(thumbnailJpg!=null && thumbnailJpg.isFile()){
-					thumbfile = thumbnailJpg;
-				}else{
-					thumbfile = new File(".\\bin\\b32.jpg");
+				if(setThumbnailJpg()){
+					if(thumbnailJpg!=null && thumbnailJpg.isFile()){
+						thumbfile = thumbnailJpg;
+					}else{
+						thumbfile = new File(".\\bin\\b32.jpg");
+					}
+				}else {
+					NicoClient client = getNicoClient();
+					if(saveThumbInfo0(client) && saveThumbnailJpg(thumbInfo, client)){
+						thumbfile = thumbnailJpg;
+					}
 				}
 			}
 		}else{
