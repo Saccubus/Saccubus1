@@ -147,6 +147,7 @@ public class ConvertingSetting {
 	private StringBuffer retBuffer;
 	private String opaqueRate;
 	private boolean swfTo3path;
+	private boolean checkFps;
 	private Double fpsUp;
 	private Double fpsMin;
 	private boolean enableSoundOnly;
@@ -359,6 +360,7 @@ public class ConvertingSetting {
 			StringBuffer return_buffer,
 			String opaque_rate,
 			boolean swf_3path,
+			boolean check_fps,
 			double fps_up,
 			double fps_min,
 			boolean en_soundonly,
@@ -479,6 +481,7 @@ public class ConvertingSetting {
 		retBuffer = return_buffer;
 		opaqueRate = opaque_rate;
 		swfTo3path = swf_3path;
+		checkFps = check_fps;
 		fpsUp = fps_up;
 		fpsMin = fps_min;
 		enableSoundOnly = en_soundonly;
@@ -803,6 +806,9 @@ public class ConvertingSetting {
 	public boolean isSwfTo3Path(){
 		return swfTo3path;
 	}
+	public boolean enableCheckFps(){
+		return checkFps;
+	}
 	public double getFpsUp(){
 		return fpsUp;
 	}
@@ -934,6 +940,7 @@ public class ConvertingSetting {
 	static final String PROP_ZQ_ADD_OPTION = "QAddOption";
 	static final String PROP_OPAQUE_RATE = "OpaqueRate";
 	static final String PROP_SWF_3PATH = "SwfTo3Path";
+	static final String PROP_CHECK_FPS = "CheckFps";
 	static final String PROP_FPS_UP = "FpsUp";
 	static final String PROP_FPS_MIN = "FpsMin";
 	static final String PROP_SOUNDONLY = "SoundOnly";
@@ -1123,6 +1130,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ZQ_ADD_OPTION, setting.getZqAddOption());
 		prop.setProperty(PROP_OPAQUE_RATE,setting.getOpaqueRate());
 		prop.setProperty(PROP_SWF_3PATH, Boolean.toString(setting.isSwfTo3Path()));
+		prop.setProperty(PROP_CHECK_FPS, Boolean.toString(setting.enableCheckFps()));
 		prop.setProperty(PROP_FPS_UP, Double.toString(setting.getFpsUp()));
 		prop.setProperty(PROP_FPS_MIN, Double.toString(setting.getFpsMin()));
 		prop.setProperty(PROP_SOUNDONLY, Boolean.toString(setting.canSoundOnly()));
@@ -1356,6 +1364,7 @@ public class ConvertingSetting {
 			new StringBuffer(),
 			prop.getProperty(PROP_OPAQUE_RATE, "1.0"),
 			Boolean.parseBoolean(prop.getProperty(PROP_SWF_3PATH, "true")),
+			Boolean.parseBoolean(prop.getProperty(PROP_CHECK_FPS, "false")),
 			Double.parseDouble(prop.getProperty(PROP_FPS_UP, "25.0")),
 			Double.parseDouble(prop.getProperty(PROP_FPS_MIN, "23.0")),
 			Boolean.parseBoolean(prop.getProperty(PROP_SOUNDONLY, "false")),

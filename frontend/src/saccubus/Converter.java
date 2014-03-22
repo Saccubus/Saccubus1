@@ -222,6 +222,7 @@ public class Converter extends Thread {
 	private String wakuiro = "";
 	private StringBuffer resultBuffer;
 	private File thumbnailJpg;
+	private String addOption;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -1542,6 +1543,7 @@ public class Converter extends Thread {
 	private String mylistID;
 	private JLabel watchArea = new JLabel();
 	private ArrayList<CommentReplace> CommentReplaceList = new ArrayList<CommentReplace>();
+	private boolean checkFps;
 
 	void downloadPage(String url){
 		ArrayList<String[]> plist = new ArrayList<String[]>();
@@ -1921,6 +1923,7 @@ public class Converter extends Thread {
 			videoLength = info.getDuration();
 		}
 		frameRate = info.getFrameRate();
+		checkFps = Setting.enableCheckFps();
 		fpsUp = Setting.getFpsUp();
 		fpsMin = Setting.getFpsMin();
 		System.out.println("frameRate:"+frameRate+",fpsUp:"+fpsUp+",fpsMin:"+fpsMin);
@@ -2188,7 +2191,7 @@ public class Converter extends Thread {
 	}
 
 	boolean addAdditionalOption(boolean wide, boolean isQ) {
-		String addOption = "";
+		addOption = "";
 		if(isQ){
 			addOption = Setting.getZqAddOption();
 		} else if(wide){
@@ -2224,21 +2227,24 @@ public class Converter extends Thread {
 
 	private static final int CODE_CONVERTING_ABORTED = 100;
 
-	private int convFLV_fpsUp(File videoin, File videoout){
+	private int convFLV_fpsUp(File videoin, File videoout, String addoption){
 		int code = -1;
 		/*
 		 * ffmpeg -r fpsUp
 		 */
-		Double fps = fpsUp;
-		if(fps < fpsMin)
-			fps = fpsMin;
-		System.out.println("FLV FpsUp");
+		System.out.println("FLV Up "+fpsUp+"fps");
 		String txt = MovieInfo.getText();
-		MovieInfo.setText("FLV FpsUp," + txt);
-		ffmpeg.setCmd("-y  -i ");
+		MovieInfo.setText("FLV "+fpsUp+"fps," + txt);
+		ffmpeg.setCmd("-y ");
+		ffmpeg.addCmd(MainOption);
+		ffmpeg.addCmd(" ");
+		ffmpeg.addCmd(InOption);
+		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(videoin);
-		ffmpeg.addCmd(" -r " + fps);
+		ffmpeg.addCmd(" -r " + fpsUp);
 		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -f mp4 ");
+		ffmpeg.addCmd(addoption);
+		ffmpeg.addCmd(" ");
 		//ffmpeg.addCmd(" -acodec copy -vcodec mpeg4 -crf 16 -pix_fmt yuv420p -f mp4 ");
 		ffmpeg.addFile(videoout);
 
@@ -2251,15 +2257,20 @@ public class Converter extends Thread {
 
 	private int convSWF_25fps(File videoin, File videoout){
 		int code = -1;
-		System.out.println("FWS 25fps");
+		System.out.println("FWS fpsUp");
 		String txt = MovieInfo.getText();
-		MovieInfo.setText("FWS 25fps," + txt);
+		MovieInfo.setText("FWS fpsUp," + txt);
 		/*
 		 * ffmpeg -r 25.0
 		 */
-		ffmpeg.setCmd("-y  -i ");
+		ffmpeg.setCmd("-y ");
+		ffmpeg.addCmd(MainOption);
+		ffmpeg.addCmd(" ");
+		ffmpeg.addCmd(InOption);
+		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(videoin);
-		ffmpeg.addCmd(" -r 25 -acodec copy -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -f mp4 ");
+		ffmpeg.addCmd(" -r "+fpsUp);
+		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -f mp4 ");
 		//ffmpeg.addCmd(" -r 25 -acodec copy -vcodec mpeg4 -crf 18 -pix_fmt yuv420p -f mp4 ");
 		ffmpeg.addFile(videoout);
 
@@ -2317,7 +2328,7 @@ public class Converter extends Thread {
 		return code;
 	}
 
-	private int convMix(File videoin, File audioin, File videoout, String offset){
+	private int convMix(File videoin, File audioin, File videoout){
 		int code = -1;
 		/*
 		 * 音声を合成
@@ -2325,15 +2336,19 @@ public class Converter extends Thread {
 		 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 		 */
 		System.out.println("Tring MP4+sound to .MP4");
+		double fps = 25.0;
+		if(checkFps && fps < fpsMin){
+			fps = fpsUp;
+		}
 		String txt = MovieInfo.getText();
 		MovieInfo.setText("MP4 Mix," + txt);
 		ffmpeg.setCmd("-y -i ");
 		ffmpeg.addFile(audioin);	// audio, must be FWS_SWF
-		ffmpeg.addCmd(offset);
 		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(videoin);	// visual
-		ffmpeg.addCmd(" -map 1:0 -map 0:0 ");
-		ffmpeg.addCmd(" -r 25 -acodec copy -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -pix_fmt yuv420p -f mp4 ");
+		ffmpeg.addCmd(" -map 1:v -map 0:a ");
+		ffmpeg.addCmd(" -r " + fps);
+		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -pix_fmt yuv420p -f mp4 ");
 		//ffmpeg.addCmd(" -r 25 -acodec copy -vcodec mpeg4 -crf 18 -pix_fmt yuv420p -f mp4 ");
 		ffmpeg.addFile(videoout);
 
@@ -2426,6 +2441,9 @@ public class Converter extends Thread {
 		 * ffmpeg -y mainoption -loop 1 -shortest -i thmbnail_picture -i input
 		 * outoption -map 0:0 -map 1:a [vhookOption]  output
 		 */
+		double fps = 25.0;
+		if(checkFps && fps < fpsMin)
+			fps = fpsUp;
 		ffmpeg.setCmd("-y ");
 		ffmpeg.addCmd(MainOption);
 		ffmpeg.addCmd(" -loop 1 -shortest -i ");
@@ -2434,9 +2452,9 @@ public class Converter extends Thread {
 		ffmpeg.addCmd(InOption);
 		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(input);
-		ffmpeg.addCmd(" ");
+		ffmpeg.addCmd(" -map 0:v -map 1:a ");
 		ffmpeg.addCmd(OutOption);
-		ffmpeg.addCmd(" -r 25 -map 0:0 -map 1:a ");
+		ffmpeg.addCmd(" -r " + fpsUp);
 		ffmpeg.addCmd(" -metadata");
 		ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
 		ffmpeg.addCmd(" -metadata");
@@ -2463,7 +2481,7 @@ public class Converter extends Thread {
 		int code = -1;
 		File input = VideoFile;
 		String txt = MovieInfo.getText();
-		if(frameRate == 0.0){
+		if(checkFps && frameRate == 0.0){
 			System.out.println("映像ストリームのデコードに失敗しました");
 			if(!Setting.canSoundOnly()){
 				errorLog = "映像ストリームのデコードに失敗しました";
@@ -2477,12 +2495,19 @@ public class Converter extends Thread {
 		}
 		if (!Cws2Fws.isFws(VideoFile)) {
 			// fps up check
-			if(fpsMin > frameRate){
+			if(checkFps && frameRate < fpsMin){
 				File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
-				code = convFLV_fpsUp(input, outputFps);
-				if (code != 0)
-					return code;
-				input = outputFps;
+				code = convFLV_fpsUp(input, outputFps, addOption);
+				if (code == 0){
+					//fps変換成功
+					input = outputFps;
+				}else{
+					if(code == CODE_CONVERTING_ABORTED)
+						System.out.println("変換が中断されました。従来の変換を続行");
+					else
+						System.out.println("("+code+")FLVのfps変換に失敗。従来の変換を続行");
+					errorLog = ffmpeg.getErrotLog().toString();
+				}
 			}
 			System.out.println("FLV 従来通り");
 			MovieInfo.setText(txt);
@@ -2519,14 +2544,24 @@ public class Converter extends Thread {
 		}
 		else {
 			if(!Setting.isSwfTo3Path()){
-				/*
-				 * ffmpeg -r 25.0
-				 */
-				File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
-				code = convSWF_25fps(input, outputFps);
-				if (code != 0)
-					return code;
-				input = outputFps;
+				// nm対応しない
+				if(checkFps && frameRate < fpsMin){
+					/*
+					 * ffmpeg -r 25.0
+					 */
+					File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
+					code = convSWF_25fps(input, outputFps);
+					if (code == 0){
+						//fps変換成功
+						input = outputFps;
+					}else{
+						if(code == CODE_CONVERTING_ABORTED)
+							System.out.println("変換が中断されました。従来の変換を続行");
+						else
+							System.out.println("("+code+")FWSのfps変換に失敗。従来の変換を続行");
+						errorLog = ffmpeg.getErrotLog().toString();
+					}
+				}
 
 				System.out.println("FWS 従来通り");
 				MovieInfo.setText("FWS,"+txt);
@@ -2575,7 +2610,7 @@ public class Converter extends Thread {
 					System.out.println("Created folder - " + imgDir);
 				File outputImg = new File(imgDir,"%d.jpg");
 				code = convSWF_JPG(input, outputImg);
-				if (code != 0){
+				if (code != 0 && Setting.canSoundOnly()){
 					// jpegに変換できない場合は音声のみにする
 					code = convFLV_audio(input, ConvertedVideoFile);
 					return code;
@@ -2588,26 +2623,71 @@ public class Converter extends Thread {
 					frames = frames.substring(index+6).trim();
 					index = (frames+" ").indexOf(" ");
 					frames = frames.substring(0, index);
-					frame = Integer.decode(frames);
+					try{
+						frame = Integer.decode(frames);
+					}catch(NumberFormatException e){
+						frame = 0;
+					}
 				}
-				int rate1000 = 1000;
+				//1.jpgを0.jpgにコピーする
+				if(imgDir.isDirectory()){
+					File jpg1 = new File(imgDir,"1.jpg");
+					File jpg0 = new File(imgDir,"0.jpg");
+					if(jpg1.isFile()){
+						if(jpg0.isFile() && jpg0.delete())
+								;
+						FileInputStream fis = null;
+						FileOutputStream fos = null;
+						byte[] buf;
+						try{
+							fis = new FileInputStream(jpg1);
+							fos = new FileOutputStream(jpg0);
+							buf = new byte[4096];
+							int k = 0;
+							while((k = fis.read(buf, 0, buf.length))>0){
+								fos.write(buf, 0, k);
+							}
+						}catch(IOException e){
+						}finally{
+							try{
+								if(fis!=null)
+									fis.close();
+								if(fos!=null){
+									fos.flush();
+									fos.close();
+								}
+							}catch(Exception e){
+							}
+						}
+						// copy 1.jpg->0.jpg
+					}
+				}
+				//frame += 1;
+				if(frame == 0)
+					frame = 1;
+				double rate = 1.0;
 				if(videoLength > 0){
-					rate1000 = frame * 1000 / videoLength;
+					rate = (double)frame / (double)videoLength;
 				}
-				System.out.printf("Frame= %d, Rate= %d/1000(fps)\n", frame, rate1000);
+				System.out.printf("Frame= %d, Rate= %.5f(fps)\n", frame, rate);
 				/*
 				 * JPEGファイルをMP4形式に合成
 				 * ffmpeg.exe -r 1/4 -y -i %03d.jpg -an -vcodec huffyuv -f avi huffjpg.avi
 				 */
-				String inputCmd = " -r " + rate1000 + "/1000";
-				if(frame <= 1){
-					inputCmd = " -r 1 -loop 1";
+				String inputCmd = " -loop 1 -shortest -r 1 ";
+				if(frame > 1){
+					inputCmd = " -loop 1 -shortest -r " + Double.toString(rate);
 				}
-				inputCmd += " -t " + (videoLength + 1) + " ";
+				double tl = (double)videoLength;
+				if(frame > 1){
+					tl += (double)(frame + 1) / frame;
+				}
+				inputCmd += " -t " + tl;
+				//inputCmd += " -itsoffset " + Double.toString(frame1) + " ";
 				//出力
 				File outputAvi = new File(imgDir,"huffyuv.mp4");
 				code = convJPG_MP4(outputImg, outputAvi, inputCmd);
-				if (code != 0){
+				if (code != 0 && Setting.canSoundOnly()){
 					// jpegがmp4に変換できない場合は音声のみにする
 					code = convFLV_audio(input, ConvertedVideoFile);
 					return code;
@@ -2618,17 +2698,8 @@ public class Converter extends Thread {
 				 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 				 */
 				File outputMix = new File(imgDir,"mix.mp4");
-				String offset = "";
-				int frame1 = 1000 / rate1000;
-				int toffset = 0;
-				if(frame1 < 3){
-					toffset = 3 - frame1;
-					offset = " -itsoffset " + toffset + " ";
-				}
-				int l = videoLength + toffset + 1;
-				offset = " -t " + l + offset;
-				code = convMix(outputAvi, input, outputMix,offset);
-				if (code != 0){
+				code = convMix(outputAvi, input, outputMix);
+				if (code != 0 && Setting.canSoundOnly()){
 					// 合成できない場合は音声のみにする
 					code = convFLV_audio(input, ConvertedVideoFile);
 					return code;
@@ -2666,7 +2737,7 @@ public class Converter extends Thread {
 				System.out.println("arg:" + ffmpeg.getCmd());
 				code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 				errorLog = ffmpeg.getErrotLog().toString();
-				if (code != 0){
+				if (code != 0 && Setting.canSoundOnly()){
 					// 変換できない場合は音声のみにする
 					code = convFLV_audio(input, ConvertedVideoFile);
 					return code;

@@ -2114,14 +2114,14 @@ public class MainFrame extends JFrame {
 		ownercomment += saccubus.Converter.OWNER_EXT;
 		Double fpsUp = 0.0;
 		Double fpsMin = 0.0;
-		if(fpsUpCheckBox.isSelected()){
+//		if(fpsUpCheckBox.isSelected()){
 			try{
 				fpsUp = Double.parseDouble(fpsUpTextFiled.getText());
 				fpsMin = Double.parseDouble(fpsMinTextField.getText());
 			}catch(NumberFormatException e){
-				//
+				//e.printStackTrace();
 			}
-		}
+//		}
 		return new ConvertingSetting(
 			MailAddrField.getText(),
 			new String(PasswordField.getPassword()),
@@ -2226,6 +2226,7 @@ public class MainFrame extends JFrame {
 			history,
 			opaqueRateTextField.getText(),
 			nmmNewEnableCheckBox.isSelected(),
+			fpsUpCheckBox.isSelected(),
 			fpsUp,
 			fpsMin,
 			soundOnlyCheckBox.isSelected(),
@@ -2372,9 +2373,9 @@ public class MainFrame extends JFrame {
 		zqAdditionalOptionFiled.setText(setting.getZqAddOption());
 		opaqueRateTextField.setText(setting.getOpaqueRate());
 		nmmNewEnableCheckBox.setSelected(setting.isSwfTo3Path());
-		fpsMinTextField.setText(""+setting.getFpsMin());
-		fpsUpTextFiled.setText(""+setting.getFpsUp());
-		fpsUpCheckBox.setSelected(setting.getFpsMin()>=0.0);
+		fpsUpCheckBox.setSelected(setting.enableCheckFps());
+		fpsMinTextField.setText(Double.toString(setting.getFpsMin()));
+		fpsUpTextFiled.setText(Double.toString(setting.getFpsUp()));
 		soundOnlyCheckBox.setSelected(setting.canSoundOnly());
 		thumbTextFiled.setText(setting.getDefaultThumbnail());
 	}
