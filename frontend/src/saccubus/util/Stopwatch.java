@@ -1,6 +1,5 @@
 package saccubus.util;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JLabel;
@@ -58,31 +57,45 @@ public class Stopwatch {
 		return new Date().getTime() - getStartTime();
 	}
 
-	private static String FMT1 = "s•bSSSƒ~ƒŠ";
-	private static String FMT2 = "m•ªss•bSSSƒ~ƒŠ";
-	private static String FMT3 = "HŽžŠÔmm•ªss•bSSSƒ~ƒŠ";
-//	private static String FMT3 = "%dŽžŠÔ%02d•ª%02d•b%03dƒ~ƒŠ";
+//	private static String FMT1 = "s•bSSSƒ~ƒŠ";
+	private static String FMT1 = "%d•b%03dƒ~ƒŠ";
+//	private static String FMT2 = "m•ªss•bSSSƒ~ƒŠ";
+	private static String FMT2 = "%d•ª%02d•b%03dƒ~ƒŠ";
+//	private static String FMT3 = "HŽžŠÔmm•ªss•bSSSƒ~ƒŠ";
+	private static String FMT3 = "%dŽžŠÔ%02d•ª%02d•b%03dƒ~ƒŠ";
 //	maybe ok since synchronized fixed
-	private static long LONG_MINUIT = 60 * 1000;
+//	oops NOT ok There was a mistake between JST and UTC
+	private static long LONG_SEC = 1000L;
+	private static long LONG_MINUIT = 60 * LONG_SEC;
 	private static long LONG_HOUR = 60 * LONG_MINUIT;
 
-	synchronized private static String  format(long time){
-		Date date = new Date(time);
+//	synchronized 
+	private static String  format(long time){
+//		Date date = new Date(time);
+		long s, m, h;
 		if (time < 0){
 			return "";
 		} else if (time < LONG_MINUIT){
-			return new SimpleDateFormat(FMT1).format(date);
+//			return new SimpleDateFormat(FMT1).format(date);
+			s = time / LONG_SEC;
+			time %= LONG_SEC;
+			return String.format(FMT1, s, time);
 		} else if (time < LONG_HOUR){
-			return new SimpleDateFormat(FMT2).format(date);
+//			return new SimpleDateFormat(FMT2).format(date);
+			m = time / LONG_MINUIT;
+			time %= LONG_MINUIT;
+			s = time / LONG_SEC;
+			time %= LONG_SEC;
+			return String.format(FMT2, m, s, time);
 		} else {
-			return new SimpleDateFormat(FMT3).format(date);
-//			long h = time / LONG_HOUR;
-//			time %= LONG_HOUR;
-//			long m = time / LONG_MINUIT;
-//			time %= LONG_MINUIT;
-//			long s = time / 1000;
-//			time %= 1000;
-//			return String.format(FMT3, h, m, s, time);
+//			return new SimpleDateFormat(FMT3).format(date);
+			h = time / LONG_HOUR;
+			time %= LONG_HOUR;
+			m = time / LONG_MINUIT;
+			time %= LONG_MINUIT;
+			s = time / LONG_SEC;
+			time %= LONG_SEC;
+			return String.format(FMT3, h, m, s, time);
 		}
 	}
 
