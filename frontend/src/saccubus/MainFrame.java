@@ -900,6 +900,15 @@ public class MainFrame extends JFrame {
 		nmmNewEnableCheckBox.setForeground(Color.blue);
 		nmmNewEnableCheckBox.setToolTipText("フォント、ビデオクリップ、テキスト、アクションスクリプト未対応");
 		nmmNewEnableCheckBox.setEnabled(true);
+		GridBagConstraints grid14_x0_y0 = new GridBagConstraints();
+		grid14_x0_y0.gridx = 0;
+		grid14_x0_y0.gridy = 0;
+		grid14_x0_y0.gridwidth = 5;
+//		grid14_x0_y0.weightx = 1.0;
+		grid14_x0_y0.anchor = GridBagConstraints.NORTH;
+		grid14_x0_y0.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x0_y0.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(new JLabel("新機能を全てオフにすると以前と同じ。長時間ローカル変換等はオフで試して下さい"), grid14_x0_y0);
 		GridBagConstraints grid14_x0_y1 = new GridBagConstraints();
 		grid14_x0_y1.gridx = 0;
 		grid14_x0_y1.gridy = 1;
@@ -2486,7 +2495,6 @@ public class MainFrame extends JFrame {
 	private final JRadioButton sharedNgHighRadioButton = new JRadioButton();
 	private JLabel sharedNgLabel;
 	private JPanel sharedNgPanel;
-
 	public static StringBuffer history = new StringBuffer("");
 
 	public void DoButton_actionPerformed(ActionEvent e) {
@@ -2597,45 +2605,28 @@ public class MainFrame extends JFrame {
 	// 変換動画再生
 	private void playConvertedVideo_actionPerformed(ActionEvent e) {
 		try {
-			File convertedVideo = null;
-			ConvertingSetting setting = getSetting();
-			Converter conv = new Converter(
-					VideoID_TextField.getText(),
-					WayBackField.getText(),
-					setting,
-					statusBar,
-					new ConvertStopFlag(null, null, null, null),
-					new JLabel(),
-					new JLabel());
-			if (setting.isVideoFixFileName()) {
-				File folder = setting.getConvFixFileNameFolder();
-				String path = conv.detectTitleFromConvertedVideo(folder);
-				if (path == null || path.isEmpty()){
-					sendtext("検索しましたが動画が見つかりません。");
-					return;
-				}
-				convertedVideo = new File(folder, path);
-			} else {
-				convertedVideo = setting.getConvertedVideoFile();
-			}
-			if (convertedVideo == null || !convertedVideo.canRead()){
-				sendtext("変換後の動画がありません。");
+			if (converter == null || !converter.isFinished()) {
+				sendtext("変換が出来ていません");
 				return;
 			}
-			ArrayList<String> cmd = new ArrayList<String>();
-			cmd.add("cmd.exe");
-			cmd.add("/C");
-			cmd.add(convertedVideo.getAbsolutePath());
-			ProcessBuilder pb = new ProcessBuilder(cmd);
-			pb.start();
+			File convertedVideo = converter.getConvertedVideoFile();
+			if (convertedVideo == null || !convertedVideo.canRead()){
+				sendtext("変換後の動画がありません：" + convertedVideo.getName());
+				return;
+			}
+			if(vplayer!=null && vplayer.isAlive()){
+				vplayer.interrupt();
+				try {
+					vplayer.join(1000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}
+			vplayer = new VPlayer(convertedVideo, statusBar);
+			vplayer.start();
 			return ;
 		} catch(NullPointerException ex){
 			sendtext("(´∀｀)＜ぬるぽ\nガッ");
-			ex.printStackTrace();
-		} catch (FileNotFoundException ex) {
-			sendtext(ex.getMessage());
-			ex.printStackTrace();
-		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -2684,11 +2675,6 @@ public class MainFrame extends JFrame {
 			} else {
 				inputVideo = setting.getVideoFile();
 			}
-//			} else {
-//				textout.setText("変換実施中。お待ちください。");
-//				needStop = false;
-//				return;
-//			}
 			if (inputVideo == null || !inputVideo.canRead()){
 				textout.setText("ダウンロード動画がありません。");
 				return;
@@ -3595,6 +3581,8 @@ s	 * @return javax.swing.JPanel
 	private JLabel ShadowKindLabel = null;
 	@SuppressWarnings("rawtypes")
 	private JComboBox ShadowComboBox = null;
+
+	private VPlayer vplayer = null;
 
 	/**
 	 * Initialize FFmpegOptionComboBox

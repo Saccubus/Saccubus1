@@ -1364,7 +1364,7 @@ public class ConvertingSetting {
 			new StringBuffer(),
 			prop.getProperty(PROP_OPAQUE_RATE, "1.0"),
 			Boolean.parseBoolean(prop.getProperty(PROP_SWF_3PATH, "true")),
-			Boolean.parseBoolean(prop.getProperty(PROP_CHECK_FPS, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_CHECK_FPS, "true")),
 			Double.parseDouble(prop.getProperty(PROP_FPS_UP, "25.0")),
 			Double.parseDouble(prop.getProperty(PROP_FPS_MIN, "23.0")),
 			Boolean.parseBoolean(prop.getProperty(PROP_SOUNDONLY, "false")),

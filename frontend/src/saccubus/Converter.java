@@ -13,10 +13,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
@@ -242,25 +244,6 @@ public class Converter extends Thread {
 		errorLog = errorLog.trim();
 		int index = errorLog.lastIndexOf("\n");
 		String lasterror = errorLog.substring(index+1);
-		if(index >= 0){
-			errorLog = errorLog.substring(0, index);
-		}else{
-			errorLog = null;
-		}
-		return lasterror;
-	}
-	public String getLastValidError(){
-		if (errorLog==null)
-			return "";
-		errorLog = errorLog.trim();
-		int index = errorLog.lastIndexOf(":");
-		index = Math.max(index, errorLog.lastIndexOf("\n"));
-		String lasterror = errorLog.substring(index+1);
-		if(index >= 0){
-			errorLog = errorLog.substring(0, index);
-		}else{
-			errorLog = null;
-		}
 		return lasterror;
 	}
 
@@ -724,8 +707,8 @@ public class Converter extends Thread {
 			}
 			sendtext("動画の保存を終了");
 		}catch(NullPointerException e){
+			sendtext("(´∀｀)＜ぬるぽ\nガッ\n");
 			e.printStackTrace();
-			sendtext("ぬるぽ：バグってるよ：動画の保存");
 		}
 		return true;
 	}
@@ -1509,7 +1492,7 @@ public class Converter extends Thread {
 		} else {
 			if(errorLog==null||errorLog.isEmpty())
 				errorLog = ffmpeg.getLastError().toString();
-			sendtext("変換エラー：(" + code + ") "+ getLastValidError());
+			sendtext("変換エラー：(" + code + ") "+ getLastError());
 		}
 		result = "97";
 		return false;
@@ -1544,6 +1527,7 @@ public class Converter extends Thread {
 	private JLabel watchArea = new JLabel();
 	private ArrayList<CommentReplace> CommentReplaceList = new ArrayList<CommentReplace>();
 	private boolean checkFps;
+	private File imgDir;
 
 	void downloadPage(String url){
 		ArrayList<String[]> plist = new ArrayList<String[]>();
@@ -1869,6 +1853,7 @@ public class Converter extends Thread {
 			System.out.println("変換時間　" + Stopwatch.formatLatency());
 			System.out.println("LastStatus:[" + result + "]" + Status.getText());
 			System.out.println("VideoInfo: " + MovieInfo.getText());
+			System.out.println("LastFrame: "+ ffmpeg.getLastFrame());
 			if(sbRet!=null){
 				sbRet.append("RESULT=" + result + "\n");
 				if(!dateUserFirst.isEmpty()){
@@ -1909,12 +1894,12 @@ public class Converter extends Thread {
 			e.printStackTrace();
 		}
 		if (fwsFile != null){
-			VideoFile = fwsFile;
+//			VideoFile = fwsFile;
 			video = fwsFile;
 		}else{
 			if (Cws2Fws.isCws(video)){
 				sendtext("SWFのFWS変換に失敗しました");
-				return false;
+				//return false;
 			}
 		}
 		VideofileInfo info = new VideofileInfo(video, ffmpeg, Status, StopFlag, Stopwatch);
@@ -1980,8 +1965,10 @@ public class Converter extends Thread {
 
 		//replaceチェック
 		if(Setting.getReplaceOptions()!=null){
+//			replace3option(Setting.getReplaceOptions());
 			replace3option(Setting.getReplaceOptions());
 		}
+//		ffmpegVfOption = getvfOption();
 		ffmpegVfOption = getvfOption();
 
 		inSize = videoAspect.getSize();
@@ -1998,7 +1985,8 @@ public class Converter extends Thread {
 			outAspect = toAspect(outSize, outAspect);
 			setSize = outSize;
 			printOutputSize(setSize,outAspect);
-			replaceSetSize();
+//			replaceSetSize();
+			outputOptionMap.put("-s", setSize.replace(':', 'x'));
 			return true;
 		}
 		if (getSameAspectMaxFlag()){
@@ -2019,7 +2007,8 @@ public class Converter extends Thread {
 				outAspect = new Aspect(outw, outh);
 				setSize = outAspect.getSize();
 				printOutputSize(setSize,outAspect);
-				replaceSetSize();
+//				replaceSetSize();
+				outputOptionMap.put("-s", setSize.replace(':', 'x'));
 				return true;
 			}
 		}
@@ -2036,7 +2025,7 @@ public class Converter extends Thread {
 			printOutputSize(inSize,outAspect);
 		}
 		// framerate
-		String framerate = getFramerete();
+		String framerate = getFramerate();
 		if(!framerate.isEmpty()){
 			System.out.println(" framerate="+framerate);
 		}
@@ -2107,7 +2096,7 @@ public class Converter extends Thread {
 		}
 		return new Aspect(width, height);
 	}
-
+/*
 	private String getSetSize() {
  		String[] list = OutOption.split(" +");
 		for(int i=0;i<list.length;i++){
@@ -2121,11 +2110,18 @@ public class Converter extends Thread {
 		}
 		return null;
 	}
-
+*/
+	private String getSetSize(){
+		String size = outputOptionMap.get("-s");
+		if(size!=null && size.contains("x"))
+			return size.replace('x', ':');
+		return null;
+	}
+/*
 	private void replaceSetSize(){
 		OutOption = replaceOption(OutOption, "-s", setSize.replace(':', 'x'));
 	}
-
+*/
 	private String getPadOption() {
 		return getFromVfOpotion("pad=");
 	}
@@ -2145,7 +2141,7 @@ public class Converter extends Thread {
 		}
 		return outs;
 	}
-
+/*
 	private boolean getSameAspectMaxFlag(){
 		//-samx
 		if(OutOption.contains("-samx")){
@@ -2154,7 +2150,12 @@ public class Converter extends Thread {
 		}
 		return false;
 	}
-
+ */
+	private boolean getSameAspectMaxFlag(){
+		//-samx
+		return outputOptionMap.remove("-samx") != null;
+	}
+/*
 	private String getFramerete(){
 		//-r or -r:v
 		String str = "";
@@ -2180,6 +2181,21 @@ public class Converter extends Thread {
 		}
 		return str.substring(index, index2);
 	}
+*/
+	private String getFramerate(){
+		//-r or -r:v
+		String value = "-r";
+		value = outputOptionMap.get("-r");
+		if(value==null)
+			value = mainOptionMap.get("-r");
+		if(value==null)
+			value = outputOptionMap.get("-r:v");
+		if(value==null)
+			value = mainOptionMap.get("-r:v");
+		if(value==null)
+			value = "";
+		return value;
+	}
 
 	private String getFromVfOpotion(String prefix){
 		for(String arg: getFFmpegVfOption().split(",")){
@@ -2202,6 +2218,7 @@ public class Converter extends Thread {
 		if(addOption.isEmpty()){
 			return true;
 		}
+/*
 		String[] list = addOption.split(" +");
 		LinkedHashMap<String,String> optionMap = new LinkedHashMap<String, String>(16);
 		String key = "";
@@ -2223,11 +2240,18 @@ public class Converter extends Thread {
 			}
 			replace3option(optionMap);
 			return true;
+*/
+		setOptionMap(addOption, addOptionMap);
+//		replace3option(addOptionMap);
+//		仕様変更 MainOpt InOptは置き換えない
+		for(String key : addOptionMap.keySet())
+			outputOptionMap.put(key, addOptionMap.get(key));
+		return true;
 	}
 
 	private static final int CODE_CONVERTING_ABORTED = 100;
 
-	private int convFLV_fpsUp(File videoin, File videoout, String addoption){
+	private int convFLV_fpsUp(File videoin, File videoout){
 		int code = -1;
 		/*
 		 * ffmpeg -r fpsUp
@@ -2236,15 +2260,19 @@ public class Converter extends Thread {
 		String txt = MovieInfo.getText();
 		MovieInfo.setText("FLV "+fpsUp+"fps," + txt);
 		ffmpeg.setCmd("-y ");
-		ffmpeg.addCmd(MainOption);
+		ffmpeg.addMap(mainOptionMap);
 		ffmpeg.addCmd(" ");
-		ffmpeg.addCmd(InOption);
+		ffmpeg.addMap(inputOptionMap);
 		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(videoin);
 		ffmpeg.addCmd(" -r " + fpsUp);
-		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -f mp4 ");
-		ffmpeg.addCmd(addoption);
-		ffmpeg.addCmd(" ");
+		String out_option_t = outputOptionMap.get("-t");
+		if(out_option_t!=null)
+			ffmpeg.addCmd(" -t "+out_option_t);
+		String out_option_ss = outputOptionMap.get("-ss");
+		if(out_option_ss!=null)
+			ffmpeg.addCmd(" -ss "+out_option_ss);
+		ffmpeg.addCmd(" -acodec copy -vsync 1 -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -f mp4 ");
 		//ffmpeg.addCmd(" -acodec copy -vcodec mpeg4 -crf 16 -pix_fmt yuv420p -f mp4 ");
 		ffmpeg.addFile(videoout);
 
@@ -2252,6 +2280,21 @@ public class Converter extends Thread {
 		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 		errorLog = ffmpeg.getErrotLog().toString();
 		MovieInfo.setText(txt);
+		if(code==0){
+			// -itsoffset削除
+			inputOptionMap.remove("-itsoffset");
+			mainOptionMap.remove("-itsoffset");
+			// -ss削除
+			inputOptionMap.remove("-ss");
+			mainOptionMap.remove("-ss");
+			// outの -ss はそのまま残す
+			out_option_ss = outputOptionMap.get("-ss");
+			if(out_option_ss!=null){
+				// 出力の-itsoffsetは -ssによる
+				inputOptionMap.put("-itsoffset", out_option_ss);
+			}
+			// -t はそのまま残して良い
+		}
 		return code;
 	}
 
@@ -2264,13 +2307,19 @@ public class Converter extends Thread {
 		 * ffmpeg -r 25.0
 		 */
 		ffmpeg.setCmd("-y ");
-		ffmpeg.addCmd(MainOption);
+		ffmpeg.addMap(mainOptionMap);
 		ffmpeg.addCmd(" ");
-		ffmpeg.addCmd(InOption);
+		ffmpeg.addMap(inputOptionMap);
 		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(videoin);
+		String out_option_t = outputOptionMap.get("-t");
+		if(out_option_t!=null)
+			ffmpeg.addCmd(" -t "+out_option_t);
+		String out_option_ss = outputOptionMap.get("-ss");
+		if(out_option_ss!=null)
+			ffmpeg.addCmd(" -ss "+out_option_ss);
 		ffmpeg.addCmd(" -r "+fpsUp);
-		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -f mp4 ");
+		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip  -pix_fmt yuv420p -f mp4 ");
 		//ffmpeg.addCmd(" -r 25 -acodec copy -vcodec mpeg4 -crf 18 -pix_fmt yuv420p -f mp4 ");
 		ffmpeg.addFile(videoout);
 
@@ -2278,6 +2327,20 @@ public class Converter extends Thread {
 		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 		errorLog = ffmpeg.getErrotLog().toString();
 		MovieInfo.setText(txt);
+		if(code==0){
+			// -itsoffset削除
+			inputOptionMap.remove("-itsoffset");
+			mainOptionMap.remove("-itsoffset");
+			// -ss削除
+			inputOptionMap.remove("-ss");
+			mainOptionMap.remove("-ss");
+			out_option_ss = outputOptionMap.get("-ss");
+			if(out_option_ss!=null){
+				// 出力の-itsoffsetは -ssによる
+				inputOptionMap.put("-itsoffset", out_option_ss);
+			}
+			// -t はそのまま残して良い
+		}
 		return code;
 	}
 
@@ -2303,7 +2366,7 @@ public class Converter extends Thread {
 		return code;
 	}
 
-	private int convJPG_MP4(File videoin, File videoout, String incmd){
+	private int convJPG_MP4(File videoin, File videoout){
 		int code = -1;
 		/*
 		 * JPEGファイルをMP4形式に合成
@@ -2312,11 +2375,88 @@ public class Converter extends Thread {
 		System.out.println("Tring JPG to .MP4");
 		String txt = MovieInfo.getText();
 		MovieInfo.setText("JPG->MP4," + txt);
+		//
+		// frame check
+		//
+		// TODO JPG切替速度指定する?
+		String frames = ffmpeg.getLastFrame();
+		int frame = 0;
+		int index = frames.indexOf("frame=");
+		if(index >=0){
+			frames = frames.substring(index+6).trim();
+			index = (frames+" ").indexOf(" ");
+			frames = frames.substring(0, index);
+			try{
+				frame = Integer.decode(frames);
+			}catch(NumberFormatException e){
+				frame = 0;
+			}
+		}
+		//1.jpgを0.jpgにコピーする
+		// TODO -itsoffset -ssオプションでできるはず
+		if(imgDir.isDirectory()){
+			File jpg1 = new File(imgDir,"1.jpg");
+			File jpg0 = new File(imgDir,"0.jpg");
+			if(jpg1.isFile()){
+				if(jpg0.isFile() && jpg0.delete())
+						;
+				FileInputStream fis = null;
+				FileOutputStream fos = null;
+				byte[] buf;
+				try{
+					fis = new FileInputStream(jpg1);
+					fos = new FileOutputStream(jpg0);
+					buf = new byte[4096];
+					int k = 0;
+					while((k = fis.read(buf, 0, buf.length))>0){
+						fos.write(buf, 0, k);
+					}
+				}catch(IOException e){
+				}finally{
+					try{
+						if(fis!=null)
+							fis.close();
+						if(fos!=null){
+							fos.flush();
+							fos.close();
+						}
+					}catch(Exception e){
+					}
+				}
+				// copy 1.jpg->0.jpg
+			}
+		}
+		//frame += 1;
+		if(frame == 0)
+			frame = 1;
+		double rate = 1.0;
+		if(videoLength > 0 && frame > 1){
+			rate = (double)frame / (double)videoLength;
+		}
+		System.out.printf("Frame= %d, Rate= %.5f(fps)\n", frame, rate);
+		String out_t = outputOptionMap.get("-t");
+		double t0 = 0.0;
+		if(out_t!=null){
+			try{
+				t0 = Double.parseDouble(out_t);
+			}catch(NumberFormatException e){
+				t0 = 0.0;
+			}
+		}
+		double tl = (double)videoLength;
+		if(tl < 1.0)
+			tl = 1.0;
+		if(t0 > 1.0)
+			tl = Math.min(t0, tl);
+		if(frame > 1){
+			tl *= (double)(frame + 1) / frame;
+		}
 		//File outputAvi = new File(imgDir,"huffyuv.avi");
-		ffmpeg.setCmd(incmd);
+		ffmpeg.setCmd(" -loop 1 -shortest -r " + Double.toString(rate));
 		ffmpeg.addCmd(" -y -i ");
 		ffmpeg.addFile(videoin);
-		ffmpeg.addCmd(" -an -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -f mp4 ");
+		ffmpeg.addCmd(" -t " + tl);
+		ffmpeg.addCmd(" -an -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -pix_fmt yuv420p -f mp4 ");
 		//ffmpeg.addCmd(" -an -vcodec copy -crf 10 -f mp4 ");
 		//ffmpeg.addCmd(" -an -vcodec huffyuv -pix_fmt yuv420p -f avi ");
 		ffmpeg.addFile(videoout);
@@ -2332,7 +2472,7 @@ public class Converter extends Thread {
 		int code = -1;
 		/*
 		 * 音声を合成
-		 * ffmpeg.exe -y -i fws_tmp.swf -itsoffset 1.0 -i avi4.avi
+		 * ffmpeg.exe -shortest -y -i fws_tmp.swf -itsoffset 1.0 -i avi4.avi
 		 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 		 */
 		System.out.println("Tring MP4+sound to .MP4");
@@ -2342,11 +2482,14 @@ public class Converter extends Thread {
 		}
 		String txt = MovieInfo.getText();
 		MovieInfo.setText("MP4 Mix," + txt);
-		ffmpeg.setCmd("-y -i ");
+		ffmpeg.setCmd("-y -shortest -i ");
 		ffmpeg.addFile(audioin);	// audio, must be FWS_SWF
 		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(videoin);	// visual
 		ffmpeg.addCmd(" -map 1:v -map 0:a ");
+		String out_option_t = outputOptionMap.get("-t");
+		if(out_option_t!=null)
+			ffmpeg.addCmd(" -t "+out_option_t);
 		ffmpeg.addCmd(" -r " + fps);
 		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -pix_fmt yuv420p -f mp4 ");
 		//ffmpeg.addCmd(" -r 25 -acodec copy -vcodec mpeg4 -crf 18 -pix_fmt yuv420p -f mp4 ");
@@ -2445,15 +2588,15 @@ public class Converter extends Thread {
 		if(checkFps && fps < fpsMin)
 			fps = fpsUp;
 		ffmpeg.setCmd("-y ");
-		ffmpeg.addCmd(MainOption);
+		ffmpeg.addMap(mainOptionMap);
 		ffmpeg.addCmd(" -loop 1 -shortest -i ");
 		ffmpeg.addFile(thumbfile);
 		ffmpeg.addCmd(" ");
-		ffmpeg.addCmd(InOption);
+		ffmpeg.addMap(inputOptionMap);
 		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(input);
 		ffmpeg.addCmd(" -map 0:v -map 1:a ");
-		ffmpeg.addCmd(OutOption);
+		ffmpeg.addMap(outputOptionMap);
 		ffmpeg.addCmd(" -r " + fpsUp);
 		ffmpeg.addCmd(" -metadata");
 		ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
@@ -2480,8 +2623,10 @@ public class Converter extends Thread {
 	private int converting_video() {
 		int code = -1;
 		File input = VideoFile;
+		if(fwsFile!=null)
+			input = fwsFile;
 		String txt = MovieInfo.getText();
-		if(checkFps && frameRate == 0.0){
+		if(frameRate == 0.0 && (checkFps||Setting.canSoundOnly()||Setting.isSwfTo3Path())){
 			System.out.println("映像ストリームのデコードに失敗しました");
 			if(!Setting.canSoundOnly()){
 				errorLog = "映像ストリームのデコードに失敗しました";
@@ -2493,20 +2638,21 @@ public class Converter extends Thread {
 			errorLog = ffmpeg.getErrotLog().toString();
 			return code;
 		}
-		if (!Cws2Fws.isFws(VideoFile)) {
+		if (!Cws2Fws.isFws(input) && !Cws2Fws.isCws(input)) {
 			// fps up check
 			if(checkFps && frameRate < fpsMin){
 				File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
-				code = convFLV_fpsUp(input, outputFps, addOption);
+				code = convFLV_fpsUp(input, outputFps);
+				errorLog = ffmpeg.getErrotLog().toString();
 				if (code == 0){
 					//fps変換成功
 					input = outputFps;
 				}else{
-					if(code == CODE_CONVERTING_ABORTED)
-						System.out.println("変換が中断されました。従来の変換を続行");
-					else
-						System.out.println("("+code+")FLVのfps変換に失敗。従来の変換を続行");
-					errorLog = ffmpeg.getErrotLog().toString();
+					if(code != CODE_CONVERTING_ABORTED){
+						System.out.println("("+code+")fps変換に失敗 ");
+						errorLog += "\nfps変換に失敗 "+ getLastError();
+					}
+					return code;
 				}
 			}
 			System.out.println("FLV 従来通り");
@@ -2515,13 +2661,13 @@ public class Converter extends Thread {
 			 * ffmpeg.exe -y mainoption inoption -i infile outoptiont [vhookOption] outfile
 			 */
 			ffmpeg.setCmd("-y ");
-			ffmpeg.addCmd(MainOption);
+			ffmpeg.addMap(mainOptionMap);
 			ffmpeg.addCmd(" ");
-			ffmpeg.addCmd(InOption);
+			ffmpeg.addMap(inputOptionMap);
 			ffmpeg.addCmd(" -i ");
 			ffmpeg.addFile(input);
 			ffmpeg.addCmd(" ");
-			ffmpeg.addCmd(OutOption);
+			ffmpeg.addMap(outputOptionMap);
 			ffmpeg.addCmd(" -metadata");
 			ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
 			ffmpeg.addCmd(" -metadata");
@@ -2551,15 +2697,16 @@ public class Converter extends Thread {
 					 */
 					File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
 					code = convSWF_25fps(input, outputFps);
+					errorLog = ffmpeg.getErrotLog().toString();
 					if (code == 0){
 						//fps変換成功
 						input = outputFps;
 					}else{
-						if(code == CODE_CONVERTING_ABORTED)
-							System.out.println("変換が中断されました。従来の変換を続行");
-						else
-							System.out.println("("+code+")FWSのfps変換に失敗。従来の変換を続行");
-						errorLog = ffmpeg.getErrotLog().toString();
+						if(code != CODE_CONVERTING_ABORTED){
+							System.out.println("("+code+")fps変換に失敗 ");
+							errorLog += "\nfps変換に失敗 "+ getLastError();
+						}
+						return code;
 					}
 				}
 
@@ -2569,13 +2716,13 @@ public class Converter extends Thread {
 				 * ffmpeg.exe -y mainoption inoption -i infile outoptiont [vhookOption] outfile
 				 */
 				ffmpeg.setCmd("-y ");
-				ffmpeg.addCmd(MainOption);
+				ffmpeg.addMap(mainOptionMap);
 				ffmpeg.addCmd(" ");
-				ffmpeg.addCmd(InOption);
+				ffmpeg.addMap(inputOptionMap);
 				ffmpeg.addCmd(" -i ");
-				ffmpeg.addFile(VideoFile);
+				ffmpeg.addFile(input);
 				ffmpeg.addCmd(" ");
-				ffmpeg.addCmd(OutOption);
+				ffmpeg.addMap(outputOptionMap);
 				ffmpeg.addCmd(" -metadata");
 				ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
 				ffmpeg.addCmd(" -metadata");
@@ -2602,94 +2749,37 @@ public class Converter extends Thread {
 				// try 3 path
 				/*
 				 * SWFファイルをJPEG形式に合成
-				 * ffmpeg.exe -r 25 -y -i fws_tmp.swf -an -vcodec copy -f image2 %03d.jpg
+				 * ffmpeg.exe -y -i fws_tmp.swf -an -vcodec copy -f image2 %03d.jpg
 				 */
 				//出力先を作る
-				File imgDir = Path.mkTemp("IMG"+VideoID);
+				imgDir = Path.mkTemp("IMG"+VideoID);
 				if(imgDir.mkdir())
 					System.out.println("Created folder - " + imgDir);
 				File outputImg = new File(imgDir,"%d.jpg");
 				code = convSWF_JPG(input, outputImg);
-				if (code != 0 && Setting.canSoundOnly()){
-					// jpegに変換できない場合は音声のみにする
-					code = convFLV_audio(input, ConvertedVideoFile);
+				errorLog = ffmpeg.getErrotLog().toString();
+				if(code!=0){
+					if (Setting.canSoundOnly()){
+						// jpegに変換できない場合は音声のみにする
+						code = convFLV_audio(input, ConvertedVideoFile);
+						errorLog = ffmpeg.getErrotLog().toString();
+					}
 					return code;
 				}
-				// frame check
-				String frames = ffmpeg.getLastFrame();
-				int frame = 0;
-				int index = frames.indexOf("frame=");
-				if(index >=0){
-					frames = frames.substring(index+6).trim();
-					index = (frames+" ").indexOf(" ");
-					frames = frames.substring(0, index);
-					try{
-						frame = Integer.decode(frames);
-					}catch(NumberFormatException e){
-						frame = 0;
-					}
-				}
-				//1.jpgを0.jpgにコピーする
-				if(imgDir.isDirectory()){
-					File jpg1 = new File(imgDir,"1.jpg");
-					File jpg0 = new File(imgDir,"0.jpg");
-					if(jpg1.isFile()){
-						if(jpg0.isFile() && jpg0.delete())
-								;
-						FileInputStream fis = null;
-						FileOutputStream fos = null;
-						byte[] buf;
-						try{
-							fis = new FileInputStream(jpg1);
-							fos = new FileOutputStream(jpg0);
-							buf = new byte[4096];
-							int k = 0;
-							while((k = fis.read(buf, 0, buf.length))>0){
-								fos.write(buf, 0, k);
-							}
-						}catch(IOException e){
-						}finally{
-							try{
-								if(fis!=null)
-									fis.close();
-								if(fos!=null){
-									fos.flush();
-									fos.close();
-								}
-							}catch(Exception e){
-							}
-						}
-						// copy 1.jpg->0.jpg
-					}
-				}
-				//frame += 1;
-				if(frame == 0)
-					frame = 1;
-				double rate = 1.0;
-				if(videoLength > 0){
-					rate = (double)frame / (double)videoLength;
-				}
-				System.out.printf("Frame= %d, Rate= %.5f(fps)\n", frame, rate);
 				/*
 				 * JPEGファイルをMP4形式に合成
 				 * ffmpeg.exe -r 1/4 -y -i %03d.jpg -an -vcodec huffyuv -f avi huffjpg.avi
 				 */
-				String inputCmd = " -loop 1 -shortest -r 1 ";
-				if(frame > 1){
-					inputCmd = " -loop 1 -shortest -r " + Double.toString(rate);
-				}
-				double tl = (double)videoLength;
-				if(frame > 1){
-					tl += (double)(frame + 1) / frame;
-				}
-				inputCmd += " -t " + tl;
-				//inputCmd += " -itsoffset " + Double.toString(frame1) + " ";
 				//出力
 				File outputAvi = new File(imgDir,"huffyuv.mp4");
-				code = convJPG_MP4(outputImg, outputAvi, inputCmd);
-				if (code != 0 && Setting.canSoundOnly()){
-					// jpegがmp4に変換できない場合は音声のみにする
-					code = convFLV_audio(input, ConvertedVideoFile);
+				code = convJPG_MP4(outputImg, outputAvi);
+				errorLog = ffmpeg.getErrotLog().toString();
+				if(code!=0){
+					if (Setting.canSoundOnly()){
+						// jpegがmp4に変換できない場合は音声のみにする
+						code = convFLV_audio(input, ConvertedVideoFile);
+						errorLog = ffmpeg.getErrotLog().toString();
+					}
 					return code;
 				}
 				/*
@@ -2699,9 +2789,13 @@ public class Converter extends Thread {
 				 */
 				File outputMix = new File(imgDir,"mix.mp4");
 				code = convMix(outputAvi, input, outputMix);
-				if (code != 0 && Setting.canSoundOnly()){
-					// 合成できない場合は音声のみにする
-					code = convFLV_audio(input, ConvertedVideoFile);
+				errorLog = ffmpeg.getErrotLog().toString();
+				if(code!=0){
+					if (Setting.canSoundOnly()){
+						// jpegがmp4に変換できない場合は音声のみにする
+						code = convFLV_audio(input, ConvertedVideoFile);
+						errorLog = ffmpeg.getErrotLog().toString();
+					}
 					return code;
 				}
 				/*
@@ -2712,13 +2806,13 @@ public class Converter extends Thread {
 				System.out.println("Tring MIX & comment to .mp4");
 				MovieInfo.setText("FWS comment,"+txt);
 				ffmpeg.setCmd("-y ");
-				ffmpeg.addCmd(MainOption);
+				ffmpeg.addMap(mainOptionMap);
 				ffmpeg.addCmd(" ");
-				ffmpeg.addCmd(InOption);
+				ffmpeg.addMap(inputOptionMap);
 				ffmpeg.addCmd(" -i ");
 				ffmpeg.addFile(outputMix);
 				ffmpeg.addCmd(" ");
-				ffmpeg.addCmd(OutOption);
+				ffmpeg.addMap(outputOptionMap);
 				ffmpeg.addCmd(" -metadata");
 				ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
 				ffmpeg.addCmd(" -metadata");
@@ -2737,9 +2831,12 @@ public class Converter extends Thread {
 				System.out.println("arg:" + ffmpeg.getCmd());
 				code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 				errorLog = ffmpeg.getErrotLog().toString();
-				if (code != 0 && Setting.canSoundOnly()){
-					// 変換できない場合は音声のみにする
-					code = convFLV_audio(input, ConvertedVideoFile);
+				if(code!=0){
+					if (Setting.canSoundOnly()){
+						// jpegがmp4に変換できない場合は音声のみにする
+						code = convFLV_audio(input, ConvertedVideoFile);
+						errorLog = ffmpeg.getErrotLog().toString();
+					}
 					return code;
 				}
 			}
@@ -2875,8 +2972,8 @@ public class Converter extends Thread {
 			if(!extra.isEmpty()){
 				ffmpeg.addCmd("|--extra-mode:" + extra.replaceAll(" +", " ").trim().replace(' ', '+'));
 			}
-			if(!getFramerete().isEmpty()){
-				ffmpeg.addCmd("|--fr:" + getFramerete());
+			if(!getFramerate().isEmpty()){
+				ffmpeg.addCmd("|--fr:" + getFramerate());
 			}
 			if(Setting.isEnableCA()){
 				ffmpeg.addCmd("|--enable-CA");
@@ -3026,6 +3123,122 @@ public class Converter extends Thread {
 
 	private String ffmpegVfOption = "";
 
+	private LinkedHashMap<String, String> inputOptionMap = new LinkedHashMap<String, String>(16);
+
+	private LinkedHashMap<String, String> outputOptionMap = new LinkedHashMap<String, String>(40);
+
+	private LinkedHashMap<String, String> mainOptionMap = new LinkedHashMap<String, String>(16);
+
+	private LinkedHashMap<String, String> addOptionMap = new LinkedHashMap<String, String>(16);
+	private final String[] SINGLE_KEYWORD = {"-an","-vn","-y","-shortest","-loop_input","-samx","-help","-h",};
+
+	private boolean isSingleKeyword(String keyword){
+		for(String s:SINGLE_KEYWORD){
+			//前のキーワード処理
+			if(keyword.equals(s))
+				return true;
+		}
+		return false;
+	}
+
+	private boolean setOptionMap(String option, HashMap<String,String> optionMap){
+		if (option==null || option.isEmpty()){
+			return false;
+		}
+		Matcher m = Pattern.compile("[^ ]+").matcher(option);
+		int start = 0;
+		int end = 0;
+		int flag = 0;
+		// 0: for keyword, 1: for parameter, 2: for additional parameter or next keyword
+		boolean processing_quote = false;
+		String w = "";
+		String keyword = null;
+		String parameter = null;
+		String non_keyword = "";
+		int begin_quote = 0;
+		int end_quote = 0;
+		char c = 0;
+		while(m.find()){
+			start = m.start();
+			end = m.end();
+			w = option.substring(start, end);	//w is word
+			c = w.charAt(0);
+			if(processing_quote){
+				// ""スキップ中
+				if(start < end_quote)
+					continue;
+				processing_quote = false;
+				end_quote = 0;
+			}
+			if(c=='"'){
+				//quoteの最後まで実行してスキップさせる
+				begin_quote = start;
+				end_quote = option.indexOf("\" ", begin_quote+1);
+				if(end_quote<0){
+					end_quote = option.length();	//文字列の終わりまで
+				}
+				w = option.substring(begin_quote, end_quote);
+				if(w.charAt(w.length()-1)!='"'){
+					w += "\"";	//parameterは""を含む
+				}
+				processing_quote = true;
+			}
+			switch(flag){
+			case 0:
+				if(c!='-'){
+					System.out.print("警告　キーワードではありません:"+w);
+					non_keyword += w + " ";
+					continue;
+				}
+				keyword = w;
+				parameter = "";
+				flag = 1;
+				continue;
+			case 1:
+				if(c=='-'){
+					//前のキーワードチェック
+					if(isSingleKeyword(keyword)){
+						//前のキーワード処理
+						optionMap.put(keyword, "");
+						keyword = w;
+						parameter = "";
+						flag = 1;
+						continue;
+					}
+					System.out.print("警告　'-'使っています:"+w);
+				}
+				parameter = w + " ";
+				flag = 2;
+				continue;
+			case 2:
+				if(c=='-'){
+					//次のキーワード?
+					//前のパラメータ処理
+					if(keyword.equals("-map"))
+						optionMap.put(keyword+" "+parameter.trim(), "");
+					else
+						optionMap.put(keyword, parameter.trim());
+					keyword = w;
+					parameter = "";
+					flag = 1;
+					continue;
+				}
+				parameter += w + " ";
+				flag = 2;
+				continue;
+			}
+			System.out.println("バグってる");
+		}
+		//parameterが残っていたら登録(出力ファイル?)
+		if(parameter!=null){
+			optionMap.put(keyword, parameter.trim());
+		}
+		if(!non_keyword.isEmpty()){
+			optionMap.put(":non_keyord", non_keyword.trim());
+		}
+		return true;
+	}
+
 	boolean detectOption(boolean isWide, boolean isQ) {
 		File option_file = null;
 		ffmpegOptionName = "直接入力";
@@ -3076,9 +3289,12 @@ public class Converter extends Thread {
 		if(ExtOption != null && !ExtOption.startsWith(".")){
 			ExtOption = "."+ExtOption;
 		}
+		setOptionMap(InOption, inputOptionMap);
+		setOptionMap(MainOption, mainOptionMap);
+		setOptionMap(OutOption, outputOptionMap);
 		return true;
 	}
-
+/*
 	private void replace3option(Map<String,String> map){
 		for(Entry<String, String> pair : map.entrySet()){
 			String optMain = replaceOption(MainOption,pair.getKey(),pair.getValue());
@@ -3096,12 +3312,43 @@ public class Converter extends Thread {
 			}
 		}
 	}
+*/
+	private void replace3option(Map<String, String> map) {
+		boolean replaced = false;
+		for(Entry<String, String> pair : map.entrySet()){
+			String key = pair.getKey();
+			String value = pair.getValue();
+			replaced = false;
+			if(mainOptionMap.containsKey(key)){
+				mainOptionMap.put(key, value);
+				replaced = true;
+			}
+			if(inputOptionMap.containsKey(key)){
+				inputOptionMap.put(key, value);
+				replaced = true;
+			}
+			if(outputOptionMap.containsKey(key)){
+				outputOptionMap.put(key, value);
+				replaced = true;
+			}
+			if(!replaced){
+				LinkedHashMap<String,String> newoptionmap = new LinkedHashMap<String, String>(40);
+				// 新しいkeyは OuOptionの先頭に追加
+				newoptionmap.put(key, value);
+				newoptionmap.putAll(outputOptionMap);
+				outputOptionMap.clear();
+				outputOptionMap = newoptionmap;
+			}
+		}
+	}
+
 	/**
 	 * @param option :String
 	 * @param key
 	 * @param value
 	 * @return replaced :String
 	 */
+/*
 	private String replaceOption(String option, String key, String value) {
 		key += " ";
 		if (option!=null && !option.isEmpty() && option.contains(key)){
@@ -3120,7 +3367,8 @@ public class Converter extends Thread {
 		}
 		return null;
 	}
-
+*/
+/*
 	private String getvfOption() {
 		String vfIn, vfOut, vfMain;
 		vfIn = getvfOption(InOption);
@@ -3141,9 +3389,33 @@ public class Converter extends Thread {
 		}
 		return vfIn;
 	}
+*/
+	private String getvfOption() {
+		String vfIn, vfOut, vfMain, vfOpt;
+		vfIn = getvfOption(inputOptionMap);
+		deletevfOption(inputOptionMap);
+		vfOut = getvfOption(outputOptionMap);
+		deletevfOption(outputOptionMap);
+		vfMain = getvfOption(mainOptionMap);
+		deletevfOption(mainOptionMap);
+		vfOpt = vfIn;
+		if (vfOpt.isEmpty()){
+			vfOpt = vfMain;
+		} else if (!vfMain.isEmpty()){
+			vfOpt += "," + vfMain;
+		}
+		if (vfOpt.isEmpty()){
+			vfOpt = vfOut;
+		} else if (!vfOut.isEmpty()){
+			vfOpt += "," + vfOut;
+		}
+		return vfOpt;
+	}
+
 	private static final String VFILTER_FLAG = "-vfilters";
 	private static final String VFILTER_FLAG2 = "-vf";
 	private String vfilter_flag = VFILTER_FLAG;
+/*
 	private String getvfOption(String option){
 		if (option == null){
 			return "";
@@ -3164,6 +3436,25 @@ public class Converter extends Thread {
 		option = option.substring(0, index);
 		return option;
 	}
+*/
+	private String getvfOption(Map<String,String> map){
+		if(map==null)
+			return "";
+		String vfopt = null;
+		vfopt = map.get(VFILTER_FLAG);
+		if(vfopt==null){
+			vfopt = map.get(VFILTER_FLAG2);
+		}
+		if(vfopt==null)
+			return "";
+		vfopt = vfopt.trim();
+		if(vfopt.charAt(0)=='"')
+			vfopt = vfopt.substring(1);
+		if(vfopt.charAt(vfopt.length()-1)=='"')
+			vfopt = vfopt.substring(0, vfopt.length()-1);
+		return vfopt;
+	}
+/*
 	private String deletevfOption(String option, String vfoption){
 		if (option == null){
 			return "";
@@ -3171,9 +3462,18 @@ public class Converter extends Thread {
 		return option.replace(vfilter_flag,"").replace(vfoption, "")
 			.replaceAll(" +", " ");
 	}
+*/
+	private void deletevfOption(Map<String, String> map) {
+		if(map==null)
+			return;
+		map.remove(VFILTER_FLAG);
+		map.remove(VFILTER_FLAG2);
+	}
+/*
 	public String getInOption(){
 			return InOption;
 	}
+*/
 	public String getFFmpegOptionName() {
 		return ffmpegOptionName;
 	}
@@ -3370,6 +3670,10 @@ public class Converter extends Thread {
 			path = path.substring(0, path.lastIndexOf("."));
 		}
 		return path;
+	}
+
+	public File getConvertedVideoFile() {
+		return ConvertedVideoFile;
 	}
 
 	/*

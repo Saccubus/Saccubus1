@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +39,16 @@ public class FFmpeg {
 
 	public void addCmd(String string) {
 		sb.append(string);
+	}
+
+	public void addMap(LinkedHashMap<String,String> map){
+		String key = "";
+		Iterator<String> it = map.keySet().iterator();
+		while (it.hasNext()) {
+			key = (String) it.next();
+			sb.append(key + " " + map.get(key) + " ");
+		}
+		sb.toString();
 	}
 
 	public void addFile(File file) {
