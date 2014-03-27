@@ -2616,11 +2616,6 @@ public class MainFrame extends JFrame {
 			}
 			if(vplayer!=null && vplayer.isAlive()){
 				vplayer.interrupt();
-				try {
-					vplayer.join(1000);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
 			}
 			vplayer = new VPlayer(convertedVideo, statusBar);
 			vplayer.start();
