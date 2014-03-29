@@ -97,7 +97,7 @@ public class FFmpeg {
 			pb = new ProcessBuilder(getCmdArrayList());
 			pb.redirectErrorStream(true);
 			process = pb.start();
-			ebr = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			ebr = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
 			String e;
 			while ((e = ebr.readLine()) != null) {
 				callback.doEveryLoop(e);
