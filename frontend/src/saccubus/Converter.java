@@ -2378,7 +2378,7 @@ public class Converter extends Thread {
 		//
 		// frame check
 		//
-		// TODO JPG切替速度指定する?
+		// JPG切替速度指定する?
 		String frames = ffmpeg.getLastFrame();
 		int frame = 0;
 		int index = frames.indexOf("frame=");
@@ -2392,8 +2392,8 @@ public class Converter extends Thread {
 				frame = 0;
 			}
 		}
+/*
 		//1.jpgを0.jpgにコピーする
-		// TODO -itsoffset -ssオプションでできるはず
 		if(imgDir.isDirectory()){
 			File jpg1 = new File(imgDir,"1.jpg");
 			File jpg0 = new File(imgDir,"0.jpg");
@@ -2427,6 +2427,7 @@ public class Converter extends Thread {
 			}
 		}
 		//frame += 1;
+*/
 		if(frame == 0)
 			frame = 1;
 		double rate = 1.0;
@@ -2444,18 +2445,25 @@ public class Converter extends Thread {
 			}
 		}
 		double tl = (double)videoLength;
-		if(tl < 1.0)
-			tl = 1.0;
-		if(t0 > 1.0)
+		if(tl == 0.0)
+			tl = t0;
+		else if(t0 != 0.0)
 			tl = Math.min(t0, tl);
-		if(frame > 1){
-			tl *= (double)(frame + 1) / frame;
+		// tl==0(情報なし) または tlは最小長
+		double length_frame = 1.0 /rate;
+		System.out.printf("Frame= %.2f(sec/frame), Rate= %.5f(fps)\n", length_frame, rate);
+		if(tl != 0.0){
+			tl += length_frame;
 		}
+		System.out.printf("Frame= %d, Rate= %.5f(fps)\n", frame, rate);
+
 		//File outputAvi = new File(imgDir,"huffyuv.avi");
 		ffmpeg.setCmd(" -loop 1 -shortest -r " + Double.toString(rate));
+		ffmpeg.addCmd(" -itsoffset " + Double.toString(length_frame));
 		ffmpeg.addCmd(" -y -i ");
 		ffmpeg.addFile(videoin);
-		ffmpeg.addCmd(" -t " + tl);
+		if(tl!=0.0)
+			ffmpeg.addCmd(" -t " + tl);
 		ffmpeg.addCmd(" -an -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -pix_fmt yuv420p -f mp4 ");
 		//ffmpeg.addCmd(" -an -vcodec copy -crf 10 -f mp4 ");
 		//ffmpeg.addCmd(" -an -vcodec huffyuv -pix_fmt yuv420p -f avi ");
