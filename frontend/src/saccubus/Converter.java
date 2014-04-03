@@ -1485,13 +1485,15 @@ public class Converter extends Thread {
 		}
 		if (code == 0) {
 			sendtext("変換が正常に終了しました。");
-			System.out.println(ffmpeg.getLastFrame());
+			if(ffmpeg!=null)
+				System.out.println(ffmpeg.getLastFrame());
 			return true;
 		} else if (code == CODE_CONVERTING_ABORTED) { /*中断*/
 
 		} else {
 			if(errorLog==null||errorLog.isEmpty())
-				errorLog = ffmpeg.getLastError().toString();
+				if(ffmpeg!=null)
+					errorLog = ffmpeg.getLastError().toString();
 			sendtext("変換エラー：(" + code + ") "+ getLastError());
 		}
 		result = "97";
@@ -1853,7 +1855,8 @@ public class Converter extends Thread {
 			System.out.println("変換時間　" + Stopwatch.formatLatency());
 			System.out.println("LastStatus:[" + result + "]" + Status.getText());
 			System.out.println("VideoInfo: " + MovieInfo.getText());
-			System.out.println("LastFrame: "+ ffmpeg.getLastFrame());
+			if(ffmpeg!=null)
+				System.out.println("LastFrame: "+ ffmpeg.getLastFrame());
 			if(sbRet!=null){
 				sbRet.append("RESULT=" + result + "\n");
 				if(!dateUserFirst.isEmpty()){
