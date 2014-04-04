@@ -113,6 +113,7 @@ public class Converter extends Thread {
 	private double frameRate = 0.0;
 	private double fpsUp = 0.0;
 	private double fpsMin = 0.0;
+	private String lastFrame = "";
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -1485,8 +1486,7 @@ public class Converter extends Thread {
 		}
 		if (code == 0) {
 			sendtext("変換が正常に終了しました。");
-			if(ffmpeg!=null)
-				System.out.println(ffmpeg.getLastFrame());
+			System.out.println(lastFrame);
 			return true;
 		} else if (code == CODE_CONVERTING_ABORTED) { /*中断*/
 
@@ -1855,8 +1855,7 @@ public class Converter extends Thread {
 			System.out.println("変換時間　" + Stopwatch.formatLatency());
 			System.out.println("LastStatus:[" + result + "]" + Status.getText());
 			System.out.println("VideoInfo: " + MovieInfo.getText());
-			if(ffmpeg!=null)
-				System.out.println("LastFrame: "+ ffmpeg.getLastFrame());
+			System.out.println("LastFrame: "+ lastFrame);
 			if(sbRet!=null){
 				sbRet.append("RESULT=" + result + "\n");
 				if(!dateUserFirst.isEmpty()){
@@ -2282,6 +2281,7 @@ public class Converter extends Thread {
 		System.out.println("arg:" + ffmpeg.getCmd());
 		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 		errorLog = ffmpeg.getErrotLog().toString();
+		lastFrame = ffmpeg.getLastFrame();
 		MovieInfo.setText(txt);
 		if(code==0){
 			// -itsoffset削除
@@ -2329,6 +2329,7 @@ public class Converter extends Thread {
 		System.out.println("arg:" + ffmpeg.getCmd());
 		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 		errorLog = ffmpeg.getErrotLog().toString();
+		lastFrame = ffmpeg.getLastFrame();
 		MovieInfo.setText(txt);
 		if(code==0){
 			// -itsoffset削除
@@ -2365,6 +2366,7 @@ public class Converter extends Thread {
 		System.out.println("arg:" + ffmpeg.getCmd());
 		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 		errorLog = ffmpeg.getErrotLog().toString();
+		lastFrame = ffmpeg.getLastFrame();
 		MovieInfo.setText(txt);
 		return code;
 	}
@@ -2475,6 +2477,7 @@ public class Converter extends Thread {
 		System.out.println("arg:" + ffmpeg.getCmd());
 		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 		errorLog = ffmpeg.getErrotLog().toString();
+		lastFrame = ffmpeg.getLastFrame();
 		MovieInfo.setText(txt);
 		return code;
 	}
@@ -2509,6 +2512,7 @@ public class Converter extends Thread {
 		System.out.println("arg:" + ffmpeg.getCmd());
 		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 		errorLog = ffmpeg.getErrotLog().toString();
+		lastFrame = ffmpeg.getLastFrame();
 		MovieInfo.setText(txt);
 		return code;
 	}
@@ -2627,6 +2631,7 @@ public class Converter extends Thread {
 		System.out.println("arg:" + ffmpeg.getCmd());
 		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 		errorLog = ffmpeg.getErrotLog().toString();
+		lastFrame = ffmpeg.getLastFrame();
 		MovieInfo.setText(txt);
 		return code;
 	}
@@ -2647,6 +2652,7 @@ public class Converter extends Thread {
 			System.out.println("コメントと音声だけを合成します");
 			code = convFLV_audio(input, ConvertedVideoFile, Setting.getDefaultThumbnail());
 			errorLog = ffmpeg.getErrotLog().toString();
+			lastFrame = ffmpeg.getLastFrame();
 			return code;
 		}
 		if (!Cws2Fws.isFws(input) && !Cws2Fws.isCws(input)) {
@@ -2655,6 +2661,7 @@ public class Converter extends Thread {
 				File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
 				code = convFLV_fpsUp(input, outputFps);
 				errorLog = ffmpeg.getErrotLog().toString();
+				lastFrame = ffmpeg.getLastFrame();
 				if (code == 0){
 					//fps変換成功
 					input = outputFps;
@@ -2697,6 +2704,7 @@ public class Converter extends Thread {
 			System.out.println("arg:" + ffmpeg.getCmd());
 			code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 			errorLog = ffmpeg.getErrotLog().toString();
+			lastFrame = ffmpeg.getLastFrame();
 			MovieInfo.setText(txt);
 		}
 		else {
@@ -2709,6 +2717,7 @@ public class Converter extends Thread {
 					File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
 					code = convSWF_25fps(input, outputFps);
 					errorLog = ffmpeg.getErrotLog().toString();
+					lastFrame = ffmpeg.getLastFrame();
 					if (code == 0){
 						//fps変換成功
 						input = outputFps;
@@ -2752,6 +2761,7 @@ public class Converter extends Thread {
 				System.out.println("arg:" + ffmpeg.getCmd());
 				code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 				errorLog = ffmpeg.getErrotLog().toString();
+				lastFrame = ffmpeg.getLastFrame();
 				if (code != 0)
 					return code;
 				MovieInfo.setText(txt);
@@ -2769,11 +2779,13 @@ public class Converter extends Thread {
 				File outputImg = new File(imgDir,"%d.jpg");
 				code = convSWF_JPG(input, outputImg);
 				errorLog = ffmpeg.getErrotLog().toString();
+				lastFrame = ffmpeg.getLastFrame();
 				if(code!=0){
 					if (Setting.canSoundOnly()){
 						// jpegに変換できない場合は音声のみにする
 						code = convFLV_audio(input, ConvertedVideoFile);
 						errorLog = ffmpeg.getErrotLog().toString();
+						lastFrame = ffmpeg.getLastFrame();
 					}
 					return code;
 				}
@@ -2785,11 +2797,13 @@ public class Converter extends Thread {
 				File outputAvi = new File(imgDir,"huffyuv.mp4");
 				code = convJPG_MP4(outputImg, outputAvi);
 				errorLog = ffmpeg.getErrotLog().toString();
+				lastFrame = ffmpeg.getLastFrame();
 				if(code!=0){
 					if (Setting.canSoundOnly()){
 						// jpegがmp4に変換できない場合は音声のみにする
 						code = convFLV_audio(input, ConvertedVideoFile);
 						errorLog = ffmpeg.getErrotLog().toString();
+						lastFrame = ffmpeg.getLastFrame();
 					}
 					return code;
 				}
@@ -2801,11 +2815,13 @@ public class Converter extends Thread {
 				File outputMix = new File(imgDir,"mix.mp4");
 				code = convMix(outputAvi, input, outputMix);
 				errorLog = ffmpeg.getErrotLog().toString();
+				lastFrame = ffmpeg.getLastFrame();
 				if(code!=0){
 					if (Setting.canSoundOnly()){
 						// jpegがmp4に変換できない場合は音声のみにする
 						code = convFLV_audio(input, ConvertedVideoFile);
 						errorLog = ffmpeg.getErrotLog().toString();
+						lastFrame = ffmpeg.getLastFrame();
 					}
 					return code;
 				}
@@ -2842,11 +2858,13 @@ public class Converter extends Thread {
 				System.out.println("arg:" + ffmpeg.getCmd());
 				code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
 				errorLog = ffmpeg.getErrotLog().toString();
+				lastFrame = ffmpeg.getLastFrame();
 				if(code!=0){
 					if (Setting.canSoundOnly()){
 						// jpegがmp4に変換できない場合は音声のみにする
 						code = convFLV_audio(input, ConvertedVideoFile);
 						errorLog = ffmpeg.getErrotLog().toString();
+						lastFrame = ffmpeg.getLastFrame();
 					}
 					return code;
 				}
