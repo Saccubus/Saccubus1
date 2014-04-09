@@ -18,11 +18,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
@@ -96,7 +96,7 @@ public class Converter extends Thread {
 	private String outSize;
 	private String aprilFool;
 	private StringBuffer sbRet = null;
-	private JFrame parent = null;;
+	private saccubus.MainFrame parent = null;;
 	/*
 	 * sbRet is return String value to EXTERNAL PROGRAM such as BAT file, SH script, so on.
 	 * string should be ASCII or URLEncoded in System Encoding.
@@ -114,6 +114,7 @@ public class Converter extends Thread {
 	private double fpsUp = 0.0;
 	private double fpsMin = 0.0;
 	private String lastFrame = "";
+	private ConcurrentLinkedQueue<File> fileQueue;
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -172,10 +173,16 @@ public class Converter extends Thread {
 	}
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch,
-			JFrame frame) {
+			MainFrame frame, StringBuffer sb) {
 		this(url,time,setting,status,flag,movieInfo,watch);
-		sbRet  = new StringBuffer();
+		sbRet  = sb;
 		parent = frame;
+	}
+	public Converter(String url, String time, ConvertingSetting setting,
+			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch,
+			ConcurrentLinkedQueue<File> queue) {
+		this(url,time,setting,status,flag,movieInfo,watch);
+		fileQueue = queue;
 	}
 	private File VideoFile = null;
 	private File CommentFile = null;
@@ -1653,9 +1660,10 @@ public class Converter extends Thread {
 						return;
 					}
 					ConvertingSetting mySetting = getSetting();
-					if(parent!=null && parent instanceof MainFrame){
-						MainFrame mainFrame = (MainFrame)parent;
-						mySetting = mainFrame.getSetting();
+					if(parent!=null){
+						mySetting = parent.getSetting();
+						// parent!=nullÇ»ÇÁmylistÇ≈fileQueue==null
+						fileQueue = parent.getQueue();
 					}
 					sb = new StringBuffer();
 					converter = new Converter(
@@ -1666,6 +1674,7 @@ public class Converter extends Thread {
 							new ConvertStopFlag(new JButton(),null,null,null),
 							MovieInfo,
 							watchArea,
+							parent,
 							sb);
 					converter.start();
 					while(converter!=null && !converter.isFinished()){
@@ -1683,6 +1692,7 @@ public class Converter extends Thread {
 							e1.printStackTrace();
 						}
 					}
+					ConvertedVideoFile = converter.getConvertedVideoFile();
 					if(!sb.toString().contains("RESULT=0\n")){
 						result=sb.toString();
 						ngn++;
@@ -1820,6 +1830,10 @@ public class Converter extends Thread {
 			Stopwatch.show();
 			if (convertVideo()) {
 				// ïœä∑ê¨å˜
+				if(parent!=null)
+					fileQueue = parent.getQueue();
+				if(fileQueue!=null)
+					fileQueue.offer(ConvertedVideoFile);
 				if (isDeleteCommentAfterConverting()
 					&& CommentFile != null) {
 					deleteCommentFile();

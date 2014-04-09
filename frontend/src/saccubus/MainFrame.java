@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -2416,6 +2417,7 @@ public class MainFrame extends JFrame {
 
 	/* 変換・保存する */
 	Converter converter = null;
+	ConcurrentLinkedQueue<File> queue = new ConcurrentLinkedQueue<File>();
 
 	JTextField CommandLineInOptionField = new JTextField();
 	JLabel InLabel = new JLabel();
@@ -2496,6 +2498,7 @@ public class MainFrame extends JFrame {
 	private JLabel sharedNgLabel;
 	private JPanel sharedNgPanel;
 	public static StringBuffer history = new StringBuffer("");
+	private boolean isLastMylist = false;
 
 	public void DoButton_actionPerformed(ActionEvent e) {
 		ConvertStopFlag stopFlag;
@@ -2508,9 +2511,13 @@ public class MainFrame extends JFrame {
 					flag.stop();
 				}
 			}else
+				//converter is finished and Button is pushed
+				// so new video or new mylist will be converted
 			if(url!=null && url.contains("mylist")){
 				//converter worker start
+				isLastMylist = true;
 				stopFlag = new ConvertStopFlag(DoButton, DoButtonStopString, DoButtonWaitString, DoButtonDefString);
+				StringBuffer sb = new StringBuffer();
 				converter = new Converter(
 						url,
 						WayBackField.getText(),
@@ -2519,12 +2526,23 @@ public class MainFrame extends JFrame {
 						stopFlag,
 						vhookInfoBar,
 						elapsedTimeBar,
-						this);
+						this,
+						sb);
 				converter.start();
 				// return to dispatch
 			}else
+			//if(url==null||!url.contains("mylist"))
 			{
 				//通常変換
+				// Shall fileQueue for playing video be cleared or truncated to 1 file?
+				// Now it will be cleared only change mylist to video, temporally.
+				if(isLastMylist){
+					queue.clear();
+					if(converter.getConvertedVideoFile()!=null){
+						queue.offer(converter.getConvertedVideoFile());
+					}
+					isLastMylist = false;
+				}
 				stopFlag = new ConvertStopFlag(DoButton, DoButtonStopString, DoButtonWaitString, DoButtonDefString);
 				converter = new Converter(
 					url,
@@ -2533,8 +2551,8 @@ public class MainFrame extends JFrame {
 					statusBar,
 					stopFlag,
 					vhookInfoBar,
-					elapsedTimeBar
-					);
+					elapsedTimeBar,
+					queue);
 				converter.start();
 			}
 		}catch(Exception ex){
@@ -2605,13 +2623,13 @@ public class MainFrame extends JFrame {
 	// 変換動画再生
 	private void playConvertedVideo_actionPerformed(ActionEvent e) {
 		try {
-			if (converter == null || !converter.isFinished()) {
-				sendtext("変換が出来ていません");
+			File convertedVideo = queue.poll();
+			if(convertedVideo==null){
+				sendtext("変換後の動画がありません");
 				return;
 			}
-			File convertedVideo = converter.getConvertedVideoFile();
-			if (convertedVideo == null || !convertedVideo.canRead()){
-				sendtext("変換後の動画がありません：" + convertedVideo.getName());
+			if(!convertedVideo.canRead()){
+				sendtext("変換後の動画が読めません：" + convertedVideo.getName());
 				return;
 			}
 			if(vplayer!=null && vplayer.isAlive()){
@@ -3934,6 +3952,9 @@ s	 * @return javax.swing.JPanel
 		return ShadowComboBox;
 	}
 
+	public ConcurrentLinkedQueue<File> getQueue(){
+		return queue;
+	}
 }
 
 class MainFrame_ShowSavingVideoFolderDialogButton_actionAdapter implements

@@ -28,11 +28,11 @@ public class VPlayer extends Thread {
 			&& !videoPath.startsWith("\"")){
 			videoPath = "\"" + videoPath + "\"";
 		}
-		//Windowsファイル名に使えるがコマンドプロンプトではエスケープしないとダメな文字()^&及びz全角半角スペース
+		//Windowsファイル名に使えるがコマンドプロンプトではエスケープしないとダメな文字()^&;及び全角半角スペース
 		//コマンドプロンプトのエスケープは^である
 		//()^は正規表現内で\でエスケープしないとだめ
 		//\はJavaのリテラルでは\\と書かないとダメ　面倒いｗ
-		videoPath = videoPath.replaceAll("([\\(\\)\\^& 　])","^$1");
+		videoPath = videoPath.replaceAll("([\\(\\)\\^&; 　])","^$1");
 		ArrayList<String> cmd = new ArrayList<String>();
 		cmd.add("cmd.exe");
 		cmd.add("/C");
