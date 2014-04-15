@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -115,6 +116,7 @@ public class Converter extends Thread {
 	private double fpsMin = 0.0;
 	private String lastFrame = "";
 	private ConcurrentLinkedQueue<File> fileQueue;
+	private static final String MY_MYLIST = "my/mylist";
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -124,6 +126,15 @@ public class Converter extends Thread {
 		}
 		if(url.startsWith(VIDEO_URL_PARSER)){
 			url = url.substring(VIDEO_URL_PARSER.length());
+		}else if(url.startsWith("http://www.nicovideo.jp/" + MY_MYLIST)
+				||url.startsWith(MY_MYLIST)){
+			int index = url.indexOf("/#/");
+			if(index < 0){
+				url = "http://www.nicovideo.jp/api/deflist/list";
+			}else{
+				url = "http://www.nicovideo.jp/api/mylist/list?group_id="+url.substring(index+3);
+				//url = url.replace("my/mylist/#/","mylist/");
+			}
 		}else if(!url.startsWith("http")){
 			if(	  url.startsWith("mylist/")
 				||url.startsWith("user/")
@@ -137,7 +148,12 @@ public class Converter extends Thread {
 		}
 		Url = url;
 		watchvideo = !url.startsWith("http");
-		int index = url.indexOf('?');
+		int index = 0;
+		index = url.indexOf('#');
+		if(index >= 0){
+			url.replace("#+", "?").replace("#/", "?");
+		}
+		index = url.indexOf('?');
 		if(index >= 0){
 			int index2 = url.lastIndexOf('/',index);
 			Tag = url.substring(index2+1,index);
@@ -1563,6 +1579,15 @@ public class Converter extends Thread {
 			if(StopFlag.needStop()) {
 				return;
 			}
+			if(url.contains("api/deflist")) {
+				//mylist api処理
+				mylistID = "deflist";
+			}else
+			if(url.contains("api/mylist/list?group_id=")){
+				//mylist api処理
+				int start = url.indexOf("id=")+3;
+				mylistID = url.substring(start);
+			}else
 			if(url.contains("mylist")) {
 				//mylist処理
 				String json_start = "Mylist.preload(";
@@ -1577,6 +1602,11 @@ public class Converter extends Thread {
 				start = text.indexOf(",");
 				mylistID = text.substring(0, start);
 				text = text.substring(start+1).trim();
+			}else{
+				// here will come XML parser
+			}
+			//common
+			{
 				file = new Path(file.getRelativePath().replace(".html", ".xml"));
 				Path.unescapeStoreXml(file, text, url);	//xml is property key:json val:JSON
 				Properties prop = new Properties();
@@ -1646,9 +1676,13 @@ public class Converter extends Thread {
 				if(StopFlag.needStop()) {
 					return;
 				}
-				//start dowloader
+				//start downloader
 				if(Stopwatch.getSource()!=null){
 					watchArea = Stopwatch.getSource();
+				}
+				if(Setting.isSaveAutoList()){
+					saveAutoList(plist);
+					return;
 				}
 				StringBuffer sb = new StringBuffer();
 				for(String[] ds: plist){
@@ -1694,7 +1728,7 @@ public class Converter extends Thread {
 					}
 					ConvertedVideoFile = converter.getConvertedVideoFile();
 					if(!sb.toString().contains("RESULT=0\n")){
-						result=sb.toString();
+						result=sb.toString().replace("\n", ",").trim();
 						ngn++;
 					}
 					Long t = new Date().getTime();
@@ -1736,6 +1770,61 @@ public class Converter extends Thread {
 				sbRet.append("FAIL="+ngn+"\n");
 			}
 		}
+	}
+
+	private void saveAutoList(ArrayList<String[]> mylist) {
+		File autobat = new File(".\\auto.bat");
+		final String CMD_LINE = "%CMD% ";
+		File autolist = new File(".\\autolist.bat");
+		if(!autobat.canRead()){
+			System.out.println("auto.batがないのでautolist.batが出力できません:"+mylistID);
+			sendtext("出力失敗 autolist.bat:"+mylistID);
+			return;
+		}
+		BufferedReader br = null;
+		PrintWriter pw = null;
+		String s;
+		try {
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(autobat), "MS932"));
+			pw = new PrintWriter(autolist, "MS932");
+			pw.println(":自動生成 autolist.bat for myslist/" + mylistID);
+			pw.println(": produced " + new Date());
+			pw.println(":――――――――――――――――――");
+			while((s = br.readLine())!=null){
+				if(!s.startsWith(CMD_LINE)){
+					// %CMD%行が現れるまでコピー
+					pw.println(s);
+				}else{
+					// マイリストの%CMD%出力
+					pw.println(":――――――――――――――――――");
+					pw.println(":set OPTION=過去ログ日時 他のオプション などを必要に応じ指定(readmeNew.txt参照)");
+					pw.println("set OPTION=");
+					pw.println(":保存変換しない行は削除してください");
+					for(String[] ds: mylist){
+						pw.println(":タイトル " + ds[1]);
+						pw.println("%CMD% "+ ds[0] + " %OPTION%");
+					}
+					break;
+				}
+			}
+			while((s = br.readLine())!=null){
+				if(!s.startsWith(CMD_LINE)){
+					// %CMD%行以外を出力
+					pw.println(s);
+					continue;
+				}
+			}
+			sendtext("出力成功 autolist.bat:"+mylistID);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try{
+				br.close();
+				pw.flush();
+				pw.close();
+			}catch(Exception ex){}
+		}
+
 	}
 
 	@Override
@@ -2656,7 +2745,10 @@ public class Converter extends Thread {
 		if(fwsFile!=null)
 			input = fwsFile;
 		String txt = MovieInfo.getText();
-		if(frameRate == 0.0 && (checkFps||Setting.canSoundOnly()||Setting.isSwfTo3Path())){
+		if(frameRate == 0.0 &&
+			(checkFps
+			||Setting.canSoundOnly()
+			||(Setting.isSwfTo3Path() && (Cws2Fws.isFws(input) || Cws2Fws.isCws(input))))){
 			System.out.println("映像ストリームのデコードに失敗しました");
 			if(!Setting.canSoundOnly()){
 				errorLog = "映像ストリームのデコードに失敗しました";

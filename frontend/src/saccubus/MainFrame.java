@@ -226,6 +226,7 @@ public class MainFrame extends JFrame {
 	private JTextField thumbTextFiled = new JTextField();
 	private JButton playConvertedVideoButton = new JButton();
 	private JLabel playConvertedVideoLabel = new JLabel();
+	private JCheckBox saveAutoListCheckBox = new JCheckBox();
 
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
@@ -2240,7 +2241,8 @@ public class MainFrame extends JFrame {
 			fpsUp,
 			fpsMin,
 			soundOnlyCheckBox.isSelected(),
-			thumbTextFiled.getText()
+			thumbTextFiled.getText(),
+			saveAutoListCheckBox.isSelected()
 		);
 	}
 /*
@@ -2388,6 +2390,7 @@ public class MainFrame extends JFrame {
 		fpsUpTextFiled.setText(Double.toString(setting.getFpsUp()));
 		soundOnlyCheckBox.setSelected(setting.canSoundOnly());
 		thumbTextFiled.setText(setting.getDefaultThumbnail());
+		saveAutoListCheckBox.setSelected(setting.isSaveAutoList());
 	}
 
 	/**
@@ -3511,6 +3514,18 @@ s	 * @return javax.swing.JPanel
 		grid_x0_y9.weighty = 1.0;
 		grid_x0_y9.gridwidth = 2;
 		watchPageSavingInfoPanel.add(saveWatchPageInfoCheckBox, grid_x0_y9);
+
+		saveAutoListCheckBox.setText("マイリスト自動変換用のautolist.batファイルを保存する");
+		GridBagConstraints grid_x0_y10 = new GridBagConstraints();
+		grid_x0_y10.gridx = 0;
+		grid_x0_y10.gridy = 10;
+		grid_x0_y10.anchor = GridBagConstraints.NORTH;
+		grid_x0_y10.fill = GridBagConstraints.HORIZONTAL;
+		grid_x0_y10.insets = INSETS_0_0_0_5;
+		grid_x0_y10.weightx = 1.0;
+		grid_x0_y10.weighty = 1.0;
+		grid_x0_y10.gridwidth = 2;
+		watchPageSavingInfoPanel.add(saveAutoListCheckBox, grid_x0_y10);
 
 		return watchPageSavingInfoPanel;
 	}

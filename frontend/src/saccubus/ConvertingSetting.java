@@ -152,6 +152,7 @@ public class ConvertingSetting {
 	private Double fpsMin;
 	private boolean enableSoundOnly;
 	private String thumbnailFile;
+	private boolean saveAutoList;
 
 	private Map<String, String> replaceOptions;
 
@@ -364,7 +365,8 @@ public class ConvertingSetting {
 			double fps_up,
 			double fps_min,
 			boolean en_soundonly,
-			String thumb_file
+			String thumb_file,
+			boolean save_autolist
 		)
 	{
 		this(	mailaddress,
@@ -486,6 +488,7 @@ public class ConvertingSetting {
 		fpsMin = fps_min;
 		enableSoundOnly = en_soundonly;
 		thumbnailFile = thumb_file;
+		saveAutoList = save_autolist;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -821,6 +824,9 @@ public class ConvertingSetting {
 	public String getDefaultThumbnail() {
 		return thumbnailFile;
 	}
+	public boolean isSaveAutoList(){
+		return saveAutoList;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -945,6 +951,7 @@ public class ConvertingSetting {
 	static final String PROP_FPS_MIN = "FpsMin";
 	static final String PROP_SOUNDONLY = "SoundOnly";
 	static final String PROP_THUMBNIAL = "DefaultThumbFile";
+	static final String PROP_SAVE_AUTOLIST = "SaveAutoList";
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
 	 */
@@ -1135,6 +1142,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_FPS_MIN, Double.toString(setting.getFpsMin()));
 		prop.setProperty(PROP_SOUNDONLY, Boolean.toString(setting.canSoundOnly()));
 		prop.setProperty(PROP_THUMBNIAL, setting.getDefaultThumbnail());
+		prop.setProperty(PROP_SAVE_AUTOLIST, Boolean.toString(setting.isSaveAutoList()));
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1368,7 +1376,8 @@ public class ConvertingSetting {
 			Double.parseDouble(prop.getProperty(PROP_FPS_UP, "25.0")),
 			Double.parseDouble(prop.getProperty(PROP_FPS_MIN, "23.0")),
 			Boolean.parseBoolean(prop.getProperty(PROP_SOUNDONLY, "false")),
-			prop.getProperty(PROP_THUMBNIAL, "<é©ìÆ>")
+			prop.getProperty(PROP_THUMBNIAL, "<é©ìÆ>"),
+			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_AUTOLIST, "false"))
 		);
 	}
 
