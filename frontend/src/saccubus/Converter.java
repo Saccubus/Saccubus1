@@ -1788,7 +1788,7 @@ public class Converter extends Thread {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(autobat), "MS932"));
 			pw = new PrintWriter(autolist, "MS932");
 			pw.println(":自動生成 autolist.bat for myslist/" + mylistID);
-			pw.println(": produced " + new Date());
+			pw.println(": produced by Saccubus" + MainFrame_AboutBox.rev + " " + new Date());
 			pw.println(":――――――――――――――――――");
 			while((s = br.readLine())!=null){
 				if(!s.startsWith(CMD_LINE)){
