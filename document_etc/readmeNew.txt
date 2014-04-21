@@ -6,13 +6,11 @@ readmeNew.txt
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-1.48(3014/3/31)
-　auto.bat debug.batでJavaのパスの設定を不要にする
-　変換後動画再生ボタンのバグ修正(再)
-　JPG->MP4変換時にコピー省略
-　FFmpegの出力のタイトル文字化け修正(charset指定をUTF-8に変更)
-　NGワードの引用符処理修正(""内がコメント全体一致→部分一致に変更) 
-　/replace @置換のバグ修正
+1.49(2014/4/20)
+　mylist変換をあとでまとめてautolist.batでできるように出力
+　mylist処理少し追加
+　GUIでmylist変換中も動画の再生ボタン可能に
+　LastFrame出力時のバグ修正
 
 ■動作が変なときは
 　・通常の Saccubus.exe の起動では、
@@ -67,12 +65,12 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　http://anago.2ch.net/test/read.cgi/software/1346798166/
 
 □動作環境
-　Windows XP/7/8/8.1desktop　（多分Vistaも動くはず）
+　Windows XP/7/8/8.1 desktop　（多分Vistaも動くはず）
 
 ●注意●
-　javaランタイム Java7 - JRE7 または JDK1.7が必要です。
-　Java6 - JRE6 または JDK1.6　でも可能ですが、
-　セキュリティアップデートの関係からJava7を推奨します。
+　Javaランタイム Java7 - JRE7 または JDK1.7が必要です。
+　Java8 JRE8 と JDK1.8も確認済みです。
+　Java6 JRE6 と JDK1.6は非推奨です。
 　最近アップデートしていない場合は必ず更新して下さい。
 　JRE5 JDK1.5はテストしていません。
 　　http://java.com/ja/
@@ -97,8 +95,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　コメント全体を画面内に収まるよう縮小しています。
 
 ●注意●
-　　Windows8はデスクトップUIでのIE10で確認しました。Windows8スタイルUIでは
-　　IEとのブラウザ共有は出来ませんでした。Firefox、Chromeは未確認です。
+　　Windows8/8.1はデスクトップUIでのIE11/Firefoxで確認しました。Windows8スタイルUIでは
+　　IEとのブラウザ共有は出来ませんでした。Chromeは不可です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
@@ -125,6 +123,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ffmpegを設定します。使用しない場合は■削除■して下さい。
 
 　◆拡張機能（概要）追加分
+　・mylist変換をあとでまとめてautolist.batでできるように出力
+　・mylist処理少し追加
 　・動画設定タブに再生ボタン追加
 　・映像ストリームが認識できない場合に音声のみコメント付き可能に
 　・上記の場合にサムネイルを指定可能。また自動では取得済みサムネイルがあれば使用します。
@@ -218,6 +218,20 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 □拡張機能（変更点）説明
+●mylist変換をあとでまとめてautolist.batでできるように出力(暫定)
+　保存設定・ページ情報・マイリスト自動変換用のautolist.batファイルを保存する
+　をオンにして、mylistのURLをURL/IDに指定して変換ボタンを押すと
+　autolist.batを出力する。この時はマイリストの内容を読むだけで変換はしません。
+　あとは適宜内容を編集して(これはメモ帳可)実行する事ができます。
+　変換時の設定などは今までのauto.batと同じです。
+
+●mylist処理少し追加
+　自分のマイリストやとりあえずマイリストも指定可能にしました。
+　とりあえずマイリストの指定　http://www.nicovideo.jp/my/mylist
+　自分のマイリストの指定　http://www.nicovideo.jp/my/mylist/#/999999
+　要するにブラウザで開いたURLそのものです。
+　（マイリスト番号は　mylist/999999　でも指定可能）
+
 ●動画設定タブに再生ボタン追加
 　ボタンを押すと変換直後の動画を拡張子既定のソフトで再生します。
 　デフォルトはmp4なのでmp4動画をダブルクリックしたのと同じになります。
@@ -478,6 +492,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　184		匿名NG
 　　docomo	ドコモNG
 　　iPhone	iPhoneNG
+　　softbank	ソフトバンクNG
 　　all		デフォルトでないコマンドのコメントを全てNG
 　　/(((docomo|iPhone|softbank) (white )?)?18[46])/
 　　		デフォルトコマンドのコメントをNG
@@ -656,8 +671,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　で行いました。
 　（GoogleChromeは Ver.33.0.xxからクッキーが暗号化されて保存されるため
 　　ファイルからセッションを検索できないので共有できません。）
-　・動画変換確認は、ffmpeg55686で行いました。
-　　Win7 64 Corei7, Win7 32 Core2Duo, WinXP 32 CeleronD
+　・動画変換確認は、ffmpeg56884wで行いました。
+　　Win7 64 Corei7, Win7 32 Core2Duo
 　・但し再生確認はPC上だけで、携帯その他では未確認
 　・前スレ>>670(SVN-25041) は変換エラーする動画(Decoder not found)がありました。
 　・前スレ>>481(SVN-23386)は livx264でのマルチスレッドオプション
@@ -668,12 +683,11 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 ■収録物
-　　ffmpeg55686同梱版
+　　ffmpeg56884w同梱版
 □フォルダ構成
-　saccubus1.37r6.zip
-　├ffmpeg55686同梱版  表示
+　saccubus1.49.zip
+　├ffmpeg56884w同梱版  表示
 　├最初に必ず読んで.txt
-　├Done.txt
 　├ToDO.txt
 　└saccubus　　本体exe jar xml bat
 　　├bin        実行ファイルフォルダ exe dll
@@ -705,7 +719,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・AUTO2PROC.BAT　　　　　　 ２プロセス自動実行本体
 ・AUTO2PROCDEBUG.BAT　　　  ２プロセス自動実行時のログ記録用
 ・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
-・saccubus.ini　　　　　　　N55686向け初期設定
+・saccubus.ini　　　　　　　N56884w向け初期設定
 ・オプションファイル見本.xml　　　　　　（1.22rの物）
 ・変換リストが起動しない場合.txt
 ・ローカル変換追加説明.txt
@@ -713,7 +727,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　Saccubus.jar　のjavaソースファイル、eclipseプロジェクトファイル
 　　nicovideoE.dll　のソースファイル、eclipseプロジェクトファイル
 　　Bin.jar　のjavaソースファイル、eclipseプロジェクトファイル
-　　Saccubdus.exe　のCソースファイル(launcher)、makeファイル、リソース
+　　Saccubus.exe　のCソースファイル(launcher)、makeファイル、リソース
 
 関連リンク
 ・ソースコード
@@ -734,6 +748,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　FFmpeg評価用(2013/6/16)　http://www1.axfc.net/uploader/so/2936495.zip
 
 　改造版
+　1.48　　　http://www1.axfc.net/u/3210572.zip
 　1.47r3　　http://www1.axfc.net/u/3206385.zip
 　1.47　　　http://www1.axfc.net/u/3200935.zip
 　1.46r 　　http://www1.axfc.net/uploader/so/3181769.zip
@@ -793,6 +808,14 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 変更履歴・修正・改変点
+1.48(2014/3/31)
+　auto.bat debug.batでJavaのパスの設定を不要にする
+　変換後動画再生ボタンのバグ修正(再)
+　JPG->MP4変換時にコピー省略
+　FFmpegの出力のタイトル文字化け修正(charset指定をUTF-8に変更)
+　NGワードの引用符処理修正(""内がコメント全体一致→部分一致に変更) 
+　/replace @置換のバグ修正
+
 1.47r3(2014/3/27)
 　新機能オフ場合は1.43と同じにする
 　0秒で停止するバグ修正(再)
