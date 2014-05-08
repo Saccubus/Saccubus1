@@ -813,7 +813,7 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fi
 		//ëÊÇQäÓèÄÉtÉHÉìÉgÇÃåüç∏
 		if(secondBase==UNDEFINED_FONT){
 			if((foundAscii && !wasAscii && basefont<=GOTHIC_FONT)||
-				(basefont==GOTHIC_FONT &&(newfont==SIMSUN_FONT || newfont==GULIM_FONT))){
+				(basefont==GOTHIC_FONT &&(newfont==SIMSUN_FONT || newfont==GULIM_FONT || newfont==MINGLIU_FONT))){
 				secondBase = getFirstFont(index,basefont);
 				if(secondBase==basefont || secondBase==GOTHIC_FONT){
 					secondBase = UNDEFINED_FONT;
@@ -840,14 +840,19 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fi
 		}else if(newfont!=nextfont){
 			int typechar = getDetailType(*index);
 			switch (newfont) {
-			case SIMSUN_FONT:
-				if(typechar==STRONG_SIMSUN_CHAR || typechar==WEAK_SIMSUN_CHAR){
-					nextfont = SIMSUN_FONT;
+			case MINGLIU_FONT:
+				if(typechar==MINGLIU_CHAR){
+					nextfont = MINGLIU_CHAR;
 				}
 				break;
 			case GULIM_FONT:
 				if(typechar==GULIM_CHAR){
 					nextfont = GULIM_FONT;
+				}
+				break;
+			case SIMSUN_FONT:
+				if(typechar==STRONG_SIMSUN_CHAR || typechar==WEAK_SIMSUN_CHAR){
+					nextfont = SIMSUN_FONT;
 				}
 				break;
 			case GOTHIC_FONT:
@@ -933,47 +938,71 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,
 	if(isSpaceFont(fonttype)){	//fonttype is one of space-char's
 		Uint16 code = GET_CODE(fonttype);	//get unicode0
 		int w = data->fontsize_fix;
-		if(code==0x0020 || code==0x00A0){
+		if(code==CA_CODE_SPACE_0020 || code==CA_CODE_SPACE_00A0){
 			// half space
 			w = (CA_FONT_SPACE_WIDTH[size] * len)<<w;
-		}else if(code==0x3000){
+			//continue to draw
+		}else if(code==CA_CODE_SPACE_3000){
 			// full space
-			if(fontsel > GULIM_FONT){	//fonttype should be 0..2 (gothic,simsun,gulim)
+			if(fontsel < GOTHIC_FONT || (fontsel > GULIM_FONT && fontsel!=MINGLIU_FONT)){	//fonttype should be 0..2 (gothic,simsun,gulim)
 				fprintf(log,"[comsurface/drawText3]fontsel error %d\n",fonttype);
 				fflush(log);
 				return NULL;
 			}
-			w = (CA_FONT_3000_WIDTH[fontsel][size] * len)<<w;
+			// here, fontsel 0(GOTHIC) 1(SIMSUN), 2(GULIM),8(MINGLIU)
+			if(fontsel==GOTHIC_FONT)
+				w = (CA_FONT_3000_WIDTH[GOTHIC_FONT][size] * len)<<w;
+			else
+				//other 3000 space is full kanji width, same as Simsun
+				w = (CA_FONT_3000_WIDTH[SIMSUN_FONT][size] * len)<<w;
+			//continue to draw
 		}else if(isZeroWidth(code)){
 			// zero width
 			w = 0;
 			fprintf(log,"[comsurface/drawText3]found ZERO width char 0x%04x\n",code);
-		}else if((code & 0xfff0)==0x2000){
+			//continue to draw
+		}else if((code & 0xfff0)==CA_CODE_SPACE_2000){
 			//code should be 2000..200a 200c
 			//Here, it assumed fonttype should belog to GOTHIC
 			//but width of 2000 series DIFFERS when SIMSUN (or GULIM?) in Windows7
 			//futhermore it FAULTS (TOUFU) when ARIAL in XP
 			w = (CA_FONT_2000_WIDTH[code & 0x000f][size] * len)<<w;
-		}else if(code==0x0009){
+		}else if(code==CA_CODE_SPACE_0009){
 			// code 0009 TAB
 			w = (CA_FONT_TAB_WIDTH[size] * len)<<w;
+			//continue to draw
+		}else if(code==CA_CODE_NOGLYPH_SIMSUN){
+			// code e800 NoGlyph Simsun
+			w = (CA_FONT_3000_WIDTH[SIMSUN_FONT][size] * len)<<w;
+			//continue to draw
+		}else if(code==CA_CODE_NOGLYPH_MINGLIU){
+			// code e900 NoGlyph MingLiu same width simsun
+			// but it makes TOUFU in XP
+			w = (CA_FONT_3000_WIDTH[SIMSUN_FONT][size] * len)<<w;
+			//continue to draw
 		}else {
 			fprintf(log,"[comsurface/drawText3]fontsel error %d\n",fonttype);
 			fflush(log);
 			return NULL;
 		}
+		//draw here
 		SDL_Surface* ret = drawNullSurface(w,h);
 		if(debug){
 			int codeno;
 			switch (code) {
-				case 0x0020:	codeno = 0; break;
-				case 0x00a0:	codeno = 1; break;
-				case 0x3000:	codeno = 3; break;
-				case 0x0009:	codeno = 4; break;
-				default:		codeno = 2; break;
+				case CA_CODE_SPACE_0020:	codeno = 0; break;
+				case CA_CODE_SPACE_00A0:	codeno = 1; break;
+				case CA_CODE_SPACE_3000:	codeno = 3; break;
+				case CA_CODE_SPACE_0009:	codeno = 4; break;
+				case CA_CODE_NOGLYPH_SIMSUN:
+				case CA_CODE_NOGLYPH_MINGLIU:	codeno=5; break;
+				default:	//case 2000-200F
+					codeno = 2; break;
 			}
 			fprintf(log,"[comsurface/drawText3]return %s font %04X %s %d chars.(%d,%d)\n"
 				,CA_SPACE_NAME[codeno],code,COM_FONTSIZE_NAME[size],len,ret->w,ret->h);
+			if(ret==NULL)
+				fprintf(log,"***ERROR*** [comsurface/drawText3]drawNullSurface:%s\n",SDL_GetError());
 			fflush(log);
 		}
 		return ret;

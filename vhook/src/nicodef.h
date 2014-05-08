@@ -313,11 +313,13 @@ static const int CA_FONT_SPACE_WIDTH[CMD_FONT_MAX] = {
 //ASCII SPACE 0020/00A0 arial.ttf
 	7,11,4,7	//2012.3.24変更
 };
-static const int CA_FONT_3000_WIDTH[3][CMD_FONT_MAX] = {
+#define CA_FONT_3000_WIDTH_SZ	4
+static const int CA_FONT_3000_WIDTH[CA_FONT_3000_WIDTH_SZ][CMD_FONT_MAX] = {
 //KANJI SPACE 3000 msgothic.ttc#1
 	{17,27,11,17},		//gothic
 	{25,40,16,25},		//simsun
 	{25,40,16,25},		//gulim
+	{25,40,16,25},		//MingLiu
 };
 static const int CA_FONT_TAB_WIDTH[CMD_FONT_MAX] = {
 //TAB SPACE 0009
@@ -326,10 +328,11 @@ static const int CA_FONT_TAB_WIDTH[CMD_FONT_MAX] = {
 /*
  * CJKフォントの既定文字幅
  * U+3400-D7FF	全角、漢字幅
+ * U+E750-F8FF	全角、感じ幅(私用領域、外字)
  * U+F900-FAFF	全角、漢字幅
  */
 static const Uint16 KANJI_WIDTH[] =
-	{0x3400,0xd7ff,0xf900,0xfaff,0,0};
+	{0x3400,0xd7ff,0xe750,0xf8ff,0xf900,0xfaff,0,0};
 
 /*
  * コメントタイプ CID

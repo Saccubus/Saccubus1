@@ -227,6 +227,9 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		data->font_pixel_size[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_MEDIUM],
 		data->font_pixel_size[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_SMALL]
 	);
+	int ttf_style = TTF_STYLE_BOLD;
+	if(strstr(setting->extra_mode,"-normal")!=NULL)
+		ttf_style = TTF_STYLE_NORMAL;
 	if(!setting->enableCA){
 		fputs("[main/init]initializing default Font...\n",log);
 		for(i=0;i<CMD_FONT_MAX;i++){
@@ -253,7 +256,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 					fixed_font_index = 0;
 				}
 			}
-			TTF_SetFontStyle(font[i],TTF_STYLE_BOLD);
+			TTF_SetFontStyle(font[i],ttf_style);
 			data->fixed_font_height[i] = TTF_FontHeight(font[i]);
 			// TTF_FontHeight()‚ª³‚µ‚¢‚©‚Ç‚¤‚©‚Í‹^–âH
 			// ŽÀŒ±‚Å‚ÍÝ’è’l‚Æˆá‚¤’l‚É‚È‚Á‚½
@@ -352,7 +355,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 							fprintf(log,"[main/init]failed to load CAfont[%s][%d]:%s size:%d index:%d.\n",getfontname(f),i,font_path,fontsize,fixed_font_index);
 						return FALSE;
 					}
-					TTF_SetFontStyle(font[i],TTF_STYLE_BOLD);
+					TTF_SetFontStyle(font[i],ttf_style);
 					font_height[i] = TTF_FontHeight(font[i]);
 					line_skip[i] = TTF_FontLineSkip(font[i]);
 					if(data->use_lineskip_as_fontsize){

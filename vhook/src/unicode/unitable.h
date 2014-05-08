@@ -517,25 +517,37 @@ static const int CA_FONT_SIZE_FIX[][CMD_FONT_MAX] = {
 };
 
 #define CA_TYPE_SPACE_00A0 0x00A00000
+#define CA_CODE_SPACE_00A0 0x00A0
 #define CA_TYPE_SPACE_0020 0x00200000
+#define CA_CODE_SPACE_0020 0x0020
 #define CA_TYPE_SPACE_2000 0x20000000
-#define CA_TYPE_SPACE_200C 0x2000000C
+#define CA_CODE_SPACE_2000 0x2000
+#define CA_TYPE_SPACE_200C 0x200C0000
+#define CA_CODE_SPACE_200C 0x200C
 #define CA_TYPE_SPACE_3000 0x30000000
+#define CA_CODE_SPACE_3000 0x3000
 #define CA_TYPE_SPACE_0009 0x00090000
+#define CA_CODE_SPACE_0009 0x0009
+#define CA_TYPE_NOGLYPH_SIMSUN	0xe8000000
+#define CA_CODE_NOGLYPH_SIMSUN	0xe800
+#define CA_TYPE_NOGLYPH_MINGLIU	0xe9000000
+#define CA_CODE_NOGLYPH_MINGLIU	0xe900
 #define isSpaceFont(ft) ((ft)>CA_TYPE_MASK)
-#define GET_CODE(ft)	((ft)>>16)
+#define GET_CODE(ft)	(((ft)>>16)&0xffff)
 #define GET_TYPE(ft)	((ft)&CA_TYPE_MASK)
 
 #define SPACE_0020 0
 #define SPACE_00A0 1
 #define SPACE_2000 2
 #define SPACE_3000 3
+#define NO_GLYPH 4
 static char* const CA_SPACE_NAME[] = {
 		"SPACE",
 		"no-break-SPACE",
 		"U+2000 series",
 		"CJK SPACE",
-		"TAB"
+		"TAB",
+		"No Glyph"
 };
 
 

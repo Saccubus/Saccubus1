@@ -36,6 +36,7 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 			case GOTHIC_FONT:	bg.r = 0xff; break;	//red
 			case SIMSUN_FONT:	bg.g = 0xff; break;	//green
 			case GULIM_FONT:	bg.b = 0xff; break;	//blue
+			case MINGLIU_FONT:	bg.g = bg.b = 0xff;	break;	//cyan
 			case UNDEFINED_FONT:
 			case ARIAL_FONT:	bg.r = bg.g = 0xff;	break;	//yellow
 			default:			bg.r = bg.g = bg.b = 0x80; break;	//gray
@@ -99,7 +100,7 @@ SDL_Surface* pointsConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int fo
 	double doh;
 	double dh;
 	double rate;
-	if(fontsel<GOTHIC_FONT || fontsel>ARIAL_FONT){
+	if(fontsel!=MINGLIU_FONT && (fontsel<GOTHIC_FONT || fontsel>ARIAL_FONT)){
 		fontsel=GOTHIC_FONT;
 	}
 	doh = (double)oh;
@@ -122,7 +123,7 @@ SDL_Surface* pointsConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int fo
 
 SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int fontsel){
 	FILE* log = data->log;
-	if(fontsel < GOTHIC_FONT || fontsel > ARIAL_FONT){
+	if(fontsel < GOTHIC_FONT || (fontsel > ARIAL_FONT && fontsel!=MINGLIU_FONT)){
 		if(data->debug)
 			fprintf(log,"[render_unicode/widthFix]not change Font %s.\n",getfontname(fontsel));
 		return surf;
@@ -130,6 +131,10 @@ SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int 
 	switch (fontsel) {
 		// now defined only whenÅ@fontsel==SIMSUN_FONT
 		case SIMSUN_FONT:
+			break;
+		// alse fontsel==MINGLIU
+		case MINGLIU_FONT:
+			fontsel = SIMSUN_FONT;
 			break;
 		// asume MOMOSPACE when fontsel==GULIM and KanjiWidth
 		case GULIM_FONT:
