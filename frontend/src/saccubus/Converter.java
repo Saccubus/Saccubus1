@@ -34,13 +34,13 @@ import saccubus.conv.CommandReplace;
 import saccubus.conv.CommentReplace;
 import saccubus.conv.ConvertToVideoHook;
 import saccubus.conv.NicoXMLReader;
+import saccubus.json.Mson;
 import saccubus.net.BrowserInfo;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.net.Loader;
 import saccubus.net.NicoClient;
 import saccubus.net.Path;
 import saccubus.util.Cws2Fws;
-import saccubus.util.Mson;
 import saccubus.util.Stopwatch;
 import saccubus.util.Util;
 
