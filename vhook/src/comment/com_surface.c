@@ -22,7 +22,7 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 int isDoubleResize(double width, double limit_width, int size, int line, FILE* log, int is_full);
 int deleteLastLF(Uint16* index);
 
-SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width,int video_height){
+SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int video_height){
 	Uint16* index = item->str;
 	Uint16* last = item->str;
 	SDL_Surface* ret = NULL;
@@ -236,6 +236,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		}
 		is_button = 0;
 	}
+	item->nb_line = nb_line;
 
 	if(ret==NULL || ret->h == 0){
 		fprintf(log,"***ERROR*** [comsurface/makeE]comment %d has no char.\n",item->no);
@@ -441,6 +442,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 			SDL_FreeSurface(tmp);
 		}
 
+		item->double_resized = double_resized;
 		return ret;
 
 	 }
@@ -700,6 +702,7 @@ SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width
 		SDL_FreeSurface(tmp);
 	}
 
+	item->double_resized = double_resized;
 	return ret;
 }
 
@@ -795,7 +798,7 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fi
 		if(newfont==UNDEFINED_FONT||newfont==NULL_FONT)
 			newfont = nextfont;
 		if(debug)
-			fprintf(log," -->%s%s%s%s%s\n",getfontname(newfont),
+			fprintf(log," -->0x%08x,%s%s%s%s%s\n",(unsigned)newfont,getfontname(newfont),
 				foundAscii?" found_Ascii":"",wasAscii?" was_Ascii":"",
 				isKanji?" Kanji":"",isKanji!=wasKanji?" change_Kanji_width":"");
 		if(newfont != fonttype || (fonttype!=SIMSUN_FONT && isKanji != wasKanji)){	//別のフォント出現、又は漢字幅チェック変化
@@ -994,8 +997,8 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,
 				case CA_CODE_SPACE_00A0:	codeno = 1; break;
 				case CA_CODE_SPACE_3000:	codeno = 3; break;
 				case CA_CODE_SPACE_0009:	codeno = 4; break;
-				case CA_CODE_NOGLYPH_SIMSUN:
-				case CA_CODE_NOGLYPH_MINGLIU:	codeno=5; break;
+				case CA_CODE_NOGLYPH_SIMSUN:	codeno=5; break;
+				case CA_CODE_NOGLYPH_MINGLIU:	codeno=6; break;
 				default:	//case 2000-200F
 					codeno = 2; break;
 			}

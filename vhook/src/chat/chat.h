@@ -50,6 +50,8 @@ struct CHAT_ITEM{
 	  // ue shitaの場合  300 vpos
 	  // 4:3の場合  400 vpos
 	  // 16:9の場合  400+α vpos
+	int nb_line;	//コメント行数
+	int double_resized;	//二重リサイズしたか？
 	//リファレンス
 	CHAT* chat;
 };

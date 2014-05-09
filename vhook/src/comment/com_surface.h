@@ -5,7 +5,7 @@
 #include "../chat/chat_slot.h"
 #include "../main.h"
 
-SDL_Surface* makeCommentSurface(DATA* data,const CHAT_ITEM* item,int video_width,int video_height);
+SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int video_height);
 SDL_Surface* drawNullSurface(int w,int h);
 SDL_Surface* getErrFont(DATA* data);
 void closeErrFont(DATA* data);

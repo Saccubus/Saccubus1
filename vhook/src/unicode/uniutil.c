@@ -65,8 +65,8 @@ int isZeroWidth(Uint16 u){
 }
 
 FontType getFontType2(Uint16* up,int basefont,DATA* data){
-	Uint16 u = *up;
-	if(up==NULL || u == '\0'){
+	Uint16 u;
+	if(up==NULL || (u = *up) == '\0'){
 		return NULL_FONT;
 	}
 /*
@@ -107,11 +107,12 @@ FontType getFontType2(Uint16* up,int basefont,DATA* data){
 			return SIMSUN_FONT;
 		case MINGLIU_CHAR:	//ébíËèCê≥ÅFñæí©ïœâªÇ∑ÇÈ(XPÇÊÇËå„ÇÕ)
 			if(0xE865<=u && u<=0xF8FF){	//MingLiu
-				if(isGlyphExist(data,MINGLIU_FONT,u))
+				if(!isGlyphExist(data,MINGLIU_FONT,u))
 					//even if glyph does not exist, fonttype should be defined
 					return MINGLIU_FONT|CA_TYPE_NOGLYPH_MINGLIU;
 			}
-			return MINGLIU_FONT;
+			//return MINGLIU_FONT|CA_TYPE_NOGLYPH_MINGLIU;	//debug 2014.5.9
+			return MINGLIU_FONT;	//debug 2014.5.9
 		case N_MINCHO_CHAR:	//ñæí©ïœâªÇ»Çµ simsun or ngulim
 			return N_MINCHO_FONT;
 		case GULIM_CHAR:

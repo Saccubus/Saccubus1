@@ -297,7 +297,23 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	if(y < y_min || y + surf_h > y_max){	// 範囲を超えてるので、ランダムに配置。
 		fprintf(data->log,"[chat_slot/add random]comment %d %s %s y=%d -> random\n",
 			item->no,COM_LOC_NAME[location],COM_FONTSIZE_NAME[size],y);
-		y = y_min + ((rnd() & 0xffff) * (limit_height - surf_h)) / 0xffff;
+		//big16は固定
+		if(item->nb_line==16 && size==CMD_FONT_BIG){
+			y = y_min;
+		}
+		else
+		//naka弾幕は固定
+		if(surf_h>limit_height && location==CMD_LOC_NAKA){
+			y = y_min;
+		}
+		else
+		//DR弾幕も固定
+		if(item->double_resized){
+			y = location==CMD_LOC_BOTTOM? (y_max - surf_h) : y_min;
+		}
+		else{
+			y = y_min + ((rnd() & 0xffff) * (limit_height - surf_h)) / 0xffff;
+		}
 	}
 	//追加
 	slot_item->used = TRUE;
