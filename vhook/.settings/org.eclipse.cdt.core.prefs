@@ -15,5 +15,11 @@ environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/delimiter=;
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/operation=replace
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/LD_RUN_PATH/value=${HOMEDRIVE}/mingw/lib
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/MINGW_HOME/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/MINGW_HOME/operation=replace
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/MINGW_HOME/value=${HOMEDRIVE}\\mingw
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/MSYS_HOME/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/MSYS_HOME/operation=replace
+environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/MSYS_HOME/value=${HOMEDRIVE}\\MinGW\\msys\\1.0
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/append=true
 environment/project/cdt.managedbuild.config.gnu.cygwin.so.release.235245055/appendContributed=true

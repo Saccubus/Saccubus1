@@ -201,6 +201,8 @@ SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int 
 
 SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,int location,SDL_Surface* surf,SDL_Color col,int s){
 	int is_color_set = FALSE;
+	int is_frame_set = strstr(data->extra_mode,"-frame")!=NULL;
+	int pixel_down = 0;
 	char buf[16];
 	if(data->debug)
 		fprintf(data->log,"[render_unicode/drawFrame]comment %d waku.\n",item->no);
@@ -245,7 +247,16 @@ SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,int location,SDL_Surface
 			}
 		}
 	}
-	if(!is_color_set && strstr(data->extra_mode,"-frame")==NULL && item->waku==0){
+	if(is_frame_set && item->waku && !is_color_set){
+		//waku command and -frame option and no -wakuiro -> command typing red
+		col = COMMENT_COLOR[CMD_COLOR_RED];
+		if(item->location == CMD_LOC_BOTTOM){
+			pixel_down = s;
+		}
+		s <<= 1;	// frame size doublize
+		is_color_set = TRUE;
+	}
+	if(!is_color_set && !is_frame_set && item->waku==0){
 		//wakuiro is set, but waku is not set at this comment nor color
 		//no frame is drawn, just copy surf
 		SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);
@@ -270,9 +281,9 @@ SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,int location,SDL_Surface
 		}
 	}
 	SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);
-	SDL_Rect rect = {0,0,tmp->w,tmp->h};
+	SDL_Rect rect = {0,pixel_down,tmp->w,tmp->h-pixel_down};
 	SDL_Rect rect2 = {s,0,tmp->w-(s<<1),tmp->h-(s<<1)};
-	SDL_Rect rect3 = {s,s,tmp->w-(s<<1),tmp->h-(s<<1)};
+	SDL_Rect rect3 = {s,s+pixel_down,tmp->w-(s<<1),tmp->h-(s<<1)};
 	Uint32 col32 = SDL_MapRGB(tmp->format,col.r,col.g,col.b);
 	SDL_FillRect(tmp,&rect,col32);
 	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha

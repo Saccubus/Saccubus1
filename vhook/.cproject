@@ -4,7 +4,7 @@
 		<cconfiguration id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055" moduleId="org.eclipse.cdt.core.settings" name="Release">
 				<macros>
-					<stringMacro name="HOMEDRIVE" type="VALUE_TEXT" value="C:"/>
+					<stringMacro name="HOMEDRIVE" type="VALUE_TEXT" value="D:"/>
 				</macros>
 				<externalSettings>
 					<externalSetting>
@@ -14,16 +14,16 @@
 					</externalSetting>
 				</externalSettings>
 				<extensions>
-					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="dll" artifactName="nicovideoE" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser" id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055" name="Release" parent="cdt.managedbuild.config.gnu.cygwin.so.release" postbuildStep="cp -p ${ProjDirPath}/Release/nicovideoE.dll ${WorkspaceDirPath}/frontend/bin">
+				<configuration artifactExtension="dll" artifactName="nicovideoE" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser" id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055" name="Release" parent="cdt.managedbuild.config.gnu.cygwin.so.release" postbuildStep="cp -p ${ProjDirPath}/Release/nicovideoE.dll ${WorkspaceDirPath}/frontend/bin">
 					<folderInfo id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1489638098" name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.139402476" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.base.2033999945" name="デバッグ・プラットフォーム" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
@@ -38,10 +38,10 @@
 								<option id="gnu.cpp.compiler.option.debugging.level.600600580" name="デバッグ・レベル" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.base.170848053" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.base">
-								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.option.optimization.level.1496536622" name="最適化レベル" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.more" valueType="enumerated"/>
+								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.option.optimization.level.1496536622" name="最適化レベル" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.694403866" name="デバッグ・レベル" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.default" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.2113363943" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${HOMEDRIVE}/mingw/include/SDL&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${HOMEDRIVE}\MinGW\include&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1371605120" name="定義済みのシンボル (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_GNU_SOURCE=1"/>
@@ -54,6 +54,9 @@
 								<option id="gnu.c.compiler.option.warnings.extrawarn.2012473497" name="Extra warnings (-Wextra)" superClass="gnu.c.compiler.option.warnings.extrawarn" value="false" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.warnings.toerrors.484598601" name="エラーとしての警告 (-Werror)" superClass="gnu.c.compiler.option.warnings.toerrors" value="false" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.warnings.wconversion.1822588439" name="Implicit conversion warnings (-Wconversion)" superClass="gnu.c.compiler.option.warnings.wconversion" value="false" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.dialect.std.810985801" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.misc.verbose.1480621923" name="詳細 (-v)" superClass="gnu.c.compiler.option.misc.verbose" value="false" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.misc.other.863227116" name="その他のフラグ" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -static-libgcc" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1135098064" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.base.1350897189" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base">
@@ -70,8 +73,12 @@
 								<option id="gnu.c.link.option.paths.1420612223" name="ライブラリー検索パス (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${HOMEDRIVE}/mingw/lib&quot;"/>
 								</option>
-								<option id="gnu.c.link.option.ldflags.1729749471" name="リンカー・フラグ" superClass="gnu.c.link.option.ldflags" value="-mwindows" valueType="string"/>
+								<option id="gnu.c.link.option.ldflags.1729749471" name="リンカー・フラグ" superClass="gnu.c.link.option.ldflags" value="-mwindows -static-libgcc" valueType="string"/>
 								<option id="gnu.c.link.option.noshared.1113272581" name="共用ライブラリーなし (-static)" superClass="gnu.c.link.option.noshared" value="false" valueType="boolean"/>
+								<option id="gnu.c.link.option.nodeflibs.2047088895" name="デフォルト・ライブラリーを使用しない (-nodefaultlibs)" superClass="gnu.c.link.option.nodeflibs" value="false" valueType="boolean"/>
+								<option id="gnu.c.link.option.nostdlibs.506969946" name="始動またはデフォルト・ライブラリーなし (-nostdlib)" superClass="gnu.c.link.option.nostdlibs" value="false" valueType="boolean"/>
+								<option id="gnu.c.link.option.nostart.1539548072" name="標準開始ファイルを使用しない (-nostartfiles)" superClass="gnu.c.link.option.nostart" value="false" valueType="boolean"/>
+								<option id="gnu.c.link.option.other.1765254196" name="その他のオプション (-Xlinker [option])" superClass="gnu.c.link.option.other" valueType="stringList"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1331880332" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -100,16 +107,16 @@
 					</externalSetting>
 				</externalSettings>
 				<extensions>
-					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="dll" artifactName="nicovideoEg" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser" id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162" name="Debug" parent="cdt.managedbuild.config.gnu.cygwin.so.release" postbuildStep="cp -p ${ProjDirPath}/Release/nicovideoE.dll ${WorkspaceDirPath}/frontend/bin">
+				<configuration artifactExtension="dll" artifactName="nicovideoEg" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser" id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162" name="Debug" parent="cdt.managedbuild.config.gnu.cygwin.so.release" postbuildStep="cp -p ${ProjDirPath}/Release/nicovideoE.dll ${WorkspaceDirPath}/frontend/bin">
 					<folderInfo id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1073781162." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.860886812" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.base.620999028" name="デバッグ・プラットフォーム" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
