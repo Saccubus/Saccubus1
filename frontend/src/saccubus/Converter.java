@@ -151,7 +151,7 @@ public class Converter extends Thread {
 		int index = 0;
 		index = url.indexOf('#');
 		if(index >= 0){
-			url.replace("#+", "?").replace("#/", "?");
+			url = url.replace("#+", "?").replace("#/", "?");
 		}
 		index = url.indexOf('?');
 		if(index >= 0){
@@ -301,20 +301,6 @@ public class Converter extends Thread {
 	private boolean isCommentFixFileName(){
 		return Setting.isCommentFixFileName();
 	}
-/*
-	private String getProxy(){
-		return Setting.getProxy();
-	}
-	private int getProxyPort(){
-		return Setting.getProxyPort();
-	}
-	private String getMailAddress(){
-		return Setting.getMailAddress();
-	}
-	private String getPassword(){
-		return Setting.getPassword();
-	}
-*/
 	private boolean isDeleteVideoAfterConverting(){
 		return Setting.isDeleteVideoAfterConverting();
 	}
@@ -844,7 +830,7 @@ public class Converter extends Thread {
 			String text = br.readLine();
 			int begin = 0;
 			int end = 0;
-			if (text.contains("date=\"")) {
+			if (text!=null && text.contains("date=\"")) {
 				begin = text.indexOf("date=\"") + "date=\"".length();
 				end = text.indexOf("\" ", begin);
 				if(end>0){
@@ -1822,7 +1808,9 @@ public class Converter extends Thread {
 				br.close();
 				pw.flush();
 				pw.close();
-			}catch(Exception ex){}
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
 		}
 
 	}
@@ -2070,10 +2058,8 @@ public class Converter extends Thread {
 
 		//replaceチェック
 		if(Setting.getReplaceOptions()!=null){
-//			replace3option(Setting.getReplaceOptions());
 			replace3option(Setting.getReplaceOptions());
 		}
-//		ffmpegVfOption = getvfOption();
 		ffmpegVfOption = getvfOption();
 
 		inSize = videoAspect.getSize();
@@ -2090,7 +2076,6 @@ public class Converter extends Thread {
 			outAspect = toAspect(outSize, outAspect);
 			setSize = outSize;
 			printOutputSize(setSize,outAspect);
-//			replaceSetSize();
 			outputOptionMap.put("-s", setSize.replace(':', 'x'));
 			return true;
 		}
@@ -2112,7 +2097,6 @@ public class Converter extends Thread {
 				outAspect = new Aspect(outw, outh);
 				setSize = outAspect.getSize();
 				printOutputSize(setSize,outAspect);
-//				replaceSetSize();
 				outputOptionMap.put("-s", setSize.replace(':', 'x'));
 				return true;
 			}
@@ -2201,32 +2185,12 @@ public class Converter extends Thread {
 		}
 		return new Aspect(width, height);
 	}
-/*
-	private String getSetSize() {
- 		String[] list = OutOption.split(" +");
-		for(int i=0;i<list.length;i++){
-			String arg = list[i];
-			if(arg.equals("-s") && i+1 < list.length){
-				String size = list[i+1];
-				if(size.contains("x")){
-					return size.replace('x', ':');
-				}
-			}
-		}
-		return null;
-	}
-*/
 	private String getSetSize(){
 		String size = outputOptionMap.get("-s");
 		if(size!=null && size.contains("x"))
 			return size.replace('x', ':');
 		return null;
 	}
-/*
-	private void replaceSetSize(){
-		OutOption = replaceOption(OutOption, "-s", setSize.replace(':', 'x'));
-	}
-*/
 	private String getPadOption() {
 		return getFromVfOpotion("pad=");
 	}
@@ -2246,47 +2210,10 @@ public class Converter extends Thread {
 		}
 		return outs;
 	}
-/*
-	private boolean getSameAspectMaxFlag(){
-		//-samx
-		if(OutOption.contains("-samx")){
-			OutOption = OutOption.replaceAll("-samx", "");
-			return true;
-		}
-		return false;
-	}
- */
 	private boolean getSameAspectMaxFlag(){
 		//-samx
 		return outputOptionMap.remove("-samx") != null;
 	}
-/*
-	private String getFramerete(){
-		//-r or -r:v
-		String str = "";
-		if(OutOption.contains("-r ")||OutOption.contains("-r:v ")){
-			str = OutOption;
-		}else if(MainOption.contains("-r ")||MainOption.contains("-r:v ")){
-			str = MainOption;
-		}
-		if(str.isEmpty()){
-			return str;
-		}
-		int index = str.indexOf("-r");
-		if(index < 0){
-			return "";
-		}
-		int index2 = str.indexOf(" ", index+1);
-		if(index2 < 0){
-			return "";
-		}
-		index2 = str.indexOf(" ", index2+1);
-		if(index2 < 0){
-			return "";
-		}
-		return str.substring(index, index2);
-	}
-*/
 	private String getFramerate(){
 		//-r or -r:v
 		String value = "-r";
@@ -2323,31 +2250,7 @@ public class Converter extends Thread {
 		if(addOption.isEmpty()){
 			return true;
 		}
-/*
-		String[] list = addOption.split(" +");
-		LinkedHashMap<String,String> optionMap = new LinkedHashMap<String, String>(16);
-		String key = "";
-		String value = "";
-			for(int i=0;i<list.length;i++){
-				String arg = list[i];
-				if(arg.startsWith("-")){
-					if(!key.isEmpty()){
-						optionMap.put(key, value);
-					}
-					key = arg;
-					value = "";
-				}else{
-					value = arg;
-				}
-			}
-			if(!key.isEmpty()){
-				optionMap.put(key, value);
-			}
-			replace3option(optionMap);
-			return true;
-*/
 		setOptionMap(addOption, addOptionMap);
-//		replace3option(addOptionMap);
 //		仕様変更 MainOpt InOptは置き換えない
 		for(String key : addOptionMap.keySet())
 			outputOptionMap.put(key, addOptionMap.get(key));
@@ -2500,42 +2403,6 @@ public class Converter extends Thread {
 				frame = 0;
 			}
 		}
-/*
-		//1.jpgを0.jpgにコピーする
-		if(imgDir.isDirectory()){
-			File jpg1 = new File(imgDir,"1.jpg");
-			File jpg0 = new File(imgDir,"0.jpg");
-			if(jpg1.isFile()){
-				if(jpg0.isFile() && jpg0.delete())
-						;
-				FileInputStream fis = null;
-				FileOutputStream fos = null;
-				byte[] buf;
-				try{
-					fis = new FileInputStream(jpg1);
-					fos = new FileOutputStream(jpg0);
-					buf = new byte[4096];
-					int k = 0;
-					while((k = fis.read(buf, 0, buf.length))>0){
-						fos.write(buf, 0, k);
-					}
-				}catch(IOException e){
-				}finally{
-					try{
-						if(fis!=null)
-							fis.close();
-						if(fos!=null){
-							fos.flush();
-							fos.close();
-						}
-					}catch(Exception e){
-					}
-				}
-				// copy 1.jpg->0.jpg
-			}
-		}
-		//frame += 1;
-*/
 		if(frame == 0)
 			frame = 1;
 		double rate = 1.0;
@@ -3191,45 +3058,6 @@ public class Converter extends Thread {
 		return URLEncoder.encode(Path.toUnixPath(fontfile), enc);
 	}
 
-	/*
-	private static void addArrayToList(ArrayList<String> list,String array[]){
-	for(int i=0;i<array.length;i++){
-	list.add(array[i]);
-	}
-	}
-	private static String escape(String str){
-	byte[] buff = null;
-	try {
-	buff = str.getBytes("Shift_JIS");
-	} catch (UnsupportedEncodingException e) {
-	e.printStackTrace();
-	}
-	int cnt = 0;
-	for(int i=0;i<buff.length;i++){
-	if(buff[i] == '\\' || buff[i] == '{' || buff[i] == '}'){
-	cnt++;
-	}
-	cnt++;
-	}
-	byte[] obuff = new byte[cnt];
-	cnt = 0;
-	for(int i=0;i<buff.length;i++){
-	if(buff[i] == '\\' || buff[i] == '{' || buff[i] == '}'){
-	obuff[cnt] = '\\';
-	cnt++;
-	}
-	obuff[cnt] = buff[i];
-	cnt++;
-	}
-	try {
-	String out = new String(obuff,"Shift_JIS");
-	return out;
-	} catch (UnsupportedEncodingException e) {
-	e.printStackTrace();
-	}
-	return "";
-	}
-	 */
 	public boolean isFinished() {
 		return StopFlag.isFinished();
 	}
@@ -3429,25 +3257,6 @@ public class Converter extends Thread {
 		setOptionMap(OutOption, outputOptionMap);
 		return true;
 	}
-/*
-	private void replace3option(Map<String,String> map){
-		for(Entry<String, String> pair : map.entrySet()){
-			String optMain = replaceOption(MainOption,pair.getKey(),pair.getValue());
-			if(optMain!=null)
-				MainOption = optMain;
-			String optIn = replaceOption(InOption,pair.getKey(),pair.getValue());
-			if(optIn!=null)
-				InOption = optIn;
-			String optOut = replaceOption(OutOption,pair.getKey(),pair.getValue());
-			if(optOut!=null)
-				OutOption = optOut;
-			if(optIn==null && optOut==null && optMain==null){
-				OutOption = pair.getKey() + " " + pair.getValue() + " " + OutOption;
-				// 新しいkeyは OuOptionの先頭に追加
-			}
-		}
-	}
-*/
 	private void replace3option(Map<String, String> map) {
 		boolean replaced = false;
 		for(Entry<String, String> pair : map.entrySet()){
@@ -3483,48 +3292,6 @@ public class Converter extends Thread {
 	 * @param value
 	 * @return replaced :String
 	 */
-/*
-	private String replaceOption(String option, String key, String value) {
-		key += " ";
-		if (option!=null && !option.isEmpty() && option.contains(key)){
-			String ret = option.trim();
-			int keypos = ret.indexOf(key);
-			ret = ret + " ";
-			int valpos = ret.indexOf(" ", keypos) + 1;
-			if(valpos>=ret.length()){
-				// key is last token
-				return ret + value;
-			}
-			ret = ret + " ";
-			int valend = ret.indexOf(" ", valpos);
-			ret = ret.substring(0, valpos) + value +ret.substring(valend);
-			return ret.trim();
-		}
-		return null;
-	}
-*/
-/*
-	private String getvfOption() {
-		String vfIn, vfOut, vfMain;
-		vfIn = getvfOption(InOption);
-		InOption = deletevfOption(InOption, vfIn);
-		vfOut = getvfOption(OutOption);
-		OutOption = deletevfOption(OutOption, vfOut);
-		vfMain = getvfOption(MainOption);
-		MainOption = deletevfOption(MainOption, vfMain);
-		if (vfIn.isEmpty()){
-			vfIn = vfMain;
-		} else if (!vfMain.isEmpty()){
-			vfIn += "," + vfMain;
-		}
-		if (vfIn.isEmpty()){
-			vfIn = vfOut;
-		} else if (!vfOut.isEmpty()){
-			vfIn += "," + vfOut;
-		}
-		return vfIn;
-	}
-*/
 	private String getvfOption() {
 		String vfIn, vfOut, vfMain, vfOpt;
 		vfIn = getvfOption(inputOptionMap);
@@ -3550,28 +3317,6 @@ public class Converter extends Thread {
 	private static final String VFILTER_FLAG = "-vfilters";
 	private static final String VFILTER_FLAG2 = "-vf";
 	private String vfilter_flag = VFILTER_FLAG;
-/*
-	private String getvfOption(String option){
-		if (option == null){
-			return "";
-		}
-		int index;
-		if ((index = option.indexOf(VFILTER_FLAG+" ")) >= 0){
-			vfilter_flag = VFILTER_FLAG;
-		}else if ((index = option.indexOf(VFILTER_FLAG2+" ")) >= 0){
-			vfilter_flag = VFILTER_FLAG2;
-		}else{
-			return "";
-		}
-		option = option.substring(index + vfilter_flag.length());
-		option = option.trim();
-		if ((index = option.indexOf(" ")) < 0){
-			return option;
-		}
-		option = option.substring(0, index);
-		return option;
-	}
-*/
 	private String getvfOption(Map<String,String> map){
 		if(map==null)
 			return "";
@@ -3589,26 +3334,12 @@ public class Converter extends Thread {
 			vfopt = vfopt.substring(0, vfopt.length()-1);
 		return vfopt;
 	}
-/*
-	private String deletevfOption(String option, String vfoption){
-		if (option == null){
-			return "";
-		}
-		return option.replace(vfilter_flag,"").replace(vfoption, "")
-			.replaceAll(" +", " ");
-	}
-*/
 	private void deletevfOption(Map<String, String> map) {
 		if(map==null)
 			return;
 		map.remove(VFILTER_FLAG);
 		map.remove(VFILTER_FLAG2);
 	}
-/*
-	public String getInOption(){
-			return InOption;
-	}
-*/
 	public String getFFmpegOptionName() {
 		return ffmpegOptionName;
 	}
@@ -3810,22 +3541,5 @@ public class Converter extends Thread {
 	public File getConvertedVideoFile() {
 		return ConvertedVideoFile;
 	}
-
-	/*
-	 * lastChar が videoID より後ろにあれば
-	 * 最後の lastChar の前までに縮める
-	 * lastCharはタイトルにダブって含まれてよいが
-	 * タイトル後に少なくとも1つあることは確実でないとダメ
-	 */
-	/*
-	private String getTitileFromPath(String path, String videoID,
-			String lastChar){
-		if (lastChar != null
-				&& path.lastIndexOf(lastChar) > path.indexOf(videoID)){
-			path = path.substring(0, path.lastIndexOf(lastChar));
-		}
-		return getTitleFromPath(path, videoID);
-	}
-	*/
 
 }
