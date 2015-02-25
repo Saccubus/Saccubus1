@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="EXT">mp4</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-threads 0 -pass 2 -vcodec libx264 -coder 1 -r 29970/1001 -aspect 4:3 -b 760k -bt 15200k -me_range 32 -sc_threshold 85 -bf 2 -direct-pred auto -partitions parti4x4+partp8x8+partb8x8 -refs 3 -bufsize 20000k -g 300 -qcomp 0.7 -subq 7 -qmin 22 -qmax 31 -qdiff 4 -maxrate 15200k -flags +loop+mv4+mv0 -mixed-refs 1 -weightp 1 -b_strategy 1 -i_qoffset 1.40 -i_qfactor 0.71 -b_qoffset 1 -b_qfactor 1.30 -trellis 2 -qsquish 1 -mbd rd -deblock 0:0 -cmp 3 -subcmp 3 -keyint_min 30 -me_method 4 -nr 100 -sws_flags lanczos -s 480x270 -async 1000 -acodec libvo_aacenc -ac 2 -ar 44100 -ab 96k -f psp -level 13 -pix_fmt yuv420p</entry>
+	</properties>

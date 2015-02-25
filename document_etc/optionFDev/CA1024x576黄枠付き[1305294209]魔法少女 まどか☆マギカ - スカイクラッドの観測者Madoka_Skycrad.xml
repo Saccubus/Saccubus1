@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Add for CA-Sat Mar 24 06:49:46 JST 2012-Rev1.31.dev14</comment>
+<entry key="History1">http://www.nicovideo.jp/watch/1305294209</entry>
+<entry key="VhookDisabled">false</entry>
+<entry key="WideOptionFile"/>
+<entry key="FixFontSize">true</entry>
+<entry key="FontHeightFix">false</entry>
+<entry key="WideAddOption">-vf pad=1024:576:192:96</entry>
+<entry key="CommentSpeed"/>
+<entry key="UseLineskipAsFontsize">false</entry>
+<entry key="DeleteVideoAfterConv">false</entry>
+<entry key="WideCMD_MAIN"/>
+<entry key="UseVhookWide">true</entry>
+<entry key="FontWidthFix">false</entry>
+<entry key="ShadowIndex">1</entry>
+<entry key="FixCommentSize">true</entry>
+<entry key="DisableOriginalResize">true</entry>
+<entry key="SaveConvertedFile">true</entry>
+<entry key="WideCMD_EXT">.mp4</entry>
+<entry key="EnableCA">true</entry>
+<entry key="SetCommentSpeed">false</entry>
+<entry key="WideCMD_OUT">-threads 0 -s 640x360 -acodec libvo_aacenc -ab 128k -ar 44100  -ac 2 -vcodec libx264 -crf 23 -b 1400k -async 1</entry>
+<entry key="AddComment">true</entry>
+<entry key="ExtraMode">-loc -frame</entry>
+</properties>

@@ -44,6 +44,7 @@ int printFontInfo(FILE* log,TTF_Font** pfont,int size,const char* name);
  */
 int initData(DATA* data,FILE* log,SETTING* setting){
 	int i;
+	data->version = setting->version;
 	data->user.enable_comment = setting->enable_user_comment;
 	data->owner.enable_comment = setting->enable_owner_comment;
 	data->optional.enable_comment = setting->enable_optional_comment;
@@ -566,6 +567,7 @@ int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 		//comment area height is independent from video height
 		if(surf->w!=data->vout_width||surf->h!=data->vout_height){
 			fprintf(log,"[main/process]screen size != video size\n");
+			fprintf(log,"[main/process]this may be woring Ver.%s\n",data->version);
 		}
 		fprintf(log,"[main/process]screen %dx%d, video %dx%d, comment %.0fx%.0f\n",
 			surf->w,surf->h,data->vout_width,data->vout_height,

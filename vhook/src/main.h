@@ -36,6 +36,7 @@ struct DATA{
 //	int enable_optional_comment;
 //	CHAT optionalchat;
 //	CHAT_SLOT optionalslot;
+	const char* version;
 	//一般的なデータ
 	int shadow_kind;
 	int show_video;
@@ -106,6 +107,7 @@ typedef struct SETTING{
 	const char* data_owner_path;
 	const char* data_optional_path;
 	const char* font_path;
+	const char* version;	// Saccubus1 version (ver>=1.60)   (version of frontend FFmpeg nicovideo set)
 	int video_length;
 	// 新しいffmpegからvideoの時間を貰うInterfaceが分かるまで代わりに
 	// さきゅばすから渡す（但し不明の場合は　0　or　-1）

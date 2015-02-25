@@ -21,7 +21,7 @@ typedef struct ContextInfo{
  * 必要な関数ひとつめ。最初に呼ばれるよ！
  *
  */
-int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[]);
+int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[], char* version);
 FILE* changelog(FILE* log,SETTING* setting);
 
 __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc, char *argv[]){
@@ -29,7 +29,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.51.2";	//
+	char *ver="1.60.0.4";	//
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -50,7 +50,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	}
 	//セッティング取得。
 	SETTING setting;
-	if(init_setting(log,tbox,&setting,argc,argv)){
+	if(init_setting(log,tbox,&setting,argc,argv,ver)){
 		fputs("[framehook/init]initialized settings.\n",log);
 		fflush(log);
 	}else{
@@ -117,7 +117,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 int extra_font(SETTING* setting,FILE* log);
 int parseFontList(SETTING* setting,FILE* log);
 
-int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[]){
+int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[], char* version){
 	/* TOOLBOXのバージョンチェック */
 	fprintf(log,"[framehook/init]TOOLBOX version:%d.\n", tbox->version);
 	if (tbox->version != TOOLBOX_VERSION){
@@ -133,6 +133,7 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		fflush(log);
 //		return FALSE;
 	}
+	setting->version = version;	// 1.60
 	/*以降オプション*/
 
 	//コメントを見せるか否か？
