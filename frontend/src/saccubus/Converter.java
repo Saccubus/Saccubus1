@@ -15,6 +15,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1539,6 +1540,7 @@ public class Converter extends Thread {
 	private ArrayList<CommentReplace> CommentReplaceList = new ArrayList<CommentReplace>();
 	private boolean checkFps;
 	private File imgDir;
+	private Aspect outAspect;
 
 	void downloadPage(String url){
 		ArrayList<String[]> plist = new ArrayList<String[]>();
@@ -2066,13 +2068,13 @@ public class Converter extends Thread {
 		setSize = getSetSize();	//videoSetSize="width"x"height"
 		padOption = getPadOption();		//padOption=width:height:x:y
 		outSize = getOutSize();
-		Aspect outAspect = videoAspect;
+		outAspect = videoAspect;
 		if (setSize != null){
 			//setSize=width:height in -s WIDTHxHEIGHT
 			outAspect = toAspect(setSize,outAspect);
 		}
 		if (outSize != null){
-			//outSize=width:height in -vfilters outs=w:h
+			//outSize=width:height in -vf outs=w:h
 			outAspect = toAspect(outSize, outAspect);
 			setSize = outSize;
 			printOutputSize(setSize,outAspect);
@@ -2102,7 +2104,7 @@ public class Converter extends Thread {
 			}
 		}
 		if (padOption != null){
-			//padOption=width:height:videox:videoy in -vfilters pad=w:h:x:y
+			//padOption=width:height:videox:videoy in -vf pad=w:h:x:y
 			printOutputSize(padOption,outAspect);
 			printOutputSize(inSize,outAspect);
 		}else
@@ -2196,7 +2198,7 @@ public class Converter extends Thread {
 	}
 
 	private String getOutSize(){
-		//outSize=width:height in -vfilters outs=w:h
+		//outSize=width:height in -vf outs=w:h
 		String outs = getFromVfOpotion("outs=");
 		String outs_str = "outs=" + outs;
 		if(outs != null){
@@ -2280,7 +2282,7 @@ public class Converter extends Thread {
 		String out_option_ss = outputOptionMap.get("-ss");
 		if(out_option_ss!=null)
 			ffmpeg.addCmd(" -ss "+out_option_ss);
-		ffmpeg.addCmd(" -acodec copy -vsync 1 -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -f mp4 ");
+		ffmpeg.addCmd(" -acodec copy -vsync 1 -vcodec libx264 -qscale 0 -f mp4 ");
 		//ffmpeg.addCmd(" -acodec copy -vcodec mpeg4 -crf 16 -pix_fmt yuv420p -f mp4 ");
 		ffmpeg.addFile(videoout);
 
@@ -2328,7 +2330,7 @@ public class Converter extends Thread {
 		if(out_option_ss!=null)
 			ffmpeg.addCmd(" -ss "+out_option_ss);
 		ffmpeg.addCmd(" -r "+fpsUp);
-		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip  -pix_fmt yuv420p -f mp4 ");
+		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ");
 		//ffmpeg.addCmd(" -r 25 -acodec copy -vcodec mpeg4 -crf 18 -pix_fmt yuv420p -f mp4 ");
 		ffmpeg.addFile(videoout);
 
@@ -2439,7 +2441,7 @@ public class Converter extends Thread {
 		ffmpeg.addFile(videoin);
 		if(tl!=0.0)
 			ffmpeg.addCmd(" -t " + tl);
-		ffmpeg.addCmd(" -an -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -pix_fmt yuv420p -f mp4 ");
+		ffmpeg.addCmd(" -an -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ");
 		//ffmpeg.addCmd(" -an -vcodec copy -crf 10 -f mp4 ");
 		//ffmpeg.addCmd(" -an -vcodec huffyuv -pix_fmt yuv420p -f avi ");
 		ffmpeg.addFile(videoout);
@@ -2475,7 +2477,7 @@ public class Converter extends Thread {
 		if(out_option_t!=null)
 			ffmpeg.addCmd(" -t "+out_option_t);
 		ffmpeg.addCmd(" -r " + fps);
-		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -crf 16 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -directpred 3 -trellis 1 -flags2 +wpred+mixed_refs+dct8x8+fastpskip -pix_fmt yuv420p -f mp4 ");
+		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ");
 		//ffmpeg.addCmd(" -r 25 -acodec copy -vcodec mpeg4 -crf 18 -pix_fmt yuv420p -f mp4 ");
 		ffmpeg.addFile(videoout);
 
@@ -2592,7 +2594,7 @@ public class Converter extends Thread {
 				return -1;
 			}
 		} else if (!getFFmpegVfOption().isEmpty()){
-			ffmpeg.addCmd(" -vfilters ");
+			ffmpeg.addCmd(" "+vfilter_flag+" ");
 			ffmpeg.addCmd(getFFmpegVfOption());
 		}
 		ffmpeg.addCmd(" ");
@@ -2668,7 +2670,7 @@ public class Converter extends Thread {
 					return -1;
 				}
 			} else if (!getFFmpegVfOption().isEmpty()){
-				ffmpeg.addCmd(" -vfilters ");
+				ffmpeg.addCmd(" "+vfilter_flag+" ");
 				ffmpeg.addCmd(getFFmpegVfOption());
 			}
 			ffmpeg.addCmd(" ");
@@ -2725,7 +2727,7 @@ public class Converter extends Thread {
 						return -1;
 					}
 				} else if (!getFFmpegVfOption().isEmpty()){
-					ffmpeg.addCmd(" -vfilters ");
+					ffmpeg.addCmd(" "+vfilter_flag+" ");
 					ffmpeg.addCmd(getFFmpegVfOption());
 				}
 				ffmpeg.addCmd(" ");
@@ -2822,7 +2824,7 @@ public class Converter extends Thread {
 						return -1;
 					}
 				} else if (!getFFmpegVfOption().isEmpty()){
-					ffmpeg.addCmd(" -vfilters ");
+					ffmpeg.addCmd(" "+vfilter_flag+" ");
 					ffmpeg.addCmd(getFFmpegVfOption());
 				}
 				ffmpeg.addCmd(" ");
@@ -2850,12 +2852,69 @@ public class Converter extends Thread {
 		return code;
 	}
 
-	private boolean addVhookSetting(FFmpeg ffmpeg, File vhookExe, boolean isWide) {
+	private boolean addVhookSetting(FFmpeg ffmpeg, File vhookExe, boolean isWide){
+		FFmpeg ffmpeg1 = new FFmpeg("#");
+		ffmpeg1.setCmd(" ");
+		if(!addVhookSetting2014(ffmpeg1, vhookExe, isWide)){
+			return false;
+		}
+		Iterator<String> it = ffmpeg1.getCmdArrayList().iterator();
+		// ffmpeg1に設定された文字列を取り出すiterator
+		StringBuilder sb = new StringBuilder();
+		String s = "";
+		it.next();	//最初は読み飛ばす
+		while(it.hasNext()){
+			s = it.next();
+			s = s.replaceAll(VFILTER_FLAG, VFILTER_FLAG2);
+			if(s.equals(VFILTER_FLAG2)){
+				sb.append(" "+vfilter_flag+" ");
+				s = it.next();
+				int index = s.indexOf("vhext=");
+				if(index > 0){
+					index += "vhext=".length();
+					sb.append(s.substring(0, index));
+					s = s.substring(index);
+					s = vf_quote(s);	// vhext= のオプションは video filter用に quoteする
+				}else{
+					return false;
+				}
+			}
+			sb.append(s);
+			sb.append(' ');
+		}
+		s = sb.substring(0);
+		ffmpeg.addCmd(s);
+		return true;
+	}
+
+	/*
+	 *  Character escape convention
+	 *  1st File or path	'\'-> '/'			(Path.toUnixPath)
+	 *  2nd String Encode	Unicode->ShiftJis	(URLEncoder)
+	 *  3rd Filter Quote	,:;[\]				(See below)
+	 */
+	private String vf_quote(String s) {
+		String r = s
+				.replaceAll(",", "%2C")
+				.replaceAll(":", "%3A")
+				.replaceAll(";", "%3B")
+				.replaceAll("=", "%3D")
+				.replaceAll("\\[", "%5B")
+				.replaceAll("\\\\", "%5C")
+				.replaceAll("\\]", "%5D");
+		return r;
+	}
+
+	private boolean addVhookSetting2014(FFmpeg ffmpeg, File vhookExe, boolean isWide) {
 		try {
 			String encoding = "Shift_JIS";
-			ffmpeg.addCmd(" -vfilters \"");
+			ffmpeg.addCmd(" "+vfilter_flag+" \"");
 			if (!getFFmpegVfOption().isEmpty()){
 				ffmpeg.addCmd(getFFmpegVfOption());
+				ffmpeg.addCmd(",");
+			}else{
+				// -s オプションを -vf scale=w:h として先に追加
+				ffmpeg.addCmd("scale="+outAspect.getSize());
 				ffmpeg.addCmd(",");
 			}
 			ffmpeg.addCmd("vhext=");
@@ -3316,7 +3375,7 @@ public class Converter extends Thread {
 
 	private static final String VFILTER_FLAG = "-vfilters";
 	private static final String VFILTER_FLAG2 = "-vf";
-	private String vfilter_flag = VFILTER_FLAG;
+	private String vfilter_flag = VFILTER_FLAG2;
 	private String getvfOption(Map<String,String> map){
 		if(map==null)
 			return "";

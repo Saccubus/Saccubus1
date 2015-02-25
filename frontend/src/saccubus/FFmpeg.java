@@ -72,6 +72,7 @@ public class FFmpeg {
 	}
 
 	private ArrayList<String> parse(String cmd) {
+		// 引用符で囲まれた文字列かスペースで区切られたトークンごとにArrayList要素にする
 		String reg = "(\"[^\"]*\")|([^ ]+)";
 		Pattern p = Pattern.compile(reg);
 		Matcher m = p.matcher(cmd);
@@ -275,9 +276,6 @@ public class FFmpeg {
 		}
 		public String getSize(){
 			return "" + width + ":" + height;
-		}
-		public boolean equals(Aspect a){
-			return aspect == a.aspect;
 		}
 		public static final Aspect NORMAL = new Aspect(4, 3);
 		public static final Aspect WIDE = new Aspect(16, 9);
