@@ -78,7 +78,7 @@
 								<option id="gnu.c.link.option.nodeflibs.2047088895" name="デフォルト・ライブラリーを使用しない (-nodefaultlibs)" superClass="gnu.c.link.option.nodeflibs" value="false" valueType="boolean"/>
 								<option id="gnu.c.link.option.nostdlibs.506969946" name="始動またはデフォルト・ライブラリーなし (-nostdlib)" superClass="gnu.c.link.option.nostdlibs" value="false" valueType="boolean"/>
 								<option id="gnu.c.link.option.nostart.1539548072" name="標準開始ファイルを使用しない (-nostartfiles)" superClass="gnu.c.link.option.nostart" value="false" valueType="boolean"/>
-								<option id="gnu.c.link.option.other.1765254196" name="その他のオプション (-Xlinker [option])" superClass="gnu.c.link.option.other" valueType="stringList"/>
+								<option id="gnu.c.link.option.other.1765254196" name="その他のオプション (-Xlinker [option])" superClass="gnu.c.link.option.other"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1331880332" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
