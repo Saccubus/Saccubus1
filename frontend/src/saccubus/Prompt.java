@@ -261,14 +261,15 @@ public class Prompt {
 		System.out.println("Finished.");
 		System.out.println();
 		String[] ret = sbReturn.toString().split("\n");
+		int code = 0;
 		for(int l=0;l<ret.length;l++){
 			System.out.println(ret[l]);
 			String[] s = ret[l].split("=");
 			if("RESULT".equals(s[0]) && !"0".equals(s[1])){
-				exit(Integer.parseInt(s[1],16));
+				code = Integer.parseInt(s[1],16);
 			}
 		}
-		exit(0);
+		exit(code);
 	}
 
 	private static int getLogsize(){

@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -215,8 +216,8 @@ public class MainFrame extends JFrame {
 	private JLabel showDownloadListLabel = new JLabel();
 	private JPanel updateInfoPanel = new JPanel();
 	private JLabel updateInfoLabel = new JLabel();
-	private JLabel updateInfoLabel1 = new JLabel();
-	private JLabel updateInfoLabel2 = new JLabel();
+//	private JLabel updateInfoLabel1 = new JLabel();
+//	private JLabel updateInfoLabel2 = new JLabel();
 	private JCheckBox nmmNewEnableCheckBox = new JCheckBox();
 	private JCheckBox fpsUpCheckBox = new JCheckBox();
 	private JCheckBox soundOnlyCheckBox = new JCheckBox();
@@ -225,8 +226,7 @@ public class MainFrame extends JFrame {
 	private JTextField thumbTextFiled = new JTextField();
 	private JButton playConvertedVideoButton = new JButton();
 	private JLabel playConvertedVideoLabel = new JLabel();
-
-
+	private JCheckBox saveAutoListCheckBox = new JCheckBox();
 
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
@@ -797,7 +797,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y0_96.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y0_96.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserInfoLabel, grid13_x0_y0_96);
-		BrowserIECheckBox.setText("Interner Eplorer (IE7/IE8/IE9)");
+		BrowserIECheckBox.setText("Interner Eplorer (IE7/IE8/IE9～11)");
 		BrowserIECheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y1_97 = new GridBagConstraints();
 		grid13_x0_y1_97.gridx = 0;
@@ -808,7 +808,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y1_97.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y1_97.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserIECheckBox, grid13_x0_y1_97);
-		BrowserFFCheckBox.setText("Firefox (FF3/FF4～10)");
+		BrowserFFCheckBox.setText("Firefox (FF3/FF4～28)");
 		BrowserFFCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y2_98 = new GridBagConstraints();
 		grid13_x0_y2_98.gridx = 0;
@@ -830,7 +830,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y3_99.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y3_99.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserChromeCheckBox, grid13_x0_y3_99);
-		BrowserOperaCheckBox.setText("Opera");
+		BrowserOperaCheckBox.setText("Opera(ver 20.0以降は暗号化のため不可)");
 		BrowserOperaCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y4_100 = new GridBagConstraints();
 		grid13_x0_y4_100.gridx = 0;
@@ -898,32 +898,42 @@ public class MainFrame extends JFrame {
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"新機能情報", TitledBorder.LEADING, TitledBorder.TOP,
 				getFont(), Color.blue));
-		updateInfoLabel.setText("NM動画に少し対応（主に1枚絵。画面の切替はズレが有る）");
-		updateInfoLabel.setForeground(Color.blue);
-		updateInfoLabel.setToolTipText("手書き漫画の動画などは画面か音声かがネタバレになるので注意。");
-		GridBagConstraints grid14_x0_y0 = new GridBagConstraints();
-		grid14_x0_y0.gridx = 0;
-		grid14_x0_y0.gridy = 0;
-		grid14_x0_y0.gridwidth = 5;
-		grid14_x0_y0.weightx = 1.0;
-		grid14_x0_y0.anchor = GridBagConstraints.NORTH;
-		grid14_x0_y0.fill = GridBagConstraints.HORIZONTAL;
-		grid14_x0_y0.insets = INSETS_0_5_0_5;
-		updateInfoPanel.add(updateInfoLabel, grid14_x0_y0);
 		nmmNewEnableCheckBox.setText("NM動画に少し対応");
 		nmmNewEnableCheckBox.setForeground(Color.blue);
 		nmmNewEnableCheckBox.setToolTipText("フォント、ビデオクリップ、テキスト、アクションスクリプト未対応");
 		nmmNewEnableCheckBox.setEnabled(true);
+		GridBagConstraints grid14_x0_y0 = new GridBagConstraints();
+		grid14_x0_y0.gridx = 0;
+		grid14_x0_y0.gridy = 0;
+		grid14_x0_y0.gridwidth = 5;
+//		grid14_x0_y0.weightx = 1.0;
+		grid14_x0_y0.anchor = GridBagConstraints.NORTH;
+		grid14_x0_y0.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x0_y0.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(new JLabel("新機能を全てオフにすると以前と同じ。長時間ローカル変換等はオフで試して下さい"), grid14_x0_y0);
 		GridBagConstraints grid14_x0_y1 = new GridBagConstraints();
 		grid14_x0_y1.gridx = 0;
 		grid14_x0_y1.gridy = 1;
-		grid14_x0_y1.gridwidth = 5;
-		grid14_x0_y1.weightx = 1.0;
+		grid14_x0_y1.gridwidth = 1;
+//		grid14_x0_y1.weightx = 1.0;
 		grid14_x0_y1.anchor = GridBagConstraints.NORTH;
 		grid14_x0_y1.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x0_y1.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(nmmNewEnableCheckBox, grid14_x0_y1);
-		updateInfoLabel1.setText("フレームレートが低い動画のfps変更");
+		updateInfoLabel.setText("（主に1枚絵。画面の切替はズレが有る）");
+		updateInfoLabel.setForeground(Color.blue);
+		updateInfoLabel.setToolTipText("手書き漫画の動画などは画面か音声かがネタバレになるので注意。");
+		GridBagConstraints grid14_x1_y1 = new GridBagConstraints();
+		grid14_x1_y1.gridx = 1;
+		grid14_x1_y1.gridy = 1;
+		grid14_x1_y1.gridwidth = 4;
+		grid14_x1_y1.weightx = 1.0;
+		grid14_x1_y1.anchor = GridBagConstraints.CENTER;
+		grid14_x1_y1.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x1_y1.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(updateInfoLabel, grid14_x1_y1);
+/*
+ 		updateInfoLabel1.setText("フレームレートが低い動画のfps変更。変換時間が長くなります");
 		updateInfoLabel1.setForeground(Color.blue);
 		updateInfoLabel1.setToolTipText("変換時間が長くなります");
 		GridBagConstraints grid14_x0_y2 = new GridBagConstraints();
@@ -935,9 +945,11 @@ public class MainFrame extends JFrame {
 		grid14_x0_y2.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x0_y2.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(updateInfoLabel1, grid14_x0_y2);
+*/
 		fpsUpCheckBox.setText("fps変更");
 		fpsUpCheckBox.setForeground(Color.blue);
 		fpsUpCheckBox.setEnabled(true);
+		fpsUpCheckBox.setToolTipText("フレームレートが低い動画のfps変更。変換時間が長くなります");
 		GridBagConstraints grid14_x0_y3 = new GridBagConstraints();
 		grid14_x0_y3.gridx = 0;
 		grid14_x0_y3.gridy = 3;
@@ -988,20 +1000,9 @@ public class MainFrame extends JFrame {
 		grid14_x4_y3.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x4_y3.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(fpsUpTextFiled, grid14_x4_y3);
-		updateInfoLabel2.setText("映像が認識できない時音声のみの変換を行う");
-		updateInfoLabel2.setForeground(Color.blue);
-		updateInfoLabel2.setToolTipText("SoundOnly");
-		GridBagConstraints grid14_x0_y4 = new GridBagConstraints();
-		grid14_x0_y4.gridx = 0;
-		grid14_x0_y4.gridy = 4;
-		grid14_x0_y4.gridwidth = 5;
-		grid14_x0_y4.weightx = 1.0;
-		grid14_x0_y4.anchor = GridBagConstraints.NORTH;
-		grid14_x0_y4.fill = GridBagConstraints.HORIZONTAL;
-		grid14_x0_y4.insets = INSETS_0_5_0_5;
-		updateInfoPanel.add(updateInfoLabel2, grid14_x0_y4);
 		soundOnlyCheckBox.setText("映像なし許可");
 		soundOnlyCheckBox.setForeground(Color.blue);
+		soundOnlyCheckBox.setToolTipText("映像が認識できない時音声のみコメント付きに変換する");
 		GridBagConstraints grid14_x0_y5 = new GridBagConstraints();
 		grid14_x0_y5.gridx = 0;
 		grid14_x0_y5.gridy = 5;
@@ -2124,14 +2125,14 @@ public class MainFrame extends JFrame {
 		ownercomment += saccubus.Converter.OWNER_EXT;
 		Double fpsUp = 0.0;
 		Double fpsMin = 0.0;
-		if(fpsUpCheckBox.isSelected()){
+//		if(fpsUpCheckBox.isSelected()){
 			try{
 				fpsUp = Double.parseDouble(fpsUpTextFiled.getText());
 				fpsMin = Double.parseDouble(fpsMinTextField.getText());
 			}catch(NumberFormatException e){
-				//
+				//e.printStackTrace();
 			}
-		}
+//		}
 		return new ConvertingSetting(
 			MailAddrField.getText(),
 			new String(PasswordField.getPassword()),
@@ -2236,10 +2237,12 @@ public class MainFrame extends JFrame {
 			history,
 			opaqueRateTextField.getText(),
 			nmmNewEnableCheckBox.isSelected(),
+			fpsUpCheckBox.isSelected(),
 			fpsUp,
 			fpsMin,
 			soundOnlyCheckBox.isSelected(),
-			thumbTextFiled.getText()
+			thumbTextFiled.getText(),
+			saveAutoListCheckBox.isSelected()
 		);
 	}
 /*
@@ -2382,11 +2385,12 @@ public class MainFrame extends JFrame {
 		zqAdditionalOptionFiled.setText(setting.getZqAddOption());
 		opaqueRateTextField.setText(setting.getOpaqueRate());
 		nmmNewEnableCheckBox.setSelected(setting.isSwfTo3Path());
-		fpsMinTextField.setText(""+setting.getFpsMin());
-		fpsUpTextFiled.setText(""+setting.getFpsUp());
-		fpsUpCheckBox.setSelected(setting.getFpsMin()>=0.0);
+		fpsUpCheckBox.setSelected(setting.enableCheckFps());
+		fpsMinTextField.setText(Double.toString(setting.getFpsMin()));
+		fpsUpTextFiled.setText(Double.toString(setting.getFpsUp()));
 		soundOnlyCheckBox.setSelected(setting.canSoundOnly());
 		thumbTextFiled.setText(setting.getDefaultThumbnail());
+		saveAutoListCheckBox.setSelected(setting.isSaveAutoList());
 	}
 
 	/**
@@ -2416,6 +2420,7 @@ public class MainFrame extends JFrame {
 
 	/* 変換・保存する */
 	Converter converter = null;
+	ConcurrentLinkedQueue<File> queue = new ConcurrentLinkedQueue<File>();
 
 	JTextField CommandLineInOptionField = new JTextField();
 	JLabel InLabel = new JLabel();
@@ -2495,8 +2500,8 @@ public class MainFrame extends JFrame {
 	private final JRadioButton sharedNgHighRadioButton = new JRadioButton();
 	private JLabel sharedNgLabel;
 	private JPanel sharedNgPanel;
-
 	public static StringBuffer history = new StringBuffer("");
+	private boolean isLastMylist = false;
 
 	public void DoButton_actionPerformed(ActionEvent e) {
 		ConvertStopFlag stopFlag;
@@ -2509,9 +2514,13 @@ public class MainFrame extends JFrame {
 					flag.stop();
 				}
 			}else
+				//converter is finished and Button is pushed
+				// so new video or new mylist will be converted
 			if(url!=null && url.contains("mylist")){
 				//converter worker start
+				isLastMylist = true;
 				stopFlag = new ConvertStopFlag(DoButton, DoButtonStopString, DoButtonWaitString, DoButtonDefString);
+				StringBuffer sb = new StringBuffer();
 				converter = new Converter(
 						url,
 						WayBackField.getText(),
@@ -2520,12 +2529,23 @@ public class MainFrame extends JFrame {
 						stopFlag,
 						vhookInfoBar,
 						elapsedTimeBar,
-						this);
+						this,
+						sb);
 				converter.start();
 				// return to dispatch
 			}else
+			//if(url==null||!url.contains("mylist"))
 			{
 				//通常変換
+				// Shall fileQueue for playing video be cleared or truncated to 1 file?
+				// Now it will be cleared only change mylist to video, temporally.
+				if(isLastMylist){
+					queue.clear();
+					if(converter.getConvertedVideoFile()!=null){
+						queue.offer(converter.getConvertedVideoFile());
+					}
+					isLastMylist = false;
+				}
 				stopFlag = new ConvertStopFlag(DoButton, DoButtonStopString, DoButtonWaitString, DoButtonDefString);
 				converter = new Converter(
 					url,
@@ -2534,8 +2554,8 @@ public class MainFrame extends JFrame {
 					statusBar,
 					stopFlag,
 					vhookInfoBar,
-					elapsedTimeBar
-					);
+					elapsedTimeBar,
+					queue);
 				converter.start();
 			}
 		}catch(Exception ex){
@@ -2606,45 +2626,23 @@ public class MainFrame extends JFrame {
 	// 変換動画再生
 	private void playConvertedVideo_actionPerformed(ActionEvent e) {
 		try {
-			File convertedVideo = null;
-			ConvertingSetting setting = getSetting();
-			Converter conv = new Converter(
-					VideoID_TextField.getText(),
-					WayBackField.getText(),
-					setting,
-					statusBar,
-					new ConvertStopFlag(null, null, null, null),
-					new JLabel(),
-					new JLabel());
-			if (setting.isVideoFixFileName()) {
-				File folder = setting.getConvFixFileNameFolder();
-				String path = conv.detectTitleFromConvertedVideo(folder);
-				if (path == null || path.isEmpty()){
-					sendtext("検索しましたが動画が見つかりません。");
-					return;
-				}
-				convertedVideo = new File(folder, path);
-			} else {
-				convertedVideo = setting.getConvertedVideoFile();
-			}
-			if (convertedVideo == null || !convertedVideo.canRead()){
-				sendtext("変換後の動画がありません。");
+			File convertedVideo = queue.poll();
+			if(convertedVideo==null){
+				sendtext("変換後の動画がありません");
 				return;
 			}
-			ArrayList<String> cmd = new ArrayList<String>();
-			cmd.add("cmd.exe");
-			cmd.add("/C");
-			cmd.add(convertedVideo.getAbsolutePath());
-			ProcessBuilder pb = new ProcessBuilder(cmd);
-			pb.start();
+			if(!convertedVideo.canRead()){
+				sendtext("変換後の動画が読めません：" + convertedVideo.getName());
+				return;
+			}
+			if(vplayer!=null && vplayer.isAlive()){
+				vplayer.interrupt();
+			}
+			vplayer = new VPlayer(convertedVideo, statusBar);
+			vplayer.start();
 			return ;
 		} catch(NullPointerException ex){
 			sendtext("(´∀｀)＜ぬるぽ\nガッ");
-			ex.printStackTrace();
-		} catch (FileNotFoundException ex) {
-			sendtext(ex.getMessage());
-			ex.printStackTrace();
-		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -2693,11 +2691,6 @@ public class MainFrame extends JFrame {
 			} else {
 				inputVideo = setting.getVideoFile();
 			}
-//			} else {
-//				textout.setText("変換実施中。お待ちください。");
-//				needStop = false;
-//				return;
-//			}
 			if (inputVideo == null || !inputVideo.canRead()){
 				textout.setText("ダウンロード動画がありません。");
 				return;
@@ -3522,6 +3515,18 @@ s	 * @return javax.swing.JPanel
 		grid_x0_y9.gridwidth = 2;
 		watchPageSavingInfoPanel.add(saveWatchPageInfoCheckBox, grid_x0_y9);
 
+		saveAutoListCheckBox.setText("マイリスト自動変換用のautolist.batファイルを保存する");
+		GridBagConstraints grid_x0_y10 = new GridBagConstraints();
+		grid_x0_y10.gridx = 0;
+		grid_x0_y10.gridy = 10;
+		grid_x0_y10.anchor = GridBagConstraints.NORTH;
+		grid_x0_y10.fill = GridBagConstraints.HORIZONTAL;
+		grid_x0_y10.insets = INSETS_0_0_0_5;
+		grid_x0_y10.weightx = 1.0;
+		grid_x0_y10.weighty = 1.0;
+		grid_x0_y10.gridwidth = 2;
+		watchPageSavingInfoPanel.add(saveAutoListCheckBox, grid_x0_y10);
+
 		return watchPageSavingInfoPanel;
 	}
 
@@ -3604,6 +3609,8 @@ s	 * @return javax.swing.JPanel
 	private JLabel ShadowKindLabel = null;
 	@SuppressWarnings("rawtypes")
 	private JComboBox ShadowComboBox = null;
+
+	private VPlayer vplayer = null;
 
 	/**
 	 * Initialize FFmpegOptionComboBox
@@ -3960,6 +3967,9 @@ s	 * @return javax.swing.JPanel
 		return ShadowComboBox;
 	}
 
+	public ConcurrentLinkedQueue<File> getQueue(){
+		return queue;
+	}
 }
 
 class MainFrame_ShowSavingVideoFolderDialogButton_actionAdapter implements

@@ -77,7 +77,6 @@ public class VideofileInfo {
 		ffmpeg.setCmd("-y -i ");
 		ffmpeg.addFile(videoFile);
 		System.out.println("get Info:" + ffmpeg.getCmd());
-		
 		int abortedCode = 0;
 		ffmpeg.exec(abortedCode, new InfoMapCallback());
 		src = output.toString();
@@ -168,25 +167,32 @@ public class VideofileInfo {
 		duration = src.substring(index, src.indexOf(",", index)).trim();
 		String tms = "";
 		int it = 0;
-		index = duration.lastIndexOf(":");	//for min:sec
-		if(index < 0){
-			it = Integer.parseInt(duration);	//sec
-		}else{
-			tms = duration.substring(index+1);
-			duration = duration.substring(0, index);	//hour:min
+		try{
+			index = duration.lastIndexOf(":");	//for min:sec
+			if(index < 0){
+				tms = duration;		//sec
+				duration = "";		//hour:min
+			}else{
+				tms = duration.substring(index+1);			//sec
+				duration = duration.substring(0, index);	//hour:min
+			}
 			if(tms.contains(".")){
 				it = (int)(Double.parseDouble(tms));
 			} else
-				it = Integer.parseInt(tms);	//sec
+				it = Integer.parseInt(tms);		//sec
 			index = duration.lastIndexOf(":");	//for hour:min
 			if(index < 0){
-				it += Integer.parseInt(duration) * 60;	//min
+				tms = duration;		//min
+				duration = "";		//hour
 			}else{
-				tms = duration.substring(index+1);	//min
+				tms = duration.substring(index+1);			//min
 				duration = duration.substring(0, index);	//hour
-				it += Integer.parseInt(tms) * 60;	//min
-				it += Integer.parseInt(duration) * 3600;	//hour
 			}
+			it += Integer.parseInt(tms) * 60;	//min
+			if(!duration.isEmpty())
+				it += Integer.parseInt(duration) * 3600;	//hour
+		}catch(NumberFormatException e){
+			e.printStackTrace();
 		}
 		return it;
 	}

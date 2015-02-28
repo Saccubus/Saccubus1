@@ -110,6 +110,7 @@ public class CommentReplace {
 				//オーナーコメント
 				if(getChat().equals(chat)){
 					//自分自身のコメント 何もしない
+					chat.addCmd(Chat.CMD_LOC_SCRIPT);
 				}
 				else if(!chat.isScript()){
 					//スクリプト以外

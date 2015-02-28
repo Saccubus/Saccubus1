@@ -111,6 +111,10 @@ public class Chat {
 
 	private static final int CMD_COLOR_WHITE = 17;
 
+	private static final int CMD_COLOR_PINK2 = 18;
+
+	private static final int CMD_COLOR_CYAN2 = 19;
+
 	private static final int CMD_COLOR_NONE = 99;
 
 	private static final int CMD_COLOR_ERROR = 100;
@@ -404,6 +408,10 @@ public class Chat {
 			return CMD_COLOR_BLACK;
 		if (str.equals("white"))
 			return CMD_COLOR_WHITE;
+		if (str.equals("pink2"))
+			return CMD_COLOR_PINK2;
+		if (str.equals("cyan2"))
+			return CMD_COLOR_CYAN2;
 		if (!str.startsWith("#"))
 			return CMD_COLOR_NONE;	// not color
 		// color 24bit

@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,15 +41,25 @@ public class FFmpeg {
 		sb.append(string);
 	}
 
+	public void addMap(LinkedHashMap<String,String> map){
+		String key = "";
+		Iterator<String> it = map.keySet().iterator();
+		while (it.hasNext()) {
+			key = (String) it.next();
+			sb.append(key + " " + map.get(key) + " ");
+		}
+		sb.toString();
+	}
+
 	public void addFile(File file) {
 		String path = file.getPath().replace(File.separator, "/");
-//		if (path.indexOf(' ') >= 0 || path.indexOf("　") >= 0){
+		if (path.indexOf(' ') >= 0 || path.indexOf("　") >= 0){
 			sb.append(" \"");
 			sb.append(path);
 			sb.append("\"");
-//		} else {
-//			sb.append(path);
-//		}
+		} else {
+			sb.append(path);
+		}
 	}
 
 	public String getCmd() {
@@ -60,6 +72,7 @@ public class FFmpeg {
 	}
 
 	private ArrayList<String> parse(String cmd) {
+		// 引用符で囲まれた文字列かスペースで区切られたトークンごとにArrayList要素にする
 		String reg = "(\"[^\"]*\")|([^ ]+)";
 		Pattern p = Pattern.compile(reg);
 		Matcher m = p.matcher(cmd);
@@ -85,7 +98,7 @@ public class FFmpeg {
 			pb = new ProcessBuilder(getCmdArrayList());
 			pb.redirectErrorStream(true);
 			process = pb.start();
-			ebr = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			ebr = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
 			String e;
 			while ((e = ebr.readLine()) != null) {
 				callback.doEveryLoop(e);
@@ -263,9 +276,6 @@ public class FFmpeg {
 		}
 		public String getSize(){
 			return "" + width + ":" + height;
-		}
-		public boolean equals(Aspect a){
-			return aspect == a.aspect;
 		}
 		public static final Aspect NORMAL = new Aspect(4, 3);
 		public static final Aspect WIDE = new Aspect(16, 9);

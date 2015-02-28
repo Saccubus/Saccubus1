@@ -25,8 +25,6 @@ import saccubus.conv.ChatSave;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.util.Stopwatch;
 
-import com.sun.xml.internal.ws.util.ByteArrayBuffer;
-
 /**
  * <p>
  * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
@@ -347,7 +345,7 @@ public class NicoClient {
 	 * @return : String
 	 */
 	private static String toSafeString(String str, String encoding) {
-		ByteArrayBuffer bytebuf = new ByteArrayBuffer();
+		StringBuilder sb = new StringBuilder(64);
 		for (int i = 0; i < str.length(); i++){
 			String s = str.substring(i, i+1);
 			byte[] b = { (byte)'-' };
@@ -360,6 +358,7 @@ public class NicoClient {
 			}
 			if (len == 1 && b[0] == '?'){	// illegal char -> '?', but it's not safe, -> '-'
 				b[0] = '-';
+				s = "-";	//this is unicode
 			}
 			/*
 			if ("MS932".equals(encoding) && len == 2 &&
@@ -367,16 +366,9 @@ public class NicoClient {
 				System.out.println("Checked Danger Byte Code<" + b[1] + ">, better to fix?");
 			}
 			*/
-
-			bytebuf.write(b, 0, len);
+			sb.append(s);
 		}
-		try {
-			bytebuf.flush();
-			bytebuf.close();
-		} catch (IOException e) {
-			// e.printStackTrace();
-		}
-		String dest = bytebuf.toString();	// to Unicode
+		String dest = sb.toString();	// to Unicode
 		return dest;
 	}
 

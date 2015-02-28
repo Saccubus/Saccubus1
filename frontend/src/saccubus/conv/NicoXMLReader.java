@@ -113,8 +113,8 @@ public class NicoXMLReader extends DefaultHandler {
 			if (e.length() > 1 && e.startsWith("/") && e.endsWith("/")) {
 				regb.append("(" + e.substring(1, e.length() - 1) + ")");
 			} else if (e.length() > 1 && e.startsWith("\"") && e.endsWith("\"")) {
-				regb.append("(" + Pattern.quote(e.substring(1, e.length() - 1))
-						+ ")");
+				regb.append("(.*(" + Pattern.quote(e.substring(1, e.length() - 1))
+						+ ")+.*)");
 			} else {
 				regb.append("(.*(" + Pattern.quote(e) + ")+.*)");
 			}
