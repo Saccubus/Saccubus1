@@ -52,8 +52,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.60.0.4";
-	private static final String modefied = " (2015/02/26)";
+	public static final String rev = "1.60.0.5";
+	private static final String modefied = " (2015/03/02)";
 
 	String productHTML =
 		"<html>" +
@@ -68,12 +68,12 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 		"さきゅばす "+ rev + modefied + "</a><br/><br/>"+
 		"<table border=0>" +
 		"<tr><td>Copyright (C) <td>2008 Saccubus Developers Team"+
-		"<tr><td><td>2007-2008 2012-2014(FFmpeg) PSI"+
-		"<tr><td><td>2011-2014 orz"+
+		"<tr><td><td>2007-2008 2012-2015(FFmpeg) PSI"+
+		"<tr><td><td>2011-2015 orz"+
 		"</table>" +
 		"ニコニコ動画の動画をコメントつきで保存</p>" +
 		"<p>本プログラムは<br/>" +
-		" <a href=\'http://sourceforge.jp/projects/coroid/downloads/52981/\'>"	+
+		" <a href=\'http://sourceforge.jp/projects/coroid/wiki/Inqubus\'>"	+
 		"いんきゅばす</a>/inqubus1.7.2.zip<br/>を参考にしています。</p>" +
 		"<p>関連リンク<br/>" +
 		"さきゅばす <a href=\'http://sourceforge.jp/projects/saccubus/\'>sourceforge.jp/projects/saccubus</a><br/>" +

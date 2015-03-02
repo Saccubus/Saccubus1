@@ -210,8 +210,6 @@ public class MainFrame extends JFrame {
 	JCheckBox changeTitleIdCheckBox = new JCheckBox();
 	JCheckBox saveThumbnailJpgCheckBox = new JCheckBox();
 	JTextField opaqueRateTextField = new JTextField();
-	@SuppressWarnings("unused")
-	private StringBuffer resultBuffer;
 	private JButton showDownloadListButton = new JButton();
 	private JLabel showDownloadListLabel = new JLabel();
 	private JPanel updateInfoPanel = new JPanel();
@@ -220,6 +218,9 @@ public class MainFrame extends JFrame {
 //	private JLabel updateInfoLabel2 = new JLabel();
 	private JCheckBox nmmNewEnableCheckBox = new JCheckBox();
 	private JCheckBox fpsUpCheckBox = new JCheckBox();
+	private JRadioButton fpsFilterRadioButton = new JRadioButton();
+	private JRadioButton fpsConvRadioButton = new JRadioButton();
+	private ButtonGroup fpsConvButtonGroup = new ButtonGroup();
 	private JCheckBox soundOnlyCheckBox = new JCheckBox();
 	private JTextField fpsUpTextFiled = new JTextField();
 	private JTextField fpsMinTextField = new JTextField();
@@ -227,6 +228,7 @@ public class MainFrame extends JFrame {
 	private JButton playConvertedVideoButton = new JButton();
 	private JLabel playConvertedVideoLabel = new JLabel();
 	private JCheckBox saveAutoListCheckBox = new JCheckBox();
+	private JCheckBox autoPlayCheckBox = new JCheckBox();
 
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
@@ -259,7 +261,7 @@ public class MainFrame extends JFrame {
 					null, "./saccubus.ini", false);
 			}
 			this.setSetting(setting);
-			resultBuffer = new StringBuffer();
+			new StringBuffer();
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
@@ -456,6 +458,9 @@ public class MainFrame extends JFrame {
 				3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(3, 50, 5, 5), 0, 0);
 		grid5_x0_y8_43.gridy = 8;
+		GridBagConstraints grid5_x0_y9 = new GridBagConstraints(0, 9,
+				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.BOTH, INSETS_0_25_0_5, 0, 0);
 		GridBagConstraints grid5_x0_y7_42 = new GridBagConstraints(0, 4,
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.NONE, INSETS_0_25_0_5, 0, 0);
@@ -669,28 +674,28 @@ public class MainFrame extends JFrame {
 		jMenuHelpReadme.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("./readme.txt");
+				showReadme_actionPerformed("readme.txt");
 			}
 		});
 		jMenuHelpReadmeNew.setText("reameNew(最新)表示");
 		jMenuHelpReadmeNew.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("./readmeNew.txt");
+				showReadme_actionPerformed("readmeNew.txt");
 			}
 		});
 		jMenuHelpReadmePlus.setText("　reame+表示");
 		jMenuHelpReadmePlus.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("./readme+.txt");
+				showReadme_actionPerformed("readme+.txt");
 			}
 		});
 		jMenuHelpReadmeFirst.setText("　最初に必ず読んで　表示");
 		jMenuHelpReadmeFirst.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("./最初に必ず読んで.txt");
+				showReadme_actionPerformed("最初に必ず読んで.txt");
 			}
 		});
 		jMenuHelpFF.setText("FFmpegヘルプ表示");
@@ -808,7 +813,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y1_97.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y1_97.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserIECheckBox, grid13_x0_y1_97);
-		BrowserFFCheckBox.setText("Firefox (FF3/FF4～28)");
+		BrowserFFCheckBox.setText("Firefox (FF3/FF4～36)");
 		BrowserFFCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y2_98 = new GridBagConstraints();
 		grid13_x0_y2_98.gridx = 0;
@@ -932,24 +937,10 @@ public class MainFrame extends JFrame {
 		grid14_x1_y1.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x1_y1.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(updateInfoLabel, grid14_x1_y1);
-/*
- 		updateInfoLabel1.setText("フレームレートが低い動画のfps変更。変換時間が長くなります");
-		updateInfoLabel1.setForeground(Color.blue);
-		updateInfoLabel1.setToolTipText("変換時間が長くなります");
-		GridBagConstraints grid14_x0_y2 = new GridBagConstraints();
-		grid14_x0_y2.gridx = 0;
-		grid14_x0_y2.gridy = 2;
-		grid14_x0_y2.gridwidth = 5;
-		grid14_x0_y2.weightx = 1.0;
-		grid14_x0_y2.anchor = GridBagConstraints.NORTH;
-		grid14_x0_y2.fill = GridBagConstraints.HORIZONTAL;
-		grid14_x0_y2.insets = INSETS_0_5_0_5;
-		updateInfoPanel.add(updateInfoLabel1, grid14_x0_y2);
-*/
 		fpsUpCheckBox.setText("fps変更");
 		fpsUpCheckBox.setForeground(Color.blue);
 		fpsUpCheckBox.setEnabled(true);
-		fpsUpCheckBox.setToolTipText("フレームレートが低い動画のfps変更。変換時間が長くなります");
+		fpsUpCheckBox.setToolTipText("フレームレートが低い動画のfps変更。");
 		GridBagConstraints grid14_x0_y3 = new GridBagConstraints();
 		grid14_x0_y3.gridx = 0;
 		grid14_x0_y3.gridy = 3;
@@ -1000,6 +991,30 @@ public class MainFrame extends JFrame {
 		grid14_x4_y3.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x4_y3.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(fpsUpTextFiled, grid14_x4_y3);
+		fpsFilterRadioButton.setText("fpsフィルター使用");
+		fpsFilterRadioButton.setForeground(Color.blue);
+		fpsFilterRadioButton.setSelected(true);
+		fpsFilterRadioButton.setToolTipText("ffmpeg内fpsフィルターを使う");
+		GridBagConstraints grid14_x0_y4 = new GridBagConstraints();
+		grid14_x0_y4.gridx = 0;
+		grid14_x0_y4.gridy = 4;
+		grid14_x0_y4.weightx = 0.0;
+		grid14_x0_y4.anchor = GridBagConstraints.NORTH;
+		grid14_x0_y4.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x0_y4.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(fpsFilterRadioButton, grid14_x0_y4);
+		fpsConvRadioButton.setText("2path-fps変換(1.50互換)");
+		fpsConvRadioButton.setSelected(false);
+		fpsConvRadioButton.setToolTipText("2回変換を使う");
+		GridBagConstraints grid14_x1_y4 = new GridBagConstraints();
+		grid14_x1_y4.gridx = 1;
+		grid14_x1_y4.gridy = 4;
+		grid14_x1_y4.gridwidth = 3;
+		grid14_x1_y4.anchor = GridBagConstraints.NORTH;
+		grid14_x1_y4.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x1_y4.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(fpsConvRadioButton, grid14_x1_y4);
+//
 		soundOnlyCheckBox.setText("映像なし許可");
 		soundOnlyCheckBox.setForeground(Color.blue);
 		soundOnlyCheckBox.setToolTipText("映像が認識できない時音声のみコメント付きに変換する");
@@ -1092,6 +1107,8 @@ public class MainFrame extends JFrame {
 		ShowSavingConvertedVideoFileDialogButton
 				.addActionListener(new MainFrame_ShowSavingConvertedVideoDialogButton_actionAdapter(
 						this));
+		autoPlayCheckBox.setText("変換後自動再生(拡張子の既定値)");
+		autoPlayCheckBox.setForeground(Color.blue);
 		OptionalThreadInfoPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"オプショナルスレッド設定", TitledBorder.LEADING, TitledBorder.TOP,
@@ -1222,6 +1239,9 @@ public class MainFrame extends JFrame {
 
 		thumbInfoExtButtonGroup.add(saveThumbInfoExtTxtRadioButton);
 		thumbInfoExtButtonGroup.add(saveThumbInfoExtXmlRadioButton);
+
+		fpsConvButtonGroup.add(fpsFilterRadioButton);
+		fpsConvButtonGroup.add(fpsConvRadioButton);
 
 		StatusPanel.setLayout(new BorderLayout());
 		StatusPanel.add(elapsedTimeBar,BorderLayout.WEST);
@@ -1485,6 +1505,7 @@ public class MainFrame extends JFrame {
 				grid5_x0_y8_43);
 		ConvertedVideoSavingInfoPanel.add(
 				ShowSavingConvertedVideoFileDialogButton,	grid5_x3_y8_45);
+		ConvertedVideoSavingInfoPanel.add(autoPlayCheckBox, grid5_x0_y9);
 		GridBagConstraints grid__x_y_000_ = new GridBagConstraints();
 		grid__x_y_000_.gridx = 0;
 		grid__x_y_000_.gridy = 0;
@@ -2242,7 +2263,9 @@ public class MainFrame extends JFrame {
 			fpsMin,
 			soundOnlyCheckBox.isSelected(),
 			thumbTextFiled.getText(),
-			saveAutoListCheckBox.isSelected()
+			saveAutoListCheckBox.isSelected(),
+			fpsFilterRadioButton.isSelected(),
+			autoPlayCheckBox.isSelected()
 		);
 	}
 /*
@@ -2386,11 +2409,14 @@ public class MainFrame extends JFrame {
 		opaqueRateTextField.setText(setting.getOpaqueRate());
 		nmmNewEnableCheckBox.setSelected(setting.isSwfTo3Path());
 		fpsUpCheckBox.setSelected(setting.enableCheckFps());
+		fpsFilterRadioButton.setSelected(setting.isUseFpsFilter());
+		fpsConvRadioButton.setSelected(!setting.isUseFpsFilter());
 		fpsMinTextField.setText(Double.toString(setting.getFpsMin()));
 		fpsUpTextFiled.setText(Double.toString(setting.getFpsUp()));
 		soundOnlyCheckBox.setSelected(setting.canSoundOnly());
 		thumbTextFiled.setText(setting.getDefaultThumbnail());
 		saveAutoListCheckBox.setSelected(setting.isSaveAutoList());
+		autoPlayCheckBox.setSelected(setting.isAutoPlay());
 	}
 
 	/**
@@ -2625,39 +2651,20 @@ public class MainFrame extends JFrame {
 
 	// 変換動画再生
 	private void playConvertedVideo_actionPerformed(ActionEvent e) {
-		try {
-			File convertedVideo = queue.poll();
-			if(convertedVideo==null){
-				sendtext("変換後の動画がありません");
-				return;
-			}
-			if(!convertedVideo.canRead()){
-				sendtext("変換後の動画が読めません：" + convertedVideo.getName());
-				return;
-			}
-			if(vplayer!=null && vplayer.isAlive()){
-				vplayer.interrupt();
-			}
-			vplayer = new VPlayer(convertedVideo, statusBar);
-			vplayer.start();
-			return ;
-		} catch(NullPointerException ex){
-			sendtext("(´∀｀)＜ぬるぽ\nガッ");
-			ex.printStackTrace();
-		}
+		if(converter!=null)
+			converter.playConvertedVideo();
 	}
 
 	/* readme表示 */
 	public void showReadme_actionPerformed(String readmePath){
 		HtmlView hv;
+		String text = "ファイルが見つかりません.";
 		try{
-			String text = Path.readAllText(readmePath, "MS932");
-			if(text.isEmpty()){
-				text = "ファイルが見つかりません.";
-			}
+			String docfile = new File("doc"+File.separator+readmePath).getPath();
+			text = Path.readAllText(docfile, "MS932");
 			hv = new HtmlView(this, "readme表示", "");
 			hv.setText(HtmlView.markupHtml(text));
-	}catch(Exception e){
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
@@ -3055,35 +3062,35 @@ s	 * @return javax.swing.JPanel
 		if (ProxyInfoPanel == null) {
 			GridBagConstraints grid_x0_y0_13 = new GridBagConstraints();
 			grid_x0_y0_13.gridx = 0;
-			grid_x0_y0_13.gridwidth = 2;
-			grid_x0_y0_13.weightx = 1.0;
+			//grid_x0_y0_13.gridwidth = 1;
+			grid_x0_y0_13.weightx = 0.0;
 			grid_x0_y0_13.fill = GridBagConstraints.HORIZONTAL;
 			grid_x0_y0_13.insets = INSETS_0_5_0_5;
 			grid_x0_y0_13.gridy = 0;
 			GridBagConstraints grid_x1_y2_12 = new GridBagConstraints();
 			grid_x1_y2_12.fill = GridBagConstraints.HORIZONTAL;
-			grid_x1_y2_12.gridy = 2;
+			grid_x1_y2_12.gridy = 1;
 			grid_x1_y2_12.weightx = 1.0;
 			grid_x1_y2_12.insets = new Insets(5, 0, 5, 5);
-			grid_x1_y2_12.gridx = 1;
+			grid_x1_y2_12.gridx = 2;
 			GridBagConstraints grid_x0_y2_10 = new GridBagConstraints();
-			grid_x0_y2_10.gridx = 0;
+			grid_x0_y2_10.gridx = 1;
 			grid_x0_y2_10.insets = INSETS_5_5_5_5;
-			grid_x0_y2_10.gridy = 2;
+			grid_x0_y2_10.gridy = 1;
 			ProxyPortLabel = new JLabel();
 			ProxyPortLabel.setText("ポート番号");
 			GridBagConstraints grid_x1_y1_9 = new GridBagConstraints();
 			grid_x1_y1_9.fill = GridBagConstraints.BOTH;
-			grid_x1_y1_9.gridy = 1;
+			grid_x1_y1_9.gridy = 0;
 			grid_x1_y1_9.weightx = 1.0;
 			grid_x1_y1_9.insets = INSETS_0_0_0_5;
-			grid_x1_y1_9.gridx = 1;
+			grid_x1_y1_9.gridx = 2;
 			GridBagConstraints grid_x0_y1_8 = new GridBagConstraints();
-			grid_x0_y1_8.gridx = 0;
+			grid_x0_y1_8.gridx = 1;
 			grid_x0_y1_8.insets = INSETS_0_5_0_5;
 			grid_x0_y1_8.fill = GridBagConstraints.NONE;
-			grid_x0_y1_8.anchor = GridBagConstraints.EAST;
-			grid_x0_y1_8.gridy = 1;
+			grid_x0_y1_8.anchor = GridBagConstraints.WEST;
+			grid_x0_y1_8.gridy = 0;
 			ProxyLabel = new JLabel();
 			ProxyLabel.setText("プロキシ");
 			ProxyInfoPanel = new JPanel();
@@ -3609,8 +3616,6 @@ s	 * @return javax.swing.JPanel
 	private JLabel ShadowKindLabel = null;
 	@SuppressWarnings("rawtypes")
 	private JComboBox ShadowComboBox = null;
-
-	private VPlayer vplayer = null;
 
 	/**
 	 * Initialize FFmpegOptionComboBox

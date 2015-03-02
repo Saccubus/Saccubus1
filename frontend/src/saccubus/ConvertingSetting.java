@@ -36,6 +36,23 @@ import saccubus.util.Encryption;
  * @version 1.0
  */
 public class ConvertingSetting {
+	//default setting for 1.60-
+
+	static final String DEF_OPTS_FPSUP = " -acodec copy -vsync 1 -vcodec libx264 -qscale 1 -f mp4 ";
+	//static final String OUTOPT_FPSUP = " -acodec copy -vcodec mpeg4 -crf 16 -pix_fmt yuv420p -f mp4";
+	static final String DEF_OPTS_SWF_JPEG = " -an -vcodec copy -r 1 -f image2 ";
+	static final String DEF_OPTS_JPEG_MP4 = " -an -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ";
+	//static final String OUTOPTS_JPEG_MP4 = " -an -vcodec copy -crf 10 -f mp4 ";
+	//static final String OUTOPTS_JPEG_MP4 = " -an -vcodec huffyuv -pix_fmt yuv420p -f avi ";
+	static final String DEF_OPTS_MIX = " -acodec copy -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ";
+	//static final String OUTOPTS_MIX = " -r 25 -acodec copy -vcodec mpeg4 -crf 18 -pix_fmt yuv420p -f mp4 ";
+	static final String DEFAULT_CMDLINE_OUT="-threads 0 -s 512x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 4:3";
+	static final String DEFAULT_WIDE_CMDLINE_OUT = "-threads 0 -s 640x360 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -aspect 16:9 -pix_fmt yuv420p";
+	static final String DEFAULT_ZQ_CMDLINE_OUT = "-threads 0 -s 640x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -samx -pix_fmt yuv420p";
+	static final String DEFAULT_OPTION_FOLDER = "./optionF";
+	static final String DEFAULT_VHOOK_PATH = "./bin/nicovideoF.dll";
+	static final String DEFAULT_FFMPEG_PATH = "./bin/ffmpegF.exe";
+
 	public static final String[] ShadowKindArray = {
 		"00:なし",
 		"01:ニコニコ動画風",
@@ -153,7 +170,12 @@ public class ConvertingSetting {
 	private boolean enableSoundOnly;
 	private String thumbnailFile;
 	private boolean saveAutoList;
-
+	private boolean useFpsFilter;
+	private boolean autoPlay;
+	private static String defOptsFpsUp = DEF_OPTS_FPSUP;
+	private static String defOptsSwfJpeg = DEF_OPTS_SWF_JPEG;
+	private static String defOptsJpegMp4 = DEF_OPTS_JPEG_MP4;
+	private static String defOptsMix = DEF_OPTS_MIX;
 	private Map<String, String> replaceOptions;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
@@ -366,7 +388,9 @@ public class ConvertingSetting {
 			double fps_min,
 			boolean en_soundonly,
 			String thumb_file,
-			boolean save_autolist
+			boolean save_autolist,
+			boolean use_fpsfilter,
+			boolean auto_play
 		)
 	{
 		this(	mailaddress,
@@ -489,6 +513,8 @@ public class ConvertingSetting {
 		enableSoundOnly = en_soundonly;
 		thumbnailFile = thumb_file;
 		saveAutoList = save_autolist;
+		useFpsFilter = use_fpsfilter;
+		autoPlay = auto_play;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -827,6 +853,25 @@ public class ConvertingSetting {
 	public boolean isSaveAutoList(){
 		return saveAutoList;
 	}
+	public boolean isUseFpsFilter() {
+		return useFpsFilter;
+	}
+	public boolean isAutoPlay() {
+		return autoPlay;
+	}
+	//
+	public static String getDefOptsFpsUp(){
+		return defOptsFpsUp;
+	}
+	public static String getDefOptsSwfJpeg(){
+		return defOptsSwfJpeg;
+	}
+	public static String getDefOptsJpegMp4(){
+		return defOptsJpegMp4;
+	}
+	public static String getDefOptsMix(){
+		return defOptsMix;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -952,6 +997,13 @@ public class ConvertingSetting {
 	static final String PROP_SOUNDONLY = "SoundOnly";
 	static final String PROP_THUMBNIAL = "DefaultThumbFile";
 	static final String PROP_SAVE_AUTOLIST = "SaveAutoList";
+	static final String PROP_USE_FPS_FILTER = "UseFpsFilter";
+	static final String PROP_AUTO_PLAY = "AutoPlay";
+	// 読み込むだけ、保存しない
+	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
+	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
+	public static final String PROP_OPTS_JPEG_MP4 = "OutOptionJpegMp4";
+	public static final String PROP_OPTS_MIX = "OutOptionMix";
 	/*
 	 * ここまで拡張設定 1.22r3 に対する
 	 */
@@ -971,9 +1023,10 @@ public class ConvertingSetting {
 		String user = setting.getMailAddress();
 		String password = setting.getPassword();
 		String encrypt_pass = setting.getEncryptPass();
-		if (user != null && !user.isEmpty()
-			&& password != null && !password.isEmpty()
-			&& encrypt_pass.isEmpty()){
+		if(user == null) user = "";
+		if(password == null) password = "";
+		if(encrypt_pass == null) encrypt_pass = "";
+		if (!user.isEmpty() && !password.isEmpty() && encrypt_pass.isEmpty()){
 			// パスワードを暗号化する
 			Key skey = Encryption.makeKey(128,user);
 			String try_encryption = Encryption.encode(password, skey);
@@ -985,7 +1038,7 @@ public class ConvertingSetting {
 			} else {
 				System.out.println("パスワード暗号化失敗");
 			}
-		}else {
+		}else if(encrypt_pass.isEmpty()) {
 			System.out.println("メールアドレスが無効なため、パスワードを暗号化しません");
 		}
 		prop.setProperty(PROP_MAILADDR, user);
@@ -1143,6 +1196,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_SOUNDONLY, Boolean.toString(setting.canSoundOnly()));
 		prop.setProperty(PROP_THUMBNIAL, setting.getDefaultThumbnail());
 		prop.setProperty(PROP_SAVE_AUTOLIST, Boolean.toString(setting.isSaveAutoList()));
+		prop.setProperty(PROP_USE_FPS_FILTER, Boolean.toString(setting.isUseFpsFilter()));
+		prop.setProperty(PROP_AUTO_PLAY, Boolean.toString(setting.isAutoPlay()));
 		/*
 		 * ここまで拡張設定保存 1.22r3 に対する
 		 */
@@ -1251,6 +1306,11 @@ public class ConvertingSetting {
 			}
 		}
 		String option_file_name = prop.getProperty(PROP_OPTION_FILE, null);
+		defOptsFpsUp = prop.getProperty(PROP_OPTS_FPSUP, DEF_OPTS_FPSUP);
+		defOptsSwfJpeg = prop.getProperty(PROP_OPTS_SWF_JPEG, DEF_OPTS_SWF_JPEG);
+		defOptsJpegMp4 = prop.getProperty(PROP_OPTS_JPEG_MP4, DEF_OPTS_JPEG_MP4);
+		defOptsMix = prop.getProperty(PROP_OPTS_MIX, DEF_OPTS_MIX);
+
 		File option_file = null;
 		if (option_file_name != null) {
 			option_file = new File(option_file_name);
@@ -1284,12 +1344,12 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_CONV_WITH_OWNERCOMMENT,"false")),	// false<-true 1.22r3e8
 			prop.getProperty(PROP_CONVERTED_FILE, "./video.avi"),
 			prop.getProperty(PROP_SHOW_COMMENT, "40"),
-			prop.getProperty(PROP_FFMPEG_PATH,"./bin/ffmpeg.exe"),
-			prop.getProperty(PROP_VHOOK_PATH,"./bin/nicovideoE.dll"),
+			prop.getProperty(PROP_FFMPEG_PATH,DEFAULT_FFMPEG_PATH),
+			prop.getProperty(PROP_VHOOK_PATH,DEFAULT_VHOOK_PATH),
 			prop.getProperty(PROP_CMDLINE_EXT, "avi"),
 			prop.getProperty(PROP_CMDLINE_MAIN,""),
 			prop.getProperty(PROP_CMDLINE_IN, ""),
-			prop.getProperty(PROP_CMDLINE_OUT,"-threads 0 -s 512x384 -acodec libmp3lame -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 4:3"),
+			prop.getProperty(PROP_CMDLINE_OUT,DEFAULT_CMDLINE_OUT),
 			prop.getProperty(PROP_BACK_COMMENT, "500"),
 			prop.getProperty(PROP_FONT_PATH, win_dir+"Fonts/msgothic.ttc"),
 			Integer.parseInt(prop.getProperty(PROP_FONT_INDEX, "1")),
@@ -1316,7 +1376,7 @@ public class ConvertingSetting {
 			Integer.parseInt(prop.getProperty(PROP_SHADOW_INDEX,"1"),10),
 			Boolean.parseBoolean(prop.getProperty(PROP_ADD_OPTION_CONV_VIDEO, "false")),
 			prop.getProperty(PROP_HISTORY1, ""),
-			prop.getProperty(PROP_VHOOK_WIDE_PATH,"./bin/nicovideoE.dll"),
+			prop.getProperty(PROP_VHOOK_WIDE_PATH,DEFAULT_VHOOK_PATH),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_VHOOK,"true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_VHOOK_WIDE,"true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_BROWSER_IE, "false")),
@@ -1326,12 +1386,12 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_OPERA, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_COOKIE_PATH, "false")),
 			prop.getProperty(PROP_BROWSER_COOKIE_PATH,"－場所は自分で捜して下さい－"),
-			prop.getProperty(PROP_OPTION_FOLDER, "./option"),
+			prop.getProperty(PROP_OPTION_FOLDER, DEFAULT_OPTION_FOLDER),
 			wide_option_file,
 			prop.getProperty(PROP_WIDE_CMDLINE_EXT, "mp4"),
 			prop.getProperty(PROP_WIDE_CMDLINE_MAIN,""),
 			prop.getProperty(PROP_WIDE_CMDLINE_IN, ""),
-			prop.getProperty(PROP_WIDE_CMDLINE_OUT,"-threads 0 -s 640x360 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -cqp 23 -async 1 -aspect 16:9"),
+			prop.getProperty(PROP_WIDE_CMDLINE_OUT,DEFAULT_WIDE_CMDLINE_OUT),
 			Boolean.parseBoolean(prop.getProperty(PROP_OPTIONAL_TRANSLUCENT, "true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_FONT_HEIGHT_FIX,"false")),
 			prop.getProperty(PROP_FONT_HEIGHT_FIX_RAITO,""),
@@ -1362,12 +1422,12 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_CHANGE_TITLE_ID, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_THUMBNAIL_JPG, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ZQ_PLAYER, "false")),
-			prop.getProperty(PROP_ZQ_VHOOK_PATH,"./bin/nicovideoE.dll"),
+			prop.getProperty(PROP_ZQ_VHOOK_PATH,DEFAULT_VHOOK_PATH),
 			zq_option_file,
 			prop.getProperty(PROP_ZQ_CMDLINE_EXT, "mp4"),
 			prop.getProperty(PROP_ZQ_CMDLINE_MAIN,""),
 			prop.getProperty(PROP_ZQ_CMDLINE_IN, ""),
-			prop.getProperty(PROP_ZQ_CMDLINE_OUT,"-threads 0 -s 640x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -samx"),
+			prop.getProperty(PROP_ZQ_CMDLINE_OUT,DEFAULT_ZQ_CMDLINE_OUT),
 			prop.getProperty(PROP_ZQ_ADD_OPTION, ""),
 			new StringBuffer(),
 			prop.getProperty(PROP_OPAQUE_RATE, "1.0"),
@@ -1377,14 +1437,16 @@ public class ConvertingSetting {
 			Double.parseDouble(prop.getProperty(PROP_FPS_MIN, "23.0")),
 			Boolean.parseBoolean(prop.getProperty(PROP_SOUNDONLY, "false")),
 			prop.getProperty(PROP_THUMBNIAL, "<自動>"),
-			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_AUTOLIST, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_AUTOLIST, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_USE_FPS_FILTER,"false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_PLAY,"false"))
 		);
 	}
 
 	public static ConvertingSetting loadSetting(String user, String password) {
 		return ConvertingSetting.loadSetting(user, password, PROP_FILE);
 	}
-
+/*
 	public void setFontPath(String path) {
 		FontPath = path;
 	}
@@ -1408,7 +1470,7 @@ public class ConvertingSetting {
 	public void setDisableOriginalResize(boolean b) {
 		disableOriginalResize = b;
 	}
-
+*/
 	/**
 	 * @param replaceOptions セットする replaceOptions
 	 */

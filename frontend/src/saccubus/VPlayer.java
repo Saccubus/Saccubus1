@@ -12,9 +12,9 @@ import javax.swing.JLabel;
 public class VPlayer extends Thread {
 	private final File playVideo;
 	private final JLabel status;
-	private String exitMsg;
+	private String exitMsg = "";
 	private static AtomicInteger playCount = new AtomicInteger(0);
- 
+
 	public VPlayer(File playvideo, JLabel stat) {
 		playVideo = playvideo;
 		status = stat;
@@ -66,28 +66,28 @@ public class VPlayer extends Thread {
 			try {
 				if(process!=null){
 					process.destroy();
+					ebr.close();
+					process.getInputStream().close();
 				}
-				ebr.close();
-				process.getInputStream().close();
 			} catch(Exception ex){
 				//ex.printStackTrace();
 			}
 		}
 	}
-	
+
 	@Override
 	public void run(){
 		playCount.incrementAndGet();
 		sendtext("çƒê∂:"+playVideo.getName());
 		String msg = play();
-		synchronized (playCount) {
+//		synchronized (playCount) {
 			int ct = playCount.decrementAndGet();
 			if(ct==0)
 				sendtext(msg);
-		}
+//		}
 
 	}
-	
+
 	public String getExitMsg(){
 		return exitMsg;
 	}

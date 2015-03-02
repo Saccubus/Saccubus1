@@ -79,6 +79,7 @@ public class Converter extends Thread {
 	private String OtherVideo;
 	private final String WatchInfo;
 	private final JLabel MovieInfo;
+	private InfoStack infoStack;
 	private BrowserCookieKind BrowserKind = BrowserCookieKind.NONE;
 	private final BrowserInfo BrowserInfo = new BrowserInfo();
 	private String UserSession = "";	//ブラウザから取得したユーザーセッション
@@ -98,7 +99,7 @@ public class Converter extends Thread {
 	private String outSize;
 	private String aprilFool;
 	private StringBuffer sbRet = null;
-	private saccubus.MainFrame parent = null;;
+	private saccubus.MainFrame parent = null;
 	/*
 	 * sbRet is return String value to EXTERNAL PROGRAM such as BAT file, SH script, so on.
 	 * string should be ASCII or URLEncoded in System Encoding.
@@ -1541,6 +1542,7 @@ public class Converter extends Thread {
 	private boolean checkFps;
 	private File imgDir;
 	private Aspect outAspect;
+	private VPlayer vplayer = null;
 
 	void downloadPage(String url){
 		ArrayList<String[]> plist = new ArrayList<String[]>();
@@ -1938,6 +1940,9 @@ public class Converter extends Thread {
 						System.out.println("Deleted: " + OptionalMiddleFile.getPath());
 					}
 				}
+				if (Setting.isAutoPlay()){
+					playConvertedVideo();
+				}
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -1958,6 +1963,29 @@ public class Converter extends Thread {
 		}
 	}
 
+	// 変換動画再生
+	public void playConvertedVideo() {
+		try {
+			File convertedVideo = fileQueue.poll();
+			if(convertedVideo==null){
+				sendtext("変換後の動画がありません");
+				return;
+			}
+			if(!convertedVideo.canRead()){
+				sendtext("変換後の動画が読めません：" + convertedVideo.getName());
+				return;
+			}
+			if(vplayer!=null && vplayer.isAlive()){
+				vplayer.interrupt();
+			}
+			vplayer = new VPlayer(convertedVideo, Status);
+			vplayer.start();
+			return ;
+		} catch(NullPointerException ex){
+			sendtext("(´∀｀)＜ぬるぽ\nガッ");
+			ex.printStackTrace();
+		}
+	}
 	private void deleteList(ArrayList<File> list){
 		if (list== null)	{
 			return;
@@ -2260,21 +2288,70 @@ public class Converter extends Thread {
 	}
 
 	private static final int CODE_CONVERTING_ABORTED = 100;
+	//private static final String OUTOPTS_FPSUP = " -acodec copy -vsync 1 -vcodec libx264 -qscale 1 -f mp4 ";
+	//private static final String OPTOPTS_SWF_JPEG = " -an -vcodec copy -r 1 -f image2 ";
+	//private static final String OUTOPTS_JPEG_MP4 = " -an -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ";
+	//private static final String OUTOPTS_MIX = " -acodec copy -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ";
 
-	private int convFLV_fpsUp(File videoin, File videoout){
-		int code = -1;
-		/*
-		 * ffmpeg -r fpsUp
-		 */
-		System.out.println("FLV Up "+fpsUp+"fps");
-		String txt = MovieInfo.getText();
-		MovieInfo.setText("FLV "+fpsUp+"fps," + txt);
+	private void setOption1(File infile){
 		ffmpeg.setCmd("-y ");
 		ffmpeg.addMap(mainOptionMap);
 		ffmpeg.addCmd(" ");
 		ffmpeg.addMap(inputOptionMap);
 		ffmpeg.addCmd(" -i ");
-		ffmpeg.addFile(videoin);
+		ffmpeg.addFile(infile);
+		ffmpeg.addCmd(" ");
+	}
+
+	private void setOption2(){
+		ffmpeg.addCmd(" ");
+		ffmpeg.addMap(outputOptionMap);
+		ffmpeg.addCmd(" -metadata");
+		ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
+		ffmpeg.addCmd(" -metadata");
+		ffmpeg.addCmd(" \"comment="+VideoID+"\"");
+		ffmpeg.addCmd(" ");
+	}
+
+	private boolean setOption3(File outfile){
+		if (!Setting.isVhookDisabled()) {
+			if(!addVhookSetting(ffmpeg, selectedVhook, isPlayerWide)){
+				return false;
+			}
+		} else {
+			ffmpeg.addCmd(" "+vfilter_flag+" ");
+			ffmpeg.addCmd(getFFmpegVfOption());
+		}
+		ffmpeg.addCmd(" ");
+		ffmpeg.addFile(outfile);
+		return true;
+	}
+
+	private int execOption(){
+		int code;
+		System.out.println("arg:" + ffmpeg.getCmd());
+		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
+		errorLog = ffmpeg.getErrotLog().toString();
+		lastFrame = ffmpeg.getLastFrame();
+		return code;
+	}
+
+	private int convFLV(File videoin, File videoout){
+		int code = -1;
+		setOption1(videoin);
+		setOption2();
+		if(!setOption3(videoout))
+			return code;
+		code = execOption();
+		return code;
+	}
+
+	private int conv_fpsUp(File videoin, File videoout){
+		int code = -1;
+		/*
+		 * ffmpeg -r fpsUp
+		 */
+		setOption1(videoin);
 		ffmpeg.addCmd(" -r " + fpsUp);
 		String out_option_t = outputOptionMap.get("-t");
 		if(out_option_t!=null)
@@ -2282,20 +2359,15 @@ public class Converter extends Thread {
 		String out_option_ss = outputOptionMap.get("-ss");
 		if(out_option_ss!=null)
 			ffmpeg.addCmd(" -ss "+out_option_ss);
-		ffmpeg.addCmd(" -acodec copy -vsync 1 -vcodec libx264 -qscale 0 -f mp4 ");
-		//ffmpeg.addCmd(" -acodec copy -vcodec mpeg4 -crf 16 -pix_fmt yuv420p -f mp4 ");
+		ffmpeg.addCmd(ConvertingSetting.getDefOptsFpsUp());
 		ffmpeg.addFile(videoout);
 
-		System.out.println("arg:" + ffmpeg.getCmd());
-		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
-		errorLog = ffmpeg.getErrotLog().toString();
-		lastFrame = ffmpeg.getLastFrame();
-		MovieInfo.setText(txt);
+		code = execOption();
 		if(code==0){
-			// -itsoffset削除
+			// -itsoffset削除 実行済み
 			inputOptionMap.remove("-itsoffset");
 			mainOptionMap.remove("-itsoffset");
-			// -ss削除
+			// -ss削除  実行済み
 			inputOptionMap.remove("-ss");
 			mainOptionMap.remove("-ss");
 			// outの -ss はそのまま残す
@@ -2309,85 +2381,19 @@ public class Converter extends Thread {
 		return code;
 	}
 
-	private int convSWF_25fps(File videoin, File videoout){
-		int code = -1;
-		System.out.println("FWS fpsUp");
-		String txt = MovieInfo.getText();
-		MovieInfo.setText("FWS fpsUp," + txt);
-		/*
-		 * ffmpeg -r 25.0
-		 */
-		ffmpeg.setCmd("-y ");
-		ffmpeg.addMap(mainOptionMap);
-		ffmpeg.addCmd(" ");
-		ffmpeg.addMap(inputOptionMap);
-		ffmpeg.addCmd(" -i ");
-		ffmpeg.addFile(videoin);
-		String out_option_t = outputOptionMap.get("-t");
-		if(out_option_t!=null)
-			ffmpeg.addCmd(" -t "+out_option_t);
-		String out_option_ss = outputOptionMap.get("-ss");
-		if(out_option_ss!=null)
-			ffmpeg.addCmd(" -ss "+out_option_ss);
-		ffmpeg.addCmd(" -r "+fpsUp);
-		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ");
-		//ffmpeg.addCmd(" -r 25 -acodec copy -vcodec mpeg4 -crf 18 -pix_fmt yuv420p -f mp4 ");
-		ffmpeg.addFile(videoout);
-
-		System.out.println("arg:" + ffmpeg.getCmd());
-		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
-		errorLog = ffmpeg.getErrotLog().toString();
-		lastFrame = ffmpeg.getLastFrame();
-		MovieInfo.setText(txt);
-		if(code==0){
-			// -itsoffset削除
-			inputOptionMap.remove("-itsoffset");
-			mainOptionMap.remove("-itsoffset");
-			// -ss削除
-			inputOptionMap.remove("-ss");
-			mainOptionMap.remove("-ss");
-			out_option_ss = outputOptionMap.get("-ss");
-			if(out_option_ss!=null){
-				// 出力の-itsoffsetは -ssによる
-				inputOptionMap.put("-itsoffset", out_option_ss);
-			}
-			// -t はそのまま残して良い
-		}
-		return code;
-	}
-
 	private int convSWF_JPG(File videoin, File videoout){
 		int code = -1;
-		/*
-		 * SWFファイルをJPEG形式に合成
-		 * ffmpeg.exe -r 25 -y -i fws_tmp.swf -an -vcodec copy -f image2 %03d.jpg
-		 */
-		System.out.println("Tring SWF to .number.JPG");
-		String txt = MovieInfo.getText();
-		MovieInfo.setText("SWF->JPG," + txt);
 		//出力
 		ffmpeg.setCmd("-y -i ");
 		ffmpeg.addFile(videoin);
-		ffmpeg.addCmd(" -an -vcodec copy -qscale 1 -f image2 ");
+		ffmpeg.addCmd(ConvertingSetting.getDefOptsSwfJpeg());
 		ffmpeg.addFile(videoout);
-
-		System.out.println("arg:" + ffmpeg.getCmd());
-		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
-		errorLog = ffmpeg.getErrotLog().toString();
-		lastFrame = ffmpeg.getLastFrame();
-		MovieInfo.setText(txt);
+		code = execOption();
 		return code;
 	}
 
 	private int convJPG_MP4(File videoin, File videoout){
 		int code = -1;
-		/*
-		 * JPEGファイルをMP4形式に合成
-		 * ffmpeg.exe -r 1/4 -y -i %03d.jpg -an -vcodec huffyuv -f avi huffjpg.avi
-		 */
-		System.out.println("Tring JPG to .MP4");
-		String txt = MovieInfo.getText();
-		MovieInfo.setText("JPG->MP4," + txt);
 		//
 		// frame check
 		//
@@ -2435,40 +2441,30 @@ public class Converter extends Thread {
 		System.out.printf("Frame= %d, Rate= %.5f(fps)\n", frame, rate);
 
 		//File outputAvi = new File(imgDir,"huffyuv.avi");
-		ffmpeg.setCmd(" -loop 1 -shortest -r " + Double.toString(rate));
+		ffmpeg.setCmd(" -loop 1 -r " + Double.toString(rate));
 		ffmpeg.addCmd(" -itsoffset " + Double.toString(length_frame));
 		ffmpeg.addCmd(" -y -i ");
 		ffmpeg.addFile(videoin);
 		if(tl!=0.0)
 			ffmpeg.addCmd(" -t " + tl);
-		ffmpeg.addCmd(" -an -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ");
-		//ffmpeg.addCmd(" -an -vcodec copy -crf 10 -f mp4 ");
-		//ffmpeg.addCmd(" -an -vcodec huffyuv -pix_fmt yuv420p -f avi ");
+		ffmpeg.addCmd(ConvertingSetting.getDefOptsJpegMp4());
 		ffmpeg.addFile(videoout);
-
-		System.out.println("arg:" + ffmpeg.getCmd());
-		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
-		errorLog = ffmpeg.getErrotLog().toString();
-		lastFrame = ffmpeg.getLastFrame();
-		MovieInfo.setText(txt);
+		code = execOption();
 		return code;
 	}
 
 	private int convMix(File videoin, File audioin, File videoout){
 		int code = -1;
+		double fps = 25.0;
+		if(checkFps && fps < fpsMin){
+			fps = fpsUp;
+		}
 		/*
 		 * 音声を合成
 		 * ffmpeg.exe -shortest -y -i fws_tmp.swf -itsoffset 1.0 -i avi4.avi
 		 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 		 */
-		System.out.println("Tring MP4+sound to .MP4");
-		double fps = 25.0;
-		if(checkFps && fps < fpsMin){
-			fps = fpsUp;
-		}
-		String txt = MovieInfo.getText();
-		MovieInfo.setText("MP4 Mix," + txt);
-		ffmpeg.setCmd("-y -shortest -i ");
+		ffmpeg.setCmd("-y -i ");
 		ffmpeg.addFile(audioin);	// audio, must be FWS_SWF
 		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(videoin);	// visual
@@ -2477,15 +2473,9 @@ public class Converter extends Thread {
 		if(out_option_t!=null)
 			ffmpeg.addCmd(" -t "+out_option_t);
 		ffmpeg.addCmd(" -r " + fps);
-		ffmpeg.addCmd(" -acodec copy -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ");
-		//ffmpeg.addCmd(" -r 25 -acodec copy -vcodec mpeg4 -crf 18 -pix_fmt yuv420p -f mp4 ");
+		ffmpeg.addCmd(ConvertingSetting.getDefOptsMix());
 		ffmpeg.addFile(videoout);
-
-		System.out.println("arg:" + ffmpeg.getCmd());
-		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
-		errorLog = ffmpeg.getErrotLog().toString();
-		lastFrame = ffmpeg.getLastFrame();
-		MovieInfo.setText(txt);
+		code = execOption();
 		return code;
 	}
 
@@ -2564,9 +2554,13 @@ public class Converter extends Thread {
 			code = 198;
 			return code;
 		}
+		code = convFLV_thumbaudio(thumbfile, input, output);
+		return code;
+	}
+
+	int convFLV_thumbaudio(File thumbin, File audioin, File videoout){
+		int code = -1;
 		// サムネイルのアスペクト比は無視
-		String txt = MovieInfo.getText();
-		MovieInfo.setText("SoundOnly," + txt);
 		/*
 		 * ffmpeg -y mainoption -loop 1 -shortest -i thmbnail_picture -i input
 		 * outoption -map 0:0 -map 1:a [vhookOption]  output
@@ -2576,113 +2570,125 @@ public class Converter extends Thread {
 			fps = fpsUp;
 		ffmpeg.setCmd("-y ");
 		ffmpeg.addMap(mainOptionMap);
-		ffmpeg.addCmd(" -loop 1 -shortest -i ");
-		ffmpeg.addFile(thumbfile);
+		ffmpeg.addCmd(" -loop 1 -i ");
+		ffmpeg.addFile(thumbin);
 		ffmpeg.addCmd(" ");
 		ffmpeg.addMap(inputOptionMap);
 		ffmpeg.addCmd(" -i ");
-		ffmpeg.addFile(input);
+		ffmpeg.addFile(audioin);
 		ffmpeg.addCmd(" -map 0:v -map 1:a ");
-		ffmpeg.addMap(outputOptionMap);
 		ffmpeg.addCmd(" -r " + fpsUp);
-		ffmpeg.addCmd(" -metadata");
-		ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
-		ffmpeg.addCmd(" -metadata");
-		ffmpeg.addCmd(" \"comment=SoundOnly_"+VideoID+"\"");
-		if (!Setting.isVhookDisabled()) {
-			if(!addVhookSetting(ffmpeg, selectedVhook, isPlayerWide)){
-				return -1;
-			}
-		} else if (!getFFmpegVfOption().isEmpty()){
-			ffmpeg.addCmd(" "+vfilter_flag+" ");
-			ffmpeg.addCmd(getFFmpegVfOption());
-		}
-		ffmpeg.addCmd(" ");
-		ffmpeg.addFile(ConvertedVideoFile);
-
-		System.out.println("arg:" + ffmpeg.getCmd());
-		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
-		errorLog = ffmpeg.getErrotLog().toString();
-		lastFrame = ffmpeg.getLastFrame();
-		MovieInfo.setText(txt);
+		setOption2();
+		if(!setOption3(videoout))
+			return code;
+		code = execOption();
 		return code;
 	}
 
 	private int converting_video() {
 		int code = -1;
+		infoStack = new InfoStack(MovieInfo);
 		File input = VideoFile;
 		if(fwsFile!=null)
 			input = fwsFile;
-		String txt = MovieInfo.getText();
-		if(frameRate == 0.0 &&
-			(checkFps
-			||Setting.canSoundOnly()
-			||(Setting.isSwfTo3Path() && (Cws2Fws.isFws(input) || Cws2Fws.isCws(input))))){
+		if(frameRate == 0.0 && checkFps){
+			//映像decode失敗
 			System.out.println("映像ストリームのデコードに失敗しました");
-			if(!Setting.canSoundOnly()){
-				errorLog = "映像ストリームのデコードに失敗しました";
-				code = 199;
+			if(Setting.canSoundOnly()){
+				System.out.println("コメントと音声だけを合成します");
+				infoStack.pushText("SoundOnly");
+				code = convFLV_audio(input, ConvertedVideoFile, Setting.getDefaultThumbnail());
+				infoStack.popText();
 				return code;
 			}
-			System.out.println("コメントと音声だけを合成します");
-			code = convFLV_audio(input, ConvertedVideoFile, Setting.getDefaultThumbnail());
-			errorLog = ffmpeg.getErrotLog().toString();
-			lastFrame = ffmpeg.getLastFrame();
+			errorLog = "映像ストリームのデコードに失敗しました";
+			code = 199;
 			return code;
 		}
 		if (!Cws2Fws.isFws(input) && !Cws2Fws.isCws(input)) {
+			//通常のFLV
 			// fps up check
 			if(checkFps && frameRate < fpsMin){
+				//FPS変換必要
+				if(Setting.isUseFpsFilter()){
+					//FPS Filter選択
+					System.out.println("FPS filter");
+					String fvoptsave = getFFmpegVfOption();
+					String fvopt = "fps=fps="+fpsUp
+						+ ",scale="+outAspect.getSize();	// -s オプションを -vf scale=w:h として先に追加
+					if(!fvoptsave.isEmpty()){
+						fvopt += "," + fvoptsave;
+					}
+					setFfmpegVfOption(fvopt);
+					/*
+					 * ffmpeg.exe -y mainoption inoption -i infile outoptiont -vf fps=fps=fpsUP [vhookOption] outfile
+					 */
+					infoStack.pushText("Filter");
+					code = convFLV(input, ConvertedVideoFile);
+					infoStack.popText();
+					setFfmpegVfOption(fvoptsave);
+					if(code == CODE_CONVERTING_ABORTED){
+						return code;
+					}
+					if (code == 0){
+						//fpsfilter変換成功
+						return code;
+					}
+					System.out.println("("+code+")fps filterに失敗 ");
+					errorLog += "\nfps filterに失敗 "+ getLastError();
+					System.out.println("続行\n");	//続行モード
+					//return code;					//終了モード
+				}
+
+				// 2パスFPS変換
 				File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
-				code = convFLV_fpsUp(input, outputFps);
-				errorLog = ffmpeg.getErrotLog().toString();
-				lastFrame = ffmpeg.getLastFrame();
+				System.out.println("FLV Up "+fpsUp+"fps");
+				infoStack.pushText("FLV "+fpsUp);
+				code = conv_fpsUp(input, outputFps);
+				infoStack.popText();
+				if(code == CODE_CONVERTING_ABORTED){
+					return code;
+				}
+				if(code != 0){
+					//error
+					System.out.println("("+code+")fps変換に失敗 ");
+					errorLog += "\nfps変換に失敗 "+ getLastError();
+					return code;
+				}
 				if (code == 0){
 					//fps変換成功
 					input = outputFps;
-				}else{
-					if(code != CODE_CONVERTING_ABORTED){
-						System.out.println("("+code+")fps変換に失敗 ");
-						errorLog += "\nfps変換に失敗 "+ getLastError();
-					}
-					return code;
 				}
 			}
-			System.out.println("FLV 従来通り");
-			MovieInfo.setText(txt);
+
+			//FPS変換なし
 			/*
 			 * ffmpeg.exe -y mainoption inoption -i infile outoptiont [vhookOption] outfile
 			 */
-			ffmpeg.setCmd("-y ");
-			ffmpeg.addMap(mainOptionMap);
-			ffmpeg.addCmd(" ");
-			ffmpeg.addMap(inputOptionMap);
-			ffmpeg.addCmd(" -i ");
-			ffmpeg.addFile(input);
-			ffmpeg.addCmd(" ");
-			ffmpeg.addMap(outputOptionMap);
-			ffmpeg.addCmd(" -metadata");
-			ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
-			ffmpeg.addCmd(" -metadata");
-			ffmpeg.addCmd(" \"comment="+VideoID+"\"");
-			if (!Setting.isVhookDisabled()) {
-				if(!addVhookSetting(ffmpeg, selectedVhook, isPlayerWide)){
-					return -1;
+			System.out.println("FLV 従来通り");
+			if(checkFps && Setting.isUseFpsFilter()){
+				String fvopt = "";
+				String ropt = outputOptionMap.get("-r");
+				if(ropt == null){
+					ropt = outputOptionMap.get("-r:v");
 				}
-			} else if (!getFFmpegVfOption().isEmpty()){
-				ffmpeg.addCmd(" "+vfilter_flag+" ");
-				ffmpeg.addCmd(getFFmpegVfOption());
+				if(ropt != null){
+					fvopt = "fps=fps="+ropt
+						+ ",scale="+outAspect.getSize();
+					// -s オプションも -vf scale=w:h として先に追加
+					System.out.println("FPS filter -r "+ropt);
+					String fvoptsave = getFFmpegVfOption();
+					if(!fvoptsave.isEmpty()){
+						fvopt += "," + fvoptsave;
+					}
+					setFfmpegVfOption(fvopt);
+				}
 			}
-			ffmpeg.addCmd(" ");
-			ffmpeg.addFile(ConvertedVideoFile);
-
-			System.out.println("arg:" + ffmpeg.getCmd());
-			code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
-			errorLog = ffmpeg.getErrotLog().toString();
-			lastFrame = ffmpeg.getLastFrame();
-			MovieInfo.setText(txt);
+			code = convFLV(input, ConvertedVideoFile);
+			infoStack.popText();
 		}
 		else {
+			// nm動画 FWS入力
 			if(!Setting.isSwfTo3Path()){
 				// nm対応しない
 				if(checkFps && frameRate < fpsMin){
@@ -2690,56 +2696,31 @@ public class Converter extends Thread {
 					 * ffmpeg -r 25.0
 					 */
 					File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
-					code = convSWF_25fps(input, outputFps);
-					errorLog = ffmpeg.getErrotLog().toString();
-					lastFrame = ffmpeg.getLastFrame();
-					if (code == 0){
+					System.out.println("FWS fpsUp");
+					infoStack.pushText("FWS fpsUp");
+					code = conv_fpsUp(input, outputFps);
+					infoStack.popText();
+					if(code == CODE_CONVERTING_ABORTED){
+						return code;
+					}
+					if (code != 0){
+						System.out.println("("+code+")fps変換に失敗 ");
+						errorLog += "\nfps変換に失敗 "+ getLastError();
+						return code;
+					}else{
 						//fps変換成功
 						input = outputFps;
-					}else{
-						if(code != CODE_CONVERTING_ABORTED){
-							System.out.println("("+code+")fps変換に失敗 ");
-							errorLog += "\nfps変換に失敗 "+ getLastError();
-						}
-						return code;
 					}
 				}
 
-				System.out.println("FWS 従来通り");
-				MovieInfo.setText("FWS,"+txt);
 				/*
 				 * ffmpeg.exe -y mainoption inoption -i infile outoptiont [vhookOption] outfile
 				 */
-				ffmpeg.setCmd("-y ");
-				ffmpeg.addMap(mainOptionMap);
-				ffmpeg.addCmd(" ");
-				ffmpeg.addMap(inputOptionMap);
-				ffmpeg.addCmd(" -i ");
-				ffmpeg.addFile(input);
-				ffmpeg.addCmd(" ");
-				ffmpeg.addMap(outputOptionMap);
-				ffmpeg.addCmd(" -metadata");
-				ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
-				ffmpeg.addCmd(" -metadata");
-				ffmpeg.addCmd(" \"comment="+VideoID+"\"");
-				if (!Setting.isVhookDisabled()) {
-					if(!addVhookSetting(ffmpeg, selectedVhook, isPlayerWide)){
-						return -1;
-					}
-				} else if (!getFFmpegVfOption().isEmpty()){
-					ffmpeg.addCmd(" "+vfilter_flag+" ");
-					ffmpeg.addCmd(getFFmpegVfOption());
-				}
-				ffmpeg.addCmd(" ");
-				ffmpeg.addFile(ConvertedVideoFile);
-
-				System.out.println("arg:" + ffmpeg.getCmd());
-				code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
-				errorLog = ffmpeg.getErrotLog().toString();
-				lastFrame = ffmpeg.getLastFrame();
-				if (code != 0)
-					return code;
-				MovieInfo.setText(txt);
+				System.out.println("FWS 従来通り");
+				infoStack.pushText("FWS");
+				code = convFLV(input, ConvertedVideoFile);
+				infoStack.popText();
+				return code;
 			} else {
 				System.out.println("FWS 3path");
 				// try 3 path
@@ -2751,16 +2732,18 @@ public class Converter extends Thread {
 				imgDir = Path.mkTemp("IMG"+VideoID);
 				if(imgDir.mkdir())
 					System.out.println("Created folder - " + imgDir);
-				File outputImg = new File(imgDir,"%d.jpg");
+				File outputImg = new File(imgDir,"%03d.jpeg");
+				System.out.println("Tring SWF to .number.JPG");
+				infoStack.pushText("SWF->JPG");
 				code = convSWF_JPG(input, outputImg);
-				errorLog = ffmpeg.getErrotLog().toString();
-				lastFrame = ffmpeg.getLastFrame();
+				infoStack.popText();
+				if(code == CODE_CONVERTING_ABORTED){
+					return code;
+				}
 				if(code!=0){
 					if (Setting.canSoundOnly()){
 						// jpegに変換できない場合は音声のみにする
 						code = convFLV_audio(input, ConvertedVideoFile);
-						errorLog = ffmpeg.getErrotLog().toString();
-						lastFrame = ffmpeg.getLastFrame();
 					}
 					return code;
 				}
@@ -2770,15 +2753,17 @@ public class Converter extends Thread {
 				 */
 				//出力
 				File outputAvi = new File(imgDir,"huffyuv.mp4");
+				System.out.println("Tring JPG to .MP4");
+				infoStack.pushText("JPG->MP4");
 				code = convJPG_MP4(outputImg, outputAvi);
-				errorLog = ffmpeg.getErrotLog().toString();
-				lastFrame = ffmpeg.getLastFrame();
+				infoStack.popText();
+				if(code == CODE_CONVERTING_ABORTED){
+					return code;
+				}
 				if(code!=0){
 					if (Setting.canSoundOnly()){
 						// jpegがmp4に変換できない場合は音声のみにする
 						code = convFLV_audio(input, ConvertedVideoFile);
-						errorLog = ffmpeg.getErrotLog().toString();
-						lastFrame = ffmpeg.getLastFrame();
 					}
 					return code;
 				}
@@ -2788,15 +2773,16 @@ public class Converter extends Thread {
 				 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 				 */
 				File outputMix = new File(imgDir,"mix.mp4");
+				System.out.println("Tring MP4+sound to .MP4");
+				infoStack.pushText("MP4 Mix");
 				code = convMix(outputAvi, input, outputMix);
-				errorLog = ffmpeg.getErrotLog().toString();
-				lastFrame = ffmpeg.getLastFrame();
+				infoStack.popText();
+				if(code == CODE_CONVERTING_ABORTED){
+					return code;
+				}
 				if(code!=0){
 					if (Setting.canSoundOnly()){
-						// jpegがmp4に変換できない場合は音声のみにする
 						code = convFLV_audio(input, ConvertedVideoFile);
-						errorLog = ffmpeg.getErrotLog().toString();
-						lastFrame = ffmpeg.getLastFrame();
 					}
 					return code;
 				}
@@ -2806,48 +2792,19 @@ public class Converter extends Thread {
 				 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 				 */
 				System.out.println("Tring MIX & comment to .mp4");
-				MovieInfo.setText("FWS comment,"+txt);
-				ffmpeg.setCmd("-y ");
-				ffmpeg.addMap(mainOptionMap);
-				ffmpeg.addCmd(" ");
-				ffmpeg.addMap(inputOptionMap);
-				ffmpeg.addCmd(" -i ");
-				ffmpeg.addFile(outputMix);
-				ffmpeg.addCmd(" ");
-				ffmpeg.addMap(outputOptionMap);
-				ffmpeg.addCmd(" -metadata");
-				ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
-				ffmpeg.addCmd(" -metadata");
-				ffmpeg.addCmd(" \"comment="+VideoID+"\"");
-				if (!Setting.isVhookDisabled()) {
-					if(!addVhookSetting(ffmpeg, selectedVhook, isPlayerWide)){
-						return -1;
-					}
-				} else if (!getFFmpegVfOption().isEmpty()){
-					ffmpeg.addCmd(" "+vfilter_flag+" ");
-					ffmpeg.addCmd(getFFmpegVfOption());
-				}
-				ffmpeg.addCmd(" ");
-				ffmpeg.addFile(ConvertedVideoFile);
-
-				System.out.println("arg:" + ffmpeg.getCmd());
-				code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
-				errorLog = ffmpeg.getErrotLog().toString();
-				lastFrame = ffmpeg.getLastFrame();
+				infoStack.pushText("FWS comment");
+				code = convFLV(outputMix,ConvertedVideoFile);
+				infoStack.popText();
 				if(code!=0){
 					if (Setting.canSoundOnly()){
-						// jpegがmp4に変換できない場合は音声のみにする
 						code = convFLV_audio(input, ConvertedVideoFile);
-						errorLog = ffmpeg.getErrotLog().toString();
-						lastFrame = ffmpeg.getLastFrame();
 					}
 					return code;
 				}
 			}
-		}
-		MovieInfo.setText(txt);
-		if (fwsFile != null){
-			// fwsFile.delete();	// For DEBUG
+			if (fwsFile != null){
+				// fwsFile.delete();	// For DEBUG
+			}
 		}
 		return code;
 	}
