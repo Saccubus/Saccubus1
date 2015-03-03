@@ -43,8 +43,10 @@ import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.plaf.basic.BasicArrowButton;
 
 import psi.lib.swing.PopupRightClick;
 import saccubus.net.Loader;
@@ -80,6 +82,7 @@ public class MainFrame extends JFrame {
 	public static final Image WinIcon = Toolkit.getDefaultToolkit()
 			.createImage(saccubus.MainFrame.class.getResource("icon32.png"));
 
+	private final static File TOP_DIR= new File(".");
 	JPanel contentPane;
 	BorderLayout borderLayout1 = new BorderLayout();
 	JMenuBar jMenuBar1 = new JMenuBar();
@@ -229,6 +232,7 @@ public class MainFrame extends JFrame {
 	private JLabel playConvertedVideoLabel = new JLabel();
 	private JCheckBox saveAutoListCheckBox = new JCheckBox();
 	private JCheckBox autoPlayCheckBox = new JCheckBox();
+	private JCheckBox liveOperationCheckBox = new JCheckBox();
 
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
@@ -236,6 +240,7 @@ public class MainFrame extends JFrame {
 	private static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
 	private static final Insets INSETS_0_0_5_5 = new Insets(0, 0, 5, 5);
 	private static final Insets INSETS_0_0_0_5 = new Insets(0, 0, 0, 5);
+	private static final Insets INSETS_0_0_5_0 = new Insets(0, 0, 5, 0);
 	private static final Insets INSETS_0_0_0_0 = new Insets(0, 0, 0, 0);
 	private static final Insets INSETS_5_5_5_5 = new Insets(5, 5, 5, 5);
 	private static final Insets INSETS_0_25_0_5 = new Insets(0, 25, 0, 5);
@@ -454,10 +459,12 @@ public class MainFrame extends JFrame {
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
 		grid5_x3_y6_44.gridy = 6;
-		GridBagConstraints grid5_x0_y8_43 = new GridBagConstraints(0, 5,
-				3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+		GridBagConstraints grid5_x0_y8_43 = new GridBagConstraints(0, 8,
+				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(3, 50, 5, 5), 0, 0);
-		grid5_x0_y8_43.gridy = 8;
+		GridBagConstraints grid5_x2_y8 = new GridBagConstraints(2, 8,
+				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.NONE, INSETS_0_0_5_0, 0, 0);
 		GridBagConstraints grid5_x0_y9 = new GridBagConstraints(0, 9,
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.BOTH, INSETS_0_25_0_5, 0, 0);
@@ -465,10 +472,12 @@ public class MainFrame extends JFrame {
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.NONE, INSETS_0_25_0_5, 0, 0);
 		grid5_x0_y7_42.gridy = 7;
-		GridBagConstraints grid5_x0_y6_41 = new GridBagConstraints(0, 3,
-				3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+		GridBagConstraints grid5_x0_y6_41 = new GridBagConstraints(0, 6,
+				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 50, 0, 5), 0, 0);
-		grid5_x0_y6_41.gridy = 6;
+		GridBagConstraints grid5_x2_y6 = new GridBagConstraints(2, 6,
+				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 0);
 		GridBagConstraints gird5_x0_y5_89 = new GridBagConstraints();
 		gird5_x0_y5_89.gridx = 0;
 		gird5_x0_y5_89.gridy = 5;
@@ -573,18 +582,24 @@ public class MainFrame extends JFrame {
 				4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_0_0_5, 0, 0);
 		grid4_x1_y10_22.gridy = 10;
-		GridBagConstraints grid4_x0_y14_21 = new GridBagConstraints(0, 10,
-				3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+		GridBagConstraints grid4_x0_y14_21 = new GridBagConstraints(0, 14,
+				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 50, 5, 5), 0, 0);
 		grid4_x0_y14_21.gridy = 14;
+		GridBagConstraints grid4_x2_y14 = new GridBagConstraints(2, 14,
+				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.NONE, INSETS_0_0_5_0, 0, 0);
 		GridBagConstraints grid4_x0_y13_20 = new GridBagConstraints(0, 9,
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0, 0);
 		grid4_x0_y13_20.gridy = 13;
-		GridBagConstraints grid4_x0_y12_19 = new GridBagConstraints(0, 8,
-				3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+		GridBagConstraints grid4_x0_y12_19 = new GridBagConstraints(0, 12,
+				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 50, 0, 5), 0, 0);
 		grid4_x0_y12_19.gridy = 12;
+		GridBagConstraints grid4_x2_y12 = new GridBagConstraints(2, 12,
+				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 0);
 		GridBagConstraints grid4_x0_y11_18 = new GridBagConstraints(0, 7,
 				4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0, 0);
@@ -1048,6 +1063,19 @@ public class MainFrame extends JFrame {
 		grid14_x2_y5.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(thumbTextFiled, grid14_x2_y5);
 
+		liveOperationCheckBox.setText("運営コメント簡易変更");
+		liveOperationCheckBox.setForeground(Color.blue);
+		liveOperationCheckBox.setToolTipText("運営コメントのコマンドを少し変更します(ニコ生と同じではありません)");
+		GridBagConstraints grid14_x0_y6 = new GridBagConstraints();
+		grid14_x0_y6.gridx = 0;
+		grid14_x0_y6.gridy = 6;
+		grid14_x0_y6.gridwidth = 3;
+		grid14_x0_y6.weightx = 0.0;
+		grid14_x0_y6.anchor = GridBagConstraints.NORTH;
+		grid14_x0_y6.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x0_y6.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(liveOperationCheckBox, grid14_x0_y6);
+
 		SavingVideoCheckBox.setText("動画をダウンロードする");
 		disableEcoCheckBox.setText("エコノミー時は中止");
 		disableEcoCheckBox.setForeground(Color.blue);
@@ -1056,11 +1084,21 @@ public class MainFrame extends JFrame {
 				.addActionListener(new MainFrame_ShowSavingVideoDialogButton_actionAdapter(
 						this));
 		Video_SaveFolderRadioButton.setText("保存するフォルダを指定し、ファイル名は自動で決定する");
+		openVideoSaveFolderButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+				{openFolder(getFile(VideoSavedFolderField.getText()));}
+		});
 		ShowSavingVideoFolderDialogButton.setText("参照");
 		ShowSavingVideoFolderDialogButton
 				.addActionListener(new MainFrame_ShowSavingVideoFolderDialogButton_actionAdapter(
 						this));
 		Video_SaveFileRadioButton.setText("保存するファイル名を指定する");
+		openVideoSaveFileButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+				{openFileParent(getFile(VideoSavedFileField.getText()));}
+		});
 		CommentSaveInfoPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"コメント保存設定"
@@ -1077,11 +1115,21 @@ public class MainFrame extends JFrame {
 				.addActionListener(new MainFrame_ShowSavingCommentDialogButton_actionAdapter(
 						this));
 		Comment_SaveFolderRadioButton.setText("保存するフォルダを指定し、ファイル名は自動で決定する");
+		openCommentSaveFolderButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+				{openFolder(getFile(CommentSavedFolderField.getText()));}
+		});
 		ShowSavingCommentFolderDialogButton.setText("参照");
 		ShowSavingCommentFolderDialogButton
 				.addActionListener(new MainFrame_ShowSavingCommentFolderDialogButton_actionAdapter(
 						this));
 		Comment_SaveFileRadioButton.setText("保存するファイル名を指定する");
+		openCommentSaveFileButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+				{openFileParent(getFile(CommentSavedFileField.getText()));}
+		});
  		OldCommentModePanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"投稿者コメント保存説明・コメント表示モード設定", TitledBorder.LEADING, TitledBorder.TOP,
@@ -1103,6 +1151,16 @@ public class MainFrame extends JFrame {
 		AddOption_ConvVideoFileCheckBox.setText("サブフォルダを作りFFmpeg設定をファイル名に（デバッグ用）");
 		AddOption_ConvVideoFileCheckBox.setForeground(Color.blue);
 		AddOption_ConvVideoFileCheckBox.setToolTipText("サブフォルダ名はビデオタイトル");
+		openConvSaveFileButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+				{openFileParent(getFile(ConvertedVideoSavedFileField.getText()));}
+		});
+		openConvSaveFolderButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+				{openFolder(getFile(ConvertedVideoSavedFolderField.getText()));}
+		});
 		ShowSavingConvertedVideoFileDialogButton.setText("参照");
 		ShowSavingConvertedVideoFileDialogButton
 				.addActionListener(new MainFrame_ShowSavingConvertedVideoDialogButton_actionAdapter(
@@ -1475,9 +1533,11 @@ public class MainFrame extends JFrame {
 		CommentSaveInfoPanel.add(CommentNumField, grid4_x1_y10_22);
 		CommentSaveInfoPanel.add(Comment_SaveFolderRadioButton,grid4_x0_y11_18);
 		CommentSaveInfoPanel.add(CommentSavedFolderField, grid4_x0_y12_19);
+		CommentSaveInfoPanel.add(openCommentSaveFolderButton, grid4_x2_y12);
 		CommentSaveInfoPanel.add(ShowSavingCommentFolderDialogButton,grid4_x3_y12_23);
 		CommentSaveInfoPanel.add(Comment_SaveFileRadioButton,grid4_x0_y13_20);
 		CommentSaveInfoPanel.add(CommentSavedFileField, grid4_x0_y14_21);
+		CommentSaveInfoPanel.add(openCommentSaveFileButton, grid4_x2_y14);
 		CommentSaveInfoPanel.add(ShowSavingCommentFileDialogButton,grid4_x3_y14_24);
 		OldCommentModePanel.add(commentModeComboBox, grid11_x0_y0_75);
 		OldCommentModePanel.add(OwnerCommentNoticeLabel1, grid11_x0_y1_76);
@@ -1497,12 +1557,16 @@ public class MainFrame extends JFrame {
 				gird5_x0_y5_89);
 		ConvertedVideoSavingInfoPanel.add(ConvertedVideoSavedFolderField,
 				grid5_x0_y6_41);
+		ConvertedVideoSavingInfoPanel.add(openConvSaveFolderButton,
+				grid5_x2_y6);
 		ConvertedVideoSavingInfoPanel.add(ShowSavingConvertedVideoFolderDialogButton,
 				grid5_x3_y6_44);
 		ConvertedVideoSavingInfoPanel.add(Conv_SaveFileRadioButton,
 				grid5_x0_y7_42);
 		ConvertedVideoSavingInfoPanel.add(ConvertedVideoSavedFileField,
 				grid5_x0_y8_43);
+		ConvertedVideoSavingInfoPanel.add(openConvSaveFileButton,
+				grid5_x2_y8);
 		ConvertedVideoSavingInfoPanel.add(
 				ShowSavingConvertedVideoFileDialogButton,	grid5_x3_y8_45);
 		ConvertedVideoSavingInfoPanel.add(autoPlayCheckBox, grid5_x0_y9);
@@ -2265,7 +2329,8 @@ public class MainFrame extends JFrame {
 			thumbTextFiled.getText(),
 			saveAutoListCheckBox.isSelected(),
 			fpsFilterRadioButton.isSelected(),
-			autoPlayCheckBox.isSelected()
+			autoPlayCheckBox.isSelected(),
+			liveOperationCheckBox.isSelected()
 		);
 	}
 /*
@@ -2417,6 +2482,7 @@ public class MainFrame extends JFrame {
 		thumbTextFiled.setText(setting.getDefaultThumbnail());
 		saveAutoListCheckBox.setSelected(setting.isSaveAutoList());
 		autoPlayCheckBox.setSelected(setting.isAutoPlay());
+		liveOperationCheckBox.setSelected(setting.isLiveOperationConversion());
 	}
 
 	/**
@@ -2468,13 +2534,19 @@ public class MainFrame extends JFrame {
 	JRadioButton Conv_SaveFileRadioButton = new JRadioButton();
 	JRadioButton Conv_SaveFolderRadioButton = new JRadioButton();
 	JTextField ConvertedVideoSavedFolderField = new JTextField();
+	BasicArrowButton openConvSaveFolderButton = new BasicArrowButton(SwingConstants.NORTH);
+	BasicArrowButton openConvSaveFileButton = new BasicArrowButton(SwingConstants.NORTH);
 	JButton ShowSavingConvertedVideoFolderDialogButton = new JButton();
 	JTextField VideoSavedFolderField = new JTextField();
+	BasicArrowButton openVideoSaveFolderButton = new BasicArrowButton(SwingConstants.NORTH);
+	BasicArrowButton openVideoSaveFileButton = new BasicArrowButton(SwingConstants.NORTH);
 	JButton ShowSavingVideoFolderDialogButton = new JButton();
 	JRadioButton Video_SaveFolderRadioButton = new JRadioButton();
 	JRadioButton Video_SaveFileRadioButton = new JRadioButton();
 	JRadioButton Comment_SaveFileRadioButton = new JRadioButton();
 	JTextField CommentSavedFolderField = new JTextField();
+	BasicArrowButton openCommentSaveFolderButton = new BasicArrowButton(SwingConstants.NORTH);
+	BasicArrowButton openCommentSaveFileButton = new BasicArrowButton(SwingConstants.NORTH);
 	JButton ShowSavingCommentFolderDialogButton = new JButton();
 	JRadioButton Comment_SaveFolderRadioButton = new JRadioButton();
 	JPanel BasicInfoTabPanel = new JPanel();
@@ -3222,6 +3294,9 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y1_15.gridy = 1;
 			grid_x0_y1_15.weightx = 1.0;
 			grid_x0_y1_15.insets = INSETS_0_25_0_5;
+			GridBagConstraints grid_x2_y5 = new GridBagConstraints(2,
+					5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, INSETS_0_0_5_0, 0, 0);
 			GridBagConstraints grid_x3_y5_32 = new GridBagConstraints(3,
 					4, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH,
 					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
@@ -3229,21 +3304,16 @@ s	 * @return javax.swing.JPanel
 			grid_x3_y5_32.insets = INSETS_0_0_5_5;
 			grid_x3_y5_32.gridy = 5;
 			GridBagConstraints grid_x0_y5_30 = new GridBagConstraints(0,
-					4, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-					GridBagConstraints.BOTH, new Insets(0, 50, 0, 5), 0, 0);
-			grid_x0_y5_30.gridx = 0;
-			grid_x0_y5_30.insets = new Insets(0, 50, 5, 5);
-			grid_x0_y5_30.gridy = 5;
+					5, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+					GridBagConstraints.BOTH, new Insets(0, 50, 5, 5), 0, 0);
 			GridBagConstraints grid_x0_y4_29 = new GridBagConstraints(0,
 					3, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 					GridBagConstraints.BOTH, INSETS_0_25_0_5, 0, 0);
 			grid_x0_y4_29.gridx = 0;
 			grid_x0_y4_29.gridy = 4;
 			GridBagConstraints grid_x0_y3_28 = new GridBagConstraints(0,
-					2, 3, 1, 1.0, 0.0, GridBagConstraints.WEST,
+					3, 2, 1, 1.0, 0.0, GridBagConstraints.WEST,
 					GridBagConstraints.BOTH, new Insets(0, 50, 0, 5), 0, 0);
-			grid_x0_y3_28.gridx = 0;
-			grid_x0_y3_28.gridy = 3;
 			GridBagConstraints grid_x0_y2_27 = new GridBagConstraints(0,
 					1, 4, 1, 1.0, 0.0, GridBagConstraints.WEST,
 					GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0,
@@ -3262,6 +3332,9 @@ s	 * @return javax.swing.JPanel
 			grid_x1_y0_34_2.weightx = 1.0;
 			grid_x1_y0_34_2.fill = GridBagConstraints.HORIZONTAL;
 			grid_x1_y0_34_2.gridx = 1;
+			GridBagConstraints grid_x2_y3 = new GridBagConstraints(2,
+					3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 0);
 			GridBagConstraints grid_x3_y3_31 = new GridBagConstraints(3,
 					2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
@@ -3281,8 +3354,10 @@ s	 * @return javax.swing.JPanel
 			VideoSaveInfoPanel.add(Video_SaveFolderRadioButton,
 					grid_x0_y2_27);
 			VideoSaveInfoPanel.add(VideoSavedFolderField, grid_x0_y3_28);
+			VideoSaveInfoPanel.add(openVideoSaveFolderButton,grid_x2_y3);
 			VideoSaveInfoPanel.add(ShowSavingVideoFolderDialogButton,
 					grid_x3_y3_31);
+			VideoSaveInfoPanel.add(openVideoSaveFileButton,grid_x2_y5);
 			VideoSaveInfoPanel.add(Video_SaveFileRadioButton,
 					grid_x0_y4_29);
 			VideoSaveInfoPanel.add(VideoSavedFileField, grid_x0_y5_30);
@@ -3975,6 +4050,64 @@ s	 * @return javax.swing.JPanel
 	public ConcurrentLinkedQueue<File> getQueue(){
 		return queue;
 	}
+
+	private File getFile(String path){
+		if(path==null)
+			return new File("");
+		if(path.startsWith(".")){
+			return new File(TOP_DIR,path);
+		}
+		return new File(path);
+	}
+
+	private int openFolder(File folder){
+		if(folder==null || !folder.isDirectory())
+			return -1;
+		ArrayList<String> cmd = new ArrayList<String>();
+		cmd.add("explorer.exe");
+		cmd.add(folder.getAbsolutePath());
+		return cmd_prompt(cmd);
+	}
+
+	private int openFileParent(File file){
+		if(file==null)
+			return -1;
+		return openFolder(file.getParentFile());
+	}
+	public int cmd_prompt(ArrayList<String> args){
+		ArrayList<String> cmd = new ArrayList<String>();
+		ProcessBuilder pb = null;
+		Process process = null;
+		int ret = -1;
+		try {
+			for(String arg: args){
+				if((arg.contains("　") && !arg.contains(" "))
+					&& !arg.startsWith("\"")){
+					arg = "\"" + arg + "\"";
+				}
+				arg = arg.replaceAll("([\\(\\)\\^&;, 　])","^$1");
+				cmd.add(arg);
+			}
+			pb = new ProcessBuilder(cmd);
+			pb.redirectErrorStream(true);
+			process = pb.start();
+			process.waitFor();
+			ret = process.exitValue();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				if(process!=null){
+					process.destroy();
+					process.getInputStream().close();
+				}
+			} catch(Exception ex){
+				//ex.printStackTrace();
+			}
+		}
+		return ret;
+	}
+
 }
 
 class MainFrame_ShowSavingVideoFolderDialogButton_actionAdapter implements

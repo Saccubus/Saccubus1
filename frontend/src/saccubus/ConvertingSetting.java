@@ -50,8 +50,8 @@ public class ConvertingSetting {
 	static final String DEFAULT_WIDE_CMDLINE_OUT = "-threads 0 -s 640x360 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -aspect 16:9 -pix_fmt yuv420p";
 	static final String DEFAULT_ZQ_CMDLINE_OUT = "-threads 0 -s 640x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -samx -pix_fmt yuv420p";
 	static final String DEFAULT_OPTION_FOLDER = "./optionF";
-	static final String DEFAULT_VHOOK_PATH = "./bin/nicovideoF.dll";
-	static final String DEFAULT_FFMPEG_PATH = "./bin/ffmpegF.exe";
+	static final String DEFAULT_VHOOK_PATH = "./bin/nicovideoE.dll";
+	static final String DEFAULT_FFMPEG_PATH = "./bin/ffmpeg.exe";
 
 	public static final String[] ShadowKindArray = {
 		"00:Ç»Çµ",
@@ -177,6 +177,7 @@ public class ConvertingSetting {
 	private static String defOptsJpegMp4 = DEF_OPTS_JPEG_MP4;
 	private static String defOptsMix = DEF_OPTS_MIX;
 	private Map<String, String> replaceOptions;
+	private boolean liveOparetionConversion;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -390,7 +391,8 @@ public class ConvertingSetting {
 			String thumb_file,
 			boolean save_autolist,
 			boolean use_fpsfilter,
-			boolean auto_play
+			boolean auto_play,
+			boolean live_operation
 		)
 	{
 		this(	mailaddress,
@@ -515,6 +517,7 @@ public class ConvertingSetting {
 		saveAutoList = save_autolist;
 		useFpsFilter = use_fpsfilter;
 		autoPlay = auto_play;
+		liveOparetionConversion = live_operation;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -859,6 +862,9 @@ public class ConvertingSetting {
 	public boolean isAutoPlay() {
 		return autoPlay;
 	}
+	public boolean isLiveOperationConversion(){
+		return liveOparetionConversion;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -999,6 +1005,7 @@ public class ConvertingSetting {
 	static final String PROP_SAVE_AUTOLIST = "SaveAutoList";
 	static final String PROP_USE_FPS_FILTER = "UseFpsFilter";
 	static final String PROP_AUTO_PLAY = "AutoPlay";
+	static final String PROP_LIVE_OPERATION = "LiveOperationComment";
 	// ì«Ç›çûÇﬁÇæÇØÅAï€ë∂ÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1198,6 +1205,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_SAVE_AUTOLIST, Boolean.toString(setting.isSaveAutoList()));
 		prop.setProperty(PROP_USE_FPS_FILTER, Boolean.toString(setting.isUseFpsFilter()));
 		prop.setProperty(PROP_AUTO_PLAY, Boolean.toString(setting.isAutoPlay()));
+		prop.setProperty(PROP_LIVE_OPERATION, Boolean.toString(setting.isLiveOperationConversion()));
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1439,7 +1447,8 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_THUMBNIAL, "<é©ìÆ>"),
 			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_AUTOLIST, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_FPS_FILTER,"false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_PLAY,"false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_PLAY,"false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_LIVE_OPERATION,"false"))
 		);
 	}
 

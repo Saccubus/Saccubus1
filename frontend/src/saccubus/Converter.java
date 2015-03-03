@@ -1362,7 +1362,7 @@ public class Converter extends Thread {
 	private boolean convertToCommentMiddle(File commentfile, File middlefile) {
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile, CommentReplaceList,
-				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit())){
+				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit(), Setting.isLiveOperationConversion())){
 			return false;
 		}
 		//コメント数が0の時削除する
@@ -2143,10 +2143,10 @@ public class Converter extends Thread {
 			//inSize=width:height
 			printOutputSize(inSize,outAspect);
 		}
-		// framerate
-		String framerate = getFramerate();
-		if(!framerate.isEmpty()){
-			System.out.println(" framerate="+framerate);
+		// ropt
+		String ropt = getRopt();
+		if(!ropt.isEmpty()){
+			System.out.println(" framerate="+ropt);
 		}
 		return true;
 	}
@@ -2244,7 +2244,7 @@ public class Converter extends Thread {
 		//-samx
 		return outputOptionMap.remove("-samx") != null;
 	}
-	private String getFramerate(){
+	private String getRopt(){
 		//-r or -r:v
 		String value = "-r";
 		value = outputOptionMap.get("-r");
@@ -2288,10 +2288,6 @@ public class Converter extends Thread {
 	}
 
 	private static final int CODE_CONVERTING_ABORTED = 100;
-	//private static final String OUTOPTS_FPSUP = " -acodec copy -vsync 1 -vcodec libx264 -qscale 1 -f mp4 ";
-	//private static final String OPTOPTS_SWF_JPEG = " -an -vcodec copy -r 1 -f image2 ";
-	//private static final String OUTOPTS_JPEG_MP4 = " -an -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ";
-	//private static final String OUTOPTS_MIX = " -acodec copy -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ";
 
 	private void setOption1(File infile){
 		ffmpeg.setCmd("-y ");
@@ -2360,6 +2356,7 @@ public class Converter extends Thread {
 		if(out_option_ss!=null)
 			ffmpeg.addCmd(" -ss "+out_option_ss);
 		ffmpeg.addCmd(ConvertingSetting.getDefOptsFpsUp());
+		// -acodec copy -vsync 1 -vcodec libx264 -qscale 1 -f mp4
 		ffmpeg.addFile(videoout);
 
 		code = execOption();
@@ -2387,6 +2384,7 @@ public class Converter extends Thread {
 		ffmpeg.setCmd("-y -i ");
 		ffmpeg.addFile(videoin);
 		ffmpeg.addCmd(ConvertingSetting.getDefOptsSwfJpeg());
+		// -an -vcodec copy -r 1 -f image2
 		ffmpeg.addFile(videoout);
 		code = execOption();
 		return code;
@@ -2435,9 +2433,9 @@ public class Converter extends Thread {
 		// tl==0(情報なし) または tlは最小長
 		double length_frame = 1.0 /rate;
 		System.out.printf("Frame= %.2f(sec/frame), Rate= %.5f(fps)\n", length_frame, rate);
-		if(tl != 0.0){
-			tl += length_frame;
-		}
+	//	if(tl != 0.0){
+	//		tl += length_frame;
+	//	}
 		System.out.printf("Frame= %d, Rate= %.5f(fps)\n", frame, rate);
 
 		//File outputAvi = new File(imgDir,"huffyuv.avi");
@@ -2445,9 +2443,11 @@ public class Converter extends Thread {
 		ffmpeg.addCmd(" -itsoffset " + Double.toString(length_frame));
 		ffmpeg.addCmd(" -y -i ");
 		ffmpeg.addFile(videoin);
+		ffmpeg.addCmd(" -shortest ");
 		if(tl!=0.0)
 			ffmpeg.addCmd(" -t " + tl);
 		ffmpeg.addCmd(ConvertingSetting.getDefOptsJpegMp4());
+		// -an -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4
 		ffmpeg.addFile(videoout);
 		code = execOption();
 		return code;
@@ -2474,6 +2474,7 @@ public class Converter extends Thread {
 			ffmpeg.addCmd(" -t "+out_option_t);
 		ffmpeg.addCmd(" -r " + fps);
 		ffmpeg.addCmd(ConvertingSetting.getDefOptsMix());
+		// -acodec copy -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4
 		ffmpeg.addFile(videoout);
 		code = execOption();
 		return code;
@@ -2591,20 +2592,6 @@ public class Converter extends Thread {
 		File input = VideoFile;
 		if(fwsFile!=null)
 			input = fwsFile;
-		if(frameRate == 0.0 && checkFps){
-			//映像decode失敗
-			System.out.println("映像ストリームのデコードに失敗しました");
-			if(Setting.canSoundOnly()){
-				System.out.println("コメントと音声だけを合成します");
-				infoStack.pushText("SoundOnly");
-				code = convFLV_audio(input, ConvertedVideoFile, Setting.getDefaultThumbnail());
-				infoStack.popText();
-				return code;
-			}
-			errorLog = "映像ストリームのデコードに失敗しました";
-			code = 199;
-			return code;
-		}
 		if (!Cws2Fws.isFws(input) && !Cws2Fws.isCws(input)) {
 			//通常のFLV
 			// fps up check
@@ -2613,20 +2600,20 @@ public class Converter extends Thread {
 				if(Setting.isUseFpsFilter()){
 					//FPS Filter選択
 					System.out.println("FPS filter");
-					String fvoptsave = getFFmpegVfOption();
-					String fvopt = "fps=fps="+fpsUp
+					String vfoptsave = getFFmpegVfOption();
+					String vfopt = "fps=fps="+fpsUp
 						+ ",scale="+outAspect.getSize();	// -s オプションを -vf scale=w:h として先に追加
-					if(!fvoptsave.isEmpty()){
-						fvopt += "," + fvoptsave;
+					if(!vfoptsave.isEmpty()){
+						vfopt += "," + vfoptsave;
 					}
-					setFfmpegVfOption(fvopt);
+					setFfmpegVfOption(vfopt);
 					/*
 					 * ffmpeg.exe -y mainoption inoption -i infile outoptiont -vf fps=fps=fpsUP [vhookOption] outfile
 					 */
 					infoStack.pushText("Filter");
 					code = convFLV(input, ConvertedVideoFile);
 					infoStack.popText();
-					setFfmpegVfOption(fvoptsave);
+					setFfmpegVfOption(vfoptsave);
 					if(code == CODE_CONVERTING_ABORTED){
 						return code;
 					}
@@ -2637,7 +2624,6 @@ public class Converter extends Thread {
 					System.out.println("("+code+")fps filterに失敗 ");
 					errorLog += "\nfps filterに失敗 "+ getLastError();
 					System.out.println("続行\n");	//続行モード
-					//return code;					//終了モード
 				}
 
 				// 2パスFPS変換
@@ -2653,6 +2639,12 @@ public class Converter extends Thread {
 					//error
 					System.out.println("("+code+")fps変換に失敗 ");
 					errorLog += "\nfps変換に失敗 "+ getLastError();
+					if(Setting.canSoundOnly()){
+						System.out.println("コメントと音声だけを合成します");
+						infoStack.pushText("SoundOnly");
+						code = convFLV_audio(input, ConvertedVideoFile, Setting.getDefaultThumbnail());
+						infoStack.popText();
+					}
 					return code;
 				}
 				if (code == 0){
@@ -2666,26 +2658,24 @@ public class Converter extends Thread {
 			 * ffmpeg.exe -y mainoption inoption -i infile outoptiont [vhookOption] outfile
 			 */
 			System.out.println("FLV 従来通り");
+			String vfoptsave = getFFmpegVfOption();
 			if(checkFps && Setting.isUseFpsFilter()){
-				String fvopt = "";
-				String ropt = outputOptionMap.get("-r");
-				if(ropt == null){
-					ropt = outputOptionMap.get("-r:v");
-				}
-				if(ropt != null){
-					fvopt = "fps=fps="+ropt
+				String vfopt = "";
+				String ropt = getRopt();
+				if(ropt != null && !ropt.isEmpty()){
+					vfopt = "fps=fps="+ropt
 						+ ",scale="+outAspect.getSize();
 					// -s オプションも -vf scale=w:h として先に追加
 					System.out.println("FPS filter -r "+ropt);
-					String fvoptsave = getFFmpegVfOption();
-					if(!fvoptsave.isEmpty()){
-						fvopt += "," + fvoptsave;
+					if(!vfoptsave.isEmpty()){
+						vfopt += "," + vfoptsave;
 					}
-					setFfmpegVfOption(fvopt);
+					setFfmpegVfOption(vfopt);
 				}
 			}
 			code = convFLV(input, ConvertedVideoFile);
 			infoStack.popText();
+			setFfmpegVfOption(vfoptsave);
 		}
 		else {
 			// nm動画 FWS入力
@@ -2706,6 +2696,12 @@ public class Converter extends Thread {
 					if (code != 0){
 						System.out.println("("+code+")fps変換に失敗 ");
 						errorLog += "\nfps変換に失敗 "+ getLastError();
+						if(Setting.canSoundOnly()){
+							System.out.println("コメントと音声だけを合成します");
+							infoStack.pushText("SoundOnly");
+							code = convFLV_audio(input, ConvertedVideoFile, Setting.getDefaultThumbnail());
+							infoStack.popText();
+						}
 						return code;
 					}else{
 						//fps変換成功
@@ -2733,6 +2729,7 @@ public class Converter extends Thread {
 				if(imgDir.mkdir())
 					System.out.println("Created folder - " + imgDir);
 				File outputImg = new File(imgDir,"%03d.jpeg");
+				System.out.println("outputImg="+outputImg);
 				System.out.println("Tring SWF to .number.JPG");
 				infoStack.pushText("SWF->JPG");
 				code = convSWF_JPG(input, outputImg);
@@ -2753,6 +2750,8 @@ public class Converter extends Thread {
 				 */
 				//出力
 				File outputAvi = new File(imgDir,"huffyuv.mp4");
+				System.out.println("outputImg="+outputImg);
+				System.out.println("outputAvi="+outputAvi);
 				System.out.println("Tring JPG to .MP4");
 				infoStack.pushText("JPG->MP4");
 				code = convJPG_MP4(outputImg, outputAvi);
@@ -2990,8 +2989,8 @@ public class Converter extends Thread {
 			if(!extra.isEmpty()){
 				ffmpeg.addCmd("|--extra-mode:" + extra.replaceAll(" +", " ").trim().replace(' ', '+'));
 			}
-			if(!getFramerate().isEmpty()){
-				ffmpeg.addCmd("|--fr:" + getFramerate());
+			if(!getRopt().isEmpty()){
+				ffmpeg.addCmd("|--fr:" + getRopt());
 			}
 			if(Setting.isEnableCA()){
 				ffmpeg.addCmd("|--enable-CA");

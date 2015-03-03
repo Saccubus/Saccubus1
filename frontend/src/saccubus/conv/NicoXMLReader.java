@@ -55,13 +55,20 @@ public class NicoXMLReader extends DefaultHandler {
 	private int countNG_Score = 0;
 	private int countNG_Word = 0;
 	private int countNG_ID = 0;
+	private StringBuffer sb;
 
-	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd, int scoreLimit){
+	private String premium;
+	private final boolean liveConversion;
+
+	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd, int scoreLimit, boolean liveOp){
 		this.packet = packet;
 		NG_Word = ngWordPat;
 		NG_ID = ngIdPat;
 		NG_Cmd = cmd;
 		ng_Score = scoreLimit;
+		owner_filter = null;
+		premium = "";
+		liveConversion = liveOp;
 	}
 
 	public static final Pattern makePattern(String word) throws PatternSyntaxException{
@@ -155,12 +162,19 @@ public class NicoXMLReader extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) {
+		// System.out.println("<"+qName);
+		// for (int i = 0; i < attributes.getLength(); i++) {
+		// 	System.out.println(" [" + attributes.getQName(i)+"=" + attributes.getValue(i)+"]");
+		// }
+		// System.out.println(">");
 		if (qName.toLowerCase().equals("chat")) {
 			// System.out.println("----------");
 			item = new Chat();
 			item_kicked = false;
 			item_fork = false;
 			is_button = false;
+			premium = "";
+			sb = new StringBuffer();
 			//投稿者フィルター
 			owner_filter = attributes.getValue("filter");
 			if(owner_filter!=null){
@@ -220,6 +234,11 @@ public class NicoXMLReader extends DefaultHandler {
 			if (forkval != null && forkval.equals("1")) {
 				item_fork = true;
 			}
+			if(liveConversion && premium.isEmpty()){
+				premium = attributes.getValue("premium");
+			}
+			if(premium==null)
+				premium = "";
 			item.setOwner(item_fork);
 			// item.setUserID(user_id);
 			item.setVpos(attributes.getValue("vpos"));
@@ -245,6 +264,90 @@ public class NicoXMLReader extends DefaultHandler {
 				}
 			}
 			String com = new String(ch, offset, length);
+			sb.append(com);
+		}
+	}
+
+	private String[] spsplit(String intext, int max){
+		String[] ret = new String[max];
+		for(int i = 0; i < ret.length; i++){
+			ret[i] = "";
+		}
+		if(intext==null || intext.isEmpty()){
+			return ret;
+		}
+		for(int i = 0; i < ret.length; i++){
+			int index = 0;
+			int index1 = 0;
+			if(intext.isEmpty())
+				return ret;
+			char h = intext.charAt(0);
+			if(intext.length() > 1 && (h=='"'||h=='「')){
+				if(h=='「')
+					h = '」';
+				index = intext.indexOf(h,1);
+				if(index >= 1){
+					ret[i] = intext.substring(1, index);
+					intext = intext.substring(index+1);
+					if(!intext.isEmpty())
+						if(intext.charAt(0)==' '||intext.charAt(0)=='　')
+							intext = intext.substring(1);
+					continue;
+				}
+			}
+			index = intext.indexOf(' ');
+			index1 = intext.indexOf('　');
+			if(index < 0 || (index1 >= 0 && index1 < index))
+				index = index1;
+			if(index < 0) {
+				ret[i] = intext;
+				return ret;
+			}
+			ret[i] = intext.substring(0, index);
+			intext = intext.substring(index+1);
+		}
+		if(!intext.isEmpty()){
+			ret[max-1] = ret[max-1] + intext;
+		}
+		return ret;
+	}
+
+	private String niwango(String str, String key){
+		if(str==null) return null;
+		int len = str.length();
+		if(str.startsWith(key)){
+			int index = key.length();
+			if(len<=index){
+				return null;
+			}
+			char c1 = str.charAt(index);
+			if(c1=='\''|| c1=='\"'){
+				index++;
+				if(str.charAt(len-1)!=c1){
+					return null;
+				}
+				len--;
+			}
+			str = str.substring(index,len);
+			str = str.replace("\\r", "\n").replace("\\n", "\n").replace("\\t", "\t");
+			return str;
+		}
+		return null;
+	}
+	/**
+	 *
+	 * @param uri
+	 *            String
+	 * @param localName
+	 *            String
+	 * @param qName
+	 *            String
+	 */
+	@Override
+	public void endElement(String uri, String localName, String qName) {
+		if (qName.toLowerCase().equals("chat")) {
+			String com = sb.substring(0);
+			// System.out.println("\t| "+com+" |");
 			boolean script = false;
 			//ニワン語処理
 			if (item_fork && com.startsWith("/")){
@@ -331,6 +434,29 @@ public class NicoXMLReader extends DefaultHandler {
 					item_kicked = true;
 					return;
 				}
+			}
+			//運営コメント
+			if(liveConversion && !premium.isEmpty() && !premium.equals("1")){
+				if(com.startsWith("/")){
+					//運営コマンド
+					String[] list = com.split(" ");
+					if(list[0].equals("/perm")){
+						// prem
+						item.setMail("@10");
+					}
+					item.setMail("shita small waku ender @4");
+				}else{
+					//生主コメント
+					item.setMail("ue ender @4");
+					item_fork = true;
+					com = "@ボタン 「["+com+"]」";
+				}
+				com = com.replace("<u>", "\n").replace("</u>", "")
+					.replace("<b>", "\n").replace("</b>", "")
+					.replace("<font ", "\n<font ").replace("</font>", "")
+					.replace("<br>", "\n").replace("<br />", "\n").replace("<br/>", "\n")
+					.replaceAll("(<a [^>]+>)","\n$1\n").replace("</a>","\n")
+					.replaceAll("\n+","\n");
 			}
 			//ニコスクリプト処理
 			if(com.startsWith("@")||com.startsWith("＠")){
@@ -465,91 +591,12 @@ public class NicoXMLReader extends DefaultHandler {
 				return;
 			}
 			item.setComment(com);
-		}
-	}
-
-	private String[] spsplit(String intext, int max){
-		String[] ret = new String[max];
-		for(int i = 0; i < ret.length; i++){
-			ret[i] = "";
-		}
-		if(intext==null || intext.isEmpty()){
-			return ret;
-		}
-		for(int i = 0; i < ret.length; i++){
-			int index = 0;
-			int index1 = 0;
-			if(intext.isEmpty())
-				return ret;
-			char h = intext.charAt(0);
-			if(intext.length() > 1 && (h=='"'||h=='「')){
-				if(h=='「')
-					h = '」';
-				index = intext.indexOf(h,1);
-				if(index >= 1){
-					ret[i] = intext.substring(1, index);
-					intext = intext.substring(index+1);
-					if(!intext.isEmpty())
-						if(intext.charAt(0)==' '||intext.charAt(0)=='　')
-							intext = intext.substring(1);
-					continue;
-				}
-			}
-			index = intext.indexOf(' ');
-			index1 = intext.indexOf('　');
-			if(index < 0 || (index1 >= 0 && index1 < index))
-				index = index1;
-			if(index < 0) {
-				ret[i] = intext;
-				return ret;
-			}
-			ret[i] = intext.substring(0, index);
-			intext = intext.substring(index+1);
-		}
-		if(!intext.isEmpty()){
-			ret[max-1] = ret[max-1] + intext;
-		}
-		return ret;
-	}
-
-	private String niwango(String str, String key){
-		if(str==null) return null;
-		int len = str.length();
-		if(str.startsWith(key)){
-			int index = key.length();
-			if(len<=index){
-				return null;
-			}
-			char c1 = str.charAt(index);
-			if(c1=='\''|| c1=='\"'){
-				index++;
-				if(str.charAt(len-1)!=c1){
-					return null;
-				}
-				len--;
-			}
-			str = str.substring(index,len);
-			str = str.replace("\\r", "\n").replace("\\n", "\n").replace("\\t", "\t");
-			return str;
-		}
-		return null;
-	}
-	/**
-	 *
-	 * @param uri
-	 *            String
-	 * @param localName
-	 *            String
-	 * @param qName
-	 *            String
-	 */
-	@Override
-	public void endElement(String uri, String localName, String qName) {
-		if (qName.toLowerCase().equals("chat")) {
+			// System.out.println("\tpreimum="+premium+"| item="+item.toString()+" |");
 			if (!item_kicked) {
 				packet.addChat(item);
 			}
 			item = null;
+			// System.out.println("</"+qName+">");
 		}
 	}
 

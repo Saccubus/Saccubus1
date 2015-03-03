@@ -214,7 +214,7 @@ public class VideofileInfo {
 			for(String str:strs){
 				System.out.print(str+",");
 				if(!str.contains("tbr")) continue;
-				str = str.replace("tbr", "").trim();
+				str = str.replace("tbr", "").replace("k", "").trim();
 				r = Double.parseDouble(str);
 				break;
 			}
@@ -226,6 +226,16 @@ public class VideofileInfo {
 		return r;
 	}
 
+	public boolean isVideoContainisRawvideo(){
+		LinkedList<String> strs = videoInfoMap.get("Video:");
+		if(strs==null)
+			return false;
+		for(String s:strs){
+			if(s.contains("rawvideo"))
+				return true;
+		}
+		return false;
+	}
 //	int getVideoLength(File videoFile) {
 //		return videoLength;
 //	}
