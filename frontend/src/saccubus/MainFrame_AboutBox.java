@@ -52,8 +52,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.60.0.6";
-	private static final String modefied = " (2015/03/03)";
+	public static final String rev = "1.60.0.7";
+	private static final String modefied = " (2015/03/08)";
 
 	String productHTML =
 		"<html>" +
@@ -64,8 +64,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 	//	"を改造したものです。<br/>" +
 	//	" orz " + rev + " " + modefied + "<br/>"+
 	//	"本プログラムのオリジナルは以下の通りです。<br/><br/>"+
-		"<p><a href=\'http://sourceforge.jp/projects/saccubus/\'>" +
-		"さきゅばす "+ rev + modefied + "</a><br/><br/>"+
+		"<p><a href=\'http://saccubus.sourceforge.jp/Users/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89\'>" +
+		"さきゅばす</a> "+ rev + modefied + "<br/><br/>"+
 		"<table border=0>" +
 		"<tr><td>Copyright (C) <td>2008 Saccubus Developers Team"+
 		"<tr><td><td>2007-2008 2012-2015(FFmpeg) PSI"+

@@ -10,5 +10,5 @@
 	<entry key="EXT">avi</entry>
 	<entry key="MAIN" />
 	<entry key="IN" />
-	<entry key="OUT">-s 640x360 -samx -qscale 10</entry>
+	<entry key="OUT">-s 640x360 -samx -qscale 10 -pix_fmt yuv420p</entry>
 </properties>

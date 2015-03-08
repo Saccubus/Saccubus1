@@ -106,7 +106,7 @@ public class Path extends File{
 	 * @param dir : Name of directory : String
 	 * @return Full filenames of child dirs or child files : Array of String
 	 */
-	public static String[] getFiullnameList(String dir){
+	public static String[] getFullnameList(String dir){
 		File path = new File(dir);
 		String[] lists = path.list();
 		int l = lists.length;
@@ -302,8 +302,16 @@ public class Path extends File{
 	/**
 	 * Read all text from file and return String with Encoding
 	 */
-	public static String readAllText(String file, String encoding) {
+	public static String readAllText(String path, String encoding) {
 		BufferedReader br = null;
+		File file = null;
+		try {
+			file  = new File(path);
+		}catch(Exception e){
+			return "";
+		}
+		if(!file.isFile())
+			return "";
 		try {
 			br = new BufferedReader(new InputStreamReader(
 					new FileInputStream(file), encoding));
@@ -334,6 +342,7 @@ public class Path extends File{
 			e.printStackTrace();
 			return false;
 		}finally{
+			if(bw!=null)
 			try {	bw.close();	}
 			catch (IOException e) {
 				return false;

@@ -3,6 +3,8 @@
  */
 package saccubus.net;
 
+import java.io.File;
+
 import saccubus.ConvertingSetting;
 
 /**
@@ -219,7 +221,7 @@ public class BrowserInfo {
             if (app_dir == null || app_dir.isEmpty()){
             	return "";
             }
-            String[] userLists = Path.getFiullnameList(app_dir + "\\Mozilla\\Firefox\\Profiles\\");
+            String[] userLists = Path.getFullnameList(app_dir + "\\Mozilla\\Firefox\\Profiles\\");
             for (String user_dir : userLists){
             	String sqlist_filename = user_dir + "\\cookies.sqlite";
                 if (Path.isFile(sqlist_filename))
@@ -275,31 +277,84 @@ public class BrowserInfo {
  */
 
     /** <p>
-     *  IE7/IE8/IE9 から user_session を取得。<br/>
+     *  IE7/IE8/IE9/IE10/IE11 (Win8.1対応) から user_session を取得。<br/>
      *  エラーが起こった場合、例外を投げずに空文字を返す
      *  </p>
      *  @return user_session
      */
     private String getUserSessionFromMSIE()
     {
-        String user_session = "";
+        String user_session = " ";
+        StringBuffer sb = new StringBuffer();
+        String profile_dir = null;
+        final String WINDOWS_DIR = "\\Microsoft\\Windows";
 
-        String profile_dir = System.getenv("USERPROFILE");
-        if (profile_dir == null || profile_dir.isEmpty()){
+        profile_dir = System.getenv("APPDATA");    // userfolder/appdata/Roaming
+        if (profile_dir != null && !profile_dir.isEmpty()){
+            user_session = getUserSessionFromMSIE(profile_dir + WINDOWS_DIR);
+            if(!user_session.isEmpty()){
+            	sb.append(user_session+" ");
+            }
+        }
+        profile_dir = System.getenv("LOCALAPPDATA");    // userfolder/appdata/local
+        if (profile_dir != null && !profile_dir.isEmpty()){
+            user_session = getUserSessionFromMSIE(profile_dir + WINDOWS_DIR);
+            if(!user_session.isEmpty()){
+            	sb.append(user_session+" ");
+            }
+        }
+        profile_dir = System.getenv("PROFILE");    // userfolder
+        if (profile_dir != null && !profile_dir.isEmpty()){
+            user_session = getUserSessionFromMSIE(profile_dir);
+            if(!user_session.isEmpty()){
+            	sb.append(user_session+" ");
+            }
+        }
+        user_session = sb.substring(0).trim();
+        return user_session;
+    }
+    /**
+     *  profile フォルダをもらい cookieフォルダ名を変えて２回検索
+     *  @return user_session
+     */
+    private String getUserSessionFromMSIE(String folder)
+    {
+        final String COOKIE_DIR = "\\Cookies";
+        final String COOKIE_DIR2 = "\\InetCookies";
+        String user_session = "";
+        StringBuilder sb1 = new StringBuilder();
+        if(folder==null || folder.isEmpty())
         	return "";
+        user_session = getUserSessionFromMSIE2(folder + COOKIE_DIR);
+        if(!user_session.isEmpty()){
+        	sb1.append(user_session+" ");
         }
-        String search_dir = profile_dir + "\\AppData\\Roaming\\Microsoft\\Windows\\Cookies\\Low\\";
-        user_session = getUserSessionFromDirectory(search_dir);
-        if (user_session.isEmpty())
+        user_session = getUserSessionFromMSIE2(folder + COOKIE_DIR2);
+        if(!user_session.isEmpty()){
+        	sb1.append(user_session+" ");
+        }
+        user_session = sb1.substring(0).trim();
+        return user_session;
+    }
+    /**
+     *  Cookies フォルダをもらい 下位のcookieフォルダ名を変えて２回検索
+     *  @return user_session
+     */
+    private String getUserSessionFromMSIE2(String folder)
+    {
+    	String user_session = null;
+        StringBuilder sb2 = new StringBuilder();
+        user_session = getUserSessionFromDirectory(folder + "\\");
+        if (!user_session.isEmpty())
         {
-        	search_dir = profile_dir + "\\AppData\\Roaming\\Microsoft\\Windows\\Cookies\\";
-            user_session = getUserSessionFromDirectory(search_dir);
+        	sb2.append(user_session+" ");
         }
-        if (user_session.isEmpty())
+        user_session = getUserSessionFromDirectory(folder + "\\Low\\");
+        if (!user_session.isEmpty())
         {
-        	search_dir = profile_dir + "\\Cookies\\";
-            user_session = getUserSessionFromDirectory(search_dir);
+        	sb2.append(user_session+" ");
         }
+        user_session = sb2.substring(0).trim();
         return user_session;
     }
 
@@ -314,9 +369,17 @@ public class BrowserInfo {
         try {
 	        if (Path.isDirectory(dir_name))
 	        {
-                String[] files = Path.getFiullnameList(dir_name);
+                String[] files = Path.getFullnameList(dir_name);
                 for (String fullname : files)
                 {
+                	File file = null;
+                	try{
+                		file = new File(fullname);
+                	}catch(Exception e){
+                		file = null;
+                	}
+                	if(file==null)
+                		return "";
                     user_session = cutUserSession(Path.readAllText(fullname, "MS932"), fullname);
                     if (!user_session.isEmpty()){
                     	return user_session;

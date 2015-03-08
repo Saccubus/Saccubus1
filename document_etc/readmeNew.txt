@@ -6,12 +6,6 @@ readmeNew.txt
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-1.49(2014/4/20)
-　mylist変換をあとでまとめてautolist.batでできるように出力
-　mylist処理少し追加
-　GUIでmylist変換中も動画の再生ボタン可能に
-　LastFrame出力時のバグ修正
-
 ■動作が変なときは
 　・通常の Saccubus.exe の起動では、
 　　[log]frontend.txt　にログが出力されていますので参照して下さい。
@@ -43,13 +37,15 @@ readmeNew.txt
 
 □改造部分について
 【ライセンス】
-１．ffmpeg56884w.exe（ソースはGithubレポジトリ）、Saccubus.jar（ソース同梱）は
+１．ffmpeg70404f.exe（ソースはGithubレポジトリ）、Saccubus.jar（ソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
 ２．nicovideoE.dll、Bin.jar、Saccubus.exe（全てソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)と
 二条項BSDライセンス(http://opensource.org/licenses/BSD-2-Clause)のデュアルライセンスです。
 ３．SDL.dll(LGPL)、SDL_ttf.dll(zlibライセンス)、
 SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
+４．gson-2.2.4.jar(ApacheLicense2.0)は改変なし再配布です。
+ https://code.google.com/p/google-gson/
 
 　(2013/5/1変更：さきゅばすの非ffmpegのライセンス変更に合わせて)
 
@@ -58,9 +54,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　さきゅばすの使い方などに関しては、
 　上の[メニュー][readmeNew]から参照できます。また
 　公式サイト　http://saccubus.sourceforge.jp/
-　同梱の最初に必ず読んで.txt、さきゅばす1.22rのreadme.txt、
-　1.22r3のreadme+.txtをご覧下さい。
-　1.22r3e、1.23以降の不具合報告等は2chさきゅばすスレでお願いします。
+　同梱のrewdmeNew.txt、さきゅばす1.50のreadme150.txt
+　さきゅばす1.22rのreadme.txt、1.22r3のreadme+.txtをご覧下さい。
+　不具合報告等は2chさきゅばすスレでお願いします。
 　2ch【ニコニコ】コメント付動画作成ツール さきゅばす
 　　http://anago.2ch.net/test/read.cgi/software/1346798166/
 
@@ -68,11 +64,10 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　Windows XP/7/8/8.1 desktop　（多分Vistaも動くはず）
 
 ●注意●
-　Javaランタイム Java7 - JRE7 または JDK1.7が必要です。
-　Java8 JRE8 と JDK1.8も確認済みです。
-　Java6 JRE6 と JDK1.6は非推奨です。
+　Javaランタイム Java8 JRE8 または JDK1.8が必要です。
+　Java7 - JRE7 と JDK1.7も確認済みです。
 　最近アップデートしていない場合は必ず更新して下さい。
-　JRE5 JDK1.5はテストしていません。
+　JRE6 JDK1.6 JRE5 JDK1.5はテストしていません。
 　　http://java.com/ja/
 　からインストールして下さい。通常は32bit版です。
 　64bit版をダウンロードするには説明を読んで従って下さい。
@@ -100,7 +95,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
-　・配布形態　　ffmpeg56884w同梱版
+　・配布形態　　ffmpeg70404f同梱版
 　・本Rev.は確定版SDLライブラリ（2011/11/02版）を同梱しています。（binフォルダ内）
 　・本Rev.はffmpeg 21400用optionファイルを削除しました。
 　・optionVo（ffmpeg56884w用、2013/08/01版）optionDev（実験用2011/3/30版）を同梱。
@@ -110,19 +105,34 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　「初めてさきゅばすを使う方」を実行して下さい。
 
 　◆1.22r3以降をご使用中の方
-　【注意】今回の変更は主にffmpeg56884w/ffmpeg55686用となるため
+　【注意】今回の変更は　fffmpeg70404f/ffmpeg65220w用となるため
 　他のffmpegでは使用出来ない可能性があります。ご了承ください。
 　・自分で修正したオプションファイル(optionVOファルダ)をお持ちの方は
-　　自分が使用するオプションファイルだけ別の場所に移動して下さい。
+　　ffmpeg70404fに合わせて変更が必要な場合があります。(optionFフォルダ参照)
 　・「saccubus」内のファイルを以前のさきゅばすフォルダに
 　　■全て上書き■して下さい。
 　・移動したオプションファイルをコピーして戻して下さい。
 　・初期化用にsaccubus.iniが入っています。
 　　saccubus.xmlがない時とメニューから初期化を実行した時に
-　　saccubus.iniを読み込んでffmpeg56884w用にoptionフォルダと
-　　ffmpegを設定します。使用しない場合は■削除■して下さい。
+　　saccubus.iniを読み込んでfffmpeg70404f用にoptionフォルダと
+　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・ffmpeg更新　x265 libutvideo追加
+　・fps変更時ffmpeg内蔵fps filter選択可(対応ffmpegのみ nm動画非対応)
+　・ライセンス及び旧readmeを docフォルダに移動 メニュー表示の対応
+　・初期設定値のmp3をvo_aacencに変更(.iniファイルは以前に変更済み)
+　・変換後自動再生機能追加
+　・エクスプローラーでフォルダ表示ボタン追加
+　・ニコ生運営コメント簡易変更機能追加
+　・Windows8以降のIE11クッキー取得バグ修正(仮)
+　・マルチログイン時のクッキー処理バグ修正
+　・色名pink2,cyan2追加
+　・wakuコマンドで-frameオプション時の既定をred 細枠(1pixel)に(CA研究用)
+　・Jsonのライブラリーにgsonを使う変更（gson jar,License追加)
+　・Vhook 1.50.5 MingLiuフォント変化修正
+　・CAの弾幕化モード抑え気味
+　・boldフォントをnormal化可能
 　・mylist変換をあとでまとめてautolist.batでできるように出力
 　・mylist処理少し追加
 　・動画設定タブに再生ボタン追加
@@ -218,6 +228,38 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 □拡張機能（変更点）説明
+●ffmpeg更新に対応してオプションと引数渡しを変更
+　library x265 libutvideo追加　デコード確認のみ
+
+●変換後自動再生機能追加
+　コメント付き変換した時は自動で変換後の動画を再生します。
+　既定はオフ。
+
+●ニコ生運営コメント簡易変更機能追加
+　ニコ生の運営コメント(premium="2"以上の属性を持つ)に対して
+　ueまたはshitaの枠付きで表示します。（変更不可・既定はオフ）
+　ニコ生と同じではありません。
+
+●エクスプローラーでフォルダ表示ボタン追加
+　保存タブにそれぞれ設定されたフォルダまたはファイルのあるフォルダを開きます。
+
+●Jsonのライブラリーにgsonを使う変更（gson jar,License追加)
+　今までの手製のJson処理の代わりにgoogle gson(ApacheLicense2.0)を使います。
+　少し容量が増えましたがJson処理の追加がしやすくなりました
+
+●明朝体MingLiuフォント変化修正
+　Vista以降で使用できる明朝体MingLiuの外字領域文字による変化対応修正。
+　XPの場合はニコ動ではゴシックになりますがこちらでは明朝体になります。
+
+●CAの弾幕化モード抑え気味
+　2013/11/7以降のニコ動の大画面プレイヤーでの修正に対応し
+　誤差のために上下に弾幕化していたCAが中画面でもずれにくくなります。
+
+●boldフォントをnormal化可能
+　デフォルトでは文字フォントはニコ動と同じようにbold(太字)指定していますが
+　[変換設定]タブ-実験的設定(仮)-追加モードに　-normal
+　を指定するとbold指定をしません。（boldより細いフォントになります）
+
 ●mylist変換をあとでまとめてautolist.batでできるように出力(暫定)
 　保存設定・ページ情報・マイリスト自動変換用のautolist.batファイルを保存する
 　をオンにして、mylistのURLをURL/IDに指定して変換ボタンを押すと
@@ -451,10 +493,10 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　-loc -frame　を指定すると位置コマンドによって表示枠色が変わります。
 　　ue 赤枠 naka 黄枠 shita 青枠
 　-font　を指定するとフォントの種類によって文字の背景色を変更します。
-　　ゴシック(msgothic)　赤　明朝(simsun)　緑　丸文字(gulim)　青　arial　黄　その他　灰
+　　ゴシック(msgothic)　赤　明朝(simsun)　緑　丸文字(gulim)　青　arial　黄　その他　灰　明朝体(MingLiu) シアン
 　　但し文字色と同じ場合は赤→黒、緑→黄色、青→紫と変更します。
 　-font -fg　を指定するとフォントの種類によって文字色を変更します。
-　　ゴシック(msgothic)　赤　明朝(simsun)　緑　丸文字(gulim)　青　arial　黄　その他　灰
+　　ゴシック(msgothic)　赤　明朝(simsun)　緑　丸文字(gulim)　青　arial　黄　その他　灰　明朝体(MingLiu) シアン
 　　背景は透明です。影が元の文字色になります。
 　枠とフォント指定は同時指定可能です。
 　■実行例（従来画面）
@@ -670,9 +712,10 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　XP SP3 Home 32bit + IE8, Firefox19.0, SRware
 　　で行いました。
 　（GoogleChromeは Ver.33.0.xxからクッキーが暗号化されて保存されるため
-　　ファイルからセッションを検索できないので共有できません。）
+　　ファイルからセッションを検索できないので共有できません。
+　　Opera20.0以降も共有できません）
 　・動画変換確認は、ffmpeg56884wで行いました。
-　　Win7 64 Corei7, Win7 32 Core2Duo
+　　Win7 64 Corei7
 　・但し再生確認はPC上だけで、携帯その他では未確認
 　・前スレ>>670(SVN-25041) は変換エラーする動画(Decoder not found)がありました。
 　・前スレ>>481(SVN-23386)は livx264でのマルチスレッドオプション
@@ -683,71 +726,89 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 ■収録物
-　　ffmpeg56884w同梱版
+　　ffmpeg70404f同梱版
 □フォルダ構成
-　saccubus1.49.zip
-　├ffmpeg56884w同梱版  表示
-　├最初に必ず読んで.txt
-　├ToDO.txt
-　└saccubus　　本体exe jar xml bat
-　　├bin        実行ファイルフォルダ exe dll
-　　├optionDev  オプションフォルダ(開発用)　CA用設定サンプル５種
-　　└optionVO   オプションフォルダ(56884w/55686用)
+　saccubus1.60.zip
+　├読んで下さいtxt
+　└saccubus　　  本体exe jar xml bat
+　　├bin          実行ファイルフォルダ exe dll
+　　├doc          実行ファイルフォルダ exe dll
+　　├optionF      オプションフォルダ(56884w/55686用)
+　　├optionFDev   オプションフォルダ(開発用)　CA用設定サンプル５種
+　　└Saccubus_lib Javaライブラリーフォルダ jar
 
 □内容
 ・License.txt　　　　　　　 さきゅばすライセンス（プロジェクト）
-・2-clause BSD License.txt　さきゅばす２条項BSDライセンス
-・GPL v3.txt 　　　　　　　 さきゅばすGPLライセンス
 ・Saccubus.jar　　　　　　　本体
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
+・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
+・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
+・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
+・saccubus.ini　　　　　　　70404f向け初期設定
+・最初に必ず読んで.txt
 ・bin フォルダ配下
-　　ffmpeg56884w.exe ライセンスGPLV3
-　　nicovideoE.dll(2014.01.28版)統合版拡張Vhookライブラリ
+　　ffmpeg70404f.exe ライセンスGPLV3
+　　　library70404f.txt　　外部ライブラリーバージョン
+　　nicovideoE.dll(2015.03.08版)統合版拡張Vhookライブラリ
 　　SDL.dll(2011.11.02ビルド)、COPYNG、README-SDL.txt
 　　　ライセンスはLGPL
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYING.sdl_ttf
 　　　ライセンスはzlib
 　　SDL_gfx.dll(2013.05.29ビルド)、LICENSE.gfx
 　　　グラフィックライブラリ、ライセンスはzlib
-・optionDev フォルダ配下 　 開発用ファイル
-・optionVO フォルダ配下　　 変換オプションファイル
-　　　（N56884w用 2014.03.24版）
-・readmeNew.txt(最新)、readme.txt(1.22r)、readme+.txt(1.22r3)
-・最初に必ず読んで.txt
-・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
-・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
-・AUTO2PROC.BAT　　　　　　 ２プロセス自動実行本体
-・AUTO2PROCDEBUG.BAT　　　  ２プロセス自動実行時のログ記録用
-・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
-・saccubus.ini　　　　　　　N56884w向け初期設定
-・オプションファイル見本.xml　　　　　　（1.22rの物）
-・変換リストが起動しない場合.txt
-・ローカル変換追加説明.txt
-・saccubus_src.zip
-　　Saccubus.jar　のjavaソースファイル、eclipseプロジェクトファイル
-　　nicovideoE.dll　のソースファイル、eclipseプロジェクトファイル
-　　Bin.jar　のjavaソースファイル、eclipseプロジェクトファイル
-　　Saccubus.exe　のCソースファイル(launcher)、makeファイル、リソース
+　　b32.jpg、b32.png　SoundOnly用画像
+・optionF フォルダ配下　　 変換オプションファイル
+　　　（N70404f/N65220w用 2015.03.01版）
+・optionFDev フォルダ配下 　開発用ファイル
+・Saccubus_libフォルダ配下
+　　gson-2.2.4.jar、LICENSE、README.txt
+　　　ライセンスはApache License2.0(GPLV3適用)
+・doc
+　　2-clause BSD License.txt さきゅばす２条項BSDライセンス
+　　GPL v3.txt 　　　　　　　さきゅばすGPLライセンス
+　　QandA質問応答記録.txt
+　　readmeNew.txt(最新)
+　　readme+.txt(1.22r3)
+　　readme.txt(1.22r)
+　　ToDo.txt
+　　オプションファイル見本.xml　（1.22rの物）
+　　ローカル変換追加説明.txt
+　　最初に必ず読んで.txt　　　　　(コピー)
+　　変換リストが起動しない場合.txt
+　　・saccubus_src.zip
+　　　Saccubus.jar　のjavaソースファイル、eclipseプロジェクトファイル
+　　　nicovideoE.dll　のソースファイル、eclipseプロジェクトファイル
+　　　Bin.jar　のjavaソースファイル、eclipseプロジェクトファイル
+　　　Saccubus.exe　のCソースファイル(launcher)、makeファイル、リソース
 
 関連リンク
 ・ソースコード
 　http://sourceforge.jp/projects/saccubus/svn/view/branches/dev_branch
 　(SVN：svn checkout http://svn.sourceforge.jp/svnroot/branches/dev_branch )
-　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1 (未更新)
+　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1 
+　｜commit 38dd82aec1eb17718ebd99814135cf3a5487a42d
+　｜Date:   Tue Mar 3 19:20:22 2015 +0900
+　｜Merge: 5de2dab 023c978
+　｜    Merge branch 'Saccubus1' into official/master
+
 
 ・ダウンロード
-　公式最新(Vista・Win7では追加ファイルが必要。公式ユーザーページ参照)
-　1.22r 　　http://sourceforge.jp/projects/saccubus/downloads/30757/Saccubus-1.22r.zip/
 　改造版の元
 　1.22r3　(ffmpeg.exe SVN-r21400を含む)
 　　http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip
+　公式最新(Vista・Win7では追加ファイルが必要。公式ユーザーページ参照)
+　1.22r 　　http://sourceforge.jp/projects/saccubus/downloads/30757/Saccubus-1.22r.zip/
 　参考ffmpeg
-　r23386(libfaacあり)　http://www1.axfc.net/uploader/Ne/so/82882.zip
 　N55686(libfaac無し、libvo_aacencあり)+optionVO(古い)
 　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
-　FFmpeg評価用(2013/6/16)　http://www1.axfc.net/uploader/so/2936495.zip
+　FFmpeg評価用(2013/6/16)
+　　http://www1.axfc.net/uploader/so/2936495.zip
+　FFmpeg65220w配布2.zip(2014/7/1)
+　　http://sourceforge.jp/users/orz-/pf/beta_oryzanol/files/?id=5537
 
 　改造版
+　1.50　　　http://www1.axfc.net/u/3239184.zip
+　1.49　　　http://www1.axfc.net/u/3227458.zip
 　1.48　　　http://www1.axfc.net/u/3210572.zip
 　1.47r3　　http://www1.axfc.net/u/3206385.zip
 　1.47　　　http://www1.axfc.net/u/3200935.zip
@@ -808,6 +869,34 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 変更履歴・修正・改変点
+1.60.0(2015/3/08)
+　ffmpeg更新に対応してオプションと引数渡しを変更
+　(library x265 libutvideo追加)
+　fps変更時ffmpeg内蔵fps filter選択可(対応ffmpegのみ nm動画非対応)
+　ライセンス及び旧readmeを docフォルダに移動 メニュー表示の対応
+　初期設定値のmp3をvo_aacencに変更(.iniファイルは以前に対応済み)
+　変換後自動再生機能
+　エクスプローラーでフォルダ表示ボタン追加
+　ニコ生運営コメント簡易変更
+　Windows8以降のIE11クッキー取得バグ修正(仮)
+　マルチログイン時のクッキー処理バグ修正
+
+1.51(2015/2/07)
+　色名pink2,cyan2追加
+　wakuコマンドで-frameオプション時の既定をred 細枠(1pixel)に
+
+1.50(2014/5/11)
+　Jsonのライブラリーにgsonを使う変更（gson jar,License追加)
+　Vhook 1.50.5 MingLiuフォント変化修正
+　CAの弾幕化モード抑え気味
+　boldフォントをnormal化可能
+
+1.49(2014/4/20)
+　mylist変換をあとでまとめてautolist.batでできるように出力
+　mylist処理少し追加
+　GUIでmylist変換中も動画の再生ボタン可能に
+　LastFrame出力時のバグ修正
+
 1.48(2014/3/31)
 　auto.bat debug.batでJavaのパスの設定を不要にする
 　変換後動画再生ボタンのバグ修正(再)
