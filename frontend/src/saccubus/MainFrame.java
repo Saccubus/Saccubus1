@@ -2614,7 +2614,10 @@ public class MainFrame extends JFrame {
 			}else
 				//converter is finished and Button is pushed
 				// so new video or new mylist will be converted
-			if(url!=null && url.contains("mylist")){
+			if(url==null){
+				sendtext("MainFrame NULLPOinter url error");
+				System.out.println("MainFrame NULLPOinter url error");
+			}else if(url.contains("mylist")){
 				//converter worker start
 				isLastMylist = true;
 				stopFlag = new ConvertStopFlag(DoButton, DoButtonStopString, DoButtonWaitString, DoButtonDefString);
@@ -2632,7 +2635,6 @@ public class MainFrame extends JFrame {
 				converter.start();
 				// return to dispatch
 			}else
-			//if(url==null||!url.contains("mylist"))
 			{
 				//í èÌïœä∑
 				// Shall fileQueue for playing video be cleared or truncated to 1 file?

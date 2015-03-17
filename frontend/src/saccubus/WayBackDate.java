@@ -145,12 +145,12 @@ public class WayBackDate {
 		return MyDateFmt.format(new Date());
 	}
 
-	public static Date unFormat(String time){
-		try {
-			return MyDateFmt.parse(time);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+//	public static Date unFormat(String time){
+//		try {
+//			return MyDateFmt.parse(time);
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
 }

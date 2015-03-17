@@ -34,9 +34,9 @@ public class NicoMap {
 	 * ニコマップが空ならtrue
 	 * @return
 	 */
-	private boolean isEmpty(){
-		return (map.isEmpty());
-	}
+//	private boolean isEmpty(){
+//		return (map.isEmpty());
+//	}
 	/**
 	 * keyを含んでいればtrue
 	 * @param key
@@ -55,12 +55,12 @@ public class NicoMap {
 	}
 	/**
 	 * 文字列に変換
-	 * @return String 
+	 * @return String
 	 */
 	@Override
 	public String toString(){
-		if (this.isEmpty())
-			return null;
+//		if (this.isEmpty())
+//			return null;
 		StringBuilder sb = new StringBuilder();
 		for (String key: map.keySet()){
 			sb.append(key + "=" + map.get(key) + "; ");

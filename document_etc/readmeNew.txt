@@ -98,7 +98,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　・配布形態　　ffmpeg70404f同梱版
 　・本Rev.は確定版SDLライブラリ（2011/11/02版）を同梱しています。（binフォルダ内）
 　・本Rev.はffmpeg 21400用optionファイルを削除しました。
-　・optionVo（ffmpeg56884w用、2013/08/01版）optionDev（実験用2011/3/30版）を同梱。
+　・optionF（N70404f/N65220w用 2015/03/08版）optionFDev（実験用 2015/03/08版）を同梱。
 
 □インストール方法と拡張機能設定
 　◆1.22r2以前のさきゅばすを使用中の方
@@ -427,9 +427,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　⑥５番目以降の引数（過去ログ日時の後）の＠指定キーワード（半角英大文字）
 　@NDL
 　　動画・コメントをダウンロードしない。（変換は設定ファイル通り）
-　@DLO 
+　@DLO
 　　動画・コメントを強制ダウンロードし、変換を行わない。
-　@DLC 
+　@DLC
 　　コメントのみを強制ダウンロードし、変換を行わない。
 　@PUP
 　　PC画面の左上にauto.bat中止用のボタン・ステータスを表示する。
@@ -785,7 +785,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・ソースコード
 　http://sourceforge.jp/projects/saccubus/svn/view/branches/dev_branch
 　(SVN：svn checkout http://svn.sourceforge.jp/svnroot/branches/dev_branch )
-　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1 
+　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1
 　｜commit 38dd82aec1eb17718ebd99814135cf3a5487a42d
 　｜Date:   Tue Mar 3 19:20:22 2015 +0900
 　｜Merge: 5de2dab 023c978
@@ -821,7 +821,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　1.40d2　　http://www1.axfc.net/uploader/so/2865306.zip
 　1.39r1　　http://www1.axfc.net/uploader/so/2853963.zip
 　1.38r1　　http://www1.axfc.net/uploader/so/2818777.zip
-　1.37r6　　http://www1.axfc.net/uploader/so/2781459.zip 
+　1.37r6　　http://www1.axfc.net/uploader/so/2781459.zip
 　1.37r3　　http://www1.axfc.net/uploader/Ne/so/141013.zip
 　1.37　　　http://www1.axfc.net/uploader/Ne/so/137858.zip
 　1.36r 　　http://www1.axfc.net/uploader/Ne/so/137048.zip
@@ -902,7 +902,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　変換後動画再生ボタンのバグ修正(再)
 　JPG->MP4変換時にコピー省略
 　FFmpegの出力のタイトル文字化け修正(charset指定をUTF-8に変更)
-　NGワードの引用符処理修正(""内がコメント全体一致→部分一致に変更) 
+　NGワードの引用符処理修正(""内がコメント全体一致→部分一致に変更)
 　/replace @置換のバグ修正
 
 1.47r3(2014/3/27)
