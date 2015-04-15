@@ -287,7 +287,7 @@ public class NicoClient {
 				System.out.println("Can't login: cannot set cookie.");
 				return false;
 			}
-			System.out.println("Logged in.");
+		//	System.out.println("Logged in.");
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			return false;
@@ -512,7 +512,10 @@ public class NicoClient {
 			HttpURLConnection con = urlConnectGET(url + watchInfo);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
 				System.out.println("ng.\nCan't getVideoInfo:" + url + watchInfo);
-				return false;
+				if(!loginCheck(con)){
+					System.out.println("Can't login.");
+					return false;
+				}
 			}
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
@@ -547,6 +550,10 @@ public class NicoClient {
 			if (ThreadID == null || VideoUrl == null
 				|| MsgUrl == null || UserID == null) {
 				System.out.println("ng.\nCan't get video information keys.");
+				con = urlConnectGET(url + watchInfo);
+				if(!loginCheck(con)){
+					System.out.println("Can't logged In.");
+				}
 				return false;
 			}
 			economy  = VideoUrl.toLowerCase().contains("low");
@@ -987,7 +994,7 @@ public class NicoClient {
 		return false;
 	}
 
-	private boolean loginCheck() {
+	public boolean loginCheck() {
 		String url = "http://www.nicovideo.jp";
 		System.out.print("Checking login...");
 		// GET (NO_POST), UTF-8, AllowAutoRedirect,
@@ -997,23 +1004,27 @@ public class NicoClient {
 				System.out.println("ng.\nCan't read TopPage at loginCheck:" + url);
 				return false;
 			}
-			String new_cookie = detectCookie(con);
-			if (new_cookie == null || new_cookie.isEmpty()) {
-				System.out.print(" new_cookie isEmpty. ");
-				// but continue
-			}
-			String auth = nicomap.get("x-niconico-authflag");
-			if(auth==null || auth.isEmpty() || auth.equals("0")){
-				System.out.println("ng. Not logged in. authflag=" + auth);
-				con.disconnect();
-				return false;
-			}
-			if (new_cookie != null && !new_cookie.isEmpty()) {
-				Cookie = new_cookie;
-			}
-			debug("\nÅ°Now Cookie is<" + Cookie + ">\n");
-			System.out.println("ok.");
-			return true;
+		return loginCheck(con);
+	}
+
+	private boolean loginCheck(HttpURLConnection con) {
+		String new_cookie = detectCookie(con);
+		if (new_cookie == null || new_cookie.isEmpty()) {
+			System.out.print(" new_cookie isEmpty. ");
+			// but continue
+		}
+		String auth = nicomap.get("x-niconico-authflag");
+		if(auth==null || auth.isEmpty() || auth.equals("0")){
+			System.out.println("ng. Not logged in. authflag=" + auth);
+			con.disconnect();
+			return false;
+		}
+		if (new_cookie != null && !new_cookie.isEmpty()) {
+			Cookie = new_cookie;
+		}
+		debug("\nÅ°Now Cookie is<" + Cookie + ">\n");
+		System.out.println("ok.");
+		return true;
 	}
 
 	public String getBackCommentFromLength(String def) {

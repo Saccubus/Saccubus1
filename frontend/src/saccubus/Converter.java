@@ -411,8 +411,14 @@ public class Converter extends Thread {
 				gulimFont = new File(fontDir, "GULIM.TTC");
 				if (!gulimFont.canRead()) {
 					sendtext("CA用フォントが見つかりません。" + gulimFont.getPath());
-					result = "11";
-					return false;
+					File malgunFont = new File(fontDir, "MALGUN.TTF");
+					if(malgunFont.canRead()){
+						System.out.println("CA用フォント" + gulimFont.getPath() + "を" + malgunFont.getName() + "で代替します。");
+						gulimFont = malgunFont;
+					}else{
+						result = "11";
+						return false;
+					}
 				}
 				arialFont = new File(fontDir, "ARIAL.TTF");
 				if(!arialFont.canRead()){
@@ -1840,6 +1846,8 @@ public class Converter extends Thread {
 				if (!client.getVideoInfo(Tag, WatchInfo, Time, Setting.isSaveWatchPage())) {
 					if(Tag==null || Tag.isEmpty()){
 						sendtext("URL/IDの指定がありません " + client.getExtraError());
+					}else if(!client.loginCheck()){
+						sendtext("ログイン失敗 " + BrowserKind.getName() + " " + client.getExtraError());
 					}else{
 						sendtext(Tag + "の情報の取得に失敗 " + client.getExtraError());
 					}
