@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	-threads 0 -vcodec libx265 -crf 3  ■orz
+-->
+<properties>
+	<entry key="EXT">mp4</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-threads 0 -s 640x360 -acodec copy -ac 2 -absf aac_adtstoasc -vcodec libx265 -crf 28 -b 1000k -async 1 -aspect 16:9 -g 150 -qcomp 0.7 -qmin 10 -qmax 51 -qdiff 4 -subq 6 -me_range 16 -i_qfactor 0.714286  -partitions +parti4x4+partp8x8+partb8x8 -refs 3 -bf 3 -vf scale=640:360,pad=640:384:0:12 -pix_fmt yuv420p</entry>
+</properties>

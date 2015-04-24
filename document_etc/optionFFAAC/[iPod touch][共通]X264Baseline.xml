@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	kuji-raさん提供+orz改変
+-->
+<properties>
+	<entry key="EXT">mp4</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-threads 0 -vcodec libx264  -maxrate 1024k -minrate 896k -bufsize 4096k -g 300 -acodec aac -strict experimental -ab 128k -ar 44100 -ac 2 -s 640x480 -r 30 -profile Baseline -level 30 -pix_fmt yuv420p -samx  </entry>
+</properties>

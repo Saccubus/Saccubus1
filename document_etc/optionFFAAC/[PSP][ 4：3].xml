@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="EXT">mp4</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-threads 0 -flags +bitexact -vcodec libx264 -coder 1 -bufsize 128k -g 250 -s 720x480 -r 29.97 -qscale 1 -maxrate 3000k -acodec aac -strict experimental -ac 2 -ar 44100 -ab 192k -absf aac_adtstoasc -f psp -level 21 -aspect 4:3 -qcomp 0.7 -qmin 10 -qmax 51 -qdiff 4 -subq 6 -me_range 16 -i_qfactor 0.714286 -pix_fmt yuv420p</entry>
+</properties>

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	画面全部入るように240x160の大きさ。
+　　　　コメントがはみ出ません。コメント有りエンコはこの設定で。
+　　　　作った人：春蝶◆
+-->
+<properties>
+	<entry key="EXT">mp4</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-r 29.97 -s 240x160 -acodec aac -strict experimental -vcodec libxvid -qscale 3 -f mp4 -aspect 4:3</entry>
+</properties>

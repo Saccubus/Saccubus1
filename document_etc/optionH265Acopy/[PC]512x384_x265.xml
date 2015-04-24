@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	4:3 デフォルト 設定　さきゅばす 1.60以降
+	mp4 H264 512x384 q23, 44100Hz 128kbps AAC
+-->
+<properties>
+	<entry key="EXT">mp4</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-threads 0 -s 512x384 -acodec copy -ac 2 -vcodec libx265 -aspect 4:3 -crf 28 -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 17 -qmax 51 -qdiff 4 -bf 3 -refs 3 -direct-pred auto -trellis 1 -weightp 1 -mixed-refs 1 -8x8dct 1 -fast-pskip 1 -pix_fmt yuv420p</entry>
+</properties>
