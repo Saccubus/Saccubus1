@@ -387,6 +387,12 @@ public class NicoClient {
 		if(getThumbInfoFile(tag) != null && !saveWatchPage){
 			//return true;
 		}
+		return getVideoHistoryAndTitle1(tag, watchInfo, saveWatchPage);
+	}
+	public boolean getVideoHistoryAndTitle1(String tag, String watchInfo, boolean saveWatchPage) {
+		// if(getThumbInfoFile(tag) != null && !saveWatchPage){
+		// 	//return true;
+		// }
 		String thumbTitle = getVideoTitle();
 		VideoTitle = null;
 		boolean found = false;
@@ -1264,7 +1270,12 @@ public class NicoClient {
 				if(s!=null && s.contains("title")){
 					title = safeFileName(getXmlElement(s, "title"));
 				}
-				VideoTitle = title;
+				if(title==null){
+					if(getVideoHistoryAndTitle1(tag, "", false))
+						title = getVideoTitle();
+					else
+						title = VideoTitle;
+				}
 			}
 			if(ContentType==null){
 				ContentType = getXmlElement(s, "movie_type");
