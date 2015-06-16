@@ -1881,8 +1881,18 @@ public class Converter extends Thread {
 			if(!saveThumbInfo(client)){
 				if(isSaveConverted())
 					System.out.println("追加情報の取得に失敗しましたが続行します。");
-				else
+				else {
+					String tstr = Status.getText();
+					if(isSaveComment()) {
+						tstr = "コメント取得成功、" + tstr;
+					}
+					if(isSaveVideo())
+						tstr = "[警告]動画取得成功、" + tstr;
+					else
+						tstr = "[警告]" + tstr;
+					sendtext(tstr);
 					return;
+				}
 			}
 			if(stopFlagReturn()){
 				return;
