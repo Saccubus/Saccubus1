@@ -17,8 +17,8 @@
  w SIMSUN_FONT    	weaker than GULIM, change simsun
  s SIMSUN_FONT    	change simsun
  S SIMSUN_FONT    	simsun Not Change
- m GULIM_FONT     	change Maru Gothic
- M GULI_FONT		Maru Gothic Not Change
+ m GULIM_FONT     	change Maru Gothic (malgun.ttf win10)
+ M GULI_FONT		Maru Gothic Not Change (malgun.ttf win10)
  A ARIAL_FONT     	arial
  J GEORGIA_FONT   	(win=sylfaen.ttf)
  D DEVANAGARI		(win=mangal.ttf) India
@@ -378,20 +378,20 @@ static const Uint8 UNITABLE[] =
 0530-058f アルメニア   (tahoma.ttf)
 0590-05ff ヘブライ    (arial.ttf)
 0600-06ff アラビア     (arial.ttf) 0655はゼロ幅文字扱い
-0700-077f シリア        estrangelo edessa
+0700-077f シリア        estrangelo edessa estre.ttf または seguihis.ttf
 0780-08ff ターナ    mvboli.ttf
-0900-097f テバナガリ    mangal.ttf
-0980-09ff ベンガル      vrinda.ttf または　shonar.ttf
-0a00-0a7f グルムキー   raavi.ttf
-0a80-0aff クジャラート  shruti.ttf
+0900-097f テバナガリ    mangal.ttf または nirmala.ttf
+0980-09ff ベンガル      vrinda.ttf または　shonar.ttf または nirmala.ttf
+0a00-0a7f グルムキー   raavi.ttf または nirmala.ttf
+0a80-0aff クジャラート  shruti.ttf または nirmala.ttf
 0b00-0b7f オリヤー      	■check■
-0b80-0bff タミール     latha.ttf
-0c00-0c7f テルグ      gautami.ttf
-0c80-0cff カナラ      tunga.ttf
-0d00-0d7f マラヤラム    kartika.ttf
+0b80-0bff タミール     latha.ttf または nirmala.ttf
+0c00-0c7f テルグ      gautami.ttf または nirmala.ttf
+0c80-0cff カナラ      tunga.ttf または nirmala.ttf
+0d00-0d7f マラヤラム    kartika.ttf または nirmala.ttf
 0d80-0dff シンハラ      	■check■
 0e00-0e7f タイ          tahoma.ttf
-0e80-0eff ラオス       laoui.ttf
+0e80-0eff ラオス       laoui.ttf または LeelawUI.ttf
 0f00-0fff チベット      	■check■
 1000-109f ミャンマーMSゴシック不可	■check■
 10a0-10ff グルジア		sylfaen.ttf

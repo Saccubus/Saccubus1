@@ -242,6 +242,7 @@ public class Converter extends Thread {
 	private File thaanaFont = null;
 	private File malayalamFont = null;
 	private File teluguFont = null;
+	private File nirmalaFont = null;
 	private Pattern ngWordPat;
 	private Pattern ngIDPat;
 	private CommandReplace ngCmd;
@@ -408,17 +409,22 @@ public class Converter extends Thread {
 					result = "10";
 					return false;
 				}
-				gulimFont = new File(fontDir, "GULIM.TTC");
+				gulimFont = new File(fontDir, "GULIM.TTC");	//windowsXP,7,8 丸文字
+				File saveGulimFont = gulimFont;
 				if (!gulimFont.canRead()) {
-					sendtext("CA用フォントが見つかりません。" + gulimFont.getPath());
-					File malgunFont = new File(fontDir, "MALGUN.TTF");
-					if(malgunFont.canRead()){
-						System.out.println("CA用フォント" + gulimFont.getPath() + "を" + malgunFont.getName() + "で代替します。");
-						gulimFont = malgunFont;
-					}else{
-						result = "11";
-						return false;
-					}
+					sendtext("警告　CA用フォントが見つかりません。" + gulimFont.getPath());
+					gulimFont = new File(fontDir, "MALGUN.TTF");	//windows10 ハングル
+				}
+				if (!gulimFont.canRead()) {
+					gulimFont = simsunFont;	// 明朝
+				}
+				if (!gulimFont.canRead()) {
+					sendtext("CA用フォントの代替が見つかりません。" + gulimFont.getPath());
+					result = "11";
+					return false;
+				}
+				if(!gulimFont.equals(saveGulimFont)){
+					System.out.println("CA用フォント" + saveGulimFont.getPath() + "を" + gulimFont.getName() + "で代替します。");
 				}
 				arialFont = new File(fontDir, "ARIAL.TTF");
 				if(!arialFont.canRead()){
@@ -440,8 +446,12 @@ public class Converter extends Thread {
 					System.out.println("CA用フォント" + georgiaFont.getPath() + "を" + gothicFont.getName() + "で代替します。");
 					georgiaFont = gothicFont;
 				}
+				nirmalaFont = new File(fontDir,"Nirmala.ttf");
 				devabagariFont = new File(fontDir, "mangal.ttf");
 				if (!devabagariFont.canRead()) {
+					devabagariFont = nirmalaFont;
+				}
+				if(!devabagariFont.canRead()){
 					sendtext("警告　CA用フォントが見つかりません。" + devabagariFont.getPath());
 					//retValue = "15";
 					//return false;
@@ -474,6 +484,9 @@ public class Converter extends Thread {
 				}
 				estrangeloEdessaFont = new File(fontDir, "estre.ttf");
 				if (!estrangeloEdessaFont.canRead()) {
+					estrangeloEdessaFont = new File(fontDir, "seguihis.ttf");
+				}
+				if (!estrangeloEdessaFont.canRead()){
 					sendtext("警告　CA用フォントが見つかりません。" + estrangeloEdessaFont.getPath());
 					//retValue = "19";
 					//return false;
@@ -489,6 +502,9 @@ public class Converter extends Thread {
 					arialUnicodeFont = arialFont;
 				}
 				gujaratiFont = new File(fontDir, "shruti.ttf");
+				if (!gujaratiFont.canRead()){
+					gujaratiFont = nirmalaFont;
+				}
 				if (!gujaratiFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + gujaratiFont.getPath());
 					//retValue = "21";
@@ -498,6 +514,9 @@ public class Converter extends Thread {
 				}
 				bengalFont = new File(fontDir, "vrinda.ttf");
 				if (!bengalFont.canRead()) {
+					bengalFont = nirmalaFont;
+				}
+				if(!bengalFont.canRead()){
 					sendtext("警告　CA用フォントが見つかりません。" + bengalFont.getPath());
 					//retValue = "22";
 					//return false;
@@ -505,6 +524,9 @@ public class Converter extends Thread {
 					bengalFont = arialUnicodeFont;
 				}
 				tamilFont = new File(fontDir, "latha.ttf");
+				if (!tamilFont.canRead()) {
+					tamilFont = nirmalaFont;
+				}
 				if (!tamilFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + tamilFont.getPath());
 					//retValue = "23";
@@ -514,6 +536,9 @@ public class Converter extends Thread {
 				}
 				laooFont = new File(fontDir, "laoui.ttf");
 				if (!laooFont.canRead()) {
+					laooFont = new File(fontDir, "LeelawUI.ttf");
+				}
+				if (!laooFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + laooFont.getPath());
 					//retValue = "24";
 					//return false;
@@ -522,6 +547,9 @@ public class Converter extends Thread {
 				}
 				gurmukhiFont = new File(fontDir, "raavi.ttf");
 				if (!gurmukhiFont.canRead()) {
+					gurmukhiFont = nirmalaFont;
+				}
+				if (!gurmukhiFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + gurmukhiFont.getPath());
 					//retValue = "25";
 					//return false;
@@ -529,6 +557,9 @@ public class Converter extends Thread {
 					gurmukhiFont = arialUnicodeFont;
 				}
 				kannadaFont = new File(fontDir, "tunga.ttf");
+				if (!kannadaFont.canRead()) {
+					kannadaFont = nirmalaFont;
+				}
 				if (!kannadaFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + kannadaFont.getPath());
 					//retValue = "26";
@@ -546,6 +577,9 @@ public class Converter extends Thread {
 				}
 				malayalamFont = new File(fontDir, "kartika.ttf");
 				if (!malayalamFont.canRead()) {
+					malayalamFont = nirmalaFont;
+				}
+				if (!malayalamFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + malayalamFont.getPath());
 					//retValue = "28";
 					//return false;
@@ -553,6 +587,9 @@ public class Converter extends Thread {
 					malayalamFont = arialUnicodeFont;
 				}
 				teluguFont = new File(fontDir, "gautami.ttf");
+				if (!teluguFont.canRead()) {
+					teluguFont = nirmalaFont;
+				}
 				if (!teluguFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + teluguFont.getPath());
 					//retValue = "29";

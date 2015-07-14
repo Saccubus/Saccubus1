@@ -310,6 +310,13 @@ public class BrowserInfo {
             	sb.append(user_session+" ");
             }
         }
+        profile_dir = System.getenv("USERPROFILE");    // userfolder
+        if (profile_dir != null && !profile_dir.isEmpty()){
+            user_session = getUserSessionFromMSIE(profile_dir);
+            if(!user_session.isEmpty()){
+            	sb.append(user_session+" ");
+            }
+        }
         user_session = sb.substring(0).trim();
         return user_session;
     }
