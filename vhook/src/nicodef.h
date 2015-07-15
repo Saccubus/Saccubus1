@@ -164,7 +164,7 @@ static const int COMMENT_BIG_DR_HEIGHT[16] = {
 	384,		//15
 };
 
-#define CMD_COLOR_MAX	20
+#define CMD_COLOR_MAX	21
 #define CMD_COLOR_DEF	0
 #define CMD_COLOR_RED	1
 #define CMD_COLOR_ORANGE	2
@@ -185,6 +185,7 @@ static const int COMMENT_BIG_DR_HEIGHT[16] = {
 #define CMD_COLOR_WHITE	17
 #define CMD_COLOR_PINK2 18
 #define CMD_COLOR_CYAN2 19
+#define CMD_COLOR_BLACK2 20
 
 static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 	{0xff,0xff,0xff,0x00},//DEF
@@ -209,6 +210,7 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 	{0xff,0xff,0xff,0x00},//DEF
 	{0xff,0x33,0xcc,0x00},//PINK2
 	{0x00,0xcc,0xcc,0x00},//CYAN2
+	{0x66,0x66,0x66,0x00},//BLACK2
 };
 
 //
@@ -233,6 +235,7 @@ static char* const CMD_COLOR_NAME[CMD_COLOR_MAX] = {
 	"white",
 	"pink2",
 	"cyan2",
+	"black2",
 };
 
 static const int CA_FONT_HIGHT_TUNED[4][2][CMD_FONT_MAX] = {
@@ -334,7 +337,7 @@ static const int CA_FONT_TAB_WIDTH[CMD_FONT_MAX] = {
 /*
  * CJKフォントの既定文字幅
  * U+3400-D7FF	全角、漢字幅
- * U+E750-F8FF	全角、感じ幅(私用領域、外字)
+ * U+E750-F8FF	全角、漢字幅(私用領域、外字)
  * U+F900-FAFF	全角、漢字幅
  */
 static const Uint16 KANJI_WIDTH[] =

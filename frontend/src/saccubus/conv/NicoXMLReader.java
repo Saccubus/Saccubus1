@@ -59,8 +59,9 @@ public class NicoXMLReader extends DefaultHandler {
 
 	private String premium;
 	private final boolean liveConversion;
+	private final boolean premiumColorCheck;
 
-	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd, int scoreLimit, boolean liveOp){
+	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd, int scoreLimit, boolean liveOp, boolean prem_color_check){
 		this.packet = packet;
 		NG_Word = ngWordPat;
 		NG_ID = ngIdPat;
@@ -69,6 +70,7 @@ public class NicoXMLReader extends DefaultHandler {
 		owner_filter = null;
 		premium = "";
 		liveConversion = liveOp;
+		premiumColorCheck = prem_color_check;
 	}
 
 	public static final Pattern makePattern(String word) throws PatternSyntaxException{
@@ -216,6 +218,12 @@ public class NicoXMLReader extends DefaultHandler {
 			if(mail.contains("is_button")){
 				is_button = true;
 			}
+			String user_id = attributes.getValue("user_id");
+			if (match(NG_ID, user_id)) {
+				item_kicked = true;
+				countNG_ID++;
+				return;
+			}
 			if (match(NG_Word, mail)) {
 				item_kicked = true;
 				countNG_Word++;
@@ -224,20 +232,14 @@ public class NicoXMLReader extends DefaultHandler {
 			mail = NG_Cmd.replace(mail);
 			item.setMail(mail);
 			item.setNo(attributes.getValue("no"));
-			String user_id = attributes.getValue("user_id");
-			if (match(NG_ID, user_id)) {
-				item_kicked = true;
-				countNG_ID++;
-				return;
-			}
 			String forkval = attributes.getValue("fork");
 			if (forkval != null && forkval.equals("1")) {
 				item_fork = true;
 			}
-			if(liveConversion && premium.isEmpty()){
+			if(liveConversion && premium.isEmpty()){	//here premium!=null
 				premium = attributes.getValue("premium");
 			}
-			if(premium==null)
+			if(premium==null)	//here premium may be null
 				premium = "";
 			item.setOwner(item_fork);
 			// item.setUserID(user_id);
@@ -589,6 +591,12 @@ public class NicoXMLReader extends DefaultHandler {
 				item_kicked = true;
 				countNG_Word++;
 				return;
+			}
+			//プレミアム専用カラー　一般アカウントでは無効
+			if (premiumColorCheck && (premium==null || premium.isEmpty())){
+				if(item.isPremumColor()){
+					item.setDefColor();
+				}
 			}
 			item.setComment(com);
 			// System.out.println("\tpreimum="+premium+"| item="+item.toString()+" |");

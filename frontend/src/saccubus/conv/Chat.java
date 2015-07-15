@@ -115,9 +115,12 @@ public class Chat {
 
 	private static final int CMD_COLOR_CYAN2 = 19;
 
+	private static final int CMD_COLOR_BLACK2 = 20;
+
 	private static final int CMD_COLOR_NONE = 99;
 
 	private static final int CMD_COLOR_ERROR = 100;
+
 /*
 	// "date"
 	@SuppressWarnings("unused")
@@ -458,5 +461,24 @@ public class Chat {
 
 	boolean isOwner(){
 		return IsOwner;
+	}
+
+	public boolean isPremumColor() {
+		return (Color < 0 ) ||
+			(Color == CMD_COLOR_NICOWHITE ) ||
+			(Color == CMD_COLOR_MARINEBLUE ) ||
+			(Color == CMD_COLOR_MADYELLOW ) ||
+			(Color == CMD_COLOR_PASSIONORANGE ) ||
+			(Color == CMD_COLOR_NOBLEVIOLET ) ||
+			(Color == CMD_COLOR_ELEMENTALGREEN ) ||
+			(Color == CMD_COLOR_TRUERED ) ||
+			(Color == CMD_COLOR_CYAN2 ) ||
+			(Color == CMD_COLOR_PINK2 ) ||
+			(Color == CMD_COLOR_BLACK2);
+	}
+
+	public void setDefColor() {
+		Color = CMD_COLOR_DEF;
+		isColorAssigned = true;
 	}
 }

@@ -178,6 +178,7 @@ public class ConvertingSetting {
 	private static String defOptsMix = DEF_OPTS_MIX;
 	private Map<String, String> replaceOptions;
 	private boolean liveOparetionConversion;
+	private boolean premiumColorCheck;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -392,7 +393,8 @@ public class ConvertingSetting {
 			boolean save_autolist,
 			boolean use_fpsfilter,
 			boolean auto_play,
-			boolean live_operation
+			boolean live_operation,
+			boolean premium_color_check
 		)
 	{
 		this(	mailaddress,
@@ -518,6 +520,7 @@ public class ConvertingSetting {
 		useFpsFilter = use_fpsfilter;
 		autoPlay = auto_play;
 		liveOparetionConversion = live_operation;
+		premiumColorCheck = premium_color_check;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -865,6 +868,9 @@ public class ConvertingSetting {
 	public boolean isLiveOperationConversion(){
 		return liveOparetionConversion;
 	}
+	public boolean isPremiumColorCheck(){
+		return premiumColorCheck;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1006,6 +1012,7 @@ public class ConvertingSetting {
 	static final String PROP_USE_FPS_FILTER = "UseFpsFilter";
 	static final String PROP_AUTO_PLAY = "AutoPlay";
 	static final String PROP_LIVE_OPERATION = "LiveOperationComment";
+	static final String PROP_PREMIUM_COLOR_CHECK = "PremiumColorCheck";
 	// ì«Ç›çûÇﬁÇæÇØÅAï€ë∂ÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1206,6 +1213,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_USE_FPS_FILTER, Boolean.toString(setting.isUseFpsFilter()));
 		prop.setProperty(PROP_AUTO_PLAY, Boolean.toString(setting.isAutoPlay()));
 		prop.setProperty(PROP_LIVE_OPERATION, Boolean.toString(setting.isLiveOperationConversion()));
+		prop.setProperty(PROP_PREMIUM_COLOR_CHECK, Boolean.toString(setting.isPremiumColorCheck()));
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1448,7 +1456,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_AUTOLIST, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_FPS_FILTER,"false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_PLAY,"false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_LIVE_OPERATION,"false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_LIVE_OPERATION,"false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_PREMIUM_COLOR_CHECK,"false"))
 		);
 	}
 

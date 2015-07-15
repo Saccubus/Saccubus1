@@ -1405,7 +1405,8 @@ public class Converter extends Thread {
 	private boolean convertToCommentMiddle(File commentfile, File middlefile) {
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile, CommentReplaceList,
-				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit(), Setting.isLiveOperationConversion())){
+				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit(),
+				Setting.isLiveOperationConversion(), Setting.isPremiumColorCheck())){
 			return false;
 		}
 		//ƒRƒƒ“ƒg”‚ª0‚Ìíœ‚·‚é

@@ -233,6 +233,7 @@ public class MainFrame extends JFrame {
 	private JCheckBox saveAutoListCheckBox = new JCheckBox();
 	private JCheckBox autoPlayCheckBox = new JCheckBox();
 	private JCheckBox liveOperationCheckBox = new JCheckBox();
+	private JCheckBox premiumColorCheckBox = new JCheckBox();
 
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
@@ -1063,18 +1064,31 @@ public class MainFrame extends JFrame {
 		grid14_x2_y5.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(thumbTextFiled, grid14_x2_y5);
 
-		liveOperationCheckBox.setText("運営コメント簡易変更");
+		liveOperationCheckBox.setText("運営コメ簡易変更");
 		liveOperationCheckBox.setForeground(Color.blue);
 		liveOperationCheckBox.setToolTipText("運営コメントのコマンドを少し変更します(ニコ生と同じではありません)");
 		GridBagConstraints grid14_x0_y6 = new GridBagConstraints();
 		grid14_x0_y6.gridx = 0;
 		grid14_x0_y6.gridy = 6;
-		grid14_x0_y6.gridwidth = 3;
+		grid14_x0_y6.gridwidth = 1;
 		grid14_x0_y6.weightx = 0.0;
 		grid14_x0_y6.anchor = GridBagConstraints.NORTH;
 		grid14_x0_y6.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x0_y6.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(liveOperationCheckBox, grid14_x0_y6);
+
+		premiumColorCheckBox.setText("プレミアムカラーチェック有効");
+		premiumColorCheckBox.setForeground(Color.blue);
+		premiumColorCheckBox.setToolTipText("一般会員のプレミアムカラー使用を無効にします。(1.60以下のバグ修正)");
+		GridBagConstraints grid14_x2_y6 = new GridBagConstraints();
+		grid14_x2_y6.gridx = 1;
+		grid14_x2_y6.gridy = 6;
+		grid14_x2_y6.gridwidth = 3;
+		grid14_x2_y6.weightx = 0.0;
+		grid14_x2_y6.anchor = GridBagConstraints.NORTH;
+		grid14_x2_y6.fill = GridBagConstraints.HORIZONTAL;
+		grid14_x2_y6.insets = INSETS_0_5_0_5;
+		updateInfoPanel.add(premiumColorCheckBox, grid14_x2_y6);
 
 		SavingVideoCheckBox.setText("動画をダウンロードする");
 		disableEcoCheckBox.setText("エコノミー時は中止");
@@ -2330,7 +2344,8 @@ public class MainFrame extends JFrame {
 			saveAutoListCheckBox.isSelected(),
 			fpsFilterRadioButton.isSelected(),
 			autoPlayCheckBox.isSelected(),
-			liveOperationCheckBox.isSelected()
+			liveOperationCheckBox.isSelected(),
+			premiumColorCheckBox.isSelected()
 		);
 	}
 /*
@@ -2483,6 +2498,7 @@ public class MainFrame extends JFrame {
 		saveAutoListCheckBox.setSelected(setting.isSaveAutoList());
 		autoPlayCheckBox.setSelected(setting.isAutoPlay());
 		liveOperationCheckBox.setSelected(setting.isLiveOperationConversion());
+		premiumColorCheckBox.setSelected(setting.isPremiumColorCheck());
 	}
 
 	/**

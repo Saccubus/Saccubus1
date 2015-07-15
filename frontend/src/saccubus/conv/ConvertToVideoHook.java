@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
  */
 public class ConvertToVideoHook {
 	public static boolean convert(File file, File out, ArrayList<CommentReplace> list, Pattern ng_id,
-			Pattern ng_word, CommandReplace ng_cmd, int score_limit, boolean live_op) {
+			Pattern ng_word, CommandReplace ng_cmd, int score_limit, boolean live_op, boolean premium_color_check) {
 		try {
 			Packet packet = new Packet(list);
 			// SAXパーサーファクトリを生成
@@ -44,7 +44,7 @@ public class ConvertToVideoHook {
 			// XMLファイルを指定されたデフォルトハンドラーで処理します
 			NicoXMLReader nico_reader = null;
 			try {
-				nico_reader = new NicoXMLReader(packet, ng_id, ng_word, ng_cmd, score_limit, live_op);
+				nico_reader = new NicoXMLReader(packet, ng_id, ng_word, ng_cmd, score_limit, live_op, premium_color_check);
 			} catch (java.util.regex.PatternSyntaxException e) {
 				e.printStackTrace();
 				return false;
