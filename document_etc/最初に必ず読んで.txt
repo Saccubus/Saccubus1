@@ -154,8 +154,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ●注意●
 　Javaランタイム Java8 JRE8 または JDK1.8が必要です。
-　Java7 - JRE7 と JDK1.7も確認済みです。
 　最近アップデートしていない場合は必ず更新して下さい。
+　Java7 - JRE7 と JDK1.7も確認済みですが
+　　PublicUpdate終了のため非推奨。
 　JRE6 JDK1.6 JRE5 JDK1.5はテストしていません。
 　　http://java.com/ja/
 　からインストールして下さい。通常は32bit版です。
@@ -207,6 +208,10 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・Windows10TP でのCA用代替フォント対応
+　・プレミアムカラーの一般会員使用チェック追加(バグ修正)
+　・black2コマンド追加(バグ修正)
+　・ffmpeg更新　x265 libutvideo追加
 　・ffmpeg更新に対応してオプションと引数渡しを変更
 　・fps変更時ffmpeg内蔵fps filter選択可(対応ffmpegのみ nm動画非対応)
 　・ライセンス及び旧readmeを docフォルダに移動 メニュー表示の対応

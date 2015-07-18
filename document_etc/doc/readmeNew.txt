@@ -65,8 +65,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ●注意●
 　Javaランタイム Java8 JRE8 または JDK1.8が必要です。
-　Java7 - JRE7 と JDK1.7も確認済みです。
 　最近アップデートしていない場合は必ず更新して下さい。
+　Java7 - JRE7 と JDK1.7も確認済みですが
+　　PublicUpdate終了のため非推奨。
 　JRE6 JDK1.6 JRE5 JDK1.5はテストしていません。
 　　http://java.com/ja/
 　からインストールして下さい。通常は32bit版です。
@@ -118,7 +119,11 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・Windows10TP でのCA用代替フォント対応
+　・プレミアムカラーの一般会員使用チェック追加(バグ修正)
+　・black2コマンド追加(バグ修正)
 　・ffmpeg更新　x265 libutvideo追加
+　・ffmpeg更新に対応してオプションと引数渡しを変更
 　・fps変更時ffmpeg内蔵fps filter選択可(対応ffmpegのみ nm動画非対応)
 　・ライセンス及び旧readmeを docフォルダに移動 メニュー表示の対応
 　・初期設定値のmp3をvo_aacencに変更(.iniファイルは以前に変更済み)
@@ -228,6 +233,14 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 □拡張機能（変更点）説明
+●Windows10TP でのCA用代替フォント対応
+　Windows10IP_10240インストールフォントでのCA用代替フォント対応。
+　丸文字GulimはMalgun、繁体字MingLiuはSimsunで代用。(ニコ動とは異なる)
+
+●プレミアムカラーの一般会員使用チェック追加(バグ修正)
+　チェックを入れると一般会員コメントでのプレミアムカラーコマンド及び
+　24ビットカラーコードを無効にする。カラーは白になる。(ニコ動と同じ)
+
 ●ffmpeg更新に対応してオプションと引数渡しを変更
 　library x265 libutvideo追加　デコード確認のみ
 
@@ -427,9 +440,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　⑥５番目以降の引数（過去ログ日時の後）の＠指定キーワード（半角英大文字）
 　@NDL
 　　動画・コメントをダウンロードしない。（変換は設定ファイル通り）
-　@DLO
+　@DLO 
 　　動画・コメントを強制ダウンロードし、変換を行わない。
-　@DLC
+　@DLC 
 　　コメントのみを強制ダウンロードし、変換を行わない。
 　@PUP
 　　PC画面の左上にauto.bat中止用のボタン・ステータスを表示する。
@@ -785,7 +798,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・ソースコード
 　http://sourceforge.jp/projects/saccubus/svn/view/branches/dev_branch
 　(SVN：svn checkout http://svn.sourceforge.jp/svnroot/branches/dev_branch )
-　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1
+　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1 
 　｜commit 38dd82aec1eb17718ebd99814135cf3a5487a42d
 　｜Date:   Tue Mar 3 19:20:22 2015 +0900
 　｜Merge: 5de2dab 023c978
@@ -821,7 +834,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　1.40d2　　http://www1.axfc.net/uploader/so/2865306.zip
 　1.39r1　　http://www1.axfc.net/uploader/so/2853963.zip
 　1.38r1　　http://www1.axfc.net/uploader/so/2818777.zip
-　1.37r6　　http://www1.axfc.net/uploader/so/2781459.zip
+　1.37r6　　http://www1.axfc.net/uploader/so/2781459.zip 
 　1.37r3　　http://www1.axfc.net/uploader/Ne/so/141013.zip
 　1.37　　　http://www1.axfc.net/uploader/Ne/so/137858.zip
 　1.36r 　　http://www1.axfc.net/uploader/Ne/so/137048.zip
@@ -902,7 +915,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　変換後動画再生ボタンのバグ修正(再)
 　JPG->MP4変換時にコピー省略
 　FFmpegの出力のタイトル文字化け修正(charset指定をUTF-8に変更)
-　NGワードの引用符処理修正(""内がコメント全体一致→部分一致に変更)
+　NGワードの引用符処理修正(""内がコメント全体一致→部分一致に変更) 
 　/replace @置換のバグ修正
 
 1.47r3(2014/3/27)

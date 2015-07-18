@@ -109,6 +109,8 @@ public class Path extends File{
 	public static String[] getFullnameList(String dir){
 		File path = new File(dir);
 		String[] lists = path.list();
+		if(lists==null)
+			return null;
 		int l = lists.length;
 		String[] fulls = new String[l];
 		for (int i = 0; i < l; i++){
@@ -134,6 +136,8 @@ public class Path extends File{
 	 */
 	public Path[] listPath(){
 		String[] lists = list();
+		if(lists==null)
+			return null;
 		int l = lists.length;
 		Path[] paths = new Path[l];
 		for (int i = 0; i < l; i++){
@@ -211,6 +215,8 @@ public class Path extends File{
 	public String search(String name){
 		Path[] childs = this.listPath();
 		//Path namePath = new Path(name); ©NG
+		if(childs==null)
+			return "";
 		for (Path p : childs){
 			if (p.getName().equals(name)){
 				return p.getAbsolutePath();		// means p.getFullName()
@@ -239,6 +245,8 @@ public class Path extends File{
 	public static String searchFile(String dir, String name){
 		File dirFile = new File(dir);
 		String[] childs = dirFile.list();
+		if(childs==null)
+			return "";
 		for (String s : childs){
 			if (s.equals(name)){
 				// return new File(dirFile, name).getAbsolutePath();
@@ -272,6 +280,8 @@ public class Path extends File{
 	 */
 	public String searchContains(String key){
 		String[] childs = list();
+		if(childs==null)
+			return "";
 		for (String s : childs){
 			if (s.indexOf(key) >= 0){
 				return new Path(this, s).getFullName();		// i.e. p.getFullName()

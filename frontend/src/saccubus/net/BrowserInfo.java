@@ -222,6 +222,8 @@ public class BrowserInfo {
             	return "";
             }
             String[] userLists = Path.getFullnameList(app_dir + "\\Mozilla\\Firefox\\Profiles\\");
+            if(userLists==null)
+            	return "";
             for (String user_dir : userLists){
             	String sqlist_filename = user_dir + "\\cookies.sqlite";
                 if (Path.isFile(sqlist_filename))
@@ -377,6 +379,8 @@ public class BrowserInfo {
 	        if (Path.isDirectory(dir_name))
 	        {
                 String[] files = Path.getFullnameList(dir_name);
+                if(files==null)
+                	return "";
                 for (String fullname : files)
                 {
                 	File file = null;
