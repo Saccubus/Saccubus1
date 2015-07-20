@@ -25,7 +25,10 @@ public class VideofileInfo {
 	private final File videoFile;
 	private FFmpeg ffmpeg;
 	private final HashMap<String,LinkedList<String>> videoInfoMap = new HashMap<String, LinkedList<String>>(0);
-	public static final String[] VIDEOINFO_KEYS = {"Duration:","Video:","Audio:"};
+	private final static String VI_DURATION = "Duration:";
+	private final static String VI_VIDEO = "Video:";
+	private final static String VI_AUDIO = "Audio:";
+	public static final String[] VIDEOINFO_KEYS = {VI_DURATION,VI_VIDEO,VI_AUDIO};
 	private final StringBuffer output;
 	private String src = null;
 	private Aspect aspect = null;
@@ -120,7 +123,7 @@ public class VideofileInfo {
 		} else {
 			// check by ffmpeg
 			// ffmpeg.exe -y -i file
-			LinkedList<String> strs = videoInfoMap.get("Video:");
+			LinkedList<String> strs = videoInfoMap.get(VI_VIDEO);
 			if (strs==null)
 				return Aspect.ERROR;
 			for(String str:strs){
@@ -159,7 +162,7 @@ public class VideofileInfo {
 
 	// Duration: hh:mm:ss, -> seconds
 	private int getDuration0() {
-		String TEXT_DURATION = "Duration:";
+		String TEXT_DURATION = VI_DURATION;
 		String duration = "";
 		if(!src.contains(TEXT_DURATION))
 			return 0;
@@ -205,7 +208,7 @@ public class VideofileInfo {
 	}
 
 	private double getFramerate0() {
-		LinkedList<String> strs = videoInfoMap.get("Video:");
+		LinkedList<String> strs = videoInfoMap.get(VI_VIDEO);
 		double r = 0.0;
 		if (strs==null)
 			return r;
@@ -227,7 +230,7 @@ public class VideofileInfo {
 	}
 
 	public boolean isVideoContainisRawvideo(){
-		LinkedList<String> strs = videoInfoMap.get("Video:");
+		LinkedList<String> strs = videoInfoMap.get(VI_VIDEO);
 		if(strs==null)
 			return false;
 		for(String s:strs){
@@ -239,4 +242,15 @@ public class VideofileInfo {
 //	int getVideoLength(File videoFile) {
 //		return videoLength;
 //	}
+
+	public boolean isAudioContainsAac(){
+		LinkedList<String> strs = videoInfoMap.get(VI_AUDIO);
+		if(strs==null)
+			return false;
+		for(String s:strs){
+			if(s.contains("aac"))
+				return true;
+		}
+		return false;
+	}
 }

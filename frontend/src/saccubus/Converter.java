@@ -2148,6 +2148,32 @@ public class Converter extends Thread {
 		}
 		ffmpegVfOption = getvfOption();
 
+		//AAC copy if -aacp set
+		if(getAacCopyFlag()){
+			//Outpotion contains "-aacp"
+			//check input audio codec
+			if(info.isAudioContainsAac()){
+				//if input-audio-codec is AAC
+				//then -acodec or -codec:a or -c:a audio-codec
+				//and codec is within aac faac ffaac libvo-aacanc
+				//set copy to acodec
+				String[] acodecs;
+				if((acodecs = getAudioCodecKV(outputOptionMap))!=null){
+					if(acodecs[1].toLowerCase().contains("aac")){
+						replaceOption(outputOptionMap,acodecs[0],"copy");
+						System.out.println("Changed: "+acodecs[0]+" "+acodecs[1]+" -> copy");
+					}
+				}else if((acodecs = getAudioCodecKV(mainOptionMap))!=null){
+					//then -acodec or -codec:a or -c:a audio-codec
+					//and then codec is aac faac ffaac libvo-aacanc
+					if(acodecs[1].toLowerCase().contains("aac")){
+						replaceOption(mainOptionMap,acodecs[0],"copy");
+						System.out.println("Changed: "+acodecs[0]+" "+acodecs[1]+" -> copy");
+					}
+				}
+			}
+		}
+
 		inSize = videoAspect.getSize();
 		setSize = getSetSize();	//videoSetSize="width"x"height"
 		padOption = getPadOption();		//padOption=width:height:x:y
@@ -2299,6 +2325,31 @@ public class Converter extends Thread {
 	private boolean getSameAspectMaxFlag(){
 		//-samx
 		return outputOptionMap.remove("-samx") != null;
+	}
+	private boolean getAacCopyFlag(){
+		//-aacp
+		return outputOptionMap.remove("-aacp") != null;
+	}
+	private String[] getAudioCodecKV(HashMap<String,String> map){
+		String[] pair = new String[2];
+		String value = "";
+		String[] keys = {"-acodec","-codec:a","-c:a"};
+		for (String key:keys){
+			value = map.get(key);
+			if(value!=null && value.toLowerCase().contains("aac")){
+				pair[0] = key;
+				pair[1] = value;
+				return pair;
+			}
+		}
+		return null;
+	}
+	private boolean replaceOption(HashMap<String, String> map, String key, String value){
+		if(map.containsKey(key)){
+			map.put(key, value);
+			return true;
+		}
+		return false;
 	}
 	private String getRopt(){
 		//-r or -r:v
