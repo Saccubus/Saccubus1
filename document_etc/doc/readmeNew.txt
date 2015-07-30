@@ -53,7 +53,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 □サポート解説など
 　さきゅばすの使い方などに関しては、
 　上の[メニュー][readmeNew]から参照できます。また
-　公式サイト　http://saccubus.sourceforge.jp/
+　公式サイト　http://saccubus.osdn.jp/
 　同梱のrewdmeNew.txt、さきゅばす1.50のreadme150.txt
 　さきゅばす1.22rのreadme.txt、1.22r3のreadme+.txtをご覧下さい。
 　不具合報告等は2chさきゅばすスレでお願いします。
@@ -61,7 +61,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　http://anago.2ch.net/test/read.cgi/software/1346798166/
 
 □動作環境
-　Windows XP/7/8/8.1 desktop　（多分Vistaも動くはず）
+　Windows XP/7/8/8.1/10 desktop　（多分Vistaも動くはず）
 
 ●注意●
 　Javaランタイム Java8 JRE8 または JDK1.8が必要です。
@@ -93,13 +93,14 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ●注意●
 　　Windows8/8.1はデスクトップUIでのIE11/Firefoxで確認しました。Windows8スタイルUIでは
 　　IEとのブラウザ共有は出来ませんでした。Chromeは不可です。
+　　Windows10でEdge(Spartan)とのブラウザ共有は不可、IE11は可能です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
 　・配布形態　　ffmpeg70404f同梱版
 　・本Rev.は確定版SDLライブラリ（2011/11/02版）を同梱しています。（binフォルダ内）
 　・本Rev.はffmpeg 21400用optionファイルを削除しました。
-　・optionF（N70404f/N65220w用 2015/03/08版）optionFDev（実験用 2015/03/08版）を同梱。
+　・optionF（N70404f/N65220w用 2015/07/31版）optionFDev（実験用 2015/03/08版）を同梱。
 
 □インストール方法と拡張機能設定
 　◆1.22r2以前のさきゅばすを使用中の方
@@ -119,6 +120,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・入力出力ともに音声codecがAACの場合にcopyするオプション-aacpを追加。
+　・PC用オプションに-aacp追加。(outオプションの最後に追加するだけ)
 　・Windows10TP でのCA用代替フォント対応
 　・プレミアムカラーの一般会員使用チェック追加(バグ修正)
 　・black2コマンド追加(バグ修正)
@@ -233,6 +236,12 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 □拡張機能（変更点）説明
+●入力出力ともに音声codecがAACの場合にcopyするオプション-aacpを追加。
+　現状入力音声がHE-AAC/HE-AACv2の場合にHEで再エンコード出来ないので
+　入力音声がAACならそのままcopyするオプション(AAC-LCもcopyする。)
+　入力音声がAAC以外ならcopyせず指定の音声エンコードを行う。
+　PC用オプション(5つ)に-aacp追加。(outオプションの最後に追加しただけ)
+
 ●Windows10TP でのCA用代替フォント対応
 　Windows10IP_10240インストールフォントでのCA用代替フォント対応。
 　丸文字GulimはMalgun、繁体字MingLiuはSimsunで代用。(ニコ動とは異なる)
@@ -615,9 +624,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　　コメントは取得できない。（無意味）
 　■本機能は「いんきゅばす1.7.2」とcoroid project wikiを
 　　参考にしました。感謝。以下に説明があります。
-　　　http://sourceforge.jp/projects/coroid/wiki/NicoApiSpec
+　　　http://osdn.jp/projects/coroid/wiki/NicoApiSpec
 　　coroid project　「いんきゅばす」を含む　ライセンス AGPLv3
-　　　http://sourceforge.jp/projects/coroid/
+　　　http://osdn.jp/projects/coroid/
 
 ●不適切な動画の読み込みで失敗をメッセージに明示する
 　・｢不適切な内容が含まれている｣動画をダウンロードするには
@@ -679,8 +688,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ニコニコランキングメーカー配布サイト↓
 　　http://www.daily-vocaran.info/nicorank/
 　　ソースファイル↓
-　　http://sourceforge.jp/projects/nicorank/downloads/40282/nicorank186_src.zip/
-　　（最新版ソースは SVN　http://svn.sourceforge.jp/svnroot/nicorank/）
+　　http://osdn.jp/projects/nicorank/downloads/40282/nicorank186_src.zip/
+　　（最新版ソースは SVN　http://svn.osdn.jp/svnroot/nicorank/）
 
 
 ●拡張Vhook統合版 (nicovideoE.dll)について
@@ -720,14 +729,15 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ■機能確認
 　・ブラウザのセッション共有機能確認は
+　　Win10 pro 64bit + IE11,
 　　Win8 pro desktop 64bit + IE10,
 　　Win7 Home 64bit + IE9, Firefox19.0, SRware 及び
-　　XP SP3 Home 32bit + IE8, Firefox19.0, SRware
+　　(XP SP3 Home 32bit + IE8, Firefox19.0, SRware)
 　　で行いました。
 　（GoogleChromeは Ver.33.0.xxからクッキーが暗号化されて保存されるため
 　　ファイルからセッションを検索できないので共有できません。
 　　Opera20.0以降も共有できません）
-　・動画変換確認は、ffmpeg56884wで行いました。
+　・動画変換確認は、ffmpeg70404fで行いました。
 　　Win7 64 Corei7
 　・但し再生確認はPC上だけで、携帯その他では未確認
 　・前スレ>>670(SVN-25041) は変換エラーする動画(Decoder not found)がありました。
@@ -746,7 +756,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　└saccubus　　  本体exe jar xml bat
 　　├bin          実行ファイルフォルダ exe dll
 　　├doc          実行ファイルフォルダ exe dll
-　　├optionF      オプションフォルダ(56884w/55686用)
+　　├optionF      オプションフォルダ(70404f/65220w用)
 　　├optionFDev   オプションフォルダ(開発用)　CA用設定サンプル５種
 　　└Saccubus_lib Javaライブラリーフォルダ jar
 
@@ -762,7 +772,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・bin フォルダ配下
 　　ffmpeg70404f.exe ライセンスGPLV3
 　　　library70404f.txt　　外部ライブラリーバージョン
-　　nicovideoE.dll(2015.03.08版)統合版拡張Vhookライブラリ
+　　nicovideoE.dll(2015.07.18版)統合版拡張Vhookライブラリ
 　　SDL.dll(2011.11.02ビルド)、COPYNG、README-SDL.txt
 　　　ライセンスはLGPL
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYING.sdl_ttf
@@ -771,7 +781,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　　グラフィックライブラリ、ライセンスはzlib
 　　b32.jpg、b32.png　SoundOnly用画像
 ・optionF フォルダ配下　　 変換オプションファイル
-　　　（N70404f/N65220w用 2015.03.01版）
+　　　（N70404f/N65220w用 2015.07.31版）
 ・optionFDev フォルダ配下 　開発用ファイル
 ・Saccubus_libフォルダ配下
 　　gson-2.2.4.jar、LICENSE、README.txt
@@ -796,8 +806,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 関連リンク
 ・ソースコード
-　http://sourceforge.jp/projects/saccubus/svn/view/branches/dev_branch
-　(SVN：svn checkout http://svn.sourceforge.jp/svnroot/branches/dev_branch )
+　http://osdn.jp/projects/saccubus/svn/view/branches/dev_branch
+　(http://osdn.jp/projects/saccubus/scm/svn/tree/head/branches/dev_branch/　WebUI新バージョン)
+　(SVN：svn checkout http://svn.osdn.jp/svnroot/branches/dev_branch )
 　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1 
 　｜commit 38dd82aec1eb17718ebd99814135cf3a5487a42d
 　｜Date:   Tue Mar 3 19:20:22 2015 +0900
@@ -810,16 +821,19 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　1.22r3　(ffmpeg.exe SVN-r21400を含む)
 　　http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip
 　公式最新(Vista・Win7では追加ファイルが必要。公式ユーザーページ参照)
-　1.22r 　　http://sourceforge.jp/projects/saccubus/downloads/30757/Saccubus-1.22r.zip/
+　1.22r 　　http://osdn.jp/projects/saccubus/downloads/30757/Saccubus-1.22r.zip/
 　参考ffmpeg
 　N55686(libfaac無し、libvo_aacencあり)+optionVO(古い)
 　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
 　FFmpeg評価用(2013/6/16)
 　　http://www1.axfc.net/uploader/so/2936495.zip
 　FFmpeg65220w配布2.zip(2014/7/1)
-　　http://sourceforge.jp/users/orz-/pf/beta_oryzanol/files/?id=5537
+　　http://osdn.jp/users/orz-/pf/beta_oryzanol/files/?id=5537
 
 　改造版
+　1.61　　　http://www1.axfc.net/u/3502367.zip
+　　　　　　http://osdn.jp/users/orz-/pf/beta_oryzanol/files/?id=8837
+　1.60　　　http://www1.axfc.net/u/3426513.zip
 　1.50　　　http://www1.axfc.net/u/3239184.zip
 　1.49　　　http://www1.axfc.net/u/3227458.zip
 　1.48　　　http://www1.axfc.net/u/3210572.zip
@@ -872,16 +886,21 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ・サイト
 　さきゅばす公式
-　　http://saccubus.sourceforge.jp/
+　　http://saccubus.osdn.jp/
 　2ch【ニコニコ】コメント付動画作成ツール さきゅばす
 　　http://anago.2ch.net/test/read.cgi/software/1346798166/
 　coroid project　「いんきゅばす」を含む
-　　http://sourceforge.jp/projects/coroid/
+　　http://osdn.jp/projects/coroid/
 　ニコニコランキングメーカー(nicorank)配布サイト
 　　http://www.daily-vocaran.info/nicorank/
 
 
 変更履歴・修正・改変点
+1.61.0.9(2015/07/18)
+　Windows10TP でのCA用代替フォント対応
+　プレミアムカラーの一般会員使用チェック追加(バグ修正)
+　black2コマンド追加(バグ修正)
+
 1.60.0(2015/3/08)
 　ffmpeg更新に対応してオプションと引数渡しを変更
 　(library x265 libutvideo追加)
