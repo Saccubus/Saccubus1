@@ -2150,23 +2150,29 @@ public class Converter extends Thread {
 
 		//AAC copy if -aacp set
 		if(getAacCopyFlag()){
-			//Outpotion contains "-aacp"
-			//check input audio codec
 			if(info.isAudioContainsAac()){
-				//if input-audio-codec is AAC
-				//then -acodec or -codec:a or -c:a audio-codec
-				//and codec is one of { aac faac ffaac libvo-aacanc }
-				//set copy to acodec
-				String[] acodecs;
-				if(((acodecs = getAudioCodecKV(outputOptionMap))!=null) &&
-					(acodecs[1].toLowerCase().contains("aac"))){
-						replaceOption(outputOptionMap,acodecs[0],"copy");
-						System.out.println("Changed: "+acodecs[0]+" "+acodecs[1]+" -> copy");
-				}else
-				if(((acodecs = getAudioCodecKV(mainOptionMap))!=null) &&
-					(acodecs[1].toLowerCase().contains("aac"))){
-						replaceOption(mainOptionMap,acodecs[0],"copy");
-						System.out.println("Changed: "+acodecs[0]+" "+acodecs[1]+" -> copy");
+				String[] ac;
+				LinkedHashMap<String,String> optmap = outputOptionMap;
+				if(getAudioCodecKV(optmap)==null){
+					optmap = mainOptionMap;
+				}
+				if(((ac = getAudioCodecKV(optmap))!=null) && (ac[1].contains("aac"))){
+					replaceOption(optmap,ac[0],"copy");
+					System.out.println("Changed: "+ac[0]+" "+ac[1]+" -> copy");
+				}
+			}
+		}
+		//AAC-LC copy if -alcp set
+		if(getAacLcCopyFlag()){
+			if(info.isAudioContainsAacLc()){
+				String[] ac;
+				LinkedHashMap<String,String> optmap = outputOptionMap;
+				if(getAudioCodecKV(optmap)==null){
+					optmap = mainOptionMap;
+				}
+				if(((ac = getAudioCodecKV(optmap))!=null) && (ac[1].contains("aac")) && !ac[1].contains("he")){
+					replaceOption(optmap,ac[0],"copy");
+					System.out.println("Changed: "+ac[0]+" "+ac[1]+" -> copy");
 				}
 			}
 		}
@@ -2327,6 +2333,10 @@ public class Converter extends Thread {
 		//-aacp
 		return outputOptionMap.remove("-aacp") != null;
 	}
+	private boolean getAacLcCopyFlag(){
+		//-aacp
+		return outputOptionMap.remove("-alcp") != null;
+	}
 	private String[] getAudioCodecKV(HashMap<String,String> map){
 		String[] pair = new String[2];
 		String value = "";
@@ -2335,7 +2345,7 @@ public class Converter extends Thread {
 			value = map.get(key);
 			if(value!=null){
 				pair[0] = key;
-				pair[1] = value;
+				pair[1] = value.toLowerCase();
 				return pair;
 			}
 		}

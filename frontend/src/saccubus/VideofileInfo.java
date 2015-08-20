@@ -253,4 +253,14 @@ public class VideofileInfo {
 		}
 		return false;
 	}
+	public boolean isAudioContainsAacLc(){
+		LinkedList<String> strs = videoInfoMap.get(VI_AUDIO);
+		if(strs==null)
+			return false;
+		for(String s:strs){
+			if(s.contains("aac") && s.contains("lc"))
+				return true;
+		}
+		return false;
+	}
 }

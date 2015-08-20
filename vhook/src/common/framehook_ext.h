@@ -1,27 +1,22 @@
 /*
- * Šg’£VhookƒtƒBƒ‹ƒ^
- * copyright (c) 2008 ƒÕiƒvƒTƒCj
+ * æ‹¡å¼µVhookãƒ•ã‚£ãƒ«ã‚¿
+ * copyright (c) 2008 Ïˆï¼ˆãƒ—ã‚µã‚¤ï¼‰
  *
- * ‚³‚«‚ã‚Î‚·—p‚ÉŠg’£‚³‚ê‚½Vhookƒ‰ƒCƒuƒ‰ƒŠ‚ğ
- * ƒrƒ‹ƒh‚·‚é‚½‚ß‚Ìƒwƒbƒ_‚Å‚·B
+ * ã•ãã‚…ã°ã™ç”¨ã«æ‹¡å¼µã•ã‚ŒãŸVhookãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’
+ * ãƒ“ãƒ«ãƒ‰ã™ã‚‹ãŸã‚ã®ãƒ˜ãƒƒãƒ€ã§ã™ã€‚
  *
- * ‚±‚Ìƒtƒ@ƒCƒ‹‚Íu‚³‚«‚ã‚Î‚·v‚Ìˆê•”‚Å‚ ‚èA
- * ‚±‚Ìƒ\[ƒXƒR[ƒh‚ÍGPLƒ‰ƒCƒZƒ“ƒX‚Å”z•z‚³‚ê‚Ü‚·‚Å‚·B
+ * ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã¯ã€Œã•ãã‚…ã°ã™ã€ã®ä¸€éƒ¨ã§ã‚ã‚Šã€
+ * ã“ã®ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ã¯GPLãƒ©ã‚¤ã‚»ãƒ³ã‚¹ã§é…å¸ƒã•ã‚Œã¾ã™ã§ã™ã€‚
  */
 #ifndef SACCUBUS_VF_VHEXT_H
 #define SACCUBUS_VF_VHEXT_H
-/*
- * ƒc[ƒ‹ƒ{ƒbƒNƒX‚Ìƒo[ƒWƒ‡ƒ“
- * DLL‚Ì’†‚ÅŠm”F‚µ‚Æ‚¢‚½•û‚ª‚¢‚¢B
- */
-#define TOOLBOX_VERSION 2
 
 /*
- * ŒÄ‚Î‚ê‚é‚Æ‚«‚Éˆê‚É‚Â‚¢‚Ä‚­‚étoolbox.
- * ‚±‚±‚©‚ç“®‰æ‚Ìî•ñ‚È‚ñ‚©‚àæ“¾‚Å‚«‚éB
+ * å‘¼ã°ã‚Œã‚‹ã¨ãã«ä¸€ç·’ã«ã¤ã„ã¦ãã‚‹toolbox.
+ * ã“ã“ã‹ã‚‰å‹•ç”»ã®æƒ…å ±ãªã‚“ã‹ã‚‚å–å¾—ã§ãã‚‹ã€‚
  */
 typedef struct toolbox{
-	//ƒo[ƒWƒ‡ƒ“
+	//ãƒãƒ¼ã‚¸ãƒ§ãƒ³
 	int version;
 	double video_length;
 } toolbox;
@@ -36,21 +31,21 @@ typedef struct vhext_frame{
 
 
 /*
- * Šg’£vhookƒ‰ƒCƒuƒ‰ƒŠ—pŠÖ”ŒQ’è‹`
+ * æ‹¡å¼µvhookãƒ©ã‚¤ãƒ–ãƒ©ãƒªç”¨é–¢æ•°ç¾¤å®šç¾©
  */
 
-//configure—p
-typedef int (FrameHookExtConfigure)(void **ctxp,const toolbox *tbox, int argc, char *argv[]);
+//configureç”¨
+typedef int (FrameHookExtConfigure)(void **ctxp,int argc, char *argv[]);
 typedef FrameHookExtConfigure *FrameHookExtConfigureFn;
 extern FrameHookExtConfigure ExtConfigure;
 
-//ƒtƒŒ[ƒ€—p
-typedef void (FrameHookExtProcess)(void *ctx,const toolbox *tbox,vhext_frame *pict);
+//ãƒ•ãƒ¬ãƒ¼ãƒ ç”¨
+typedef void (FrameHookExtProcess)(void *ctx,vhext_frame *pict);
 typedef FrameHookExtProcess *FrameHookExtProcessFn;
 extern FrameHookExtProcess ExtProcess;
 
-//I—¹‚ÉŒÄ‚Ô
-typedef void (FrameHookExtRelease)(void *ctx,const toolbox *tbox);
+//çµ‚äº†æ™‚ã«å‘¼ã¶
+typedef void (FrameHookExtRelease)(void *ctx);
 typedef FrameHookExtRelease *FrameHookExtReleaseFn;
 extern FrameHookExtRelease ExtRelease;
 

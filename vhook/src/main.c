@@ -45,6 +45,7 @@ int printFontInfo(FILE* log,TTF_Font** pfont,int size,const char* name);
 int initData(DATA* data,FILE* log,SETTING* setting){
 	int i;
 	data->version = setting->version;
+	data->typeNicovideoE = setting->typeNicovideoE;
 	data->user.enable_comment = setting->enable_user_comment;
 	data->owner.enable_comment = setting->enable_owner_comment;
 	data->optional.enable_comment = setting->enable_optional_comment;

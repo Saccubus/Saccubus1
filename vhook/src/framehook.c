@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <SDL/SDL.h>
-#include "common/framehook_ext.h"
+#include "common/framehook_ext_old.h"
 #include "framehook.h"
 #include "main.h"
 #include "mydef.h"
@@ -21,15 +21,21 @@ typedef struct ContextInfo{
  * 必要な関数ひとつめ。最初に呼ばれるよ！
  *
  */
-int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[], char* version);
+int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version, int typeNicovideoE);
 FILE* changelog(FILE* log,SETTING* setting);
 
-__declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc, char *argv[]){
+__declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char *argv[]){
+	int typeNicovideoE = TRUE;
+	if(0 < (unsigned)dummy && (unsigned)dummy < 0x0400){
+		argv = (char **)argc;
+		argc = (int)dummy;
+		typeNicovideoE = FALSE;
+	}
 	int i;
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.61.0.8c";	//
+	char *ver="1.63.0.5";	//
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -50,7 +56,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 	}
 	//セッティング取得。
 	SETTING setting;
-	if(init_setting(log,tbox,&setting,argc,argv,ver)){
+	if(init_setting(log,&setting,argc,argv,ver,typeNicovideoE)){
 		fputs("[framehook/init]initialized settings.\n",log);
 		fflush(log);
 	}else{
@@ -117,22 +123,14 @@ __declspec(dllexport) int ExtConfigure(void **ctxp,const toolbox *tbox, int argc
 int extra_font(SETTING* setting,FILE* log);
 int parseFontList(SETTING* setting,FILE* log);
 
-int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *argv[], char* version){
+int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version, int typeNicovideoE){
 	/* TOOLBOXのバージョンチェック */
-	fprintf(log,"[framehook/init]TOOLBOX version:%d.\n", tbox->version);
-	if (tbox->version != TOOLBOX_VERSION){
-		fprintf(log,"[framehook/init]TOOLBOX version(%d) is not %d.\n", tbox->version, TOOLBOX_VERSION);
-		fflush(log);
-		return FALSE;
-	}
+	fprintf(log,"[framehook/init]type NicovideoE? %s.\n", typeNicovideoE ? "yes":"no");
+	setting->typeNicovideoE = typeNicovideoE;
+	fprintf(log,"[framehook/init]TOOLBOX version is DELETED.\n");
+	fflush(log);
 	/*videoの長さ*/
-	setting->video_length = (tbox->video_length * VPOS_FACTOR);
-	fprintf(log,"[framehook/init]video_length %d vpos.\n",setting->video_length);
-	if (setting->video_length<=0){
-		fprintf(log,"[framehook/init]video_length is less or equals 0.\n");
-		fflush(log);
-//		return FALSE;
-	}
+	setting->video_length = 0; //(tbox->video_length * VPOS_FACTOR);
 	setting->version = version;	// 1.60
 	/*以降オプション*/
 
@@ -183,20 +181,6 @@ int init_setting(FILE*log,const toolbox *tbox,SETTING* setting,int argc, char *a
 		setting->CAfont_index[f] = 0;
 	}
 	setting->fontdir = NULL;
-	// CA切替用Unicode群
-	//setting->CAfont_change_uc[SIMSUN_FONT] = "02cb 2196-2199 2470-249b 2504-250b 250d-250e 2550-2573 2581-258f 2593-2595 3021-3029 3105-3129 3220-3229 e758-e864 f929 f995";	//明朝化 SIMSUN
-	//setting->CAfont_change_uc[GULIM_FONT] = "249c-24b5 24d0-24e9 2592 25a3-25a9 25b6-25b7 25c0-25c1 25c8 25d0-25d1 260e-260f 261c 261e 2660-2661 2663-2665 2667-2669 266c 3131-318e 3200-321c 3260-327b ac00-d7a3 f900-fa0b";	//丸ゴ GULIM
-	//setting->CAfont_change_uc[GOTHIC_FONT] = "30fb ff61-ff9f";	//ゴシック：保護 ・ 中点 半角カナ
-	//setting->zero_width_uc = "0x200b 0x2029-0x202f";	// ゼロ幅
-	//setting->spaceable_uc = "0x02cb";	// griph が未対応のため空白に
-	//setting->CAfont_change_uc[ARIAL_FONT] = NULL;
-	//setting->CAfont_change_uc[GEORGIA_FONT] = "10d0-10fb";	//グルジア文字 winフォント
-	//setting->CAfont_change_uc[UI_GOTHIC_FONT] = NULL;
-	//setting->CAfont_change_uc[DEVANAGARI] = "0900-097f";	//デーヴァナーガリー文字 winフォント
-	//setting->CAfont_change_uc[TAHOMA_FONT] = "0e00-0e7f";	//タホマ
-	/* その他　参考
-	 * 空白   0x00a0 0x2001 0x3000 など
-	 */
 	// 実験的追加フォント
 	setting->extra_path = NULL;
 	//setting->extra_uc = NULL;
@@ -728,9 +712,12 @@ int parseFontList(SETTING* setting,FILE* log){
  * 必要な関数二つめ。フレームごとに呼ばれるよ！
  *
  */
-__declspec(dllexport) void ExtProcess(void *ctx,const toolbox *tbox,vhext_frame *pict){
+__declspec(dllexport) void ExtProcess(void *ctx,void* dummy, vhext_frame *pict){
 		ContextInfo *ci = (ContextInfo *) ctx;
 		FILE* log = ci->log;
+		if(!ci->data.typeNicovideoE){
+			pict = (vhext_frame*)dummy;
+		}
 
 	/* Note:
 	 * Saccubus 1.22以降の拡張vhookフィルタでは、RGB24フォーマットでのみ
@@ -768,7 +755,7 @@ __declspec(dllexport) void ExtProcess(void *ctx,const toolbox *tbox,vhext_frame 
  *
  */
 
-__declspec(dllexport) void ExtRelease(void *ctx,const toolbox *tbox){
+__declspec(dllexport) void ExtRelease(void *ctx, void* dummy){
 		ContextInfo *ci;
 		ci = (ContextInfo *) ctx;
 		FILE* log = ci->log;
