@@ -25,8 +25,8 @@ public class MultiXMLHandler extends DefaultHandler {
 	}
 
 	@Override
-	public void startElement(String uri, String localName, String qName,
-			Attributes attributes) {
+	public void startElement(String uri, String localName, String qName, Attributes attributes) {
+	  try{
 		if (qName.toLowerCase().equals("thread")){
 			String thread = attributes.getValue("thread");
 			chatArray.setThread(thread);
@@ -42,18 +42,25 @@ public class MultiXMLHandler extends DefaultHandler {
 				chat_kicked = true;
 				return;
 			}
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i <attributes.getLength(); i++) {
-				sb.append(attributes.getQName(i));
-				sb.append("=\"");
-				sb.append(ChatSave.safeReference(attributes.getValue(i)));
-				sb.append("\" ");
-			}
-			chat.setAttributeString(sb.substring(0));
-			chat.setNo(attributes.getValue("no"));
+			chat.setAttributeString(toAttributeString(attributes));
+			//chat.setNo(attributes.getValue("no"));
 			return;
 		}
+	  }catch(Exception e){
+		// just ignore element
+	  }
 		// System.out.print(qName + " ");
+	}
+
+	private String toAttributeString(Attributes attributes){
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i <attributes.getLength(); i++) {
+			sb.append(attributes.getQName(i));
+			sb.append("=\"");
+			sb.append(ChatSave.safeReference(attributes.getValue(i)));
+			sb.append("\" ");
+		}
+		return sb.substring(0);
 	}
 
 	@Override

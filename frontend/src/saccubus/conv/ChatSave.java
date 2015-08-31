@@ -1,6 +1,7 @@
 package saccubus.conv;
 
-import java.io.*;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 /**
  * <p>
@@ -26,9 +27,6 @@ public class ChatSave {
 	// all attributes and its values
 	private String attributesStr = "";
 
-	// "No"
-	private int No = 0;
-
 	// comment itself
 	private String Comment = "";
 
@@ -39,17 +37,8 @@ public class ChatSave {
 		attributesStr = attributes;
 	}
 
-	public void setNo(String no_str) {
-//		noStr = no_str;
-		try {
-			No = Integer.parseInt(no_str);
-		} catch (Exception e) {
-			No = -1;
-		}
-	}
-
-	public int getNo() {
-		return No;
+	public String getAttributes() {
+		return attributesStr;
 	}
 
 	public void setComment(String com_str) {

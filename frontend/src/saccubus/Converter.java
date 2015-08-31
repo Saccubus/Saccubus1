@@ -182,6 +182,8 @@ public class Converter extends Thread {
 		MovieInfo = movieInfo;
 		MovieInfo.setText(" ");
 		Stopwatch = new Stopwatch(watch);
+		if(fileQueue==null)
+			fileQueue = new ConcurrentLinkedQueue<File>();
 	}
 
 	public Converter(String url, String time, ConvertingSetting setting,
@@ -1166,6 +1168,7 @@ public class Converter extends Thread {
 	private boolean convertComment(){
 		sendtext("コメントの中間ファイルへの変換中");
 		File folder = Setting.getCommentFixFileNameFolder();
+		ArrayList<File> filelist = new ArrayList<File>();
 		if (isConvertWithComment()) {
 			if (Setting.isAddTimeStamp() && isCommentFixFileName()) {
 				// 複数のコメントファイル（過去ログ）があるかも
@@ -1177,7 +1180,6 @@ public class Converter extends Thread {
 				}
 				// VideoTitle は見つかった。
 				if (pathlist.size() > 0) {			// 0 1.22r3e8, for NP4 comment ver 2009
-					ArrayList<File> filelist = new ArrayList<File>();
 					for (String path: pathlist){
 						filelist.add(new File(folder, path));
 					}
@@ -1234,6 +1236,16 @@ public class Converter extends Thread {
 						dateUserFirst = getDateUserFirst(CommentFile);
 					}
 				}
+			}
+			//combine ファイル内ダブリも削除
+			filelist.clear();
+			filelist.add(CommentFile);
+			CommentFile = mkTemp(TMP_COMBINED_XML);
+			sendtext("コメントファイル結合中");
+			if (!CombineXML.combineXML(filelist, CommentFile)){
+				sendtext("コメントファイルが結合出来ませんでした（バグ？）");
+				result = "72a";
+				return false;
 			}
 			CommentMiddleFile = mkTemp(TMP_COMMENT);
 			if(!convertToCommentMiddle(CommentFile, CommentMiddleFile)){
@@ -2022,7 +2034,7 @@ public class Converter extends Thread {
 	// 変換動画再生
 	public void playConvertedVideo() {
 		try {
-			File convertedVideo = fileQueue.poll();
+			File convertedVideo = fileQueue==null ? null : fileQueue.poll();
 			if(convertedVideo==null){
 				sendtext("変換後の動画がありません");
 				return;
@@ -2038,7 +2050,7 @@ public class Converter extends Thread {
 			vplayer.start();
 			return ;
 		} catch(NullPointerException ex){
-			sendtext("(´∀｀)＜ぬるぽ\nガッ");
+			sendtext("playConvertedVideo: NullPo.");
 			ex.printStackTrace();
 		}
 	}
@@ -2334,7 +2346,7 @@ public class Converter extends Thread {
 		return outputOptionMap.remove("-aacp") != null;
 	}
 	private boolean getAacLcCopyFlag(){
-		//-aacp
+		//-alcp
 		return outputOptionMap.remove("-alcp") != null;
 	}
 	private String[] getAudioCodecKV(HashMap<String,String> map){

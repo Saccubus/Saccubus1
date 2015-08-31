@@ -109,6 +109,13 @@
 　　エラー終了した場合はtemp\動画ID[log]vhext.txtを調べて下さい。
 　・色々設定を変更した時は、設定を初期化してみて下さい。
 
+■詳細デバッグ
+　・プロキシを使うをオンにして、プロキシに　debug/ 
+　　プロキシポート番号 80 を設定すると
+　　ダウンロード関連のデバッグ詳細情報を出力します。([log]frontend.txt)
+　・変換設定　追加モード　に　-debug　を指定すると、
+　　コメント変換の詳細情報を出力します。（[log]vhext.txt)
+
 ■auto.batで動作が変な時は
 　Javaにパスが通っていないとエラーになります。
 　（◆Javaのパスの設定(参考)を参照してください）
@@ -142,7 +149,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 □サポート解説など
 　さきゅばすの使い方などに関しては、
 　上の[メニュー][readmeNew]から参照できます。また
-　公式サイト　http://saccubus.sourceforge.jp/
+　公式サイト　http://saccubus.osdn.jp/
 　同梱のrewdmeNew.txt、さきゅばす1.50のreadme150.txt
 　さきゅばす1.22rのreadme.txt、1.22r3のreadme+.txtをご覧下さい。
 　不具合報告等は2chさきゅばすスレでお願いします。
@@ -150,7 +157,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　http://anago.2ch.net/test/read.cgi/software/1346798166/
 
 □動作環境
-　Windows XP/7/8/8.1 desktop　（多分Vistaも動くはず）
+　Windows XP/7/8/8.1/10 desktop　（多分Vistaも動くはず）
 
 ●注意●
 　Javaランタイム Java8 JRE8 または JDK1.8が必要です。
@@ -166,6 +173,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　auto.batやdebug.batを実行するにはjava.exeがパスに設定されていることが必要です。
 　win7まではsystem32にjava.exeが自動でインストールされますが
 　場合によってはされないこともあります。またwin8以降ではされません。
+　(最近Java8ではまたJavaインストール時にパスが通るように成ったようですが)
 　Javaをパスに設定するには以下のページを参考にしてください。
 　参考：Windows 7 にパス(Path)を設定する
 　　http://blog.cnu.jp/2009/11/06/windows-7-path/
@@ -182,13 +190,14 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ●注意●
 　　Windows8/8.1はデスクトップUIでのIE11/Firefoxで確認しました。Windows8スタイルUIでは
 　　IEとのブラウザ共有は出来ませんでした。Chromeは不可です。
+　　Windows10でEdge(Spartan)とのブラウザ共有は不可、IE11は可能です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
 　・配布形態　　ffmpeg70404f同梱版
 　・本Rev.は確定版SDLライブラリ（2011/11/02版）を同梱しています。（binフォルダ内）
 　・本Rev.はffmpeg 21400用optionファイルを削除しました。
-　・optionF（N70404f/N65220w用 2015/03/08版）optionFDev（実験用 2015/03/08版）を同梱。
+　・optionF（N70404f/N65220w用 2015/08/31版）optionFDev（実験用 2015/03/08版）を同梱。
 
 □インストール方法と拡張機能設定
 　◆1.22r2以前のさきゅばすを使用中の方
@@ -208,6 +217,13 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・さきゅばす用ffmpegの修正(toolbox削除)に合わせて修正。
+　・nicovideoE.dllをffmpeg新(Jenkins自動ビルド)旧(70404f/65520w)両方に対応。
+　・コメントサーバー nmsg.nicovideo.jp/api/ に対応修正。
+　・生放送タイムシフトログの部屋別コメント合成を可能に。
+　・入力出力ともに音声codecがAAC-LCの場合にcopyするオプション-alcpを追加。
+　・入力出力ともに音声codecがAAC(LC,HE,HEv2)の場合にcopyするオプション-aacpを追加。
+　・PC用オプションに-aacp追加。(outオプションの最後に追加するだけ)
 　・Windows10TP でのCA用代替フォント対応
 　・プレミアムカラーの一般会員使用チェック追加(バグ修正)
 　・black2コマンド追加(バグ修正)
@@ -690,6 +706,10 @@ readmeNew.txt
 　起動までの準備について
 　起動
 　拡張機能（変更点）説明
+　　入力出力ともに音声codecがAACの場合にcopyするオプション-aacpを追加。
+　　Windows10TP でのCA用代替フォント対応
+　　プレミアムカラーの一般会員使用チェック追加(バグ修正)
+　　ffmpeg更新に対応してオプションと引数渡しを変更
 　　変換後自動再生機能追加
 　　ニコ生運営コメント簡易変更機能追加
 　　エクスプローラーでフォルダ表示ボタン追加

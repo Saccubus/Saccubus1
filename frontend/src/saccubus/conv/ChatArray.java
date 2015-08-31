@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /**
  *
@@ -14,55 +14,26 @@ import java.util.ArrayList;
  * @version 1.22r3e
  */
 public class ChatArray {
-	private ArrayList<ChatSave> chatList;
-	private ArrayList<Integer> chatIndex;
 	private String thread;
+	private LinkedHashMap<String,ChatSave> chatMap;
 
 	public ChatArray() {
-		chatList = new ArrayList<ChatSave>();
-		chatIndex = new ArrayList<Integer>();
 		thread = null;
+		chatMap = new LinkedHashMap<>();
 	}
 
 	public void addChat(ChatSave chat){
-		int no = chat.getNo();
-		if (no < 0) {
-			System.out.println("\nCan't add chat()");
-			return;
-		}
-		if (chatIndex.size() <= no){
-			for (int i = chatIndex.size(); i < no; i++){
-				chatIndex.add(i, -1);
-			}
-			chatIndex.add(no, chatList.size());
-			chatList.add(chatList.size(), chat);
-			return;
-		}
-		int idx = chatIndex.get(no);
-		if (idx == -1){
-			chatIndex.set(no, chatList.size());
-			chatList.add(chatList.size(), chat);
-			return;
-		}
-		// nothing to do, because chat is idential if No. is same.
-		// TODO BUT it would be better to check if these are identical?
-		return;
+		chatMap.put(chat.getAttributes(), chat);
 	}
 
 	public void writeXML(File file) throws IOException{
 		PrintWriter pw = new PrintWriter(new BufferedWriter(
-			new OutputStreamWriter(new FileOutputStream(file),"UTF-8")));
+				new OutputStreamWriter(new FileOutputStream(file),"UTF-8")));
 		pw.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		pw.println("<packet><thread thread=\"" + thread + "\" />");
 		pw.flush();
-		for (int no = 0; no < chatIndex.size(); no++){
-			int idx = chatIndex.get(no);
-			if (idx >= 0 && idx < chatList.size()){
-				ChatSave chat = chatList.get(idx);
-				chat.printXML(pw);
-			} else {
-				// idx == -1 then nothing to do
-			}
+		for (ChatSave chat : chatMap.values()) {
+			chat.printXML(pw);
 		}
 		pw.println("</packet>");
 		pw.flush();

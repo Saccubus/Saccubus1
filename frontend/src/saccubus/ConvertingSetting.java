@@ -39,14 +39,10 @@ public class ConvertingSetting {
 	//default setting for 1.60-
 
 	static final String DEF_OPTS_FPSUP = " -acodec copy -vsync 1 -vcodec libx264 -qscale 1 -f mp4 ";
-	//static final String OUTOPT_FPSUP = " -acodec copy -vcodec mpeg4 -crf 16 -pix_fmt yuv420p -f mp4";
 	static final String DEF_OPTS_SWF_JPEG = " -an -vcodec copy -r 1 -f image2 ";
 	static final String DEF_OPTS_JPEG_MP4 = " -an -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ";
-	//static final String OUTOPTS_JPEG_MP4 = " -an -vcodec copy -crf 10 -f mp4 ";
-	//static final String OUTOPTS_JPEG_MP4 = " -an -vcodec huffyuv -pix_fmt yuv420p -f avi ";
 	static final String DEF_OPTS_MIX = " -acodec copy -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ";
-	//static final String OUTOPTS_MIX = " -r 25 -acodec copy -vcodec mpeg4 -crf 18 -pix_fmt yuv420p -f mp4 ";
-	static final String DEFAULT_CMDLINE_OUT="-threads 0 -s 512x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 4:3";
+	static final String DEFAULT_CMDLINE_OUT="-threads 0 -s 512x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -aspect 16:9 -pix_fmt yuv420p";
 	static final String DEFAULT_WIDE_CMDLINE_OUT = "-threads 0 -s 640x360 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -aspect 16:9 -pix_fmt yuv420p";
 	static final String DEFAULT_ZQ_CMDLINE_OUT = "-threads 0 -s 640x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -samx -pix_fmt yuv420p";
 	static final String DEFAULT_OPTION_FOLDER = "./optionF";
@@ -179,6 +175,7 @@ public class ConvertingSetting {
 	private Map<String, String> replaceOptions;
 	private boolean liveOparetionConversion;
 	private boolean premiumColorCheck;
+	private String optionFileDescription;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -394,7 +391,8 @@ public class ConvertingSetting {
 			boolean use_fpsfilter,
 			boolean auto_play,
 			boolean live_operation,
-			boolean premium_color_check
+			boolean premium_color_check,
+			String option_file_description
 		)
 	{
 		this(	mailaddress,
@@ -521,6 +519,7 @@ public class ConvertingSetting {
 		autoPlay = auto_play;
 		liveOparetionConversion = live_operation;
 		premiumColorCheck = premium_color_check;
+		optionFileDescription = option_file_description;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -871,6 +870,9 @@ public class ConvertingSetting {
 	public boolean isPremiumColorCheck(){
 		return premiumColorCheck;
 	}
+	public String getOptionFileDescr(){
+		return optionFileDescription;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1013,6 +1015,7 @@ public class ConvertingSetting {
 	static final String PROP_AUTO_PLAY = "AutoPlay";
 	static final String PROP_LIVE_OPERATION = "LiveOperationComment";
 	static final String PROP_PREMIUM_COLOR_CHECK = "PremiumColorCheck";
+	static final String PROP_OPTION_FILE_DESCR = "OptionFileDescr";
 	// ì«Ç›çûÇﬁÇæÇØÅAï€ë∂ÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1214,6 +1217,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_AUTO_PLAY, Boolean.toString(setting.isAutoPlay()));
 		prop.setProperty(PROP_LIVE_OPERATION, Boolean.toString(setting.isLiveOperationConversion()));
 		prop.setProperty(PROP_PREMIUM_COLOR_CHECK, Boolean.toString(setting.isPremiumColorCheck()));
+		prop.setProperty(PROP_OPTION_FILE_DESCR, "");
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1457,7 +1461,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_FPS_FILTER,"false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_PLAY,"false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_LIVE_OPERATION,"false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_PREMIUM_COLOR_CHECK,"false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_PREMIUM_COLOR_CHECK,"false")),
+			prop.getProperty(PROP_OPTION_FILE_DESCR, "")
 		);
 	}
 

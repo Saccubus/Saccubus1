@@ -258,7 +258,7 @@ public class VideofileInfo {
 		if(strs==null)
 			return false;
 		for(String s:strs){
-			if(s.contains("aac") && s.contains("lc"))
+			if(s.contains("aac") && !s.contains("he"))
 				return true;
 		}
 		return false;

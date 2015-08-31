@@ -171,8 +171,33 @@ public class NicoClient {
 			HttpURLConnection con = (HttpURLConnection) (new URL(url))
 				.openConnection(ConProxy);
 			/* リクエストの設定 */
+	// this is a successfull request header from waterfox to nmsg.nicovideo.jp/api/
+	//POST http://nmsg.nicovideo.jp/api/ HTTP/1.1
+	//Host: nmsg.nicovideo.jp
+	//User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:40.0) Gecko/20100101 Firefox/40.0.2 Waterfox/40.0.2
+	//Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+	//Accept-Language: ja,en-US;q=0.7,en;q=0.3
+	//Accept-Encoding: gzip, deflate
+	//DNT: 1
+	//Pragma: no-cache
+	//Cache-Control: no-cache
+	//Referer: http://nmsg.nicovideo.jp/api/
+	//Content-Length: 292
+	//Content-Type: text/plain; charset=UTF-8
+	//Cookie: __utmc=8292653; nicosid=1440976771.2140294297; nicorepo_filter=all;
+	//Connection: keep-alive
+	// the following commented source code lines can be made valid in the future, and it would be ok (already tested).
 			con.setRequestMethod(method);
 			con.addRequestProperty("Cookie", cookieProp);
+		//	con.setRequestProperty("Host", "nmsg.nicovideo.jp");
+		//	con.setRequestProperty("User-Agent", "Java/Saccubus-1.xx");
+		//	con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
+		//	con.setRequestProperty("Accept-Encoding", "deflate");
+		//	/* gzip deflateを受付可能にしたらコメント取得が早くなる？ 実際にdeflateで来るかは確かめてない */
+		//	con.setRequestProperty("DNT", "1");
+		//	con.setRequestProperty("Pragma", "no-cache");
+		//	con.setRequestProperty("Referer", "http://nmsg.nicovideo.jp/api/");
+			con.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");	// REQUIRED on nmsg/nicovideo.jp/api/
 			if (connectionProp != null){
 				con.addRequestProperty("Connection", connectionProp);
 			}
@@ -180,9 +205,11 @@ public class NicoClient {
 				con.setDoInput(true);
 			}
 			if (doOutput){
+		//		con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 				con.setDoOutput(true);
 			}
 			HttpURLConnection.setFollowRedirects(followRedirect);
+
 			connect(con);
 			if (doOutput){
 				return con;
@@ -219,6 +246,18 @@ public class NicoClient {
 			+ (con.getRequestProperty("Connection") == null ?
 				"" : "Connection " + con.getRequestProperty("Connection"))
 			+ "\n");
+/*
+		for(Entry<String, List<String>> entry : con.getRequestProperties().entrySet()){
+			System.out.print("\n■Request "+entry.getKey());
+			for(String value : entry.getValue())
+				System.out.print(":"+value);
+		}
+		for(Entry<String, List<String>> entry:con.getHeaderFields().entrySet()){
+			System.out.print("\n■Header "+entry.getKey());
+			for(String value : entry.getValue())
+				System.out.print(":"+value);
+		}
+*/
 		con.connect();
 	}
 
@@ -390,9 +429,6 @@ public class NicoClient {
 		return getVideoHistoryAndTitle1(tag, watchInfo, saveWatchPage);
 	}
 	public boolean getVideoHistoryAndTitle1(String tag, String watchInfo, boolean saveWatchPage) {
-		// if(getThumbInfoFile(tag) != null && !saveWatchPage){
-		// 	//return true;
-		// }
 		String thumbTitle = getVideoTitle();
 		VideoTitle = null;
 		boolean found = false;
@@ -751,7 +787,7 @@ public class NicoClient {
 		String wayback =  "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey;
 		String resfrom;
 		if(!back_comment.endsWith("-")){
-			resfrom = "";
+			resfrom = "\" res_from=\"-" + back_comment;
 		}else {
 			resfrom = "\" res_from=\"" + back_comment;
 		}
@@ -759,26 +795,32 @@ public class NicoClient {
 		sb.append("<packet>");
 		sb.append("<thread thread=\"" + ThreadID);
 		sb.append("\" version=\"20090904");
-		if(!"0".equals(WayBackKey)){
-			sb.append(wayback);
-		}
+		sb.append(resfrom);
 		sb.append("\" user_id=\"" + UserID);
 		if(NeedsKey){
 			sb.append(Official);
 		}
+		if(!"0".equals(WayBackKey)){
+			sb.append(wayback);
+		}
 		sb.append("\" scores=\"1");	//NGscore
+		sb.append("\" nicoru=\"1");
+		sb.append("\" with_global=\"1");
 		sb.append("\"/>");
 		//thread end, thread_leaves start
 		sb.append("<thread_leaves thread=\"" + ThreadID);
-		if(!"0".equals(WayBackKey)){
-			sb.append(wayback);
-		}
+		sb.append("\" version=\"20090904");
+		sb.append(resfrom);
 		sb.append("\" user_id=\"" + UserID);
 		if(NeedsKey){
 			sb.append(Official);
 		}
+		if(!"0".equals(WayBackKey)){
+			sb.append(wayback);
+		}
 		sb.append("\" scores=\"1");	//NGscore
-		sb.append(resfrom);
+		sb.append("\" nicoru=\"1");
+		sb.append("\" with_global=\"1");
 		sb.append("\">0-");	//>0-10:100,1000<
 		sb.append((VideoLength + 59) / 60);
 		sb.append(":100,");
@@ -808,7 +850,7 @@ public class NicoClient {
 				System.out.print("previous " + commentType.toString().toLowerCase() + " comment deleted...");
 			}
 			fos = new FileOutputStream(file);
-			HttpURLConnection con = urlConnect(MsgUrl, "POST", Cookie, true, true, "close");
+			HttpURLConnection con = urlConnect(MsgUrl, "POST", Cookie, true, true, "keep-alive",true);
 			OutputStream os = con.getOutputStream();
 			/*
 			 * 投稿者コメントは2006versionを使用するらしい。「いんきゅばす1.7.0」

@@ -1748,6 +1748,30 @@ public class MainFrame extends JFrame {
 		gird_x0_y2_0.insets = INSETS_0_0_0_5;
 		zqFFmpegSettingPanel.add(zqAdditionalOptionFiled, gird_x0_y2_0);
 		zqFFmpegSettingPanel.setForeground(Color.blue);
+/*
+ * 		デバッグ中 保留
+		gird_x0_y2_0 = new GridBagConstraints();
+		gird_x0_y2_0.gridy = 7;
+		gird_x0_y2_0.gridx = 0;
+		gird_x0_y2_0.weightx = 0.0;
+		gird_x0_y2_0.weighty = 0.0;
+		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
+		gird_x0_y2_0.insets = INSETS_0_5_0_5;
+		zqFFmpegSettingPanel.add(new JLabel("注釈"), gird_x0_y2_0);
+		gird_x0_y2_0 = new GridBagConstraints();
+		gird_x0_y2_0.gridy = 7;
+		gird_x0_y2_0.gridx = 1;
+		gird_x0_y2_0.gridwidth = 1;
+		gird_x0_y2_0.weightx = 1.0;
+		gird_x0_y2_0.weighty = 0.0;
+		gird_x0_y2_0.gridwidth =3;
+		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
+		gird_x0_y2_0.insets = INSETS_0_0_0_5;
+		zqFFmpegSettingPanel.add(zqOptionFileDescription, gird_x0_y2_0);
+		zqFFmpegSettingPanel.setForeground(Color.blue);
+*/
 		gird_x0_y2_0 = new GridBagConstraints();
 		gird_x0_y2_0.gridx = 0;
 		gird_x0_y2_0.gridy = 4;
@@ -1755,7 +1779,7 @@ public class MainFrame extends JFrame {
 		gird_x0_y2_0.weighty = 0.0;
 		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_5_0_5;
+		gird_x0_y2_0.insets = INSETS_0_5_5_5;
 		FFMpegTab2Panel.add(zqFFmpegSettingPanel,gird_x0_y2_0);
 
 		CheckFFmpegFunctionPanel.setBorder(BorderFactory.createTitledBorder(
@@ -1868,23 +1892,6 @@ public class MainFrame extends JFrame {
 		grid_x1_y4_x.fill = GridBagConstraints.HORIZONTAL;
 		grid_x1_y4_x.insets = INSETS_0_5_0_5;
 		CheckFFmpegFunctionPanel.add(playConvertedVideoLabel, grid_x1_y4_x);
-/*
-		GridBagConstraints grid_x0_y2_87 = new GridBagConstraints();
- 		grid_x0_y2_87.gridx = 0;
-		grid_x0_y2_87.gridy = 2;
-		grid_x0_y2_87.gridwidth = 2;
-		grid_x0_y2_87.gridheight = 4;
-		grid_x0_y2_87.weightx = 1.0;
-		grid_x0_y2_87.weighty = 1.0;
-		grid_x0_y2_87.anchor = GridBagConstraints.NORTHEAST;
-		grid_x0_y2_87.fill = GridBagConstraints.BOTH;
-		grid_x0_y2_87.insets = INSETS_0_5_5_5;
-		TextFFmpegOutput.setLineWrap(true);
-		TextFFmpegOutput.setForeground(Color.blue);
-		TextFFmpegOutput.setOpaque(false);
-		CheckFFmpegFunctionPanel.add(
-				new JScrollPane(TextFFmpegOutput), grid_x0_y2_87);
-*/
 		GridBagConstraints grid6_x0_y2_82 = new GridBagConstraints();
 		grid6_x0_y2_82.gridx = 0;
 		grid6_x0_y2_82.gridy = 6;
@@ -2151,6 +2158,7 @@ public class MainFrame extends JFrame {
 	private JComboBox zqFFmpegOptionComboBox = null;
 	private JButton zqFFmpegOptionReloadButton = null;
 	private JPanel zqFFmpegOptionComboBoxPanel = null;
+	private JTextArea zqOptionFileDescription = new JTextArea("",2,20);
 
 	JLabel FontPathLabel = new JLabel();
 	JTextField FontPathField = new JTextField();
@@ -2345,7 +2353,8 @@ public class MainFrame extends JFrame {
 			fpsFilterRadioButton.isSelected(),
 			autoPlayCheckBox.isSelected(),
 			liveOperationCheckBox.isSelected(),
-			premiumColorCheckBox.isSelected()
+			premiumColorCheckBox.isSelected(),
+			zqOptionFileDescription.getText()
 		);
 	}
 /*
@@ -2499,6 +2508,9 @@ public class MainFrame extends JFrame {
 		autoPlayCheckBox.setSelected(setting.isAutoPlay());
 		liveOperationCheckBox.setSelected(setting.isLiveOperationConversion());
 		premiumColorCheckBox.setSelected(setting.isPremiumColorCheck());
+		zqOptionFileDescription.setText(setting.getOptionFileDescr());
+		zqOptionFileDescription.setLineWrap(true);
+		zqOptionFileDescription.setEditable(false);
 	}
 
 	/**
@@ -3805,10 +3817,17 @@ s	 * @return javax.swing.JPanel
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							if (zqFFmpegOptionModel.isFile()) {// ファイル
+								File optionXml = null;
 								Properties prop = new Properties();
+								String descr = "";
 								try {
-									prop.loadFromXML(new FileInputStream(
-										zqFFmpegOptionModel.getSelectedFile()));
+									optionXml = zqFFmpegOptionModel.getSelectedFile();
+									prop.loadFromXML(new FileInputStream(optionXml));
+									descr = Path.readAllText(optionXml.getAbsolutePath(), "UTF-8");
+									if(descr.contains("<!--"))
+										descr = descr.replaceAll("\\s+"," ").replaceAll(".*<!--", "").replaceAll("-->.*", "");
+									else
+										descr = "";
 								} catch (IOException ex) {
 									sendtext("Qwatchのオプションファイルが表示できません。");
 									ex.printStackTrace();
@@ -3817,16 +3836,19 @@ s	 * @return javax.swing.JPanel
 								zqMainOptionField.setText(prop.getProperty("MAIN", ""));
 								zqCommandLineInOptionField.setText(prop.getProperty("IN", ""));
 								zqCommandLineOutOptionField.setText(prop.getProperty("OUT", ""));
+								zqOptionFileDescription.setText(descr);
 								zqExtOptionField.setEnabled(false);
 								zqMainOptionField.setEnabled(false);
 								zqCommandLineInOptionField.setEnabled(false);
 								zqCommandLineOutOptionField.setEnabled(false);
+								zqOptionFileDescription.setEnabled(false);
 								return;
 							} else {// ファイルでない
 								zqExtOptionField.setEnabled(true);
 								zqMainOptionField.setEnabled(true);
 								zqCommandLineInOptionField.setEnabled(true);
 								zqCommandLineOutOptionField.setEnabled(true);
+								zqOptionFileDescription.setEnabled(true);
 							}
 						}
 					});
@@ -3920,9 +3942,16 @@ s	 * @return javax.swing.JPanel
 							zqFFmpegOptionModel.reload();
 							if (!zqFFmpegOptionModel.isFile()) {// ファイルでない
 								Properties prop = new Properties();
+								String optionXml = null;
+								String descr = "";
 								try {
-									prop.loadFromXML(new FileInputStream(
-										ConvertingSetting.PROP_FILE));
+									optionXml = ConvertingSetting.PROP_FILE;
+									prop.loadFromXML(new FileInputStream(optionXml));
+									descr = Path.readAllText(optionXml, "UTF-8");
+									if(descr.contains("<!--"))
+										descr = descr.replaceAll("\\s+"," ").replaceAll(".*<!--", "").replaceAll("-->.*", "");
+									else
+										descr = "";
 								} catch (IOException ex) {
 									sendtext("Qwatchのオプションファイルが更新できません。");
 									ex.printStackTrace();
@@ -3932,6 +3961,7 @@ s	 * @return javax.swing.JPanel
 								zqMainOptionField.setText(prop.getProperty("QCMD_MAIN", ""));
 								zqCommandLineInOptionField.setText(prop.getProperty("QCMD_IN", ""));
 								zqCommandLineOutOptionField.setText(prop.getProperty("QCMD_OUT", ""));
+								zqOptionFileDescription.setText(descr);
 							}
 						}
 					});
