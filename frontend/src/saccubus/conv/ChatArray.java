@@ -15,10 +15,10 @@ import java.util.LinkedHashMap;
  */
 public class ChatArray {
 	private String thread;
-	private LinkedHashMap<String,ChatSave> chatMap;
+	private LinkedHashMap<ChatAttribute,ChatSave> chatMap;
 
 	public ChatArray() {
-		thread = null;
+		thread = Integer.toString(Integer.MAX_VALUE);
 		chatMap = new LinkedHashMap<>();
 	}
 

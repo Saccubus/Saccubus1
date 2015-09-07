@@ -75,6 +75,8 @@ public class Converter extends Thread {
 	public static final String OPTIONAL_EXT = "{Optional}.xml";	// オプショナルスレッドサフィックス
 	private static final String TMP_COMBINED_XML = "_tmp_comment.xml";
 	private static final String TMP_COMBINED_XML2 = "_tmp_optional.xml";
+	private static final String TMP_COMBINED_XML3 = "_tmp_comment2.xml";
+	private static final String TMP_COMBINED_XML4 = "_tmp_optiona2.xml";
 	private static final String THUMB_INFO = "_thumb_info";
 	private String OtherVideo;
 	private final String WatchInfo;
@@ -254,6 +256,8 @@ public class Converter extends Thread {
 	private StringBuffer resultBuffer;
 	private File thumbnailJpg;
 	private String addOption;
+	private File CombinedCommentFile;
+	private File CombinedOptionalFile;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -1240,15 +1244,15 @@ public class Converter extends Thread {
 			//combine ファイル内ダブリも削除
 			filelist.clear();
 			filelist.add(CommentFile);
-			CommentFile = mkTemp(TMP_COMBINED_XML);
-			sendtext("コメントファイル結合中");
-			if (!CombineXML.combineXML(filelist, CommentFile)){
-				sendtext("コメントファイルが結合出来ませんでした（バグ？）");
-				result = "72a";
+			CombinedCommentFile = mkTemp(TMP_COMBINED_XML3);
+			sendtext("コメントファイルマージ中");
+			if (!CombineXML.combineXML(filelist, CombinedCommentFile)){
+				sendtext("コメントファイルがマージ出来ませんでした");
+				result = "72";
 				return false;
 			}
 			CommentMiddleFile = mkTemp(TMP_COMMENT);
-			if(!convertToCommentMiddle(CommentFile, CommentMiddleFile)){
+			if(!convertToCommentMiddle(CombinedCommentFile, CommentMiddleFile)){
 				sendtext("コメント変換に失敗");
 				CommentMiddleFile = null;
 				result = "76";
@@ -1265,6 +1269,7 @@ public class Converter extends Thread {
 	private boolean convertOprionalThread(){
 		sendtext("オプショナルスレッドの中間ファイルへの変換中");
 		File folder = Setting.getCommentFixFileNameFolder();
+		ArrayList<File> filelist = new ArrayList<File>();
 		if (isConvertWithComment()) {
 			if (isCommentFixFileName()) {
 				if (Setting.isAddTimeStamp()) {
@@ -1277,7 +1282,6 @@ public class Converter extends Thread {
 						return true;
 					}
 					// VideoTitle は見つかった。
-					ArrayList<File> filelist = new ArrayList<File>();
 					for (String path: pathlist){
 						filelist.add(new File(folder, path));
 					}
@@ -1322,8 +1326,18 @@ public class Converter extends Thread {
 					dateUserFirst = getDateUserFirst(OptionalThreadFile);
 				}
 			}
+			//combine ファイル内ダブリも削除
+			filelist.clear();
+			filelist.add(OptionalThreadFile);
+			CombinedOptionalFile = mkTemp(TMP_COMBINED_XML4);
+			sendtext("オプショナルスレッドマージ中");
+			if (!CombineXML.combineXML(filelist, CombinedOptionalFile)){
+				sendtext("オプショナルスレッドがマージ出来ませんでした");
+				result = "77";
+				return false;
+			}
 			OptionalMiddleFile = mkTemp(TMP_OPTIONALTHREAD);
-			if(!convertToCommentMiddle(OptionalThreadFile, OptionalMiddleFile)){
+			if(!convertToCommentMiddle(CombinedOptionalFile, OptionalMiddleFile)){
 				sendtext("オプショナルスレッド変換に失敗");
 				OptionalMiddleFile = null;
 				result = "78";
@@ -1983,31 +1997,15 @@ public class Converter extends Thread {
 					fileQueue = parent.getQueue();
 				if(fileQueue!=null)
 					fileQueue.offer(ConvertedVideoFile);
-				if (isDeleteCommentAfterConverting()
-					&& CommentFile != null) {
+				if (isDeleteCommentAfterConverting())
 					deleteCommentFile();
-				}
-				if (isDeleteVideoAfterConverting()
-					&& VideoFile != null) {
-					if (VideoFile.delete()) {
-						System.out.println("Deleted: " + VideoFile.getPath());
-					}
-				}
-				if (CommentMiddleFile != null) {
-					if (CommentMiddleFile.delete()) {
-						System.out.println("Deleted: " + CommentMiddleFile.getPath());
-					}
-				}
-				if (OwnerMiddleFile != null){
-					if (OwnerMiddleFile.delete()) {
-						System.out.println("Deleted: " + OwnerMiddleFile.getPath());
-					}
-				}
-				if (OptionalMiddleFile != null) {
-					if (OptionalMiddleFile.delete()) {
-						System.out.println("Deleted: " + OptionalMiddleFile.getPath());
-					}
-				}
+				if (isDeleteVideoAfterConverting())
+					deleteFile(VideoFile);
+				deleteFile(CommentMiddleFile);
+				deleteFile(OwnerMiddleFile);
+				deleteFile(OptionalMiddleFile);
+				deleteFile(CombinedCommentFile);
+				deleteFile(CombinedOptionalFile);
 				if (Setting.isAutoPlay()){
 					playConvertedVideo();
 				}
@@ -2055,16 +2053,19 @@ public class Converter extends Thread {
 		}
 	}
 	private void deleteList(ArrayList<File> list){
-		if (list== null)	{
+		if (list== null || list.isEmpty())
 			return;
-		}
-		boolean b = true;
+		System.out.print("Deleted: ");
 		for (File file : list){
-			b = file.delete() && b;
+			if(file.delete())
+				System.out.print(file.getName()+" ");
 		}
-		if (!b){
-			System.out.println("Can't delete list of all Comment.");
-		}
+		System.out.println("done.");
+	}
+	private void deleteFile(File file){
+		if (file != null && file.canWrite()
+		 && file.delete())
+			System.out.println("Deleted: " + file.getPath());
 	}
 
 	/**

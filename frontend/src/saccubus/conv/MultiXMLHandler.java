@@ -42,7 +42,7 @@ public class MultiXMLHandler extends DefaultHandler {
 				chat_kicked = true;
 				return;
 			}
-			chat.setAttributeString(toAttributeString(attributes));
+			chat.setAttributeString(new ChatAttribute(attributes));
 			//chat.setNo(attributes.getValue("no"));
 			return;
 		}
@@ -50,17 +50,6 @@ public class MultiXMLHandler extends DefaultHandler {
 		// just ignore element
 	  }
 		// System.out.print(qName + " ");
-	}
-
-	private String toAttributeString(Attributes attributes){
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i <attributes.getLength(); i++) {
-			sb.append(attributes.getQName(i));
-			sb.append("=\"");
-			sb.append(ChatSave.safeReference(attributes.getValue(i)));
-			sb.append("\" ");
-		}
-		return sb.substring(0);
 	}
 
 	@Override

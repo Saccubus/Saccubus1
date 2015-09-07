@@ -9,6 +9,7 @@ public class InfoStack {
 
 	public InfoStack(JLabel jInfo){
 		label = jInfo;
+		stack = jInfo.getText();
 	}
 
 	public void pushText(String txt){

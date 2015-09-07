@@ -25,7 +25,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class ChatSave {
 	// all attributes and its values
-	private String attributesStr = "";
+	private ChatAttribute attributesStr = null;
 
 	// comment itself
 	private String Comment = "";
@@ -33,11 +33,11 @@ public class ChatSave {
 	public ChatSave() {
 	}
 
-	public void setAttributeString(String attributes){
+	public void setAttributeString(ChatAttribute attributes){
 		attributesStr = attributes;
 	}
 
-	public String getAttributes() {
+	public ChatAttribute getAttributes() {
 		return attributesStr;
 	}
 
@@ -49,7 +49,7 @@ public class ChatSave {
 	public void printXML(PrintWriter pw)
 		throws UnsupportedEncodingException {
 		pw.print("<chat ");
-		pw.print(safeReference(attributesStr));
+		pw.print(safeReference(attributesStr.getValue()));
 		pw.print(">");
 		pw.print(safeReference(Comment));
 		pw.println("</chat>");

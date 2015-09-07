@@ -1150,7 +1150,7 @@ public class MainFrame extends JFrame {
 				getFont(), Color.blue));
  		OldCommentModePanel.setLayout(gridBagLayout11);
  		commentModeComboBox.setForeground(Color.blue);
-		OwnerCommentNoticeLabel1.setText("投稿者コメント保存　取得数１０００ 　フォルダ指定は通常コメントの設定通り・変換後に削除しない");
+		OwnerCommentNoticeLabel1.setText("投稿者コメント保存　取得数１０００ 　フォルダ指定は通常コメントの設定通り");
 		OwnerCommentNoticeLabel1.setForeground(Color.blue);
 		OwnerCommentNoticeLabel1.setToolTipText("ファイル名は、タイトル＋［Ｏｗｎｅｒ］．ｘｍｌ");
 
