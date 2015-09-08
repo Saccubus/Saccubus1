@@ -8,22 +8,40 @@ public class ChatAttribute {
 	final String Q_NO = "no";
 	final String Q_DATE_USEC = "date_usec";
 
-	private String date = null;
-	private String userid = null;
-	private String no = null;
-	private String attributeStr = null;
+	private String key = "";	// date,user_id,no ‚Ü‚½‚Í date,user_id,date_usec
+	private String attributeStr = "";
 
 	public String getValue() { return attributeStr; }
 
 	public ChatAttribute(Attributes attributes){
+		String date = "";
+		String userid = "";
+		String no = "";
 		if (attributes!=null) {
-			date = attributes.getValue(Q_DATE);
-			userid = attributes.getValue(Q_USERID);
-			no = attributes.getValue(Q_NO);
-			if (no == null || no.equals("-1")) {
-				no = attributes.getValue(Q_DATE_USEC);
+			try {
+				date = attributes.getValue(Q_DATE);
+			} catch(Exception e){
+				date = "error1";
 			}
-			attributeStr = toAttributeString(attributes);
+			try {
+				userid = attributes.getValue(Q_USERID);
+			} catch(Exception e){
+				userid = "error2";
+			}
+			try {
+				no = attributes.getValue(Q_NO);
+				if (no == null || no.isEmpty() || no.equals("-1")) {
+					no = attributes.getValue(Q_DATE_USEC);
+				}
+			} catch(Exception e) {
+				no = "0";
+			}
+			key = date + userid + no;
+			try {
+				attributeStr = toAttributeString(attributes);
+			} catch(Exception e){
+				// attribureStr = "";
+			}
 		}
 	}
 
@@ -42,36 +60,11 @@ public class ChatAttribute {
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ChatAttribute))
 			return false;
-		ChatAttribute attr = (ChatAttribute)obj;
-		if (this == attr)
-			return true;
-		if(hashCode()!=attr.hashCode())
-			return false;
-		if (date == null){
-			if (attr.date != null)
-				return false;
-		}
-		else if(!date.equals(attr.date))
-			return false;
-		if (userid == null) {
-			if (attr.userid != null)
-				return false;
-		}
-		else if (!userid.equals(attr.userid))
-			return false;
-		if (no == null) {
-			if (attr.no != null)
-				return false;
-		}
-		else if (!no.equals(attr.no))
-			return false;
-		return true;
+		return key.equals(((ChatAttribute)obj).key);
 	}
 
 	@Override
 	public int hashCode() {
-		if (date==null)
-			return 0;
-		return date.hashCode();
+		return key.hashCode();
 	}
 }
