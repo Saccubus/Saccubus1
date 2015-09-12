@@ -20,6 +20,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JLabel;
 
 import saccubus.ConvertStopFlag;
+import saccubus.Converter;
 import saccubus.WayBackDate;
 import saccubus.conv.ChatSave;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
@@ -184,13 +185,14 @@ public class NicoClient {
 	//Referer: http://nmsg.nicovideo.jp/api/
 	//Content-Length: 292
 	//Content-Type: text/plain; charset=UTF-8
-	//Cookie: __utmc=8292653; nicosid=1440976771.2140294297; nicorepo_filter=all;
+	//Cookie: __utmc=8292653; nicosid=1440976771.UserID数字; nicorepo_filter=all;
 	//Connection: keep-alive
 	// the following commented source code lines can be made valid in the future, and it would be ok (already tested).
 			con.setRequestMethod(method);
 			con.addRequestProperty("Cookie", cookieProp);
 		//	con.setRequestProperty("Host", "nmsg.nicovideo.jp");
 		//	con.setRequestProperty("User-Agent", "Java/Saccubus-1.xx");
+		//	con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 		//	con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
 		//	con.setRequestProperty("Accept-Encoding", "deflate");
 		//	/* gzip deflateを受付可能にしたらコメント取得が早くなる？ 実際にdeflateで来るかは確かめてない */
@@ -205,7 +207,6 @@ public class NicoClient {
 				con.setDoInput(true);
 			}
 			if (doOutput){
-		//		con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 				con.setDoOutput(true);
 			}
 			HttpURLConnection.setFollowRedirects(followRedirect);
@@ -246,18 +247,6 @@ public class NicoClient {
 			+ (con.getRequestProperty("Connection") == null ?
 				"" : "Connection " + con.getRequestProperty("Connection"))
 			+ "\n");
-/*
-		for(Entry<String, List<String>> entry : con.getRequestProperties().entrySet()){
-			System.out.print("\n■Request "+entry.getKey());
-			for(String value : entry.getValue())
-				System.out.print(":"+value);
-		}
-		for(Entry<String, List<String>> entry:con.getHeaderFields().entrySet()){
-			System.out.print("\n■Header "+entry.getKey());
-			for(String value : entry.getValue())
-				System.out.print(":"+value);
-		}
-*/
 		con.connect();
 	}
 
@@ -729,7 +718,7 @@ public class NicoClient {
 	}
 
 	public File getComment(final File file, final JLabel status, final String back_comment,
-			final String time, final ConvertStopFlag flag, final int comment_mode) {
+			final String time, final ConvertStopFlag flag, final int comment_mode, boolean isAppend) {
 		if (time != null && !time.isEmpty() && "0".equals(WayBackKey)){
 			if (!getWayBackKey(time)) { // WayBackKey
 				System.out.println("It may be wrong Date.");
@@ -740,15 +729,16 @@ public class NicoClient {
 		if(comment_mode == 2 || comment_mode == 0 && !hasNewCommentBegun){
 			useNewComment = false;
 		}
-		return downloadComment(file, status, back_comment, CommentType.USER, flag, useNewComment);
+		return downloadComment(file, status, back_comment, CommentType.USER, flag, useNewComment, isAppend);
 	}
 
 	public File getOwnerComment(final File file, final JLabel status, final ConvertStopFlag flag) {
-		return downloadComment(file, status, STR_OWNER_COMMENT, CommentType.OWNER, flag, false);
+		return downloadComment(file, status, STR_OWNER_COMMENT, CommentType.OWNER, flag, false, false);
 	}
 
 	public File getOptionalThread(final File file, final JLabel status, final String optionalThreadID,
-			final String back_comment, final String time, final ConvertStopFlag flag,final int comment_mode) {
+			final String back_comment, final String time, final ConvertStopFlag flag,
+			final int comment_mode, final boolean isAppend) {
 		ThreadID = optionalThreadID;
 	 	NeedsKey = false;
 	 	Official = "";
@@ -764,7 +754,7 @@ public class NicoClient {
 		if(comment_mode == 2 || comment_mode == 0 && !hasNewCommentBegun){
 			useNewComment = false;
 		}
-		return downloadComment(file, status, back_comment, CommentType.OPTIONAL, flag, useNewComment);
+		return downloadComment(file, status, back_comment, CommentType.OPTIONAL, flag, useNewComment, isAppend);
 	}
 
 	private String Official = "";
@@ -782,13 +772,21 @@ public class NicoClient {
 		+ (comType == CommentType.OWNER ? "\" fork=\"1\"/>" :  "\"/>");
 	}
 
-	private String commentCommand2009(CommentType commentType, String back_comment){
+	private String commentCommand2009(CommentType commentType, String back_comment, String res_from){
 		String req;
 		String wayback =  "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey;
 		String resfrom;
 		if(!back_comment.endsWith("-")){
-			resfrom = "\" res_from=\"-" + back_comment;
+			// normal
+			if (res_from.isEmpty()){
+				// overwrite file
+				resfrom = "\" res_from=\"-" + back_comment;
+			}else{
+				// append file mode using res_from param (this is test)
+				resfrom = "\" res_from=\"" + res_from;
+			}
 		}else {
+			// for Debug, input comment_no "12345-" etc.
 			resfrom = "\" res_from=\"" + back_comment;
 		}
 		StringBuffer sb = new StringBuffer();
@@ -832,7 +830,8 @@ public class NicoClient {
 	}
 
 	private File downloadComment(final File file, final JLabel status,
-			String back_comment, CommentType commentType, final ConvertStopFlag flag, boolean useNewComment) {
+			String back_comment, CommentType commentType, final ConvertStopFlag flag,
+			boolean useNewComment, boolean isAppend) {
 		System.out.print("Downloading " + commentType.toString().toLowerCase()
 				+" comment, size:" + back_comment + "...");
 		//String official = "";	/* 公式動画用のkey追加 */
@@ -846,10 +845,18 @@ public class NicoClient {
 		}
 		FileOutputStream fos = null;
 		try {
-			if (file.canRead()	 && file.delete()) {	//	ファイルがすでに存在するなら削除する。
-				System.out.print("previous " + commentType.toString().toLowerCase() + " comment deleted...");
+			String lastNo = "";
+			if (file.canRead()){
+				if(isAppend && useNewComment){
+					if(commentType != CommentType.OWNER)
+						lastNo = Converter.getNoUserLastChat(file);
+				}else{
+					if (file.delete()) {	//	ファイルがすでに存在するなら削除する。
+						System.out.print("previous " + commentType.toString().toLowerCase() + " comment deleted...");
+					}
+				}
 			}
-			fos = new FileOutputStream(file);
+			fos = new FileOutputStream(file, isAppend);
 			HttpURLConnection con = urlConnect(MsgUrl, "POST", Cookie, true, true, "keep-alive",true);
 			OutputStream os = con.getOutputStream();
 			/*
@@ -861,8 +868,11 @@ public class NicoClient {
 			 */
 			String req;
 			if (useNewComment) {
-				req = commentCommand2009(commentType, back_comment);
-				System.out.print("New comment mode...");
+				req = commentCommand2009(commentType, back_comment, lastNo);
+				if (lastNo.isEmpty())
+					System.out.print("New comment mode...");
+				else
+					System.out.print("Append new comment mode...");
 			} else {
 				req = commentCommand2006(commentType, back_comment);
 				System.out.print("Old comment mode...");
@@ -928,7 +938,7 @@ public class NicoClient {
 			return file;
 		} catch (IOException ex) {
 			ex.printStackTrace();
-			if(ex.toString().contains("Unexpected end of file from server")){
+			if(ex.toString().contains("Unexpected")){	//"Unexpected end of file from server"
 				setExtraError("サーバーから切断されました。タイムアウト？");
 			}
 		} catch(NumberFormatException ex){

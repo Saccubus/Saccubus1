@@ -234,6 +234,7 @@ public class MainFrame extends JFrame {
 	private JCheckBox autoPlayCheckBox = new JCheckBox();
 	private JCheckBox liveOperationCheckBox = new JCheckBox();
 	private JCheckBox premiumColorCheckBox = new JCheckBox();
+	private JCheckBox appendCommentCheckBox = new JCheckBox();
 
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
@@ -579,10 +580,6 @@ public class MainFrame extends JFrame {
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
 		grid4_x3_y12_23.gridy = 12;
-		GridBagConstraints grid4_x1_y10_22 = new GridBagConstraints(1, 6,
-				4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, INSETS_0_0_0_5, 0, 0);
-		grid4_x1_y10_22.gridy = 10;
 		GridBagConstraints grid4_x0_y14_21 = new GridBagConstraints(0, 14,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 50, 5, 5), 0, 0);
@@ -605,15 +602,33 @@ public class MainFrame extends JFrame {
 				4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0, 0);
 		grid4_x0_y11_18.gridy = 11;
-		GridBagConstraints grid4_x0_y10_17 = new GridBagConstraints(0, 6,
-				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0);
+		GridBagConstraints grid4_x0_y10_17 = new GridBagConstraints();
+		grid4_x0_y10_17.gridx = 0;
 		grid4_x0_y10_17.gridy = 10;
+		grid4_x0_y10_17.gridwidth = 1;
+		grid4_x0_y10_17.anchor = GridBagConstraints.CENTER;
+		grid4_x0_y10_17.fill = GridBagConstraints.BOTH;
 		grid4_x0_y10_17.insets = new Insets(0, 50, 0, 5);
+		GridBagConstraints grid4_x1_y10_22 = new GridBagConstraints();
+		//grid4_x1_y10_22.gridx = 1;
+		grid4_x1_y10_22.gridy = 10;
+		grid4_x1_y10_22.gridwidth = 4;
+		grid4_x1_y10_22.weightx = 1.0;
+		grid4_x1_y10_22.anchor = GridBagConstraints.CENTER;
+		grid4_x1_y10_22.fill = GridBagConstraints.BOTH;
+		grid4_x1_y10_22.insets = INSETS_0_0_0_5;
 		GridBagConstraints grid4_x0_y6_16 = new GridBagConstraints(0, 5,
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.BOTH, INSETS_5_5_5_5, 0, 0);
 		grid4_x0_y6_16.gridy = 6;
+		grid4_x0_y6_16.gridwidth = 1;
+		grid4_x0_y6_16.insets = INSETS_0_5_0_0;
+		GridBagConstraints grid4_x1_y6_ = new GridBagConstraints();
+		//grid4_x1_y6_.gridx = 2;
+		grid4_x1_y6_.gridy = 6;
+		grid4_x1_y6_.anchor = GridBagConstraints.WEST;
+		grid4_x1_y6_.fill = GridBagConstraints.HORIZONTAL;
+		grid4_x1_y6_.insets = INSETS_0_5_0_5;
 		GridBagConstraints grid4_x0_y7_86 = new GridBagConstraints();
 		grid4_x0_y7_86.gridx = 0;
 		grid4_x0_y7_86.gridy = 7;
@@ -1121,6 +1136,8 @@ public class MainFrame extends JFrame {
 			//	new Font("MS UI Gothic", Font.PLAIN, 12), Color.black));
 		CommentSaveInfoPanel.setLayout(gridBagLayout4);
 		SavingCommentCheckBox.setText("コメントをダウンロードする");
+		appendCommentCheckBox.setText("追加モードで保存");
+		appendCommentCheckBox.addActionListener(new MainFrame_noticePop(this));
 		AddTimeStampToCommentCheckBox.setText("コメントファイル名に日時を付加する（フォルダを指定した時のみ）");
 		AddTimeStampToCommentCheckBox.setForeground(Color.blue);
 		AddTimeStampToCommentCheckBox.setToolTipText("過去ログにも現在のコメントにも日時が付く");
@@ -1540,6 +1557,7 @@ public class MainFrame extends JFrame {
 		VhookSettingPanel.add(commentSpeedTextField, grid8_x2_y10_1);
 
 		CommentSaveInfoPanel.add(SavingCommentCheckBox, grid4_x0_y6_16);
+		CommentSaveInfoPanel.add(appendCommentCheckBox, grid4_x1_y6_);
 		CommentSaveInfoPanel.add(AddTimeStampToCommentCheckBox, grid4_x0_y7_86);
 		CommentSaveInfoPanel.add(getDelCommentCheckBox(), grid4_x0_y8_25);
 		CommentSaveInfoPanel.add(getFixCommentNumCheckBox(),grid4_x0_y9_26);
@@ -2354,7 +2372,8 @@ public class MainFrame extends JFrame {
 			autoPlayCheckBox.isSelected(),
 			liveOperationCheckBox.isSelected(),
 			premiumColorCheckBox.isSelected(),
-			zqOptionFileDescription.getText()
+			zqOptionFileDescription.getText(),
+			appendCommentCheckBox.isSelected()
 		);
 	}
 /*
@@ -2511,6 +2530,7 @@ public class MainFrame extends JFrame {
 		zqOptionFileDescription.setText(setting.getOptionFileDescr());
 		zqOptionFileDescription.setLineWrap(true);
 		zqOptionFileDescription.setEditable(false);
+		appendCommentCheckBox.setSelected(setting.isAppendComment());
 	}
 
 	/**
@@ -4352,6 +4372,29 @@ class MainFrame_LoadNGConfig implements ActionListener {
 		String url = "http://ext.nicovideo.jp/api/configurengclient?mode=get";
 		if (loader.load(url, file)){
 			mainFrame.sendtext("ニコニコ動画のNG設定を保存しました：" + file.getRelativePath());
+		}
+	}
+}
+
+class MainFrame_noticePop implements ActionListener {
+	MainFrame adaptee;
+
+	public MainFrame_noticePop(MainFrame frame) {
+		adaptee = frame;
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		JCheckBox src = (JCheckBox)e.getSource();
+		if(src.isSelected()){
+			MsgBox box = new MsgBox(
+				adaptee, "注意", 450, 150,
+				 "追加モードは指定ファイルにコメントを追加保存します。\n"
+				+"日時付加ありで追加モードにすると変換時にフォルダ合成しません。\n"
+				+"下の「変換後にコメントファイルを削除する」にチェックを入れると\n"
+				+"変換実行の成功後、指定したファイルの追加されたコメントを含む\n"
+				+"全てのコメントが削除されます。\n"
+			);
+			box.setVisible(true);
 		}
 	}
 }

@@ -60,7 +60,7 @@ public class BrowserInfo {
 		}
 	}
 */
-	private static final BrowserCookieKind[] ALL_BROWSER = BrowserCookieKind.values();
+	public static final BrowserCookieKind[] ALL_BROWSER = BrowserCookieKind.values();
 	public static final int NUM_BROWSER = ALL_BROWSER.length;
 
 	public BrowserInfo(){
@@ -169,10 +169,10 @@ public class BrowserInfo {
 	            user_session = cutUserSession(dataStr, fileOrDir);
 	            return user_session;
 	    	}
-	        return "";
+	        return user_session;
 	    } catch(Exception e){
 	    	e.printStackTrace();
-	        return "";
+	        return user_session;
 	    } finally {
             if (!user_session.isEmpty()){
             	validBrowser = BrowserCookieKind.Other;
@@ -215,6 +215,7 @@ public class BrowserInfo {
     private String getUserSessionFromFilefox4()
     {
         String user_session = "";
+        StringBuffer sb = new StringBuffer();
         try
         {
             String app_dir = System.getenv("APPDATA");
@@ -231,12 +232,13 @@ public class BrowserInfo {
                     String dataStr = Path.readAllText(sqlist_filename, "US-ASCII");
                     user_session = cutUserSession(dataStr, sqlist_filename);
                     if (!user_session.isEmpty()){
-                    	return user_session;
+       	            	sb.append(user_session+" ");
                     }
                     // else continue
                 }
             }
-            return "";	// not found
+            user_session = sb.substring(0).trim();
+            return user_session;
         }
         catch (Exception e) {
         	e.printStackTrace();
@@ -375,6 +377,7 @@ public class BrowserInfo {
     private String getUserSessionFromDirectory(String dir_name)
     {
         String user_session = "";
+        StringBuffer sb = new StringBuffer();
         try {
 	        if (Path.isDirectory(dir_name))
 	        {
@@ -393,7 +396,7 @@ public class BrowserInfo {
                 		return "";
                     user_session = cutUserSession(Path.readAllText(fullname, "MS932"), fullname);
                     if (!user_session.isEmpty()){
-                    	return user_session;
+                    	sb.append(user_session+" ");
                     }
 
                     /*	Obsolete after WindowsUpdate Aug 2011
@@ -408,7 +411,8 @@ public class BrowserInfo {
                     }
                     */
                 }
-                return "";
+                user_session = sb.substring(0).trim();
+                return user_session;
             }
         }
         catch (Exception e) {

@@ -12,6 +12,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 
 /**
@@ -404,21 +406,33 @@ public class Path extends File{
 	 *
 	 * @param srcfile
 	 * @param destfile
+	 * @return
 	 */
-	public static void fileCopy(File srcfile, File destfile) {
+	public static boolean fileCopy(File srcfile, File destfile) {
 		FileChannel srcch = null, destch = null;
 		try {
 			srcch = new FileInputStream(srcfile).getChannel();
 			destch = new FileOutputStream(destfile).getChannel();
 			destch.transferFrom(srcch, 0, srcch.size());
 			//sc.transferTo(0, sc.size(), dc);
+			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		} finally {
 			if (destch != null) try { destch.close(); } catch (IOException e) {}
 			if (srcch != null) try { srcch.close(); } catch (IOException e) {}
 		}
 	}
+	/*
+	public static void fileCopy(File srcfile, File destfile) {
+		try {
+			Files.copy(srcfile.toPath(), destfile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	 */
 	/**
 	 * unescape Unicode-Escape like "\u0061"
 	 */
@@ -451,5 +465,33 @@ public class Path extends File{
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 *
+	 * @param srcfile
+	 * @param destfile
+	 * @return ok?
+	 */
+	public static boolean move(File srcfile, File destfile) {
+		try {
+			Files.move(srcfile.toPath(), destfile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	/**
+	 * Read all text from file and return String with Encoding
+	 */
+	public static String readAllText(File file, String encoding) {
+		return Path.readAllText(file.getPath(), encoding);
+	}
+	/**
+	 * Write all text to file with Encoding
+	 */
+	public static void writeAllText(File file, String text, String encoding) {
+		writeAllText(file.getPath(), text, encoding);
 	}
 }

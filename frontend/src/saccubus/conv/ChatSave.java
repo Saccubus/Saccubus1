@@ -24,13 +24,21 @@ import java.io.UnsupportedEncodingException;
  * @version 1.0
  */
 public class ChatSave {
+	// qName
+	final private String qName;
+
 	// all attributes and its values
 	private ChatAttribute attributesStr = null;
 
 	// comment itself
 	private String Comment = "";
 
-	public ChatSave() {
+	public ChatSave(String qname) {
+		qName = qname;
+	}
+
+	public String getQName() {
+		return qName;
 	}
 
 	public void setAttributeString(ChatAttribute attributes){
@@ -48,11 +56,19 @@ public class ChatSave {
 
 	public void printXML(PrintWriter pw)
 		throws UnsupportedEncodingException {
-		pw.print("<chat ");
-		pw.print(safeReference(attributesStr.getValue()));
-		pw.print(">");
-		pw.print(safeReference(Comment));
-		pw.println("</chat>");
+		pw.print("<"+qName);
+		String s = safeReference(attributesStr.getValue());
+		if(!s.isEmpty()){
+			pw.print(" ");
+			pw.print(safeReference(attributesStr.getValue()));
+		}
+		if(Comment!=null && !Comment.isEmpty()){
+			pw.print(">");
+			pw.print(safeReference(Comment));
+			pw.println("</" + qName + ">");
+		}else{
+			pw.println("/>");
+		}
 	}
 
 	/*

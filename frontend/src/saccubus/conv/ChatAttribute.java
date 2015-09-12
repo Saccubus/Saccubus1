@@ -13,35 +13,44 @@ public class ChatAttribute {
 
 	public String getValue() { return attributeStr; }
 
-	public ChatAttribute(Attributes attributes){
-		String date = "";
-		String userid = "";
-		String no = "";
-		if (attributes!=null) {
-			try {
-				date = attributes.getValue(Q_DATE);
-			} catch(Exception e){
-				date = "error1";
-			}
-			try {
-				userid = attributes.getValue(Q_USERID);
-			} catch(Exception e){
-				userid = "error2";
-			}
-			try {
-				no = attributes.getValue(Q_NO);
-				if (no == null || no.isEmpty() || no.equals("-1")) {
-					no = attributes.getValue(Q_DATE_USEC);
+	public ChatAttribute(String qName, Attributes attributes){
+		if(qName.equals("chat")){
+			String date = "";
+			String userid = "";
+			String no = "";
+			if (attributes!=null) {
+				try {
+					date = attributes.getValue(Q_DATE);
+				} catch(Exception e){
+					date = "error1";
 				}
-			} catch(Exception e) {
-				no = "0";
+				try {
+					userid = attributes.getValue(Q_USERID);
+				} catch(Exception e){
+					userid = "error2";
+				}
+				try {
+					no = attributes.getValue(Q_NO);
+					if (no == null || no.isEmpty() || no.equals("-1")) {
+						no = attributes.getValue(Q_DATE_USEC);
+					}
+				} catch(Exception e) {
+					no = "0";
+				}
+				key = date + userid + no;
+				try {
+					attributeStr = toAttributeString(attributes);
+				} catch(Exception e){
+					// attribureStr = "";
+				}
 			}
-			key = date + userid + no;
+		}else{
 			try {
 				attributeStr = toAttributeString(attributes);
 			} catch(Exception e){
 				// attribureStr = "";
 			}
+			key = qName + " " + attributeStr;
 		}
 	}
 

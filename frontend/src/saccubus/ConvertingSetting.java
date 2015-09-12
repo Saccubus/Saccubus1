@@ -176,6 +176,7 @@ public class ConvertingSetting {
 	private boolean liveOparetionConversion;
 	private boolean premiumColorCheck;
 	private String optionFileDescription;
+	private boolean appendCommentMode;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -392,7 +393,8 @@ public class ConvertingSetting {
 			boolean auto_play,
 			boolean live_operation,
 			boolean premium_color_check,
-			String option_file_description
+			String option_file_description,
+			boolean append_comment
 		)
 	{
 		this(	mailaddress,
@@ -520,6 +522,7 @@ public class ConvertingSetting {
 		liveOparetionConversion = live_operation;
 		premiumColorCheck = premium_color_check;
 		optionFileDescription = option_file_description;
+		appendCommentMode = append_comment;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -693,6 +696,10 @@ public class ConvertingSetting {
 	public boolean isBrowser(BrowserCookieKind browser){
 		return useBrowser[browser.ordinal()];
 	}
+	public boolean isBrowser(int n) {
+		return useBrowser[n];
+	}
+
 	public boolean isBrowserOther(){
 		return BrowserOther;
 	}
@@ -873,6 +880,9 @@ public class ConvertingSetting {
 	public String getOptionFileDescr(){
 		return optionFileDescription;
 	}
+	public boolean isAppendComment(){
+		return appendCommentMode;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1016,6 +1026,7 @@ public class ConvertingSetting {
 	static final String PROP_LIVE_OPERATION = "LiveOperationComment";
 	static final String PROP_PREMIUM_COLOR_CHECK = "PremiumColorCheck";
 	static final String PROP_OPTION_FILE_DESCR = "OptionFileDescr";
+	static final String PROP_APPEND_COMMENT = "AppendComment";
 	// 読み込むだけ、保存しない
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1218,6 +1229,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_LIVE_OPERATION, Boolean.toString(setting.isLiveOperationConversion()));
 		prop.setProperty(PROP_PREMIUM_COLOR_CHECK, Boolean.toString(setting.isPremiumColorCheck()));
 		prop.setProperty(PROP_OPTION_FILE_DESCR, "");
+		prop.setProperty(PROP_APPEND_COMMENT, Boolean.toString(setting.isAppendComment()));
 		/*
 		 * ここまで拡張設定保存 1.22r3 に対する
 		 */
@@ -1462,43 +1474,19 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_PLAY,"false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_LIVE_OPERATION,"false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_PREMIUM_COLOR_CHECK,"false")),
-			prop.getProperty(PROP_OPTION_FILE_DESCR, "")
+			prop.getProperty(PROP_OPTION_FILE_DESCR, ""),
+			Boolean.parseBoolean(prop.getProperty(PROP_APPEND_COMMENT, "false"))
 		);
 	}
 
 	public static ConvertingSetting loadSetting(String user, String password) {
 		return ConvertingSetting.loadSetting(user, password, PROP_FILE);
 	}
-/*
-	public void setFontPath(String path) {
-		FontPath = path;
-	}
 
-	public void setFontIndex(int i) {
-		FontIndex = i;
-	}
-
-	public void setOptionFile(File file) {
-		OptionFile = file;
-	}
-
-	public void setWideOptionFile(File file) {
-		wideOptionFile = file;
-	}
-
-	public void setSaveConverted(boolean b){
-		SaveConverted = b;
-	}
-
-	public void setDisableOriginalResize(boolean b) {
-		disableOriginalResize = b;
-	}
-*/
 	/**
 	 * @param replaceOptions セットする replaceOptions
 	 */
 	public void setReplaceOptions(Map<String, String> replaceOptions) {
 		this.replaceOptions = replaceOptions;
 	}
-
 }

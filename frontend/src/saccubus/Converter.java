@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -73,6 +72,8 @@ public class Converter extends Thread {
 	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
 	public static final String OWNER_EXT = "[Owner].xml";	// 投稿者コメントサフィックス
 	public static final String OPTIONAL_EXT = "{Optional}.xml";	// オプショナルスレッドサフィックス
+	public static final String TMP_APPEND_EXT = "_all_comment.xml";
+	public static final String TMP_APPEND_OPTIONAL_EXT = "_all_optional.xml";
 	private static final String TMP_COMBINED_XML = "_tmp_comment.xml";
 	private static final String TMP_COMBINED_XML2 = "_tmp_optional.xml";
 	private static final String TMP_COMBINED_XML3 = "_tmp_comment2.xml";
@@ -83,7 +84,7 @@ public class Converter extends Thread {
 	private final JLabel MovieInfo;
 	private InfoStack infoStack;
 	private BrowserCookieKind BrowserKind = BrowserCookieKind.NONE;
-	private final BrowserInfo BrowserInfo = new BrowserInfo();
+	private final BrowserInfo browserInfo = new BrowserInfo();
 	private String UserSession = "";	//ブラウザから取得したユーザーセッション
 	private final Stopwatch Stopwatch;
 	private File selectedVhook;
@@ -113,6 +114,7 @@ public class Converter extends Thread {
 	 */
 	private String result = "0";
 	private String dateUserFirst = "";
+	//private String dateUserLast = "";
 	private ArrayList<CommentReplace> commentReplaceSet = new ArrayList<CommentReplace>();
 	private final boolean watchvideo;
 	private double frameRate = 0.0;
@@ -121,6 +123,7 @@ public class Converter extends Thread {
 	private String lastFrame = "";
 	private ConcurrentLinkedQueue<File> fileQueue;
 	private static final String MY_MYLIST = "my/mylist";
+	private String alternativeVideoID = "";
 
 	public Converter(String url, String time, ConvertingSetting setting,
 			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
@@ -258,6 +261,8 @@ public class Converter extends Thread {
 	private String addOption;
 	private File CombinedCommentFile;
 	private File CombinedOptionalFile;
+	private File appendCommentFile;
+	private File appendOptionalFile;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -325,7 +330,9 @@ public class Converter extends Thread {
 	void addCommentReplace(CommentReplace cmrpl){
 		commentReplaceSet.add(cmrpl);
 	}
-
+	boolean isAppendComment(){
+		return Setting.isAppendComment();
+	}
 	private boolean checkOK() {
 		sendtext("チェックしています");
 		if (!isSaveConverted() && !isSaveVideo()
@@ -626,21 +633,39 @@ public class Converter extends Thread {
 		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
 			|| Setting.isSaveThumbInfo()) {
 			// ブラウザセッション共有の場合はここでセッションを読み込む
-			UserSession = BrowserInfo.getUserSession(Setting);
-			BrowserKind = BrowserInfo.getValidBrowser();
-			if (BrowserKind == BrowserCookieKind.NONE){
-				mailAddress = Setting.getMailAddress();
-				password = Setting.getPassword();
-				if (mailAddress == null || mailAddress.isEmpty()
-					|| password == null || password.isEmpty()) {
-					sendtext("メールアドレスかパスワードが空白です。");
-					result = "33";
-					return false;
+			//UserSession = browserInfo.getUserSession(Setting);
+			//BrowserKind = browserInfo.getValidBrowser();
+			for(BrowserCookieKind browser: BrowserInfo.ALL_BROWSER){
+				if (browser == BrowserCookieKind.NONE)
+					continue;
+				if (browser == BrowserCookieKind.Other){
+					BrowserKind = browser;
+					UserSession = browserInfo.getUserSessionOther(Setting.getBrowserCookiePath());
+					if(!UserSession.isEmpty())
+						break;
 				}
-			} else if (UserSession.isEmpty()){
-					sendtext("ブラウザ" + BrowserKind.getName() + "のセッション取得に失敗");
-					result = "34";
+				if(Setting.isBrowser(browser)){
+					BrowserKind = browser;
+					UserSession = browserInfo.getUserSession(browser);
+					if(!UserSession.isEmpty())
+						break;
+				}
+			}
+			if(UserSession.isEmpty()){
+				if (BrowserKind == BrowserCookieKind.NONE){
+					mailAddress = Setting.getMailAddress();
+					password = Setting.getPassword();
+					if (mailAddress == null || mailAddress.isEmpty()
+						|| password == null || password.isEmpty()) {
+						sendtext("ログインセッション無し、メールアドレスかパスワードが空白です。");
+						result = "33";
 					return false;
+					}
+				} else {
+						sendtext("ブラウザ" + BrowserKind.getName() + "のセッション取得に失敗");
+						result = "34";
+						return false;
+				}
 			}
 			if (useProxy()){
 				proxy = Setting.getProxy();
@@ -780,6 +805,8 @@ public class Converter extends Thread {
 		String commentTitle = "";
 		String prefix = "";
 		String back_comment = Setting.getBackComment();
+		ArrayList<File> filelist = new ArrayList<>();
+		boolean backup = false;
 		if (isSaveComment()) {
 			if (isCommentFixFileName()) {
 				if (folder.mkdir()) {
@@ -819,15 +846,36 @@ public class Converter extends Thread {
 						.getBackCommentFromLength(back_comment);
 			}
 			sendtext("コメントのダウンロード開始中");
-			CommentFile = client.getComment(CommentFile, Status, back_comment, Time, StopFlag, Setting.getCommentIndex());
+			if(isAppendComment()){
+				// ファイル名設定
+				appendCommentFile = mkTemp(TMP_APPEND_EXT);
+				// 前処理
+				if(CommentFile.exists()){
+					backup = Path.fileCopy(CommentFile,appendCommentFile);
+				}
+			}
+			File target = client.getComment(CommentFile, Status, back_comment, Time, StopFlag,
+					Setting.getCommentIndex(), isAppendComment());
 			if (stopFlagReturn()) {
 				result = "52";
 				return false;
 			}
-			if (CommentFile == null) {
+			if (target == null) {
 				sendtext("コメントのダウンロードに失敗 " + client.getExtraError());
+				if(backup)
+					Path.move(appendCommentFile, CommentFile);
 				result = "53";
 				return false;
+			}
+			if(isAppendComment()){
+				// ファイル内ダブリを整理
+				filelist.add(CommentFile);
+				sendtext("コメントファイル整理中");
+				if (!CombineXML.combineXML(filelist, CommentFile)){
+					sendtext("コメントファイルが整理出来ませんでした");
+					result = "5A";
+					return false;
+				}
 			}
 			//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
 			dateUserFirst = getDateUserFirst(CommentFile);
@@ -840,17 +888,38 @@ public class Converter extends Thread {
 				} else {
 					OptionalThreadFile = getOptionalThreadFile(Setting.getCommentFile());
 				}
+				backup = false;
+				if(isAppendComment()){
+					appendOptionalFile = mkTemp(TMP_APPEND_OPTIONAL_EXT);
+					// 前処理
+					if(OptionalThreadFile.exists()){
+						backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
+					}
+				}
 				sendtext("オプショナルスレッドのダウンロード開始中");
-				OptionalThreadFile = client.getOptionalThread(
-					OptionalThreadFile, Status, optionalThreadID, back_comment, Time, StopFlag, Setting.getCommentIndex());
+				target = client.getOptionalThread(
+					OptionalThreadFile, Status, optionalThreadID, back_comment, Time, StopFlag,
+					Setting.getCommentIndex(),isAppendComment());
 				if (stopFlagReturn()) {
 					result = "54";
 					return false;
 				}
-				if (OptionalThreadFile == null) {
+				if (target == null) {
 					sendtext("オプショナルスレッドのダウンロードに失敗 " + client.getExtraError());
+					if(backup)
+						Path.move(appendOptionalFile, OptionalThreadFile);
 					result = "55";
 					return false;
+				}
+				if(isAppendComment()){
+					filelist.clear();
+					filelist.add(OptionalThreadFile);
+					sendtext("オプショナルスレッド整理中");
+					if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
+						sendtext("オプショナルスレッドが整理出来ませんでした");
+						result = "5B";
+						return false;
+					}
 				}
 				if (dateUserFirst.isEmpty()) {
 					//ファイルの最初のdate="integer"を探して dateUserFirst にセット
@@ -863,37 +932,52 @@ public class Converter extends Thread {
 		sendtext("コメントの保存終了");
 		return true;
 	}
+
 	private File getOptionalThreadFile(File file) {
-		if (file == null || !file.isFile() || file.getPath() == null) {
+		if (file == null || file.getPath() == null) {
 			return mkTemp(OPTIONAL_EXT);
 		}
-		String path = file.getPath();
-		int index = path.lastIndexOf(".");
-		if (index > path.lastIndexOf(File.separator)) {
-			path = path.substring(0, index);		// 拡張子を削除
-		}
-		return new File(path + OPTIONAL_EXT);
+		return getReplacedExtFile(file, OPTIONAL_EXT);
 	}
 	private String getDateUserFirst(File comfile){
 		//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(CommentFile));
-			String text = br.readLine();
-			int begin = 0;
-			int end = 0;
-			if (text!=null && text.contains("date=\"")) {
-				begin = text.indexOf("date=\"") + "date=\"".length();
-				end = text.indexOf("\" ", begin);
-				if(end>0){
-					br.close();
-					return text.substring(begin, end);
-				}
-			}
-			br.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		String text = Path.readAllText(comfile, "UTF-8");
+		Pattern p = Pattern.compile("<chat [^>]+>");
+		Matcher m = p.matcher(text);
+		String chats = "";
+		String ret = "";
+		while(m.find()){
+			chats = m.group() ;
+			ret = getDateFromChat(chats);
+			if(!ret.isEmpty())
+				return ret;
+		}
+		return ret;
+	}
+	private static String getLastChat(File comfile){
+		//コメントファイルの最後の<chat thread="..." > の文字列を返す
+		String text = Path.readAllText(comfile, "UTF-8");
+		Pattern p = Pattern.compile("<chat [^>]+>");
+		Matcher m = p.matcher(text);
+		String chats = "";
+		while(m.find()){
+			chats = m.group();
+		}
+		return chats;
+	}
+	private static String getRexpFromChats(String chats, String rexp, int i){
+		Pattern p = Pattern.compile(rexp);
+		Matcher m = p.matcher(chats);
+		if(m.find()){
+			return m.group(i);
 		}
 		return "";
+	}
+	private String getDateFromChat(String chat){
+		return getRexpFromChats(chat,"date=\"([0-9]+)\"",1);
+	}
+	public static String getNoUserLastChat(File file) {
+		return getRexpFromChats(getLastChat(file),"no=\"([0-9]+)\"", 1);
 	}
 
 	private boolean saveOwnerComment(NicoClient client){
@@ -1098,12 +1182,7 @@ public class Converter extends Thread {
 			if (file == null || !file.isFile() || file.getPath() == null) {
 				thumbnailJpg = mkTemp(Tag + "_thumnail.jpg");
 			}else{
-				String path = file.getPath();
-				int index = path.lastIndexOf(".");
-				if (index > path.lastIndexOf(File.separator)) {
-					path = path.substring(0, index) + ".jpg";		// 拡張子を変更
-				}
-				thumbnailJpg = new File(path);
+				thumbnailJpg = getReplacedExtFile(file, ".jpg");
 			}
 		}
 		return true;
@@ -1135,22 +1214,17 @@ public class Converter extends Thread {
 	}
 
 	private File getThumbInfoFileFrom(File file, String ext) {
-		if (file == null || !file.isFile() || file.getPath() == null) {
+		if (file == null || file.getPath() == null) {
 			return mkTemp(THUMB_INFO + ext);
 		}
-		String path = file.getPath();
-		int index = path.lastIndexOf(".");
-		if (index > path.lastIndexOf(File.separator)) {
-			path = path.substring(0, index);		// 拡張子を削除
-		}
-		return new File(path + THUMB_INFO + ext);
+		return getReplacedExtFile(file, THUMB_INFO + ext);
 	}
 
 	private boolean makeNGPattern() {
 		sendtext("NGパターン作成中");
 		try{
-			String all_regex = "/((docomo|iPhone|softbank) (white )?)?.* 18[46]|18[46] .*/";
-			String def_regex = "/((docomo|iPhone|softbank) (white )?)?18[46]/";
+			String all_regex = "/((docomo|iPhone|softbank|device:3DS) (white )?)?.* 18[46]|18[46]( (iPhone|device:3DS))? .*/";
+			String def_regex = "/((docomo|iPhone|softbank|device:3DS) (white )?)?18[46]|18[46]( (iPhone|device:3DS))?/";
 			String ngWord = Setting.getNG_Word().replaceFirst("^all", all_regex).replace(" all", all_regex);
 			ngWord = ngWord.replaceFirst("^default", def_regex).replace(" default", def_regex);
 			ngWordPat = NicoXMLReader.makePattern(ngWord);
@@ -1169,12 +1243,28 @@ public class Converter extends Thread {
 		return Path.mkTemp(Tag + uniq);
 	}
 
+	private String getRemovedExtName(String path) {
+		int index = path.lastIndexOf(".");
+		if (index > path.lastIndexOf(File.separator)) {
+			path = path.substring(0, index);		// 拡張子を削除
+		}
+		return path;
+	}
+
+	private String getReplacedExtName(String path, String ext) {
+		return getRemovedExtName(path) + ext;
+	}
+
+	private File getReplacedExtFile(File file, String ext){
+		return new File(getReplacedExtName(file.getPath(),ext));
+	}
+
 	private boolean convertComment(){
 		sendtext("コメントの中間ファイルへの変換中");
 		File folder = Setting.getCommentFixFileNameFolder();
 		ArrayList<File> filelist = new ArrayList<File>();
 		if (isConvertWithComment()) {
-			if (Setting.isAddTimeStamp() && isCommentFixFileName()) {
+			if (Setting.isAddTimeStamp() && isCommentFixFileName() && !isAppendComment()) {
 				// 複数のコメントファイル（過去ログ）があるかも
 				ArrayList<String> pathlist = detectFilelistFromComment(folder);
 				if (pathlist == null || pathlist.isEmpty()){
@@ -1241,6 +1331,10 @@ public class Converter extends Thread {
 					}
 				}
 			}
+			//alternativeVideoID取得
+			if(alternativeVideoID.isEmpty()){
+				alternativeVideoID = getViewCounterID(CommentFile);
+			}
 			//combine ファイル内ダブリも削除
 			filelist.clear();
 			filelist.add(CommentFile);
@@ -1266,13 +1360,29 @@ public class Converter extends Thread {
 		return true;
 	}
 
+	private String getViewCounterID(File comfile) {
+		//コメントファイルの最初の<view_counter id="..." > の文字列を返す
+		String text = Path.readAllText(comfile, "UTF-8");
+		Pattern p = Pattern.compile("<view_counter [^>]+>");
+		Matcher m = p.matcher(text);
+		String view_counter = "";
+		String ret = "";
+		while(m.find()){
+			view_counter  = m.group() ;
+			ret = getRexpFromChats(view_counter, "id=\"([a-zA-Z]+[0-9]+)\"", 1);
+			if(!ret.isEmpty())
+				return "[" + ret + "]";
+		}
+		return ret;
+	}
+
 	private boolean convertOprionalThread(){
 		sendtext("オプショナルスレッドの中間ファイルへの変換中");
 		File folder = Setting.getCommentFixFileNameFolder();
 		ArrayList<File> filelist = new ArrayList<File>();
 		if (isConvertWithComment()) {
 			if (isCommentFixFileName()) {
-				if (Setting.isAddTimeStamp()) {
+				if (Setting.isAddTimeStamp() && !isAppendComment()) {
 					// フォルダ指定時、複数のオプショナルスレッド（過去ログ）があるかも
 					ArrayList<String> pathlist = detectFilelistFromOptionalThread(folder);
 					if (pathlist == null || pathlist.isEmpty()){
@@ -1385,6 +1495,10 @@ public class Converter extends Thread {
 						return true;
 					}
 				}
+			}
+			//alternativeVideoID取得
+			if(alternativeVideoID.isEmpty()){
+				alternativeVideoID = getViewCounterID(OwnerCommentFile);
 			}
 			OwnerMiddleFile = mkTemp(TMP_OWNERCOMMENT);
 			//ここで commentReplaceが作られる
@@ -2432,7 +2546,7 @@ public class Converter extends Thread {
 		ffmpeg.addCmd(" -metadata");
 		ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
 		ffmpeg.addCmd(" -metadata");
-		ffmpeg.addCmd(" \"comment="+VideoID+"\"");
+		ffmpeg.addCmd(" \"comment="+alternativeVideoID+"\"");
 		ffmpeg.addCmd(" ");
 	}
 
@@ -2717,6 +2831,9 @@ public class Converter extends Thread {
 		int code = -1;
 		infoStack = new InfoStack(MovieInfo);
 		File input = VideoFile;
+		if(alternativeVideoID.isEmpty()){
+			alternativeVideoID = VideoID;
+		}
 		if(fwsFile!=null)
 			input = fwsFile;
 		if (!Cws2Fws.isFws(input) && !Cws2Fws.isCws(input)) {

@@ -17,6 +17,7 @@ public class MultiXMLHandler extends DefaultHandler {
 
 	public MultiXMLHandler(ChatArray chatArray) {
 		this.chatArray = chatArray;
+		chat_kicked = false;
 	}
 
 	@Override
@@ -28,13 +29,18 @@ public class MultiXMLHandler extends DefaultHandler {
 	public void startElement(String uri, String localName, String qName, Attributes attributes) {
 	  try{
 		if (qName.toLowerCase().equals("thread")){
+			chat = null;
 			String thread = attributes.getValue("thread");
 			chatArray.setThread(thread);
 			// System.out.print("thread(" + thread + ") ");
 			return;
 		}
+		if (qName.toLowerCase().equals("thread")){
+			chat = null;
+			return;
+		}
 		if (qName.toLowerCase().equals("chat")) {
-			chat = new ChatSave();
+			chat = new ChatSave("chat");
 			chat_kicked = false;
 			//É}ÉCÉÅÉÇÉäçÌèúëŒè€
 			String deleted = attributes.getValue("deleted");
@@ -42,8 +48,14 @@ public class MultiXMLHandler extends DefaultHandler {
 				chat_kicked = true;
 				return;
 			}
-			chat.setAttributeString(new ChatAttribute(attributes));
-			//chat.setNo(attributes.getValue("no"));
+			chat.setAttributeString(new ChatAttribute("chat",attributes));
+			return;
+		}
+		// other qName
+		{
+			chat = new ChatSave(qName);
+			chat_kicked = false;
+			chat.setAttributeString(new ChatAttribute(qName, attributes));
 			return;
 		}
 	  }catch(Exception e){
@@ -55,13 +67,15 @@ public class MultiXMLHandler extends DefaultHandler {
 	@Override
 	public void characters(char[] ch, int offset, int length) {
 		if (chat != null) {
-			chat.setComment(new String(ch, offset, length));
+			if(chat.getQName().equals("chat")){
+				chat.setComment(new String(ch, offset, length));
+			}
 		}
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName) {
-		if (qName.equalsIgnoreCase("chat")) {
+		if (chat != null) {
 			if (!chat_kicked) {
 				chatArray.addChat(chat);
 			}

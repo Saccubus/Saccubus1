@@ -3,6 +3,8 @@ package saccubus.conv;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -10,6 +12,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
+
+import saccubus.net.Path;
 
 /**
  *
@@ -42,6 +46,12 @@ public class CombineXML {
 					filename = filename.substring(index+1,index2);
 				}
 				System.out.print(filename + ". ");
+				String text = Path.readAllText(file, "UTF-8");
+				String rexp = "</packet>.*<\\?xml [^>]*>.?<packet>";
+				Pattern p = Pattern.compile(rexp, Pattern.DOTALL);
+				Matcher m = p.matcher(text);
+				text = m.replaceAll("");
+				Path.writeAllText(file, text, "UTF-8");
 				saxparser.parse(file, xmlhandler);
 			}
 			// ïœä∑åãâ ÇÃèëÇ´çûÇ›
