@@ -633,39 +633,21 @@ public class Converter extends Thread {
 		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
 			|| Setting.isSaveThumbInfo()) {
 			// ブラウザセッション共有の場合はここでセッションを読み込む
-			//UserSession = browserInfo.getUserSession(Setting);
-			//BrowserKind = browserInfo.getValidBrowser();
-			for(BrowserCookieKind browser: BrowserInfo.ALL_BROWSER){
-				if (browser == BrowserCookieKind.NONE)
-					continue;
-				if (browser == BrowserCookieKind.Other){
-					BrowserKind = browser;
-					UserSession = browserInfo.getUserSessionOther(Setting.getBrowserCookiePath());
-					if(!UserSession.isEmpty())
-						break;
-				}
-				if(Setting.isBrowser(browser)){
-					BrowserKind = browser;
-					UserSession = browserInfo.getUserSession(browser);
-					if(!UserSession.isEmpty())
-						break;
-				}
-			}
-			if(UserSession.isEmpty()){
-				if (BrowserKind == BrowserCookieKind.NONE){
-					mailAddress = Setting.getMailAddress();
-					password = Setting.getPassword();
-					if (mailAddress == null || mailAddress.isEmpty()
-						|| password == null || password.isEmpty()) {
-						sendtext("ログインセッション無し、メールアドレスかパスワードが空白です。");
-						result = "33";
+			UserSession = browserInfo.getUserSession(Setting);
+			BrowserKind = browserInfo.getValidBrowser();
+			if (BrowserKind == BrowserCookieKind.NONE){
+				mailAddress = Setting.getMailAddress();
+				password = Setting.getPassword();
+				if (mailAddress == null || mailAddress.isEmpty()
+					|| password == null || password.isEmpty()) {
+					sendtext("ログインセッション無し、メールアドレスかパスワードが空白です。");
+					result = "33";
 					return false;
-					}
-				} else {
-						sendtext("ブラウザ" + BrowserKind.getName() + "のセッション取得に失敗");
-						result = "34";
-						return false;
 				}
+			} else if(UserSession.isEmpty()){
+				sendtext("ブラウザ" + BrowserKind.getName() + "のセッション取得に失敗");
+				result = "34";
+				return false;
 			}
 			if (useProxy()){
 				proxy = Setting.getProxy();

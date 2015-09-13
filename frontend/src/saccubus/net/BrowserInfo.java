@@ -78,33 +78,24 @@ public class BrowserInfo {
 		String user_session = "";
 		if(setting == null)
 			return user_session;
-		for (BrowserCookieKind browser : ALL_BROWSER){
-			switch(browser){
-			case MSIE:
-				if (setting.isBrowser(browser)){
-					user_session = getUserSession(browser);
-				}
-				break;
-			case Firefox:
-			case Chrome:
-			case Chromium:
-			case Opera:
-				if (user_session.isEmpty() && setting.isBrowser(browser)){
-					user_session = getUserSession(browser);
-				}
-				break;
-			case Other:
-				if (user_session.isEmpty() && setting.isBrowserOther()){
+		for(BrowserCookieKind browser: BrowserInfo.ALL_BROWSER){
+			if(setting.isBrowser(browser)){
+				validBrowser = browser;
+				if (browser == BrowserCookieKind.NONE)
+					continue;
+				if (browser == BrowserCookieKind.Other){
 					user_session = getUserSessionOther(setting.getBrowserCookiePath());
+					if(!user_session.isEmpty())
+						break;
+				}else{
+					user_session = getUserSession(browser);
+					if(!user_session.isEmpty())
+						break;
 				}
-				break;
-			default:
-				break;
 			}
 		}
 		return user_session;
 	}
-
 	public BrowserCookieKind getValidBrowser(){
 		return validBrowser;
 	}
