@@ -73,7 +73,7 @@ public class NicoClient {
 		nicomap = new NicoMap();
 		ConProxy = conProxy(proxy, proxy_port);
 		// ÉçÉOÉCÉì
-		Logged_in = login();
+		Logged_in = login() && loginCheck();
 	}
 
 	private Proxy conProxy(String proxy, final int proxy_port){
@@ -279,7 +279,7 @@ public class NicoClient {
 	private boolean login() {
 		try {
 			System.out.print("Trying login...");
-			String url = "https://secure.nicovideo.jp/secure/login?site=niconico";
+			String url = "https://account.nicovideo.jp/api/v1/login?show_button_twitter=1&site=niconico&show_button_facebook=1";
 			debug("\nÅ°HTTPS<" + url + ">\n");
 			HttpURLConnection con = (HttpsURLConnection) (new URL(url))
 				.openConnection(ConProxy);
@@ -292,7 +292,7 @@ public class NicoClient {
 			connect(con);
 			StringBuffer sb = new StringBuffer(4096);
 			sb.append("next_url=/&");
-			sb.append("mail=");
+			sb.append("mail_tel=");
 			sb.append(URLEncoder.encode(User, "Shift_JIS"));
 			sb.append("&password=");
 			sb.append(URLEncoder.encode(Pass, "Shift_JIS"));

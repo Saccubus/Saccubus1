@@ -116,16 +116,15 @@ public class NicoMap {
 	void add(String key, String value){
 		if(!key.equalsIgnoreCase("Set-Cookie")){
 			this.put(key, value);
-		} else {
-		//Set-Cookie
+		}else{
+			//Set-Cookie
 			if (!this.containsKey(key)){
+				//Set-Cookie 1st
 				this.put(key, value);
-			} else {
+			}else{
 				//Set-Cookie 2nd
-				NicoMap nm = new NicoMap();
-				nm.splitAndPut(this.get(key), "; ");
-				nm.splitAndPut(value, "; ");
-				this.put(key, nm.toString());
+				value = this.get(key) + "; " + value;
+				this.put(key, value);
 			}
 		}
 	}
