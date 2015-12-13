@@ -36,6 +36,7 @@ int init(FILE* log){
 	return TRUE;
 }
 
+int checkMSPGOTHIC(TTF_Font* font);
 int printFontInfo(FILE* log,TTF_Font** pfont,int size,const char* name);
 //int extra_font(SETTING* setting, FILE* log);
 /*
@@ -347,6 +348,11 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 				direction = 0;
 				while(try>0){
 					font[i] = TTF_OpenFontIndex(font_path,fontsize,fixed_font_index);
+					if(f==0 && fixed_font_index!=0 && font[i]!=NULL && !checkMSPGOTHIC(font[i])){
+						fputs("[main/init]Not MS PGothic, retry\n",log);
+						fixed_font_index = fixed_font_index==1 ? 2:1;
+						font[i] = TTF_OpenFontIndex(font_path,fontsize,fixed_font_index);
+					}
 					if(fixed_font_index!=0 && font[i] == NULL){
 						//try index 0
 						fixed_font_index = 0;
@@ -502,7 +508,14 @@ int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int m
 	fflush(log);
 	return TRUE;
 }
-
+// check MS P GOTHIC
+int checkMSPGOTHIC(TTF_Font* font){
+	char *familyname=TTF_FontFaceFamilyName(font);
+	if(strstr(familyname,"MS PGothic")){
+		return TRUE;
+	}
+	return FALSE;
+}
 // check and print font info
 int printFontInfo(FILE* log, TTF_Font** font,int size,const char* name){
 	char *familyname=TTF_FontFaceFamilyName(font[size]);
