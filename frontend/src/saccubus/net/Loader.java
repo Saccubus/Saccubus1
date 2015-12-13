@@ -147,9 +147,7 @@ public class Loader {
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(
 				new FileOutputStream(file), encoding));			if(client.Debug){
 				System.out.println();
-				NicoMap nicomap = new NicoMap();
-				nicomap.putConnection(con);
-				nicomap.printAll(System.out);
+				new NicoMap().putConnection(con, System.out);
 			}
 			while ((ret = br.readLine()) != null) {
 				pw.println(ret);

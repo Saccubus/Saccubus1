@@ -128,7 +128,7 @@ public class NicoClient {
 				if (session != null && !session.isEmpty()){
 					String this_session = "user_session=" + session;
 					Cookie = new NicoCookie();
-					Cookie.session_cookie = this_session;
+					Cookie.setSession(this_session);
 					if(loginCheck()){
 						Logged_in = true;	// ログイン済みのハズ
 						return;
@@ -148,63 +148,6 @@ public class NicoClient {
 		}
 	}
 
-	static class NicoCookie {
-		//Set-Cookie
-		// 1 https secure cookie for login (about one month)
-		// 2 nicosid cookie (long life)
-		// 3 user_session cookie (about one month)
-		// 4 delete user_session cookie, shall immediately expire (no life)
-		// 5 other
-		String secure_cookie;
-		String normal_cookie;
-		String session_cookie;
-		String delete_cookie;
-		String other_cookie;
-		String ret_cookie;
-
-		String get(String url){
-			ret_cookie = "";
-			if(url.contains("https"))
-				add(secure_cookie);
-			add(normal_cookie);
-			add(session_cookie);
-			add(other_cookie);
-			return ret_cookie;
-		}
-		void add(String str){
-			if(str!=null && !str.isEmpty()){
-				if(!ret_cookie.isEmpty()){
-					ret_cookie += "; ";
-				}
-				ret_cookie += str;
-			}
-		}
-		boolean isEmpty(){
-			if(secure_cookie==null
-			&& normal_cookie==null
-			&& session_cookie==null
-			&& delete_cookie==null
-			&& other_cookie==null)
-				return true;
-			return false;
-		}
-		public String toString(){
-			return get("https");
-		}
-		public void update(NicoCookie new_cookie) {
-			if(new_cookie==null) return;
-			if(new_cookie.secure_cookie!=null && !new_cookie.secure_cookie.isEmpty())
-				secure_cookie = new_cookie.secure_cookie;
-			if(new_cookie.normal_cookie!=null && !new_cookie.normal_cookie.isEmpty())
-				normal_cookie = new_cookie.normal_cookie;
-			if(new_cookie.session_cookie!=null && !new_cookie.session_cookie.isEmpty())
-				session_cookie = new_cookie.session_cookie;
-			if(new_cookie.delete_cookie!=null && !new_cookie.delete_cookie.isEmpty())
-				delete_cookie = new_cookie.delete_cookie;
-			if(new_cookie.other_cookie!=null && !new_cookie.other_cookie.isEmpty())
-				other_cookie = new_cookie.other_cookie;
-		}
-	}
 	private NicoCookie Cookie = null;
 
 	HttpURLConnection urlConnectGET(String url){
@@ -324,17 +267,10 @@ public class NicoClient {
 	}
 
 	private NicoCookie detectCookie(HttpURLConnection con){
-		nicomap.putConnection(con);
-		if (Debug){
-			nicomap.printAll(System.out);
-		}
+		nicomap.putConnection(con, (Debug? System.out:null));
 		NicoCookie cookie = new NicoCookie();
-		cookie.secure_cookie = nicomap.get(NicoMap.SECURE_COOKIE);
-		cookie.normal_cookie = nicomap.get(NicoMap.NORMAL_COOKIE);
-		cookie.session_cookie = nicomap.get(NicoMap.SESSION_COOKIE);
-		cookie.delete_cookie = nicomap.get(NicoMap.DELETE_COOKIE);
-		cookie.other_cookie = nicomap.get(NicoMap.OTHER_COOKIE);
-		debug("■<NicoCookie><" + cookie.toString() + ">\n");
+		nicomap.setCookie(cookie);
+	//	debug("■<NicoCookie><" + cookie.toString() + ">\n");
 		return cookie;
 	}
 
@@ -495,14 +431,7 @@ public class NicoClient {
 				System.out.println("ng.\nCan't getVideoHistory:" + url);
 				return false;
 			}
-			NicoCookie new_cookie = detectCookie(con);
-			if (new_cookie == null || new_cookie.isEmpty()) {
-				System.out.println("ng.\nCan't getVideoHistory: cannot get cookie.");
-				/*
-				con.disconnect();
-				return false;
-				*/
-			}
+			Cookie.update(detectCookie(con));
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
 				encoding = "UTF-8";
@@ -578,7 +507,6 @@ public class NicoClient {
 				System.out.println(" <" + Path.toUnixPath(titleHtml) + "> saved.");
 			}
 			System.out.println("ok.");
-			Cookie.update(new_cookie);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			return false;
@@ -694,11 +622,7 @@ public class NicoClient {
 				return null;
 			}
 			InputStream is = con.getInputStream();
-			if(Debug){
-				NicoMap videoMap = new NicoMap();
-				videoMap.putConnection(con);
-				videoMap.printAll(System.out);
-			}
+			new NicoMap().putConnection(con, (Debug? System.out:null));
 
 			if(ContentType==null){
 				ContentType = con.getHeaderField("Content-Type");
@@ -1356,7 +1280,7 @@ public class NicoClient {
 				System.out.println("ng.\nCan't getThumbInfo:" + url);
 				return null;
 			}
-			Cookie.update(detectCookie(con));
+		//	Cookie.update(detectCookie(con));
 
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
@@ -1446,7 +1370,7 @@ public class NicoClient {
 				System.out.println("ng.\nCan't getThumbUser:" + url);
 				return null;
 			}
-			Cookie.update(detectCookie(con));
+		//	Cookie.update(detectCookie(con));
 
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
@@ -1488,7 +1412,7 @@ public class NicoClient {
 				System.out.println("ng.\nCan't getUserInfo:" + url);
 				return null;
 			}
-			Cookie.update(detectCookie(con));
+		//	Cookie.update(detectCookie(con));
 
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
@@ -1536,7 +1460,7 @@ public class NicoClient {
 				System.out.println("ng.\nCan't getThumbnailJpg:" + url);
 				return false;
 			}
-			Cookie.update(detectCookie(con));
+		//	Cookie.update(detectCookie(con));
 
 			InputStream is = con.getInputStream();
 			FileOutputStream fos = new FileOutputStream(thumbnalJpgFile);
