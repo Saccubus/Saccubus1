@@ -235,6 +235,8 @@ public class MainFrame extends JFrame {
 	private JCheckBox liveOperationCheckBox = new JCheckBox();
 	private JCheckBox premiumColorCheckBox = new JCheckBox();
 	private JCheckBox appendCommentCheckBox = new JCheckBox();
+	private JTextField nThreadTextField = new JTextField();
+	private Activity activity;
 
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
@@ -1046,6 +1048,7 @@ public class MainFrame extends JFrame {
 		grid14_x1_y4.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(fpsConvRadioButton, grid14_x1_y4);
 //
+
 		soundOnlyCheckBox.setText("映像なし許可");
 		soundOnlyCheckBox.setForeground(Color.blue);
 		soundOnlyCheckBox.setToolTipText("映像が認識できない時音声のみコメント付きに変換する");
@@ -1508,6 +1511,7 @@ public class MainFrame extends JFrame {
 		MainTabbedPane.add(SavingInfoTabPanel, "保存設定");
 		MainTabbedPane.add(FFMpegInfoTabPanel, "動画設定");
 		MainTabbedPane.addTab("変換設定", null, getConvertingSettingPanel(), null);
+		MainTabbedPane.addTab("管理", getManagentPanel());
 		SavingInfoTabPanel.add(getSaveInfoTabPaneEach(), grid2_x__y__35);
 		FFmpegInfoTabPaneEach.addTab("変換オプション設定(共通)", null, FFMpegTab2Panel, null);
 		FFmpegInfoTabPaneEach.addTab("変換オプション設定(従来)", null, FFMpegTabPanel, null);
@@ -1520,6 +1524,7 @@ public class MainFrame extends JFrame {
 		BasicInfoTabPanel.add(UserInfoPanel, grid12_x0_y0_7);
 		BasicInfoTabPanel.add(getProxyInfoPanel(), grid12_x0_y1_6);
 		BasicInfoTabPanel.add(BrowserInfoPanel, grid12_x0_y2_95);
+
 		GridBagConstraints grid12_x0_y3 = new GridBagConstraints();
 		grid12_x0_y3.gridx = 0;
 		grid12_x0_y3.gridy = 3;
@@ -1529,6 +1534,7 @@ public class MainFrame extends JFrame {
 		grid12_x0_y3.fill = GridBagConstraints.HORIZONTAL;
 		grid12_x0_y3.anchor = GridBagConstraints.NORTH;
 		BasicInfoTabPanel.add(updateInfoPanel,grid12_x0_y3);
+
 		VhookSettingPanel.setLayout(gridBagLayout8);
 		VhookSettingPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(), "拡張vhookライブラリの設定"));
@@ -2052,6 +2058,64 @@ public class MainFrame extends JFrame {
 		experimentPanel.add(extraModeField, grid20_x1_y12);
 	}
 
+	private JPanel getManagentPanel() {
+		if(managementPanel ==null){
+
+			managementPanel = new JPanel();
+			managementPanel.setLayout(new GridBagLayout());
+
+			managementControl = new JPanel();
+			managementControl.setLayout(new GridBagLayout());
+			managementControl.setBorder(BorderFactory.createTitledBorder(
+					BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+					"管理制御", TitledBorder.LEADING, TitledBorder.TOP,
+					getFont(), Color.red));
+			GridBagConstraints grid401 = new GridBagConstraints();
+			grid401.gridx = 0;
+			grid401.gridy = 0;
+			grid401.gridwidth = 1;
+			grid401.gridheight = 1;
+			grid401.weightx = 0.0;
+			grid401.anchor = GridBagConstraints.NORTH;
+			grid401.fill = GridBagConstraints.HORIZONTAL;
+			grid401.insets = INSETS_0_5_0_5;
+			managementControl.add(new JLabel("同時変換数"),grid401);
+			GridBagConstraints grid402 = new GridBagConstraints();
+			grid402.gridx = 1;
+			grid402.gridy = 0;
+			grid402.gridwidth = 1;
+			grid402.gridheight = 1;
+			grid402.weightx = 1.0;
+			grid402.anchor = GridBagConstraints.NORTH;
+			grid402.fill = GridBagConstraints.HORIZONTAL;
+			grid402.insets = INSETS_0_5_0_5;
+			managementControl.add(nThreadTextField,grid402);
+			GridBagConstraints grid40 = new GridBagConstraints();
+			grid40.gridx = 0;
+			grid40.gridy = 0;
+			grid40.gridwidth = 1;
+			grid40.weightx = 1.0;
+			grid40.anchor = GridBagConstraints.NORTH;
+			grid40.fill = GridBagConstraints.BOTH;
+			grid40.insets = INSETS_0_5_0_5;
+			managementPanel.add(managementControl,grid40);
+
+			GridBagConstraints grid41 = new GridBagConstraints();
+			grid41.gridx = 0;
+			grid41.gridy = 2;
+			grid41.gridwidth = 1;
+			grid41.weightx = 1.0;
+			grid41.weighty = 1.0;
+			grid41.anchor = GridBagConstraints.NORTH;
+			grid41.fill = GridBagConstraints.BOTH;
+			grid41.insets = INSETS_0_5_0_5;
+			activity = new Activity(statusBar);
+			activityStatusPanel = activity.getActiveStatusPanel();
+			managementPanel.add(activityStatusPanel, grid41);
+}
+		return managementPanel;
+	}
+
 	private void setPopup() {
 		MainOptionField.addMouseListener(new PopupRightClick(
 				this.MainOptionField));
@@ -2250,14 +2314,20 @@ public class MainFrame extends JFrame {
 		ownercomment += saccubus.Converter.OWNER_EXT;
 		Double fpsUp = 0.0;
 		Double fpsMin = 0.0;
-//		if(fpsUpCheckBox.isSelected()){
+		{	//if(fpsUpCheckBox.isSelected()){
 			try{
 				fpsUp = Double.parseDouble(fpsUpTextFiled.getText());
 				fpsMin = Double.parseDouble(fpsMinTextField.getText());
 			}catch(NumberFormatException e){
 				//e.printStackTrace();
 			}
-//		}
+		}
+		int nThread;
+		try {
+			nThread = Integer.parseInt(nThreadTextField.getText());
+		} catch(NumberFormatException e){
+			nThread = 1;
+		}
 		return new ConvertingSetting(
 			MailAddrField.getText(),
 			new String(PasswordField.getPassword()),
@@ -2373,7 +2443,8 @@ public class MainFrame extends JFrame {
 			liveOperationCheckBox.isSelected(),
 			premiumColorCheckBox.isSelected(),
 			zqOptionFileDescription.getText(),
-			appendCommentCheckBox.isSelected()
+			appendCommentCheckBox.isSelected(),
+			nThread
 		);
 	}
 /*
@@ -2531,6 +2602,7 @@ public class MainFrame extends JFrame {
 		zqOptionFileDescription.setLineWrap(true);
 		zqOptionFileDescription.setEditable(false);
 		appendCommentCheckBox.setSelected(setting.isAppendComment());
+		nThreadTextField.setText(Integer.toString(setting.getNumThread()));
 	}
 
 	/**
@@ -2559,7 +2631,7 @@ public class MainFrame extends JFrame {
 	}
 
 	/* 変換・保存する */
-	Converter converter = null;
+	ConvertManager convertManager = null;
 	ConcurrentLinkedQueue<File> queue = new ConcurrentLinkedQueue<File>();
 
 	JTextField CommandLineInOptionField = new JTextField();
@@ -2607,8 +2679,6 @@ public class MainFrame extends JFrame {
 	private JPanel NGWordSettingPanel = null;
 	private JLabel NGWordLabel = null;
 	private JTextField NGWordTextField = null;
-	//JLabel ngCmdLabel = null;
-	//JTextField ngCmdTextField = null;
 	private JLabel NGIDLabel = null;
 	private JTextField NGIDTextField = null;
 	private JPanel ProxyInfoPanel = null;
@@ -2648,63 +2718,57 @@ public class MainFrame extends JFrame {
 	private JPanel sharedNgPanel;
 	public static StringBuffer history = new StringBuffer("");
 	private boolean isLastMylist = false;
+	private JPanel managementPanel;
+	private JPanel managementControl = new JPanel();
+	private JPanel activityStatusPanel;
 
 	public void DoButton_actionPerformed(ActionEvent e) {
 		ConvertStopFlag stopFlag;
 		try{
 			String url = VideoID_TextField.getText();
-			if (converter != null && !converter.isFinished()) {
-				//converter実行中→converter中止
-				final ConvertStopFlag flag = converter.getStopFlag();
-				if(flag!=null && !flag.needStop() && !flag.isFinished()){ /* まだストップしていない。 */
-					flag.stop();
+			if (convertManager != null && !convertManager.isFinished()) {
+				//convertManager実行中→convertManager中止
+				stopFlag = convertManager.getStopFlag();
+				if(stopFlag!=null && !stopFlag.needStop() && !stopFlag.isFinished()){
+					// convertManager has not yet stopped.
+					stopFlag.stop();
 				}
-			}else
-				//converter is finished and Button is pushed
+			}else{
+				//convertManager is finished and Button is pushed
 				// so new video or new mylist will be converted
-			if(url==null){
-				sendtext("MainFrame NULLPOinter url error");
-				System.out.println("MainFrame NULLPOinter url error");
-			}else if(url.contains("mylist")){
-				//converter worker start
-				isLastMylist = true;
-				stopFlag = new ConvertStopFlag(DoButton, DoButtonStopString, DoButtonWaitString, DoButtonDefString);
-				StringBuffer sb = new StringBuffer();
-				converter = new Converter(
-						url,
-						WayBackField.getText(),
-						getSetting(),
-						statusBar,
-						stopFlag,
-						vhookInfoBar,
-						elapsedTimeBar,
-						this,
-						sb);
-				converter.start();
-				// return to dispatch
-			}else
-			{
-				//通常変換
-				// Shall fileQueue for playing video be cleared or truncated to 1 file?
-				// Now it will be cleared only change mylist to video, temporally.
-				if(isLastMylist){
-					queue.clear();
-					if(converter.getConvertedVideoFile()!=null){
-						queue.offer(converter.getConvertedVideoFile());
+				if(url==null){
+					sendtext("MainFrame NULLPOinter url error");
+					System.out.println("MainFrame NULLPOinter url error");
+				}else if(url.contains("mylist")){
+					//マイリスト
+					//convertManager worker start
+					isLastMylist = true;
+				}else
+				{
+					//通常変換
+					// Shall fileQueue for playing video be cleared or truncated to 1 file?
+					// Now it will be cleared only change mylist to video, temporally.
+					if(isLastMylist){
+						queue.clear();
+						if(convertManager.getConvertedVideoFile()!=null){
+							queue.offer(convertManager.getConvertedVideoFile());
+						}
+						isLastMylist = false;
 					}
-					isLastMylist = false;
 				}
-				stopFlag = new ConvertStopFlag(DoButton, DoButtonStopString, DoButtonWaitString, DoButtonDefString);
-				converter = new Converter(
+				StringBuffer sb = new StringBuffer();
+				convertManager = new ConvertManager(
 					url,
 					WayBackField.getText(),
 					getSetting(),
 					statusBar,
-					stopFlag,
+					new ConvertStopFlag(DoButton),
 					vhookInfoBar,
 					elapsedTimeBar,
-					queue);
-				converter.start();
+					this,
+					sb,queue);
+				convertManager.start();
+				// return to dispatch
 			}
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -2773,8 +2837,8 @@ public class MainFrame extends JFrame {
 
 	// 変換動画再生
 	private void playConvertedVideo_actionPerformed(ActionEvent e) {
-		if(converter!=null)
-			converter.playConvertedVideo();
+		if(convertManager!=null)
+			convertManager.playConvertedVideo();
 	}
 
 	/* readme表示 */
@@ -2871,32 +2935,6 @@ public class MainFrame extends JFrame {
 		});
 		return output;
 	}
-
-/*
- 	private ArrayList<String> execOutFFmpeg(String parameter)
-			throws FileNotFoundException {
-		final ArrayList<String> output = new ArrayList<String>();
-
-		if (parameter == null) {
-			parameter = "";
-		}
-		String path = getSetting().getFFmpegPath();
-		if (!new File(path).canRead()) {
-			throw new FileNotFoundException("FFmpegが見つかりません");
-		}
-		FFmpeg ffmpeg = new FFmpeg(path);
-		ffmpeg.setCmd(parameter);
-	//	System.out.println("execute:" + ffmpeg.getCmd());
-		ffmpeg.exec(new FFmpeg.Callback() {
-				@Override
-				public void doEveryLoop(String e) {
-				//	System.out.println(e);
-					output.add(e.trim() + "\n");
-				}
-		});
-		return output;
-	}
-*/
 
 	/* ビデオ・セーブダイアログ */
 	public void ShowSavingVideoDialogButton_actionPerformed(ActionEvent e) {
@@ -4378,6 +4416,7 @@ class MainFrame_LoadNGConfig implements ActionListener {
 
 class MainFrame_noticePop implements ActionListener {
 	MainFrame adaptee;
+	static boolean showed = false;
 
 	public MainFrame_noticePop(MainFrame frame) {
 		adaptee = frame;
@@ -4385,7 +4424,7 @@ class MainFrame_noticePop implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JCheckBox src = (JCheckBox)e.getSource();
-		if(src.isSelected()){
+		if(src.isSelected() && !showed){
 			MsgBox box = new MsgBox(
 				adaptee, "注意", 450, 150,
 				 "追加モードは指定ファイルにコメントを追加保存します。\n"
@@ -4394,6 +4433,7 @@ class MainFrame_noticePop implements ActionListener {
 				+"変換実行の成功後、指定したファイルの追加されたコメントを含む\n"
 				+"全てのコメントが削除されます。\n"
 			);
+			showed = true;
 			box.setVisible(true);
 		}
 	}

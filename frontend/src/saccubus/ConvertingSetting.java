@@ -177,6 +177,7 @@ public class ConvertingSetting {
 	private boolean premiumColorCheck;
 	private String optionFileDescription;
 	private boolean appendCommentMode;
+	private int numThread;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -394,7 +395,8 @@ public class ConvertingSetting {
 			boolean live_operation,
 			boolean premium_color_check,
 			String option_file_description,
-			boolean append_comment
+			boolean append_comment,
+			int n_thread
 		)
 	{
 		this(	mailaddress,
@@ -523,6 +525,7 @@ public class ConvertingSetting {
 		premiumColorCheck = premium_color_check;
 		optionFileDescription = option_file_description;
 		appendCommentMode = append_comment;
+		numThread = n_thread;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -896,6 +899,9 @@ public class ConvertingSetting {
 	public static String getDefOptsMix(){
 		return defOptsMix;
 	}
+	public int getNumThread(){
+		return numThread;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -1027,6 +1033,7 @@ public class ConvertingSetting {
 	static final String PROP_PREMIUM_COLOR_CHECK = "PremiumColorCheck";
 	static final String PROP_OPTION_FILE_DESCR = "OptionFileDescr";
 	static final String PROP_APPEND_COMMENT = "AppendComment";
+	static final String PROP_NUM_THREAD = "NumberOfThreads";
 	// ì«Ç›çûÇﬁÇæÇØÅAï€ë∂ÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1230,6 +1237,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_PREMIUM_COLOR_CHECK, Boolean.toString(setting.isPremiumColorCheck()));
 		prop.setProperty(PROP_OPTION_FILE_DESCR, "");
 		prop.setProperty(PROP_APPEND_COMMENT, Boolean.toString(setting.isAppendComment()));
+		prop.setProperty(PROP_NUM_THREAD, Integer.toString(setting.getNumThread()));
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1475,7 +1483,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_LIVE_OPERATION,"false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_PREMIUM_COLOR_CHECK,"false")),
 			prop.getProperty(PROP_OPTION_FILE_DESCR, ""),
-			Boolean.parseBoolean(prop.getProperty(PROP_APPEND_COMMENT, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_APPEND_COMMENT, "false")),
+			Integer.parseInt(prop.getProperty(PROP_NUM_THREAD, "1"))
 		);
 	}
 

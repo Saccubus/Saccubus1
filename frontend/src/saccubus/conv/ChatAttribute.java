@@ -59,10 +59,14 @@ public class ChatAttribute {
 		for (int i = 0; i <attributes.getLength(); i++) {
 			sb.append(attributes.getQName(i));
 			sb.append("=\"");
-			sb.append(ChatSave.safeReference(attributes.getValue(i)));
+			sb.append(safeReference(attributes.getValue(i)));
 			sb.append("\" ");
 		}
 		return sb.substring(0).trim();
+	}
+
+	private static String safeReference(String s){
+		return ChatSave.safeReference(s).replace("\"", "&quote;");
 	}
 
 	@Override

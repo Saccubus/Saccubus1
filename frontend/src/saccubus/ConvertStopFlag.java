@@ -43,7 +43,7 @@ public class ConvertStopFlag {
 		DoneText = done_text;
 		init();
 	}
-	public void init(){
+	private synchronized void init(){
 		Flag = false;
 		Finished = false;
 		if (Button != null && StopText != null) {
@@ -53,25 +53,20 @@ public class ConvertStopFlag {
 	}
 	//use default DoButton string
 	public ConvertStopFlag(final JButton button){
-		Button = button;
-		StopText = MainFrame.DoButtonStopString;
-		WaitText = MainFrame.DoButtonWaitString;
-		DoneText = MainFrame.DoButtonDefString;
-		init();
+		this(button,
+			MainFrame.DoButtonStopString,
+			MainFrame.DoButtonWaitString,
+			MainFrame.DoButtonDefString
+		);
 	}
 	/**
 	 * Call from prompt CUI without Display
 	 */
 	public ConvertStopFlag() {
-		Flag = false;
-		Finished = false;
-		Button = null;
-		StopText = null;
-		WaitText = null;
-		DoneText = null;
+		this(null,null,null,null);
 	}
 
-	public void stop() {
+	public synchronized void stop() {
 		Flag = true;
 		if (Button != null && WaitText != null) {
 			Button.setText(WaitText);
@@ -87,7 +82,7 @@ public class ConvertStopFlag {
 		return Finished;
 	}
 
-	public void finish() {
+	public synchronized void finish() {
 		Finished = true;
 		if (Button != null && DoneText != null) {
 			Button.setText(DoneText);
