@@ -20,7 +20,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JLabel;
 
 import saccubus.ConvertStopFlag;
-import saccubus.Converter;
+import saccubus.ConvertWorker;
 import saccubus.WayBackDate;
 import saccubus.conv.ChatSave;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
@@ -616,8 +616,20 @@ public class NicoClient {
 			HttpURLConnection con = urlConnect(VideoUrl, "GET", Cookie, true, false, null);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK) {
 				System.out.println("Can't get video:" + VideoUrl);
-				if("403".equals(getExtraError())){
+				String ecode = getExtraError();
+				if(ecode==null){
+
+				}
+				else if (ecode.contains("403")){
 					setExtraError("=不適切な動画の可能性。readmeNew.txt参照");
+				}
+				else if(ecode.contains("50")){
+					// 5秒待機
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						// e.printStackTrace();
+					}
 				}
 				return null;
 			}
@@ -837,7 +849,7 @@ public class NicoClient {
 			if (file.canRead()){
 				if(isAppend && useNewComment){
 					if(commentType != CommentType.OWNER)
-						lastNo = Converter.getNoUserLastChat(file);
+						lastNo = ConvertWorker.getNoUserLastChat(file);
 				}else{
 					if (file.delete()) {	//	ファイルがすでに存在するなら削除する。
 						System.out.print("previous " + commentType.toString().toLowerCase() + " comment deleted...");

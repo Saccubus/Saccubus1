@@ -43,12 +43,12 @@ public class ConvertStopFlag {
 		DoneText = done_text;
 		init();
 	}
-	private synchronized void init(){
+	private void init(){
 		Flag = false;
 		Finished = false;
-		if (Button != null && StopText != null) {
-			Button.setText(StopText);
-			Button.setEnabled(true);
+		if (getButton() != null && StopText != null) {
+			getButton().setText(StopText);
+			getButton().setEnabled(true);
 		}
 	}
 	//use default DoButton string
@@ -66,11 +66,11 @@ public class ConvertStopFlag {
 		this(null,null,null,null);
 	}
 
-	public synchronized void stop() {
+	public void stop() {
 		Flag = true;
-		if (Button != null && WaitText != null) {
-			Button.setText(WaitText);
-			Button.setEnabled(false);
+		if (getButton() != null && WaitText != null) {
+			getButton().setText(WaitText);
+			getButton().setEnabled(false);
 		}
 	}
 
@@ -82,12 +82,24 @@ public class ConvertStopFlag {
 		return Finished;
 	}
 
-	public synchronized void finish() {
+	public void finish() {
+		// this may be called from NON EDT asynchronus method,
+		// so may cause a problem, then should use invokeLater
+		// or just Finish without Button
 		Finished = true;
-		if (Button != null && DoneText != null) {
-			Button.setText(DoneText);
-			Button.setEnabled(true);
+		if (getButton() != null && DoneText != null) {
+			getButton().setText(DoneText);
+			getButton().setEnabled(true);
 		}
+	}
+	public void finishWithoutButton(){
+		Finished = true;
+	}
+	public JButton getButton() {
+		return Button;
+	}
+	public void setButtonEnabled(boolean b) {
+		getButton().setEnabled(b);
 	}
 
 }

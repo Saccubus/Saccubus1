@@ -1,7 +1,12 @@
 package saccubus.util;
 
-import java.awt.datatransfer.*;
-import java.awt.dnd.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -46,7 +51,7 @@ public class FileDropTarget extends DropTargetAdapter {
 							}
 						} else {
 							if (file.isFile()) {
-								Field.setText(file.getPath());
+								Field.setText(evalExt(file.getPath()));
 							}
 						}
 					}
@@ -58,6 +63,18 @@ public class FileDropTarget extends DropTargetAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String evalExt(String path) {
+		final String INTERNET_SHORTCUT = "[InternetShortcut]\nURL=";
+		if(path.endsWith(".url")){
+			String text =
+				saccubus.net.Path.readAllText(new File(path), "ms932");
+			if(text!=null && text.startsWith(INTERNET_SHORTCUT)){
+				return text.substring(INTERNET_SHORTCUT.length());
+			}
+		}
+		return path;
 	}
 
 }

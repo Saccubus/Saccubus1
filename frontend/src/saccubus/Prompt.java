@@ -204,7 +204,7 @@ public class Prompt {
 			}
 		});
 		Window popup = new Window(null);
-		popup.setSize(360, 20);
+		popup.setSize(400, 20);
 		popup.setLocation(0,0);
 		popup.setLayout(new BorderLayout(5, 0));
 		Color fg = Color.black;
@@ -224,8 +224,6 @@ public class Prompt {
 		popup.setVisible(enablePupup);
 		StringBuffer sbReturn = new StringBuffer(16);
 
-		Converter conv = new Converter(tag, time, setting, status, cuiStop,
-									   info, watch, sbReturn);		// these three params are extended
 		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		System.out.println("Saccubus on CUI");
 		System.out.println();
@@ -247,12 +245,17 @@ public class Prompt {
 		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		System.out.println("Version " + MainFrame_AboutBox.rev );
 
-		conv.start();
-		try {
-			conv.join();
-		} catch (InterruptedException e) {
-			// e.printStackTrace();
-			// continue;
+		ConvertManager manager = new ConvertManager();
+		ConvertWorker conv = manager.request(setting.getNumThread(), tag, time, setting,
+				new JLabel[]{status, info, watch},
+				cuiStop, null, null);
+		while(conv!=null && !conv.isDone()){
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// e.printStackTrace();
+				// continue;
+			}
 		}
 		popup.dispose();
 		// System.out.println("LastStatus: " + status.getText());

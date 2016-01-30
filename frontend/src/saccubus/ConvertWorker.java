@@ -12,14 +12,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import saccubus.FFmpeg.Aspect;
 import saccubus.conv.Chat;
@@ -47,8 +51,10 @@ import saccubus.util.Util;
  *
  * @author 未入力
  * @version 1.0
+ *  非EventDispatchThreadのためGUI描画はすべてinvokeLater()にて行うこと
+ *  JLabelの表示書き換えなど
  */
-public class Converter extends Thread {
+public class ConvertWorker extends SwingWorker<String, String> {
 	private final ConvertingSetting Setting;
 	private String Tag;
 	private String VideoID;
@@ -56,11 +62,12 @@ public class Converter extends Thread {
 	private String VideoBaseName;
 	private String Time;
 	private JLabel Status;
+	private final JLabel MovieInfo;
 	private final ConvertStopFlag StopFlag;
 	private static final String TMP_COMMENT = "_vhook.tmp";
 	private static final String TMP_OWNERCOMMENT = "_vhookowner.tmp";
 	private static final String TMP_OPTIONALTHREAD = "_vhookoptional.tmp";
-	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
+//	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
 	public static final String OWNER_EXT = "[Owner].xml";	// 投稿者コメントサフィックス
 	public static final String OPTIONAL_EXT = "{Optional}.xml";	// オプショナルスレッドサフィックス
 	public static final String TMP_APPEND_EXT = "_all_comment.xml";
@@ -72,12 +79,11 @@ public class Converter extends Thread {
 	private static final String THUMB_INFO = "_thumb_info";
 	private String OtherVideo;
 	private final String WatchInfo;
-	private final JLabel MovieInfo;
 	private InfoStack infoStack;
 	private BrowserCookieKind BrowserKind = BrowserCookieKind.NONE;
 	private final BrowserInfo browserInfo = new BrowserInfo();
 	private String UserSession = "";	//ブラウザから取得したユーザーセッション
-	private final Stopwatch Stopwatch;
+	private final Stopwatch stopwatch;
 	private File selectedVhook;
 	private Aspect videoAspect;
 	private boolean isPlayerWide;
@@ -92,8 +98,8 @@ public class Converter extends Thread {
 	private String padOption;
 	private String outSize;
 	private String aprilFool;
-	private StringBuffer sbRet = null;
-	private saccubus.MainFrame parent = null;
+	private final StringBuffer sbRet;
+	private final saccubus.MainFrame parent;
 	/*
 	 * sbRet is return String value to EXTERNAL PROGRAM such as BAT file, SH script, so on.
 	 * string should be ASCII or URLEncoded in System Encoding.
@@ -115,41 +121,15 @@ public class Converter extends Thread {
 	private ConcurrentLinkedQueue<File> fileQueue;
 //	private static final String MY_MYLIST = "my/mylist";
 	private String alternativeVideoID = "";
+	private final ConvertManager manager;
 
-	public Converter(String url, String time, ConvertingSetting setting,
-			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch) {
+
+	public ConvertWorker(String url, String time, ConvertingSetting setting,
+			JLabel[] jLabels, ConvertStopFlag flag,	MainFrame frame,
+			ConcurrentLinkedQueue<File> queue, ConvertManager conv, StringBuffer sb) {
 		url = url.trim();
-		if(url.startsWith("/")){
-			url = url.substring(1);
-		}
-		if(url.startsWith(VIDEO_URL_PARSER)){
-			url = url.substring(VIDEO_URL_PARSER.length());
-//		}else if(url.startsWith("http://www.nicovideo.jp/" + MY_MYLIST)
-//				||url.startsWith(MY_MYLIST)){
-//			int index = url.indexOf("/#/");
-//			if(index < 0){
-//				url = "http://www.nicovideo.jp/api/deflist/list";
-//			}else{
-//				url = "http://www.nicovideo.jp/api/mylist/list?group_id="+url.substring(index+3);
-//				//url = url.replace("my/mylist/#/","mylist/");
-//			}
-//		}else if(!url.startsWith("http")){
-//			if(	  url.startsWith("mylist/")
-//				||url.startsWith("user/")
-//				||url.startsWith("my/")){
-//				url = "http://www.nicovideo.jp/" + url;	//may not work
-//			}else if(url.startsWith("lv")){
-//				url = "http://live.nicovideo.jp/watch/"+ url;	//may not work
-//			}else if(url.startsWith("co")){
-//				url = "http://com.nicovideo.jp/watch/" + url;	//may not work
-//			}
-		}
 		watchvideo = !url.startsWith("http");
 		int index = 0;
-		index = url.indexOf('#');
-		if(index >= 0){
-			url = url.replace("#+", "?").replace("#/", "?");
-		}
 		index = url.indexOf('?');
 		if(index >= 0){
 			int index2 = url.lastIndexOf('/',index);
@@ -160,10 +140,6 @@ public class Converter extends Thread {
 			Tag = url.substring(index2+1);
 			WatchInfo = "";
 		}
-		if(Tag.contains("/")||Tag.contains(":")){
-			Tag = Tag.replace("/","_").replace(":","_");
-			System.out.println("BUG Tag changed: "+Tag);
-		}
 		VideoID = "[" + Tag + "]";
 		DefaultVideoIDFilter = new VideoIDFilter(VideoID);
 		if (time.equals("000000") || time.equals("0")){		// for auto.bat
@@ -172,32 +148,17 @@ public class Converter extends Thread {
 			Time = time;
 		}
 		Setting = setting;
-		Status = status;
+		Status = jLabels[0];
 		StopFlag = flag;
-		MovieInfo = movieInfo;
+		MovieInfo = jLabels[1];
 		MovieInfo.setText(" ");
-		Stopwatch = new Stopwatch(watch);
+		stopwatch = new Stopwatch(jLabels[2]);
 		if(fileQueue==null)
 			fileQueue = new ConcurrentLinkedQueue<File>();
-	}
-
-	public Converter(String url, String time, ConvertingSetting setting,
-			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch, StringBuffer sbret) {
-		this(url,time,setting,status,flag,movieInfo,watch);
-		sbRet  = sbret;
-	}
-	public Converter(String url, String time, ConvertingSetting setting,
-			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch,
-			MainFrame frame, StringBuffer sb) {
-		this(url,time,setting,status,flag,movieInfo,watch);
-		sbRet  = sb;
-		parent = frame;
-	}
-	public Converter(String url, String time, ConvertingSetting setting,
-			JLabel status, ConvertStopFlag flag, JLabel movieInfo, JLabel watch,
-			ConcurrentLinkedQueue<File> queue) {
-		this(url,time,setting,status,flag,movieInfo,watch);
+		manager = conv;
 		fileQueue = queue;
+		parent = frame;
+		sbRet = sb;
 	}
 	private File VideoFile = null;
 	private File CommentFile = null;
@@ -274,12 +235,17 @@ public class Converter extends Thread {
 		return lasterror;
 	}
 
-	private void sendtext(String text){
-		synchronized (Status) {
-			Status.setText(text);
-		}
-	}
+//	private void sendtext(final String text){
+//		Status.setText(text);
+//	}
 
+	private void sendtext(final String text){
+		publish(text);
+	}
+	protected void process(List<String> chunk){
+		while(!chunk.isEmpty())
+			Status.setText(chunk.remove(0));
+	}
 	private boolean isSaveConverted(){
 		return Setting.isSaveConverted();
 	}
@@ -664,9 +630,9 @@ public class Converter extends Thread {
 			NicoClient client = null;
 			if (BrowserKind != BrowserCookieKind.NONE){
 				// セッション共有、ログイン済みのNicoClientをclientに返す
-				client = new NicoClient(BrowserKind, UserSession, proxy, proxy_port, Stopwatch);
+				client = new NicoClient(BrowserKind, UserSession, proxy, proxy_port, stopwatch);
 			} else {
-				client = new NicoClient(mailAddress, password, proxy, proxy_port, Stopwatch);
+				client = new NicoClient(mailAddress, password, proxy, proxy_port, stopwatch);
 			}
 			if (!client.isLoggedIn()) {
 				sendtext("ログイン失敗 " + BrowserKind.getName() + " " + client.getExtraError());
@@ -1539,7 +1505,7 @@ public class Converter extends Thread {
 
 	private boolean convertVideo() throws IOException {
 		sendtext("動画の変換を開始");
-		Stopwatch.start();
+		stopwatch.start();
 		if(!VideoFile.canRead()){
 			sendtext("動画が読み込めません");
 			result = "90";
@@ -1639,7 +1605,7 @@ public class Converter extends Thread {
 			}
 		}
 		int code = converting_video();
-		Stopwatch.stop();
+		stopwatch.stop();
 		//vhext(nicovideoログ)をコピーする
 		File log_vhext = new File(".","[log]vhext.txt");
 		File video_vhext = Path.mkTemp(Tag+"[log]vhext.txt");
@@ -1690,22 +1656,23 @@ public class Converter extends Thread {
 	private VPlayer vplayer = null;
 
 	@Override
-	public void run() {
+	protected String doInBackground() throws Exception {
 		if(!watchvideo){
 			//not watch video get try mylist
 			sendtext("バグ URL振り分け失敗");
-			return;
+			result = "-1";
+			return result;
 		}
-		Stopwatch.clear();
-		Stopwatch.start();
+		stopwatch.clear();
+		stopwatch.start();
 		try {
 			if (!checkOK()) {
-				return;
+				return result;
 			}
 			NicoClient client = getNicoClient();
 			if (client != null){
 				if (!client.isLoggedIn()){
-					return;
+					return result;
 				}
 				if (!client.getVideoInfo(Tag, WatchInfo, Time, Setting.isSaveWatchPage())) {
 					if(Tag==null || Tag.isEmpty()){
@@ -1715,10 +1682,10 @@ public class Converter extends Thread {
 					}else{
 						sendtext(Tag + "の情報の取得に失敗 " + client.getExtraError());
 					}
-					return;
+					return result;
 				}
 				if (stopFlagReturn()) {
-					return;
+					return result;
 				}
 				VideoTitle = client.getVideoTitle();
 				VideoBaseName = Setting.isChangeTitleId()?
@@ -1726,22 +1693,23 @@ public class Converter extends Thread {
 				sendtext(Tag + "の情報の取得に成功");
 			}
 
-			Stopwatch.show();
+			stopwatch.show();
 			if (!saveVideo(client) || stopFlagReturn()) {
-				return;
+				return result;
 			}
 
-			Stopwatch.show();
+			System.out.println(this.getClass().toString()+" run 3 comment "+Status.getText());
+			stopwatch.show();
 			if (!saveComment(client) || stopFlagReturn()){
-				return;
+				return result;
 			}
 
-			Stopwatch.show();
+			stopwatch.show();
 			if (!saveOwnerComment(client) || stopFlagReturn()) {
-				return;
+				return result;
 			}
 
-			Stopwatch.show();
+			stopwatch.show();
 			if(!saveThumbInfo(client)){
 				if(isSaveConverted())
 					System.out.println("追加情報の取得に失敗しましたが続行します。");
@@ -1755,42 +1723,43 @@ public class Converter extends Thread {
 					else
 						tstr = "[警告]" + tstr;
 					sendtext(tstr);
-					return;
+					return result;
 				}
 			}
 			if(stopFlagReturn()){
-				return;
+				return result;
 			}
 
-			Stopwatch.show();
-			System.out.println("変換前時間　" + Stopwatch.formatElapsedTime());
+			stopwatch.show();
+			System.out.println("変換前時間　" + stopwatch.formatElapsedTime());
 
 			if (!isSaveConverted()) {
 				sendtext("動画・コメントを保存し、変換は行いませんでした。");
-				return;
+				return result;
 			}
 
-			Stopwatch.show();
+			stopwatch.show();
 			if(!makeNGPattern() || stopFlagReturn()){
-				return;
+				return result;
 			}
 
-			Stopwatch.show();
+			stopwatch.show();
 			if (!convertOwnerComment() || stopFlagReturn()){
-				return;
+				return result;
 			}
 
-			Stopwatch.show();
+			stopwatch.show();
 			if (!convertComment() || stopFlagReturn()) {
-				return;
+				return result;
 			}
 
-			Stopwatch.show();
+			stopwatch.show();
 			if (!convertOprionalThread() || stopFlagReturn()) {
-				return;
+				return result;
 			}
 
-			Stopwatch.show();
+			System.out.println(this.getClass().toString()+" run 4 convert "+Status.getText());
+			stopwatch.show();
 			if (convertVideo()) {
 				// 変換成功
 				if(parent!=null)
@@ -1813,10 +1782,17 @@ public class Converter extends Thread {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
-			StopFlag.finish();
-			Stopwatch.show();
-			Stopwatch.stop();
-			System.out.println("変換時間　" + Stopwatch.formatLatency());
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					StopFlag.finish();
+					StopFlag.setButtonEnabled(false);
+				}
+			});
+			manager.reqDone(result);
+			stopwatch.show();
+			stopwatch.stop();
+			System.out.println("変換時間　" + stopwatch.formatLatency());
 			System.out.println("LastStatus:[" + result + "]" + Status.getText());
 			System.out.println("VideoInfo: " + MovieInfo.getText());
 			System.out.println("LastFrame: "+ lastFrame);
@@ -1826,6 +1802,23 @@ public class Converter extends Thread {
 					sbRet.append("DATEUF=" + dateUserFirst + "\n");
 				}
 			}
+		}
+		return result;
+	}
+
+	public void done(){
+		String retStr = null;
+
+		try {
+			retStr = get();
+			if(retStr == null)
+				System.out.println("ConvertWorker#done.ret==null　バグ？");
+			else
+				System.out.println("["+retStr+"]Converter.done! "+Tag);
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}finally{
+
 		}
 	}
 
@@ -1894,7 +1887,7 @@ public class Converter extends Thread {
 				//return false;
 			}
 		}
-		VideofileInfo info = new VideofileInfo(video, ffmpeg, Status, StopFlag, Stopwatch);
+		VideofileInfo info = new VideofileInfo(video, ffmpeg, Status, StopFlag, stopwatch);
 		videoAspect = info.getAspect();
 		if(videoLength <= 0){
 			videoLength = info.getDuration();
@@ -2253,7 +2246,7 @@ public class Converter extends Thread {
 	private int execOption(){
 		int code;
 		System.out.println("arg:" + ffmpeg.getCmd());
-		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, Stopwatch);
+		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, stopwatch);
 		errorLog = ffmpeg.getErrotLog().toString();
 		lastFrame = ffmpeg.getLastFrame();
 		return code;
@@ -2453,7 +2446,7 @@ public class Converter extends Thread {
 				int len = 0;
 				while ((len = fis.read(buf, 0, buf.length)) > 0) {
 					fos.write(buf, 0, len);
-					Stopwatch.show();
+					stopwatch.show();
 				}
 				copyok = true;
 			}catch(IOException e){

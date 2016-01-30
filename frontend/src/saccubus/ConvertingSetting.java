@@ -178,6 +178,8 @@ public class ConvertingSetting {
 	private String optionFileDescription;
 	private boolean appendCommentMode;
 	private int numThread;
+	private String appendNotice;
+	private int numDownload;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -396,6 +398,7 @@ public class ConvertingSetting {
 			boolean premium_color_check,
 			String option_file_description,
 			boolean append_comment,
+			String append_notice,
 			int n_thread
 		)
 	{
@@ -525,6 +528,7 @@ public class ConvertingSetting {
 		premiumColorCheck = premium_color_check;
 		optionFileDescription = option_file_description;
 		appendCommentMode = append_comment;
+		appendNotice = append_notice;
 		numThread = n_thread;
 	}
 
@@ -886,6 +890,15 @@ public class ConvertingSetting {
 	public boolean isAppendComment(){
 		return appendCommentMode;
 	}
+	public String getAppendNotice(){
+		return appendNotice;
+	}
+	public int getNumThread(){
+		return numThread;
+	}
+	public int getNumDownload(){
+		return numDownload;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -898,9 +911,6 @@ public class ConvertingSetting {
 	}
 	public static String getDefOptsMix(){
 		return defOptsMix;
-	}
-	public int getNumThread(){
-		return numThread;
 	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
@@ -1033,7 +1043,9 @@ public class ConvertingSetting {
 	static final String PROP_PREMIUM_COLOR_CHECK = "PremiumColorCheck";
 	static final String PROP_OPTION_FILE_DESCR = "OptionFileDescr";
 	static final String PROP_APPEND_COMMENT = "AppendComment";
-	static final String PROP_NUM_THREAD = "NumberOfThreads";
+	static final String PROP_APPEND_NOTICE = "AppendNotice";
+	static final String PROP_NUM_THREAD = "MaxNumberOfThreads";
+	static final String PROP_NUM_DOWNLOAD = "MaxNumberOfDownload";
 	// ì«Ç›çûÇﬁÇæÇØÅAï€ë∂ÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1238,6 +1250,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_OPTION_FILE_DESCR, "");
 		prop.setProperty(PROP_APPEND_COMMENT, Boolean.toString(setting.isAppendComment()));
 		prop.setProperty(PROP_NUM_THREAD, Integer.toString(setting.getNumThread()));
+		prop.setProperty(PROP_APPEND_NOTICE, setting.getAppendNotice());
+		prop.setProperty(PROP_NUM_DOWNLOAD, Integer.toString(setting.getNumDownload()));
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1378,7 +1392,7 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_ADD_TIMESTAMP, "false")),
 			prop.getProperty(PROP_COMMENT_FILE, "./comment.xml"),
 			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_OWNERCOMMENT, "false")),	// false<-true 1.22r3e8
-			prop.getProperty(PROP_OWNERCOMMENT_FILE, "./comment" + Converter.OWNER_EXT),
+			prop.getProperty(PROP_OWNERCOMMENT_FILE, "./comment" + ConvertWorker.OWNER_EXT),
 			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_CONVERTED, "true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_CONV_WITH_COMMENT,"true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_CONV_WITH_OWNERCOMMENT,"false")),	// false<-true 1.22r3e8
@@ -1484,8 +1498,9 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_PREMIUM_COLOR_CHECK,"false")),
 			prop.getProperty(PROP_OPTION_FILE_DESCR, ""),
 			Boolean.parseBoolean(prop.getProperty(PROP_APPEND_COMMENT, "false")),
+			prop.getProperty(PROP_APPEND_NOTICE, ""),
 			Integer.parseInt(prop.getProperty(PROP_NUM_THREAD, "1"))
-		);
+			);
 	}
 
 	public static ConvertingSetting loadSetting(String user, String password) {

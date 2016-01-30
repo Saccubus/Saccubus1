@@ -36,10 +36,10 @@ public class Loader {
 	private String userSession;
 	private BrowserCookieKind browserKind;
 
-	public Loader(ConvertingSetting setting, JLabel status, JLabel watch){
+	public Loader(ConvertingSetting setting, JLabel[] status3) {
 		this.setting = setting;
-		this.status = status;
-		stopwatch = new Stopwatch(watch);
+		this.status = status3[0];
+		stopwatch = new Stopwatch(status3[1]);
 	}
 
 	void sendtext(String text){

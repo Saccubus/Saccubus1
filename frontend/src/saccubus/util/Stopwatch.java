@@ -1,8 +1,10 @@
 package saccubus.util;
 
 import java.util.Date;
+import java.util.Hashtable;
 
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -14,17 +16,40 @@ public class Stopwatch {
 	private Date startedDate = new Date();
 	private Date stopedDate = new Date();
 	private final JLabel out;
+	private static Hashtable<JLabel, Stopwatch> stopWatchTab = new Hashtable<JLabel, Stopwatch>();
 
+	public Stopwatch(JLabel out){
+		this.out = out;
+	}
+
+	public static Stopwatch create(JLabel lbl){
+		Stopwatch prev = stopWatchTab.get(lbl);
+		if(prev==null){
+			prev = new Stopwatch(lbl);
+			stopWatchTab.put(lbl, prev);
+		}
+		return prev;
+	}
+
+	private void sendText(final String text){
+		if(!SwingUtilities.isEventDispatchThread()){
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					out.setText(text);
+				}
+			});
+		}else{
+			out.setText(text);
+		}
+	}
 	synchronized public void start() {
 		startedDate = new Date();
 	}
 
 	synchronized public void stop() {
 		stopedDate = new Date();
-	}
-
-	public Stopwatch(JLabel out){
-		this.out = out;
 	}
 
 	public static void setup(JLabel display) {
@@ -39,9 +64,9 @@ public class Stopwatch {
 		return out;
 	}
 
-	synchronized public void clear(){
+	public void clear(){
 		if (isSetup()){
-			out.setText(" ");
+			sendText(" ");
 		}
 	}
 
@@ -105,7 +130,7 @@ public class Stopwatch {
 
 	public void show() {
 		if (isSetup()){
-			out.setText("経過時間　" + formatElapsedTime());
+			sendText("経過時間　" + formatElapsedTime());
 		}
 	}
 
