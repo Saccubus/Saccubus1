@@ -196,11 +196,14 @@ public class Prompt {
 		JLabel info = new JLabel();
 		JLabel watch = new JLabel();
 		JButton stopButton = new JButton();
-		final ConvertStopFlag cuiStop = new ConvertStopFlag(stopButton, "停止", "待機", "終了");
+		final ConvertStopFlag cuiStop = new ConvertStopFlag(stopButton, "停止", "待機", "終了", "変換", false);
 		stopButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cuiStop.stop();
+				synchronized(cuiStop){
+					cuiStop.stop();
+					cuiStop.notify();
+				}
 			}
 		});
 		Window popup = new Window(null);

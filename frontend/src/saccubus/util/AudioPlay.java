@@ -9,7 +9,11 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
 public class AudioPlay {
-	public static void playWav(File file){
+	public static boolean playWav(File file){
+		if(!file.exists()){
+			System.out.println("wav file not found.");
+			return false;
+		}
 		// Read the sound file using AudioInputStream.
 		AudioInputStream stream;
 		byte[] buf;
@@ -34,20 +38,22 @@ public class AudioPlay {
 
 			line.drain();
 			line.close();
-
+			return true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("wav error");
+			//e.printStackTrace();
+			return false;
 		}
 	}
 
-	public static void playWav(String wav){
-		playWav(new File(wav));
+	public static boolean playWav(String wav){
+		return playWav(new File(wav));
 	}
 
 	public static void main(String[] args){
 		String filename =
-				"C:/WINDOWS/Media/dollJudgement.wav";
-			//	"D:/mmd/wav/test03.wav";
+			//	"C:/WINDOWS/Media/dollJudgement.wav";
+				"end.wav";
 		playWav(filename);
 	}
 }

@@ -22,15 +22,18 @@ public class ListInfo extends JComponent {
 	private String url;
 	private final JLabel[] status3;
 	private final JButton jButton;
+	private boolean oneLine;
 
 	/**
+	 * @param isOneLine
 	 *
 	 */
-	public ListInfo(String vid, JLabel[] status, JButton button) {
+	public ListInfo(String vid, JLabel[] status, JButton button, boolean isOneLine) {
 		vidArea = new JLabel(vid);
 		url = vid;
 		status3 = status;
 		jButton = button;
+		oneLine = isOneLine;
 		init();
 	}
 	private void init() {
@@ -41,10 +44,14 @@ public class ListInfo extends JComponent {
 	//	jButton.setBackground(Color.CYAN);
 
 		GridBagConstraints gc = new GridBagConstraints();
+		if(oneLine) {
+			gc.gridheight = 1;
+		}else{
+			gc.gridheight = 3;
+		}
 		gc.gridx = 0;
 		gc.gridy = 0;
 		gc.gridwidth = 1;
-		gc.gridheight = 3;
 		gc.anchor = GridBagConstraints.WEST;;
 		gc.fill = GridBagConstraints.BOTH;;
 		add(jButton, gc);
@@ -52,62 +59,97 @@ public class ListInfo extends JComponent {
 		gc = new GridBagConstraints();
 		gc.gridx = 1;
 		gc.gridy = 0;
-		gc.gridwidth = 4;
+		gc.weightx = 0.0f;
 		gc.gridheight = 1;
 		gc.anchor = GridBagConstraints.WEST;;
+		if(oneLine) {
+			gc.gridwidth = 1;
+		}else{
+			gc.gridwidth = 4;
+		}
 		gc.fill = GridBagConstraints.HORIZONTAL;
-		add(vidArea, gc);
 		vidArea.setForeground(Color.blue);
-
+//		Dimension sz = vidArea.getSize();
+//		vidArea.setSize(Short.MAX_VALUE, sz.height);
+		add(vidArea, gc);
+			
 		gc = new GridBagConstraints();
-		gc.gridx = 1;
-		gc.gridy = 1;
+		if(oneLine) {
+			gc.gridx = 2;
+			gc.gridy = 0;
+		}else{
+			gc.gridx = 1;
+			gc.gridy = 1;
+		}
 		gc.gridwidth = 1;
 		gc.gridheight = 1;
 		gc.anchor = GridBagConstraints.WEST;
 		gc.fill = GridBagConstraints.HORIZONTAL;
-		add(status3[2], gc);
 		status3[2].setForeground(Color.darkGray);
+		add(status3[2], gc);
 
 		gc = new GridBagConstraints();
-		gc.gridx = 2;
-		gc.gridy = 1;
+		if(oneLine) {
+			gc.gridx = 3;
+			gc.gridy = 0;
+			gc.anchor = GridBagConstraints.WEST;;
+		}else{
+			gc.gridx = 2;
+			gc.gridy = 1;
+			gc.anchor = GridBagConstraints.CENTER;;
+		}
 		gc.gridwidth = 1;
 		gc.gridheight = 1;
-		gc.anchor = GridBagConstraints.CENTER;;
 		gc.fill = GridBagConstraints.HORIZONTAL;
 		add(new JLabel("Å@Å@"), gc);
 
 		gc = new GridBagConstraints();
-		gc.gridx = 3;
-		gc.gridy = 1;
+		if(oneLine) {
+			gc.gridx = 4;
+			gc.gridy = 0;
+			gc.anchor = GridBagConstraints.WEST;
+		}else{
+			gc.gridx = 3;
+			gc.gridy = 1;
+			gc.anchor = GridBagConstraints.EAST;
+			gc.weightx = 1.0;
+		}
 		gc.gridwidth = 1;
 		gc.gridheight = 1;
-		gc.weightx = 1.0;
-		gc.anchor = GridBagConstraints.EAST;
 		gc.fill = GridBagConstraints.HORIZONTAL;
-		add(status3[1], gc);
 		status3[1].setForeground(Color.MAGENTA);
+		add(status3[1], gc);
 
 		gc = new GridBagConstraints();
-		gc.gridx = 1;
-		gc.gridy = 2;
-		gc.gridwidth = 3;
-		gc.gridheight = 1;
+		if(oneLine) {
+			gc.gridx = 5;
+			gc.gridy = 0;
+			gc.gridwidth = 1;
+		}else{
+			gc.gridx = 1;
+			gc.gridy = 2;
+			gc.gridwidth = 3;
+		}
 		gc.weightx = 1.0;
+		gc.gridheight = 1;
 		gc.anchor = GridBagConstraints.WEST;
 		gc.fill = GridBagConstraints.HORIZONTAL;
 		add(status3[0], gc);
 
 		//Dimension sz = getjButton().getMaximumSize();
 		int height = getjButton().getMaximumSize().height;
-		setMaximumSize(new Dimension(1000, (int)(height * 4.5)));
+		if(oneLine) {
+			setMaximumSize(new Dimension(Short.MAX_VALUE, (int)(height * 2.0f)));
+		}else{
+			setMaximumSize(new Dimension(Short.MAX_VALUE, (int)(height * 4.5f)));
+		}
 
-		setAlignmentX(LEFT_ALIGNMENT);
+		setAlignmentX(0.0f);
+		setAlignmentY(0.0f);
 		setVisible(true);
 	}
-	public ListInfo(String vid){
-		this(vid, new JLabel[]{new JLabel(),new JLabel(), new JLabel()}, new JButton());
+	public ListInfo(String vid, boolean isOneLine){
+		this(vid, new JLabel[]{new JLabel(),new JLabel(), new JLabel()}, new JButton(), isOneLine);
 	}
 	public JLabel getVidArea() {
 		return vidArea;

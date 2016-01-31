@@ -37,7 +37,7 @@ public class Path extends File{
 		// 注意　pathが相対パス名でも絶対パス名でもない時は
 		// カレントディレクトリにあるファイルを意味する
 	}
-	Path(File file){
+	public Path(File file){
 		super(file.getAbsolutePath());
 	}
 	public Path(File dir, String name){
@@ -493,5 +493,9 @@ public class Path extends File{
 	 */
 	public static void writeAllText(File file, String text, String encoding) {
 		writeAllText(file.getPath(), text, encoding);
+	}
+	public String getExtension() {
+		String name = this.getName();
+		return name.substring(name.lastIndexOf('.'));
 	}
 }

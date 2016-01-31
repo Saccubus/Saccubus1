@@ -180,6 +180,8 @@ public class ConvertingSetting {
 	private int numThread;
 	private String appendNotice;
 	private int numDownload;
+	private boolean PendingMode;
+	private boolean OneLineMode;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -399,7 +401,9 @@ public class ConvertingSetting {
 			String option_file_description,
 			boolean append_comment,
 			String append_notice,
-			int n_thread
+			int n_thread,
+			boolean pending_mode,
+			boolean one_line_mode
 		)
 	{
 		this(	mailaddress,
@@ -530,6 +534,8 @@ public class ConvertingSetting {
 		appendCommentMode = append_comment;
 		appendNotice = append_notice;
 		numThread = n_thread;
+		PendingMode = pending_mode;
+		OneLineMode = one_line_mode;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -899,6 +905,12 @@ public class ConvertingSetting {
 	public int getNumDownload(){
 		return numDownload;
 	}
+	public boolean isPendingMode(){
+		return PendingMode;
+	}
+	public boolean isOneLineMode(){
+		return OneLineMode;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1046,6 +1058,8 @@ public class ConvertingSetting {
 	static final String PROP_APPEND_NOTICE = "AppendNotice";
 	static final String PROP_NUM_THREAD = "MaxNumberOfThreads";
 	static final String PROP_NUM_DOWNLOAD = "MaxNumberOfDownload";
+	static final String PROP_PENDING_MODE = "PendingMode";
+	static final String PROP_ONE_LINE_MODE = "OneLineMode";
 	// ì«Ç›çûÇﬁÇæÇØÅAï€ë∂ÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1252,6 +1266,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_NUM_THREAD, Integer.toString(setting.getNumThread()));
 		prop.setProperty(PROP_APPEND_NOTICE, setting.getAppendNotice());
 		prop.setProperty(PROP_NUM_DOWNLOAD, Integer.toString(setting.getNumDownload()));
+		prop.setProperty(PROP_PENDING_MODE, Boolean.toString(setting.isPendingMode()));
+		prop.setProperty(PROP_ONE_LINE_MODE, Boolean.toString(setting.isOneLineMode()));
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1499,7 +1515,9 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_OPTION_FILE_DESCR, ""),
 			Boolean.parseBoolean(prop.getProperty(PROP_APPEND_COMMENT, "false")),
 			prop.getProperty(PROP_APPEND_NOTICE, ""),
-			Integer.parseInt(prop.getProperty(PROP_NUM_THREAD, "1"))
+			Integer.parseInt(prop.getProperty(PROP_NUM_THREAD, "1")),
+			Boolean.parseBoolean(prop.getProperty(PROP_PENDING_MODE, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_ONE_LINE_MODE, "false"))
 			);
 	}
 

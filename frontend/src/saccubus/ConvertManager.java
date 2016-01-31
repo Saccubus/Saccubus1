@@ -12,6 +12,7 @@ public class ConvertManager extends Thread {
 	private static ConcurrentLinkedQueue<ConvertWorker> reqQueue = new ConcurrentLinkedQueue<>();
 	private static AtomicInteger numReq = new AtomicInteger(0);
 
+
 	public ConvertManager(){
 
 	}

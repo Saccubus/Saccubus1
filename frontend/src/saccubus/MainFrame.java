@@ -133,6 +133,7 @@ public class MainFrame extends JFrame {
 	public static final String DoButtonDefString = "変換";
 	public static final String DoButtonStopString = "停止";
 	public static final String DoButtonWaitString = "待機";
+	public static final String DoButtonDoneString = "終了";
 	GridBagLayout gridBagLayout2 = new GridBagLayout();
 	JPanel UserInfoPanel = new JPanel();
 	GridBagLayout gridBagLayout3 = new GridBagLayout();
@@ -267,13 +268,17 @@ public class MainFrame extends JFrame {
 
 	private static final String MY_MYLIST = "my/mylist";
 	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
-	private String url;
 
+	private String url;
 	private JPanel activityPane;
 	private JScrollPane activityScroll;
 	private JButton AllCancelButton;
 	private JButton AllDeleteButton;
 	private ChangeListener changeListener;
+	private JButton AllExecButton;
+	private JCheckBox PendingModeCheckbox;
+	private JCheckBox OneLineCheckbox;
+	private boolean OneLineMode;
 
 	public MainFrame() {
 		try {
@@ -2099,17 +2104,17 @@ public class MainFrame extends JFrame {
 			grid400.weightx = 0.0;
 			grid400.anchor = GridBagConstraints.NORTH;
 			grid400.fill = GridBagConstraints.HORIZONTAL;
-			grid400.insets = INSETS_0_5_0_5;
+			grid400.insets = INSETS_0_0_0_0;
 			managementControl.add(new JLabel("同時変換数"),grid400);
 			GridBagConstraints grid401 = new GridBagConstraints();
 			grid401.gridx = 1;
 			grid401.gridy = 0;
-			grid401.gridwidth = 2;
+			grid401.gridwidth = 4;
 			grid401.gridheight = 1;
-			grid401.weightx = 0.5;
+			grid401.weightx = 1.0;
 			grid401.anchor = GridBagConstraints.NORTH;
 			grid401.fill = GridBagConstraints.HORIZONTAL;
-			grid401.insets = INSETS_0_5_0_5;
+			grid401.insets = INSETS_0_5_0_0;
 			SpinnerNumberModel model = new SpinnerNumberModel(0, null, null, 1);
 			nThreadSpinner = new JSpinner(model);
 			managementControl.add(nThreadSpinner,grid401);
@@ -2119,25 +2124,28 @@ public class MainFrame extends JFrame {
 					noticeConvertManager(e);
 				}
 			});
+			GridBagConstraints grid402 = new GridBagConstraints();
+			grid402.gridx = 5;
+			grid402.gridy = 0;
+			grid402.gridwidth = 3;
+			grid402.gridheight = 1;
+			grid402.weightx = 1.0;
+			grid402.anchor = GridBagConstraints.NORTH;
+			grid402.fill = GridBagConstraints.HORIZONTAL;
+			grid402.insets = INSETS_0_5_0_0;
+			PendingModeCheckbox = new JCheckBox("開始時保留", false);
+			PendingModeCheckbox.setToolTipText("変換ボタンを押した時に保留にする、個別ボタンで変換開始");
+			managementControl.add(PendingModeCheckbox, grid402);
 			GridBagConstraints grid410 = new GridBagConstraints();
 			grid410.gridx = 0;
 			grid410.gridy = 1;
 			grid410.gridwidth = 1;
 			grid410.gridheight = 1;
 			grid410.weightx = 0.0;
-			grid410.anchor = GridBagConstraints.NORTH;
-			grid410.fill = GridBagConstraints.HORIZONTAL;
-			grid410.insets = INSETS_0_5_0_5;
-			AllCancelButton = new JButton("全停止");
-			AllCancelButton.setToolTipText("全てのリクエストを取り消し、全変換を停止します");
-			AllCancelButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					AllCancel_ActionHandler(e);
-				}
-			});
-			managementControl.add(AllCancelButton, grid410);
-
+			grid410.anchor = GridBagConstraints.EAST;
+			grid410.fill = GridBagConstraints.BOTH;
+			grid410.insets = INSETS_0_0_0_0;
+			managementControl.add(new JLabel("全制御"), grid410);
 			GridBagConstraints grid411 = new GridBagConstraints();
 			grid411.gridx = 1;
 			grid411.gridy = 1;
@@ -2146,7 +2154,54 @@ public class MainFrame extends JFrame {
 			grid411.weightx = 0.0;
 			grid411.anchor = GridBagConstraints.NORTH;
 			grid411.fill = GridBagConstraints.HORIZONTAL;
+			grid411.insets = INSETS_0_0_0_0;
+			AllExecButton = new JButton("変換");
+			AllExecButton.setForeground(Color.blue);
+			AllExecButton.setToolTipText("変換を開始します");
+			AllExecButton.setEnabled(false);
+			managementControl.add(AllExecButton, grid411);
+			GridBagConstraints grid412 = new GridBagConstraints();
+			grid412.gridx = 2;
+			grid412.gridy = 1;
+			grid412.gridwidth = 1;
+			grid412.gridheight = 1;
+			grid412.weightx = 0.0;
+			grid412.anchor = GridBagConstraints.NORTH;
+			grid412.fill = GridBagConstraints.HORIZONTAL;
+			grid412.insets = INSETS_0_0_0_0;
+			AllCancelButton = new JButton("停止");
+			AllCancelButton.setToolTipText("全てのリクエストを取り消し、全変換を停止します");
+			AllCancelButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					AllCancel_ActionHandler(e);
+				}
+			});
+			managementControl.add(AllCancelButton, grid412);
+			GridBagConstraints grid415 = new GridBagConstraints();
+			grid415.gridx = 5;
+			grid415.gridy = 1;
+			grid415.gridwidth = 3;
+			grid415.gridheight = 1;
+			grid415.weightx = 1.0;
+			grid415.anchor = GridBagConstraints.NORTH;
+			grid415.fill = GridBagConstraints.HORIZONTAL;
+			grid415.insets = INSETS_0_5_0_0;
+			OneLineCheckbox = new JCheckBox("１行表示", false);
+			OneLineCheckbox.setToolTipText("1動画ごとに１行で表示");
+			managementControl.add(OneLineCheckbox, grid415);
+
+			GridBagConstraints grid413 = new GridBagConstraints();
+			grid413.gridx = 3;
+			grid413.gridy = 1;
+			grid413.gridwidth = 1;
+			grid413.gridheight = 1;
+			grid413.weightx = 0.0;
+			grid413.anchor = GridBagConstraints.NORTH;
+			grid413.fill = GridBagConstraints.HORIZONTAL;
+			grid413.insets = INSETS_0_0_0_0;
 			AllDeleteButton = new JButton("消去");
+			AllDeleteButton.setForeground(Color.red);
 			AllDeleteButton.setToolTipText("全て停止して全変換表示を消去します");
 			AllDeleteButton.addActionListener(new ActionListener() {
 				@Override
@@ -2154,7 +2209,7 @@ public class MainFrame extends JFrame {
 					AllDelete_ActionHandler(e);
 				}
 			});
-			managementControl.add(AllDeleteButton, grid411);
+			managementControl.add(AllDeleteButton, grid413);
 
 			GridBagConstraints grid40 = new GridBagConstraints();
 			grid40.gridx = 0;
@@ -2178,7 +2233,7 @@ public class MainFrame extends JFrame {
 			activityStatusPanel = new JPanel();
 			activityStatusPanel.setLayout(new BorderLayout());
 			activityPane = new JPanel();
-			activityPane.setSize(new Dimension(500, Short.MAX_VALUE));
+			activityPane.setMaximumSize(new Dimension(200, Short.MAX_VALUE));
 			activityPane.setLayout(new BoxLayout(activityPane, BoxLayout.Y_AXIS));
 			activityScroll = new JScrollPane(activityPane);
 			activityStatusPanel.add(activityScroll,BorderLayout.CENTER);
@@ -2201,8 +2256,14 @@ public class MainFrame extends JFrame {
 		convertManager.cancelAllRequest();
 		// stop converter
 		for(ConvertStopFlag flag:buttonTable.values()){
-			if(!flag.isFinished())
-			flag.stop();
+			synchronized(flag){
+				if(flag.isNotStarted()){
+					flag.notify();
+					flag.go();
+				}
+				if(!flag.isFinished())
+					flag.stop();
+			}
 		};
 		//buttonTable の全ボタンをdisable
 		for(JButton button:buttonTable.keySet()){
@@ -2216,8 +2277,6 @@ public class MainFrame extends JFrame {
 		AllCancel_ActionHandler(e);
 		activityPane.removeAll();
 		activityPane.repaint();
-	//	activityPane = new JPanel();
-	//	activityPane.setSize(new Dimension(1000, Short.MAX_VALUE));
 		activityPane.setLayout(new BoxLayout(activityPane, BoxLayout.Y_AXIS));
 	}
 
@@ -2274,10 +2333,11 @@ public class MainFrame extends JFrame {
 				this.NGWordTextField));
 		NGIDTextField.addMouseListener(new PopupRightClick(this.NGIDTextField));
 
-	//	TextFFmpegOutput.addMouseListener(
-	//			new PopupRightClick(this.TextFFmpegOutput));
 		BrowserCookieField.addMouseListener(
 				new PopupRightClick(this.BrowserCookieField));
+
+		activityPane.addMouseListener(new PopupRightClick(this.VideoID_TextField));
+		managementControl.addMouseListener(new PopupRightClick(this.VideoID_TextField));
 	}
 
 	private void setDropTarget() {
@@ -2299,6 +2359,7 @@ public class MainFrame extends JFrame {
 		addTarget(BrowserCookieField, false);
 
 		addComponentTarget(VideoID_TextField, activityPane, false);
+		addComponentTarget(VideoID_TextField, managementControl, false);
 	}
 
 	private DropTarget addTarget(JTextField c, boolean isDir) {
@@ -2556,7 +2617,9 @@ public class MainFrame extends JFrame {
 			zqOptionFileDescription.getText(),
 			appendCommentCheckBox.isSelected(),
 			notice,
-			numThread
+			numThread,
+			PendingModeCheckbox.isSelected(),
+			OneLineCheckbox.isSelected()
 		);
 	}
 /*
@@ -2716,6 +2779,8 @@ public class MainFrame extends JFrame {
 		appendCommentCheckBox.setSelected(setting.isAppendComment());
 		notice = setting.getAppendNotice();
 		nThreadSpinner.setValue((Integer)(setting.getNumThread()));
+		PendingModeCheckbox.setSelected(setting.isPendingMode());
+		OneLineCheckbox.setSelected(setting.isOneLineMode());
 	}
 
 	/**
@@ -2835,17 +2900,13 @@ public class MainFrame extends JFrame {
 	private JPanel activityStatusPanel;
 	private MylistGetter mylistGetter;
 	private StringBuffer movieList;
-
 	private int numThread;
-
 	private Hashtable<JButton, ConvertStopFlag> buttonTable = new Hashtable<>();
-
 	private ConvertManager convertManager;
-
 	private String Tag;
-
 	@SuppressWarnings("unused")
 	private String watchInfo;
+	private boolean PendingMode;
 
 	public void myListGetterDone(StringBuffer vList) {
 		// mylist読み込み終了　結果を受け取る
@@ -2867,7 +2928,8 @@ public class MainFrame extends JFrame {
 			if(ss.length > 2)
 				watchinfo = ss[2];
 			// idを登録
-			ListInfo listInfo = new ListInfo(vid+"_"+title);
+			ListInfo listInfo = new ListInfo(vid+"_"+title,OneLineMode);
+			listInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
 			JLabel[] status3 = listInfo.getStatus();
 			activityPane.add(listInfo);
 			JButton stopButton = listInfo.getjButton();
@@ -2875,13 +2937,14 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					stopButton_acrionPerformed(e);
+					stopButton_actionPerformed(e);
 				}
 			});
 			int indexNow = convNo++;
 			//System.out.println(">"+indexNow+"個目の要求: "+vid);
 			sendtext(">"+indexNow+"個目の要求: "+vid);
-			ConvertStopFlag stopFlag = new ConvertStopFlag(stopButton,"停","待","終");
+			ConvertStopFlag stopFlag =
+				new ConvertStopFlag(stopButton,"停","待","終", "変", PendingMode);
 			buttonTable.put(stopButton, stopFlag);
 			ConvertingSetting setting1 = getSetting();
 			// ConverManager処理を要求
@@ -2899,7 +2962,18 @@ public class MainFrame extends JFrame {
 
 	}
 
-	public void stopButton_acrionPerformed(ActionEvent e){
+	//全変換ボタン
+	private void AllExecButton_handler(ActionEvent e) {
+		for(ConvertStopFlag flag:buttonTable.values()){
+			synchronized(flag){
+				flag.go();
+				flag.notify();
+			}
+		}
+
+	}
+	//変換/停止ボタン
+	public void stopButton_actionPerformed(ActionEvent e){
 		Object obj = e.getSource();
 		if(obj instanceof JButton){
 			ConvertStopFlag flag = buttonTable.get((JButton)obj);
@@ -2907,8 +2981,14 @@ public class MainFrame extends JFrame {
 				System.out.println("stopButton が登録されていません");
 				return;
 			}
-			if(!flag.needStop() && !flag.isFinished()){
-				flag.stop();
+			synchronized(flag){
+				if(flag.isPending()){
+					flag.go();
+					flag.notify();
+				}else
+				if(!flag.needStop() && !flag.isFinished()){
+					flag.stop();
+				}
 			}
 		}
 	}
@@ -2919,7 +2999,16 @@ public class MainFrame extends JFrame {
 			if(changeListener!=null){
 				nThreadSpinner.addChangeListener(changeListener);
 				changeListener = null;
+				AllExecButton.setEnabled(true);
+				AllExecButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						AllExecButton_handler(e);
+					}
+				});
 			}
+			PendingMode = PendingModeCheckbox.isSelected();
+			OneLineMode = OneLineCheckbox.isSelected();
 			sendtext(" ");
 			DoButton.setEnabled(false);
 			//DoButton has nolonger stop function
@@ -2933,11 +3022,16 @@ public class MainFrame extends JFrame {
 			/*
 			 * URL解析
 			 */
+			boolean isLocal = checkLocal(url);
+			if(isLocal){
+				MainTabbedPane.setSelectedComponent(SavingInfoTabPanel);
+				return;
+			}
 			boolean isMylist = parseUrlMylist();
 			String vid = isMylist? url : Tag;
 			managementPanel.addNotify();
 			MainTabbedPane.setSelectedComponent(managementPanel);
-			ListInfo listInfo = new ListInfo(vid);
+			ListInfo listInfo = new ListInfo(vid,OneLineMode);
 			JLabel[] status3 = listInfo.getStatus();
 			activityPane.add(listInfo);
 			listInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -2947,13 +3041,14 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					stopButton_acrionPerformed(e);
+					stopButton_actionPerformed(e);
 				}
 			});
 			int indexNow = convNo++;
 			//System.out.println(">"+indexNow+"個目の要求: "+vid);
 			sendtext(">"+indexNow+"個目の要求: "+vid);
-			ConvertStopFlag stopFlag = new ConvertStopFlag(stopButton,"停","待","終");
+			ConvertStopFlag stopFlag =
+				new ConvertStopFlag(stopButton,"停","待","終", "変", PendingMode);
 			buttonTable.put(stopButton, stopFlag);
 			ConvertingSetting setting1 = getSetting();
 			if (isMylist){
@@ -2999,6 +3094,32 @@ public class MainFrame extends JFrame {
 		finally{
 			DoButton.setEnabled(true);
 		}
+	}
+
+	private boolean checkLocal(String path) {
+		if(new File(path).exists()){
+			File localFile = new File(path);
+			url = "sm0";
+			Tag = url;
+			if(localFile.isFile()){
+				String extension = new Path(localFile).getExtension().toLowerCase();
+				if(".mp4.flv.avi".contains(extension)){
+					SavingVideoCheckBox.setSelected(false);
+					VideoSavedFileField.setText(path);
+					Video_SaveFileRadioButton.setSelected(true);
+					String localComment = path.replace(extension, ".xml");
+					if(new File(localComment).exists()){
+						SavingCommentCheckBox.setSelected(false);
+						Comment_SaveFileRadioButton.setSelected(true);
+						CommentSavedFileField.setText(localComment);
+					}
+					return true;
+				}
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	private boolean parseUrlMylist() {
@@ -3143,7 +3264,7 @@ public class MainFrame extends JFrame {
 					WayBackField.getText(),
 					setting,
 					new JLabel[]{statusBar,new JLabel(),new JLabel()},
-					new ConvertStopFlag(),
+					new ConvertStopFlag(new JButton()),
 					this,
 					queue,
 					new ConvertManager(),

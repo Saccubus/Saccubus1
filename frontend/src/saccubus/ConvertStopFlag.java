@@ -21,11 +21,16 @@ import javax.swing.JButton;
  *
  * @author 未入力
  * @version 1.0
+ *
  */
 public class ConvertStopFlag {
 	private boolean Flag = false;
 
 	private boolean Finished = false;
+
+	private boolean Pending = false;
+
+	private boolean PendingMode = false;
 
 	private final JButton Button;
 
@@ -35,20 +40,46 @@ public class ConvertStopFlag {
 
 	private final String StopText;
 
-	public ConvertStopFlag(final JButton button, final String stop_text,
-			final String wait_text, final String done_text) {
+	private final String PendingText;
+
+/*
+ * 状態は　変換待ち,変換待機(disable),停止待ち,終了待機(disable),終了 の５つ
+ * method go 変換待ち→boolean=readyToGo→変換待機
+ * method started 変換待機→停止待ち
+ * method stop 停止待ち→boolean=needstop→終了待機
+ * method finish 終了待ち→終了 or 再変換待ち
+ */
+
+	public ConvertStopFlag(
+		final JButton button,
+		final String stop_text,
+		final String wait_text,
+		final String done_text,
+		final String pending_text,
+		final boolean pending_mode){
 		Button = button;
 		StopText = stop_text;
 		WaitText = wait_text;
 		DoneText = done_text;
+		PendingText = pending_text;
+		PendingMode = pending_mode;
 		init();
 	}
+
 	private void init(){
 		Flag = false;
 		Finished = false;
-		if (getButton() != null && StopText != null) {
-			getButton().setText(StopText);
-			getButton().setEnabled(true);
+		Pending = PendingMode;
+		if(Pending){
+			if (Button != null && PendingText != null) {
+				Button.setText(PendingText);
+				Button.setEnabled(true);
+			}
+		}else{
+			if (Button != null && StopText != null) {
+				Button.setText(StopText);
+				Button.setEnabled(true);
+			}
 		}
 	}
 	//use default DoButton string
@@ -56,21 +87,51 @@ public class ConvertStopFlag {
 		this(button,
 			MainFrame.DoButtonStopString,
 			MainFrame.DoButtonWaitString,
-			MainFrame.DoButtonDefString
+			MainFrame.DoButtonDoneString,
+			MainFrame.DoButtonDefString,
+			false
 		);
 	}
-	/**
-	 * Call from prompt CUI without Display
-	 */
-	public ConvertStopFlag() {
-		this(null,null,null,null);
+
+	public void go(){
+		if(Pending){
+			Flag = false;
+			Pending = false;
+			if (Button!=null && WaitText != null) {
+				Button.setText(WaitText);
+				Button.setEnabled(false);
+			}
+		}
 	}
 
+	public boolean isReady(){
+		return !Pending;
+	}
+
+	public boolean isPending(){
+		return Pending;
+	}
+
+	public boolean isNotStarted(){
+		return Finished && Pending;
+	}
+
+	public void start(){
+		// this may be called from NON EDT asynchronus method,
+		// so may cause a problem, then should use invokeLater
+		// or just Start without Button
+		Finished = false;
+		if (Button != null && StopText != null) {
+			Button.setText(StopText);
+			Button.setEnabled(true);
+		}
+
+	}
 	public void stop() {
 		Flag = true;
-		if (getButton() != null && WaitText != null) {
-			getButton().setText(WaitText);
-			getButton().setEnabled(false);
+		if (Button != null && WaitText != null) {
+			Button.setText(WaitText);
+			Button.setEnabled(false);
 		}
 	}
 
@@ -87,9 +148,10 @@ public class ConvertStopFlag {
 		// so may cause a problem, then should use invokeLater
 		// or just Finish without Button
 		Finished = true;
-		if (getButton() != null && DoneText != null) {
-			getButton().setText(DoneText);
-			getButton().setEnabled(true);
+		Pending = true;
+		if (Button!= null && DoneText != null) {
+			Button.setText(DoneText);
+			Button.setEnabled(false);
 		}
 	}
 	public void finishWithoutButton(){
@@ -99,7 +161,12 @@ public class ConvertStopFlag {
 		return Button;
 	}
 	public void setButtonEnabled(boolean b) {
-		getButton().setEnabled(b);
+		Button.setEnabled(b);
+	}
+
+	public boolean started() {
+		// TODO 自動生成されたメソッド・スタブ
+		return false;
 	}
 
 }

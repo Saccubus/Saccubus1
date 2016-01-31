@@ -34,8 +34,10 @@ import saccubus.conv.ConvertToVideoHook;
 import saccubus.conv.NicoXMLReader;
 import saccubus.net.BrowserInfo;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
+import saccubus.net.Gate;
 import saccubus.net.NicoClient;
 import saccubus.net.Path;
+import saccubus.util.AudioPlay;
 import saccubus.util.Cws2Fws;
 import saccubus.util.Stopwatch;
 import saccubus.util.Util;
@@ -122,6 +124,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 //	private static final String MY_MYLIST = "my/mylist";
 	private String alternativeVideoID = "";
 	private final ConvertManager manager;
+	private Gate gate;
 
 
 	public ConvertWorker(String url, String time, ConvertingSetting setting,
@@ -1657,12 +1660,22 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	@Override
 	protected String doInBackground() throws Exception {
+		synchronized (StopFlag) {
+			if(StopFlag.isPending()){
+				StopFlag.wait();
+			}
+			if(stopFlagReturn())
+				return "FF";
+			StopFlag.start();
+		}
+
 		if(!watchvideo){
 			//not watch video get try mylist
 			sendtext("バグ URL振り分け失敗");
 			result = "-1";
 			return result;
 		}
+		gate = Gate.enter();
 		stopwatch.clear();
 		stopwatch.start();
 		try {
@@ -1733,6 +1746,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			stopwatch.show();
 			System.out.println("変換前時間　" + stopwatch.formatElapsedTime());
 
+			gate.exit();
 			if (!isSaveConverted()) {
 				sendtext("動画・コメントを保存し、変換は行いませんでした。");
 				return result;
@@ -1792,6 +1806,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			manager.reqDone(result);
 			stopwatch.show();
 			stopwatch.stop();
+			gate.exit();
 			System.out.println("変換時間　" + stopwatch.formatLatency());
 			System.out.println("LastStatus:[" + result + "]" + Status.getText());
 			System.out.println("VideoInfo: " + MovieInfo.getText());
@@ -1802,24 +1817,25 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sbRet.append("DATEUF=" + dateUserFirst + "\n");
 				}
 			}
+			//end alarm
+			if(!AudioPlay.playWav("end.wav")){
+				// sendtext("wav error");
+			};
 		}
 		return result;
 	}
 
 	public void done(){
 		String retStr = null;
-
 		try {
 			retStr = get();
-			if(retStr == null)
-				System.out.println("ConvertWorker#done.ret==null　バグ？");
-			else
-				System.out.println("["+retStr+"]Converter.done! "+Tag);
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
-		}finally{
-
 		}
+		if(retStr == null)
+			System.out.println("ConvertWorker#done.ret==null　バグ？");
+		else
+			System.out.println("["+retStr+"]Converter.done! "+Tag);
 	}
 
 	// 変換動画再生
