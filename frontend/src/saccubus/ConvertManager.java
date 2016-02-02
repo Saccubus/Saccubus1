@@ -29,7 +29,8 @@ public class ConvertManager extends Thread {
 		JLabel[] status3,
 		ConvertStopFlag flag,
 		MainFrame frame,
-		ConcurrentLinkedQueue<File> queue
+		ConcurrentLinkedQueue<File> queue,
+		StringBuffer sbret
 		)
 	{
 //		System.out.println("manager URL="+url+" run="+numRun.get()+" thread="+numThread.get());
@@ -43,30 +44,10 @@ public class ConvertManager extends Thread {
 				frame,
 				queue,
 				this,
-				new StringBuffer());
+				sbret);
 		reqQueue.offer(converter);
-		int nReq = numReq.incrementAndGet();
-		ConvertWorker conv = null;
-		int nRun = numRun.get();
-		int nMax = numThread.get();
-		int count = 0;
-		while(nRun < nMax && count < nMax && nReq > 0){
-			conv = reqQueue.poll();
-			if(conv!=null){
-				conv.execute();
-				nRun = numRun.incrementAndGet();
-				nReq = numReq.decrementAndGet();
-			}
-			else{
-				System.out.println("manager#request ex run="+numRun.get()+" count="+count+" req="+nReq);
-			}
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// e.printStackTrace();
-			}	//100ms 待機
-			count++;
-		}
+		int nReq = numReq.incrementAndGet();	//
+		queueCheckAndGo(nReq, numRun.get(), numThread.get());
 		return converter;	//実行したものではなく要求を受け付けたもの
 	}
 
@@ -78,20 +59,8 @@ public class ConvertManager extends Thread {
 				// e.printStackTrace();
 			}	//1秒 待機
 		}
-		ConvertWorker conv = null;
-		int nRun = numRun.decrementAndGet();
-		int nMax = numThread.get();
-		int nReq = numReq.get();
-		if(nRun < nMax && nReq > 0){
-				conv = reqQueue.poll();
-				if(conv!=null){
-					conv.execute();
-					nRun = numRun.incrementAndGet();
-					nReq = numReq.decrementAndGet();
-				}
-				else
-					System.out.println("manager#reqDone ex run="+numRun.get()+" req="+nReq);
-		}
+		int nRun = numRun.decrementAndGet();	//
+		queueCheckAndGo(numReq.get(), nRun, numThread.get());
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
@@ -103,36 +72,39 @@ public class ConvertManager extends Thread {
 		int nMax = numThread.get();
 		try {
 			nMax = Integer.decode(num.toString());
+			numThread.set(nMax);
+			queueCheckAndGo(numReq.get(),numRun.get(),nMax);
 		} catch(NumberFormatException e){
 			e.printStackTrace();
 		}
-		numThread.set(nMax);
-		int nReq = numReq.get();
+	}
+
+	private void queueCheckAndGo(int nReq, int nRun, int nMax){
 		ConvertWorker conv = null;
-		int nRun = numRun.get();
-		int count = 0;
-		while(nRun < nMax && count < nMax && nReq > 0){
-			conv = reqQueue.poll();
-			if(conv!=null){
-				conv.execute();
-				nRun = numRun.incrementAndGet();
-				nReq = numReq.decrementAndGet();
-				nMax = numThread.get();
+		for(int count = 0;count < (nMax+2);count++)
+			while(nRun < nMax && nReq > 0){
+				conv = reqQueue.poll();
+				if(conv!=null){
+					conv.execute();
+					nRun = numRun.incrementAndGet();
+					nReq = numReq.decrementAndGet();
+					System.out.println("manager#queueGo excute()  req="+nReq+" run="+nRun+" thread="+nMax+" count="+count);
+				}
+				else{
+					System.out.println("manager#queueGo null  req="+nReq+" run="+nRun+" thread="+nMax+" count="+count);
+				}
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// e.printStackTrace();
+				}	//100ms 待機
 			}
-			else
-				System.out.println("manager#notice run="+numRun.get()+" count="+count+" req="+nReq);
-			count++;
-		}
+		return;
 	}
 
 	public void cancelAllRequest() {
 		reqQueue.clear();
 		numReq.set(0);
-	}
-
-	public void cancelAllRequest(String nThread) {
-		cancelAllRequest();
-		notice(nThread);
 	}
 
 	public void init(){

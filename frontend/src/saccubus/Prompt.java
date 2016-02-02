@@ -2,6 +2,7 @@ package saccubus;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +16,7 @@ import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import saccubus.net.Path;
 import saccubus.util.DuplicatedOutput;
@@ -54,6 +56,16 @@ public class Prompt {
 	private static String propFile = ConvertingSetting.PROP_FILE;
 	private static String addPropFile = "";
 	private static Properties prop;
+	private static ConvertStopFlag cuiStop;
+	private static JButton stopButton;
+	private static ConvertManager manager;
+	private static JLabel[] status3;
+	private static ConvertWorker converter;
+	private static StringBuffer sbReturn;
+	private static int convNo;
+	private static File localListFile;
+	private static String watchinfo;
+	private static ArrayList<ConvertStopFlag> flags = new ArrayList<ConvertStopFlag>();
 
 	public static void main(String[] args) {
 		if(!setLog(logname)){
@@ -195,8 +207,9 @@ public class Prompt {
 		JLabel status = new JLabel();
 		JLabel info = new JLabel();
 		JLabel watch = new JLabel();
-		JButton stopButton = new JButton();
-		final ConvertStopFlag cuiStop = new ConvertStopFlag(stopButton, "停止", "待機", "終了", "変換", false);
+		status3 = new JLabel[]{status, info, watch};
+		stopButton = new JButton();
+		cuiStop = new ConvertStopFlag(stopButton, "停止", "待機", "終了", "変換", false);
 		stopButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -225,7 +238,7 @@ public class Prompt {
 		popup.add(stopButton,BorderLayout.WEST);
 		popup.add(status, BorderLayout.CENTER);
 		popup.setVisible(enablePupup);
-		StringBuffer sbReturn = new StringBuffer(16);
+		sbReturn = new StringBuffer(16);
 
 		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		System.out.println("Saccubus on CUI");
@@ -248,34 +261,168 @@ public class Prompt {
 		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		System.out.println("Version " + MainFrame_AboutBox.rev );
 
-		ConvertManager manager = new ConvertManager();
-		ConvertWorker conv = manager.request(setting.getNumThread(), tag, time, setting,
-				new JLabel[]{status, info, watch},
-				cuiStop, null, null);
-		while(conv!=null && !conv.isDone()){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// e.printStackTrace();
-				// continue;
+		manager = new ConvertManager();
+		if(!tag.startsWith("auto")){
+			converter = manager.request(
+					setting.getNumThread(),
+					tag,
+					time,
+					setting,
+					status3,
+					cuiStop,
+					null,
+					null,
+					sbReturn);
+			while(converter!=null && !converter.isDone()){
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// e.printStackTrace();
+					// continue;
+				}
 			}
-		}
-		popup.dispose();
-		// System.out.println("LastStatus: " + status.getText());
-		// System.out.println("VideoInfo: " + info.getText());
-		// System.out.println("ElapsedTime: " + watch.getText());
-		System.out.println("Finished.");
-		System.out.println();
-		String[] ret = sbReturn.toString().split("\n");
-		int code = 0;
-		for(int l=0;l<ret.length;l++){
-			System.out.println(ret[l]);
-			String[] s = ret[l].split("=");
-			if("RESULT".equals(s[0]) && !"0".equals(s[1])){
-				code = Integer.parseInt(s[1],16);
+			popup.dispose();
+			System.out.println("Finished.");
+			System.out.println();
+			String[] ret = sbReturn.toString().split("\n");
+			int code = 0;
+			for(int l=0;l<ret.length;l++){
+				System.out.println(ret[l]);
+				String[] s = ret[l].split("=");
+				if("RESULT".equals(s[0]) && !"0".equals(s[1])){
+					code = Integer.parseInt(s[1],16);
+				}
 			}
+			exit(code);
+		}else{
+			int index1 = tag.indexOf('?');
+			watchinfo = (index1>0) ? tag.substring(index1) : "";
+			tag = tag.substring(0, index1);
+			localListFile= new File( tag + ".txt");
+			if(!localListFile.exists()){
+				System.out.println("Error: "+localListFile.getAbsolutePath()+"がありません .");
+				exit(253);
+			}
+			String text = Path.readAllText(localListFile, "MS932");
+			if(text.isEmpty()){
+				System.out.println("Error: "+localListFile.getAbsolutePath()+"に動画がありません. 書式が違っていないか確認して下さい");
+				exit(254);
+			}
+
+			String[] lists = text.split("\n");
+			int nConvert = lists.length;
+			JPanel activityPane = new JPanel();
+			ConvertWorker[] converterList = new ConvertWorker[nConvert];
+			StringBuffer[] sbRetList = new StringBuffer[nConvert];
+			String[] vids = new String[nConvert];
+			stopButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					AllCancel_ActionHandler(e);
+				}
+			});
+			for(int k=0; k<lists.length; k++){
+				String id_title = lists[k];
+				if(id_title.isEmpty()) continue;
+				String[] ss = id_title.split("\\t");
+				String vid = ss[0];
+				if(vid.trim().isEmpty()||vid.charAt(0)==':') continue;
+				// idを登録
+				ListInfo listInfo = new ListInfo(vid+"\tauto", true);
+				listInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
+				activityPane.add(listInfo);
+				int indexNow = convNo++;
+				System.out.println(">"+indexNow+" "+vid+watchinfo);
+				// ConverManager処理を要求
+				StringBuffer sbRet = new StringBuffer();
+				final ConvertStopFlag autoStop = new ConvertStopFlag(stopButton, "停止", "待機", "終了", "変換", false);
+				converter = manager.request(
+					setting.getNumThread(),
+					vid + watchinfo,
+					time,
+					setting,
+					status3,
+					autoStop,
+					null,
+					null,
+					sbRet);
+				converterList[indexNow] = converter;
+				sbRetList[indexNow] = sbRet;
+				vids[indexNow] = vid;
+				flags.add(autoStop);
+				// return to dispatch
+	 		}
+
+			int codes = 0;
+			int code = 0;
+			int rest = convNo;
+			while(rest>0){
+				for(int j = 0; j<convNo;j++){
+					ConvertWorker conv = converterList[j];
+					if(conv!=null && conv.isDone()){
+						try{
+							System.out.println();
+							System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+							System.out.println("VideoID: " + tag);
+							System.out.println("WaybackTime: " + time);
+							if(!optionFilePrefix.isEmpty()){
+								System.out.println("OptionPrefix: " + optionFilePrefix);
+							}
+							if(!atArgs.isEmpty()){
+								System.out.print("Other args:");
+								for(String arg : atArgs){
+									System.out.print(" " + arg);
+								}
+								System.out.println();
+							}
+							System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+							System.out.println("Finished. ("+j+") "+vids[j]);
+							if(sbRetList[j]==null){
+								System.out.println("エラー：ret=null");
+								continue;
+							}
+							String[] ret = sbRetList[j].toString().split("\n");
+							code = 0;
+							for(int l=0;l<ret.length;l++){
+								System.out.println(ret[l]);
+								String[] s = ret[l].split("=");
+								if("RESULT".equals(s[0]) && !"0".equals(s[1])){
+									code = Integer.parseInt(s[1],16);
+								}
+							}
+						}catch(Exception e1){
+							e1.printStackTrace();
+							code = -999;
+						}finally{
+							if(code!=0 && codes==0) codes = code;	//最初のエラーコード
+							converterList[j] = null;
+							rest--;
+						}
+					}
+				}
+			}
+			System.out.println("正常終了\nRESULTS="+code);
+			if(code!=0)
+				System.out.println("エラーがありました");
+			exit(code);
 		}
-		exit(code);
+	}
+
+	private static void AllCancel_ActionHandler(ActionEvent e) {
+		// cancel request
+		manager.cancelAllRequest();
+		// stop converter
+		for(ConvertStopFlag flag:flags){
+			synchronized(flag){
+				if(flag.isNotStarted()){
+					flag.notify();
+					flag.go();
+				}
+				if(!flag.isFinished())
+					flag.stop();
+			}
+		};
+		stopButton.setEnabled(false);
 	}
 
 	private static int getLogsize(){

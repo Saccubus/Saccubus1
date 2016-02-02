@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -102,7 +103,7 @@ public class ConvertingSetting {
 	private boolean ConvertWithOwnerComment;
 	private boolean AddTimeStamp;
 	private boolean AddOption_ConvVideoFile;
-	private String History1;
+	private ArrayList<String> requestHistory;
 	private String VhookWidePath;
 	private boolean UseVhookNormal;
 	private boolean UseVhookWide;
@@ -331,7 +332,7 @@ public class ConvertingSetting {
 			boolean disable_vhook,
 			int shadow_index,
 			boolean addOption_ConvVideoFile,
-			String history1,
+			ArrayList<String> history,
 			String vhook_wide_path,
 			boolean use_vhook_normal,
 			boolean use_vhook_wide,
@@ -454,7 +455,7 @@ public class ConvertingSetting {
 		ConvertWithOwnerComment = convertwithownercomment;
 		AddTimeStamp = addtimestamp;
 		AddOption_ConvVideoFile = addOption_ConvVideoFile;
-		History1 = history1;
+		requestHistory = history;
 		VhookWidePath = vhook_wide_path;
 		UseVhookNormal = use_vhook_normal;
 		UseVhookWide = use_vhook_wide;
@@ -679,8 +680,8 @@ public class ConvertingSetting {
 	public boolean isAddOption_ConvVideoFile() {
 		return AddOption_ConvVideoFile;
 	}
-	public String getHistory1() {
-		return History1;
+	public ArrayList<String> getRequestHistory() {
+		return requestHistory;
 	}
 	public String getVhookWidePath(){
 		return VhookWidePath;
@@ -1181,7 +1182,7 @@ public class ConvertingSetting {
 			.isAddTimeStamp()));
 		prop.setProperty(PROP_ADD_OPTION_CONV_VIDEO,  Boolean.toString(
 			setting.isAddOption_ConvVideoFile()));
-		prop.setProperty(PROP_HISTORY1, setting.getHistory1());
+		prop.setProperty(PROP_HISTORY1, lastHistory(setting.getRequestHistory()));
 		prop.setProperty(PROP_VHOOK_WIDE_PATH, setting.getVhookWidePath());
 		prop.setProperty(PROP_USE_VHOOK,
 				Boolean.toString(setting.isUseVhookNormal()));
@@ -1272,6 +1273,19 @@ public class ConvertingSetting {
 		 * ここまで拡張設定保存 1.22r3 に対する
 		 */
 		return prop;
+	}
+
+	public String lastHisory() {
+		return lastHistory(getRequestHistory());
+	}
+
+	private static String lastHistory(ArrayList<String> historyList) {
+		//改行で切れた履歴の最後の一つをセット
+		String history1 = "";
+		while(!historyList.isEmpty()){
+			history1 = historyList.remove(historyList.size()-1);
+		}
+		return history1;
 	}
 
 	public static void saveSetting(ConvertingSetting setting) {
@@ -1399,6 +1413,8 @@ public class ConvertingSetting {
 		if(!win_dir.endsWith(File.separator)){
 			win_dir = win_dir+File.separator;
 		}
+		ArrayList<String> reqHistory = new ArrayList<String>();
+		reqHistory.add(prop.getProperty(PROP_HISTORY1, ""));
 		return new ConvertingSetting(
 			user,
 			password,
@@ -1445,7 +1461,7 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_VHOOK,"false")),
 			Integer.parseInt(prop.getProperty(PROP_SHADOW_INDEX,"1"),10),
 			Boolean.parseBoolean(prop.getProperty(PROP_ADD_OPTION_CONV_VIDEO, "false")),
-			prop.getProperty(PROP_HISTORY1, ""),
+			reqHistory,
 			prop.getProperty(PROP_VHOOK_WIDE_PATH,DEFAULT_VHOOK_PATH),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_VHOOK,"true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_VHOOK_WIDE,"true")),

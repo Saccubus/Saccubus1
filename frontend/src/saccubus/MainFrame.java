@@ -248,6 +248,7 @@ public class MainFrame extends JFrame {
 	private JCheckBox appendCommentCheckBox = new JCheckBox();
 	private JSpinner nThreadSpinner;
 	private String notice;
+	private ArrayList<String> requestHistory;
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -833,6 +834,7 @@ public class MainFrame extends JFrame {
 		});
 		VideoInfoPanel.setLayout(gridBagLayout1);
 		VideoID_TextField.setText("http://www.nicovideo.jp/watch/");
+		requestHistory = new ArrayList<String>();
 		DoButton.setText(DoButtonDefString);
 		DoButton.addActionListener(new MainFrame_DoButton_actionAdapter(this));
 		SavingInfoTabPanel.setLayout(gridBagLayout2);
@@ -2546,7 +2548,7 @@ public class MainFrame extends JFrame {
 			NotUseVhookCheckBox.isSelected(),
 			ShadowComboBox.getSelectedIndex(),
 			AddOption_ConvVideoFileCheckBox.isSelected(),
-			VideoID_TextField.getText(),
+			requestHistory,
 			VhookWidePathField.getText(),
 			UseVhookCheckBox.isSelected(),
 			UseVhookWideCheckBox.isSelected(),
@@ -2601,7 +2603,7 @@ public class MainFrame extends JFrame {
 			zqCommandLineInOptionField.getText(),
 			zqCommandLineOutOptionField.getText(),
 			zqAdditionalOptionFiled.getText(),
-			history,
+			resultHistory,
 			opaqueRateTextField.getText(),
 			nmmNewEnableCheckBox.isSelected(),
 			fpsUpCheckBox.isSelected(),
@@ -2705,7 +2707,7 @@ public class MainFrame extends JFrame {
 		NotUseVhookCheckBox.setSelected(setting.isVhookDisabled());
 		ShadowComboBox.setSelectedIndex(setting.getShadowIndex());
 		AddOption_ConvVideoFileCheckBox.setSelected(setting.isAddOption_ConvVideoFile());
-		VideoID_TextField.setText(setting.getHistory1());
+		VideoID_TextField.setText(setting.lastHisory());
 		VhookWidePathField.setText(setting.getVhookWidePath());
 		UseVhookCheckBox.setSelected(setting.isUseVhookNormal());
 		UseVhookWideCheckBox.setSelected(setting.isUseVhookWide());
@@ -2894,7 +2896,7 @@ public class MainFrame extends JFrame {
 	private final JRadioButton sharedNgHighRadioButton = new JRadioButton();
 	private JLabel sharedNgLabel;
 	private JPanel sharedNgPanel;
-	public static StringBuffer history = new StringBuffer("");
+	public static StringBuffer resultHistory = new StringBuffer("");
 	private JPanel managementPanel;
 	private JPanel managementControl = new JPanel();
 	private JPanel activityStatusPanel;
@@ -2916,6 +2918,7 @@ public class MainFrame extends JFrame {
 			return;
 		}
 		String str = vList.toString();
+		vList = new StringBuffer();
 		System.out.println(str);
 		String[] lists = str.split("\n");
 		for(String id_title:lists){
@@ -2928,6 +2931,7 @@ public class MainFrame extends JFrame {
 			if(ss.length > 2)
 				watchinfo = ss[2];
 			// idを登録
+			OneLineMode = getSetting().isOneLineMode();
 			ListInfo listInfo = new ListInfo(vid+"_"+title,OneLineMode);
 			listInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
 			JLabel[] status3 = listInfo.getStatus();
@@ -2943,6 +2947,7 @@ public class MainFrame extends JFrame {
 			int indexNow = convNo++;
 			//System.out.println(">"+indexNow+"個目の要求: "+vid);
 			sendtext(">"+indexNow+"個目の要求: "+vid);
+			PendingMode = getSetting().isPendingMode();
 			ConvertStopFlag stopFlag =
 				new ConvertStopFlag(stopButton,"停","待","終", "変", PendingMode);
 			buttonTable.put(stopButton, stopFlag);
@@ -2956,7 +2961,8 @@ public class MainFrame extends JFrame {
 				status3,
 				stopFlag,
 				this,
-				queue);
+				queue,
+				vList);
 			// return to dispatch
  		}
 
@@ -3015,10 +3021,12 @@ public class MainFrame extends JFrame {
 			// so new video or new mylist will be converted
 			url = VideoID_TextField.getText();
 			if(url==null || url.isEmpty()){
+				url = "";
 				sendtext("MainFrame NULLPOinter url error");
 				System.out.println("MainFrame NULLPOinter url error");
 				return;
 			}
+			requestHistory.add(url);
 			/*
 			 * URL解析
 			 */
@@ -3062,6 +3070,7 @@ public class MainFrame extends JFrame {
 					stopFlag,
 					movieList);
 				mylistGetter.execute();
+				stopFlag.go();		//mylistGetterは無条件に実行
 				// MylistGetter実行
 				// return to dispatch
 			}else
@@ -3074,6 +3083,7 @@ public class MainFrame extends JFrame {
 				sendtext(">同時変換数　"+numThread+" "+indexNow);
 				System.out.println(">同時変換数　"+numThread+" "+url);
 				System.out.println(">"+indexNow+" "+url);
+				StringBuffer sbret = new StringBuffer();
 				convertManager.request(
 					numThread,
 					url,
@@ -3082,7 +3092,8 @@ public class MainFrame extends JFrame {
 					status3,
 					stopFlag,
 					this,
-					queue);
+					queue,
+					sbret);
 				// ConverManager処理を要求
 				// return to dispatch
 			}
@@ -3099,12 +3110,33 @@ public class MainFrame extends JFrame {
 	private boolean checkLocal(String path) {
 		if(new File(path).exists()){
 			File localFile = new File(path);
-			url = "sm0";
-			Tag = url;
+			String vid;
+			String regex = "[]):/\\\\_\\t\\.\\?].*$";
+		//	Pattern p=Pattern.compile(regex);
+			String Tag = localFile.getName().replaceFirst(regex, "").trim();
+			System.out.println("Tag:"+Tag);
+			if(Tag.charAt(0)=='('){
+				vid = Tag.substring(1);
+				Tag += ')';
+			} else if(Tag.charAt(0)=='['){
+				vid = Tag.substring(1);
+				Tag += ']';
+			} else {
+				vid = Tag;
+			}
+			System.out.println("Tag:"+Tag);
+			System.out.println("vid:"+vid);
+			if(idcheck(vid)){
+				url = vid;
+			} else {
+				url = "sm0";
+			}
+			VideoID_TextField.setText(url);
+		//	Tag = url;
 			if(localFile.isFile()){
+				SavingVideoCheckBox.setSelected(false);
 				String extension = new Path(localFile).getExtension().toLowerCase();
 				if(".mp4.flv.avi".contains(extension)){
-					SavingVideoCheckBox.setSelected(false);
 					VideoSavedFileField.setText(path);
 					Video_SaveFileRadioButton.setSelected(true);
 					String localComment = path.replace(extension, ".xml");
@@ -3116,10 +3148,27 @@ public class MainFrame extends JFrame {
 					return true;
 				}
 				return false;
+			}else if(localFile.isDirectory()){
+				SavingVideoCheckBox.setSelected(false);
+				VideoSavedFolderField.setText(path);
+				Video_SaveFolderRadioButton.setSelected(true);
+				CommentSavedFolderField.setText(path);
+				Comment_SaveFolderRadioButton.setSelected(true);
 			}
 			return true;
 		}
 		return false;
+	}
+
+	private boolean idcheck(String vid) {
+		if(vid.length() > 13) return false;
+		for(char c : vid.toCharArray())
+			if(!isAlphaNumeric(c)) return false;
+		return true;
+	}
+
+	private boolean isAlphaNumeric(char c) {
+		return ('A'<=c&&c<='Z')||(c>='a'&&c<='z')||('0'<=c&&c<='9');
 	}
 
 	private boolean parseUrlMylist() {
@@ -3225,7 +3274,7 @@ public class MainFrame extends JFrame {
 		JTextArea textout = null;
 		textout = new TextView(
 			this, "ダウンロードリスト").getTextArea();
-		textout.setText(history.toString());
+		textout.setText(resultHistory.toString());
 	//	textout.setCaretPosition(0);
 	}
 
@@ -3260,7 +3309,7 @@ public class MainFrame extends JFrame {
 			File inputVideo = null;
 			ConvertingSetting setting = getSetting();
 			ConvertWorker conv = new ConvertWorker(
-					VideoID_TextField.getText(),
+					url,
 					WayBackField.getText(),
 					setting,
 					new JLabel[]{statusBar,new JLabel(),new JLabel()},
@@ -3332,31 +3381,6 @@ public class MainFrame extends JFrame {
 		return output;
 	}
 
-/*
- 	private ArrayList<String> execOutFFmpeg(String parameter)
-			throws FileNotFoundException {
-		final ArrayList<String> output = new ArrayList<String>();
-
-		if (parameter == null) {
-			parameter = "";
-		}
-		String path = getSetting().getFFmpegPath();
-		if (!new File(path).canRead()) {
-			throw new FileNotFoundException("FFmpegが見つかりません");
-		}
-		FFmpeg ffmpeg = new FFmpeg(path);
-		ffmpeg.setCmd(parameter);
-	//	System.out.println("execute:" + ffmpeg.getCmd());
-		ffmpeg.exec(new FFmpeg.Callback() {
-				@Override
-				public void doEveryLoop(String e) {
-				//	System.out.println(e);
-					output.add(e.trim() + "\n");
-				}
-		});
-		return output;
-	}
-*/
 	/* ビデオ・セーブダイアログ */
 	public void ShowSavingVideoDialogButton_actionPerformed(ActionEvent e) {
 		showSaveDialog("動画の保存先(ファイル)", VideoSavedFileField, true, false);

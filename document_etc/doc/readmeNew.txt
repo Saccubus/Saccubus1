@@ -122,7 +122,7 @@ readmeNew.txt
 
 □改造部分について
 【ライセンス】
-１．ffmpeg70404f.exe（ソースはGithubレポジトリ）、Saccubus.jar（ソース同梱）は
+１．ffmpeg76711f.exe（ソースはGithubレポジトリ）、Saccubus.jar（ソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
 ２．nicovideoE.dll、Bin.jar、Saccubus.exe（全てソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)と
@@ -152,24 +152,29 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ●注意●
 　Javaランタイム Java8 JRE8 または JDK1.8が必要です。
 　最近アップデートしていない場合は必ず更新して下さい。
-　Java7 - JRE7 と JDK1.7も確認済みですが
-　　PublicUpdate終了のため非推奨。
+　Java7 - JRE7 と JDK1.7はPublicUpdate終了のため非推奨。
 　JRE6 JDK1.6 JRE5 JDK1.5はテストしていません。
 　　http://java.com/ja/
 　からインストールして下さい。通常は32bit版です。
 　64bit版をダウンロードするには説明を読んで従って下さい。
 
 ◆Javaのパスの設定(参考)
-　auto.batやdebug.batを実行するにはjava.exeがパスに設定されていることが必要です。
+　auto.batやdebug.batを実行するにはjava.exeがPathに設定されていることが必要です。
 　win7まではsystem32にjava.exeが自動でインストールされますが
 　場合によってはされないこともあります。またwin8以降ではされません。
-　(最近Java8ではまたJavaインストール時にパスが通るように成ったようですが)
-　Javaをパスに設定するには以下のページを参考にしてください。
+　最近Java8ではまたJavaインストール時にPathが通るように成ったようです。
+　「java.exe は、内部コマンドまたは外部コマンド、
+　操作可能なプログラムまたはバッチ ファイルとして認識されていません。」
+　のエラーが出る場合Javaをパスに設定するには以下のページを参考にしてください。
 　参考：Windows 7 にパス(Path)を設定する
 　　http://blog.cnu.jp/2009/11/06/windows-7-path/
 　　http://blog.cnu.jp/2010/11/10/shortcut-environment/
 　参考：Windows8にjava7を入れてみたよ（Windows 8以降）
 　　http://javatechnology.net/tool/windows8-java7-install/
+　参考:Windows10で環境変数（システム環境変数、ユーザ環境変数）を追加
+　　http://www.wannko.net/windows10/etc/kankyo.html
+　参考:Windows 10プリインストール機初期設定の留意点(Win10環境変数エディタ)
+　　http://pc.watch.impress.co.jp/docs/column/win10uw/20151224_736655.html
 
 ◆注意◆16:9黒枠なしの（PSPなどの）動画について
 　　初期化した後の変換オプション設定（従来）ではコメントは
@@ -178,13 +183,13 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　コメント全体を画面内に収まるよう縮小しています。
 
 ●注意●
-　　Windows8/8.1はデスクトップUIでのIE11/Firefoxで確認しました。Windows8スタイルUIでは
-　　IEとのブラウザ共有は出来ませんでした。Chromeは不可です。
+　　Windows8/8.1/10はデスクトップUIでのIE11/Firefoxで確認しました。
+　　Windows8スタイルUIではIEとのブラウザ共有は出来ませんでした。Chromeは不可です。
 　　Windows10でEdge(Spartan)とのブラウザ共有は不可、IE11は可能です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
-　・配布形態　　ffmpeg70404f同梱版
+　・配布形態　　ffmpeg76711f同梱版
 　・本Rev.は確定版SDLライブラリ（2011/11/02版）を同梱しています。（binフォルダ内）
 　・本Rev.はffmpeg 21400用optionファイルを削除しました。
 　・optionF（N70404f/N65220w用 2015/08/31版）optionFDev（実験用 2015/03/08版）を同梱。
@@ -203,10 +208,12 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　・移動したオプションファイルをコピーして戻して下さい。
 　・初期化用にsaccubus.iniが入っています。
 　　saccubus.xmlがない時とメニューから初期化を実行した時に
-　　saccubus.iniを読み込んでfffmpeg70404f用にoptionフォルダと
+　　saccubus.iniを読み込んでffmpeg70404f(76711f)用にoptionフォルダと
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・同時変換数設定により並行実行
+　・変換ボタンにより登録(変換予約)、停止は個別ボタンで
 　・ログイン処理修正(メールアドレス・パスワードログイン)
 　・コメント追加モード
 　・さきゅばす用ffmpegの修正(toolbox削除)に合わせて修正。
@@ -330,6 +337,23 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 □拡張機能（変更点）説明
+●同時変換数設定により並行実行([管理]タブ)
+　変換数は無制限,ダウンロードは2同時まで（内部固定）しかできません
+（サーバー負荷を上げないため）
+　普通（変換ありの場合）は変換時間の方が長いので3以上を指定しても
+　問題とはならないでしょう
+　auto.batは同時変換未対応　(java.exeが1動画毎に終了する)
+　リストを分けてauto.batを２つ実行するなどで対処願います。)
+
+●変換ボタンは変換(予約)専用　停止は状況表示に表示される[停]ボタン
+　開始時保留オン(マイリスト一括登録など)時は登録後に[変]ボタンで変換開始
+　全制御欄の　[変換]ボタンで制限数まで一斉開始、[停止]で全停止、[消去]でクリア
+　（停止した変換は再開　未対応　再登録は手動で）
+　状況表示は動画毎に3行　又は　1行
+
+※ID/URL欄および[管理]タブの空白部分はURLドロップ可能
+　右クリックでクリップボードからペーストも可能（読み取りは不可）
+
 ●ログイン処理修正(メールアドレス・パスワードログイン)
 
 ●コメント追加保存モード
@@ -1039,6 +1063,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 変更履歴・修正・改変点
+1.64.2.0(2015/12/13)
+　MSPGothicチェック追加(nicovideoE.dll)
+
 1.64.1.0(2015/12/11)
 　ログイン処理再修正(クッキー処理修正)
 

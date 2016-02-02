@@ -125,7 +125,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String alternativeVideoID = "";
 	private final ConvertManager manager;
 	private Gate gate;
-
+//	private StringBuffer requestHistory;
 
 	public ConvertWorker(String url, String time, ConvertingSetting setting,
 			JLabel[] jLabels, ConvertStopFlag flag,	MainFrame frame,
@@ -156,12 +156,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		MovieInfo = jLabels[1];
 		MovieInfo.setText(" ");
 		stopwatch = new Stopwatch(jLabels[2]);
-		if(fileQueue==null)
-			fileQueue = new ConcurrentLinkedQueue<File>();
 		manager = conv;
 		fileQueue = queue;
+		if(fileQueue==null)
+			fileQueue = new ConcurrentLinkedQueue<File>();
 		parent = frame;
 		sbRet = sb;
+	//	requestHistory = setting.getRequestHistory();
+	//	requestHistory.append(url+"\n");
 	}
 	private File VideoFile = null;
 	private File CommentFile = null;
@@ -1711,7 +1713,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return result;
 			}
 
-			System.out.println(this.getClass().toString()+" run 3 comment "+Status.getText());
 			stopwatch.show();
 			if (!saveComment(client) || stopFlagReturn()){
 				return result;
@@ -1772,14 +1773,18 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return result;
 			}
 
-			System.out.println(this.getClass().toString()+" run 4 convert "+Status.getText());
 			stopwatch.show();
 			if (convertVideo()) {
 				// 変換成功
-				if(parent!=null)
-					fileQueue = parent.getQueue();
-				if(fileQueue!=null)
-					fileQueue.offer(ConvertedVideoFile);
+				ConvertingSetting setting1;
+				if(parent!=null){
+					setting1 = parent.getSetting();
+				} else {
+					setting1 = Setting;
+				}
+				if(fileQueue==null)
+					fileQueue = new ConcurrentLinkedQueue<File>();
+				fileQueue.offer(ConvertedVideoFile);
 				if (isDeleteCommentAfterConverting())
 					deleteCommentFile();
 				if (isDeleteVideoAfterConverting())
@@ -1789,8 +1794,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				deleteFile(OptionalMiddleFile);
 				deleteFile(CombinedCommentFile);
 				deleteFile(CombinedOptionalFile);
-				if (Setting.isAutoPlay()){
-					playConvertedVideo();
+				if(setting1.isAutoPlay()){
+						playConvertedVideo();
 				}
 			}
 		} catch (IOException ex) {
@@ -1833,7 +1838,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			e.printStackTrace();
 		}
 		if(retStr == null)
-			System.out.println("ConvertWorker#done.ret==null　バグ？");
+			System.out.println("ConvertWorker#done.ret==null");
 		else
 			System.out.println("["+retStr+"]Converter.done! "+Tag);
 	}
@@ -1841,7 +1846,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	// 変換動画再生
 	public void playConvertedVideo() {
 		try {
-			File convertedVideo = fileQueue==null ? null : fileQueue.poll();
+			File convertedVideo = fileQueue.poll();
 			if(convertedVideo==null){
 				sendtext("変換後の動画がありません");
 				return;
