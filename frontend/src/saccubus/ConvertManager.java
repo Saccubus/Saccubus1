@@ -1,16 +1,20 @@
 package saccubus;
 
 import java.io.File;
+import java.util.Hashtable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JLabel;
+
+import saccubus.net.NicoClient;
 
 public class ConvertManager extends Thread {
 	private static AtomicInteger numThread = new AtomicInteger(1);
 	private static AtomicInteger numRun = new AtomicInteger(0);
 	private static ConcurrentLinkedQueue<ConvertWorker> reqQueue = new ConcurrentLinkedQueue<>();
 	private static AtomicInteger numReq = new AtomicInteger(0);
+	private static Hashtable<ConvertWorker, NicoClient> clientTab = new Hashtable<>(2);
 
 
 	public ConvertManager(){
@@ -29,7 +33,7 @@ public class ConvertManager extends Thread {
 		JLabel[] status3,
 		ConvertStopFlag flag,
 		MainFrame frame,
-		ConcurrentLinkedQueue<File> queue,
+		HistoryDeque<File> play_list,
 		StringBuffer sbret
 		)
 	{
@@ -42,7 +46,7 @@ public class ConvertManager extends Thread {
 				status3,
 				flag,
 				frame,
-				queue,
+				play_list,
 				this,
 				sbret);
 		reqQueue.offer(converter);
@@ -68,7 +72,7 @@ public class ConvertManager extends Thread {
 		}	//500ms ‘Ò‹@
 	}
 
-	public void notice(Object num) {
+	public int notice(Object num) {
 		int nMax = numThread.get();
 		try {
 			nMax = Integer.decode(num.toString());
@@ -77,6 +81,7 @@ public class ConvertManager extends Thread {
 		} catch(NumberFormatException e){
 			e.printStackTrace();
 		}
+		return nMax;
 	}
 
 	private void queueCheckAndGo(int nReq, int nRun, int nMax){
@@ -112,5 +117,13 @@ public class ConvertManager extends Thread {
 		numReq.set(0);
 		numRun.set(0);
 		numThread.set(1);
+	}
+
+	public static NicoClient getManagerClient(ConvertWorker conv){
+		NicoClient client = clientTab.get(conv);
+		if(client==null){
+			client = conv.getNicoClient();
+		}
+		return client;
 	}
 }

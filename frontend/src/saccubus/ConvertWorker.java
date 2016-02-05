@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,7 +56,7 @@ import saccubus.util.Util;
  *  JLabelの表示書き換えなど
  */
 public class ConvertWorker extends SwingWorker<String, String> {
-	private final ConvertingSetting Setting;
+	private ConvertingSetting Setting;
 	private String Tag;
 	private String VideoID;
 	private String VideoTitle;
@@ -114,22 +113,26 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String result = "0";
 	private String dateUserFirst = "";
 	//private String dateUserLast = "";
-//	private ArrayList<CommentReplace> commentReplaceSet = new ArrayList<CommentReplace>();
 	private final boolean watchvideo;
 	private double frameRate = 0.0;
 	private double fpsUp = 0.0;
 	private double fpsMin = 0.0;
+	private boolean checkFps;
 	private String lastFrame = "";
-	private ConcurrentLinkedQueue<File> fileQueue;
-//	private static final String MY_MYLIST = "my/mylist";
+	private HistoryDeque<File> playList;
+	private ArrayList<CommentReplace> CommentReplaceList = new ArrayList<CommentReplace>();
+	private File imgDir;
+	private Aspect outAspect;
+	private VPlayer vplayer = null;
 	private String alternativeVideoID = "";
 	private final ConvertManager manager;
 	private Gate gate;
-//	private StringBuffer requestHistory;
+	private StringBuffer errorList;
+	private String lowVideoID;
 
 	public ConvertWorker(String url, String time, ConvertingSetting setting,
 			JLabel[] jLabels, ConvertStopFlag flag,	MainFrame frame,
-			ConcurrentLinkedQueue<File> queue, ConvertManager conv, StringBuffer sb) {
+			HistoryDeque<File> play_list, ConvertManager conv, StringBuffer sb) {
 		url = url.trim();
 		watchvideo = !url.startsWith("http");
 		int index = 0;
@@ -144,6 +147,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			WatchInfo = "";
 		}
 		VideoID = "[" + Tag + "]";
+		lowVideoID = VideoID + "low_";
 		DefaultVideoIDFilter = new VideoIDFilter(VideoID);
 		if (time.equals("000000") || time.equals("0")){		// for auto.bat
 			Time = "";
@@ -157,13 +161,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		MovieInfo.setText(" ");
 		stopwatch = new Stopwatch(jLabels[2]);
 		manager = conv;
-		fileQueue = queue;
-		if(fileQueue==null)
-			fileQueue = new ConcurrentLinkedQueue<File>();
+		playList = play_list;
 		parent = frame;
 		sbRet = sb;
-	//	requestHistory = setting.getRequestHistory();
-	//	requestHistory.append(url+"\n");
+		errorList = Setting.getErrorList();
 	}
 	private File VideoFile = null;
 	private File CommentFile = null;
@@ -218,6 +219,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File CombinedOptionalFile;
 	private File appendCommentFile;
 	private File appendOptionalFile;
+	private File lowVideoFile;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -628,7 +630,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return true;
 	}
 
-	private NicoClient getNicoClient() {
+	public synchronized NicoClient getNicoClient() {
 		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
 			|| Setting.isSaveThumbInfo()) {
 			sendtext("ログイン中");
@@ -665,6 +667,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						result = "40";
 						return false;
 					}
+					lowVideoFile = null;
+					if(client.isEco()){
+						if(Setting.isDisableEco()){
+							sendtext("エコノミーモードなので中止します");
+							result = "42";
+							return false;
+						}else{
+							lowVideoFile = new File(folder, lowVideoID+VideoTitle+".flv");
+						}
+					}
 					VideoFile = new File(folder, getVideoBaseName() + ".flv");
 				} else {
 					VideoFile = Setting.getVideoFile();
@@ -679,16 +691,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						result = "41";
 						return false;
 					}
-					if(Setting.isDisableEco() &&  client.isEco()){
-						sendtext("エコノミーモードなので中止します");
-						result = "42";
-						return false;
+					if(lowVideoFile==null){
+						lowVideoFile = VideoFile;
 					}
-					VideoFile = client.getVideo(VideoFile, Status, StopFlag,
-						isVideoFixFileName() && Setting.isChangeMp4Ext());
-					if (stopFlagReturn()) {
-						result = "43";
-						return false;
+					if(client.isEco() && lowVideoFile.isFile() && lowVideoFile.canRead()){
+						sendtext("エコノミーモードでエコ動画は既に存在します");
+						System.out.println("エコ動画は既に存在します。ダウンロードをスキップします");
+						VideoFile = lowVideoFile;
+					}else{
+						VideoFile = client.getVideo(lowVideoFile, Status, StopFlag,
+								isVideoFixFileName() && Setting.isChangeMp4Ext());
+							if (stopFlagReturn()) {
+								result = "43";
+								return false;
+							}
 					}
 					if (VideoFile == null) {
 						sendtext("動画のダウンロードに失敗" + client.getExtraError());
@@ -1626,14 +1642,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			System.out.println(lastFrame);
 			return true;
 		} else if (code == CODE_CONVERTING_ABORTED) { /*中断*/
-
+			result = "97";
 		} else {
 			if(errorLog==null||errorLog.isEmpty())
 				if(ffmpeg!=null)
 					errorLog = ffmpeg.getLastError().toString();
 			sendtext("変換エラー：(" + code + ") "+ getLastError());
+			result = ""+code;
 		}
-		result = "97";
 		return false;
 	}
 
@@ -1654,11 +1670,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return str;
 	}
 
-	private ArrayList<CommentReplace> CommentReplaceList = new ArrayList<CommentReplace>();
-	private boolean checkFps;
-	private File imgDir;
-	private Aspect outAspect;
-	private VPlayer vplayer = null;
+	private boolean canRetry(NicoClient client, Gate gate){
+		//ゲート制限超えないならリトライ可能
+		String ecode;
+		if(client==null) return false;
+		ecode = client.getExtraError();
+		return  gate.notExceedLimiterGate()
+				&& ecode!=null &&(ecode.contains("503") || ecode.contains("504"));
+		//	HTTP_UNAVAILABLE  HTTP_GATEWAY_TIMEOUT
+		//  サービスが一時的に過負荷 ゲートウェイタイムアウト
+	}
 
 	@Override
 	protected String doInBackground() throws Exception {
@@ -1674,6 +1695,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(!watchvideo){
 			//not watch video get try mylist
 			sendtext("バグ URL振り分け失敗");
+			System.out.println("バグ URL振り分け失敗");
 			result = "-1";
 			return result;
 		}
@@ -1681,15 +1703,31 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		stopwatch.clear();
 		stopwatch.start();
 		try {
+			if(parent!= null){
+				Setting = parent.getSetting();
+			}
 			if (!checkOK()) {
 				return result;
 			}
-			NicoClient client = getNicoClient();
+			boolean success = false;
+			NicoClient client = null;
+			if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
+					|| Setting.isSaveThumbInfo()) {
+				do{
+					client = ConvertManager.getManagerClient(this);
+				}while (!stopFlagReturn() && client==null && canRetry(client, gate));
+			}
+
 			if (client != null){
 				if (!client.isLoggedIn()){
+					result = "-2";
 					return result;
 				}
-				if (!client.getVideoInfo(Tag, WatchInfo, Time, Setting.isSaveWatchPage())) {
+			//	Gate.resetLimit();
+				do{
+					success = client.getVideoInfo(Tag, WatchInfo, Time, Setting.isSaveWatchPage());
+				}while (!success && canRetry(client, gate));
+				if (!success) {
 					if(Tag==null || Tag.isEmpty()){
 						sendtext("URL/IDの指定がありません " + client.getExtraError());
 					}else if(!client.loginCheck()){
@@ -1697,10 +1735,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}else{
 						sendtext(Tag + "の情報の取得に失敗 " + client.getExtraError());
 					}
+					result = "-3";
 					return result;
 				}
 				if (stopFlagReturn()) {
-					return result;
+					return "97";
 				}
 				VideoTitle = client.getVideoTitle();
 				VideoBaseName = Setting.isChangeTitleId()?
@@ -1709,19 +1748,25 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 
 			stopwatch.show();
-			if (!saveVideo(client) || stopFlagReturn()) {
-				return result;
-			}
+			success = false;
+			do{
+				success = saveVideo(client);
+			}while (!stopFlagReturn() && !success && canRetry(client, gate));
+			if(!success) return result;
 
 			stopwatch.show();
-			if (!saveComment(client) || stopFlagReturn()){
-				return result;
-			}
+			success = false;
+			do{
+				success = saveComment(client);
+			}while (!stopFlagReturn() && !success && canRetry(client, gate));
+			if(!success) return result;
 
 			stopwatch.show();
-			if (!saveOwnerComment(client) || stopFlagReturn()) {
-				return result;
-			}
+			success = false;
+			do{
+				success = saveOwnerComment(client);
+			}while (!stopFlagReturn() && !success && canRetry(client, gate));
+			if(!success) return result;
 
 			stopwatch.show();
 			if(!saveThumbInfo(client)){
@@ -1750,6 +1795,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			gate.exit();
 			if (!isSaveConverted()) {
 				sendtext("動画・コメントを保存し、変換は行いませんでした。");
+				result = "0";
 				return result;
 			}
 
@@ -1776,15 +1822,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			stopwatch.show();
 			if (convertVideo()) {
 				// 変換成功
-				ConvertingSetting setting1;
-				if(parent!=null){
-					setting1 = parent.getSetting();
-				} else {
-					setting1 = Setting;
-				}
-				if(fileQueue==null)
-					fileQueue = new ConcurrentLinkedQueue<File>();
-				fileQueue.offer(ConvertedVideoFile);
+				result = "0";
+				playList.offer(ConvertedVideoFile);
 				if (isDeleteCommentAfterConverting())
 					deleteCommentFile();
 				if (isDeleteVideoAfterConverting())
@@ -1794,10 +1833,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				deleteFile(OptionalMiddleFile);
 				deleteFile(CombinedCommentFile);
 				deleteFile(CombinedOptionalFile);
-				if(setting1.isAutoPlay()){
-						playConvertedVideo();
+				if(parent==null && Setting.isAutoPlay()
+				 ||parent!=null && parent.getSetting().isAutoPlay()){
+					playConvertedVideo();
 				}
 			}
+			return result;
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
@@ -1808,6 +1849,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					StopFlag.setButtonEnabled(false);
 				}
 			});
+			errorList = Setting.getErrorList();
+
 			manager.reqDone(result);
 			stopwatch.show();
 			stopwatch.stop();
@@ -1816,16 +1859,27 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			System.out.println("LastStatus:[" + result + "]" + Status.getText());
 			System.out.println("VideoInfo: " + MovieInfo.getText());
 			System.out.println("LastFrame: "+ lastFrame);
+			//end alarm
+			if(!AudioPlay.playWav("end.wav")){
+				// sendtext("wav error");
+			};
 			if(sbRet!=null){
 				sbRet.append("RESULT=" + result + "\n");
 				if(!dateUserFirst.isEmpty()){
 					sbRet.append("DATEUF=" + dateUserFirst + "\n");
 				}
 			}
-			//end alarm
-			if(!AudioPlay.playWav("end.wav")){
-				// sendtext("wav error");
-			};
+//			File exe = new File("end.exe");
+//			File bat = new File("end.bat");
+//			if(bat.exists()){
+//				// batch file 実行
+//				CmdExec cmdexec = new CmdExec(bat,ConvertedVideoFile.getAbsolutePath());
+//				cmdexec.start();
+//			}else if (exe.exists()){
+//				// exe file 実行
+//				CmdExec cmdexec = new CmdExec(exe,ConvertedVideoFile.getAbsolutePath());
+//				cmdexec.start();
+//			}
 		}
 		return result;
 	}
@@ -1835,18 +1889,30 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		try {
 			retStr = get();
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		if(retStr == null)
-			System.out.println("ConvertWorker#done.ret==null");
-		else
+			System.out.println("ConvertWorker#done.ret==null. ConvertWorker might had Exception!");
+		else {
 			System.out.println("["+retStr+"]Converter.done! "+Tag);
+			if(parent!=null){
+				if(!retStr.equals("0")){
+					errorList.append(Tag+WatchInfo+"\n");
+					parent.setErrorUrl(errorList);
+				}else{
+					parent.setPlayList();
+				}
+			}
+		}
 	}
 
 	// 変換動画再生
 	public void playConvertedVideo() {
 		try {
-			File convertedVideo = fileQueue.poll();
+			File convertedVideo = playList.poll();
+			if(convertedVideo==null){
+				convertedVideo = ConvertedVideoFile;
+			}
 			if(convertedVideo==null){
 				sendtext("変換後の動画がありません");
 				return;
@@ -2439,7 +2505,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						thumbfile = new File(".\\bin\\b32.jpg");
 					}
 				}else {
-					NicoClient client = getNicoClient();
+					NicoClient client = ConvertManager.getManagerClient(this);
 					if(saveThumbInfo0(client) && saveThumbnailJpg(thumbInfo, client)){
 						thumbfile = thumbnailJpg;
 					}
@@ -3024,6 +3090,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private boolean stopFlagReturn() {
 		if (StopFlag.needStop()) {
 			sendtext("中止しました。");
+			result = "97";
 			return true;
 		}
 		return false;

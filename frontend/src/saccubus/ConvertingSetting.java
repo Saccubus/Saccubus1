@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Key;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -103,7 +102,7 @@ public class ConvertingSetting {
 	private boolean ConvertWithOwnerComment;
 	private boolean AddTimeStamp;
 	private boolean AddOption_ConvVideoFile;
-	private ArrayList<String> requestHistory;
+	private HistoryDeque<String> requestHistory;
 	private String VhookWidePath;
 	private boolean UseVhookNormal;
 	private boolean UseVhookWide;
@@ -183,6 +182,7 @@ public class ConvertingSetting {
 	private int numDownload;
 	private boolean PendingMode;
 	private boolean OneLineMode;
+	private StringBuffer errorList;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -332,7 +332,7 @@ public class ConvertingSetting {
 			boolean disable_vhook,
 			int shadow_index,
 			boolean addOption_ConvVideoFile,
-			ArrayList<String> history,
+			HistoryDeque<String> history,
 			String vhook_wide_path,
 			boolean use_vhook_normal,
 			boolean use_vhook_wide,
@@ -404,7 +404,8 @@ public class ConvertingSetting {
 			String append_notice,
 			int n_thread,
 			boolean pending_mode,
-			boolean one_line_mode
+			boolean one_line_mode,
+			StringBuffer error_list
 		)
 	{
 		this(	mailaddress,
@@ -537,6 +538,7 @@ public class ConvertingSetting {
 		numThread = n_thread;
 		PendingMode = pending_mode;
 		OneLineMode = one_line_mode;
+		errorList = error_list;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -680,8 +682,8 @@ public class ConvertingSetting {
 	public boolean isAddOption_ConvVideoFile() {
 		return AddOption_ConvVideoFile;
 	}
-	public ArrayList<String> getRequestHistory() {
-		return requestHistory;
+	public String getRequestHistory() {
+		return requestHistory.getLast();
 	}
 	public String getVhookWidePath(){
 		return VhookWidePath;
@@ -912,6 +914,9 @@ public class ConvertingSetting {
 	public boolean isOneLineMode(){
 		return OneLineMode;
 	}
+	public StringBuffer getErrorList(){
+		return errorList;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1061,6 +1066,7 @@ public class ConvertingSetting {
 	static final String PROP_NUM_DOWNLOAD = "MaxNumberOfDownload";
 	static final String PROP_PENDING_MODE = "PendingMode";
 	static final String PROP_ONE_LINE_MODE = "OneLineMode";
+	static final String PROP_ERROR_LIST = "ErrorList";
 	// 読み込むだけ、保存しない
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1182,7 +1188,7 @@ public class ConvertingSetting {
 			.isAddTimeStamp()));
 		prop.setProperty(PROP_ADD_OPTION_CONV_VIDEO,  Boolean.toString(
 			setting.isAddOption_ConvVideoFile()));
-		prop.setProperty(PROP_HISTORY1, lastHistory(setting.getRequestHistory()));
+		prop.setProperty(PROP_HISTORY1, setting.lastHistory());
 		prop.setProperty(PROP_VHOOK_WIDE_PATH, setting.getVhookWidePath());
 		prop.setProperty(PROP_USE_VHOOK,
 				Boolean.toString(setting.isUseVhookNormal()));
@@ -1269,23 +1275,15 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_NUM_DOWNLOAD, Integer.toString(setting.getNumDownload()));
 		prop.setProperty(PROP_PENDING_MODE, Boolean.toString(setting.isPendingMode()));
 		prop.setProperty(PROP_ONE_LINE_MODE, Boolean.toString(setting.isOneLineMode()));
+		prop.setProperty(PROP_ERROR_LIST, setting.getErrorList().substring(0));
 		/*
 		 * ここまで拡張設定保存 1.22r3 に対する
 		 */
 		return prop;
 	}
 
-	public String lastHisory() {
-		return lastHistory(getRequestHistory());
-	}
-
-	private static String lastHistory(ArrayList<String> historyList) {
-		//改行で切れた履歴の最後の一つをセット
-		String history1 = "";
-		while(!historyList.isEmpty()){
-			history1 = historyList.remove(historyList.size()-1);
-		}
-		return history1;
+	public String lastHistory() {
+		return getRequestHistory();
 	}
 
 	public static void saveSetting(ConvertingSetting setting) {
@@ -1413,8 +1411,6 @@ public class ConvertingSetting {
 		if(!win_dir.endsWith(File.separator)){
 			win_dir = win_dir+File.separator;
 		}
-		ArrayList<String> reqHistory = new ArrayList<String>();
-		reqHistory.add(prop.getProperty(PROP_HISTORY1, ""));
 		return new ConvertingSetting(
 			user,
 			password,
@@ -1461,7 +1457,7 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_VHOOK,"false")),
 			Integer.parseInt(prop.getProperty(PROP_SHADOW_INDEX,"1"),10),
 			Boolean.parseBoolean(prop.getProperty(PROP_ADD_OPTION_CONV_VIDEO, "false")),
-			reqHistory,
+			new HistoryDeque<String>(""),
 			prop.getProperty(PROP_VHOOK_WIDE_PATH,DEFAULT_VHOOK_PATH),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_VHOOK,"true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_VHOOK_WIDE,"true")),
@@ -1533,7 +1529,8 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_APPEND_NOTICE, ""),
 			Integer.parseInt(prop.getProperty(PROP_NUM_THREAD, "1")),
 			Boolean.parseBoolean(prop.getProperty(PROP_PENDING_MODE, "false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_ONE_LINE_MODE, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_ONE_LINE_MODE, "false")),
+			new StringBuffer(prop.getProperty(PROP_ERROR_LIST, ""))
 			);
 	}
 

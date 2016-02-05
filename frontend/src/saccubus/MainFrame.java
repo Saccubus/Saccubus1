@@ -22,10 +22,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -59,6 +59,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicArrowButton;
 
 import psi.lib.swing.PopupRightClick;
+import saccubus.net.Gate;
 import saccubus.net.Loader;
 import saccubus.net.Path;
 import saccubus.util.FileDropTarget;
@@ -129,6 +130,8 @@ public class MainFrame extends JFrame {
 	JPanel VideoInfoPanel = new JPanel();
 	JPanel StatusPanel = new JPanel();
 	JTextField VideoID_TextField = new JTextField();
+	JButton historyBackButton = new BasicArrowButton(SwingConstants.WEST);
+	JButton historyForwardButton = new BasicArrowButton(SwingConstants.EAST);
 	JButton DoButton = new JButton();
 	public static final String DoButtonDefString = "変換";
 	public static final String DoButtonStopString = "停止";
@@ -243,12 +246,14 @@ public class MainFrame extends JFrame {
 	private JLabel playConvertedVideoLabel = new JLabel();
 	private JCheckBox saveAutoListCheckBox = new JCheckBox();
 	private JCheckBox autoPlayCheckBox = new JCheckBox();
+	private JCheckBox autoPlay2CheckBox = new JCheckBox();
 	private JCheckBox liveOperationCheckBox = new JCheckBox();
 	private JCheckBox premiumColorCheckBox = new JCheckBox();
 	private JCheckBox appendCommentCheckBox = new JCheckBox();
 	private JSpinner nThreadSpinner;
 	private String notice;
-	private ArrayList<String> requestHistory;
+	private HistoryDeque<String> requestHistory;
+	private HistoryDeque<File> playList = new HistoryDeque<File>(null);
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -266,7 +271,6 @@ public class MainFrame extends JFrame {
 	};
 
 	public static final String THUMB_DEFALT_STRING = "<自動>";
-
 	private static final String MY_MYLIST = "my/mylist";
 	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
 
@@ -280,6 +284,25 @@ public class MainFrame extends JFrame {
 	private JCheckBox PendingModeCheckbox;
 	private JCheckBox OneLineCheckbox;
 	private boolean OneLineMode;
+	private JCheckBox downloadDownCheckBox;
+
+	private StringBuffer errorList;
+	private JPanel errorStatusPanel;
+	private JLabel errorUrlLabel;
+	private JButton errorResetUrlButton;
+	private JPanel errorButtonPanel;
+	private JButton errorListDeleteButton;
+	private JButton errorListSaveButton;
+
+	private JPanel playVideoPanel;
+	private JLabel playVideoLabel;
+	private JPanel playVideoButtonPanel;
+	private JButton playVideoPlayButton;
+	private JButton playVideoNextButton;
+	private JButton playVideoBackButton;
+
+	private JButton AllSaveButton;
+	private VPlayer vplayer;
 
 	public MainFrame() {
 		try {
@@ -335,6 +358,7 @@ public class MainFrame extends JFrame {
 		grid10_x1_y1_70.weightx = 1.0;
 		grid10_x1_y1_70.insets = INSETS_0_0_0_0;
 		grid10_x1_y1_70.gridx = 1;
+		grid10_x1_y1_70.gridwidth = 3;
 		GridBagConstraints grid10_x0_y1_69 = new GridBagConstraints();
 		grid10_x0_y1_69.gridx = 0;
 		grid10_x0_y1_69.ipadx = 0;
@@ -348,7 +372,18 @@ public class MainFrame extends JFrame {
 		grid10_x1_y0_68.ipady = 0;
 		grid10_x1_y0_68.weightx = 1.0;
 		grid10_x1_y0_68.insets = INSETS_0_0_0_0;
-		grid10_x1_y0_68.gridx = 1;
+		GridBagConstraints grid10_x1_y0_68B = new GridBagConstraints();
+		grid10_x1_y0_68B.gridx = 2;
+		grid10_x1_y0_68B.fill = GridBagConstraints.NONE;
+		grid10_x1_y0_68B.gridy = 0;
+		grid10_x1_y0_68B.weightx = 0.0;
+		grid10_x1_y0_68B.insets = INSETS_0_0_0_0;
+		GridBagConstraints grid10_x2_y0_68C = new GridBagConstraints();
+		grid10_x2_y0_68C.gridx = 3;
+		grid10_x2_y0_68C.fill = GridBagConstraints.NONE;
+		grid10_x2_y0_68C.gridy = 0;
+		grid10_x2_y0_68C.weightx = 0.0;
+		grid10_x2_y0_68C.insets = INSETS_0_0_0_0;
 		GridBagConstraints grid10_x0_y0_67 = new GridBagConstraints();
 		grid10_x0_y0_67.gridx = 0;
 		grid10_x0_y0_67.ipadx = 0;
@@ -834,7 +869,7 @@ public class MainFrame extends JFrame {
 		});
 		VideoInfoPanel.setLayout(gridBagLayout1);
 		VideoID_TextField.setText("http://www.nicovideo.jp/watch/");
-		requestHistory = new ArrayList<String>();
+		requestHistory = new HistoryDeque<String>(new String());
 		DoButton.setText(DoButtonDefString);
 		DoButton.addActionListener(new MainFrame_DoButton_actionAdapter(this));
 		SavingInfoTabPanel.setLayout(gridBagLayout2);
@@ -1226,7 +1261,16 @@ public class MainFrame extends JFrame {
 				.addActionListener(new MainFrame_ShowSavingConvertedVideoDialogButton_actionAdapter(
 						this));
 		autoPlayCheckBox.setText("変換後自動再生(拡張子の既定値)");
+		autoPlay2CheckBox.setText("自動再生");
 		autoPlayCheckBox.setForeground(Color.blue);
+		autoPlay2CheckBox.setForeground(Color.blue);
+		autoPlay2CheckBox.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				autoPlayCheckBox.setSelected(autoPlay2CheckBox.isSelected());
+			}
+		});
 		OptionalThreadInfoPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"オプショナルスレッド設定", TitledBorder.LEADING, TitledBorder.TOP,
@@ -1531,6 +1575,22 @@ public class MainFrame extends JFrame {
 		VideoInfoPanel.add(DoButton, grid1_x1_y0_71);
 		OpPanel.add(VideoID_Label, grid10_x0_y0_67);
 		OpPanel.add(VideoID_TextField, grid10_x1_y0_68);
+		OpPanel.add(historyBackButton, grid10_x1_y0_68B);
+		OpPanel.add(historyForwardButton, grid10_x2_y0_68C);
+		historyBackButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String vid = requestHistory.removeLast();
+				VideoID_TextField.setText(vid);
+			}
+		});
+		historyForwardButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String vid = requestHistory.removeNext();
+				VideoID_TextField.setText(vid);
+			}
+		});
 		OpPanel.add(WayBackLabel, grid10_x0_y1_69);
 		OpPanel.add(WayBackField, grid10_x1_y1_70);
 		MainTabbedPane.add(BasicInfoTabPanel, "基本設定");
@@ -1918,7 +1978,7 @@ public class MainFrame extends JFrame {
 		playConvertedVideoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				playConvertedVideo_actionPerformed(e);
+				playConvertedVideo();
 			}
 		});
 		playConvertedVideoButton.setForeground(Color.blue);
@@ -2107,54 +2167,87 @@ public class MainFrame extends JFrame {
 			grid400.anchor = GridBagConstraints.NORTH;
 			grid400.fill = GridBagConstraints.HORIZONTAL;
 			grid400.insets = INSETS_0_0_0_0;
-			managementControl.add(new JLabel("同時変換数"),grid400);
+			managementControl.add(new JLabel("同時変換"),grid400);
 			GridBagConstraints grid401 = new GridBagConstraints();
 			grid401.gridx = 1;
 			grid401.gridy = 0;
-			grid401.gridwidth = 4;
+			grid401.gridwidth = 6;
 			grid401.gridheight = 1;
-			grid401.weightx = 1.0;
+			grid401.weightx = 0.0;
 			grid401.anchor = GridBagConstraints.NORTH;
 			grid401.fill = GridBagConstraints.HORIZONTAL;
 			grid401.insets = INSETS_0_5_0_0;
 			SpinnerNumberModel model = new SpinnerNumberModel(0, null, null, 1);
 			nThreadSpinner = new JSpinner(model);
-			managementControl.add(nThreadSpinner,grid401);
 			changeListener = (new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
 					noticeConvertManager(e);
 				}
 			});
+			managementControl.add(nThreadSpinner,grid401);
+			downloadDownCheckBox = new JCheckBox("1");
+			downloadDownCheckBox.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Gate.setNumGate(downloadDownCheckBox.isSelected()? 1:2);
+				}
+			});
+			GridBagConstraints grid400B = new GridBagConstraints();
+			grid400B.gridx = 7;
+			grid400B.gridy = 0;
+			grid400B.gridwidth = 1;
+			grid400B.gridheight = 1;
+			grid400B.weightx = 0.0;
+			grid400B.anchor = GridBagConstraints.WEST;
+			grid400B.fill = GridBagConstraints.HORIZONTAL;
+			grid400B.insets = INSETS_0_0_0_0;
+			managementControl.add(downloadDownCheckBox,grid400B);
+
 			GridBagConstraints grid402 = new GridBagConstraints();
-			grid402.gridx = 5;
+			grid402.gridx = 8;
 			grid402.gridy = 0;
-			grid402.gridwidth = 3;
+			grid402.gridwidth = 4;
 			grid402.gridheight = 1;
-			grid402.weightx = 1.0;
+			grid402.weightx = 0.0;
 			grid402.anchor = GridBagConstraints.NORTH;
 			grid402.fill = GridBagConstraints.HORIZONTAL;
 			grid402.insets = INSETS_0_5_0_0;
-			PendingModeCheckbox = new JCheckBox("開始時保留", false);
+			PendingModeCheckbox = new JCheckBox("開始保留", false);
 			PendingModeCheckbox.setToolTipText("変換ボタンを押した時に保留にする、個別ボタンで変換開始");
 			managementControl.add(PendingModeCheckbox, grid402);
+			GridBagConstraints grid415 = new GridBagConstraints();
+			grid415.gridx = 12;
+			grid415.gridy = 0;
+			grid415.gridwidth = 3;
+			grid415.gridheight = 1;
+			grid415.weightx = 1.0;
+			grid415.anchor = GridBagConstraints.NORTH;
+			grid415.fill = GridBagConstraints.HORIZONTAL;
+			grid415.insets = INSETS_0_5_0_0;
+			OneLineCheckbox = new JCheckBox("１行表示", false);
+			OneLineCheckbox.setToolTipText("1動画ごとに１行で表示");
+			managementControl.add(OneLineCheckbox, grid415);
+
 			GridBagConstraints grid410 = new GridBagConstraints();
 			grid410.gridx = 0;
 			grid410.gridy = 1;
 			grid410.gridwidth = 1;
 			grid410.gridheight = 1;
 			grid410.weightx = 0.0;
-			grid410.anchor = GridBagConstraints.EAST;
+			grid410.anchor = GridBagConstraints.WEST;
 			grid410.fill = GridBagConstraints.BOTH;
 			grid410.insets = INSETS_0_0_0_0;
-			managementControl.add(new JLabel("全制御"), grid410);
+			managementControl.add(new JLabel("全制御　"), grid410);
+
 			GridBagConstraints grid411 = new GridBagConstraints();
 			grid411.gridx = 1;
 			grid411.gridy = 1;
-			grid411.gridwidth = 1;
+			grid411.gridwidth = 3;
 			grid411.gridheight = 1;
 			grid411.weightx = 0.0;
-			grid411.anchor = GridBagConstraints.NORTH;
+			grid411.anchor = GridBagConstraints.WEST;
 			grid411.fill = GridBagConstraints.HORIZONTAL;
 			grid411.insets = INSETS_0_0_0_0;
 			AllExecButton = new JButton("変換");
@@ -2162,13 +2255,14 @@ public class MainFrame extends JFrame {
 			AllExecButton.setToolTipText("変換を開始します");
 			AllExecButton.setEnabled(false);
 			managementControl.add(AllExecButton, grid411);
+
 			GridBagConstraints grid412 = new GridBagConstraints();
-			grid412.gridx = 2;
+			grid412.gridx = 4;
 			grid412.gridy = 1;
-			grid412.gridwidth = 1;
+			grid412.gridwidth = 3;
 			grid412.gridheight = 1;
 			grid412.weightx = 0.0;
-			grid412.anchor = GridBagConstraints.NORTH;
+			grid412.anchor = GridBagConstraints.WEST;
 			grid412.fill = GridBagConstraints.HORIZONTAL;
 			grid412.insets = INSETS_0_0_0_0;
 			AllCancelButton = new JButton("停止");
@@ -2180,26 +2274,14 @@ public class MainFrame extends JFrame {
 				}
 			});
 			managementControl.add(AllCancelButton, grid412);
-			GridBagConstraints grid415 = new GridBagConstraints();
-			grid415.gridx = 5;
-			grid415.gridy = 1;
-			grid415.gridwidth = 3;
-			grid415.gridheight = 1;
-			grid415.weightx = 1.0;
-			grid415.anchor = GridBagConstraints.NORTH;
-			grid415.fill = GridBagConstraints.HORIZONTAL;
-			grid415.insets = INSETS_0_5_0_0;
-			OneLineCheckbox = new JCheckBox("１行表示", false);
-			OneLineCheckbox.setToolTipText("1動画ごとに１行で表示");
-			managementControl.add(OneLineCheckbox, grid415);
 
 			GridBagConstraints grid413 = new GridBagConstraints();
-			grid413.gridx = 3;
+			grid413.gridx = 7;
 			grid413.gridy = 1;
-			grid413.gridwidth = 1;
+			grid413.gridwidth = 3;
 			grid413.gridheight = 1;
 			grid413.weightx = 0.0;
-			grid413.anchor = GridBagConstraints.NORTH;
+			grid413.anchor = GridBagConstraints.WEST;
 			grid413.fill = GridBagConstraints.HORIZONTAL;
 			grid413.insets = INSETS_0_0_0_0;
 			AllDeleteButton = new JButton("消去");
@@ -2212,6 +2294,38 @@ public class MainFrame extends JFrame {
 				}
 			});
 			managementControl.add(AllDeleteButton, grid413);
+
+			GridBagConstraints grid414 = new GridBagConstraints();
+			grid414.gridx = 10;
+			grid414.gridy = 1;
+			grid414.gridwidth = 2;
+			grid414.gridheight = 1;
+			grid414.weightx = 0.0;
+			grid414.anchor = GridBagConstraints.WEST;
+			grid414.fill = GridBagConstraints.HORIZONTAL;
+			grid414.insets = INSETS_0_0_0_0;
+			AllSaveButton = new JButton("保存");
+			AllSaveButton.setForeground(Color.BLACK);
+			AllSaveButton.setToolTipText("変換予約履歴を保存します");
+			AllSaveButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Path reqlistSave = new Path("動画ID"+WayBackDate.formatNow()+".txt");
+					String text = requestHistory.getText();
+					try {
+						PrintWriter pw = new PrintWriter(reqlistSave);
+						pw.print(text);
+						pw.flush();
+						pw.close();
+					} catch (FileNotFoundException e1) {
+						e1.printStackTrace();
+					}
+				}
+			});
+			managementControl.add(AllSaveButton, grid414);
+			managementControl.add(new JPanel(),
+				new GridBagConstraints(13, 1, 1, 1, 1.0, 1, GridBagConstraints.WEST,
+						GridBagConstraints.BOTH, INSETS_0_0_0_0, 0,	0));
 
 			GridBagConstraints grid40 = new GridBagConstraints();
 			grid40.gridx = 0;
@@ -2231,7 +2345,7 @@ public class MainFrame extends JFrame {
 			grid41.weighty = 1.0;
 			grid41.anchor = GridBagConstraints.NORTH;
 			grid41.fill = GridBagConstraints.BOTH;
-			grid41.insets = INSETS_0_5_0_5;
+			grid41.insets = INSETS_0_0_0_0;
 			activityStatusPanel = new JPanel();
 			activityStatusPanel.setLayout(new BorderLayout());
 			activityPane = new JPanel();
@@ -2245,12 +2359,153 @@ public class MainFrame extends JFrame {
 					new JLabel().getFont(), Color.red));
 
 			managementPanel.add(activityStatusPanel, grid41);
+
+			errorStatusPanel = new JPanel();
+			errorUrlLabel = new JLabel(" ");
+			errorUrlLabel.setForeground(Color.DARK_GRAY);
+			errorResetUrlButton = new JButton("再登録");
+			errorResetUrlButton.setForeground(Color.BLUE);
+			errorResetUrlButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					myListGetterDone(errorList);
+					errorList = new StringBuffer();
+					errorUrlLabel.setText(" ");
+				}
+			});
+			errorListDeleteButton = new JButton("消去");
+			errorListDeleteButton.setForeground(Color.RED);
+			errorListDeleteButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					errorList = new StringBuffer();
+					errorUrlLabel.setText(" ");
+				}
+			});
+			errorListSaveButton = new JButton("保存");
+			errorListSaveButton.setForeground(Color.BLACK);
+			errorListSaveButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					errorListSave(errorList);
+					errorList = new StringBuffer();
+					errorUrlLabel.setText(" ");
+				}
+
+			});
+			errorButtonPanel = new JPanel();
+			errorButtonPanel.setLayout(new BorderLayout());
+			errorButtonPanel.add(errorResetUrlButton, BorderLayout.WEST);
+			errorButtonPanel.add(errorListDeleteButton, BorderLayout.CENTER);
+			errorButtonPanel.add(errorListSaveButton, BorderLayout.EAST);
+			errorStatusPanel.setLayout(new BorderLayout());
+			errorStatusPanel.add(new JLabel("エラーID  "), BorderLayout.WEST);
+			errorStatusPanel.add(errorUrlLabel, BorderLayout.CENTER);
+			errorStatusPanel.add(errorButtonPanel, BorderLayout.EAST);
+			GridBagConstraints grid42 = new GridBagConstraints();
+			grid42.gridx = 0;
+			grid42.gridy = 3;
+			grid42.gridwidth = 1;
+			grid42.weightx = 1.0;
+			grid42.anchor = GridBagConstraints.NORTH;
+			grid42.fill = GridBagConstraints.BOTH;
+			grid42.insets = INSETS_0_5_0_5;
+			managementPanel.add(errorStatusPanel, grid42);
+
+			playVideoLabel = new JLabel(" ");
+			playVideoBackButton = new JButton("←戻");
+			playVideoBackButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					File video = playList.removeBack();
+					if(video!=null)
+						setPlayList();
+				}
+			});
+			playVideoNextButton = new JButton("次→");
+			playVideoNextButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					File video = playList.poll();
+					if(video!=null)
+						setPlayList();
+				}
+			});
+			playVideoPlayButton = new JButton("再生");
+			playVideoPlayButton.setForeground(Color.BLUE);
+			playVideoPlayButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					playConvertedVideo();
+				}
+			});
+			playVideoButtonPanel = new JPanel();
+			playVideoButtonPanel.setLayout(new BorderLayout());
+			playVideoButtonPanel.add(playVideoBackButton, BorderLayout.WEST);
+			playVideoButtonPanel.add(playVideoPlayButton, BorderLayout.CENTER);
+			playVideoButtonPanel.add(playVideoNextButton, BorderLayout.EAST);
+			playVideoPanel = new JPanel();
+			playVideoPanel.setLayout(new BorderLayout());
+			playVideoPanel.add(autoPlay2CheckBox, BorderLayout.WEST);
+			playVideoPanel.add(playVideoLabel, BorderLayout.CENTER);
+			playVideoPanel.add(playVideoButtonPanel, BorderLayout.EAST);
+			GridBagConstraints grid43 = new GridBagConstraints();
+			grid43.gridx = 0;
+			grid43.gridy = 4;
+			grid43.gridwidth = 1;
+			grid43.weightx = 1.0;
+			grid43.anchor = GridBagConstraints.NORTH;
+			grid43.fill = GridBagConstraints.BOTH;
+			grid43.insets = INSETS_0_5_0_5;
+			managementPanel.add(playVideoPanel, grid43);
 		}
 		return managementPanel;
 	}
 
-	private void noticeConvertManager(ChangeEvent e) {
-		convertManager.notice(nThreadSpinner.getValue());
+	static void errorListSave(StringBuffer errbuf) {
+		Path errlistSave = new Path("エラー"+WayBackDate.formatNow()+".txt");
+		String text = errbuf.toString();
+		try {
+			PrintWriter pw = new PrintWriter(errlistSave);
+			pw.print(text);
+			pw.flush();
+			pw.close();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private void playConvertedVideo() {
+		try {
+			File convertedVideo = playList.peek();
+			if(convertedVideo==null){
+				sendtext("変換後の動画がありません");
+				return;
+			}
+			if(!convertedVideo.canRead()){
+				sendtext("変換後の動画が読めません：" + convertedVideo.getName());
+				return;
+			}
+			if(vplayer!=null && vplayer.isAlive()){
+				vplayer.interrupt();
+			}
+			vplayer = new VPlayer(convertedVideo, statusBar);
+			vplayer.start();
+			return ;
+		} catch(NullPointerException ex){
+			sendtext("playConvertedVideo: NullPo.");
+			ex.printStackTrace();
+		}
+	}
+
+	private int noticeConvertManager(ChangeEvent e) {
+		return convertManager.notice(nThreadSpinner.getValue());
 	}
 
 	private void AllCancel_ActionHandler(ActionEvent e) {
@@ -2621,10 +2876,12 @@ public class MainFrame extends JFrame {
 			notice,
 			numThread,
 			PendingModeCheckbox.isSelected(),
-			OneLineCheckbox.isSelected()
+			OneLineCheckbox.isSelected(),
+			errorList
 		);
 	}
-/*
+
+	/*
 	private String getDebugMode() {
 
 		String proxy = ProxyTextField.getText();
@@ -2707,7 +2964,7 @@ public class MainFrame extends JFrame {
 		NotUseVhookCheckBox.setSelected(setting.isVhookDisabled());
 		ShadowComboBox.setSelectedIndex(setting.getShadowIndex());
 		AddOption_ConvVideoFileCheckBox.setSelected(setting.isAddOption_ConvVideoFile());
-		VideoID_TextField.setText(setting.lastHisory());
+		VideoID_TextField.setText(setting.lastHistory());
 		VhookWidePathField.setText(setting.getVhookWidePath());
 		UseVhookCheckBox.setSelected(setting.isUseVhookNormal());
 		UseVhookWideCheckBox.setSelected(setting.isUseVhookWide());
@@ -2773,6 +3030,7 @@ public class MainFrame extends JFrame {
 		thumbTextFiled.setText(setting.getDefaultThumbnail());
 		saveAutoListCheckBox.setSelected(setting.isSaveAutoList());
 		autoPlayCheckBox.setSelected(setting.isAutoPlay());
+		autoPlay2CheckBox.setSelected(setting.isAutoPlay());
 		liveOperationCheckBox.setSelected(setting.isLiveOperationConversion());
 		premiumColorCheckBox.setSelected(setting.isPremiumColorCheck());
 		zqOptionFileDescription.setText(setting.getOptionFileDescr());
@@ -2783,6 +3041,8 @@ public class MainFrame extends JFrame {
 		nThreadSpinner.setValue((Integer)(setting.getNumThread()));
 		PendingModeCheckbox.setSelected(setting.isPendingMode());
 		OneLineCheckbox.setSelected(setting.isOneLineMode());
+		errorList = new StringBuffer(setting.getErrorList());
+		setErrorUrl(errorList);
 	}
 
 	/**
@@ -2812,7 +3072,6 @@ public class MainFrame extends JFrame {
 
 	/* 変換・保存する */
 	ConvertWorker converter = null;
-	ConcurrentLinkedQueue<File> queue = new ConcurrentLinkedQueue<File>();
 
 	JTextField CommandLineInOptionField = new JTextField();
 	JLabel InLabel = new JLabel();
@@ -2834,19 +3093,19 @@ public class MainFrame extends JFrame {
 	JRadioButton Conv_SaveFileRadioButton = new JRadioButton();
 	JRadioButton Conv_SaveFolderRadioButton = new JRadioButton();
 	JTextField ConvertedVideoSavedFolderField = new JTextField();
-	BasicArrowButton openConvSaveFolderButton = new BasicArrowButton(SwingConstants.NORTH);
-	BasicArrowButton openConvSaveFileButton = new BasicArrowButton(SwingConstants.NORTH);
+	BasicArrowButton openConvSaveFolderButton = new BasicArrowButton(SwingConstants.EAST);
+	BasicArrowButton openConvSaveFileButton = new BasicArrowButton(SwingConstants.EAST);
 	JButton ShowSavingConvertedVideoFolderDialogButton = new JButton();
 	JTextField VideoSavedFolderField = new JTextField();
-	BasicArrowButton openVideoSaveFolderButton = new BasicArrowButton(SwingConstants.NORTH);
-	BasicArrowButton openVideoSaveFileButton = new BasicArrowButton(SwingConstants.NORTH);
+	BasicArrowButton openVideoSaveFolderButton = new BasicArrowButton(SwingConstants.EAST);
+	BasicArrowButton openVideoSaveFileButton = new BasicArrowButton(SwingConstants.EAST);
 	JButton ShowSavingVideoFolderDialogButton = new JButton();
 	JRadioButton Video_SaveFolderRadioButton = new JRadioButton();
 	JRadioButton Video_SaveFileRadioButton = new JRadioButton();
 	JRadioButton Comment_SaveFileRadioButton = new JRadioButton();
 	JTextField CommentSavedFolderField = new JTextField();
-	BasicArrowButton openCommentSaveFolderButton = new BasicArrowButton(SwingConstants.NORTH);
-	BasicArrowButton openCommentSaveFileButton = new BasicArrowButton(SwingConstants.NORTH);
+	BasicArrowButton openCommentSaveFolderButton = new BasicArrowButton(SwingConstants.EAST);
+	BasicArrowButton openCommentSaveFileButton = new BasicArrowButton(SwingConstants.EAST);
 	JButton ShowSavingCommentFolderDialogButton = new JButton();
 	JRadioButton Comment_SaveFolderRadioButton = new JRadioButton();
 	JPanel BasicInfoTabPanel = new JPanel();
@@ -2911,6 +3170,11 @@ public class MainFrame extends JFrame {
 	private boolean PendingMode;
 
 	public void myListGetterDone(StringBuffer vList) {
+		PendingMode = getSetting().isPendingMode();
+		myListGetterDone(vList, PendingMode);
+	}
+
+	public void myListGetterDone(StringBuffer vList, boolean pending) {
 		// mylist読み込み終了　結果を受け取る
 		if(vList==null){
 			System.out.println("マイリスト結果受け取り失敗　バグ?");
@@ -2926,12 +3190,12 @@ public class MainFrame extends JFrame {
 			System.out.println("登録\t"+id_title);
 			String[] ss = id_title.split("\t");
 			String vid = ss[0];
-			String title = ss[1];
-			String watchinfo = "";
-			if(ss.length > 2)
-				watchinfo = ss[2];
+			String title = ss.length>1 ? ss[1] : "";
+			String watchinfo = ss.length>2 ?ss[2] : "";
 			// idを登録
+			url = vid + watchinfo;
 			OneLineMode = getSetting().isOneLineMode();
+			requestHistory.add(url);
 			ListInfo listInfo = new ListInfo(vid+"_"+title,OneLineMode);
 			listInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
 			JLabel[] status3 = listInfo.getStatus();
@@ -2947,21 +3211,20 @@ public class MainFrame extends JFrame {
 			int indexNow = convNo++;
 			//System.out.println(">"+indexNow+"個目の要求: "+vid);
 			sendtext(">"+indexNow+"個目の要求: "+vid);
-			PendingMode = getSetting().isPendingMode();
 			ConvertStopFlag stopFlag =
-				new ConvertStopFlag(stopButton,"停","待","終", "変", PendingMode);
+				new ConvertStopFlag(stopButton,"停","待","終", "変", pending);
 			buttonTable.put(stopButton, stopFlag);
 			ConvertingSetting setting1 = getSetting();
 			// ConverManager処理を要求
 			convertManager.request(
 				numThread,
-				vid + watchinfo,
+				url,
 				WayBackField.getText(),
 				setting1,
 				status3,
 				stopFlag,
 				this,
-				queue,
+				playList,
 				vList);
 			// return to dispatch
  		}
@@ -3092,7 +3355,7 @@ public class MainFrame extends JFrame {
 					status3,
 					stopFlag,
 					this,
-					queue,
+					playList,
 					sbret);
 				// ConverManager処理を要求
 				// return to dispatch
@@ -3279,10 +3542,10 @@ public class MainFrame extends JFrame {
 	}
 
 	// 変換動画再生
-	private void playConvertedVideo_actionPerformed(ActionEvent e) {
-		if(converter!=null)
-			converter.playConvertedVideo();
-	}
+//	private void playConvertedVideo_actionPerformed(ActionEvent e) {
+//		if(converter!=null)
+//			converter.playConvertedVideo();
+//	}
 
 	/* readme表示 */
 	public void showReadme_actionPerformed(String readmePath){
@@ -3315,7 +3578,7 @@ public class MainFrame extends JFrame {
 					new JLabel[]{statusBar,new JLabel(),new JLabel()},
 					new ConvertStopFlag(new JButton()),
 					this,
-					queue,
+					playList,
 					new ConvertManager(),
 					null);
 			if (setting.isVideoFixFileName()) {
@@ -4598,10 +4861,6 @@ s	 * @return javax.swing.JPanel
 		return ShadowComboBox;
 	}
 
-	public ConcurrentLinkedQueue<File> getQueue(){
-		return queue;
-	}
-
 	private File getFile(String path){
 		if(path==null)
 			return new File("");
@@ -4665,6 +4924,19 @@ s	 * @return javax.swing.JPanel
 
 	void setNotice(String string) {
 		notice = string;
+	}
+
+	public void setErrorUrl(StringBuffer errorList) {
+		errorUrlLabel.setText(errorList.substring(0).replace("\n", "　"));
+	}
+
+	public void setPlayList() {
+		File video = playList.peek();
+		if(video!=null){
+			playVideoLabel.setText(video.getName());
+			playVideoLabel.setForeground(Color.CYAN);
+		}
+		repaint();
 	}
 
 }

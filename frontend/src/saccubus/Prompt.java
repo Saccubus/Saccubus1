@@ -66,6 +66,8 @@ public class Prompt {
 	private static File localListFile;
 	private static String watchinfo;
 	private static ArrayList<ConvertStopFlag> flags = new ArrayList<ConvertStopFlag>();
+	private static HistoryDeque<File> playList;
+	private static StringBuffer errorList;
 
 	public static void main(String[] args) {
 		if(!setLog(logname)){
@@ -204,6 +206,7 @@ public class Prompt {
 		if(!optionMap.isEmpty()){
 			setting.setReplaceOptions(optionMap);
 		}
+		errorList = setting.getErrorList();
 		JLabel status = new JLabel();
 		JLabel info = new JLabel();
 		JLabel watch = new JLabel();
@@ -260,8 +263,23 @@ public class Prompt {
 		}
 		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		System.out.println("Version " + MainFrame_AboutBox.rev );
+		System.out.println();
+		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+		System.out.println("VideoID: " + tag);
+		System.out.println("WaybackTime: " + time);
+		if(!optionFilePrefix.isEmpty()){
+			System.out.println("OptionPrefix: " + optionFilePrefix);
+		}
+		if(!atArgs.isEmpty()){
+			System.out.print("Other args:");
+			for(String arg : atArgs){
+				System.out.print(" " + arg);
+			}
+			System.out.println();
+		}
 
 		manager = new ConvertManager();
+		playList = new HistoryDeque<File>(null);
 		if(!tag.startsWith("auto")){
 			converter = manager.request(
 					setting.getNumThread(),
@@ -271,7 +289,7 @@ public class Prompt {
 					status3,
 					cuiStop,
 					null,
-					null,
+					playList,
 					sbReturn);
 			while(converter!=null && !converter.isDone()){
 				try {
@@ -282,6 +300,8 @@ public class Prompt {
 				}
 			}
 			popup.dispose();
+
+			System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 			System.out.println("Finished.");
 			System.out.println();
 			String[] ret = sbReturn.toString().split("\n");
@@ -297,7 +317,7 @@ public class Prompt {
 		}else{
 			int index1 = tag.indexOf('?');
 			watchinfo = (index1>0) ? tag.substring(index1) : "";
-			tag = tag.substring(0, index1);
+			tag = (index1>0)? tag.substring(0, index1) : tag;
 			localListFile= new File( tag + ".txt");
 			if(!localListFile.exists()){
 				System.out.println("Error: "+localListFile.getAbsolutePath()+"がありません .");
@@ -335,7 +355,7 @@ public class Prompt {
 				System.out.println(">"+indexNow+" "+vid+watchinfo);
 				// ConverManager処理を要求
 				StringBuffer sbRet = new StringBuffer();
-				final ConvertStopFlag autoStop = new ConvertStopFlag(stopButton, "停止", "待機", "終了", "変換", false);
+				final ConvertStopFlag autoStop = new ConvertStopFlag(new JButton(), "停止", "待機", "終了", "変換", false);
 				converter = manager.request(
 					setting.getNumThread(),
 					vid + watchinfo,
@@ -344,7 +364,7 @@ public class Prompt {
 					status3,
 					autoStop,
 					null,
-					null,
+					playList,
 					sbRet);
 				converterList[indexNow] = converter;
 				sbRetList[indexNow] = sbRet;
@@ -361,20 +381,6 @@ public class Prompt {
 					ConvertWorker conv = converterList[j];
 					if(conv!=null && conv.isDone()){
 						try{
-							System.out.println();
-							System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-							System.out.println("VideoID: " + tag);
-							System.out.println("WaybackTime: " + time);
-							if(!optionFilePrefix.isEmpty()){
-								System.out.println("OptionPrefix: " + optionFilePrefix);
-							}
-							if(!atArgs.isEmpty()){
-								System.out.print("Other args:");
-								for(String arg : atArgs){
-									System.out.print(" " + arg);
-								}
-								System.out.println();
-							}
 							System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 							System.out.println("Finished. ("+j+") "+vids[j]);
 							if(sbRetList[j]==null){
@@ -402,8 +408,10 @@ public class Prompt {
 				}
 			}
 			System.out.println("正常終了\nRESULTS="+code);
-			if(code!=0)
+			if(code!=0){
+				MainFrame.errorListSave(errorList);
 				System.out.println("エラーがありました");
+			}
 			exit(code);
 		}
 	}

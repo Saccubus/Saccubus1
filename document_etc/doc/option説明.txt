@@ -1,0 +1,54 @@
+saccubus1.60付属のffmpeg70404fにはlibx265が入っており
+デコードだけでなくエンコードも出来ます。
+試してみたい方のために x265エンコード用のPC用オプションを試作しました。
+(H.265について　wikipedia http://ja.wikipedia.org/wiki/H.265）
+方針としてはH.264と同画質の省サイズにしました
+大丈夫なはずですがハード故障OS破損も含め自己責任でお願いします。
+
+saccus1.60設定方法
+　現在の設定を「ファイル→名前をつけて保存」で保存しておいて下さい。
+　(念のため)
+　optionフォルダごと、さきゅばすフォルダ下にコピーして
+　動画設定→変換オプション設定(共通)→オプションフォルダ位置の設定に
+　./optionH265　　　（それぞれのフォルダ名）
+　と設定します。参照ボタンで設定すればスペルミスがないでしょう
+　その後共通FFmpegの設定の「更新」ボタンをクリックし
+　左の一覧からオプションを選択して下さい。
+　(最初は　PC640x360アス比共通_mp4　で良いでしょう)
+
+optionH265フォルダ　PC用テスト
+　libx264を libx265に　crf23をcrf28に変更
+optionH265Acopyフォルダ　PC用長時間用
+　上に加え acodec libvo_aacencを acodec copyに変更
+　(vo_aacencはhe he2に対応しないため長時間動画はサイズが大きくなるから)
+optionFFAAC　x265用ではないですがついでにテスト用オプション
+　vo_aacencをaac -strict experimental(ffmpeg内蔵AACエンコーダー)に変更
+　(音質比較テスト用　こちらでは変換再生確認だけしました)
+
+saccubus1.60用のデコードエンコードはオプション変更だけで出来ますが
+出力動画の再生にはH.265の再生可能なプレイヤーが別途必要です。
+
+こちらでH.265再生確認したもの
+・OS
+　　windows8.1 home premium 64bit
+　　windows7 home premium 64bit
+・player(デスクトップ　win7 win8.1)
+　　MPC-HC 64bit  https://mpc-hc.org/
+・player(win8ストアアプリ)
+　　Media Player Lite (無料)
+・codec pack(Win7)
+　　k-Lite codec pack + Windows Media Player
+注意
+　上記は使用を推奨するののではありません。
+　お好きなソフトやアプリを自由に試して頂いて構いません。
+　新しくソフトやcodec packをインストールする時は
+　マルウェアやアドウェアに各自で注意して下さい。
+
+こちらで再生出来なかったもの
+・iTunes 11.4 (win7 win8.1)
+・codecなしデフォルトのWindows Media Player(win7 win8.1)
+・codecなしデフォルトWin8.1のビデオアプリ
+・flashplayer（win8.1 firefoxブラウザ再生）
+
+
+

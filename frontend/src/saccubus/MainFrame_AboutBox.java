@@ -52,8 +52,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.65.1.0";
-	private static final String modefied = " (2016/02/03)";
+	public static final String rev = "1.65.1.1";
+	private static final String modefied = " (2016/02/05)";
 
 	String productHTML =
 		"<html>" +
@@ -64,7 +64,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 	//	"を改造したものです。<br/>" +
 	//	" orz " + rev + " " + modefied + "<br/>"+
 	//	"本プログラムのオリジナルは以下の通りです。<br/><br/>"+
-		"<p><a href=\'http://saccubus.sourceforge.jp/Users/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89\'>" +
+		"<p><a href=\'http://saccubus.osdn.jp/Users/%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89\'>" +
 		"さきゅばす</a> "+ rev + modefied + "<br/><br/>"+
 		"<table border=0>" +
 		"<tr><td>Copyright (C) <td>2008 Saccubus Developers Team"+
@@ -73,12 +73,13 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 		"</table>" +
 		"ニコニコ動画の動画をコメントつきで保存</p>" +
 		"<p>本プログラムは<br/>" +
-		" <a href=\'http://sourceforge.jp/projects/coroid/wiki/Inqubus\'>"	+
+		" <a href=\'http://osdn.jp/projects/coroid/wiki/Inqubus\'>"	+
 		"いんきゅばす</a>/inqubus1.7.2.zip<br/>を参考にしています。</p>" +
 		"<p>関連リンク<br/>" +
-		"さきゅばす <a href=\'http://sourceforge.jp/projects/saccubus/\'>sourceforge.jp/projects/saccubus</a><br/>" +
-		"coroid いんきゅばす<a href=\'http://sourceforge.jp/projects/coroid/\'>sourceforge.jp/projects/coroid</a>  雪羽氏<br/>" +
-		"<a href=\'http://anago.2ch.net/test/read.cgi/software/1346798166/l50\'>2chさきゅばすスレ 最新50</a>" +
+		"さきゅばす <a href=\'http://osdn.jp/projects/saccubus/\'>osdn.jp/projects/saccubus</a><br/>" +
+		"coroid いんきゅばす<a href=\'http://osdn.jp/projects/coroid/\'>osdn.jp/projects/coroid</a>  雪羽氏<br/>" +
+//		"<a href=\'http://anago.2ch.net/test/read.cgi/software/1346798166/l50\'>2chさきゅばすスレ 最新50</a>" +
+		"<a href=\'http://potato.2ch.net/test/read.cgi/software/1449586179/l50\'>2chさきゅばすスレ 最新50</a>" +
 		"</p></html>";
 
 	JPanel panel1 = new JPanel();
