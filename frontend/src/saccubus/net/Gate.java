@@ -20,33 +20,39 @@ public class Gate extends Thread {
 	}
 
 	public static Gate enter(){
-		int nRun = 0;
-		int nGate = 2;
-		int nReq;
 		Gate g = new Gate();
+		g.reEnter();
+		return g;
+	}
+	public void reEnter(){
+		int nRun;
+		int nGate;
+		int nReq;
+		entered = true;
 		synchronized(que){
 			nRun = numRun.incrementAndGet();
 			nGate = numGate.get();
+			nReq = numReq.get();
 			if(nRun <= nGate){
-				System.out.println("Gate entered: nRun="+nRun+",nGate="+nGate);
-				return g;
+				System.out.println("Gate entered: nRun="+nRun+",nReq="+nReq+",nGate="+nGate);
+				return;
 			}
 			//ゲート待ち
-			que.offer(g);
+			que.offer(this);
 			nReq = numReq.incrementAndGet();
-			numRun.decrementAndGet();
-			System.out.println("Gate waiting: nRun="+nRun+",nReq="+nReq+",nGate="+nGate);
+			nRun = numRun.decrementAndGet();
 		}
-		synchronized(g){
+		synchronized(this){
 			try {
-				g.wait();
+				System.out.println("Gate waiting: nRun="+nRun+",nReq="+nReq+",nGate="+nGate);
+				this.wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 		//ウェイト抜け
 		System.out.println("Gate entered after wait");
-		return g;
+		return;
 	}
 
 	public void exit(){
@@ -63,15 +69,17 @@ public class Gate extends Thread {
 				if(nRun < nGate && nReq>0){
 					//他の待ちをリリース
 					rg = que.poll();
-					if(rg == null)
+					if(rg == null){
 						System.out.println("Gate que return null, バグ?");
-					else {
-						numReq.decrementAndGet();
-						numRun.incrementAndGet();
-						synchronized (rg) {
-							rg.notify();
-						}
+						return;
 					}
+					nReq = numReq.decrementAndGet();
+					nRun = numRun.incrementAndGet();
+				}
+			}
+			if(rg!=null){
+				synchronized (rg) {
+					rg.notify();
 				}
 			}
 			System.out.println("Gate exited: nRun="+nRun+",nReq="+nReq+",nGate="+nGate);
@@ -84,18 +92,16 @@ public class Gate extends Thread {
 
 		exit();
 		// ロック開放
-		if(count++ > limitter){	//retry数超えたら false
-			count = 0;
-			exit();
-			return false;
-		}
 		try {	//5秒待機
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		enter();
-		entered = true;
+		reEnter();
+		if(count++ > limitter){	//retry数超えたら false
+			count = 0;
+			return false;
+		}
 		return true;
 	}
 
