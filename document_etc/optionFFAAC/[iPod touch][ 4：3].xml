@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <!--
 	kuji-raさん提供
@@ -8,5 +8,5 @@
 	<entry key="EXT">mp4</entry>
 	<entry key="MAIN"></entry>
 	<entry key="IN"></entry>
-	<entry key="OUT">-vcodec libxvid -b 350k  -bufsize 4096k -g 300 -acodec aac -strict experimental -ab 128k -ar 44100 -ac 2 -s 480x320 -aspect 4:3</entry>
+	<entry key="OUT">-vcodec libxvid -b 350k  -bufsize 4096k -g 300 -acodec aac -ab 128k -ar 44100 -ac 2 -s 480x320 -aspect 4:3</entry>
 </properties>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	Wizpy 09_03_21変換設定 ※音声再変換しない版	 fps、qscale、音声等お好みで弄って下さい。
+	■orz
+-->
+<properties>
+	<entry key="EXT">avi</entry>
+	<entry key="MAIN"></entry>
+	<entry key="IN"></entry>
+	<entry key="OUT">-s 160x128 -acodec copy -vcodec libxvid -r 20 -qscale 8 -flags +bitexact -threads 0 -aspect 5:4</entry>
+</properties>

@@ -3,10 +3,11 @@
 <!--
 	アスペクト比共通設定　さきゅばす 1.39以降
 	mp4 H264 640x384 q23, 44100Hz 128kbps AAC
+	copy Audio if input is AAC
 -->
 <properties>
 	<entry key="EXT">avi</entry>
 	<entry key="MAIN"></entry>
 	<entry key="IN"></entry>
-	<entry key="OUT">-map 0:a -threads 0 -s 640x384 -acodec copy -vn</entry>
+	<entry key="OUT">-map 0:a -threads 0 -s 640x384 -acodec copy -vn -aacp</entry>
 </properties>

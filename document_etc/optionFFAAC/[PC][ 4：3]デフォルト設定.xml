@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <!--
 	ここにコメント。
@@ -7,5 +7,5 @@
 	<entry key="EXT">avi</entry>
 	<entry key="MAIN"></entry>
 	<entry key="IN"></entry>
-	<entry key="OUT">-threads 0 -s 512x384 -acodec aac -strict experimental -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 4:3</entry>
+	<entry key="OUT">-threads 0 -s 512x384 -acodec aac -ab 128k -ar 44100 -ac 2 -vcodec libxvid -qscale 3 -async 1 -aspect 4:3</entry>
 </properties>
