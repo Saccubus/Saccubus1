@@ -3434,7 +3434,7 @@ public class MainFrame extends JFrame {
 		return ('A'<=c&&c<='Z')||(c>='a'&&c<='z')||('0'<=c&&c<='9');
 	}
 
-	private boolean parseUrlMylist() {
+	public static String treatUrlHttp(String url){
 		url = url.trim();
 		if(url.startsWith("/")){
 			url = url.substring(1);
@@ -3453,7 +3453,8 @@ public class MainFrame extends JFrame {
 		}else if(!url.startsWith("http")){
 			if(	  url.startsWith("mylist/")
 				||url.startsWith("user/")
-				||url.startsWith("my/")){
+				||url.startsWith("my/")
+				||url.startsWith("watch/")){
 				url = "http://www.nicovideo.jp/" + url;	//may not work
 			}else if(url.startsWith("lv")){
 				url = "http://live.nicovideo.jp/watch/"+ url;	//may not work
@@ -3461,6 +3462,11 @@ public class MainFrame extends JFrame {
 				url = "http://com.nicovideo.jp/watch/" + url;	//may not work
 			}
 		}
+		return url;
+	}
+
+	private boolean parseUrlMylist() {
+		url = treatUrlHttp(url);
 		boolean isMylist = url.startsWith("http");
 		System.out.println("Url:"+url+" isMylist="+isMylist);
 		int index = 0;

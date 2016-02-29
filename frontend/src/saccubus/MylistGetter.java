@@ -42,7 +42,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 	private final ConvertStopFlag StopFlag;
 	private final StringBuffer ret;
 
-	private ConvertingSetting Setting;
+	private final ConvertingSetting Setting;
 	private String resultText;
 	private String mylistID;
 	private String watchInfo;
@@ -68,7 +68,18 @@ public class MylistGetter extends SwingWorker<String, String> {
 		ret = sb;
 	}
 
-//	private void sendtext(String text) {
+	public MylistGetter(String tag, String info, ConvertingSetting setting, JLabel[] in_status, ConvertStopFlag flag, StringBuffer sb){
+		url = tag;
+		watchInfo = info;
+		parent = null;
+		status3 = in_status;
+		Status = status3[0];
+		StopFlag = flag;
+		Setting = setting;
+		ret = sb;
+	}
+
+	//	private void sendtext(String text) {
 //		Status.setText(text);
 //	}
 
@@ -95,7 +106,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 			//start here.
 			Path file = Path.mkTemp(url.replace("http://","").replace("nicovideo.jp/","")
 					.replaceAll("[/\\:\\?=\\&]+", "_") + ".html");
-			Loader loader = new Loader(parent.getSetting(), status3);
+			Loader loader = new Loader(Setting, status3);
 			if(!loader.load(url,file)){
 				sendtext("load失敗 "+url);
 				return "E1";
@@ -264,7 +275,9 @@ public class MylistGetter extends SwingWorker<String, String> {
 		}else{
 			System.out.println("done#get() "+result);
 		}
-		parent.myListGetterDone(ret);
+		sendtext("["+result+"]");
+		if(parent!=null)
+			parent.myListGetterDone(ret);
 	}
 
 	private void saveAutoList(ArrayList<String[]> mylist) {
@@ -279,10 +292,11 @@ public class MylistGetter extends SwingWorker<String, String> {
 		BufferedReader br = null;
 		PrintWriter pw = null;
 		String s;
+		boolean flag2nd = false;
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(autobat), "MS932"));
 			pw = new PrintWriter(autolist, "MS932");
-			pw.println(":自動生成 autolist.bat for myslist/" + mylistID);
+			pw.println(":自動生成 autolist.bat for mylist/" + mylistID);
 			pw.println(": produced by Saccubus" + MainFrame_AboutBox.rev + " " + new Date());
 			pw.println(":――――――――――――――――――");
 			while((s = br.readLine())!=null){
@@ -295,9 +309,17 @@ public class MylistGetter extends SwingWorker<String, String> {
 					pw.println(":set OPTION=過去ログ日時 他のオプション などを必要に応じ指定(readmeNew.txt参照)");
 					pw.println("set OPTION=");
 					pw.println(":保存変換しない行は削除してください");
-					for(String[] ds: mylist){
-						pw.println(":タイトル " + ds[1]);
-						pw.println("%CMD% "+ ds[0] + " %OPTION%");
+					watchInfo = watchInfo.replace('?', '+');
+					if(!s.contains("auto")){
+						// マイリストの%CMD%出力(記述法1)
+						for(String[] ds: mylist){
+							pw.println(":タイトル " + ds[1]);
+							pw.println("%CMD% "+ ds[0] + "?watch_harmful=1"+watchInfo+" %OPTION% @PUP");
+						}
+					}else{
+						// マイリストの%CMD%出力(記述法2)
+						flag2nd = true;
+						pw.print("%CMD% autolist?watch_harmful=1"+watchInfo+" %OPTION% @PUP");
 					}
 					break;
 				}
@@ -319,6 +341,32 @@ public class MylistGetter extends SwingWorker<String, String> {
 				pw.close();
 			}catch(Exception ex){
 				ex.printStackTrace();
+			}
+		}
+		if(flag2nd){
+			// 記述法2 autolist.txt出力
+			File autolisttxt = new File(".\\autolist.txt");
+			pw = null;
+			try {
+				pw = new PrintWriter(autolisttxt, "MS932");
+				pw.println(":自動生成 autolist.txt for mylist/" + mylistID);
+				pw.println(": produced by Saccubus" + MainFrame_AboutBox.rev + " " + new Date());
+				pw.println(":保存変換しない行は削除してください");
+				for(String[] ds: mylist){
+					pw.println(ds[0] + "\tタイトル :" + ds[1]);
+				}
+				sendtext("出力成功 autolist.txt:"+mylistID);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (pw!=null) {
+					try{
+						pw.flush();
+						pw.close();
+					}catch(Exception ex){
+						ex.printStackTrace();
+					}
+				}
 			}
 		}
 

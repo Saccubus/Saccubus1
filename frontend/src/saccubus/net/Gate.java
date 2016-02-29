@@ -5,10 +5,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import saccubus.HistoryDeque;
 
 public class Gate extends Thread {
-	private static AtomicInteger numGate = new AtomicInteger(2);
-	private static AtomicInteger numRun  = new AtomicInteger(0);
-	private static HistoryDeque<Gate> que = new HistoryDeque<Gate>(null);
-	private static AtomicInteger numReq = new AtomicInteger(0);
+	private final static AtomicInteger numGate = new AtomicInteger(2);
+	private final static AtomicInteger numRun  = new AtomicInteger(0);
+	private final static HistoryDeque<Gate> que = new HistoryDeque<Gate>(null);
+	private final static AtomicInteger numReq = new AtomicInteger(0);
 	private boolean entered = false;
 	private int limitter;
 	private int count;
@@ -25,30 +25,29 @@ public class Gate extends Thread {
 		return g;
 	}
 	public void reEnter(){
-		int nRun;
-		int nGate;
-		int nReq;
 		entered = true;
 		synchronized(que){
-			nRun = numRun.incrementAndGet();
-			nGate = numGate.get();
-			nReq = numReq.get();
-			if(nRun <= nGate){
-				System.out.println("Gate entered: nRun="+nRun+",nReq="+nReq+",nGate="+nGate);
+			numRun.incrementAndGet();
+			if(numRun.get() <= numGate.get()){
+				System.out.println("Gate entered: nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
 				return;
 			}
 			//ゲート待ち
 			que.offer(this);
-			nReq = numReq.incrementAndGet();
-			nRun = numRun.decrementAndGet();
-		}
-		synchronized(this){
-			try {
-				System.out.println("Gate waiting: nRun="+nRun+",nReq="+nReq+",nGate="+nGate);
-				this.wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			numReq.incrementAndGet();
+			numRun.decrementAndGet();
+			System.out.println("Gate waiting: nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
+			while(numRun.get() >= numGate.get() || que.peek()!=this){
+				try {
+					que.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
+			// que先頭が自分, nRun < nGate
+			que.poll();
+			numReq.decrementAndGet();
+			numRun.incrementAndGet();
 		}
 		//ウェイト抜け
 		System.out.println("Gate entered after wait");
@@ -56,33 +55,21 @@ public class Gate extends Thread {
 	}
 
 	public void exit(){
-		Gate rg = null;
-		int nRun;
-		int nGate;
-		int nReq;
 		if(entered){
 			entered = false;
-			synchronized (que) {
-				nRun = numRun.decrementAndGet();
-				nGate = numGate.get();
-				nReq = numReq.get();
-				if(nRun < nGate && nReq>0){
+			numRun.decrementAndGet();
+			while(numRun.get() < numGate.get() && numReq.get()>0){
+				synchronized (que) {
 					//他の待ちをリリース
-					rg = que.poll();
-					if(rg == null){
+					if(que.peek() == null){
 						System.out.println("Gate que return null, バグ?");
 						return;
 					}
-					nReq = numReq.decrementAndGet();
-					nRun = numRun.incrementAndGet();
+					que.notify();
 				}
 			}
-			if(rg!=null){
-				synchronized (rg) {
-					rg.notify();
-				}
-			}
-			System.out.println("Gate exited: nRun="+nRun+",nReq="+nReq+",nGate="+nGate);
+			// Req <=0 または　nRun>=nGate
+			System.out.println("Gate exited: nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
 		}
 	}
 
@@ -105,42 +92,18 @@ public class Gate extends Thread {
 		return true;
 	}
 
-	public static void setNumGate(int n){
-		if(n <0)
-			n = 0;
-		if(n > 2)
-			n = 2;
-		int nGate = numGate.get();
-		int delta = n - nGate;
-		while(delta < 0){
-			nGate = numGate.decrementAndGet();
-			delta++;
-		}
-		while (delta > 0){
-			nGate = numGate.incrementAndGet();
-			delta--;
-		}
-		int nReq;
-		int nRun;
-		Gate g = null;
-		synchronized(que){
-			nReq = numReq.get();
-			nRun = numRun.get();
-			if(nRun < nGate && nReq>0){
-				g = que.poll();
-			}
-		}
-		while(g!=null){
-			synchronized(g){
-				g.notify();
-			}
-			g = null;
+	public static void setNumGate(int nGate){
+		if(nGate <0)
+			nGate = 0;
+		if(nGate > 2)
+			nGate = 2;
+		numGate.addAndGet(nGate - numGate.get());
+		while(numRun.get() < numGate.get() && numReq.get()>0){
 			synchronized(que){
-				nReq = numReq.decrementAndGet();
-				nRun = numRun.incrementAndGet();
-				if(nRun < nGate && nReq>0){
-					g = que.poll();
+				if(que.peek()==null){
+					System.out.println("Gate que return null, バグ?");
 				}
+				que.notify();
 			}
 		}
 	}

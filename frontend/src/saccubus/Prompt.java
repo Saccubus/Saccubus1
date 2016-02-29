@@ -280,10 +280,32 @@ public class Prompt {
 
 		manager = new ConvertManager();
 		playList = new HistoryDeque<File>(null);
-		if(!tag.startsWith("auto")){
+		String url = MainFrame.treatUrlHttp(tag);
+		boolean isMylist = url.startsWith("http");
+		index = url.indexOf('#');
+		if(index >= 0){
+			url = url.replace("#+", "?").replace("#/", "?");
+		}
+		watchinfo = "";
+		if(isMylist){
+			tag = url;
+		}else{
+			index = tag.indexOf('?');
+			if(index >= 0){
+				int index2 = url.lastIndexOf('/',index);
+				tag = url.substring(index2+1,index);
+				watchinfo = url.substring(index);
+			}else{
+				int index2 = url.lastIndexOf('/');
+				tag = url.substring(index2+1);
+			}
+		}
+		System.out.println("Tag:"+tag+" watchinfo="+watchinfo);
+		String text;
+		if(!tag.startsWith("auto") && !isMylist){
 			converter = manager.request(
 					setting.getNumThread(),
-					tag,
+					tag+watchinfo,
 					time,
 					setting,
 					status3,
@@ -315,20 +337,48 @@ public class Prompt {
 			}
 			exit(code);
 		}else{
-			int index1 = tag.indexOf('?');
-			watchinfo = (index1>0) ? tag.substring(index1) : "";
-			tag = (index1>0)? tag.substring(0, index1) : tag;
-			localListFile= new File( tag + ".txt");
-			if(!localListFile.exists()){
-				System.out.println("Error: "+localListFile.getAbsolutePath()+"がありません .");
-				exit(253);
+			if (isMylist){
+				// "http://www/nicovideo.jp/mylist/1234567?watch_harmful=1" など
+				MylistGetter mylistGetter = new MylistGetter(
+					tag,
+					watchinfo,
+					setting,
+					status3,
+					cuiStop,
+					sbReturn);
+				mylistGetter.execute();
+				cuiStop.go();		//mylistGetterは無条件に実行
+				int count = 0;
+				while(mylistGetter!=null && !mylistGetter.isDone()){
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						// e.printStackTrace();
+					}
+					if(++count > 120){
+						System.out.println("Error: マイリストが取得できません(１分経過)");
+						exit(251);
+					}
+				}
+				text = status3[0].getText();
+				if(text==null||!text.equals("[00]")){
+					System.out.println("Error: result="+text);
+					exit(252);
+				}
+				text = sbReturn.substring(0);
+			} else {
+				// auto
+				localListFile= new File( tag + ".txt");
+				if(!localListFile.exists()){
+					System.out.println("Error: "+localListFile.getAbsolutePath()+"がありません .");
+					exit(253);
+				}
+				text = Path.readAllText(localListFile, "MS932");
+				if(text.isEmpty()){
+					System.out.println("Error: "+localListFile.getAbsolutePath()+"に動画がありません. 書式が違っていないか確認して下さい");
+					exit(254);
+				}
 			}
-			String text = Path.readAllText(localListFile, "MS932");
-			if(text.isEmpty()){
-				System.out.println("Error: "+localListFile.getAbsolutePath()+"に動画がありません. 書式が違っていないか確認して下さい");
-				exit(254);
-			}
-
 			String[] lists = text.split("\n");
 			int nConvert = lists.length;
 			JPanel activityPane = new JPanel();
@@ -345,7 +395,7 @@ public class Prompt {
 				String id_title = lists[k];
 				if(id_title.isEmpty()) continue;
 				String[] ss = id_title.split("\\t");
-				String vid = ss[0];
+				String vid = MainFrame.treatUrlHttp(ss[0]);
 				if(vid.trim().isEmpty()||vid.charAt(0)==':') continue;
 				// idを登録
 				ListInfo listInfo = new ListInfo(vid+"\tauto", true);

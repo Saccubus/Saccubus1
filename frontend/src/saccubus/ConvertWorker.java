@@ -1684,7 +1684,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	@Override
 	protected String doInBackground() throws Exception {
 		synchronized (StopFlag) {
-			if(StopFlag.isPending()){
+			while(StopFlag.isPending()){
 				StopFlag.wait();
 			}
 			if(stopFlagReturn())

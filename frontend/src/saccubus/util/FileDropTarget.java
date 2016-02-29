@@ -67,11 +67,12 @@ public class FileDropTarget extends DropTargetAdapter {
 
 	private String evalExt(String path) {
 		final String INTERNET_SHORTCUT = "[InternetShortcut]\nURL=";
-		if(path.endsWith(".url")){
+		if(path.toLowerCase().endsWith(".url")){	//
 			String text =
 				saccubus.net.Path.readAllText(new File(path), "ms932");
+			//System.out.println("Debug: dropped test is\n" + text + "\n");
 			if(text!=null && text.startsWith(INTERNET_SHORTCUT)){
-				return text.substring(INTERNET_SHORTCUT.length());
+				return text.substring(INTERNET_SHORTCUT.length()).replaceAll("\n.*","");
 			}
 		}
 		return path;

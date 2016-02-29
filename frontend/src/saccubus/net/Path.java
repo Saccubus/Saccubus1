@@ -410,9 +410,13 @@ public class Path extends File{
 	 */
 	public static boolean fileCopy(File srcfile, File destfile) {
 		FileChannel srcch = null, destch = null;
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
 		try {
-			srcch = new FileInputStream(srcfile).getChannel();
-			destch = new FileOutputStream(destfile).getChannel();
+			fis = new FileInputStream(srcfile);
+			srcch = fis.getChannel();
+			fos = new FileOutputStream(destfile);
+			destch = fos.getChannel();
 			destch.transferFrom(srcch, 0, srcch.size());
 			//sc.transferTo(0, sc.size(), dc);
 			return true;
@@ -420,8 +424,10 @@ public class Path extends File{
 			e.printStackTrace();
 			return false;
 		} finally {
-			if (destch != null) try { destch.close(); } catch (IOException e) {}
-			if (srcch != null) try { srcch.close(); } catch (IOException e) {}
+			if (destch != null) try { destch.close(); } catch (IOException e) {};
+			if (fos != null) try { fos.flush(); fos.close(); } catch(Exception e1) {e1.printStackTrace();};
+			if (srcch != null) try { srcch.close(); } catch (IOException e) {};
+			if (fis != null) try { fis.close(); } catch(Exception e3) {e3.printStackTrace();};
 		}
 	}
 	/*
