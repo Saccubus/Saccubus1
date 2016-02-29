@@ -10,11 +10,6 @@
  */
 #ifndef SACCUBUS_VF_VHEXT_H
 #define SACCUBUS_VF_VHEXT_H
-/*
- * ツールボックスのバージョン
- * DLLの中で確認しといた方がいい。
- */
-#define TOOLBOX_VERSION 2
 
 /*
  * 呼ばれるときに一緒についてくるtoolbox.
@@ -40,17 +35,17 @@ typedef struct vhext_frame{
  */
 
 //configure用
-typedef int (FrameHookExtConfigure)(void **ctxp,const toolbox *tbox, int argc, char *argv[]);
+typedef int (FrameHookExtConfigure)(void **ctxp,int argc, char *argv[]);
 typedef FrameHookExtConfigure *FrameHookExtConfigureFn;
 extern FrameHookExtConfigure ExtConfigure;
 
 //フレーム用
-typedef void (FrameHookExtProcess)(void *ctx,const toolbox *tbox,vhext_frame *pict);
+typedef void (FrameHookExtProcess)(void *ctx,vhext_frame *pict);
 typedef FrameHookExtProcess *FrameHookExtProcessFn;
 extern FrameHookExtProcess ExtProcess;
 
 //終了時に呼ぶ
-typedef void (FrameHookExtRelease)(void *ctx,const toolbox *tbox);
+typedef void (FrameHookExtRelease)(void *ctx);
 typedef FrameHookExtRelease *FrameHookExtReleaseFn;
 extern FrameHookExtRelease ExtRelease;
 
