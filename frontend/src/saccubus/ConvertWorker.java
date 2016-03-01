@@ -60,7 +60,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String Tag;
 	private String VideoID;
 	private String VideoTitle;
-	private String VideoBaseName;
+	private String VideoBaseName = "";
 	private String Time;
 	private JLabel Status;
 	private final JLabel MovieInfo;
@@ -113,7 +113,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String result = "0";
 	private String dateUserFirst = "";
 	//private String dateUserLast = "";
-	private final boolean watchvideo;
+	//private final boolean watchvideo;
 	private double frameRate = 0.0;
 	private double fpsUp = 0.0;
 	private double fpsMin = 0.0;
@@ -134,7 +134,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			JLabel[] jLabels, ConvertStopFlag flag,	MainFrame frame,
 			HistoryDeque<File> play_list, ConvertManager conv, StringBuffer sb) {
 		url = url.trim();
-		watchvideo = !url.startsWith("http");
+		//watchvideo = !url.startsWith("http");
 		int index = 0;
 		index = url.indexOf('?');
 		if(index >= 0){
@@ -1681,17 +1681,35 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		//  サービスが一時的に過負荷 ゲートウェイタイムアウト
 	}
 
+	public void abortByCancel(){
+		StopFlag.finish();
+		StopFlag.setButtonEnabled(false);
+		result = "FF";
+		sendtext("[FF]Converter cancelled.");
+		System.out.println("LastStatus:[FF]Converter cancelled.");
+		if(sbRet!=null){
+			sbRet.append("RESULT=[FF]\n");
+		}
+		if(parent!=null){
+			parent.setErrorUrl(errorList);
+			errorList.append(Tag+WatchInfo+"\n");
+		}
+	}
+
 	@Override
 	protected String doInBackground() throws Exception {
 		synchronized (StopFlag) {
 			while(StopFlag.isPending()){
 				StopFlag.wait();
 			}
-			if(stopFlagReturn())
+			if(stopFlagReturn()){
+				abortByCancel();
+				manager.reqDone(result, StopFlag);
 				return "FF";
+			}
 			StopFlag.start();
 		}
-
+	/*
 		if(!watchvideo){
 			//not watch video get try mylist
 			sendtext("バグ URL振り分け失敗");
@@ -1699,6 +1717,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			result = "-1";
 			return result;
 		}
+	*/
 		gate = Gate.enter();
 		stopwatch.clear();
 		stopwatch.start();
@@ -1849,9 +1868,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					StopFlag.setButtonEnabled(false);
 				}
 			});
-			errorList = Setting.getErrorList();
 
-			manager.reqDone(result);
+			manager.reqDone(result, StopFlag);
 			stopwatch.show();
 			stopwatch.stop();
 			gate.exit();
@@ -1885,6 +1903,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	public void done(){
+		if(result.equals("FF")){
+			return;
+		}
 		String retStr = null;
 		try {
 			retStr = get();

@@ -68,6 +68,7 @@ public class Prompt {
 	private static ArrayList<ConvertStopFlag> flags = new ArrayList<ConvertStopFlag>();
 	private static HistoryDeque<File> playList;
 	private static StringBuffer errorList;
+	private static boolean aborted = false;
 
 	public static void main(String[] args) {
 		if(!setLog(logname)){
@@ -278,7 +279,7 @@ public class Prompt {
 			System.out.println();
 		}
 
-		manager = new ConvertManager();
+		manager = new ConvertManager(null);
 		playList = new HistoryDeque<File>(null);
 		String url = MainFrame.treatUrlHttp(tag);
 		boolean isMylist = url.startsWith("http");
@@ -425,7 +426,7 @@ public class Prompt {
 
 			int codes = 0;
 			int code = 0;
-			int rest = convNo;
+			int rest = manager.getNumRun();
 			while(rest>0){
 				for(int j = 0; j<convNo;j++){
 					ConvertWorker conv = converterList[j];
@@ -452,12 +453,17 @@ public class Prompt {
 						}finally{
 							if(code!=0 && codes==0) codes = code;	//最初のエラーコード
 							converterList[j] = null;
-							rest--;
 						}
 					}
 				}
+				rest = manager.getNumRun();
 			}
-			System.out.println("正常終了\nRESULTS="+code);
+			if(aborted){
+				code = 255;
+				System.out.println("中止\nRESULTS="+code);
+			}else{
+				System.out.println("正常終了\nRESULTS="+code);
+			}
 			if(code!=0){
 				MainFrame.errorListSave(errorList);
 				System.out.println("エラーがありました");
@@ -467,20 +473,15 @@ public class Prompt {
 	}
 
 	private static void AllCancel_ActionHandler(ActionEvent e) {
-		// cancel request
-		manager.cancelAllRequest();
-		// stop converter
 		for(ConvertStopFlag flag:flags){
-			synchronized(flag){
-				if(flag.isNotStarted()){
-					flag.notify();
-					flag.go();
-				}
-				if(!flag.isFinished())
-					flag.stop();
+			if(flag!=null){
+				manager.gotoCancel(flag);
 			}
-		};
+		}
+		manager.cancelAllRequest();
+		manager.checkAccess();
 		stopButton.setEnabled(false);
+		aborted  = true;
 	}
 
 	private static int getLogsize(){
@@ -561,63 +562,4 @@ public class Prompt {
 		}
 		return true;
 	}
-
-/*
-	@SuppressWarnings("unused")
-	private static boolean setLog(String path, int size) {
-		File log = new File(path);
-		if(log.exists() && !log.canRead()){
-			// Already opened as WRITE, Maybe.
-			return true;
-		}
-		if(dout == null){
-			System.out.println("Log Bug?");
-			exit(9);
-		}
-		dout.flush();
-		dout.close();
-		long len;
-		long skiplen = 0;
-		if(log.canRead()){
-			len = log.length();
-			if(len > maxsize){
-				skiplen = len - (maxsize + 128);
-			}
-			BufferedReader br;
-			String line;
-			StringBuffer sb;
-			try {
-				br = new BufferedReader(new FileReader(log));
-				line = null;
-				sb = new StringBuffer();
-				if(skiplen > 0){
-					br.skip(skiplen);
-					line = br.readLine();
-				}
-				while((line = br.readLine())!= null){
-					sb.append(line + "\n");
-				}
-				br.close();
-				if(!log.delete()){
-					// Already opened as WRITE, Maybe.
-					return true;
-				}
-				if(!setLog(path)){
-					return false;
-				}
-				PrintStream fps = dout.getFilePrintStream();
-				line = sb.toString();
-				fps.print(line);
-				fps.flush();
-				fps.close();
-				System.out.println("Previous Log truncated.");
-			} catch (IOException e) {
-				e.printStackTrace();
-				return false;
-			}
-			return true;
-		}
-		return setLog(path);
-	}
-*/
 }

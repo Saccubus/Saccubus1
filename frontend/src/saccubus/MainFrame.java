@@ -24,7 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -2143,7 +2143,7 @@ public class MainFrame extends JFrame {
 		grid20_x1_y12.insets = INSETS_0_5_0_5;
 		experimentPanel.add(extraModeField, grid20_x1_y12);
 
-		convertManager = new ConvertManager();
+		convertManager = new ConvertManager(new JLabel[] {statusBar, elapsedTimeBar, infoBar});
 	}
 
 	private JPanel getManagentPanel() {
@@ -2510,18 +2510,14 @@ public class MainFrame extends JFrame {
 
 	private void AllCancel_ActionHandler(ActionEvent e) {
 		// cancel request
-		convertManager.cancelAllRequest();
-		// stop converter
-		for(ConvertStopFlag flag:buttonTable.values()){
-			synchronized(flag){
-				if(flag.isNotStarted()){
-					flag.notify();
-					flag.go();
-				}
-				if(!flag.isFinished())
-					flag.stop();
+		for(JButton button:buttonTable.keySet()){
+			ConvertStopFlag flag = buttonTable.get(button);
+			if(flag!=null){
+				convertManager.gotoCancel(flag);
 			}
-		};
+		}
+		convertManager.cancelAllRequest();
+		convertManager.queueCheckAndGo();
 		//buttonTable の全ボタンをdisable
 		for(JButton button:buttonTable.keySet()){
 			button.setEnabled(false);
@@ -2532,6 +2528,7 @@ public class MainFrame extends JFrame {
 
 	private void AllDelete_ActionHandler(ActionEvent e) {
 		AllCancel_ActionHandler(e);
+		convertManager.allDelete();
 		activityPane.removeAll();
 		activityPane.repaint();
 		activityPane.setLayout(new BoxLayout(activityPane, BoxLayout.Y_AXIS));
@@ -3162,7 +3159,7 @@ public class MainFrame extends JFrame {
 	private MylistGetter mylistGetter;
 	private StringBuffer movieList;
 	private int numThread;
-	private Hashtable<JButton, ConvertStopFlag> buttonTable = new Hashtable<>();
+	private LinkedHashMap<JButton, ConvertStopFlag> buttonTable = new LinkedHashMap<>();
 	private ConvertManager convertManager;
 	private String Tag;
 	@SuppressWarnings("unused")
@@ -3234,10 +3231,7 @@ public class MainFrame extends JFrame {
 	//全変換ボタン
 	private void AllExecButton_handler(ActionEvent e) {
 		for(ConvertStopFlag flag:buttonTable.values()){
-			synchronized(flag){
-				flag.go();
-				flag.notify();
-			}
+			convertManager.gotoRequest(flag);
 		}
 
 	}
@@ -3250,15 +3244,7 @@ public class MainFrame extends JFrame {
 				System.out.println("stopButton が登録されていません");
 				return;
 			}
-			synchronized(flag){
-				if(flag.isPending()){
-					flag.go();
-					flag.notify();
-				}else
-				if(!flag.needStop() && !flag.isFinished()){
-					flag.stop();
-				}
-			}
+			convertManager.buttonPushed(flag);
 		}
 	}
 
@@ -3585,8 +3571,8 @@ public class MainFrame extends JFrame {
 					new ConvertStopFlag(new JButton()),
 					this,
 					playList,
-					new ConvertManager(),
-					null);
+					new ConvertManager(null),
+					new StringBuffer());
 			if (setting.isVideoFixFileName()) {
 				File folder = setting.getVideoFixFileNameFolder();
 				String path = conv.detectTitleFromVideo(folder);
