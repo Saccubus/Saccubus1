@@ -426,8 +426,7 @@ public class Prompt {
 
 			int codes = 0;
 			int code = 0;
-			int rest = manager.getNumRun();
-			while(rest>0){
+			while(manager.getNumRun()>0){
 				for(int j = 0; j<convNo;j++){
 					ConvertWorker conv = converterList[j];
 					if(conv!=null && conv.isDone()){
@@ -456,7 +455,6 @@ public class Prompt {
 						}
 					}
 				}
-				rest = manager.getNumRun();
 			}
 			if(aborted){
 				code = 255;
@@ -479,7 +477,7 @@ public class Prompt {
 			}
 		}
 		manager.cancelAllRequest();
-		manager.checkAccess();
+		manager.queueCheckAndGo();
 		stopButton.setEnabled(false);
 		aborted  = true;
 	}
