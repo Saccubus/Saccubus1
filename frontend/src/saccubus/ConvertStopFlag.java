@@ -1,6 +1,9 @@
 package saccubus;
 
+import java.awt.Color;
+
 import javax.swing.JButton;
+
 
 /**
  * <p>
@@ -151,6 +154,7 @@ public class ConvertStopFlag {
 		Pending = true;
 		if (Button!= null && DoneText != null) {
 			Button.setText(DoneText);
+			Button.setForeground(Color.RED);
 			Button.setEnabled(false);
 		}
 	}
@@ -163,10 +167,4 @@ public class ConvertStopFlag {
 	public void setButtonEnabled(boolean b) {
 		Button.setEnabled(b);
 	}
-
-	public boolean started() {
-		// TODO 自動生成されたメソッド・スタブ
-		return false;
-	}
-
 }

@@ -188,7 +188,8 @@ public class NicoClient {
 	//Connection: keep-alive
 	// the following commented source code lines can be made valid in the future, and it would be ok (already tested).
 			con.setRequestMethod(method);
-			con.addRequestProperty("Cookie", cookieProp.get(url));
+			if (cookieProp != null)
+				con.addRequestProperty("Cookie", cookieProp.get(url));
  		//	con.setRequestProperty("Host", "nmsg.nicovideo.jp");
 		//	con.setRequestProperty("User-Agent", "Java/Saccubus-1.xx");
 		//	con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
@@ -535,7 +536,7 @@ public class NicoClient {
 			HttpURLConnection con = urlConnectGET(url + watchInfo);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
 				System.out.println("ng.\nCan't getVideoInfo:" + url + watchInfo);
-				if(!loginCheck(con)){
+				if(con == null || !loginCheck(con)){
 					System.out.println("Can't login.");
 					return false;
 				}

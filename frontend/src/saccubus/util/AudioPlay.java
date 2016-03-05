@@ -10,10 +10,6 @@ import javax.sound.sampled.SourceDataLine;
 
 public class AudioPlay {
 	public static boolean playWav(File file){
-		if(!file.exists()){
-			System.out.println("wav file not found.");
-			return false;
-		}
 		// Read the sound file using AudioInputStream.
 		AudioInputStream stream;
 		byte[] buf;
@@ -47,7 +43,12 @@ public class AudioPlay {
 	}
 
 	public static boolean playWav(String wav){
-		return playWav(new File(wav));
+		File file = new File(wav);
+		if(!file.exists()){
+			System.out.println("wav file not found: "+wav);
+			return false;
+		}
+		return playWav(file);
 	}
 
 	public static void main(String[] args){

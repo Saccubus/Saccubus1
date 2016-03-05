@@ -8,7 +8,6 @@ public class Gate extends Thread {
 	private final static AtomicInteger numGate = new AtomicInteger(2);
 	private final static AtomicInteger numRun  = new AtomicInteger(0);
 	private final static HistoryDeque<Gate> que = new HistoryDeque<Gate>(null);
-	private final static AtomicInteger numReq = new AtomicInteger(0);
 	private boolean entered = false;
 	private int limitter;
 	private int count;
@@ -29,14 +28,13 @@ public class Gate extends Thread {
 		synchronized(que){
 			numRun.incrementAndGet();
 			if(numRun.get() <= numGate.get()){
-				System.out.println("Gate entered: nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
+				System.out.println("Gate entered: nRun="+numRun.get()+",nReq="+que.size()+",nGate="+numGate.get());
 				return;
 			}
 			//ゲート待ち
 			que.offer(this);
-			numReq.incrementAndGet();
 			numRun.decrementAndGet();
-			System.out.println("Gate waiting: nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
+			System.out.println("Gate waiting: nRun="+numRun.get()+",nReq="+que.size()+",nGate="+numGate.get());
 			while(numRun.get() >= numGate.get() || que.peek()!=this){
 				try {
 					que.wait();
@@ -46,7 +44,6 @@ public class Gate extends Thread {
 			}
 			// que先頭が自分, nRun < nGate
 			que.poll();
-			numReq.decrementAndGet();
 			numRun.incrementAndGet();
 		}
 		//ウェイト抜け
@@ -58,18 +55,20 @@ public class Gate extends Thread {
 		if(entered){
 			entered = false;
 			numRun.decrementAndGet();
-			while(numRun.get() < numGate.get() && numReq.get()>0){
+			while(numRun.get() < numGate.get()){
 				synchronized (que) {
+					if(que.size()==0)
+						break;
 					//他の待ちをリリース
-					if(que.peek() == null){
-						System.out.println("Gate que return null, バグ?");
-						return;
-					}
+					//	if(que.peek() == null){
+					//		System.out.println("Gate que return null, バグ?");
+					//		return;
+								//	}
 					que.notify();
 				}
 			}
 			// Req <=0 または　nRun>=nGate
-			System.out.println("Gate exited: nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
+			System.out.println("Gate exited: nRun="+numRun.get()+",nReq="+que.size()+",nGate="+numGate.get());
 		}
 	}
 
@@ -98,16 +97,17 @@ public class Gate extends Thread {
 		if(nGate > 2)
 			nGate = 2;
 		numGate.addAndGet(nGate - numGate.get());
-		while(numRun.get() < numGate.get() && numReq.get()>0){
+		while(numRun.get() < numGate.get() && que.size()>0){
 			synchronized(que){
 				if(que.peek()==null){
-					System.out.println("Gate que return null, バグ?");
+					System.out.println("Gate que return null");
 				}
 				que.notify();
 			}
 		}
 	}
 
-	public static void downloadDown(boolean selected) {
+	public static int getNumRun() {
+		return numRun.get();
 	}
 }

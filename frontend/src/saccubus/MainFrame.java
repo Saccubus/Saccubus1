@@ -1580,14 +1580,14 @@ public class MainFrame extends JFrame {
 		historyBackButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String vid = requestHistory.removeLast();
+				String vid = requestHistory.back();
 				VideoID_TextField.setText(vid);
 			}
 		});
 		historyForwardButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String vid = requestHistory.removeNext();
+				String vid = requestHistory.next();
 				VideoID_TextField.setText(vid);
 			}
 		});
@@ -1978,7 +1978,7 @@ public class MainFrame extends JFrame {
 		playConvertedVideoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				playConvertedVideo();
+				playVideoNow();
 			}
 		});
 		playConvertedVideoButton.setForeground(Color.blue);
@@ -2416,24 +2416,22 @@ public class MainFrame extends JFrame {
 			managementPanel.add(errorStatusPanel, grid42);
 
 			playVideoLabel = new JLabel(" ");
-			playVideoBackButton = new JButton("Å©ñﬂ");
+			playVideoBackButton = new JButton("ñﬂ");
 			playVideoBackButton.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					File video = playList.removeBack();
-					if(video!=null)
-						setPlayList();
+					playList.back();
+					setPlayList();
 				}
 			});
-			playVideoNextButton = new JButton("éüÅ®");
+			playVideoNextButton = new JButton("éü");
 			playVideoNextButton.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					File video = playList.poll();
-					if(video!=null)
-						setPlayList();
+					playList.next();
+					setPlayList();
 				}
 			});
 			playVideoPlayButton = new JButton("çƒê∂");
@@ -2442,7 +2440,7 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					playConvertedVideo();
+					playVideoNow();
 				}
 			});
 			playVideoButtonPanel = new JPanel();
@@ -2481,9 +2479,9 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	private void playConvertedVideo() {
+	private void playVideoNow() {
 		try {
-			File convertedVideo = playList.peek();
+			File convertedVideo = playList.getNow();
 			if(convertedVideo==null){
 				sendtext("ïœä∑å„ÇÃìÆâÊÇ™Ç†ÇËÇ‹ÇπÇÒ");
 				return;
@@ -4923,10 +4921,12 @@ s	 * @return javax.swing.JPanel
 	}
 
 	public void setPlayList() {
-		File video = playList.peek();
+		File video = playList.getNow();
 		if(video!=null){
 			playVideoLabel.setText(video.getName());
 			playVideoLabel.setForeground(Color.CYAN);
+		}else{
+			playVideoLabel.setText("");
 		}
 		repaint();
 	}

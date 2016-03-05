@@ -1721,6 +1721,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		gate = Gate.enter();
 		stopwatch.clear();
 		stopwatch.start();
+		manager.sendTimeInfo();
 		try {
 			if(parent!= null){
 				Setting = parent.getSetting();
@@ -1812,6 +1813,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			System.out.println("変換前時間　" + stopwatch.formatElapsedTime());
 
 			gate.exit();
+			manager.sendTimeInfo();
 			if (!isSaveConverted()) {
 				sendtext("動画・コメントを保存し、変換は行いませんでした。");
 				result = "0";
@@ -1860,6 +1862,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			return result;
 		} catch (IOException ex) {
 			ex.printStackTrace();
+			if("0".equals(result)) result = "EX";
 		} finally {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
@@ -1873,14 +1876,18 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			stopwatch.show();
 			stopwatch.stop();
 			gate.exit();
+			manager.sendTimeInfo();
 			System.out.println("変換時間　" + stopwatch.formatLatency());
 			System.out.println("LastStatus:[" + result + "]" + Status.getText());
 			System.out.println("VideoInfo: " + MovieInfo.getText());
 			System.out.println("LastFrame: "+ lastFrame);
 			//end alarm
-			if(!AudioPlay.playWav("end.wav")){
-				// sendtext("wav error");
-			};
+			File wav = new File("end.wav");
+			if(wav.exists()){
+				if(!AudioPlay.playWav(wav)){
+					sendtext("wav error");
+				};
+			}
 			if(sbRet!=null){
 				sbRet.append("RESULT=" + result + "\n");
 				if(!dateUserFirst.isEmpty()){
@@ -1903,14 +1910,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	public void done(){
-		if(result.equals("FF")){
+		if("FF".equals(result)){
 			return;
 		}
 		String retStr = null;
 		try {
 			retStr = get();
 		} catch (InterruptedException | ExecutionException e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		if(retStr == null)
 			System.out.println("ConvertWorker#done.ret==null. ConvertWorker might had Exception!");
@@ -1930,7 +1937,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	// 変換動画再生
 	public void playConvertedVideo() {
 		try {
-			File convertedVideo = playList.poll();
+			File convertedVideo = playList.next();
 			if(convertedVideo==null){
 				convertedVideo = ConvertedVideoFile;
 			}

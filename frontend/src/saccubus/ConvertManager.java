@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
+import saccubus.net.Gate;
 import saccubus.net.NicoClient;
 
 public class ConvertManager extends Thread {
@@ -23,6 +24,7 @@ public class ConvertManager extends Thread {
 	@SuppressWarnings("unused")
 	private JLabel managerInfo = new JLabel();
 	private int nPending = 0;
+	private int nError = 0;
 
 	public ConvertManager(JLabel[] st3){
 		if(st3!=null){
@@ -71,6 +73,7 @@ public class ConvertManager extends Thread {
 			reqQueue.offer(converter);
 			queueCheckAndGo();
 		}
+		sendTimeInfo();
 		return converter;	//実行したものではなく要求を受け付けたもの
 	}
 
@@ -78,6 +81,12 @@ public class ConvertManager extends Thread {
 		if(flag!=null){
 			//table から削除
 			flagTable.remove(flag);
+		}
+		if(result==null || !result.equals("0")) {
+			nError++;
+			System.out.println("manager#reqDone ["+result+"] "+getTimeInfo());
+		}else{
+			System.out.println("manager#reqDone OK. [0]"+getTimeInfo());
 		}
 		if(result==null || (!result.equals("0") && !result.equals("FF"))){
 			try {
@@ -116,7 +125,8 @@ public class ConvertManager extends Thread {
 			while(numRun.get() < numThread.get() && getNumReq() > 0){
 				conv = reqQueue.poll();
 				if(conv==null){
-					System.out.println("Error: manager#queueGo null  req="+getNumReq()+" run="+numRun.get()+" thread="+numThread.get());
+					System.out.println("Error: manager#queueGo null  "+getTimeInfo());
+					sendTimeInfo();
 					break;
 				}
 				ConvertStopFlag flag = conv.getStopFlag();
@@ -126,7 +136,8 @@ public class ConvertManager extends Thread {
 				}
 				conv.execute();
 				numRun.incrementAndGet();
-				System.out.println("manager#queueGo excute()  req="+getNumReq()+" run="+numRun.get()+" thread="+numThread.get());
+				System.out.println("manager#queueGo excute()  "+getTimeInfo());
+				sendTimeInfo();
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
@@ -140,34 +151,44 @@ public class ConvertManager extends Thread {
 	private void sendTime(final String text) {
 		if(SwingUtilities.isEventDispatchThread()){
 			managerTime.setText(text);
+			managerTime.repaint();
 		}else{
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					managerTime.setText(text);
+					managerTime.repaint();
 				}
 			});
 		}
 	}
-	private void sendTimeInfo(){
-		sendTime("Thr:"+numThread.get()+"　 Fin:"+numFinish.get()+"　 Run:"+numRun.get()+"　 Req:"+getNumReq()+"　 Pending:"+nPending);
+	private String getTimeInfo(){
+		return "Thr:"+numThread.get()+"　 Fin:"+numFinish.get()+"　 (ErrFin:"+nError
+				+")　 Run:"+numRun.get()+"　 (NetRun:"+Gate.getNumRun()+")　 Req:"+getNumReq()
+				+"　 Pending:"+nPending;
+	}
+	void sendTimeInfo(){
+		sendTime(getTimeInfo());
 	}
 
 	public void cancelAllRequest() {
 		reqQueue.clear();
+		nError = 0;
 	}
 
 	public void init(){
 		reqQueue.clear();
 		numRun.set(0);
 		numThread.set(1);
+		nError = 0;
+		sendTimeInfo();
 	}
 
 	public static NicoClient getManagerClient(ConvertWorker conv){
 		NicoClient client = clientTab.get(conv);
 		if(client==null){
 			client = conv.getNicoClient();
-		//	clientTab.put(conv, client);
+			clientTab.put(conv, client);
 		}
 		return client;
 	}
@@ -187,7 +208,7 @@ public class ConvertManager extends Thread {
 					numFinish.incrementAndGet();
 					flagTable.remove(flag);
 				}
-				System.out.println("manager#cancel pending  req="+getNumReq()+" run="+numRun.get()+" thread="+numThread.get());
+				System.out.println("manager#cancel pending  "+getTimeInfo());
 				sendTimeInfo();
 			}else
 			if(reqQueue.remove(conv)){
@@ -198,7 +219,7 @@ public class ConvertManager extends Thread {
 					numFinish.incrementAndGet();
 					flagTable.remove(flag);
 				}
-				System.out.println("manager#cancel reqQueue  req="+getNumReq()+" run="+numRun.get()+" thread="+numThread.get());
+				System.out.println("manager#cancel reqQueue  "+getTimeInfo());
 				sendTimeInfo();
 			}else{
 				// executed

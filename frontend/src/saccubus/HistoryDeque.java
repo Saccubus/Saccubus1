@@ -3,131 +3,155 @@ package saccubus;
 import java.util.LinkedList;
 
 public class HistoryDeque<T> {
-	private LinkedList<T> back = new LinkedList<>();
-	private LinkedList<T> forward = new LinkedList<>();
-	private T last;
-	private T initV;
+	private final LinkedList<T> deque = new LinkedList<>();
+	private T now;
+	private final T initV;
+	private int index;
 
 	public HistoryDeque(T t){
 		initV = t;
-		last = initV;
+		now = initV;
+		index = 0;
 	}
 
+	/**
+	 *  最後尾に追加
+	 *  現在位置indexは最後尾に移動(tをポイントする)
+	 */
 	public boolean add(T t){
-		synchronized(back){
-			last = t;
-			return back.add(t);
+		synchronized(deque){
+			now = t;
+			index = deque.size();
+			return deque.add(t);
 		}
 	}
-
+	public boolean addLast(T t){
+		return add(t);
+	}
+	/**
+	 *  先頭に追加
+	 *  現在位置indexは先頭に移動(tをポイントする)
+	 */
 	public void addFirst(T t) {
-		synchronized(back) {
-			last = t;
-			back.addFirst(t);
-		}
-
-	}
-
-	public void offer(T t) {
-		synchronized(back){
-			last = t;
-			back.offer(t);
-			return;
+		synchronized(deque) {
+			now = t;
+			index = 0;
+			deque.addFirst(t);
 		}
 	}
-
+	/**
+	 *  最後尾に追加
+	 *  現在位置indexは動かない
+	 */
+	public boolean offer(T t) {
+		synchronized(deque){
+			return deque.offer(t);
+		}
+	}
+	/**
+	 *  現在の値を返す
+	 *  現在位置indexは動かない(nowをポイントする)
+	 */
+	public T getNow(){
+		synchronized(deque){
+			return now;
+		}
+	}
+	/**
+	 *  最後尾を返す
+	 *  現在位置indexは最後尾に移動(nowをポイントする)
+	 */
 	public T getLast(){
-		synchronized(back){
-			if(!back.isEmpty())
-				last = back.getLast();
+		synchronized(deque){
+			index = size() - 1;
+			if(deque.isEmpty())
+				now = initV;
 			else
-				last = initV;
-			return last;
+				now = deque.getLast();
+			return now;
 		}
 	}
-
-	public T removeLast(){
-		synchronized(back){
-			if(!back.isEmpty()){
-				last = back.removeLast();
-				forward.add(last);
+	/**
+	 *  現在位置indexの値を返す
+	 *  indexは返した値の次の位置に移動。
+	 */
+	public T next(){
+		synchronized(deque){
+			if(index >= deque.size()){
+				index = deque.size();
+				now = initV;
 			} else {
-				last = initV;
-			}
-			return last;
+				now = deque.get(index);
+				index++;			}
+			return now;
 		}
 	}
-
-	public T getNext(){
-		synchronized(back){
-			if(!forward.isEmpty()){
-				last = forward.getLast();
-			} else
-				last = initV;
-			return last;
-		}
-	}
-
-	public T removeNext(){
-		synchronized(back){
-			if(!forward.isEmpty()){
-				last = forward.removeLast();
-				back.add(last);
+	/**
+	 *  現在位置indexの前の値を返す
+	 *  indexは返した値の位置に移動。
+	 */
+	public T back(){
+		synchronized(deque){
+			if(index <= 0 || deque.isEmpty()){
+				index = 0;
+				now = initV;
 			}else{
-				last = initV;
+				now = deque.get(--index);
 			}
-			return last;
+			return now;
 		}
 	}
-
-	public T removeBack(){
-		synchronized(back){
-			if(!forward.isEmpty()){
-				last = forward.removeLast();
-				back.addFirst(last);
-			}else{
-				last = initV;
-			}
-			return last;
-		}
-	}
-
+	/**
+	 *  先頭の値を削除して返す
+	 *  現在位置indexは動かない
+	 */
 	public T poll() {
-		synchronized(back){
-			if(!back.isEmpty()){
-				last = back.poll();
-				forward.add(last);
+		synchronized(deque){
+			if(!deque.isEmpty()){
+				now = deque.poll();
 			}else
-				last = initV;
-			return last;
+				now = initV;
+			return now;
 		}
 	}
-
+	/**
+	 *  先頭の値を返す
+	 *  現在位置indexは動かない
+	 */
 	public T peek() {
-		synchronized(back){
-			if(!back.isEmpty()){
-				last = back.peek();
-			}else{
-				last = initV;
-			}
-			return last;
+		synchronized(deque){
+			if(!deque.isEmpty()){
+				now = deque.peek();
+			}else
+				now = initV;
+			return now;
 		}
 	}
-
+	/**
+	 *  文字列を返す
+	 */
 	public String getText() {
-		synchronized(back){
-			StringBuffer sb = new StringBuffer();
-			if(!forward.isEmpty()){
-				for(T t:forward){
+		StringBuffer sb = new StringBuffer("");
+		synchronized(deque){
+			if(!deque.isEmpty()){
+				for(T t:deque){
 					sb.append(t.toString());
 					sb.append("\n");
 				}
 			}
-			for(T t:back){
-				sb.append(t.toString());
-				sb.append("\n");
-			}
 			return sb.substring(0);
 		}
+	}
+	/**
+	 *  サイズを返す
+	 */
+	public int size() {
+		return deque.size();
+	}
+	/**
+	 *  indexを返す
+	 */
+	public int getIndex() {
+		return index;
 	}
 }
