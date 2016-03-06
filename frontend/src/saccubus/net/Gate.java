@@ -97,11 +97,13 @@ public class Gate extends Thread {
 		if(nGate > 2)
 			nGate = 2;
 		numGate.addAndGet(nGate - numGate.get());
-		while(numRun.get() < numGate.get() && que.size()>0){
+		while(numRun.get() < numGate.get()){
 			synchronized(que){
-				if(que.peek()==null){
-					System.out.println("Gate que return null");
-				}
+				if(que.size()==0)
+					break;
+			//	if(que.peek()==null){
+			//		System.out.println("Gate que return null");
+			//	}
 				que.notify();
 			}
 		}
