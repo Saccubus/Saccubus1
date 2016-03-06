@@ -41,6 +41,8 @@ public class Gate extends Thread {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				if(que.peek()!=this)
+					que.notify();	//•K—v‚©H
 			}
 			// queæ“ª‚ª©•ª, nRun < nGate
 			que.poll();
