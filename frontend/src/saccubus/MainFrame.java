@@ -2192,6 +2192,7 @@ public class MainFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					Gate.setNumGate(downloadDownCheckBox.isSelected()? 1:2);
+					convertManager.sendTimeInfo();
 				}
 			});
 			GridBagConstraints grid400B = new GridBagConstraints();
@@ -2382,6 +2383,7 @@ public class MainFrame extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					errorList = new StringBuffer();
 					errorUrlLabel.setText(" ");
+					convertManager.clearError();
 				}
 			});
 			errorListSaveButton = new JButton("•Û‘¶");
@@ -2393,6 +2395,7 @@ public class MainFrame extends JFrame {
 					errorListSave(errorList);
 					errorList = new StringBuffer();
 					errorUrlLabel.setText(" ");
+					convertManager.clearError();
 				}
 
 			});

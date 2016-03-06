@@ -173,7 +173,16 @@ public class ConvertManager extends Thread {
 
 	public void cancelAllRequest() {
 		reqQueue.clear();
-		nError = 0;
+		for(int r=0;r<3;r++){
+			if(Gate.getNumRun()>0 || this.getNumRun()>0){
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		Gate.init();
 	}
 
 	public void init(){
@@ -264,5 +273,9 @@ public class ConvertManager extends Thread {
 
 	public int getNumRun() {
 		return numRun.get();
+	}
+
+	public void clearError() {
+		nError = 0;
 	}
 }

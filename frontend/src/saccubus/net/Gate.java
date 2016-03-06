@@ -1,21 +1,41 @@
 package saccubus.net;
 
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import saccubus.HistoryDeque;
-
 public class Gate extends Thread {
-	private final static AtomicInteger numGate = new AtomicInteger(2);
 	private final static AtomicInteger numRun  = new AtomicInteger(0);
-	private final static HistoryDeque<Gate> que = new HistoryDeque<Gate>(null);
+	private final static AtomicInteger numGate = new AtomicInteger(2);
+	private final static AtomicInteger numReq = new AtomicInteger(0);
 	private boolean entered = false;
 	private int limitter;
 	private int count;
+	private Integer ticket;
+	private static Integer pool = null;
+	private final static LinkedBlockingQueue<Integer> que = new LinkedBlockingQueue<Integer>();
+	static {
+		netInit(numGate.get());
+	}
+	private final static AtomicBoolean waitSetNumGate = new AtomicBoolean(false);
 
 	public Gate(){
 		entered = true;
 		count = 0;
 		limitter = 3;		//retry max
+		ticket = null;
+	}
+
+	public static void init(){
+		netInit(numGate.get());
+	}
+
+	public static void netInit(int n){
+		que.clear();
+		for(int i = 0; i < n; i++ ){
+			que.offer(i);
+		}
+		System.out.println("Gate#netInit() n="+n+" numGate="+numGate.get());
 	}
 
 	public static Gate enter(){
@@ -25,52 +45,37 @@ public class Gate extends Thread {
 	}
 	public void reEnter(){
 		entered = true;
-		synchronized(que){
-			numRun.incrementAndGet();
-			if(numRun.get() <= numGate.get()){
-				System.out.println("Gate entered: nRun="+numRun.get()+",nReq="+que.size()+",nGate="+numGate.get());
-				return;
-			}
-			//ゲート待ち
-			que.offer(this);
-			numRun.decrementAndGet();
-			System.out.println("Gate waiting: nRun="+numRun.get()+",nReq="+que.size()+",nGate="+numGate.get());
-			while(numRun.get() >= numGate.get() || que.peek()!=this){
-				try {
-					que.wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+		numReq.incrementAndGet();
+		while(ticket==null){
+			try {
+				ticket = que.take();
+				if(waitSetNumGate.get() || numRun.get()>numGate.get()){
+					Thread.sleep(100);
+					que.put(ticket);
+					ticket = null;
+					continue;
 				}
-				if(que.peek()!=this)
-					que.notify();	//必要か？
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			// que先頭が自分, nRun < nGate
-			que.poll();
-			numRun.incrementAndGet();
 		}
-		//ウェイト抜け
-		System.out.println("Gate entered after wait");
+		numReq.decrementAndGet();
+		numRun.incrementAndGet();
+		System.out.println("Gate#enter() nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
 		return;
 	}
 
 	public void exit(){
 		if(entered){
 			entered = false;
-			numRun.decrementAndGet();
-			while(numRun.get() < numGate.get()){
-				synchronized (que) {
-					if(que.size()==0)
-						break;
-					//他の待ちをリリース
-					//	if(que.peek() == null){
-					//		System.out.println("Gate que return null, バグ?");
-					//		return;
-								//	}
-					que.notify();
-				}
+			try {
+				numRun.decrementAndGet();
+				System.out.println("Gate#exit()  nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
+				que.put(ticket);
+			} catch (InterruptedException e) {
+				System.out.println("Gate#exit() Exception:  nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
+				e.printStackTrace();
 			}
-			// Req <=0 または　nRun>=nGate
-			System.out.println("Gate exited: nRun="+numRun.get()+",nReq="+que.size()+",nGate="+numGate.get());
 		}
 	}
 
@@ -93,22 +98,35 @@ public class Gate extends Thread {
 		return true;
 	}
 
-	public static void setNumGate(int nGate){
-		if(nGate <0)
-			nGate = 0;
-		if(nGate > 2)
-			nGate = 2;
-		numGate.addAndGet(nGate - numGate.get());
-		while(numRun.get() < numGate.get()){
-			synchronized(que){
-				if(que.size()==0)
-					break;
-			//	if(que.peek()==null){
-			//		System.out.println("Gate que return null");
-			//	}
-				que.notify();
-			}
+	public synchronized static void setNumGate(int nGate){
+		final int n = nGate;
+		final int old = numGate.get();
+		if(n==old)
+			return;
+		if(n > old && pool==null){
+			System.out.println("Gate setNumGate(): pool==null added. bug?");
+			return;
 		}
+		waitSetNumGate.set(true);
+		numGate.set(n);
+		new Thread(){
+			@Override
+			public void run() {
+				// run in new thread since it may take some time.
+				System.out.println("Gate setNumGate("+n+"): old="+old);
+				try {
+					if(n > old){		// {0}.put(1)->{0,1}
+						que.put(pool);
+						pool = null;
+					}else if(n < old){
+						pool = que.take();	// {0,1}.take()->{0}
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				waitSetNumGate.set(false);
+			}
+		}.start();
 	}
 
 	public static int getNumRun() {

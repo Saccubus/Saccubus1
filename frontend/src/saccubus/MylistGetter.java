@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import saccubus.json.Mson;
+import saccubus.net.Gate;
 import saccubus.net.Loader;
 import saccubus.net.Path;
 
@@ -47,6 +48,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 	private String mylistID;
 	private String watchInfo;
 //	private String Tag;
+	private Gate gate;
 
 	public MylistGetter(String url0, MainFrame frame, JLabel[] in_status, ConvertStopFlag flag, StringBuffer sb){
 		url = url0;
@@ -107,10 +109,13 @@ public class MylistGetter extends SwingWorker<String, String> {
 			Path file = Path.mkTemp(url.replace("http://","").replace("nicovideo.jp/","")
 					.replaceAll("[/\\:\\?=\\&]+", "_") + ".html");
 			Loader loader = new Loader(Setting, status3);
+			gate = Gate.enter();
 			if(!loader.load(url,file)){
 				sendtext("loadé∏îs "+url);
+				gate.exit();
 				return "E1";
 			}
+			gate.exit();
 			String text = Path.readAllText(file.getPath(), "UTF-8");
 			sendtext("ï€ë∂ÇµÇ‹ÇµÇΩÅB" + file.getRelativePath());
 			if(StopFlag.needStop()) {
