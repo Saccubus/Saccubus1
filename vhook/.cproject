@@ -3,9 +3,6 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055" moduleId="org.eclipse.cdt.core.settings" name="Release">
-				<macros>
-					<stringMacro name="MINGW_HOME" type="VALUE_TEXT" value="C:\msys64\mingw32"/>
-				</macros>
 				<externalSettings>
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/vhook"/>
@@ -25,9 +22,9 @@
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 				<configuration artifactExtension="dll" artifactName="nicovideoE" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser" id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055" name="Release" parent="cdt.managedbuild.config.gnu.cygwin.so.release" postbuildStep="cp -p ${ProjDirPath}/Release/nicovideoE.dll ${WorkspaceDirPath}/frontend/bin">
 					<folderInfo id="cdt.managedbuild.config.gnu.cygwin.so.release.235245055.1489638098" name="/" resourcePath="">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.837091669" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.837091669" name="MinGW GCC" nonInternalBuilderId="cdt.managedbuild.builder.gnu.cross" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.base.731886690" name="デバッグ・プラットフォーム" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
-							<builder autoBuildTarget="" buildPath="${workspace_loc:/vhook}/Release" cleanBuildTarget="" enableAutoBuild="false" enableCleanBuild="true" enabledIncrementalBuild="true" id="cdt.managedbuild.tool.gnu.builder.mingw.base.1842594791" incrementalBuildTarget="" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT 内部ビルダー" parallelBuildOn="false" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
+							<builder buildPath="${workspace_loc:/vhook}/Release" id="cdt.managedbuild.builder.gnu.cross.395469940" keepEnvironmentInBuildfile="false" name="Gnu Make ビルダー" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.base.62634076" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1112980322" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -47,7 +44,11 @@
 								<option id="gnu.c.compiler.option.misc.other.215671473" name="その他のフラグ" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -static-libgcc" valueType="string"/>
 								<option id="gnu.c.compiler.option.warnings.wconversion.1329370014" name="Implicit conversion warnings (-Wconversion)" superClass="gnu.c.compiler.option.warnings.wconversion" value="false" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.misc.ansi.1605918599" name="ANSI プログラムのサポート (-ansi)" superClass="gnu.c.compiler.option.misc.ansi" value="false" valueType="boolean"/>
-								<option id="gnu.c.compiler.option.include.paths.1615716004" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths"/>
+								<option id="gnu.c.compiler.option.include.paths.1615716004" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;C:\MinGW\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\MinGW\mingw32\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\msys\1.0\local\include&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1791772686" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.base.1502473875" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base">
@@ -61,6 +62,7 @@
 								</option>
 								<option id="gnu.c.link.option.paths.324980670" name="ライブラリー検索パス (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${MINGW_HOME}/lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${MINGW_HOME}/local/lib&quot;"/>
 								</option>
 								<option defaultValue="true" id="gnu.c.link.option.shared.932774549" name="共用 (-shared)" superClass="gnu.c.link.option.shared" valueType="boolean"/>
 								<option id="gnu.c.link.option.noshared.1492354896" name="共用ライブラリーなし (-static)" superClass="gnu.c.link.option.noshared" value="false" valueType="boolean"/>
