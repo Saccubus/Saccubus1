@@ -35,10 +35,6 @@ public class MultiXMLHandler extends DefaultHandler {
 			// System.out.print("thread(" + thread + ") ");
 			return;
 		}
-		if (qName.toLowerCase().equals("thread")){
-			chat = null;
-			return;
-		}
 		if (qName.toLowerCase().equals("chat")) {
 			chat = new ChatSave("chat");
 			chat_kicked = false;

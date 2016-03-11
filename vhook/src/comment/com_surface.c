@@ -269,7 +269,8 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	float alpha_t = 1.0;
 	if(data->opaque_rate > 0.0){
 		alpha_t = data->opaque_rate;
-	}else{
+	}else if(item->no > 0)	// item->no <=0 の時はalphaを変更しない
+	{
 		alpha_t = (((float)(item->no)/(item->chat->max_no)) * 0.4) + 0.6;
 		if(item->chat->cid == CID_OPTIONAL && data->optional_trunslucent){
 			if(alpha_t>0.3) alpha_t = 0.3;			// これでいいのかな？適当なんだが。
