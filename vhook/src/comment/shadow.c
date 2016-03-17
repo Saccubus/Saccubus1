@@ -268,11 +268,119 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c)
 	return shadow;
 }
 
+#define SHADOW_SACCUBUS2 2
+//Saccubus2同様?
+SDL_Surface* likeSaccubus2(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
+	/*スライド幅の確定*/
+	int slide = SHADOW_SACCUBUS2;
+	if(is_fix_size){
+		slide <<= 1;
+	}
+	int w = surf->w;
+	int h = surf->h;
+	SDL_Surface* shadow = SDL_CreateRGBSurface(		SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+												w+(slide<<1),
+												h+(slide<<1),
+												32,
+												#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+												    0xff000000,
+												    0x00ff0000,
+												    0x0000ff00,
+												    0x000000ff
+												#else
+												    0x000000ff,
+												    0x0000ff00,
+												    0x00ff0000,
+												    0xff000000
+												#endif
+											);
+	SDL_Surface* shadow2 = SDL_CreateRGBSurface(	SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+												w+(slide<<1),
+												h+(slide<<1),
+												32,
+												#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+												    0xff000000,
+												    0x00ff0000,
+												    0x0000ff00,
+												    0x000000ff
+												#else
+												    0x000000ff,
+												    0x0000ff00,
+												    0x00ff0000,
+												    0xff000000
+												#endif
+											);
+	SDL_Rect rect = {slide,slide};	//左上座標
+	SDL_SetAlpha(surf,0,0xff);		//αを切る
+	SDL_BlitSurface(surf,NULL,shadow,&rect);	//surf→shadowコピー
+	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);		//αを入れる
+	if(is_black==1){//黒であれば、周りをしろで囲む
+		setRGB(shadow,0xffffffff);		//影の色で塗りつぶす
+	}else if(is_black==0){
+		setRGB(shadow,0);
+	}else{
+		setRGB(shadow,SDL_MapRGB(surf->format,c.r,c.g,c.b));
+	}
+	SDL_SetAlpha(shadow,0,0xff);		//αを切る
+	SDL_BlitSurface(shadow,NULL,shadow2,NULL);	//shadow→shadow2コピー
+	SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);		//αを入れる
+	int x,y,z;
+	int nw = shadow->w;
+	int nh = shadow->h;
+	int *pix;
+	int *pix2;
+	int pitch = shadow->pitch;
+	int bps = shadow->format->BytesPerPixel;
+	Uint32 Amask = shadow->format->Amask;
+	Uint32 Mask = (shadow->format->Rmask | shadow->format->Gmask | shadow->format->Bmask);
+	Uint32 Ashift = shadow->format->Ashift;
+	Uint32 Aloss = shadow->format->Aloss;
+	SDL_Surface* tmp;
+	SDL_LockSurface(shadow);
+	SDL_LockSurface(shadow2);
+	int zmax = slide;
+	if(is_fix_size){
+		zmax <<= 1;
+	}
+	for(z=0;z<zmax;z++){
+		char *pixels = (char*)shadow->pixels;
+		char *pixels2 = (char*)shadow2->pixels;
+		for(y=0;y<nh;y++){
+			pix = (int*)(&pixels[pitch * y]);
+			pix2 = (int*)(&pixels2[pitch * y]);
+			for(x=0;x<nw;x++){
+				int right = (x==nw-1) ? 0 : *(int*)((((char*)pix)+bps));
+				int left = (x==0) ? 0 : *(int*)((((char*)pix)-bps));
+				int up = (y==0) ? 0 : *(int*)((((char*)pix)-pitch));
+				int down = (y==nh-1) ? 0 : *(int*)((((char*)pix)+pitch));
+				int my = *pix2;
+				//周りが空白でない
+				if(((right | left | up | down | my) & Amask) != 0){
+					*pix2 &= Mask;
+					*pix2 |= ((0xff >> Aloss) << Ashift) & Amask;
+				}
+				pix = (int*)(((char*)pix)+bps);
+				pix2 = (int*)(((char*)pix2)+bps);
+			}
+		}
+		tmp = shadow2;
+		shadow2 = shadow;
+		shadow = tmp;
+	}
+	SDL_UnlockSurface(shadow);
+	SDL_UnlockSurface(shadow2);
+	shadowBlitSurface(surf,NULL,shadow,&rect);
+	SDL_FreeSurface(surf);
+	SDL_FreeSurface(shadow2);
+	return shadow;
+}
+
 
 //定義
 SDL_Surface* (*ShadowFunc[SHADOW_MAX])(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c) = {
 	noShadow,
 	likeNicoNico,
 	likeNovel,
-	likeOld
+	likeOld,
+	likeSaccubus2
 };

@@ -53,7 +53,8 @@ public class ConvertingSetting {
 		"00:なし",
 		"01:ニコニコ動画風",
 		"02:右下",
-		"03:囲い込み"
+		"03:囲い込み",
+		"04:Saccubus2風"
 		};
 
 	private String MailAddress;

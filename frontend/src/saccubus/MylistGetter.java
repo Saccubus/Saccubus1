@@ -294,6 +294,9 @@ public class MylistGetter extends SwingWorker<String, String> {
 			sendtext("出力失敗 autolist.bat:"+mylistID);
 			return;
 		}
+		//
+		String user = Setting.getMailAddress();
+		if(user!=null && user.isEmpty()) user = null;
 		BufferedReader br = null;
 		PrintWriter pw = null;
 		String s;
@@ -305,6 +308,16 @@ public class MylistGetter extends SwingWorker<String, String> {
 			pw.println(": produced by Saccubus" + MainFrame_AboutBox.rev + " " + new Date());
 			pw.println(":――――――――――――――――――");
 			while((s = br.readLine())!=null){
+				if(s.startsWith("set MAILADDR=doremi@mahodo.co.jp") && user!=null){
+					// メールアドレス置換
+					pw.println("set MAILADDR="+user);
+					continue;
+				}
+				if(s.startsWith("set PASSWORD=steeki_tabetai") && user!=null){
+					// パスワード置換
+					pw.println("set PASSWORD=!");
+					continue;
+				}
 				if(!s.startsWith(CMD_LINE)){
 					// %CMD%行が現れるまでコピー
 					pw.println(s);
@@ -313,10 +326,10 @@ public class MylistGetter extends SwingWorker<String, String> {
 					pw.println(":――――――――――――――――――");
 					pw.println(":set OPTION=過去ログ日時 他のオプション などを必要に応じ指定(readmeNew.txt参照)");
 					pw.println("set OPTION=");
-					pw.println(":保存変換しない行は削除してください");
-					watchInfo = watchInfo.replace('?', '+');
+					watchInfo = watchInfo.replace('?', '&');
 					if(!s.contains("auto")){
 						// マイリストの%CMD%出力(記述法1)
+						pw.println(":保存変換しない行は削除してください");
 						for(String[] ds: mylist){
 							pw.println(":タイトル " + ds[1]);
 							pw.println("%CMD% "+ ds[0] + "?watch_harmful=1"+watchInfo+" %OPTION% @PUP");
