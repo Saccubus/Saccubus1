@@ -13,15 +13,18 @@ public class Gate extends Thread {
 	private int limitter;
 	private int count;
 	private Integer ticket;
+	private int id;
 	private static Integer pool = null;
 	private final static LinkedBlockingQueue<Integer> que = new LinkedBlockingQueue<Integer>();
 	static {
-		netInit(numGate.get());
+		netInit(MAX_GATE);
 	}
 	private final static AtomicBoolean waitSetNumGate = new AtomicBoolean(false);
+	public final static int RETRY_WAIT_MILISECOND = 5000;	//5秒
+	public final static int ERROR_WAIT_MILISECOND = 1000;	//5秒
 
 	public Gate(){
-		entered = true;
+		entered = false;
 		count = 0;
 		limitter = 3;		//retry max
 		ticket = null;
@@ -36,45 +39,81 @@ public class Gate extends Thread {
 		for(int i = 0; i < n; i++ ){
 			que.offer(i);
 		}
-		System.out.println("Gate#netInit() n="+n+" numGate="+numGate.get());
+		System.out.println("Gate#netInit("+n+") numGate="+numGate.get());
 	}
 
-	public static Gate enter(){
+	public static Gate open(int wid){
 		Gate g = new Gate();
-		g.reEnter();
+		g.id = wid;
+		g.enter();
 		return g;
 	}
-	public void reEnter(){
+	public void enter(){
+		if(entered)
+			return;
+
 		entered = true;
 		numReq.incrementAndGet();
-		while(ticket==null){
-			try {
-				ticket = que.take();
-				if(waitSetNumGate.get() || numRun.get()>numGate.get()){
-					Thread.sleep(100);
-					que.put(ticket);
-					ticket = null;
+		do{
+			while(ticket==null){
+				try {
+					ticket = que.take();
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				while(waitSetNumGate.get()){
+					try {
+						Thread.sleep(100);
+						que.put(ticket);
+						ticket = null;
+					} catch (InterruptedException e) {
+						System.out.println("Gate#enter("+id+"):Exception ticket="+ticket);
+						e.printStackTrace();
+					}
 					continue;
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
-		}
+			if(numRun.incrementAndGet() > numGate.get()){
+				numRun.decrementAndGet();
+				try {
+					Thread.sleep(100);
+					if(ticket!=null){
+						que.put(ticket);
+						ticket = null;
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}while(ticket==null);
 		numReq.decrementAndGet();
-		numRun.incrementAndGet();
-		System.out.println("Gate#enter() nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
+		System.out.println("Gate#enter("+id+") nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
 		return;
 	}
 
-	public void exit(){
+	/**
+	 * exit(miliseconds)
+	 * @param miliseconds 次の enterを待たせるミリ秒数、エラー終了後は待つこと
+	 */
+	public void exit(int miliseconds){
 		if(entered){
 			entered = false;
+			if(miliseconds > 0){
+				// エラー終了後は次のenterさせない。ticket持ったまま
+				try{
+					Thread.sleep(miliseconds);
+				}catch(InterruptedException e){
+					// e.printStackTrace();
+				}
+			}
 			try {
 				numRun.decrementAndGet();
-				System.out.println("Gate#exit()  nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
+				assert numRun.get() >= 0 : numRun;
+				System.out.println("Gate#exit("+id+")  nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
+				assert ticket != null : ticket;
 				que.put(ticket);
 			} catch (InterruptedException e) {
-				System.out.println("Gate#exit() Exception:  nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
+				System.out.println("Gate#exit("+id+") Exception:  nRun="+numRun.get()+",nReq="+numReq.get()+",nGate="+numGate.get());
 				e.printStackTrace();
 			}
 		}
@@ -84,18 +123,14 @@ public class Gate extends Thread {
 		if(!entered)
 			return false;
 
-		exit();
-		// ロック開放
-		try {	//5秒待機
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		reEnter();
+		System.out.println("Gate#notExceedLimitterGate("+id+") waiting");
+		exit(RETRY_WAIT_MILISECOND);		//　5秒待機後、ロック開放
 		if(count++ > limitter){	//retry数超えたら false
 			count = 0;
 			return false;
 		}
+		// retry
+		enter();
 		return true;
 	}
 
@@ -132,5 +167,17 @@ public class Gate extends Thread {
 
 	public static int getNumRun() {
 		return numRun.get();
+	}
+
+	public static int getNumReq() {
+		return numReq.get();
+	}
+
+	public void exit(String result) {
+		if("0".equals(result)){
+			exit(0);
+		}else{
+			exit(ERROR_WAIT_MILISECOND);
+		}
 	}
 }

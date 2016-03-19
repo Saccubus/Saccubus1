@@ -49,8 +49,12 @@ public class MylistGetter extends SwingWorker<String, String> {
 	private String watchInfo;
 //	private String Tag;
 	private Gate gate;
+	private int id;
 
-	public MylistGetter(String url0, MainFrame frame, JLabel[] in_status, ConvertStopFlag flag, StringBuffer sb){
+	public MylistGetter(int worker_id, String url0, MainFrame frame,
+		JLabel[] in_status,ConvertStopFlag flag, StringBuffer sb)
+	{
+		id = worker_id;
 		url = url0;
 		int index = url.indexOf('?');
 		if(index >= 0){
@@ -70,7 +74,10 @@ public class MylistGetter extends SwingWorker<String, String> {
 		ret = sb;
 	}
 
-	public MylistGetter(String tag, String info, ConvertingSetting setting, JLabel[] in_status, ConvertStopFlag flag, StringBuffer sb){
+	public MylistGetter(int worker_id, String tag, String info, ConvertingSetting setting,
+			JLabel[] in_status, ConvertStopFlag flag, StringBuffer sb)
+	{
+		id = worker_id;
 		url = tag;
 		watchInfo = info;
 		parent = null;
@@ -109,13 +116,13 @@ public class MylistGetter extends SwingWorker<String, String> {
 			Path file = Path.mkTemp(url.replace("http://","").replace("nicovideo.jp/","")
 					.replaceAll("[/\\:\\?=\\&]+", "_") + ".html");
 			Loader loader = new Loader(Setting, status3);
-			gate = Gate.enter();
+			gate = Gate.open(id);
 			if(!loader.load(url,file)){
 				sendtext("loadé∏îs "+url);
-				gate.exit();
+				gate.exit("E1");
 				return "E1";
 			}
-			gate.exit();
+			gate.exit(0);
 			String text = Path.readAllText(file.getPath(), "UTF-8");
 			sendtext("ï€ë∂ÇµÇ‹ÇµÇΩÅB" + file.getRelativePath());
 			if(StopFlag.needStop()) {
@@ -159,6 +166,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				mylistID = text.substring(0, start);
 				text = text.substring(start+1).trim();
 			}else{
+				mylistID = "0";	//not implemented
 				// here will come XML parser
 			}
 			//common
@@ -280,7 +288,8 @@ public class MylistGetter extends SwingWorker<String, String> {
 		}else{
 			System.out.println("done#get() "+result);
 		}
-		sendtext("["+result+"]");
+		if(!"00".equals(result))
+			sendtext("["+result+"]");
 		if(parent!=null)
 			parent.myListGetterDone(ret);
 	}

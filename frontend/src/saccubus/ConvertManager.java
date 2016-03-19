@@ -23,8 +23,9 @@ public class ConvertManager extends Thread {
 	private JLabel managerTime = new JLabel();
 	@SuppressWarnings("unused")
 	private JLabel managerInfo = new JLabel();
-	private int nPending = 0;
-	private int nError = 0;
+	private AtomicInteger numPending = new AtomicInteger(0);
+	private AtomicInteger numError = new AtomicInteger(0);
+	private AtomicInteger numConvert = new AtomicInteger(0);
 
 	public ConvertManager(JLabel[] st3){
 		if(st3!=null){
@@ -44,6 +45,7 @@ public class ConvertManager extends Thread {
 	}
 
 	public ConvertWorker request(
+		int worker_id,
 		int nThread,
 		String url,
 		String time,
@@ -57,6 +59,7 @@ public class ConvertManager extends Thread {
 	{
 		numThread.set(nThread);
 		ConvertWorker converter = new ConvertWorker(
+				worker_id,
 				url,
 				time,
 				setting,
@@ -68,7 +71,7 @@ public class ConvertManager extends Thread {
 				sbret);
 		flagTable.put(flag, converter);
 		if(flag.isPending()){
-			nPending++;
+			numPending.incrementAndGet();
 		}else{
 			reqQueue.offer(converter);
 			queueCheckAndGo();
@@ -78,22 +81,24 @@ public class ConvertManager extends Thread {
 	}
 
 	public void reqDone(String result, ConvertStopFlag flag){
+		int wid = -99;
 		if(flag!=null){
+			wid = flagTable.get(flag).getId();
 			//table から削除
 			flagTable.remove(flag);
 		}
-		if(result==null || !result.equals("0")) {
-			nError++;
-			System.out.println("manager#reqDone ["+result+"] "+getTimeInfo());
+		if("0".equals(result)){
+			System.out.println("manager#reqDone("+wid+") OK. [0]"+getTimeInfo());
 		}else{
-			System.out.println("manager#reqDone OK. [0]"+getTimeInfo());
-		}
-		if(result==null || (!result.equals("0") && !result.equals("FF"))){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// e.printStackTrace();
-			}	//1秒 待機
+			numError.incrementAndGet();
+			System.out.println("manager#reqDone("+wid+") ["+result+"] "+getTimeInfo());
+			if(!"FF".equals(result)){
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// e.printStackTrace();
+				}	//1秒 待機
+			}
 		}
 		// 次の変換をqueから取り出して実行
 		numRun.decrementAndGet();
@@ -136,7 +141,7 @@ public class ConvertManager extends Thread {
 				}
 				conv.execute();
 				numRun.incrementAndGet();
-				System.out.println("manager#queueGo excute()  "+getTimeInfo());
+				System.out.println("manager#queueGo ("+conv.getId()+")excute  "+getTimeInfo());
 				sendTimeInfo();
 				try {
 					Thread.sleep(100);
@@ -163,9 +168,9 @@ public class ConvertManager extends Thread {
 		}
 	}
 	private String getTimeInfo(){
-		return "Thr:"+numThread.get()+"　 Fin:"+numFinish.get()+"　 (ErrFin:"+nError
-				+")　 Run:"+numRun.get()+"　 (NetRun:"+Gate.getNumRun()+")　 Req:"+getNumReq()
-				+"　 Pending:"+nPending;
+		return "Thr:"+numThread.get()+" Fin:"+numFinish.get()+"(Err:"+numError.get()
+				+") Run:"+numRun.get()+"(Conv:"+numConvert.get()+" Net:"+Gate.getNumRun()
+				+" Wait:"+Gate.getNumReq()+") Req:"+getNumReq()+" Pending:"+numPending.get();
 	}
 	void sendTimeInfo(){
 		sendTime(getTimeInfo());
@@ -189,7 +194,8 @@ public class ConvertManager extends Thread {
 		reqQueue.clear();
 		numRun.set(0);
 		numThread.set(1);
-		nError = 0;
+		numError.set(0);
+		numConvert.set(0);
 		sendTimeInfo();
 	}
 
@@ -211,7 +217,7 @@ public class ConvertManager extends Thread {
 				synchronized(flag){
 					flag.go();
 					flag.start();
-					nPending--;
+					numPending.decrementAndGet();
 					flag.stop();
 					conv.abortByCancel();
 					numFinish.incrementAndGet();
@@ -248,7 +254,7 @@ public class ConvertManager extends Thread {
 				flag.go();
 				flag.notify();
 			}
-			nPending--;
+			numPending.decrementAndGet();
 			reqQueue.offer(conv);
 			queueCheckAndGo();
 		}
@@ -268,6 +274,7 @@ public class ConvertManager extends Thread {
 
 	public void allDelete() {
 		numFinish.set(0);
+		numConvert.set(0);
 		sendTimeInfo();
 	}
 
@@ -276,6 +283,16 @@ public class ConvertManager extends Thread {
 	}
 
 	public void clearError() {
-		nError = 0;
+		numError.set(0);
+	}
+
+	public void incNumConvert(){
+		numConvert.incrementAndGet();
+		sendTimeInfo();
+	}
+
+	public void decNumConvert(){
+		numConvert.decrementAndGet();
+		sendTimeInfo();
 	}
 }

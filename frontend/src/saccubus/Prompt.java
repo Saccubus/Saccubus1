@@ -305,6 +305,7 @@ public class Prompt {
 		String text;
 		if(!tag.startsWith("auto") && !isMylist){
 			converter = manager.request(
+					-1,
 					setting.getNumThread(),
 					tag+watchinfo,
 					time,
@@ -341,6 +342,7 @@ public class Prompt {
 			if (isMylist){
 				// "http://www/nicovideo.jp/mylist/1234567?watch_harmful=1" Ç»Ç«
 				MylistGetter mylistGetter = new MylistGetter(
+					-1,
 					tag,
 					watchinfo,
 					setting,
@@ -408,6 +410,7 @@ public class Prompt {
 				StringBuffer sbRet = new StringBuffer();
 				final ConvertStopFlag autoStop = new ConvertStopFlag(new JButton(), "í‚é~", "ë“ã@", "èIóπ", "ïœä∑", false);
 				converter = manager.request(
+					indexNow,
 					setting.getNumThread(),
 					vid + watchinfo,
 					time,

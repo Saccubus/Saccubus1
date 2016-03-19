@@ -3215,6 +3215,7 @@ public class MainFrame extends JFrame {
 			ConvertingSetting setting1 = getSetting();
 			// ConverManagerˆ—‚ð—v‹
 			convertManager.request(
+				indexNow,
 				numThread,
 				url,
 				WayBackField.getText(),
@@ -3249,7 +3250,7 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	static int convNo = 0;
+	static int convNo = 1;
 	public void DoButton_actionPerformed(ActionEvent e) {
 		try{
 			if(changeListener!=null){
@@ -3314,6 +3315,7 @@ public class MainFrame extends JFrame {
 				// url = "http://www/nicovideo.jp/mylist/1234567?watch_harmful=1" ‚È‚Ç
 				movieList = new StringBuffer();
 				mylistGetter = new MylistGetter(
+					indexNow,
 					url,
 					this,
 					status3,
@@ -3335,6 +3337,7 @@ public class MainFrame extends JFrame {
 				System.out.println(">"+indexNow+" "+url);
 				StringBuffer sbret = new StringBuffer();
 				convertManager.request(
+					indexNow,
 					numThread,
 					url,
 					WayBackField.getText(),
@@ -3565,6 +3568,7 @@ public class MainFrame extends JFrame {
 			File inputVideo = null;
 			ConvertingSetting setting = getSetting();
 			ConvertWorker conv = new ConvertWorker(
+					0,
 					url,
 					WayBackField.getText(),
 					setting,

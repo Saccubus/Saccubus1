@@ -129,8 +129,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private Gate gate;
 	private StringBuffer errorList;
 	private String lowVideoID;
+	private int tid;
 
-	public ConvertWorker(String url, String time, ConvertingSetting setting,
+	public ConvertWorker(int worker_id,
+			String url, String time, ConvertingSetting setting,
 			JLabel[] jLabels, ConvertStopFlag flag,	MainFrame frame,
 			HistoryDeque<File> play_list, ConvertManager conv, StringBuffer sb) {
 		url = url.trim();
@@ -165,6 +167,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		parent = frame;
 		sbRet = sb;
 		errorList = Setting.getErrorList();
+		tid = worker_id;
 	}
 	private File VideoFile = null;
 	private File CommentFile = null;
@@ -220,6 +223,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File appendCommentFile;
 	private File appendOptionalFile;
 	private File lowVideoFile;
+	private boolean isConverting = false;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -1675,13 +1679,23 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		String ecode;
 		if(client==null) return false;
 		ecode = client.getExtraError();
-		if(gate.notExceedLimiterGate()
-			&&ecode!=null &&(ecode.contains("503") || ecode.contains("504"))){
-				//	HTTP_UNAVAILABLE  HTTP_GATEWAY_TIMEOUT
-				//  サービスが一時的に過負荷 ゲートウェイタイムアウト
+		if(ecode==null) {
+			// illegal error code, cannnot retry
+			return false;
+		}
+		if((ecode.contains("503") || ecode.contains("504"))){
+			//	HTTP_UNAVAILABLE  HTTP_GATEWAY_TIMEOUT
+			//  サービスが一時的に過負荷 ゲートウェイタイムアウト
+			// retry count check
+			sendtext("リトライ待ち中");
+			if(gate.notExceedLimiterGate()){
+				// can retry
 				client.setExtraError("retry,");
 				return true;
+			}
+			sendtext("リトライ失敗");
 		}
+		// not error or other error,cannnot retry
 		return false;
 	}
 
@@ -1722,7 +1736,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			return result;
 		}
 	*/
-		gate = Gate.enter();
+		gate = Gate.open(tid);
 		stopwatch.clear();
 		stopwatch.start();
 		manager.sendTimeInfo();
@@ -1816,7 +1830,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			stopwatch.show();
 			System.out.println("変換前時間　" + stopwatch.formatElapsedTime());
 
-			gate.exit();
+			gate.exit(result);
 			manager.sendTimeInfo();
 			if (!isSaveConverted()) {
 				sendtext("動画・コメントを保存し、変換は行いませんでした。");
@@ -1824,6 +1838,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return result;
 			}
 
+			if(!isConverting){
+				manager.incNumConvert();
+				isConverting = true;
+			}
 			stopwatch.show();
 			if(!makeNGPattern() || stopFlagReturn()){
 				return result;
@@ -1876,10 +1894,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 			});
 
+			if(isConverting){
+				manager.decNumConvert();
+				isConverting = false;
+			}
 			manager.reqDone(result, StopFlag);
 			stopwatch.show();
 			stopwatch.stop();
-			gate.exit();
+			gate.exit(result);
 			manager.sendTimeInfo();
 			System.out.println("変換時間　" + stopwatch.formatLatency());
 			System.out.println("LastStatus:[" + result + "]" + Status.getText());
@@ -3598,6 +3620,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	public File getConvertedVideoFile() {
 		return ConvertedVideoFile;
+	}
+
+	public int getId() {
+		return tid;
 	}
 
 }
