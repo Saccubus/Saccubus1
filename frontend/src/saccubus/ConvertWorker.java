@@ -1675,10 +1675,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		String ecode;
 		if(client==null) return false;
 		ecode = client.getExtraError();
-		return  gate.notExceedLimiterGate()
-				&& ecode!=null &&(ecode.contains("503") || ecode.contains("504"));
-		//	HTTP_UNAVAILABLE  HTTP_GATEWAY_TIMEOUT
-		//  サービスが一時的に過負荷 ゲートウェイタイムアウト
+		if(gate.notExceedLimiterGate()
+			&&ecode!=null &&(ecode.contains("503") || ecode.contains("504"))){
+				//	HTTP_UNAVAILABLE  HTTP_GATEWAY_TIMEOUT
+				//  サービスが一時的に過負荷 ゲートウェイタイムアウト
+				client.setExtraError("retry,");
+				return true;
+		}
+		return false;
 	}
 
 	public void abortByCancel(){
@@ -1735,7 +1739,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					|| Setting.isSaveThumbInfo()) {
 				do{
 					client = ConvertManager.getManagerClient(this);
-				}while (!stopFlagReturn() && client==null && canRetry(client, gate));
+				}while (!stopFlagReturn() && canRetry(client, gate));
 			}
 
 			if (client != null){

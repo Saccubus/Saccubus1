@@ -5,8 +5,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Gate extends Thread {
+	private final static int MAX_GATE = 2;
 	private final static AtomicInteger numRun  = new AtomicInteger(0);
-	private final static AtomicInteger numGate = new AtomicInteger(2);
+	private final static AtomicInteger numGate = new AtomicInteger(MAX_GATE);
 	private final static AtomicInteger numReq = new AtomicInteger(0);
 	private boolean entered = false;
 	private int limitter;
