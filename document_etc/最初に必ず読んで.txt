@@ -133,8 +133,9 @@
 
 □改造部分について
 【ライセンス】
-１．ffmpeg76711f.exe（ソースはGithubレポジトリ）、Saccubus.jar（ソース同梱）は
+１．ffmpeg79097h.exe、Saccubus.jar（ソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
+（ソースはGithubレポジトリ　https://github.com/Saccubus　）
 ２．nicovideoE.dll、Bin.jar、Saccubus.exe（全てソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)と
 二条項BSDライセンス(http://opensource.org/licenses/BSD-2-Clause)のデュアルライセンスです。
@@ -150,10 +151,11 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　さきゅばすの使い方などに関しては、
 　上の[メニュー][readmeNew]から参照できます。また
 　公式サイト　http://saccubus.osdn.jp/
+　レポジトリ　https://github.com/Saccubus　
 　同梱のrewdmeNew.txt、さきゅばす1.50のreadme150.txt
 　さきゅばす1.22rのreadme.txt、1.22r3のreadme+.txtをご覧下さい。
 　不具合報告等は2chさきゅばすスレでお願いします。
-　2ch【ニコニコ】コメント付動画作成ツール さきゅばす
+　2ch【ニコニコ】コメント付動画作成ツール さきゅばす5
 　　http://potato.2ch.net/test/read.cgi/software/1449586179/
 　(http://anago.2ch.net/test/read.cgi/software/1346798166/　前スレ)
 
@@ -200,29 +202,33 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
-　・配布形態　　ffmpeg76711f同梱版
-　・本Rev.は確定版SDLライブラリ（2011/11/02版）を同梱しています。（binフォルダ内）
+　・配布形態　　ffmpeg79097h同梱版
+　・本Rev.は確定版SDLライブラリ（2012/11/02版）を同梱しています。（binフォルダ内）
 　・本Rev.はffmpeg 21400用optionファイルを削除しました。
-　・optionF（N70404f/N65220w用 2015/08/31版）optionFDev（実験用 2015/03/08版）を同梱。
+　・optionFFAAC（79097h用 2016/03/20版）optionFDev（実験用 2015/03/08版）を同梱。
 
 □インストール方法と拡張機能設定
 　◆1.22r2以前のさきゅばすを使用中の方
 　　「初めてさきゅばすを使う方」を実行して下さい。
 
 　◆1.22r3以降をご使用中の方
-　【注意】今回の変更は　fffmpeg70404f/ffmpeg65220w用となるため
+　【注意】今回の変更は　ffmpeg79097h(N3.0相当)用となるため
 　他のffmpegでは使用出来ない可能性があります。ご了承ください。
-　・自分で修正したオプションファイル(optionVOファルダ)をお持ちの方は
-　　ffmpeg70404fに合わせて変更が必要な場合があります。(optionFフォルダ参照)
+　・自分で修正したオプションファイル(optionVOファルダ/optionF)をお持ちの方は
+　　ffmpeg79097h(N3.0相当)に合わせて変更が必要な場合があります。
+    (optionFFAACフォルダ参照)(optionFフォルダそのまま使用は可能)
 　・「saccubus」内のファイルを以前のさきゅばすフォルダに
 　　■全て上書き■して下さい。
 　・移動したオプションファイルをコピーして戻して下さい。
 　・初期化用にsaccubus.iniが入っています。
 　　saccubus.xmlがない時とメニューから初期化を実行した時に
-　　saccubus.iniを読み込んでffmpeg70404f(76711f)用にoptionフォルダと
+　　saccubus.iniを読み込んでffmpeg79097h(78605h)用にoptionフォルダと
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・FFmpeg3.0対応(内蔵AAC)オプションをoptionFFAACに
+　・saccubus2風文字影(影の種類04番)追加
+　・auto.batでURLが使えない件修正(1.64以前と同じ)
 　・wavファイルで終了通知可
 　・auto.batで並行実行可
 　・エラー終了IDの一括再変換予約
@@ -583,7 +589,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　　通常0は固定幅、１はプロポーショナルらしいです。
 
 　　・影の種類
-　　　影なし、他、３種類指定できます。
+　　　影なし、他、４種類指定できます。
 
 　　・変換中の画像を表示する
 　　　変換中の画像を表示します。PCへ負荷がかかります。
@@ -642,6 +648,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　　　　枠とフォント指定は同時指定可能です。
 
 　・管理
+　　・URL/IDの右端の小三角形は登録IDリストの履歴を表示します。
 　　・管理情報
 　　　・同時変換数　変換スレッドの最大数を指定します。同時ダウンロード最大数はこれとは無関係に 2 固定です。
 　　　・開始時保留　変換ボタンを押した後で状況表示欄の個別スイッチで変換を開始するときに使います。

@@ -8,12 +8,12 @@ set log=log.txt
 :default
 for %%I in (java.exe) do @set java="%%~$PATH:I"
 if not %java% == "" goto :javago
-:Java7
-set jhome=\Program Files\Java\jre7\bin;\Program Files (x86)\Java\jre7\bin;C:\Program Files\Java\jre7\bin;C:\Program Files (x86)\Java\jre7\bin
-for %%I in (java.exe) do @set java="%%~$jhome:I"
-if not %java% == "" goto :javago
 :Java8
 set jhome=\Program Files\Java\jre8\bin;\Program Files (x86)\Java\jre8\bin;C:\Program Files\Java\jre8\bin;C:\Program Files (x86)\Java\jre8\bin
+for %%I in (java.exe) do @set java="%%~$jhome:I"
+if not %java% == "" goto :javago
+:Java7
+set jhome=\Program Files\Java\jre7\bin;\Program Files (x86)\Java\jre7\bin;C:\Program Files\Java\jre7\bin;C:\Program Files (x86)\Java\jre7\bin
 for %%I in (java.exe) do @set java="%%~$jhome:I"
 if not %java% == "" goto :javago
 goto :error
