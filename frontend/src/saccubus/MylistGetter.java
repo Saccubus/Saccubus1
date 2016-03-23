@@ -172,9 +172,9 @@ public class MylistGetter extends SwingWorker<String, String> {
 		}else{
 			mylistID = "0";	//not implemented
 			// here will come XML parser
-			// watch/(sm|nm|so)9999 を抽出してautolist0.txtに出力する
+			// watch/(sm|nm|so)?9999 を抽出してautolist0.txtに出力する
 			HashSet<String> set = new HashSet<String>();
-			String regex = "watch/(sm|nm|so)[1-9][0-9]*";
+			String regex = "watch/(sm|nm|so)?[1-9][0-9]*";
 			Pattern p = Pattern.compile(regex);
 			Matcher m = p.matcher(text);
 			String s = "";
@@ -191,118 +191,135 @@ public class MylistGetter extends SwingWorker<String, String> {
 				return "E5";
 			}
 			// file output
-			String[] sary = new String[1];
-			List<String[]> list = new ArrayList<String[]>();
 			Iterator<String> it = set.iterator();
 			while(it.hasNext()){
+				String[] sary = new String[1];
 				sary[0] = it.next();
-				list.add(sary);
+				plist.add(sary);
 			}
-			if(!listFileOutput(".\\autolist0.txt",list)){
-				//出力失敗
-				return "EX";
-			};
-			sendtext("[00]autolist0.bat 出力成功");
-			return "00";
-		}
-		//common
-		try {
-			file = new Path(file.getRelativePath().replace(".html", ".xml"));
-			Path.unescapeStoreXml(file, text, url);		//xml is property key:json val:JSON
-			Properties prop = new Properties();
-				prop.loadFromXML(new FileInputStream(file));		//read JSON xml
-			text = prop.getProperty("json", "0");
-			file = new Path(file.getRelativePath().replace(".html", ".xml"));
-			//
-			if(MYLIST_DEBUG && parent!=null){
-				resultText = HtmlView.markupHtml(text);
-				final HtmlView hv2 = new HtmlView(parent, "マイリスト mson", "mson");
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						hv2.setText(resultText);
-					}
-				});
-			}
-			//
-			System.out.println("get mylist/"+mylistID);
-			System.out.println("mson: "+text.length());
-			if(StopFlag.needStop()) {
-				return "FF";
-			}
-			// parse mson
-			sendtext("パース実行中");
-			Mson mson = null;
-			try{
-				mson = Mson.parse(text);
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-			if(mson==null){
-				sendtext("[E3]パース失敗");
-				return "E3";
-			}
-			sendtext("パース成功 "+mylistID);
-			if(StopFlag.needStop()) {
-				return "FF";
-			}
-			//rename to .txt
-			file = new Path(file.getRelativePath().replace(".xml", ".txt"));
-			mson.prettyPrint(new PrintStream(file));	//pretty print
-			sendtext("リスト成功 "+mylistID);
-			if(StopFlag.needStop()) {
-				return "FF";
-			}
-			String[] keys = {"watch_id","title"};
-			ArrayList<String[]> id_title_list = mson.getListString(keys);	// List of id & title
-			for(String[] vals:id_title_list){
-			//	System.out.println("Getting ["+ vals[0] + "]"+ vals[1]);
-				plist.add(0, vals);
-			}
-
-			int sz = plist.size();
-			sendtext("抽出成功 "+mylistID + "　"+sz+"個　"+ url);
-			System.out.println("Success mylist/"+mylistID+" item:"+sz);
-			if(sz == 0){
-				sendtext("[E4]動画がありません。"+mylistID);
-				return "E4";
-			}
-			if(StopFlag.needStop()) {
-				return "FF";
-			}
-			if(MYLIST_DEBUG2 && parent!=null){
-				SwingUtilities.invokeLater(new Runnable() {
-
-					@Override
-					public void run() {
-						TextView dlg = new TextView(parent, "mylist/"+mylistID);
-						JTextArea textout = dlg.getTextArea();
-						for(String[] idts:plist){
-							textout.append("["+idts[0]+"]"+idts[1]+"\n");
-						}
-						textout.setCaretPosition(0);
-					}
-				});
-			}
-			if(StopFlag.needStop()) {
-				return "FF";
-			}
-			//start downloader
 			if(Setting.isSaveAutoList()){
-				if(saveAutoList(plist)){
-					sendtext("[00]autolist.bat 出力成功");
+				if(saveAutoList("autolist0",plist)){
+					sendtext("[00]autolist0"+".bat 出力成功");
 					return "00";
 				}else{
-					sendtext("[E6]autolist.bat 出力失敗");
+					//出力失敗
+					sendtext("[E6]autolist0"+".bat 出力失敗");
 					return "E6";
 				}
 			} else {
 				//結果データ
 				for(String[] vals:plist){
-					ret.append(vals[0]+"\t"+vals[1]+"\t"+watchInfo+"\n");
+					if(vals.length>1)
+						ret.append(vals[0]+"\t"+vals[1]+"\t"+watchInfo+"\n");
+					else
+						ret.append(vals[0]+"\tlist0\t"+watchInfo+"\n");
 				}
 				return "00";
 			}
+		}
+		//common
+		try {
+
+				file = new Path(file.getRelativePath().replace(".html", ".xml"));
+				Path.unescapeStoreXml(file, text, url);		//xml is property key:json val:JSON
+				Properties prop = new Properties();
+					prop.loadFromXML(new FileInputStream(file));		//read JSON xml
+				text = prop.getProperty("json", "0");
+				file = new Path(file.getRelativePath().replace(".html", ".xml"));
+				//
+				if(MYLIST_DEBUG && parent!=null){
+					resultText = HtmlView.markupHtml(text);
+					final HtmlView hv2 = new HtmlView(parent, "マイリスト mson", "mson");
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							hv2.setText(resultText);
+						}
+					});
+				}
+				//
+				System.out.println("get mylist/"+mylistID);
+				System.out.println("mson: "+text.length());
+				if(StopFlag.needStop()) {
+					return "FF";
+				}
+				// parse mson
+				sendtext("パース実行中");
+				Mson mson = null;
+				try{
+					mson = Mson.parse(text);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+				if(mson==null){
+					sendtext("[E3]パース失敗");
+					return "E3";
+				}
+				sendtext("パース成功 "+mylistID);
+				if(StopFlag.needStop()) {
+					return "FF";
+				}
+				//rename to .txt
+				file = new Path(file.getRelativePath().replace(".xml", ".txt"));
+				mson.prettyPrint(new PrintStream(file));	//pretty print
+				sendtext("リスト成功 "+mylistID);
+				if(StopFlag.needStop()) {
+					return "FF";
+				}
+				String[] keys = {"watch_id","title"};
+				ArrayList<String[]> id_title_list = mson.getListString(keys);	// List of id & title
+				for(String[] vals:id_title_list){
+				//	System.out.println("Getting ["+ vals[0] + "]"+ vals[1]);
+					plist.add(0, vals);
+				}
+
+				int sz = plist.size();
+				sendtext("抽出成功 "+mylistID + "　"+sz+"個　"+ url);
+				System.out.println("Success mylist/"+mylistID+" item:"+sz);
+				if(sz == 0){
+					sendtext("[E4]動画がありません。"+mylistID);
+					return "E4";
+				}
+				if(StopFlag.needStop()) {
+					return "FF";
+				}
+				if(MYLIST_DEBUG2 && parent!=null){
+					SwingUtilities.invokeLater(new Runnable() {
+
+						@Override
+						public void run() {
+							TextView dlg = new TextView(parent, "mylist/"+mylistID);
+							JTextArea textout = dlg.getTextArea();
+							for(String[] idts:plist){
+								textout.append("["+idts[0]+"]"+idts[1]+"\n");
+							}
+							textout.setCaretPosition(0);
+						}
+					});
+				}
+
+				if(StopFlag.needStop()) {
+					return "FF";
+				}
+				//start downloader
+				if(Setting.isSaveAutoList()){
+					if(saveAutoList("autolist",plist)){
+						sendtext("[00]autolist.bat 出力成功");
+						return "00";
+					}else{
+					sendtext("[E6]autolist.bat 出力失敗");
+						return "E6";
+					}
+				} else {
+					//結果データ
+					for(String[] vals:plist){
+						if(vals.length>1)
+							ret.append(vals[0]+"\t"+vals[1]+"\t"+watchInfo+"\n");
+						else
+							ret.append(vals[0]+"\tlist0\t"+watchInfo+"\n");
+					}
+					return "00";
+				}
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (Exception e) {
@@ -333,7 +350,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 			parent.myListGetterDone(ret);
 	}
 
-	private boolean saveAutoList(ArrayList<String[]> mylist) {
+	private boolean saveAutoList(String listname, ArrayList<String[]> mylist) {
 		File autobat = new File(".\\auto.bat");
 		final String CMD_LINE = "%CMD% ";
 		File autolist = new File(".\\autolist.bat");
@@ -379,7 +396,9 @@ public class MylistGetter extends SwingWorker<String, String> {
 						// マイリストの%CMD%出力(記述法1)
 						pw.println(":保存変換しない行は削除してください");
 						for(String[] ds: mylist){
-							pw.println(":タイトル " + ds[1]);
+							if(ds.length>1){
+								pw.println(":タイトル " + ds[1]);
+							}
 							pw.println("%CMD% "+ ds[0] + "?watch_harmful=1"+watchInfo+" %OPTION% @PUP");
 						}
 					}else{
@@ -401,7 +420,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 			if(!flag2nd)
 				return true;
 			else
-				return listFileOutput(".\\autolist.txt",mylist);
+				return saveListtxt(".\\autolist.txt",mylist);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -416,7 +435,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		return false;
 	}
 
-	boolean listFileOutput(String filename,List<String[]> dl){
+	boolean saveListtxt(String filename,List<String[]> dl){
 		// 記述法2 autolist.txt出力
 		File autolisttxt = new File(filename);
 		PrintWriter pw = null;
