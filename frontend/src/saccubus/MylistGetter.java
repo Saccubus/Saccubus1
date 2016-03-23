@@ -9,9 +9,13 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
@@ -110,166 +114,203 @@ public class MylistGetter extends SwingWorker<String, String> {
 		if(!url.startsWith("http")){
 			// return ret unchanged
 			return "00";
-		}else{
-			final ArrayList<String[]> plist = new ArrayList<String[]>();
-			//start here.
-			Path file = Path.mkTemp(url.replace("http://","").replace("nicovideo.jp/","")
-					.replaceAll("[/\\:\\?=\\&]+", "_") + ".html");
-			Loader loader = new Loader(Setting, status3);
-			gate = Gate.open(id);
-			if(!loader.load(url,file)){
-				sendtext("load失敗 "+url);
-				gate.exit("E1");
-				return "E1";
+		}
+		final ArrayList<String[]> plist = new ArrayList<String[]>();
+		//start here.
+		Path file = Path.mkTemp(url.replace("http://","").replace("nicovideo.jp/","")
+				.replaceAll("[/\\:\\?=\\&]+", "_") + ".html");
+		Loader loader = new Loader(Setting, status3);
+		gate = Gate.open(id);
+		if(!loader.load(url,file)){
+			sendtext("[E1]load失敗 "+url);
+			gate.exit("E1");
+			return "E1";
+		}
+		gate.exit(0);
+		String text = Path.readAllText(file.getPath(), "UTF-8");
+		sendtext("保存しました。" + file.getRelativePath());
+		if(StopFlag.needStop()) {
+			return "FF";
+		}
+		if(MYLIST_DEBUG && parent!=null){
+			resultText = HtmlView.markupHtml(text);
+			final HtmlView hv = new HtmlView(parent, "マイリスト", url);
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					hv.setText(resultText);
+				}
+			});
+		}
+		if(StopFlag.needStop()) {
+			return "FF";
+		}
+		if(url.contains("api/deflist")) {
+			//mylist api処理
+			mylistID = "deflist";
+		}else
+		if(url.contains("api/mylist/list?group_id=")){
+			//mylist api処理
+			int start = url.indexOf("id=")+3;
+			mylistID = url.substring(start);
+		}else
+		if(url.contains("mylist")) {
+			//mylist処理
+			String json_start = "Mylist.preload(";
+			int start = text.indexOf(json_start);
+			if(start < 0){
+				sendtext("JSON not found "+url);
+				return "E2";	//JSON not found
 			}
-			gate.exit(0);
-			String text = Path.readAllText(file.getPath(), "UTF-8");
-			sendtext("保存しました。" + file.getRelativePath());
+			start += json_start.length();
+			int end = (text+");\n").indexOf(");\n", start);	// end of JSON
+			text = (text+");\n").substring(start, end);
+			start = text.indexOf(",");
+			mylistID = text.substring(0, start);
+			text = text.substring(start+1).trim();
+		}else{
+			mylistID = "0";	//not implemented
+			// here will come XML parser
+			// watch/(sm|nm|so)9999 を抽出してautolist0.txtに出力する
+			HashSet<String> set = new HashSet<String>();
+			String regex = "watch/(sm|nm|so)[1-9][0-9]*";
+			Pattern p = Pattern.compile(regex);
+			Matcher m = p.matcher(text);
+			String s = "";
+			while(m.find()){
+				s = text.substring(m.start(),m.end());
+				s = s.replace("watch/", "");
+				if(MainFrame.idcheck(s)){
+					set.add(s);
+				}
+			}
+			sendtext("抽出成功 "+mylistID + "　"+set.size()+"個　"+ url);
+			if(set.isEmpty()){
+				sendtext("[E5]動画がありません");
+				return "E5";
+			}
+			// file output
+			String[] sary = new String[1];
+			List<String[]> list = new ArrayList<String[]>();
+			Iterator<String> it = set.iterator();
+			while(it.hasNext()){
+				sary[0] = it.next();
+				list.add(sary);
+			}
+			if(!listFileOutput(".\\autolist0.txt",list)){
+				//出力失敗
+				return "EX";
+			};
+			sendtext("[00]autolist0.bat 出力成功");
+			return "00";
+		}
+		//common
+		try {
+			file = new Path(file.getRelativePath().replace(".html", ".xml"));
+			Path.unescapeStoreXml(file, text, url);		//xml is property key:json val:JSON
+			Properties prop = new Properties();
+				prop.loadFromXML(new FileInputStream(file));		//read JSON xml
+			text = prop.getProperty("json", "0");
+			file = new Path(file.getRelativePath().replace(".html", ".xml"));
+			//
+			if(MYLIST_DEBUG && parent!=null){
+				resultText = HtmlView.markupHtml(text);
+				final HtmlView hv2 = new HtmlView(parent, "マイリスト mson", "mson");
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						hv2.setText(resultText);
+					}
+				});
+			}
+			//
+			System.out.println("get mylist/"+mylistID);
+			System.out.println("mson: "+text.length());
 			if(StopFlag.needStop()) {
 				return "FF";
 			}
-			if(MYLIST_DEBUG && parent!=null){
-				resultText = HtmlView.markupHtml(text);
-				final HtmlView hv = new HtmlView(parent, "マイリスト", url);
+			// parse mson
+			sendtext("パース実行中");
+			Mson mson = null;
+			try{
+				mson = Mson.parse(text);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			if(mson==null){
+				sendtext("[E3]パース失敗");
+				return "E3";
+			}
+			sendtext("パース成功 "+mylistID);
+			if(StopFlag.needStop()) {
+				return "FF";
+			}
+			//rename to .txt
+			file = new Path(file.getRelativePath().replace(".xml", ".txt"));
+			mson.prettyPrint(new PrintStream(file));	//pretty print
+			sendtext("リスト成功 "+mylistID);
+			if(StopFlag.needStop()) {
+				return "FF";
+			}
+			String[] keys = {"watch_id","title"};
+			ArrayList<String[]> id_title_list = mson.getListString(keys);	// List of id & title
+			for(String[] vals:id_title_list){
+			//	System.out.println("Getting ["+ vals[0] + "]"+ vals[1]);
+				plist.add(0, vals);
+			}
+
+			int sz = plist.size();
+			sendtext("抽出成功 "+mylistID + "　"+sz+"個　"+ url);
+			System.out.println("Success mylist/"+mylistID+" item:"+sz);
+			if(sz == 0){
+				sendtext("[E4]動画がありません。"+mylistID);
+				return "E4";
+			}
+			if(StopFlag.needStop()) {
+				return "FF";
+			}
+			if(MYLIST_DEBUG2 && parent!=null){
 				SwingUtilities.invokeLater(new Runnable() {
 
 					@Override
 					public void run() {
-						hv.setText(resultText);
+						TextView dlg = new TextView(parent, "mylist/"+mylistID);
+						JTextArea textout = dlg.getTextArea();
+						for(String[] idts:plist){
+							textout.append("["+idts[0]+"]"+idts[1]+"\n");
+						}
+						textout.setCaretPosition(0);
 					}
 				});
 			}
 			if(StopFlag.needStop()) {
 				return "FF";
 			}
-			if(url.contains("api/deflist")) {
-				//mylist api処理
-				mylistID = "deflist";
-			}else
-			if(url.contains("api/mylist/list?group_id=")){
-				//mylist api処理
-				int start = url.indexOf("id=")+3;
-				mylistID = url.substring(start);
-			}else
-			if(url.contains("mylist")) {
-				//mylist処理
-				String json_start = "Mylist.preload(";
-				int start = text.indexOf(json_start);
-				if(start < 0){
-					sendtext("JSON not found "+url);
-					return "E2";	//JSON not found
+			//start downloader
+			if(Setting.isSaveAutoList()){
+				if(saveAutoList(plist)){
+					sendtext("[00]autolist.bat 出力成功");
+					return "00";
+				}else{
+					sendtext("[E6]autolist.bat 出力失敗");
+					return "E6";
 				}
-				start += json_start.length();
-				int end = (text+");\n").indexOf(");\n", start);	// end of JSON
-				text = (text+");\n").substring(start, end);
-				start = text.indexOf(",");
-				mylistID = text.substring(0, start);
-				text = text.substring(start+1).trim();
-			}else{
-				mylistID = "0";	//not implemented
-				// here will come XML parser
-			}
-			//common
-			try {
-				file = new Path(file.getRelativePath().replace(".html", ".xml"));
-				Path.unescapeStoreXml(file, text, url);		//xml is property key:json val:JSON
-				Properties prop = new Properties();
-					prop.loadFromXML(new FileInputStream(file));		//read JSON xml
-				text = prop.getProperty("json", "0");
-				file = new Path(file.getRelativePath().replace(".html", ".xml"));
-				//
-				if(MYLIST_DEBUG && parent!=null){
-					resultText = HtmlView.markupHtml(text);
-					final HtmlView hv2 = new HtmlView(parent, "マイリスト mson", "mson");
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							hv2.setText(resultText);
-						}
-					});
-				}
-				//
-				System.out.println("get mylist/"+mylistID);
-				System.out.println("mson: "+text.length());
-				if(StopFlag.needStop()) {
-					return "FF";
-				}
-				// parse mson
-				sendtext("パース実行中");
-				Mson mson = null;
-				try{
-					mson = Mson.parse(text);
-				}catch(Exception e){
-					e.printStackTrace();
-				}
-				if(mson==null){
-					sendtext("パース失敗");
-					return "E3";
-				}
-				sendtext("パース成功 "+mylistID);
-				if(StopFlag.needStop()) {
-					return "FF";
-				}
-				//rename to .txt
-				file = new Path(file.getRelativePath().replace(".xml", ".txt"));
-				mson.prettyPrint(new PrintStream(file));	//pretty print
-				sendtext("リスト成功 "+mylistID);
-				if(StopFlag.needStop()) {
-					return "FF";
-				}
-				String[] keys = {"watch_id","title"};
-				ArrayList<String[]> id_title_list = mson.getListString(keys);	// List of id & title
-				for(String[] vals:id_title_list){
-				//	System.out.println("Getting ["+ vals[0] + "]"+ vals[1]);
-					plist.add(0, vals);
-				}
-
-				int sz = plist.size();
-				sendtext("抽出成功 "+mylistID + "　"+sz+"個　"+ url);
-				System.out.println("Success mylist/"+mylistID+" item:"+sz);
-				if(sz == 0){
-					sendtext("動画がありません。"+mylistID);
-					return "E4";
-				}
-				if(StopFlag.needStop()) {
-					return "FF";
-				}
-				if(MYLIST_DEBUG2 && parent!=null){
-					SwingUtilities.invokeLater(new Runnable() {
-
-						@Override
-						public void run() {
-							TextView dlg = new TextView(parent, "mylist/"+mylistID);
-							JTextArea textout = dlg.getTextArea();
-							for(String[] idts:plist){
-								textout.append("["+idts[0]+"]"+idts[1]+"\n");
-							}
-							textout.setCaretPosition(0);
-						}
-					});
-				}
-				if(StopFlag.needStop()) {
-					return "FF";
-				}
-				//start downloader
-				if(Setting.isSaveAutoList()){
-					saveAutoList(plist);
-					sendtext("autolist.bat 出力成功");
-				} else {
-					//結果データ
-					for(String[] vals:plist){
-						ret.append(vals[0]+"\t"+vals[1]+"\t"+watchInfo+"\n");
-					}
+			} else {
+				//結果データ
+				for(String[] vals:plist){
+					ret.append(vals[0]+"\t"+vals[1]+"\t"+watchInfo+"\n");
 				}
 				return "00";
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally{
-
 			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+
 		}
+		sendtext("[EX]例外発生?");
 		return "EX";
 	}
 
@@ -288,20 +329,18 @@ public class MylistGetter extends SwingWorker<String, String> {
 		}else{
 			System.out.println("done#get() "+result);
 		}
-		if(!"00".equals(result))
-			sendtext("["+result+"]");
 		if(parent!=null)
 			parent.myListGetterDone(ret);
 	}
 
-	private void saveAutoList(ArrayList<String[]> mylist) {
+	private boolean saveAutoList(ArrayList<String[]> mylist) {
 		File autobat = new File(".\\auto.bat");
 		final String CMD_LINE = "%CMD% ";
 		File autolist = new File(".\\autolist.bat");
 		if(!autobat.canRead()){
 			System.out.println("auto.batがないのでautolist.batが出力できません:"+mylistID);
 			sendtext("出力失敗 autolist.bat:"+mylistID);
-			return;
+			return false;
 		}
 		//
 		String user = Setting.getMailAddress();
@@ -359,6 +398,10 @@ public class MylistGetter extends SwingWorker<String, String> {
 				}
 			}
 			sendtext("出力成功 autolist.bat:"+mylistID);
+			if(!flag2nd)
+				return true;
+			else
+				return listFileOutput(".\\autolist.txt",mylist);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -370,33 +413,38 @@ public class MylistGetter extends SwingWorker<String, String> {
 				ex.printStackTrace();
 			}
 		}
-		if(flag2nd){
-			// 記述法2 autolist.txt出力
-			File autolisttxt = new File(".\\autolist.txt");
-			pw = null;
-			try {
-				pw = new PrintWriter(autolisttxt, "MS932");
-				pw.println(":自動生成 autolist.txt for mylist/" + mylistID);
-				pw.println(": produced by Saccubus" + MainFrame_AboutBox.rev + " " + new Date());
-				pw.println(":保存変換しない行は削除してください");
-				for(String[] ds: mylist){
+		return false;
+	}
+
+	boolean listFileOutput(String filename,List<String[]> dl){
+		// 記述法2 autolist.txt出力
+		File autolisttxt = new File(filename);
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(autolisttxt, "MS932");
+			pw.println(":自動生成 autolist.txt for mylist/" + mylistID);
+			pw.println(": produced by Saccubus" + MainFrame_AboutBox.rev + " " + new Date());
+			pw.println(":保存変換しない行は削除してください");
+			for(String[] ds: dl){
+				if(ds.length>1)
 					pw.println(ds[0] + "\tタイトル :" + ds[1]);
-				}
-				sendtext("出力成功 autolist.txt:"+mylistID);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				if (pw!=null) {
-					try{
-						pw.flush();
-						pw.close();
-					}catch(Exception ex){
-						ex.printStackTrace();
-					}
+				else
+					pw.println(ds[0]);
+			}
+			sendtext("出力成功 autolist.txt:"+mylistID);
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (pw!=null) {
+				try{
+					pw.flush();
+					pw.close();
+				}catch(Exception ex){
+					ex.printStackTrace();
 				}
 			}
 		}
-
+		return false;
 	}
-
 }

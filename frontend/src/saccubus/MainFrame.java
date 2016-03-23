@@ -3384,6 +3384,9 @@ public class MainFrame extends JFrame {
 			} else {
 				url = "sm0";
 			}
+			if(vid.startsWith("lv")){
+				url = "sm0_"+vid;
+			}
 			VideoID_TextField.setText(url);
 		//	Tag = url;
 			if(localFile.isFile()){
@@ -3413,14 +3416,14 @@ public class MainFrame extends JFrame {
 		return false;
 	}
 
-	private boolean idcheck(String vid) {
+	static boolean idcheck(String vid) {
 		if(vid.length() > 13) return false;
 		for(char c : vid.toCharArray())
 			if(!isAlphaNumeric(c)) return false;
 		return true;
 	}
 
-	private boolean isAlphaNumeric(char c) {
+	private static boolean isAlphaNumeric(char c) {
 		return ('A'<=c&&c<='Z')||(c>='a'&&c<='z')||('0'<=c&&c<='9');
 	}
 
