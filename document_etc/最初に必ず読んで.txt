@@ -226,6 +226,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・auto.batの同時変換数1の時のバグ修正
 　・FFmpeg3.0対応(内蔵AAC)オプションをoptionFFAACに
 　・saccubus2風文字影(影の種類04番)追加
 　・auto.batでURLが使えない件修正(1.64以前と同じ)

@@ -215,6 +215,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・auto.batの同時変換数1の時のバグ修正
 　・FFmpeg3.0対応(内蔵AAC)オプションをoptionFFAACに
 　・saccubus2風文字影(影の種類04番)追加
 　・auto.batでURLが使えない件修正(1.64以前と同じ)
@@ -1036,6 +1037,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 　改造版
+　1.65.2　　https://github.com/Saccubus/Saccubus1.x/releases/tag/1.65.2
+　1.65.1　　http://www1.axfc.net/u/3613928.zip
 　1.65.0　　http://www1.axfc.net/u/3611115.zip
 　1.64.2　　http://www1.axfc.net/u/3582177.zip
 　1.63　　　http://www1.axfc.net/u/3526594.zip
@@ -1105,6 +1108,24 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 変更履歴・修正・改変点
+1.65.2.9(2016/03/23)
+　auto.batで同時実行数 1 (デフォルト)の時に動画1つ変換で終了してしまうバグ修正
+
+1.65.2.8b(2016/03/21)
+　Bin.jar(debug.batに必要)を入れ忘れたので追加しました。
+
+1.65.2.8(2016/03/20)
+　saccubus2風文字影追加 (issue#3)
+　生放送タイムシフトでコメント番号-1のコメントが透明(issue #8) 
+　待機中からの変換が保留中の他の変換を追い越しできない(issue #2)
+　ブラウザからインターネットショートカット(.URL)をD&Dした時の動作(issue#1)
+　auto.batでURLが使えない(issue#4)処置
+　マルチスレッド内部実装を変更
+　FFmpeg3.0対応(内蔵AAC)、UtVideo 15.5.0に対応
+
+1.65.1.2(2016/02/06)
+　HTTP503 504 エラーのリトライ時のバグ修正
+
 1.65.1.1(2016/02/05)
 　wavファイルで終了通知可
 　auto.batで並列実行可

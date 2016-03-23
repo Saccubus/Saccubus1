@@ -429,7 +429,7 @@ public class Prompt {
 
 			int codes = 0;
 			int code = 0;
-			while(manager.getNumRun()>0){
+			while(manager.getNumRun()>0 || manager.getNumReq()>0){
 				for(int j = 0; j<convNo;j++){
 					ConvertWorker conv = converterList[j];
 					if(conv!=null && conv.isDone()){

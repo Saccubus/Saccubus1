@@ -40,7 +40,7 @@ public class ConvertManager extends Thread {
 		init();
 	}
 
-	private int getNumReq(){
+	int getNumReq(){
 		return reqQueue.size();
 	}
 
