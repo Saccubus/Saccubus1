@@ -9,8 +9,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -117,6 +117,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		}
 		final ArrayList<String[]> plist = new ArrayList<String[]>();
 		//start here.
+		String autolist = "auto";
 		Path file = Path.mkTemp(url.replace("http://","").replace("nicovideo.jp/","")
 				.replaceAll("[/\\:\\?=\\&]+", "_") + ".html");
 		Loader loader = new Loader(Setting, status3);
@@ -171,55 +172,93 @@ public class MylistGetter extends SwingWorker<String, String> {
 			text = text.substring(start+1).trim();
 		}else{
 			mylistID = "0";	//not implemented
-			// here will come XML parser
+			// it would be better that here would come XML parser, but just scraping
 			// watch/(sm|nm|so)?9999 を抽出してautolist0.txtに出力する
-			HashSet<String> set = new HashSet<String>();
-			String regex = "watch/(sm|nm|so)?[1-9][0-9]*";
+			HashMap<String,String> map = new LinkedHashMap<>();
+			String regex = "watch/((sm|nm|so)?[1-9][0-9]*)";
 			Pattern p = Pattern.compile(regex);
 			Matcher m = p.matcher(text);
-			String s = "";
+			String titleRe = "(title|alt)=\"([^\"]+)\"";
+			Pattern p2 = Pattern.compile(titleRe);	//title pattern
+			int i1 = 0;
+			String key = "";
+			String val = "";
 			while(m.find()){
-				s = text.substring(m.start(),m.end());
-				s = s.replace("watch/", "");
-				if(MainFrame.idcheck(s)){
-					set.add(s);
+				if(i1 > 0){
+					System.out.println("i1= "+i1);
+					Matcher m2 = p2.matcher(text.substring(i1, m.start()));	// title matcher
+					val = map.get(key);
+					while(m2.find() && val.isEmpty()) {
+						val = m2.group(2);
+						System.out.println("group(2)= "+val);
+					}
+					if(val.isEmpty()){
+						if(map.get(key).isEmpty()){
+							map.remove(key);
+							System.out.println("map.remove("+key+")");
+						}else{
+							System.out.println(" cant get title("+key+")");
+						}
+					}else{
+						if(map.get(key).isEmpty()){
+							map.put(key, val);
+							System.out.println("map.put("+key+","+val+")");
+						}else{
+							System.out.println("  map.contains("+key+","+val+")");
+						}
+					}
+				}
+				i1 = m.end();
+				key = m.group(1);
+				System.out.println("group(1):key= "+key);
+				if(key.isEmpty()){
+					System.out.println("key is empty ");
+					i1 = 0;
+				}else if(map.containsKey(key)){
+					System.out.println("map.containsKey "+key);
+					i1 = 0;
+				}else if(!MainFrame.idcheck(key)){
+					System.out.println("idcheck() flase "+key);
+					i1 = 0;
+				}else{
+					System.out.println("  key only map.put( "+key+",Empty)");
+					map.put(key, "");
 				}
 			}
-			sendtext("抽出成功 "+mylistID + "　"+set.size()+"個　"+ url);
-			if(set.isEmpty()){
+			if(i1 > 0){
+				System.out.println("i1= "+i1);
+				Matcher m2 = p2.matcher(text.substring(i1));
+				val = map.get(key);
+				while(m2.find() && val.isEmpty()) {
+					val = m2.group(2);
+					System.out.println("group(2)= "+val);
+				}
+				System.out.println("map.put("+key+","+val+")");
+				map.put(key, val);
+			}
+			sendtext("抽出成功 "+mylistID + "　"+map.size()+"個　"+ url);
+			if(map.isEmpty()){
 				sendtext("[E5]動画がありません");
 				return "E5";
 			}
-			// file output
-			Iterator<String> it = set.iterator();
-			while(it.hasNext()){
-				String[] sary = new String[1];
-				sary[0] = it.next();
-				plist.add(sary);
+			// plist output
+			for(String k: map.keySet()){
+				val = map.get(k);
+				if(val==null) val = "";
+				plist.add(new String[]{k, val});
 			}
-			if(Setting.isSaveAutoList()){
-				if(saveAutoList("autolist0",plist)){
-					sendtext("[00]autolist0"+".bat 出力成功");
-					return "00";
-				}else{
-					//出力失敗
-					sendtext("[E6]autolist0"+".bat 出力失敗");
-					return "E6";
-				}
-			} else {
-				//結果データ
-				for(String[] vals:plist){
-					if(vals.length>1)
-						ret.append(vals[0]+"\t"+vals[1]+"\t"+watchInfo+"\n");
-					else
-						ret.append(vals[0]+"\tlist0\t"+watchInfo+"\n");
-				}
-				return "00";
+			if(plist.isEmpty()){
+				sendtext("[E5]動画がありません");
+				return "E5";
 			}
 		}
 		//common
 		try {
-
+			if(mylistID.equals("0")){
+				autolist = "autolist0";
+			}else{
+				autolist = "autolist";
+				//Json解析
 				file = new Path(file.getRelativePath().replace(".html", ".xml"));
 				Path.unescapeStoreXml(file, text, url);		//xml is property key:json val:JSON
 				Properties prop = new Properties();
@@ -298,28 +337,30 @@ public class MylistGetter extends SwingWorker<String, String> {
 					});
 				}
 
-				if(StopFlag.needStop()) {
-					return "FF";
-				}
-				//start downloader
-				if(Setting.isSaveAutoList()){
-					if(saveAutoList("autolist",plist)){
-						sendtext("[00]autolist.bat 出力成功");
-						return "00";
-					}else{
-					sendtext("[E6]autolist.bat 出力失敗");
-						return "E6";
-					}
-				} else {
-					//結果データ
-					for(String[] vals:plist){
-						if(vals.length>1)
-							ret.append(vals[0]+"\t"+vals[1]+"\t"+watchInfo+"\n");
-						else
-							ret.append(vals[0]+"\tlist0\t"+watchInfo+"\n");
-					}
+			}
+			if(StopFlag.needStop()) {
+				return "FF";
+			}
+			//start downloader
+			if(Setting.isSaveAutoList()){
+				if(saveAutoList(autolist,plist)){
+					sendtext("[00]"+autolist+".bat 出力成功");
 					return "00";
+				}else{
+					//出力失敗
+					sendtext("[E6]"+autolist+".bat 出力失敗");
+					return "E6";
 				}
+			} else {
+				//結果データ
+				for(String[] vals:plist){
+					if(vals.length>1)
+						ret.append(vals[0]+"\t"+vals[1]+"\t"+watchInfo+"\n");
+					else
+						ret.append(vals[0]+"\t"+autolist+"\t"+watchInfo+"\n");
+				}
+				return "00";
+			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (Exception e) {
@@ -350,13 +391,13 @@ public class MylistGetter extends SwingWorker<String, String> {
 			parent.myListGetterDone(ret);
 	}
 
-	private boolean saveAutoList(String listname, ArrayList<String[]> mylist) {
+	private boolean saveAutoList(String autoname, ArrayList<String[]> mylist) {
 		File autobat = new File(".\\auto.bat");
 		final String CMD_LINE = "%CMD% ";
-		File autolist = new File(".\\autolist.bat");
+		File autolist = new File(".\\"+autoname+".bat");
 		if(!autobat.canRead()){
-			System.out.println("auto.batがないのでautolist.batが出力できません:"+mylistID);
-			sendtext("出力失敗 autolist.bat:"+mylistID);
+			System.out.println("auto.batがないので"+autoname+".batが出力できません:"+mylistID);
+			sendtext("出力失敗 "+autoname+".bat:"+mylistID);
 			return false;
 		}
 		//
@@ -369,7 +410,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(autobat), "MS932"));
 			pw = new PrintWriter(autolist, "MS932");
-			pw.println(":自動生成 autolist.bat for mylist/" + mylistID);
+			pw.println(":自動生成 "+autoname+".bat for mylist/" + mylistID);
 			pw.println(": produced by Saccubus" + MainFrame_AboutBox.rev + " " + new Date());
 			pw.println(":――――――――――――――――――");
 			while((s = br.readLine())!=null){
@@ -404,7 +445,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 					}else{
 						// マイリストの%CMD%出力(記述法2)
 						flag2nd = true;
-						pw.print("%CMD% autolist?watch_harmful=1"+watchInfo+" %OPTION% @PUP");
+						pw.print("%CMD% "+autoname+"?watch_harmful=1"+watchInfo+" %OPTION% @PUP");
 					}
 					break;
 				}
@@ -416,11 +457,11 @@ public class MylistGetter extends SwingWorker<String, String> {
 					continue;
 				}
 			}
-			sendtext("出力成功 autolist.bat:"+mylistID);
+			sendtext("出力成功 "+autoname+".bat:"+mylistID);
 			if(!flag2nd)
 				return true;
 			else
-				return saveListtxt(".\\autolist.txt",mylist);
+				return saveListtxt(autoname,mylist);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -435,13 +476,13 @@ public class MylistGetter extends SwingWorker<String, String> {
 		return false;
 	}
 
-	boolean saveListtxt(String filename,List<String[]> dl){
+	boolean saveListtxt(String autoname,List<String[]> dl){
 		// 記述法2 autolist.txt出力
-		File autolisttxt = new File(filename);
+		File autolisttxt = new File(".\\"+autoname+".txt");
 		PrintWriter pw = null;
 		try {
 			pw = new PrintWriter(autolisttxt, "MS932");
-			pw.println(":自動生成 autolist.txt for mylist/" + mylistID);
+			pw.println(":自動生成 "+autoname+".txt for mylist/" + mylistID);
 			pw.println(": produced by Saccubus" + MainFrame_AboutBox.rev + " " + new Date());
 			pw.println(":保存変換しない行は削除してください");
 			for(String[] ds: dl){
@@ -450,7 +491,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				else
 					pw.println(ds[0]);
 			}
-			sendtext("出力成功 autolist.txt:"+mylistID);
+			sendtext("出力成功 "+autoname+".txt:"+mylistID);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();

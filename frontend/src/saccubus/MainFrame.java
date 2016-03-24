@@ -3365,7 +3365,6 @@ public class MainFrame extends JFrame {
 			File localFile = new File(path);
 			String vid;
 			String regex = "[]):/\\\\_\\t\\.\\?].*$";
-		//	Pattern p=Pattern.compile(regex);
 			String Tag = localFile.getName().replaceFirst(regex, "").trim();
 			System.out.println("Tag:"+Tag);
 			if(Tag.charAt(0)=='('){
@@ -3447,12 +3446,17 @@ public class MainFrame extends JFrame {
 			if(	  url.startsWith("mylist/")
 				||url.startsWith("user/")
 				||url.startsWith("my/")
-				||url.startsWith("watch/")){
+				||url.startsWith("watch/")
+				||url.startsWith("tag/")
+				||url.startsWith("tag:")){
 				url = "http://www.nicovideo.jp/" + url;	//may not work
 			}else if(url.startsWith("lv")){
 				url = "http://live.nicovideo.jp/watch/"+ url;	//may not work
 			}else if(url.startsWith("co")){
 				url = "http://com.nicovideo.jp/watch/" + url;	//may not work
+			}
+			if(url.startsWith("tag/")){
+				url = "http://www.nicovideo.jp/" + url;
 			}
 		}
 		return url;
