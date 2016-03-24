@@ -458,6 +458,13 @@ public class Prompt {
 						}
 					}
 				}
+				while(manager.isWaitManager() && manager.getNumThread()==1){
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+				}
 			}
 			if(aborted){
 				code = 255;

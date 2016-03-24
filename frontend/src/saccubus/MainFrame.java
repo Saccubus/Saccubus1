@@ -2371,7 +2371,7 @@ public class MainFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					myListGetterDone(errorList);
-					errorList = new StringBuffer();
+					errorList.delete(0, errorList.length());
 					errorUrlLabel.setText(" ");
 				}
 			});
@@ -2381,7 +2381,7 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					errorList = new StringBuffer();
+					errorList.delete(0, errorList.length());
 					errorUrlLabel.setText(" ");
 					convertManager.clearError();
 				}
@@ -2393,7 +2393,7 @@ public class MainFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					errorListSave(errorList);
-					errorList = new StringBuffer();
+					errorList.delete(0, errorList.length());
 					errorUrlLabel.setText(" ");
 					convertManager.clearError();
 				}
@@ -3447,6 +3447,8 @@ public class MainFrame extends JFrame {
 				||url.startsWith("user/")
 				||url.startsWith("my/")
 				||url.startsWith("watch/")
+				||url.startsWith("search/")
+				||url.startsWith("search:")
 				||url.startsWith("tag/")
 				||url.startsWith("tag:")){
 				url = "http://www.nicovideo.jp/" + url;	//may not work

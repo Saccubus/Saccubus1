@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
@@ -53,7 +54,8 @@ public class MylistGetter extends SwingWorker<String, String> {
 	private String watchInfo;
 //	private String Tag;
 	private Gate gate;
-	private int id;
+	private final int id;
+	private final StringBuffer errorList;
 
 	public MylistGetter(int worker_id, String url0, MainFrame frame,
 		JLabel[] in_status,ConvertStopFlag flag, StringBuffer sb)
@@ -76,6 +78,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		StopFlag = flag;
 		Setting = frame.getSetting();
 		ret = sb;
+		errorList = Setting.getErrorList();
 	}
 
 	public MylistGetter(int worker_id, String tag, String info, ConvertingSetting setting,
@@ -90,6 +93,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		StopFlag = flag;
 		Setting = setting;
 		ret = sb;
+		errorList = Setting.getErrorList();
 	}
 
 	//	private void sendtext(String text) {
@@ -123,6 +127,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		Loader loader = new Loader(Setting, status3);
 		gate = Gate.open(id);
 		if(!loader.load(url,file)){
+			addError(url);
 			sendtext("[E1]load失敗 "+url);
 			gate.exit("E1");
 			return "E1";
@@ -161,6 +166,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 			String json_start = "Mylist.preload(";
 			int start = text.indexOf(json_start);
 			if(start < 0){
+				addError(url);
 				sendtext("JSON not found "+url);
 				return "E2";	//JSON not found
 			}
@@ -171,86 +177,133 @@ public class MylistGetter extends SwingWorker<String, String> {
 			mylistID = text.substring(0, start);
 			text = text.substring(start+1).trim();
 		}else{
-			mylistID = "0";	//not implemented
+			mylistID = "0";	//other page
+			HashSet<String> errorSet = new HashSet<>();
 			// it would be better that here would come XML parser, but just scraping
 			// watch/(sm|nm|so)?9999 を抽出してautolist0.txtに出力する
 			HashMap<String,String> map = new LinkedHashMap<>();
-			String regex = "watch/((sm|nm|so)?[1-9][0-9]*)";
+			String regex = "watch/((s[a-z]|n[a-z])?[1-9][0-9]*)";	//抽出ID
 			Pattern p = Pattern.compile(regex);
 			Matcher m = p.matcher(text);
-			String titleRe = "(title|alt)=\"([^\"]+)\"";
+			String titleRe = "(title|alt)=\"([^\"]+)\"";	//抽出タイトル
 			Pattern p2 = Pattern.compile(titleRe);	//title pattern
-			int i1 = 0;
+			int i1 = 0;	//last index of last match key
 			String key = "";
 			String val = "";
+			text += "watch/1";	//setinel of dummy ID
 			while(m.find()){
 				if(i1 > 0){
-					System.out.println("i1= "+i1);
 					Matcher m2 = p2.matcher(text.substring(i1, m.start()));	// title matcher
-					val = map.get(key);
+					val = map.get(key);		// val 登録済みタイトル
 					while(m2.find() && val.isEmpty()) {
 						val = m2.group(2);
-						System.out.println("group(2)= "+val);
+						if(val==null) val = "";
+						System.out.println(" title("+key+") may be \""+val+"\"");
 					}
 					if(val.isEmpty()){
+						// title抽出失敗
 						if(map.get(key).isEmpty()){
+							//keyのみ登録済み→削除
 							map.remove(key);
-							System.out.println("map.remove("+key+")");
+							System.out.println("title isEmpty() ERROR map.remove("+key+")");
+							errorSet.add(key);	//error登録
 						}else{
-							System.out.println(" cant get title("+key+")");
+							//タイトル登録済み
+							System.out.println("title isEmpty() title("+key+","+map.get(key)+") duplicated key");
 						}
 					}else{
+						// タイトル抽出ok
 						if(map.get(key).isEmpty()){
+							//タイトル未登録
 							map.put(key, val);
-							System.out.println("map.put("+key+","+val+")");
+							System.out.println("title found map.put("+key+","+val+")");
 						}else{
-							System.out.println("  map.contains("+key+","+val+")");
+							//タイトル登録済み
+							System.out.println("ttile found map.contains("+key+","+map.get(key)+")");
+							System.out.println("  duplicated titile is "+val);
 						}
 					}
 				}
 				i1 = m.end();
 				key = m.group(1);
-				System.out.println("group(1):key= "+key);
-				if(key.isEmpty()){
+				System.out.println("key= "+key);
+				if(key==null || key.isEmpty()){
+					// keyは見つからない
 					System.out.println("key is empty ");
 					i1 = 0;
 				}else if(map.containsKey(key)){
-					System.out.println("map.containsKey "+key);
+					// key登録済み
+					System.out.println("key is already in map.containsKey() "+key);
 					i1 = 0;
 				}else if(!MainFrame.idcheck(key)){
-					System.out.println("idcheck() flase "+key);
+					// keyは動画IDではない
+					System.out.println("key idcheck() ERROR "+key);
 					i1 = 0;
+					errorSet.add(key);	//error登録
 				}else{
-					System.out.println("  key only map.put( "+key+",Empty)");
+					// key登録
 					map.put(key, "");
+					System.out.println("key only map.put( "+key+",\"\")");
+					if(errorSet.remove(key))
+						System.out.println(" error remove "+key);
 				}
 			}
-			if(i1 > 0){
-				System.out.println("i1= "+i1);
-				Matcher m2 = p2.matcher(text.substring(i1));
-				val = map.get(key);
-				while(m2.find() && val.isEmpty()) {
-					val = m2.group(2);
-					System.out.println("group(2)= "+val);
+			map.remove("1");	//delete sentinel
+			errorSet.remove("1");
+			text = text.substring(0,text.lastIndexOf("watch/1")) + "</a>";
+			// うまく取れない場合に別の検索を行う
+			if(errorSet.size()>map.size()){
+				//別の抽出
+				// <a href="watch/sm999999">タイトル</a>
+				map.clear();
+				regex = "<a +href=\"(http://www.nicovideo.jp/)?watch/((s[a-z]|n[a-z])?[1-9][0-9]*)\"[^>]*>([^<]+)</a>";
+				p = Pattern.compile(regex);
+				m = p.matcher(text);
+				while(m.find()){
+					key = m.group(2);
+					val = m.group(4);
+					System.out.println("key="+key+",val="+val);
+					if(!map.containsKey(key) ||
+						map.get(key).isEmpty())
+					{
+						map.put(key, val);
+						System.out.println("map.put("+key+","+val+")");
+					}
 				}
-				System.out.println("map.put("+key+","+val+")");
-				map.put(key, val);
+				map.remove("1");	//delete sentinel
+				errorSet.remove("1");
+				if(map.size() >= errorSet.size()){
+					errorSet.clear();
+				}
 			}
-			sendtext("抽出成功 "+mylistID + "　"+map.size()+"個　"+ url);
+			sendtext("抽出成功 　"+map.size()+"個　"+ url);
 			if(map.isEmpty()){
+				addError(url);
 				sendtext("[E5]動画がありません");
 				return "E5";
+			}
+			if(!errorSet.isEmpty()){
+				// タイトル抽出失敗またはidcheckエラー
+				for(String es:errorSet){
+					errorList.append(es+watchInfo+"\n");
+				}
+				if(parent!=null)
+					parent.setErrorUrl(errorList);
 			}
 			// plist output
 			for(String k: map.keySet()){
 				val = map.get(k);
-				if(val==null) val = "";
 				plist.add(new String[]{k, val});
 			}
+			/*
 			if(plist.isEmpty()){
+				errorList.append(url+"\n");
+				if(parent!=null)
+					parent.setErrorUrl(errorList);
 				sendtext("[E5]動画がありません");
 				return "E5";
 			}
+		 	*/
 		}
 		//common
 		try {
@@ -291,6 +344,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 					e.printStackTrace();
 				}
 				if(mson==null){
+					addError(url);
 					sendtext("[E3]パース失敗");
 					return "E3";
 				}
@@ -316,6 +370,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				sendtext("抽出成功 "+mylistID + "　"+sz+"個　"+ url);
 				System.out.println("Success mylist/"+mylistID+" item:"+sz);
 				if(sz == 0){
+					addError(url);
 					sendtext("[E4]動画がありません。"+mylistID);
 					return "E4";
 				}
@@ -341,13 +396,14 @@ public class MylistGetter extends SwingWorker<String, String> {
 			if(StopFlag.needStop()) {
 				return "FF";
 			}
-			//start downloader
 			if(Setting.isSaveAutoList()){
 				if(saveAutoList(autolist,plist)){
+					//出力成功
 					sendtext("[00]"+autolist+".bat 出力成功");
 					return "00";
 				}else{
 					//出力失敗
+					addError(url);
 					sendtext("[E6]"+autolist+".bat 出力失敗");
 					return "E6";
 				}
@@ -368,8 +424,15 @@ public class MylistGetter extends SwingWorker<String, String> {
 		} finally{
 
 		}
+		addError(url);
 		sendtext("[EX]例外発生?");
 		return "EX";
+	}
+
+	private void addError(String errorID) {
+		errorList.append(errorID+watchInfo+"\n");
+		if(parent!=null)
+			parent.setErrorUrl(errorList);
 	}
 
 	//終了時EDTで自動実行される
@@ -387,8 +450,9 @@ public class MylistGetter extends SwingWorker<String, String> {
 		}else{
 			System.out.println("done#get() "+result);
 		}
-		if(parent!=null)
+		if(parent!=null){
 			parent.myListGetterDone(ret);
+		}
 	}
 
 	private boolean saveAutoList(String autoname, ArrayList<String[]> mylist) {

@@ -1709,8 +1709,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			sbRet.append("RESULT=[FF]\n");
 		}
 		if(parent!=null){
-			parent.setErrorUrl(errorList);
 			errorList.append(Tag+WatchInfo+"\n");
+			parent.setErrorUrl(errorList);
 		}
 	}
 

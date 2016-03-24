@@ -3,6 +3,7 @@ package saccubus;
 import java.io.File;
 import java.util.Hashtable;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JLabel;
@@ -26,6 +27,7 @@ public class ConvertManager extends Thread {
 	private AtomicInteger numPending = new AtomicInteger(0);
 	private AtomicInteger numError = new AtomicInteger(0);
 	private AtomicInteger numConvert = new AtomicInteger(0);
+	private AtomicBoolean waitManager = new AtomicBoolean(false);
 
 	public ConvertManager(JLabel[] st3){
 		if(st3!=null){
@@ -128,19 +130,21 @@ public class ConvertManager extends Thread {
 		for(int count = 0;count < (numThread.get()+2);count++){
 			sendTimeInfo();
 			while(numRun.get() < numThread.get() && getNumReq() > 0){
+				setWaitManager(true);
 				conv = reqQueue.poll();
 				if(conv==null){
 					System.out.println("Error: manager#queueGo null  "+getTimeInfo());
 					sendTimeInfo();
 					break;
 				}
+				numRun.incrementAndGet();
+				setWaitManager(false);
 				ConvertStopFlag flag = conv.getStopFlag();
 				synchronized(flag){
 					flag.go();
 					flag.notify();
 				}
 				conv.execute();
-				numRun.incrementAndGet();
 				System.out.println("manager#queueGo ("+conv.getId()+")excute  "+getTimeInfo());
 				sendTimeInfo();
 				try {
@@ -151,6 +155,13 @@ public class ConvertManager extends Thread {
 			}
 		}
 		return;
+	}
+
+	private void setWaitManager(boolean b) {
+		waitManager.set(b);
+	}
+	public boolean isWaitManager() {
+		return waitManager.get();
 	}
 
 	private void sendTime(final String text) {
@@ -294,5 +305,9 @@ public class ConvertManager extends Thread {
 	public void decNumConvert(){
 		numConvert.decrementAndGet();
 		sendTimeInfo();
+	}
+
+	public int getNumThread(){
+		return numThread.get();
 	}
 }
