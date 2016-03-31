@@ -194,65 +194,79 @@ public class MylistGetter extends SwingWorker<String, String> {
 			while(m.find()){
 				if(i1 > 0){
 					Matcher m2 = p2.matcher(text.substring(i1, m.start()));	// title matcher
-					val = map.get(key);		// val “o˜^Ï‚İƒ^ƒCƒgƒ‹
-					while(m2.find() && val.isEmpty()) {
-						val = m2.group(2);
-						if(val==null) val = "";
-						System.out.println(" title("+key+") may be \""+val+"\"");
+					String title = map.get(key);		// “o˜^Ï‚İƒ^ƒCƒgƒ‹
+					val = "";
+					while(m2.find()) {
+						String val2 = m2.group(2);
+						if(val2==null)
+							val2 = "";
+						else if("1—ñ".equals(val2) || "2—ñ".equals(val2) || "4—ñ".equals(val2))
+							val2 = "";
+						else if("ƒLƒƒƒbƒVƒ…".equals(val2)||"ƒ}ƒCƒŠƒXƒgƒRƒƒ“ƒgˆê——".equals(val2))
+							val2 = "";
+						if(!val2.isEmpty() && (val.isEmpty() || val.length() > val2.length())){
+							val = val2;
+						}
 					}
 					if(val.isEmpty()){
 						// title’Šo¸”s
-						if(map.get(key).isEmpty()){
+						if(title.isEmpty()){
 							//key‚Ì‚İ“o˜^Ï‚İ¨íœ
 							map.remove(key);
 							System.out.println("title isEmpty() ERROR map.remove("+key+")");
 							errorSet.add(key);	//error“o˜^
 						}else{
 							//ƒ^ƒCƒgƒ‹“o˜^Ï‚İ
-							System.out.println("title isEmpty() title("+key+","+map.get(key)+") duplicated key");
+							//System.out.println("title isEmpty() title("+key+","+map.get(key)+") duplicated key");
 						}
 					}else{
 						// ƒ^ƒCƒgƒ‹’Šook
-						if(map.get(key).isEmpty()){
+						if(title.isEmpty()){
 							//ƒ^ƒCƒgƒ‹–¢“o˜^
 							map.put(key, val);
-							System.out.println("title found map.put("+key+","+val+")");
-						}else{
+							System.out.println("map.put("+key+",\""+val+"\")");
+						}else if(!title.equals(val)){
 							//ƒ^ƒCƒgƒ‹“o˜^Ï‚İ
-							System.out.println("ttile found map.contains("+key+","+map.get(key)+")");
-							System.out.println("  duplicated titile is "+val);
+							if(title.length()>val.length()){
+								map.put(key, val);
+								System.out.println("map.put("+key+",\""+val+"\")");
+							}
+							//else
+							//	System.out.println("title("+key+") found \""+val+"\" but title was \""+title+"\"");
 						}
 					}
 				}
 				i1 = m.end();
 				key = m.group(1);
-				System.out.println("key= "+key);
+				//System.out.println("key= "+key);
 				if(key==null || key.isEmpty()){
 					// key‚ÍŒ©‚Â‚©‚ç‚È‚¢
 					System.out.println("key is empty ");
-					i1 = 0;
-				}else if(map.containsKey(key)){
-					// key“o˜^Ï‚İ
-					System.out.println("key is already in map.containsKey() "+key);
 					i1 = 0;
 				}else if(!MainFrame.idcheck(key)){
 					// key‚Í“®‰æID‚Å‚Í‚È‚¢
 					System.out.println("key idcheck() ERROR "+key);
 					i1 = 0;
-					errorSet.add(key);	//error“o˜^
+					//errorSet.add(key);	//error“o˜^
 				}else{
-					// key“o˜^
-					map.put(key, "");
-					System.out.println("key only map.put( "+key+",\"\")");
-					if(errorSet.remove(key))
-						System.out.println(" error remove "+key);
+					if(map.containsKey(key)){
+						// key“o˜^Ï‚İ
+						//String ttl = map.get(key);
+						//System.out.println("key map.containsKey("+key+","+ttl+")");
+					}else{
+						// key“o˜^
+						map.put(key, "");
+					}
+					//System.out.println("key map.put( "+key+")");
+					errorSet.remove(key);
 				}
 			}
 			map.remove("1");	//delete sentinel
 			errorSet.remove("1");
-			text = text.substring(0,text.lastIndexOf("watch/1")) + "</a>";
+			text = text.substring(0,text.lastIndexOf("watch/1"));
 			// ‚¤‚Ü‚­æ‚ê‚È‚¢ê‡‚É•Ê‚ÌŒŸõ‚ğs‚¤
 			if(errorSet.size()>map.size()){
+				System.out.println("Retry title check: "+url);
 				//•Ê‚Ì’Šo
 				// <a href="watch/sm999999">ƒ^ƒCƒgƒ‹</a>
 				map.clear();
@@ -262,12 +276,12 @@ public class MylistGetter extends SwingWorker<String, String> {
 				while(m.find()){
 					key = m.group(2);
 					val = m.group(4);
-					System.out.println("key="+key+",val="+val);
+					System.out.println("key="+key+",val=\""+val+"\"");
 					if(!map.containsKey(key) ||
 						map.get(key).isEmpty())
 					{
 						map.put(key, val);
-						System.out.println("map.put("+key+","+val+")");
+						System.out.println("map.put("+key+",\""+val+"\")");
 					}
 				}
 				map.remove("1");	//delete sentinel
@@ -278,9 +292,23 @@ public class MylistGetter extends SwingWorker<String, String> {
 			}
 			sendtext("’Šo¬Œ÷ @"+map.size()+"ŒÂ@"+ url);
 			if(map.isEmpty()){
-				addError(url);
-				sendtext("[E5]“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñ");
-				return "E5";
+				//addError(url);
+				sendtext("[E5]“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñAƒŠƒgƒ‰ƒC");
+				//return "E5";
+				String json_start = "first_data: ";
+				int start = text.indexOf(json_start);
+				if(start < 0){
+					addError(url);
+					sendtext("JSON not found "+url);
+					return "E2";	//JSON not found
+				}
+				start += json_start.length();
+				String endStr = "jQuery(";
+				int end = (text+endStr).indexOf(endStr, start);	// end of JSON
+				text = (text+endStr).substring(start, end);
+				start = text.indexOf("{");
+				mylistID = Long.toString(new Date().getTime());
+				text = text.substring(start).trim();
 			}
 			if(!errorSet.isEmpty()){
 				// ƒ^ƒCƒgƒ‹’Šo¸”s‚Ü‚½‚ÍidcheckƒGƒ‰[
@@ -372,7 +400,24 @@ public class MylistGetter extends SwingWorker<String, String> {
 				if(sz == 0){
 					addError(url);
 					sendtext("[E4]“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñB"+mylistID);
-					return "E4";
+					//return "E4";
+					keys[0] = "id";
+					keys[1] = "title_short";
+					id_title_list = mson.getListString(keys);	// List of id & title
+					plist.clear();
+					for(String[] vals:id_title_list){
+					//	System.out.println("Getting ["+ vals[0] + "]"+ vals[1]);
+						plist.add(0, vals);
+					}
+
+					sz = plist.size();
+					sendtext("’Šo¬Œ÷ "+mylistID + "@"+sz+"ŒÂ@"+ url);
+					System.out.println("Success mylist/"+mylistID+" item:"+sz);
+					if(sz == 0){
+						addError(url);
+						sendtext("[E4]“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñB"+mylistID);
+						return "E4";
+					}
 				}
 				if(StopFlag.needStop()) {
 					return "FF";

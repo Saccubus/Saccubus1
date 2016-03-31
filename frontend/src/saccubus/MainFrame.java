@@ -23,6 +23,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Properties;
@@ -3446,12 +3448,23 @@ public class MainFrame extends JFrame {
 			if(	  url.startsWith("mylist/")
 				||url.startsWith("user/")
 				||url.startsWith("my/")
-				||url.startsWith("watch/")
-				||url.startsWith("search/")
-				||url.startsWith("search:")
-				||url.startsWith("tag/")
-				||url.startsWith("tag:")){
+				||url.startsWith("watch/")){
 				url = "http://www.nicovideo.jp/" + url;	//may not work
+			}else if(url.startsWith("search/")
+				||url.startsWith("tag/")){
+				String keyword = url.replaceFirst("(search|tag)/", "");
+				String watchinfo = "";
+				int index = keyword.indexOf('?');
+				if (index > 0){
+					watchinfo = keyword.substring(index);
+					keyword = keyword.substring(0, index);
+				}
+				try {
+					url = url.replace(keyword, URLEncoder.encode(keyword, "UTF-8")) + watchinfo;
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				url = "http://www.nicovideo.jp/" + url;
 			}else if(url.startsWith("lv")){
 				url = "http://live.nicovideo.jp/watch/"+ url;	//may not work
 			}else if(url.startsWith("co")){
