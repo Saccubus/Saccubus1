@@ -92,6 +92,7 @@ struct DATA{
 	SDL_Surface* ErrFont;
 	unsigned int * wakuiro_dat;
 	int q_player;
+	int is_live;
 	//char wstr[128];
 #ifdef VHOOKDEBUG
 //	float dts_rate;	// フレームレート
@@ -137,6 +138,7 @@ typedef struct SETTING{
 	const char* opaque_rate;
 	int optional_trunslucent;
 	int q_player;		//コメントが動画の高さ以下になるか？
+	int is_live;	//生放送か?(仮) コメントコマンドの仕様が変わる
 	// CA用フォント
 	const char* CAfont_path[CA_FONT_PATH_MAX];
 	int CAfont_index[CA_FONT_PATH_MAX];

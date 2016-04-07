@@ -146,4 +146,7 @@ void exitExtProcess();
 #define FRAMEHOOK_OPT_OPAQUE	"--opaque:"
 #define FRAMEHOOK_OPT_OPAQUE_LEN	strlen(FRAMEHOOK_OPT_OPAQUE)
 
+#define FRAMEHOOK_OPT_LIVE		"--live"
+#define FRAMEHOOK_OPT_LIVE_LEN	strlen(FRAMEHOOK_OPT_LIVE)
+
 #endif /*FRAMEHOOK_H_*/

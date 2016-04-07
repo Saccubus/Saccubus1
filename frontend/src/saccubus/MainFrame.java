@@ -3402,6 +3402,7 @@ public class MainFrame extends JFrame {
 						Comment_SaveFileRadioButton.setSelected(true);
 						CommentSavedFileField.setText(localComment);
 					}
+					saveThumbInfoCheckBox.setSelected(false);
 					return true;
 				}
 				return false;
@@ -3411,6 +3412,7 @@ public class MainFrame extends JFrame {
 				Video_SaveFolderRadioButton.setSelected(true);
 				CommentSavedFolderField.setText(path);
 				Comment_SaveFolderRadioButton.setSelected(true);
+				saveThumbInfoCheckBox.setSelected(false);
 			}
 			return true;
 		}

@@ -35,7 +35,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ƒƒO
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.65.2.7";	//
+	char *ver="1.65.3.2";	//
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -356,6 +356,11 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 		else if (strncmp(FRAMEHOOK_OPT_OPAQUE,arg,FRAMEHOOK_OPT_OPAQUE_LEN) == 0){
 			setting->opaque_rate = arg+FRAMEHOOK_OPT_OPAQUE_LEN;
 			fprintf(log,"[framehook/init]opaque_rate: %s\n",setting->opaque_rate);
+			fflush(log);
+		}
+		else if (strncmp(FRAMEHOOK_OPT_LIVE,arg,FRAMEHOOK_OPT_LIVE_LEN) == 0){
+			setting->is_live = true;
+			fputs("[framehook/init]enable opaque comment.\n",log);
 			fflush(log);
 		}
 #ifdef VHOOKDEBUG

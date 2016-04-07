@@ -3023,6 +3023,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ffmpeg.addCmd("|--comment-speed:"
 					+ URLEncoder.encode(comment_speed, encoding));
 			}
+			if((Setting.isLive()&&Pattern.matches("sm[0-8]|(sm[0-8]_)?lv.*", Tag))
+				||!MainFrame.idcheck(Tag)){
+				ffmpeg.addCmd("|--live");
+			}
 			String extra = Setting.getExtraMode();
 			if(extra.contains("-April=")){
 				int index = extra.indexOf("-April=");

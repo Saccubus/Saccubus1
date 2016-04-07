@@ -107,6 +107,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 #endif
 //	data->limit_height = NICO_HEIGHT;
 	data->q_player = setting->q_player;
+	data->is_live = setting->is_live;
 	data->pad_w = 0;
 	data->pad_h = 0;
 	int outw = setting->nico_width_now;

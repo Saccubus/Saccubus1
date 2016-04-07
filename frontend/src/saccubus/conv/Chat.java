@@ -395,7 +395,7 @@ public class Chat {
 			return CMD_COLOR_GREEN;
 		if (str.equals("niconicowhite") || str.equals("white2"))
 			return CMD_COLOR_NICOWHITE;
-		if (str.equals("arineblue") || str.equals("blue2"))
+		if (str.equals("marineblue") || str.equals("blue2"))
 			return CMD_COLOR_MARINEBLUE;
 		if (str.equals("madyellow") || str.equals("yellow2"))
 			return CMD_COLOR_MADYELLOW;

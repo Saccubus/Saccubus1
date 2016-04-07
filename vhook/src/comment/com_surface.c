@@ -38,6 +38,11 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	int color = item->color;
 	int is_button = 0;
 	int is_owner = item->chat->cid == CID_OWNER;
+	//“®‰æ‚È‚çcolor=10 ("blue2","marinebule")‚Íblue2N(=21)(V‚µ‚¢blue2)‚É•ÏX
+	if(color==10 && !data->is_live){
+		color = 21;	//blue2N(#3366ff)
+		SdlColor = item->color24 = getSDL_color(color);
+	}
 
 	//Scriptˆ—
 	if(item->script){

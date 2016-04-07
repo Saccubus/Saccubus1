@@ -184,6 +184,7 @@ public class ConvertingSetting {
 	private boolean PendingMode;
 	private boolean OneLineMode;
 	private StringBuffer errorList;
+	private boolean liveFlag;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -540,6 +541,11 @@ public class ConvertingSetting {
 		PendingMode = pending_mode;
 		OneLineMode = one_line_mode;
 		errorList = error_list;
+		liveFlag = true;
+		if(savevideo || savecomment || save_thumb_info){
+			//ÉçÅ[ÉJÉãïœä∑=ê∂ï˙ëóÇ≈îªíf(âº)
+			liveFlag = false;
+		}
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -917,6 +923,9 @@ public class ConvertingSetting {
 	}
 	public StringBuffer getErrorList(){
 		return errorList;
+	}
+	public boolean isLive(){
+		return liveFlag;
 	}
 	//
 	public static String getDefOptsFpsUp(){

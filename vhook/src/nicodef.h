@@ -164,7 +164,7 @@ static const int COMMENT_BIG_DR_HEIGHT[16] = {
 	384,		//15
 };
 
-#define CMD_COLOR_MAX	21
+#define CMD_COLOR_MAX	22
 #define CMD_COLOR_DEF	0
 #define CMD_COLOR_RED	1
 #define CMD_COLOR_ORANGE	2
@@ -211,6 +211,7 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 	{0xff,0x33,0xcc,0x00},//PINK2
 	{0x00,0xcc,0xcc,0x00},//CYAN2
 	{0x66,0x66,0x66,0x00},//BLACK2
+	{0x33,0x66,0xff,0x00},//BLUE2(NP3‚©‚ç“®‰æ‚Ì‚Ý)
 };
 
 //
@@ -236,6 +237,7 @@ static char* const CMD_COLOR_NAME[CMD_COLOR_MAX] = {
 	"pink2",
 	"cyan2",
 	"black2",
+	"blue2N",	//marineblueN
 };
 
 static const int CA_FONT_HIGHT_TUNED[4][2][CMD_FONT_MAX] = {
