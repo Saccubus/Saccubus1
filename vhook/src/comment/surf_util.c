@@ -5,9 +5,11 @@
 
 SDL_Surface* connectSurface(SDL_Surface* top,SDL_Surface* bottom){
 	//not make nor use alpha channel
-	//eather top or bottom may be NULL
-	if(top==NULL||bottom==NULL)
-		return NULL;
+	//either top or bottom may be NULL
+	if(top==NULL)
+		return bottom;	//bottom may be NULL
+	if(bottom==NULL)
+		return top;
 	SDL_Surface* ret = drawNullSurface(MAX(top->w,bottom->w), top->h+bottom->h);
 /*
 	SDL_Surface* ret = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_HWACCEL,

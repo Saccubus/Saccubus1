@@ -292,9 +292,9 @@ SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,int location,SDL_Surface
 	return tmp;
 }
 
-SDL_Surface* drawButton(DATA* data,SDL_Surface* surf){
+SDL_Surface* drawUserButton(DATA* data,SDL_Surface* surf){
 	if(data->debug)
-		fprintf(data->log,"[render_unicode/drawButton]waku(%d,%d)\n",surf->w,surf->h);
+		fprintf(data->log,"[render_unicode/drawUserButton]waku(%d,%d)\n",surf->w,surf->h);
 	//@ボタン（視聴者）
 	//frame is not drawn yet,draw of width height/20 px line as frame.
 	// s should be set to frame width
@@ -306,7 +306,7 @@ SDL_Surface* drawButton(DATA* data,SDL_Surface* surf){
 	SDL_Rect rect3 = {2,s,tmp->w-4,tmp->h-(s<<1)};
 	Uint32 col32 = SDL_MapRGB(tmp->format,col.r,col.g,col.b);
 	if(data->debug)
-		fprintf(data->log,"[render_unicode/drawButton]waku(%d,%d) color#%06x w%d\n",tmp->w,tmp->h,col32,s);
+		fprintf(data->log,"[render_unicode/drawUserButton]waku(%d,%d) color#%06x w%d\n",tmp->w,tmp->h,col32,s);
 	SDL_FillRect(tmp,&rect,col32);
 	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
 	SDL_BlitSurface(surf,&rect3,tmp,&rect3);
@@ -333,4 +333,11 @@ SDL_Surface* drawOwnerButton(DATA* data,SDL_Surface* surf,SDL_Color col){
 	SDL_BlitSurface(surf,&rect2,tmp,&rect3);
 	SDL_SetClipRect(tmp,&rect);
 	return tmp;
+}
+SDL_Surface* drawButton(DATA* data,SDL_Surface* surf,SDL_Color col,int is_owner)
+{
+	if(is_owner!=0)
+		return drawOwnerButton(data,surf,col);
+	else
+		return drawUserButton(data,surf);
 }

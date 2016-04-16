@@ -18,6 +18,7 @@
 #define SCRIPT_DEFAULT	0x00020000
 #define SCRIPT_REPLACE	0x00040000
 #define SCRIPT_BUTTON	0x00080000
+#define SCRIPT_VOTE		0x00100000
 
 struct CHAT_ITEM{
 	//場所の特定
@@ -77,6 +78,8 @@ struct CHAT{
 	int reverse_duration;	// VPOS
 	//patissierコマンドによる無視コメント番号最大値
 	int patissier_ignore;
+	// /vote
+	CHAT_ITEM *vote_chatitem;
 };
 
 #include "chat_slot.h"

@@ -1,6 +1,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_rotozoom.h>
+#include <stdio.h>
 #include "com_surface.h"
 #include "surf_util.h"
 #include "../chat/chat.h"
@@ -37,6 +38,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	int nico_width = data->nico_width_now;
 	int color = item->color;
 	int is_button = 0;
+	int is_vote = FALSE;
 	int is_owner = item->chat->cid == CID_OWNER;
 	//動画ならcolor=10 ("blue2","marinebule")はblue2N(=21)(新しいblue2)に変更
 	if(color==10 && !data->is_live){
@@ -92,6 +94,28 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			is_button = 1;
 			fprintf(log,"[comsurface/make script]@BUTTON rendering...\n");
 		}
+		if(cmd == SCRIPT_VOTE){
+			// /vote
+			is_vote = TRUE;
+			is_owner = TRUE;
+			fprintf(log,"[comsurface/make script]/vote ");
+			if(index[8]=='a'){
+				// /vote start
+				is_button = 1;
+				fprintf(log,"start\n");
+			}
+			else if(index[7]=='h'){
+				// /vote showresult
+				is_button = 1;
+				fprintf(log,"showresult\n");
+			}
+			//else if(index[9]=='p'){
+			else {
+				// /vote stop
+				fprintf(log,"stop\n");
+				return drawNullSurface(0,0);
+			}
+}
 	}
 	/*
 	 * default color変更
@@ -120,75 +144,112 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	 */
 	SDL_Surface* surf = NULL;
 	SDL_Surface* before_button = NULL;
+	SDL_Surface* before_vote = NULL;
+	int button_nline = 0;
+	int vote_nline = 0;
 	// last == index == item->str;
 	if(deleteLastLF(index)<=0)
 		return NULL;
 	while(*index != '\0'){
 		if(*index=='[' && is_button==1){
 			*index = '\0';//ここで一旦切る
-			surf = drawText2(data,size,SdlColor,last,FALSE);
+			surf = drawText2(data,size,SdlColor,last,is_owner);
 			if(surf!=NULL && debug)
 				fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d) %s\n",surf->w,surf->h,COM_FONTSIZE_NAME[size]);
-			if(ret != null){
-				//改行後のボタン開始
-				surf = connectSurface(ret,surf);
-				nb_line++;
-				if(surf!=NULL && debug)
-					fprintf(log,"[comsurface/make.1]connectSurface surf(%d, %d) %s line %d\n",surf->w,surf->h,COM_FONTSIZE_NAME[size],nb_line);
+			if(is_vote){
+				// surf は無視
+				SDL_FreeSurface(surf);
+				surf = NULL;
+				if(before_button!=NULL){
+					// 左右にくっつける
+					ret = arrangeSurface(before_button,ret);
+					nb_line = MAX(button_nline,nb_line);
+					if(ret!=NULL && debug)
+						fprintf(log,"[comsurface/make.01]arrange surf(%d, %d) line %d\n",ret->w,ret->h,nb_line);
+				}
+				before_button = NULL;
+				button_nline = 0;
+				if(index!=NULL && index[-1]=='\n'){
+					// '\n'の次が'['の場合は
+					// retは上の段before_voteにする
+					before_vote = connectSurface(before_vote,ret);
+					vote_nline += nb_line;
+					if(before_vote!=NULL && debug)
+						fprintf(log,"[comsurface/make.02]connect before_vote(%d, %d) line %d\n",before_vote->w,before_vote->h,vote_nline);
+				}else{
+					// retは前の列before_buttonにする
+					before_button = ret;
+					button_nline = nb_line;
+				}
+				ret = NULL;
+				nb_line = 1;
+			}
+			else {
+				if(ret==NULL){
+					before_button = surf;
+					button_nline = nb_line;
+				}else{
+					//改行後のボタン開始
+					before_button = connectSurface(ret,surf);
+					button_nline += nb_line;
+					if(before_button!=NULL && debug)
+						fprintf(log,"[comsurface/make.03]connect before_button(%d, %d) %s line %d\n",before_button->w,before_button->h,COM_FONTSIZE_NAME[size],button_nline);
+				}
+				ret = NULL;
+				nb_line = 1;
 			}
 			*index = '[';//ここで一旦切る
 			last = index+1;
-			before_button = surf;
-			ret = NULL;
 			is_button = 2;
 		}
 		else if(*index==']' && is_button==2){
 			*index = '\0';//ここで一旦切る
 			surf = drawText2(data,size,SdlColor,last,is_owner);
-			if(surf!=NULL && debug)
-				fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d)\n",surf->w,surf->h);
-			if(ret != NULL){
+			if(ret==NULL){
+				if(surf!=NULL && debug)
+					fprintf(log,"[comsurface/make.10]drawText2 surf(%d, %d)\n",surf->w,surf->h);
+			}else{
 				//複数行のボタン終了
 				surf = connectSurface(ret,surf);
 				nb_line++;
 				if(surf!=NULL && debug)
-					fprintf(log,"[comsurface/make.1]connectSurface surf(%d, %d) line %d\n",surf->w,surf->h,nb_line);
+					fprintf(log,"[comsurface/make.11]connectSurface surf(%d, %d) line %d\n",surf->w,surf->h,nb_line);
 			}
-			if(is_owner)
-				//投稿者ボタンを塗る
-				ret = drawOwnerButton(data,surf,SdlColor);
-			else
-				//視聴者ボタン
-				ret = drawButton(data,surf);
-
+			//ボタンを塗る
+			ret = drawButton(data,surf,SdlColor,is_owner);
 			SDL_FreeSurface(surf);
 			if(ret!=NULL && debug)
-				fprintf(log,"[comsurface/make.1]drawButton surf(%d, %d)\n",ret->w,ret->h);
+				fprintf(log,"[comsurface/make.12]drawButton surf(%d, %d) button %d\n",ret->w,ret->h,nb_line);
 			*index = ']';//ここで一旦切る
 			last = index+1;
 			// ボタン描画終了 ボタン前とボタン後をつなげる
 			if(before_button!=NULL){
 				// 左右にくっつける
 				ret = arrangeSurface(before_button,ret);
+				before_button = NULL;
+				nb_line = MAX(button_nline,nb_line);
 				if(ret!=NULL && debug)
-					fprintf(log,"[comsurface/make.1]arrange surf(%d, %d)\n",ret->w,ret->h);
+					fprintf(log,"[comsurface/make.13]arrange surf(%d, %d) line %d\n",ret->w,ret->h,nb_line);
 			}
 			before_button = ret;
 			ret = NULL;
-			is_button = 3;
+			button_nline = nb_line;
+			nb_line = 1;
+			is_button = is_vote ? 1 : 3;
 		}
 		else if(*index == '\n'){
 			*index = '\0';//ここで一旦切る
 			int fill_bg = is_owner && is_button==2;
+			surf = drawText2(data,size,SdlColor,last,fill_bg);
 			if(ret == null){//最初の改行
-				ret = drawText2(data,size,SdlColor,last,fill_bg);
+				ret = surf;
 				if(ret!=NULL && debug)
-					fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d) %s\n",ret->w,ret->h,COM_FONTSIZE_NAME[size]);
+					fprintf(log,"[comsurface/make.20]drawText2 surf(%d, %d) %s\n",ret->w,ret->h,COM_FONTSIZE_NAME[size]);
 			}else{/*改行あり*/
-				ret = connectSurface(ret,drawText2(data,size,SdlColor,last,fill_bg));
+				ret = connectSurface(ret,surf);
 				nb_line++;
 				if(ret!=NULL && debug)
-					fprintf(log,"[comsurface/make.1]connectSurface surf(%d, %d) %s line %d\n",ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
+					fprintf(log,"[comsurface/make.21]connectSurface surf(%d, %d) %s line %d\n",ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
 			}
 			*index = '\n';//ここで一旦切る
 			last = index+1;
@@ -196,48 +257,55 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		index++;
 	}
 	int fill_bg = is_owner && is_button!=0;
+	surf = drawText2(data,size,SdlColor,last,fill_bg);
 	if(ret == null){//結局改行は無い
-		ret = drawText2(data,size,SdlColor,last,fill_bg);
+		ret = surf;
 		if(debug && ret!=NULL)
-			fprintf(log,"[comsurface/make.2]drawText2 surf(%d, %d) %s\n",ret->w,ret->h,COM_FONTSIZE_NAME[size]);
+			fprintf(log,"[comsurface/make.30]drawText2 surf(%d, %d) %s\n",ret->w,ret->h,COM_FONTSIZE_NAME[size]);
 	}else{/*改行あり*/
-		ret = connectSurface(ret,drawText2(data,size,SdlColor,last,fill_bg));
+		ret = connectSurface(ret,surf);
 		nb_line++;
 		if(debug && ret!=NULL)
-			fprintf(log,"[comsurface/make.3]connectSurface surf(%d, %d) %s line %d\n",ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
-
+			fprintf(log,"[comsurface/make.31]connectSurface surf(%d, %d) %s line %d\n",ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
 	}
-	//ret = surf;
-	if(is_button){
-		if(is_button==1){
-			// [は来なかった
-			// ret全体がボタン
-			surf = ret;
-			if(is_owner)
-				ret = drawOwnerButton(data,surf,SdlColor);
-			else
-				ret = drawButton(data,surf);
 
-			SDL_FreeSurface(surf);
+	//ret = surf;
+	if(is_vote){
+		if(before_button!=NULL){
+			ret = arrangeSurface(before_button,ret);
+			nb_line = MAX(nb_line,button_nline);
 			if(ret!=NULL && debug)
-				fprintf(log,"[comsurface/make.3]drawButton surf(%d, %d)\n",ret->w,ret->h);
+				fprintf(log,"[comsurface/make.33]arranged surf(%d, %d) line %d\n",ret->w,ret->h,nb_line);
+			button_nline = 0;
+			before_button = NULL;
 		}
-		else if(is_button==2){
-			// [来た後で]の前に終了
+		if(before_vote!=NULL){
+			// before_voteは今の段retにする
+			ret = connectSurface(before_vote,ret);
+			nb_line += vote_nline;
+			if(ret!=NULL && debug)
+				fprintf(log,"[comsurface/make.34]connect surf(%d, %d) line %d\n",ret->w,ret->h,nb_line);
+			before_vote = NULL;
+			vote_nline = 0;
+		}
+		is_button = 0;
+	}
+	else if(is_button){
+		if(is_button==1 || is_button==2){
+			// 1.[は来なかった ret全体がボタン
+			// 2.[来た後で]の前に終了
 			surf = ret;
-			if(is_owner)
-				ret = drawOwnerButton(data,surf,SdlColor);
-			else
-				ret = drawButton(data,surf);
+			ret = drawButton(data,surf,SdlColor,is_owner);
 			SDL_FreeSurface(surf);
 			if(ret!=NULL && debug)
-				fprintf(log,"[comsurface/make.3]drawButton surf(%d, %d)\n",ret->w,ret->h);
+				fprintf(log,"[comsurface/make.35]drawButton surf(%d, %d) button %d\n",ret->w,ret->h,nb_line);
 		}
 		if(before_button!=NULL){
 			//1つ前が残ってる
 			ret = arrangeSurface(before_button,ret);
+			nb_line = MAX(nb_line,button_nline);
 			if(ret!=NULL && debug)
-				fprintf(log,"[comsurface/make.3]arranged surf(%d, %d)\n",ret->w,ret->h);
+				fprintf(log,"[comsurface/make.3]arranged surf(%d, %d) line %d\n",ret->w,ret->h,nb_line);
 		}
 		is_button = 0;
 	}

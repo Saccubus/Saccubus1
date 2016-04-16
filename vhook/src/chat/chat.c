@@ -66,6 +66,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	int str_length;
 	int duration;
 	int script;
+	CHAT_ITEM* previous_vote = NULL;
 	SDL_Color color24;
 	Uint16* str;
 	for(i=0;i<max_item;i++){
@@ -179,6 +180,12 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 				if(duration == 0){
 					duration = INTEGER_MAX;
 				}
+			}else if(c1 == 'v'){
+				// /vote
+				script = SCRIPT_VOTE;
+				if(duration == 0){
+					duration = INTEGER_MAX;
+				}
 			}
 			if(item->is_button){
 				// @ボタン
@@ -217,8 +224,17 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		}
 		item->duration = duration;
 		item->script = script;
+		if(duration == INTEGER_MAX)
+			item->vend = INTEGER_MAX;
+		if(script==SCRIPT_VOTE){
+			if(previous_vote!=NULL){
+				previous_vote->vend = item->vstart - 1;
+				previous_vote->duration = item->vstart - previous_vote->vstart;
+			}
+			previous_vote = item;
+		}
 		item->color24 = color24;
-		if (video_length > 0){
+		if (video_length > 0 && !script){
 			int fix = item->vend - video_length;
 			if(fix > 0){
 				if(fix > TEXT_SHOW_SEC)
@@ -243,6 +259,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	if(toLeft < 0){
 		chat->reverse_duration = INT32_MAX;
 	}
+	chat->vote_chatitem = NULL;
 	chat->patissier_ignore = max_no - patissier_num;
 	fprintf(log,"[main/init]patissier ignore no <= %d.\n",chat->patissier_ignore);
 	//コメントプール（vposが更新された時に取り出したchat_itemを一時保管）

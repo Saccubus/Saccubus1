@@ -61,6 +61,10 @@ public class NicoXMLReader extends DefaultHandler {
 	private final boolean liveConversion;
 	private final boolean premiumColorCheck;
 
+	private int voteN = 0;
+	private String[] voteStr = null;
+	private String[] voteRate = null;
+
 	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd, int scoreLimit, boolean liveOp, boolean prem_color_check){
 		this.packet = packet;
 		NG_Word = ngWordPat;
@@ -439,15 +443,134 @@ public class NicoXMLReader extends DefaultHandler {
 			}
 			//運営コメント
 			if(liveConversion && !premium.isEmpty() && !premium.equals("1")){
-				if(com.startsWith("/")){
+				if(com.startsWith("/") && premium.equals("3")){
 					//運営コマンド
-					String[] list = com.split(" ");
+					String[] list = com.trim().split(" +");
 					if(list[0].equals("/perm")){
 						// prem
 						item.setMail("@10");
 					}
-					item.setMail("shita small waku ender @4");
-				}else{
+					else if(list[0].equals("/vote")){
+						int lfLim = 4;
+						String VOTECMD = "ue cyan ender full";
+						// vote
+						// 数値を変換する
+						// 投票数字を各行に
+						if(list.length>1 && list[1].equals("start")){
+							///vote start 今日の番組はいかがでしたか？ とても良かった まぁまぁ良かった ふつうだった あまり良くなかった 良くなかった
+							voteN = list.length-2;
+							voteStr = new String[voteN];
+							voteStr[0] = list[2];
+							for(int i=1; i<voteN; i++){
+								voteStr[i] = (list[i+2] + "          ")
+												.substring(0, 9);
+							}
+							voteRate = new String[voteN];
+							StringBuffer sb = new StringBuffer();
+							sb.append(voteStr[0]);
+							sb.append("\n");
+							lfLim = 4;
+							if(voteN==5) lfLim = 3;
+							for(int i=1; i<voteN;i++){
+								if(i == lfLim){
+									sb.append("\n");
+									lfLim = 7;
+								}
+								sb.append("[            \n");
+								sb.append(Integer.toString(i));
+								sb.append(".");
+								sb.append(voteStr[i]);
+								sb.append("\n");
+								sb.append(" \n");
+								sb.append("]");
+							}
+							com = "/vote start "+sb.substring(0).trim();
+							item.setMail(VOTECMD);
+							item.addCmd(Chat.CMD_LOC_SCRIPT);
+							item_fork = true;
+							script = true;
+						}
+						else if(list.length>1 && list[1].equals("showresult")){
+							///vote showresult per  602 181 60 47 108 0 0 0 0 0
+							//  15秒ぐらい
+							if(voteN==1 || voteStr==null || voteRate==null){
+								voteN = 6;
+								voteStr = new String[]{
+									"今日の番組はいかがでしたか？",
+									"　とても良かった　",
+									"まぁまぁ良かった　",
+									"　ふつうだった　　",
+									"あまり良くなかった",
+									"　良くなかった　　"
+								};
+								voteRate = new String[voteN];
+							}
+							for(int i=1; i<voteN; i++){
+								String s = list[i+2].trim();
+								int rate = 0;
+								voteRate[i] = "           %";
+								if(s!=null && !s.isEmpty()){
+									try{
+										rate = Integer.valueOf(s);
+									}catch(NumberFormatException e){
+										e.printStackTrace();
+									}
+								}
+								voteRate[i] = String.format("% 11.1f%%",(rate/10.0));
+							}
+							StringBuffer sb = new StringBuffer();
+							sb.append(voteStr[0]);
+							sb.append("\n");
+							lfLim = 4;
+							if(voteN==5) lfLim = 3;
+							for(int i=1; i<voteN;i++){
+								if(i == lfLim){
+									sb.append("\n");
+									lfLim = 7;
+								}
+								sb.append("[            \n");
+								sb.append(Integer.toString(i));
+								sb.append(".");
+								sb.append(voteStr[i]);
+								sb.append("\n");
+								sb.append(voteRate[i]);
+								sb.append("\n");
+								sb.append("]");
+							}
+							com = "/vote show "+sb.substring(0).trim();
+							item.setMail(VOTECMD);
+							item.addCmd(Chat.CMD_LOC_SCRIPT);
+							item_fork = true;
+							script = true;
+						}
+						else if(list.length>1 && list[1].equals("stop")){
+							com = "/vote stop";
+							item.setMail(VOTECMD);
+							item.addCmd(Chat.CMD_LOC_SCRIPT);
+							item_fork = true;
+							script = true;
+						}
+						else {
+							// /vote その他
+							StringBuffer sb = new StringBuffer();
+							for(int i=1; i<list.length; i++){
+								sb.append(list[i]);
+							}
+							com = "/vote [" + sb.substring(0) + "]";
+							item.setMail(VOTECMD);
+							item.addCmd(Chat.CMD_LOC_SCRIPT);
+							item_fork = true;
+							script = true;
+						}
+					}
+					else {
+						//運営コメント コマンド無し
+						item.setMail("ue ender @15");
+						item_fork = true;
+						com = "@ボタン 「["+com+"]」";
+					}
+				}
+				else if(!premium.equals("1")){
 					//生主コメント
 					item.setMail("ue ender @4");
 					item_fork = true;
@@ -457,7 +580,8 @@ public class NicoXMLReader extends DefaultHandler {
 					.replace("<b>", "\n").replace("</b>", "")
 					.replace("<font ", "\n<font ").replace("</font>", "")
 					.replace("<br>", "\n").replace("<br />", "\n").replace("<br/>", "\n")
-					.replaceAll("(<a [^>]+>)","\n$1\n").replace("</a>","\n")
+					.replaceAll("<a href=([^>]+)>","\n$1\n").replace("</a>","\n")
+					.replaceAll("<.>", "\n").replaceAll("</.>", "")
 					.replaceAll("\n+","\n");
 			}
 			//ニコスクリプト処理
