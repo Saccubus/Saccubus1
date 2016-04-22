@@ -564,17 +564,26 @@ public class NicoXMLReader extends DefaultHandler {
 						}
 					}
 					else {
-						//運営コメント コマンド無し
-						item.setMail("ue ender @15");
+						//運営コマンド該当無し
+						item.setMail("ue ender @4");
 						item_fork = true;
-						com = "@ボタン 「["+com+"]」";
+						if(com.contains("」"))
+							com = "@ボタン 「["+com.replaceAll("「", "『").replaceAll("」", "』")+"]」";
+						else
+							com = "@ボタン 「["+com+"]」";
 					}
 				}
 				else if(!premium.equals("1")){
-					//生主コメント
-					item.setMail("ue ender @4");
+					//運営コメント(生主 or BSP?) コマンドなし
+					if(premium.equals("3"))
+						item.setMail("ue ender @12");	//4秒でいい？
+					else
+						item.setMail("ue ender @4");
 					item_fork = true;
-					com = "@ボタン 「["+com+"]」";
+					if(com.contains("」"))
+						com = "@ボタン 「["+com.replaceAll("「", "『").replaceAll("」", "』")+"]」";
+					else
+						com = "@ボタン 「["+com+"]」";
 				}
 				com = com.replace("<u>", "\n").replace("</u>", "")
 					.replace("<b>", "\n").replace("</b>", "")
