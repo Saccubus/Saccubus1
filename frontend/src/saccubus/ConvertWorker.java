@@ -124,7 +124,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File imgDir;
 	private Aspect outAspect;
 	private VPlayer vplayer = null;
-	private String alternativeVideoID = "";
+	private String alternativeTag = "";
 	private final ConvertManager manager;
 	private Gate gate;
 	private StringBuffer errorList;
@@ -985,7 +985,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return true;
 	}
 
-	private boolean saveThumbInfo0(NicoClient client) {
+	private boolean saveThumbInfo0(NicoClient client,String vtag) {
 		sendtext("動画情報の保存");
 		/*ページの保存*/
 		String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
@@ -1014,7 +1014,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			result = "A2";
 			return false;
 		}
-		thumbInfo = client.getThumbInfoFile(Tag);
+		thumbInfo = client.getThumbInfoFile(vtag);
 		if (stopFlagReturn()) {
 			result = "A3";
 			return false;
@@ -1052,11 +1052,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return true;
 	}
 
-	private boolean saveThumbInfo(NicoClient client) {
-		if(Setting.isSaveThumbInfo())
-			return saveThumbInfo0(client);
-		else
+	private boolean saveThumbInfo(NicoClient client, String vtag) {
+		if(!Setting.isSaveThumbInfo())
 			return true;
+		if(saveThumbInfo0(client, vtag))
+			return true;
+		// コミュニティ動画はthumbinfoが取れないのでsmIDを使う
+		if(alternativeTag.isEmpty())
+			alternativeTag = client.getAlternativeTag();
+		if(alternativeTag.isEmpty() || alternativeTag.equals(Tag))
+			return false;
+		return saveThumbInfo0(client, alternativeTag);
 	}
 
 	private boolean saveThumbUser(Path infoFile, NicoClient client) {
@@ -1294,8 +1300,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 			}
 			//alternativeVideoID取得
-			if(alternativeVideoID.isEmpty()){
-				alternativeVideoID = getViewCounterID(CommentFile);
+			if(alternativeTag.isEmpty()){
+				alternativeTag = getViewCounterVideoTag(CommentFile);
 			}
 			//combine ファイル内ダブリも削除
 			filelist.clear();
@@ -1322,7 +1328,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return true;
 	}
 
-	private String getViewCounterID(File comfile) {
+	private String getViewCounterVideoTag(File comfile) {
 		//コメントファイルの最初の<view_counter id="..." > の文字列を返す
 		String text = Path.readAllText(comfile, "UTF-8");
 		Pattern p = Pattern.compile("<view_counter [^>]+>");
@@ -1333,7 +1339,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			view_counter  = m.group() ;
 			ret = getRexpFromChats(view_counter, "id=\"([a-zA-Z]+[0-9]+)\"", 1);
 			if(!ret.isEmpty())
-				return "[" + ret + "]";
+				return ret;
 		}
 		return ret;
 	}
@@ -1459,8 +1465,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 			}
 			//alternativeVideoID取得
-			if(alternativeVideoID.isEmpty()){
-				alternativeVideoID = getViewCounterID(OwnerCommentFile);
+			if(alternativeTag.isEmpty()){
+				alternativeTag = getViewCounterVideoTag(OwnerCommentFile);
 			}
 			OwnerMiddleFile = mkTemp(TMP_OWNERCOMMENT);
 			//ここで commentReplaceが作られる
@@ -1783,6 +1789,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				VideoBaseName = Setting.isChangeTitleId()?
 					VideoTitle + VideoID : VideoID + VideoTitle;
 				sendtext(Tag + "の情報の取得に成功");
+				if(alternativeTag.isEmpty()){
+					alternativeTag = client.getAlternativeTag();
+				}
 			}
 
 			stopwatch.show();
@@ -1807,7 +1816,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(!success) return result;
 
 			stopwatch.show();
-			if(!saveThumbInfo(client)){
+			if(!saveThumbInfo(client, Tag)){
 				if(isSaveConverted())
 					System.out.println("追加情報の取得に失敗しましたが続行します。");
 				else {
@@ -2366,7 +2375,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		ffmpeg.addCmd(" -metadata");
 		ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
 		ffmpeg.addCmd(" -metadata");
-		ffmpeg.addCmd(" \"comment="+alternativeVideoID+"\"");
+		ffmpeg.addCmd(" \"comment="+"["+alternativeTag+"]"+"\"");
 		ffmpeg.addCmd(" ");
 	}
 
@@ -2560,7 +2569,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 				}else {
 					NicoClient client = ConvertManager.getManagerClient(this);
-					if(saveThumbInfo0(client) && saveThumbnailJpg(thumbInfo, client)){
+					if(saveThumbInfo0(client, Tag) && saveThumbnailJpg(thumbInfo, client)){
 						thumbfile = thumbnailJpg;
 					}
 				}
@@ -2651,8 +2660,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		int code = -1;
 		infoStack = new InfoStack(MovieInfo);
 		File input = VideoFile;
-		if(alternativeVideoID.isEmpty()){
-			alternativeVideoID = VideoID;
+		if(alternativeTag.isEmpty()){
+			alternativeTag = Tag;
 		}
 		if(fwsFile!=null)
 			input = fwsFile;

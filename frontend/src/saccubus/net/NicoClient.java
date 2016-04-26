@@ -14,6 +14,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -333,6 +334,11 @@ public class NicoClient {
 		return VideoTitle;
 	}
 
+	private String altTag = "";
+	public String getAlternativeTag(){
+		return altTag;
+	}
+
 	private static Pattern safeFileName_SPACE = Pattern.compile(" {2}+");
 	public static String safeFileName(String str) {
 		//実体参照のパース
@@ -496,6 +502,9 @@ public class NicoClient {
 				VideoTitle = thumbTitle;
 				found = getVideoTitle()!=null;
 			}
+			if(altTag.isEmpty())
+				altTag = getAltTag(sb.substring(0));
+
 			PrintWriter pw;
 			if(!found || saveWatchPage){
 				titleHtml = Path.mkTemp(tag + "watch.htm");
@@ -513,6 +522,17 @@ public class NicoClient {
 			return false;
 		}
 		return true;
+	}
+	private String getAltTag(String text) {
+		Pattern p = Pattern.compile("www.nicovideo.jp/allegation/([a-zA-Z]+[0-9]+)");
+		Matcher m = p.matcher(text);
+		String ret = "";
+		while(m.find()){
+			ret = m.group(1);
+			if(!ret.isEmpty())
+				return ret;
+		}
+		return "";
 	}
 
 	private boolean NeedsKey = false;
@@ -1282,6 +1302,10 @@ public class NicoClient {
 		return filePath;
 	}
 */
+
+	public Path getAllegationPageFile(String tag, NicoClient client) {
+		return null;
+	}
 	public Path getThumbInfoFile(String tag){
 		final String THUMBINFO_URL = "http://ext.nicovideo.jp/api/getthumbinfo/";
 		String url = THUMBINFO_URL + tag;
