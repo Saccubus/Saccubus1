@@ -1303,9 +1303,6 @@ public class NicoClient {
 	}
 */
 
-	public Path getAllegationPageFile(String tag, NicoClient client) {
-		return null;
-	}
 	public Path getThumbInfoFile(String tag){
 		final String THUMBINFO_URL = "http://ext.nicovideo.jp/api/getthumbinfo/";
 		String url = THUMBINFO_URL + tag;

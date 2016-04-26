@@ -1068,9 +1068,18 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private boolean saveThumbUser(Path infoFile, NicoClient client) {
 		sendtext("投稿者情報の保存");
 		Path userThumbFile = null;
+		boolean isUser = true;
+		String ownerName = null;
 		if(Setting.isSaveThumbUser()){
 			String infoXml = Path.readAllText(infoFile.getPath(), "UTF-8");
 			String userID = NicoClient.getXmlElement(infoXml, "user_id");
+			if(userID==null || userID.isEmpty()){
+				isUser = false;
+				userID = NicoClient.getXmlElement(infoXml, "ch_id");
+				ownerName = NicoClient.getXmlElement(infoXml, "ch_name");
+				if(userID!=null && !userID.isEmpty())
+					userID = "ch"+userID;
+			}
 			if(userID==null || userID.isEmpty() || userID.equals("none")){
 				sendtext("投稿者の情報がありません");
 				result = "A5";
@@ -1088,37 +1097,39 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			userThumbFile = new Path(userFolder, userID + ".htm");
 			String html = null;
-			String ownerName = null;
-			if(!userThumbFile.canRead()){
-				userThumbFile = client.getThumbUserFile(userID, userFolder);
-			}
-			if(userThumbFile != null && userThumbFile.canRead()){
-				html = Path.readAllText(userThumbFile.getPath(), "UTF-8");
-				ownerName = NicoClient.getXmlElement(html, "title");
-			}
-			if(ownerName == null || ownerName.contains("非公開プロフィール")){
-				ownerName = null;
-				userThumbFile = client.getUserInfoFile(userID, userFolder);
+			if(isUser){
+				if(!userThumbFile.canRead()){
+					userThumbFile = client.getThumbUserFile(userID, userFolder);
+				}
 				if(userThumbFile != null && userThumbFile.canRead()){
 					html = Path.readAllText(userThumbFile.getPath(), "UTF-8");
 					ownerName = NicoClient.getXmlElement(html, "title");
 				}
-				if(ownerName==null){
-					sendtext("投稿者の情報の入手に失敗");
-					result = "A7";
-					return false;
+				if(ownerName == null || ownerName.contains("非公開プロフィール")){
+					ownerName = null;
+					userThumbFile = client.getUserInfoFile(userID, userFolder);
+					if(userThumbFile != null && userThumbFile.canRead()){
+						html = Path.readAllText(userThumbFile.getPath(), "UTF-8");
+						ownerName = NicoClient.getXmlElement(html, "title");
+					}
+					if(ownerName==null){
+						sendtext("投稿者の情報の入手に失敗");
+						result = "A7";
+						ownerName="投稿者の情報の入手に失敗";
+					//	return false;
+					}
 				}
+				int index = ownerName.lastIndexOf("さんのプロフィール‐");
+				if(index > 0){
+					ownerName = ownerName.substring(0,index);
+				}
+				index = ownerName.lastIndexOf("さんのユーザーページ ‐");
+				if(index > 0){
+					ownerName = ownerName.substring(0,index) + "(ニコレポ非公開)";
+				}
+				infoXml = infoXml.replace("</user_id>",
+						"</user_id>\n<user>" + ownerName + "</user>");
 			}
-			int index = ownerName.lastIndexOf("さんのプロフィール‐");
-			if(index > 0){
-				ownerName = ownerName.substring(0,index);
-			}
-			index = ownerName.lastIndexOf("さんのユーザーページ ‐");
-			if(index > 0){
-				ownerName = ownerName.substring(0,index) + "(ニコレポ非公開)";
-			}
-			infoXml = infoXml.replace("</user_id>",
-				"</user_id>\n<user>" + ownerName + "</user>");
 			try {
 				PrintWriter pw = new PrintWriter(infoFile, "UTF-8");
 				pw.write(infoXml);
