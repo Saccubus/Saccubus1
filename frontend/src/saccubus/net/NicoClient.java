@@ -1303,9 +1303,6 @@ public class NicoClient {
 	}
 */
 
-	public Path getAllegationPageFile(String tag, NicoClient client) {
-		return null;
-	}
 	public Path getThumbInfoFile(String tag){
 		final String THUMBINFO_URL = "http://ext.nicovideo.jp/api/getthumbinfo/";
 		String url = THUMBINFO_URL + tag;
@@ -1334,14 +1331,15 @@ public class NicoClient {
 			}
 			br.close();
 			con.disconnect();
-			String s = sb.toString();
+			String s = sb.substring(0);
 			String title = getVideoTitle();
 			if(title==null){
 				if(s!=null && s.contains("title")){
 					title = safeFileName(getXmlElement(s, "title"));
 				}
 				if(title==null){
-					if(getVideoHistoryAndTitle1(tag, "", false))
+					boolean saveHtml = titleHtml==null || !titleHtml.canRead();
+					if(getVideoHistoryAndTitle1(tag, "", saveHtml))
 						title = getVideoTitle();
 					else
 						title = VideoTitle;
@@ -1354,10 +1352,35 @@ public class NicoClient {
 			thumbXml  = Path.mkTemp(tag + "_" + title + ".xml");
 			;
 			pw = new PrintWriter(thumbXml, encoding);
-			pw.write(sb.toString());
+			if(thumbXml!=null && s.indexOf("status=\"ok\"") < 0 && titleHtml!=null){
+				// ‰Â”\‚È‚çthumbXml‚ðtitleHtml‚©‚ç\¬‚·‚é
+				//
+				String html = Path.readAllText(titleHtml, encoding);
+				sb = new StringBuilder();
+				sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+				sb.append("<nicovideo_thumb_response status=\"ok\">\n");
+				sb.append("<thumb>\n");
+				sb.append(makeNewXmlElement(html,"code"));
+				String thumbStatus = getXmlElement(s, "nicovideo_thumb_response status");
+				sb.append("<original_response status=\""+thumbStatus+"\">\n");
+				sb.append("<video_id>"+tag+"</video_id>");
+				sb.append("<title>"+title+"</title>");
+				sb.append(makeNewXmlElement(html,"description"));
+				sb.append(makeNewXmlElement(html,"thumbnail_url"));
+				sb.append("<movie_type>"+ContentType+"</movie_type>");
+				sb.append("<watch_url>http://www.nicovideo.jp/watch/"+tag+"</watch_url>");
+				sb.append("<thumb_type>video</thumb_type>");
+				sb.append(makeNewXmlElement(html,"user_id"));
+				sb.append(makeNewXmlElement(html,"user_nickname"));
+				sb.append(makeNewXmlElement(html,"user_icon_url"));
+				sb.append("</thumb>");
+				sb.append("</nicovideo_thumb_response>");
+				s = sb.substring(0);
+			}
+			pw.write(s);
 			pw.flush();
 			pw.close();
-			if(thumbXml==null || sb.indexOf("status=\"ok\"") < 0){
+			if(thumbXml==null || s.indexOf("status=\"ok\"") < 0){
 				System.out.println("ng.\nSee file:" + thumbXml);
 				return null;
 			}
@@ -1378,6 +1401,11 @@ public class NicoClient {
 		index += tag.length() + 2;
 		dest = xml.substring(index, endIx);
 		return dest;
+	}
+
+	private static String makeNewXmlElement(String html, String key) {
+		String val = getXmlElement(html, key);
+		return "<"+key+">"+val+"</"+key+">";
 	}
 
 	public static String getXmlElement2(String xml, String tag){
