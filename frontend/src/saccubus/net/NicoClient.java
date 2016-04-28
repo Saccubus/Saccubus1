@@ -2,6 +2,7 @@ package saccubus.net;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,7 +14,9 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -420,8 +423,8 @@ public class NicoClient {
 	private static final String TITLE_GINZA_DIV = "DataContainer\"";
 	private static final String TITLE_GINZA_DUMMY = "<title>ニコニコ動画:GINZA</title>";
 	public boolean getVideoHistoryAndTitle(String tag, String watchInfo, boolean saveWatchPage) {
-		if(getThumbInfoFile(tag) != null && !saveWatchPage){
-			//return true;
+		if(getThumbInfoFile(tag) != null && titleHtml!=null){
+			return true;
 		}
 		return getVideoHistoryAndTitle1(tag, watchInfo, saveWatchPage);
 	}
@@ -1348,43 +1351,82 @@ public class NicoClient {
 			if(ContentType==null){
 				ContentType = getXmlElement(s, "movie_type");
 			}
-			PrintWriter pw;
 			thumbXml  = Path.mkTemp(tag + "_" + title + ".xml");
-			;
-			pw = new PrintWriter(thumbXml, encoding);
-			if(thumbXml!=null && s.indexOf("status=\"ok\"") < 0 && titleHtml!=null){
+			if(s.indexOf("status=\"ok\"") < 0 && titleHtml!=null){
 				// 可能ならthumbXmlをtitleHtmlから構成する
 				//
 				String html = Path.readAllText(titleHtml, encoding);
+				if(html==null)
+					return null;
+				String text = html;
+				// 動画ページのJSONを取り出す
+				text = getXmlElement1(text, "body");	//body
+				if(text==null)
+					return null;
+				text = getXmlElement1(text, "div");
+					//div id="watchAPIDataContainer" style="display:none"
+				if(text==null)
+					return null;
+				String json_start = "{&quot;flashvars&quot;:";
+				int start = text.indexOf(json_start);
+				if(start < 0)
+					return null;
+				String json_end = "<";
+				int end = (text+json_end).indexOf(json_end, start);	// end of JSON
+				text = (text+json_end).substring(start, end);
+				text = text.replace("&quot;", "\"");
+				text = URLDecoder.decode(text, encoding);	// decode URLEncode
+				//Json解析
+				Path file = new Path(titleHtml.getRelativePath()+"J.xml");
+				Path.unescapeStoreXml(file, text, url);		//xml is property key:json val:JSON
+				Properties prop = new Properties();
+				prop.loadFromXML(new FileInputStream(file));		//read JSON xml
+				text = prop.getProperty("json", "0");
+
 				sb = new StringBuilder();
 				sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 				sb.append("<nicovideo_thumb_response status=\"ok\">\n");
 				sb.append("<thumb>\n");
-				sb.append(makeNewXmlElement(html,"code"));
-				String thumbStatus = getXmlElement(s, "nicovideo_thumb_response status");
-				sb.append("<original_response status=\""+thumbStatus+"\">\n");
-				sb.append("<video_id>"+tag+"</video_id>");
-				sb.append("<title>"+title+"</title>");
-				sb.append(makeNewXmlElement(html,"description"));
-				sb.append(makeNewXmlElement(html,"thumbnail_url"));
-				sb.append("<movie_type>"+ContentType+"</movie_type>");
-				sb.append("<watch_url>http://www.nicovideo.jp/watch/"+tag+"</watch_url>");
-				sb.append("<thumb_type>video</thumb_type>");
-				sb.append(makeNewXmlElement(html,"user_id"));
-				sb.append(makeNewXmlElement(html,"user_nickname"));
-				sb.append(makeNewXmlElement(html,"user_icon_url"));
-				sb.append("</thumb>");
-				sb.append("</nicovideo_thumb_response>");
+				sb.append(makeNewXmlElement(s,"code"));
+				sb.append("<video_id>"+tag+"</video_id>\n");
+				sb.append("<title>"+title+"</title>\n");
+				String description = getJsonValue(text,"description");
+				description = description.replace("&quot;", "”")
+					.replace("&lt;", "(").replace("&gt;", ")")
+					.replaceAll("\\(br ?/?\\)","\n");
+				sb.append("<description>"+description+"</description>\n");
+				String thumbUrl = getJsonValue(text,"thumbnail");
+				if(thumbUrl==null)
+					thumbUrl = getJsonValue(text,"thumbImage");
+				if(thumbUrl==null) thumbUrl="";
+				sb.append("<thumbnail_url>"+thumbUrl+"</thumbnail_url>\n");
+				if(ContentType==null)
+					ContentType = getJsonValue(text,"movie_type");
+				sb.append("<movie_type>"+ContentType+"</movie_type>\n");
+				sb.append("<watch_url>http://www.nicovideo.jp/watch/"+tag+"</watch_url>\n");
+				sb.append("<thumb_type>video</thumb_type>\n");
+				String user_id = getJsonValue(text,"user_id");
+				if(user_id==null || user_id.isEmpty())
+					user_id = getJsonValue(text,"videoUserId");
+				if(user_id==null)
+					user_id = "";
+				sb.append("<user_id>"+user_id+"</user_id>\n");
+				String nickname = getJsonValue(text,"user_nickname");
+				if(nickname!=null)
+					sb.append(makeNewJsonValue(text,"user_nickname"));
+				sb.append(makeNewJsonValue(text,"user_icon_url"));
+				sb.append("</thumb>\n");
+				sb.append("</nicovideo_thumb_response>\n");
 				s = sb.substring(0);
 			}
+			PrintWriter pw = new PrintWriter(thumbXml, encoding);
 			pw.write(s);
 			pw.flush();
 			pw.close();
-			if(thumbXml==null || s.indexOf("status=\"ok\"") < 0){
+			if(s.indexOf("status=\"ok\"") < 0)
 				System.out.println("ng.\nSee file:" + thumbXml);
-				return null;
-			}
-			System.out.println("ok.");
+			else
+				System.out.println("ok.");
 			return thumbXml;
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -1392,36 +1434,65 @@ public class NicoClient {
 		}
 	}
 
-	public static String getXmlElement(String xml, String tag){
-		String dest;
-		int index = xml.indexOf("<"+tag+">");
-		int endIx = xml.indexOf("</", index+2);
-		if(index < 0 || endIx < 0)
-			return null;
-		index += tag.length() + 2;
-		dest = xml.substring(index, endIx);
-		return dest;
+	public static String getXmlElement(String input, String key){
+		Pattern p = Pattern.compile("<"+key+">(.*)</"+key+">",Pattern.DOTALL);
+		Matcher m = p.matcher(input);
+		if(m.find()){
+			return m.group(1);
+		}
+		return null;
 	}
 
 	private static String makeNewXmlElement(String html, String key) {
 		String val = getXmlElement(html, key);
-		return "<"+key+">"+val+"</"+key+">";
+		if(val==null)
+			val = "";
+		return "<"+key+">"+val+"</"+key+">\n";
 	}
 
-	public static String getXmlElement2(String xml, String tag){
-		String dest;
-		int index = xml.indexOf("<"+tag);
-		if(index < 0)
-			return null;
-		index += tag.length() + 1;
-		index = xml.indexOf(">", index);
-		if(index < 0)
-			return null;
-		int endIx = xml.indexOf("</", index+1);
-		if(endIx < 0)
-			endIx = xml.length();
-		dest = xml.substring(index+1, endIx);
+	public static String getJsonValue(String input, String key){
+		Pattern p = Pattern.compile("\""+key+"\":\"?([^,}]+)\"?[,}]",Pattern.DOTALL);
+		Matcher m = p.matcher(input);
+		String val = "";
+		if(m.find()){
+			val = m.group(1).replace("\"", "");
+			return val;
+		}
+		return null;
+	}
+
+	private static String makeNewJsonValue(String html, String key) {
+		String val = getJsonValue(html, key);
+		if(val==null)
+			val = "";
+		return "<"+key+">"+val+"</"+key+">\n";
+	}
+
+	public static String getXmlElement1(String xml, String key){
+		Pattern p = Pattern.compile("<"+key+"[^>]*>(.*)</"+key,Pattern.DOTALL);
+		Matcher m = p.matcher(xml);
+		String dest = "";
+		if(m.find()){
+			dest = m.group(1);
+			return dest;
+		}
 		return dest;
+	}
+
+	public static String getXmlElement2(String input, String key){
+		Pattern p = Pattern.compile("<"+key+"[^>]*>([^<]*)</",Pattern.DOTALL);
+		Matcher m = p.matcher(input);
+		if(m.find())
+			return m.group(1);
+		return null;
+	}
+
+	public static String getXmlAttribute(String input, String atribname){
+		Pattern p = Pattern.compile("<[^>]*"+atribname+"=\"([^\"]+)\"[^>]*>",Pattern.DOTALL);
+		Matcher m = p.matcher(input);
+		if(m.find())
+			return m.group(1);
+		return null;
 	}
 
 	public Path getThumbUserFile(String userID, File userFolder){

@@ -1084,6 +1084,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ownerName = NicoClient.getXmlElement(infoXml, "ch_name");
 				if(userID!=null && !userID.isEmpty())
 					userID = "ch"+userID;
+				else
+					isUser = true;
 			}
 			if(userID==null || userID.isEmpty() || userID.equals("none")){
 				sendtext("“ŠeÒ‚Ìî•ñ‚ª‚ ‚è‚Ü‚¹‚ñ");
