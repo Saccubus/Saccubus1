@@ -3273,10 +3273,11 @@ public class MainFrame extends JFrame {
 			//DoButton has nolonger stop function
 			// so new video or new mylist will be converted
 			url = VideoID_TextField.getText();
-			if(url==null || url.isEmpty()){
+			if(url==null)
 				url = "";
-				sendtext("MainFrame NULLPOinter url error");
-				System.out.println("MainFrame NULLPOinter url error");
+			if(url.isEmpty()){
+				sendtext("URL/ID‚ª“ü—Í‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
+				System.out.println("•ÏŠ·ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ªURL/ID—“‚ª“ü—Í‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
 				return;
 			}
 			requestHistory.add(url);
@@ -3450,30 +3451,31 @@ public class MainFrame extends JFrame {
 			if(	  url.startsWith("mylist/")
 				||url.startsWith("user/")
 				||url.startsWith("my/")
-				||url.startsWith("watch/")){
-				url = "http://www.nicovideo.jp/" + url;	//may not work
-			}else if(url.startsWith("search/")
+				||url.startsWith("watch/")
+				||url.startsWith("search/")
 				||url.startsWith("tag/")){
-				String keyword = url.replaceFirst("(search|tag)/", "");
-				String watchinfo = "";
-				int index = keyword.indexOf('?');
-				if (index > 0){
-					watchinfo = keyword.substring(index);
-					keyword = keyword.substring(0, index);
-				}
-				try {
-					url = url.replace(keyword, URLEncoder.encode(keyword, "UTF-8")) + watchinfo;
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
-				url = "http://www.nicovideo.jp/" + url;
+				url = "http://www.nicovideo.jp/" + url;	//may not work
 			}else if(url.startsWith("lv")){
 				url = "http://live.nicovideo.jp/watch/"+ url;	//may not work
 			}else if(url.startsWith("co")){
 				url = "http://com.nicovideo.jp/watch/" + url;	//may not work
 			}
-			if(url.startsWith("tag/")){
-				url = "http://www.nicovideo.jp/" + url;
+		}
+		if(url.startsWith("http://www.nicovideo.jp/tag/")
+			||url.startsWith("http://www.nicovideo.jp/search/")){
+			String keyword = url.replaceFirst("http://www.nicovideo.jp/(search|tag)/", "");
+			String watchinfo = "";
+			int index = keyword.indexOf('?');
+			if (index > 0){
+				watchinfo = keyword.substring(index);
+				keyword = keyword.substring(0, index);
+			}
+			if(!keyword.contains("%")){
+				try {
+					url = url.replace(keyword, URLEncoder.encode(keyword, "UTF-8")) + watchinfo;
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return url;
