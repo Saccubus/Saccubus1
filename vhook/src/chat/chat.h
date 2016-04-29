@@ -89,7 +89,7 @@ struct CHAT_SET{
 };
 
 //初期化
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,int cid,const char* com_type,int toLeft);
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,int cid,const char* com_type,int toLeft, int is_live);
 void closeChat();
 //イテレータ
 void resetChatIterator(CHAT* chat);

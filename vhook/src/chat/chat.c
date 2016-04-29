@@ -13,7 +13,7 @@ SDL_Color convColor24(int color);
  * èoóÕ CHAT chat óÃàÊämï€ÅAçÄñ⁄ê›íË
  * èoóÕ CHAT_SLOT chat->slot Å© slot É|ÉCÉìÉ^ê›íËÇÃÇ›
  */
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,int cid,const char* com_type,int toLeft){
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,int cid,const char* com_type,int toLeft,int is_live){
 	int i;
 	int max_no = INTEGER_MIN;
 	int min_no = INTEGER_MAX;
@@ -217,6 +217,9 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			item->vappear = vpos;
 		}else{
 			//naka
+			if(is_live){	// vposÇÊÇËëÅÇ≠ï\é¶Ç≈Ç´Ç»Ç¢ÇÃÇ≈vposÇ1ïbíxÇ≠Ç∑ÇÈ
+				item->vpos += TEXT_AHEAD_SEC;
+			}
 			item->vstart = vpos - TEXT_AHEAD_SEC;	//ÇPïbëOÇ©ÇÁ
 			// item->vend = vpos + TEXT_SHOW_SEC_S - 1;
 			item->vend = vpos + duration - 1 + TEXT_AHEAD_SEC;	//ÇPïbå„Ç‹Ç≈ï\é¶;

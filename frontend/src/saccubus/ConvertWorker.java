@@ -225,6 +225,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File lowVideoFile;
 	private boolean isConverting = false;
 	private boolean isDebugNet = false;
+	private boolean isLive = false;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -3063,8 +3064,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ffmpeg.addCmd("|--comment-speed:"
 					+ URLEncoder.encode(comment_speed, encoding));
 			}
-			if((Setting.isLive()&&Pattern.matches("sm[0-8]|(sm[0-8]_)?lv.*", Tag))
-				||!MainFrame.idcheck(Tag)){
+			if(convertIsLive()){
 				ffmpeg.addCmd("|--live");
 			}
 			String extra = Setting.getExtraMode();
@@ -3172,6 +3172,21 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	private boolean convertIsLive() {
+		if(Setting.isLive()){
+			// ローカル変換で
+			if(Pattern.matches("sm[0-8]|(sm[0-8]_)?lv.*", Tag))		// Tagが sm9より小さい場合 lvを含む場合
+				isLive = true;
+			if(Tag.length() <= 2 || !Character.isDigit(Tag.charAt(2)))	// 3文字目が数字ではない場合
+				isLive = true;
+			if(Pattern.matches("[a-zA-Z][0-9].*", Tag))	// 英字1文字+数字の場合
+				isLive = true;
+		}
+		else if(!MainFrame.idcheck(Tag))	// IDではない文字が設定された場合(エラーになる?)
+			isLive = true;
+		return isLive;
 	}
 
 	private String getFontUrl(File fontfile,String enc) throws UnsupportedEncodingException {

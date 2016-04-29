@@ -481,7 +481,7 @@ int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int m
 	if (cdata->enable_comment){
 		fprintf(log,"[main/init]%s comment is enabled.\n",com_type);
 		//コメントデータ
-		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length, data->nico_width_now, cid, com_type, tl)){
+		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length, data->nico_width_now, cid, com_type, tl, data->is_live)){
 			fprintf(log,"[main/init]initialized %s comment.\n",com_type);
 		}else{
 			fprintf(log,"[main/init]failed to initialize %s comment.",com_type);
