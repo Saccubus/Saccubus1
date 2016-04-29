@@ -224,6 +224,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File appendOptionalFile;
 	private File lowVideoFile;
 	private boolean isConverting = false;
+	private boolean isDebugNet = false;
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -624,6 +625,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					result = "35";
 					return false;
 				}
+				isDebugNet = proxy.startsWith(NicoClient.DEBUG_PROXY);
 			} else {
 				proxy = null;
 				proxy_port = -1;
@@ -808,7 +810,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						.getBackCommentFromLength(back_comment);
 			}
 			sendtext("コメントのダウンロード開始中");
-			if(isAppendComment()){
+			if(isAppendComment() || !isDebugNet){
 				// ファイル名設定
 				appendCommentFile = mkTemp(TMP_APPEND_EXT);
 				// 前処理
@@ -829,12 +831,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				result = "53";
 				return false;
 			}
-			if(isAppendComment()){
+			if(isAppendComment() || !isDebugNet){	// デバッグでなければコメントファイル整理
 				// ファイル内ダブリを整理
+				backup = Path.fileCopy(CommentFile,appendCommentFile);
 				filelist.add(CommentFile);
 				sendtext("コメントファイル整理中");
 				if (!CombineXML.combineXML(filelist, CommentFile)){
 					sendtext("コメントファイルが整理出来ませんでした");
+					if(backup)
+						Path.move(appendCommentFile, CommentFile);	// 失敗したらバックアップを戻す
 					result = "5A";
 					return false;
 				}
@@ -851,7 +856,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					OptionalThreadFile = getOptionalThreadFile(Setting.getCommentFile());
 				}
 				backup = false;
-				if(isAppendComment()){
+				if(isAppendComment() || !isDebugNet){
 					appendOptionalFile = mkTemp(TMP_APPEND_OPTIONAL_EXT);
 					// 前処理
 					if(OptionalThreadFile.exists()){
@@ -873,12 +878,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					result = "55";
 					return false;
 				}
-				if(isAppendComment()){
+				if(isAppendComment() || !isDebugNet){
+					backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
 					filelist.clear();
 					filelist.add(OptionalThreadFile);
 					sendtext("オプショナルスレッド整理中");
 					if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
 						sendtext("オプショナルスレッドが整理出来ませんでした");
+						if(backup)
+							Path.move(appendOptionalFile, OptionalThreadFile);
 						result = "5B";
 						return false;
 					}
