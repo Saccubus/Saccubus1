@@ -429,7 +429,8 @@ public class Prompt {
 
 			int codes = 0;
 			int code = 0;
-			while(manager.getNumRun()>0 || manager.getNumReq()>0){
+			int rest = convNo;
+			do{
 				for(int j = 0; j<convNo;j++){
 					ConvertWorker conv = converterList[j];
 					if(conv!=null && conv.isDone()){
@@ -449,6 +450,7 @@ public class Prompt {
 									code = Integer.parseInt(s[1],16);
 								}
 							}
+							rest--;
 						}catch(Exception e1){
 							e1.printStackTrace();
 							code = -999;
@@ -465,12 +467,14 @@ public class Prompt {
 						e1.printStackTrace();
 					}
 				}
-			}
+				if(aborted || (manager.getNumReq() == 0 && manager.getNumRun()==0))
+					break;
+			}while(manager.getNumFinish() < convNo);
 			if(aborted){
 				code = 255;
 				System.out.println("’†Ž~\nRESULTS="+code);
-			}else{
-				System.out.println("³íI—¹\nRESULTS="+code);
+			}else {
+				System.out.println("I—¹\nRESULTS="+code);
 			}
 			if(code!=0){
 				MainFrame.errorListSave(errorList);
@@ -481,6 +485,7 @@ public class Prompt {
 	}
 
 	private static void AllCancel_ActionHandler(ActionEvent e) {
+		aborted  = true;
 		for(ConvertStopFlag flag:flags){
 			if(flag!=null){
 				manager.gotoCancel(flag);
@@ -489,7 +494,6 @@ public class Prompt {
 		manager.cancelAllRequest();
 		manager.queueCheckAndGo();
 		stopButton.setEnabled(false);
-		aborted  = true;
 	}
 
 	private static int getLogsize(){

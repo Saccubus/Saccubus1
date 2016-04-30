@@ -310,4 +310,8 @@ public class ConvertManager extends Thread {
 	public int getNumThread(){
 		return numThread.get();
 	}
+
+	public int getNumFinish() {
+		return numFinish.get();
+	}
 }
