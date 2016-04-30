@@ -430,7 +430,6 @@ public class Prompt {
 
 			int codes = 0;
 			int code = 0;
-			int rest = convNo;
 			do{
 				for(int j = 0; j<convNo;j++){
 					ConvertWorker conv = converterList[j];
@@ -451,7 +450,6 @@ public class Prompt {
 									code = Integer.parseInt(s[1],16);
 								}
 							}
-							rest--;
 						}catch(Exception e1){
 							e1.printStackTrace();
 							code = -999;
@@ -470,16 +468,14 @@ public class Prompt {
 				}
 				if(aborted || (manager.getNumReq() == 0 && manager.getNumRun()==0))
 					break;
-				if(rest == 0)
-					break;
 			}while(manager.getNumFinish() < convNo);
 			if(aborted){
-				code = 255;
+				codes = 255;
 				System.out.println("’†Ž~\nRESULTS="+code);
 			}else {
 				System.out.println("I—¹\nRESULTS="+code);
 			}
-			if(code!=0){
+			if(codes!=0){
 				errorList.save();
 				System.out.println("ƒGƒ‰[‚ª‚ ‚è‚Ü‚µ‚½");
 			}
