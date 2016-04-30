@@ -67,7 +67,7 @@ public class Prompt {
 	private static String watchinfo;
 	private static ArrayList<ConvertStopFlag> flags = new ArrayList<ConvertStopFlag>();
 	private static HistoryDeque<File> playList;
-	private static StringBuffer errorList;
+	private static ErrorList errorList;
 	private static boolean aborted = false;
 
 	public static void main(String[] args) {
@@ -208,6 +208,7 @@ public class Prompt {
 			setting.setReplaceOptions(optionMap);
 		}
 		errorList = setting.getErrorList();
+		errorList.clear();
 		JLabel status = new JLabel();
 		JLabel info = new JLabel();
 		JLabel watch = new JLabel();
@@ -469,6 +470,8 @@ public class Prompt {
 				}
 				if(aborted || (manager.getNumReq() == 0 && manager.getNumRun()==0))
 					break;
+				if(rest == 0)
+					break;
 			}while(manager.getNumFinish() < convNo);
 			if(aborted){
 				code = 255;
@@ -477,7 +480,7 @@ public class Prompt {
 				System.out.println("I—¹\nRESULTS="+code);
 			}
 			if(code!=0){
-				MainFrame.errorListSave(errorList);
+				errorList.save();
 				System.out.println("ƒGƒ‰[‚ª‚ ‚è‚Ü‚µ‚½");
 			}
 			exit(code);

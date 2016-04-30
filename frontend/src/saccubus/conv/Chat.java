@@ -192,7 +192,8 @@ public class Chat {
 						sec = Integer.parseInt(strsec) + 1;	// @0 -> 1
 						Location |= ((sec & CMD_MAX_SECONDS) << CMD_LOC_SECONDS_BITS) & CMD_LOC_SECONDS_MASK;
 					} catch(NumberFormatException e){
-						e.printStackTrace();
+						// e.printStackTrace();
+						System.out.println("\nChat: •ÏŠ·ƒGƒ‰[ @"+strsec+" at No:"+No);
 					}
 				}
 			}

@@ -127,7 +127,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String alternativeTag = "";
 	private final ConvertManager manager;
 	private Gate gate;
-	private StringBuffer errorList;
+	private ErrorList errorList;
 	private String lowVideoID;
 	private int tid;
 
@@ -1745,10 +1745,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(sbRet!=null){
 			sbRet.append("RESULT=[FF]\n");
 		}
-		if(parent!=null){
-			errorList.append(Tag+WatchInfo+"\n");
-			parent.setErrorUrl(errorList);
-		}
+		errorList.setError(Tag+WatchInfo+"\n");
 	}
 
 	@Override
@@ -1990,14 +1987,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			System.out.println("ConvertWorker#done.ret==null. ConvertWorker might had Exception!");
 		else {
 			System.out.println("["+retStr+"]Converter.done! "+Tag);
-			if(parent!=null){
-				if(!retStr.equals("0")){
-					errorList.append(Tag+WatchInfo+"\n");
-					parent.setErrorUrl(errorList);
-				}else{
+			if(!retStr.equals("0")){
+				errorList.setError(Tag+WatchInfo+"\n");
+			}else
+				if(parent!=null){
 					parent.setPlayList();
 				}
-			}
 		}
 	}
 

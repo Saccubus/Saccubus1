@@ -288,7 +288,7 @@ public class MainFrame extends JFrame {
 	private boolean OneLineMode;
 	private JCheckBox downloadDownCheckBox;
 
-	private StringBuffer errorList;
+	private ErrorList errorList;
 	private JPanel errorStatusPanel;
 	private JLabel errorUrlLabel;
 	private JButton errorResetUrlButton;
@@ -2366,15 +2366,16 @@ public class MainFrame extends JFrame {
 			errorStatusPanel = new JPanel();
 			errorUrlLabel = new JLabel(" ");
 			errorUrlLabel.setForeground(Color.DARK_GRAY);
+			errorList = new ErrorList(errorUrlLabel);
 			errorResetUrlButton = new JButton("çƒìoò^");
 			errorResetUrlButton.setForeground(Color.BLUE);
 			errorResetUrlButton.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					myListGetterDone(errorList);
-					errorList.delete(0, errorList.length());
-					errorUrlLabel.setText(" ");
+					StringBuffer vlist = new StringBuffer(errorList.getString());
+					myListGetterDone(vlist);
+					errorList.clear();
 				}
 			});
 			errorListDeleteButton = new JButton("è¡ãé");
@@ -2383,8 +2384,7 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					errorList.delete(0, errorList.length());
-					errorUrlLabel.setText(" ");
+					errorList.clear();
 					convertManager.clearError();
 				}
 			});
@@ -2394,9 +2394,7 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					errorListSave(errorList);
-					errorList.delete(0, errorList.length());
-					errorUrlLabel.setText(" ");
+					errorList.save();
 					convertManager.clearError();
 				}
 
@@ -2469,19 +2467,6 @@ public class MainFrame extends JFrame {
 			managementPanel.add(playVideoPanel, grid43);
 		}
 		return managementPanel;
-	}
-
-	static void errorListSave(StringBuffer errbuf) {
-		Path errlistSave = new Path("ÉGÉâÅ["+WayBackDate.formatNow()+".txt");
-		String text = errbuf.toString();
-		try {
-			PrintWriter pw = new PrintWriter(errlistSave);
-			pw.print(text);
-			pw.flush();
-			pw.close();
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
 	}
 
 	private void playVideoNow() {
@@ -3041,8 +3026,7 @@ public class MainFrame extends JFrame {
 		nThreadSpinner.setValue((Integer)(setting.getNumThread()));
 		PendingModeCheckbox.setSelected(setting.isPendingMode());
 		OneLineCheckbox.setSelected(setting.isOneLineMode());
-		errorList = new StringBuffer(setting.getErrorList());
-		setErrorUrl(errorList);
+		errorList.setError(setting.getErrorList().getString());
 	}
 
 	/**
@@ -4947,10 +4931,6 @@ s	 * @return javax.swing.JPanel
 
 	void setNotice(String string) {
 		notice = string;
-	}
-
-	public void setErrorUrl(StringBuffer errorList) {
-		errorUrlLabel.setText(errorList.substring(0).replace("\n", "Å@"));
 	}
 
 	public void setPlayList() {

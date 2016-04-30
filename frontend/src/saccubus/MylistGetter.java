@@ -55,7 +55,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 //	private String Tag;
 	private Gate gate;
 	private final int id;
-	private final StringBuffer errorList;
+	private final ErrorList errorList;
 
 	public MylistGetter(int worker_id, String url0, MainFrame frame,
 		JLabel[] in_status,ConvertStopFlag flag, StringBuffer sb)
@@ -312,11 +312,11 @@ public class MylistGetter extends SwingWorker<String, String> {
 			}
 			if(!errorSet.isEmpty()){
 				// タイトル抽出失敗またはidcheckエラー
+				StringBuffer sb = new StringBuffer();
 				for(String es:errorSet){
-					errorList.append(es+watchInfo+"\n");
+					sb.append(es+watchInfo+"\n");
 				}
-				if(parent!=null)
-					parent.setErrorUrl(errorList);
+				errorList.setError(sb.substring(0));
 			}
 			// plist output
 			for(String k: map.keySet()){
@@ -475,9 +475,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 	}
 
 	private void addError(String errorID) {
-		errorList.append(errorID+watchInfo+"\n");
-		if(parent!=null)
-			parent.setErrorUrl(errorList);
+		errorList.setError(errorID+watchInfo+"\n");
 	}
 
 	//終了時EDTで自動実行される

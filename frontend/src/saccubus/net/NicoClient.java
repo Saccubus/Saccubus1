@@ -239,11 +239,13 @@ public class NicoClient {
 				return null;
 			}
 		} catch(IOException ex){
-			ex.printStackTrace();
+			if(Debug)
+				ex.printStackTrace();
 			System.out.println("Connection error. Check proxy ?");
 			setExtraError("コネクションエラー。プロキシが不正？");
 		} catch(IllegalStateException ex){
-			ex.printStackTrace();
+			if(Debug)
+				ex.printStackTrace();
 			System.out.println("Connection error. Check proxy ?");
 			setExtraError("コネクションエラー。プロキシが不正？");
 		}

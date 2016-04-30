@@ -183,7 +183,7 @@ public class ConvertingSetting {
 	private int numDownload;
 	private boolean PendingMode;
 	private boolean OneLineMode;
-	private StringBuffer errorList;
+	private ErrorList errorList;
 	private boolean liveFlag;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
@@ -407,7 +407,7 @@ public class ConvertingSetting {
 			int n_thread,
 			boolean pending_mode,
 			boolean one_line_mode,
-			StringBuffer error_list
+			ErrorList error_list
 		)
 	{
 		this(	mailaddress,
@@ -921,7 +921,7 @@ public class ConvertingSetting {
 	public boolean isOneLineMode(){
 		return OneLineMode;
 	}
-	public StringBuffer getErrorList(){
+	public ErrorList getErrorList(){
 		return errorList;
 	}
 	public boolean isLive(){
@@ -1285,7 +1285,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_NUM_DOWNLOAD, Integer.toString(setting.getNumDownload()));
 		prop.setProperty(PROP_PENDING_MODE, Boolean.toString(setting.isPendingMode()));
 		prop.setProperty(PROP_ONE_LINE_MODE, Boolean.toString(setting.isOneLineMode()));
-		prop.setProperty(PROP_ERROR_LIST, setting.getErrorList().substring(0));
+		prop.setProperty(PROP_ERROR_LIST, setting.getErrorList().getString());
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1540,7 +1540,7 @@ public class ConvertingSetting {
 			Integer.parseInt(prop.getProperty(PROP_NUM_THREAD, "1")),
 			Boolean.parseBoolean(prop.getProperty(PROP_PENDING_MODE, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ONE_LINE_MODE, "false")),
-			new StringBuffer(prop.getProperty(PROP_ERROR_LIST, ""))
+			new ErrorList(prop.getProperty(PROP_ERROR_LIST, ""))
 			);
 	}
 
