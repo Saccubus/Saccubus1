@@ -1744,7 +1744,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		sendtext("[FF]Converter cancelled.");
 		System.out.println("LastStatus:[FF]Converter cancelled.");
 		sbRet.append("RESULT=[FF]\n");
-		errorControl.setError(result,Tag+WatchInfo+"\n");
+		errorControl.setError(result,Tag+WatchInfo);
 	}
 
 	@Override
@@ -1925,7 +1925,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				sbRet.append("DATEUF=" + dateUserFirst + "\n");
 			}
 			if(!result.equals("0"))
-				errorControl.setError(result,Tag+WatchInfo+"\n");
+				errorControl.setError(result,Tag+WatchInfo);
 			else {
 				autoPlay.playAuto();
 			}

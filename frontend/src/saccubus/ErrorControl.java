@@ -36,7 +36,7 @@ public class ErrorControl {
 	}
 
 	public void setError(String code, String mes){
-		setError(mes+"\t"+code);
+		setError(mes.replace("\n", "")+"\t"+code+"\n");
 	}
 
 	public String getString(){

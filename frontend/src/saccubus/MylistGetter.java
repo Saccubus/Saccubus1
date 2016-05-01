@@ -476,7 +476,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 	}
 
 	private void addError(String code, String errorID) {
-		errorControl.setError(code,errorID+watchInfo+"\n");
+		errorControl.setError(code,errorID+watchInfo);
 	}
 
 	//I—¹EDT‚Å©“®Às‚³‚ê‚é
