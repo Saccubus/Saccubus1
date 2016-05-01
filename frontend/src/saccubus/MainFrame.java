@@ -255,7 +255,7 @@ public class MainFrame extends JFrame {
 	private JSpinner nThreadSpinner;
 	private String notice;
 	private HistoryDeque<String> requestHistory;
-	private HistoryDeque<File> playList = new HistoryDeque<File>(null);
+	private AutoPlay autoPlay;
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -288,7 +288,7 @@ public class MainFrame extends JFrame {
 	private boolean OneLineMode;
 	private JCheckBox downloadDownCheckBox;
 
-	private ErrorList errorList;
+	private ErrorControl errorControl;
 	private JPanel errorStatusPanel;
 	private JLabel errorUrlLabel;
 	private JButton errorResetUrlButton;
@@ -304,7 +304,6 @@ public class MainFrame extends JFrame {
 	private JButton playVideoBackButton;
 
 	private JButton AllSaveButton;
-	private VPlayer vplayer;
 
 	public MainFrame() {
 		try {
@@ -1271,6 +1270,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				autoPlayCheckBox.setSelected(autoPlay2CheckBox.isSelected());
+				autoPlay.setSelected(autoPlay2CheckBox.isSelected());
 			}
 		});
 		OptionalThreadInfoPanel.setBorder(BorderFactory.createTitledBorder(
@@ -1980,7 +1980,7 @@ public class MainFrame extends JFrame {
 		playConvertedVideoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				playVideoNow();
+				autoPlay.playVideo();
 			}
 		});
 		playConvertedVideoButton.setForeground(Color.blue);
@@ -2366,16 +2366,17 @@ public class MainFrame extends JFrame {
 			errorStatusPanel = new JPanel();
 			errorUrlLabel = new JLabel(" ");
 			errorUrlLabel.setForeground(Color.DARK_GRAY);
-			errorList = new ErrorList(errorUrlLabel);
+			errorControl = new ErrorControl(errorUrlLabel);
 			errorResetUrlButton = new JButton("再登録");
 			errorResetUrlButton.setForeground(Color.BLUE);
 			errorResetUrlButton.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					StringBuffer vlist = new StringBuffer(errorList.getString());
+					StringBuffer vlist = new StringBuffer(errorControl.getString());
 					myListGetterDone(vlist);
-					errorList.clear();
+					errorControl.clear();
+					convertManager.clearError();
 				}
 			});
 			errorListDeleteButton = new JButton("消去");
@@ -2384,7 +2385,7 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					errorList.clear();
+					errorControl.clear();
 					convertManager.clearError();
 				}
 			});
@@ -2394,8 +2395,10 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					errorList.save();
-					convertManager.clearError();
+					if(errorControl.save())
+						sendtext("エラーリストを保存しました");
+					else
+						sendtext("エラーリスト保存失敗");
 				}
 
 			});
@@ -2424,8 +2427,7 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					playList.back();
-					setPlayList();
+					autoPlay.back();
 				}
 			});
 			playVideoNextButton = new JButton("次");
@@ -2433,8 +2435,7 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					playList.next();
-					setPlayList();
+					autoPlay.next();
 				}
 			});
 			playVideoPlayButton = new JButton("再生");
@@ -2443,7 +2444,7 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					playVideoNow();
+					autoPlay.playVideo();
 				}
 			});
 			playVideoButtonPanel = new JPanel();
@@ -2465,31 +2466,9 @@ public class MainFrame extends JFrame {
 			grid43.fill = GridBagConstraints.BOTH;
 			grid43.insets = INSETS_0_5_0_5;
 			managementPanel.add(playVideoPanel, grid43);
+			autoPlay = new AutoPlay(autoPlayCheckBox,playVideoLabel,null,statusBar);
 		}
 		return managementPanel;
-	}
-
-	private void playVideoNow() {
-		try {
-			File convertedVideo = playList.getNow();
-			if(convertedVideo==null){
-				sendtext("変換後の動画がありません");
-				return;
-			}
-			if(!convertedVideo.canRead()){
-				sendtext("変換後の動画が読めません：" + convertedVideo.getName());
-				return;
-			}
-			if(vplayer!=null && vplayer.isAlive()){
-				vplayer.interrupt();
-			}
-			vplayer = new VPlayer(convertedVideo, statusBar);
-			vplayer.start();
-			return ;
-		} catch(NullPointerException ex){
-			sendtext("playConvertedVideo: NullPo.");
-			ex.printStackTrace();
-		}
 	}
 
 	private int noticeConvertManager(ChangeEvent e) {
@@ -2742,6 +2721,7 @@ public class MainFrame extends JFrame {
 		} catch(NumberFormatException e){
 			numThread = 1;
 		}
+		autoPlay.setCheckBox(autoPlayCheckBox);
 		return new ConvertingSetting(
 			MailAddrField.getText(),
 			new String(PasswordField.getPassword()),
@@ -2788,7 +2768,7 @@ public class MainFrame extends JFrame {
 			NotUseVhookCheckBox.isSelected(),
 			ShadowComboBox.getSelectedIndex(),
 			AddOption_ConvVideoFileCheckBox.isSelected(),
-			requestHistory,
+			requestHistory.getLast(),
 			VhookWidePathField.getText(),
 			UseVhookCheckBox.isSelected(),
 			UseVhookWideCheckBox.isSelected(),
@@ -2862,7 +2842,7 @@ public class MainFrame extends JFrame {
 			numThread,
 			PendingModeCheckbox.isSelected(),
 			OneLineCheckbox.isSelected(),
-			errorList
+			errorControl.getString()
 		);
 	}
 
@@ -2950,6 +2930,7 @@ public class MainFrame extends JFrame {
 		ShadowComboBox.setSelectedIndex(setting.getShadowIndex());
 		AddOption_ConvVideoFileCheckBox.setSelected(setting.isAddOption_ConvVideoFile());
 		VideoID_TextField.setText(setting.lastHistory());
+		requestHistory.add(setting.lastHistory());
 		VhookWidePathField.setText(setting.getVhookWidePath());
 		UseVhookCheckBox.setSelected(setting.isUseVhookNormal());
 		UseVhookWideCheckBox.setSelected(setting.isUseVhookWide());
@@ -3014,8 +2995,11 @@ public class MainFrame extends JFrame {
 		soundOnlyCheckBox.setSelected(setting.canSoundOnly());
 		thumbTextFiled.setText(setting.getDefaultThumbnail());
 		saveAutoListCheckBox.setSelected(setting.isSaveAutoList());
-		autoPlayCheckBox.setSelected(setting.isAutoPlay());
-		autoPlay2CheckBox.setSelected(setting.isAutoPlay());
+		boolean b = setting.isAutoPlay();
+		autoPlay.setSelected(b);
+		autoPlay2CheckBox.setSelected(b);
+		autoPlay.setLabel(playVideoLabel);
+		autoPlay.setStatus(statusBar);
 		liveOperationCheckBox.setSelected(setting.isLiveOperationConversion());
 		premiumColorCheckBox.setSelected(setting.isPremiumColorCheck());
 		zqOptionFileDescription.setText(setting.getOptionFileDescr());
@@ -3026,7 +3010,7 @@ public class MainFrame extends JFrame {
 		nThreadSpinner.setValue((Integer)(setting.getNumThread()));
 		PendingModeCheckbox.setSelected(setting.isPendingMode());
 		OneLineCheckbox.setSelected(setting.isOneLineMode());
-		errorList.setError(setting.getErrorList().getString());
+		errorControl.setError(setting.getErrorList());
 	}
 
 	/**
@@ -3165,7 +3149,7 @@ public class MainFrame extends JFrame {
 			sendtext("マイリスト結果受け取り失敗　バグ?");
 			return;
 		}
-		String str = vList.toString();
+		String str = vList.substring(0);
 		vList = new StringBuffer();
 		System.out.println(str);
 		String[] lists = str.split("\n");
@@ -3209,7 +3193,8 @@ public class MainFrame extends JFrame {
 				status3,
 				stopFlag,
 				this,
-				playList,
+				autoPlay,
+				errorControl,
 				vList);
 			// return to dispatch
  		}
@@ -3307,6 +3292,7 @@ public class MainFrame extends JFrame {
 					this,
 					status3,
 					stopFlag,
+					errorControl,
 					movieList);
 				mylistGetter.execute();
 				stopFlag.go();		//mylistGetterは無条件に実行
@@ -3332,7 +3318,8 @@ public class MainFrame extends JFrame {
 					status3,
 					stopFlag,
 					this,
-					playList,
+					autoPlay,
+					errorControl,
 					sbret);
 				// ConverManager処理を要求
 				// return to dispatch
@@ -3585,8 +3572,9 @@ public class MainFrame extends JFrame {
 					new JLabel[]{statusBar,new JLabel(),new JLabel()},
 					new ConvertStopFlag(new JButton()),
 					this,
-					playList,
+					autoPlay,
 					new ConvertManager(null),
+					errorControl,
 					new StringBuffer());
 			if (setting.isVideoFixFileName()) {
 				File folder = setting.getVideoFixFileNameFolder();
@@ -4931,17 +4919,6 @@ s	 * @return javax.swing.JPanel
 
 	void setNotice(String string) {
 		notice = string;
-	}
-
-	public void setPlayList() {
-		File video = playList.getNow();
-		if(video!=null){
-			playVideoLabel.setText(video.getName());
-			playVideoLabel.setForeground(Color.CYAN);
-		}else{
-			playVideoLabel.setText("");
-		}
-		repaint();
 	}
 
 }

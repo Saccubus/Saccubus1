@@ -55,10 +55,11 @@ public class MylistGetter extends SwingWorker<String, String> {
 //	private String Tag;
 	private Gate gate;
 	private final int id;
-	private final ErrorList errorList;
+	private final ErrorControl errorControl;
 
 	public MylistGetter(int worker_id, String url0, MainFrame frame,
-		JLabel[] in_status,ConvertStopFlag flag, StringBuffer sb)
+		JLabel[] in_status,ConvertStopFlag flag, ErrorControl error_control,
+		StringBuffer sb)
 	{
 		id = worker_id;
 		url = url0;
@@ -78,11 +79,11 @@ public class MylistGetter extends SwingWorker<String, String> {
 		StopFlag = flag;
 		Setting = frame.getSetting();
 		ret = sb;
-		errorList = Setting.getErrorList();
+		errorControl = error_control;
 	}
 
 	public MylistGetter(int worker_id, String tag, String info, ConvertingSetting setting,
-			JLabel[] in_status, ConvertStopFlag flag, StringBuffer sb)
+			JLabel[] in_status, ConvertStopFlag flag, ErrorControl errcon, StringBuffer sb)
 	{
 		id = worker_id;
 		url = tag;
@@ -93,7 +94,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		StopFlag = flag;
 		Setting = setting;
 		ret = sb;
-		errorList = Setting.getErrorList();
+		errorControl = errcon;
 	}
 
 	//	private void sendtext(String text) {
@@ -127,12 +128,12 @@ public class MylistGetter extends SwingWorker<String, String> {
 		Loader loader = new Loader(Setting, status3);
 		gate = Gate.open(id);
 		if(!loader.load(url,file)){
-			addError(url);
+			addError("E1",url);
 			sendtext("[E1]load失敗 "+url);
 			gate.exit("E1");
 			return "E1";
 		}
-		gate.exit(0);
+		gate.exit("0");
 		String text = Path.readAllText(file.getPath(), "UTF-8");
 		sendtext("保存しました。" + file.getRelativePath());
 		if(StopFlag.needStop()) {
@@ -166,7 +167,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 			String json_start = "Mylist.preload(";
 			int start = text.indexOf(json_start);
 			if(start < 0){
-				addError(url);
+				addError("E2",url);
 				sendtext("JSON not found "+url);
 				return "E2";	//JSON not found
 			}
@@ -298,7 +299,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				String json_start = "first_data: ";
 				int start = text.indexOf(json_start);
 				if(start < 0){
-					addError(url);
+					addError("E2",url);
 					sendtext("JSON not found "+url);
 					return "E2";	//JSON not found
 				}
@@ -316,7 +317,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				for(String es:errorSet){
 					sb.append(es+watchInfo+"\n");
 				}
-				errorList.setError(sb.substring(0));
+				errorControl.setError(sb.substring(0));
 			}
 			// plist output
 			for(String k: map.keySet()){
@@ -372,7 +373,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 					e.printStackTrace();
 				}
 				if(mson==null){
-					addError(url);
+					addError("E3",url);
 					sendtext("[E3]パース失敗");
 					return "E3";
 				}
@@ -398,7 +399,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				sendtext("抽出成功 "+mylistID + "　"+sz+"個　"+ url);
 				System.out.println("Success mylist/"+mylistID+" item:"+sz);
 				if(sz == 0){
-					addError(url);
+					addError("E4",url);
 					sendtext("[E4]動画がありません。"+mylistID);
 					//return "E4";
 					keys[0] = "id";
@@ -414,7 +415,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 					sendtext("抽出成功 "+mylistID + "　"+sz+"個　"+ url);
 					System.out.println("Success mylist/"+mylistID+" item:"+sz);
 					if(sz == 0){
-						addError(url);
+						addError("E4",url);
 						sendtext("[E4]動画がありません。"+mylistID);
 						return "E4";
 					}
@@ -448,7 +449,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 					return "00";
 				}else{
 					//出力失敗
-					addError(url);
+					addError("E6",url);
 					sendtext("[E6]"+autolist+".bat 出力失敗");
 					return "E6";
 				}
@@ -469,13 +470,13 @@ public class MylistGetter extends SwingWorker<String, String> {
 		} finally{
 
 		}
-		addError(url);
+		addError("EX",url);
 		sendtext("[EX]例外発生?");
 		return "EX";
 	}
 
-	private void addError(String errorID) {
-		errorList.setError(errorID+watchInfo+"\n");
+	private void addError(String code, String errorID) {
+		errorControl.setError(code,errorID+watchInfo+"\n");
 	}
 
 	//終了時EDTで自動実行される

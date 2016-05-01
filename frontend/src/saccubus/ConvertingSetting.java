@@ -103,7 +103,7 @@ public class ConvertingSetting {
 	private boolean ConvertWithOwnerComment;
 	private boolean AddTimeStamp;
 	private boolean AddOption_ConvVideoFile;
-	private HistoryDeque<String> requestHistory;
+	private String lastHistory;
 	private String VhookWidePath;
 	private boolean UseVhookNormal;
 	private boolean UseVhookWide;
@@ -183,7 +183,7 @@ public class ConvertingSetting {
 	private int numDownload;
 	private boolean PendingMode;
 	private boolean OneLineMode;
-	private ErrorList errorList;
+	private String errorList;
 	private boolean liveFlag;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
@@ -334,7 +334,7 @@ public class ConvertingSetting {
 			boolean disable_vhook,
 			int shadow_index,
 			boolean addOption_ConvVideoFile,
-			HistoryDeque<String> history,
+			String history,
 			String vhook_wide_path,
 			boolean use_vhook_normal,
 			boolean use_vhook_wide,
@@ -407,7 +407,7 @@ public class ConvertingSetting {
 			int n_thread,
 			boolean pending_mode,
 			boolean one_line_mode,
-			ErrorList error_list
+			String error_list
 		)
 	{
 		this(	mailaddress,
@@ -458,7 +458,7 @@ public class ConvertingSetting {
 		ConvertWithOwnerComment = convertwithownercomment;
 		AddTimeStamp = addtimestamp;
 		AddOption_ConvVideoFile = addOption_ConvVideoFile;
-		requestHistory = history;
+		lastHistory = history;
 		VhookWidePath = vhook_wide_path;
 		UseVhookNormal = use_vhook_normal;
 		UseVhookWide = use_vhook_wide;
@@ -690,7 +690,7 @@ public class ConvertingSetting {
 		return AddOption_ConvVideoFile;
 	}
 	public String getRequestHistory() {
-		return requestHistory.getLast();
+		return lastHistory;
 	}
 	public String getVhookWidePath(){
 		return VhookWidePath;
@@ -891,7 +891,7 @@ public class ConvertingSetting {
 	public boolean isUseFpsFilter() {
 		return useFpsFilter;
 	}
-	public boolean isAutoPlay() {
+	boolean isAutoPlay() {
 		return autoPlay;
 	}
 	public boolean isLiveOperationConversion(){
@@ -921,7 +921,7 @@ public class ConvertingSetting {
 	public boolean isOneLineMode(){
 		return OneLineMode;
 	}
-	public ErrorList getErrorList(){
+	public String getErrorList(){
 		return errorList;
 	}
 	public boolean isLive(){
@@ -1285,7 +1285,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_NUM_DOWNLOAD, Integer.toString(setting.getNumDownload()));
 		prop.setProperty(PROP_PENDING_MODE, Boolean.toString(setting.isPendingMode()));
 		prop.setProperty(PROP_ONE_LINE_MODE, Boolean.toString(setting.isOneLineMode()));
-		prop.setProperty(PROP_ERROR_LIST, setting.getErrorList().getString());
+		prop.setProperty(PROP_ERROR_LIST, setting.getErrorList());
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1467,7 +1467,7 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_DISABLE_VHOOK,"false")),
 			Integer.parseInt(prop.getProperty(PROP_SHADOW_INDEX,"1"),10),
 			Boolean.parseBoolean(prop.getProperty(PROP_ADD_OPTION_CONV_VIDEO, "false")),
-			new HistoryDeque<String>(""),
+			prop.getProperty(PROP_HISTORY1, ""),
 			prop.getProperty(PROP_VHOOK_WIDE_PATH,DEFAULT_VHOOK_PATH),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_VHOOK,"true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_VHOOK_WIDE,"true")),
@@ -1540,7 +1540,7 @@ public class ConvertingSetting {
 			Integer.parseInt(prop.getProperty(PROP_NUM_THREAD, "1")),
 			Boolean.parseBoolean(prop.getProperty(PROP_PENDING_MODE, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ONE_LINE_MODE, "false")),
-			new ErrorList(prop.getProperty(PROP_ERROR_LIST, ""))
+			prop.getProperty(PROP_ERROR_LIST, "")
 			);
 	}
 

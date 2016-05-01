@@ -66,8 +66,8 @@ public class Prompt {
 	private static File localListFile;
 	private static String watchinfo;
 	private static ArrayList<ConvertStopFlag> flags = new ArrayList<ConvertStopFlag>();
-	private static HistoryDeque<File> playList;
-	private static ErrorList errorList;
+	private static AutoPlay autoPlay;
+	private static ErrorControl errorControl;
 	private static boolean aborted = false;
 
 	public static void main(String[] args) {
@@ -207,8 +207,7 @@ public class Prompt {
 		if(!optionMap.isEmpty()){
 			setting.setReplaceOptions(optionMap);
 		}
-		errorList = setting.getErrorList();
-		errorList.clear();
+		errorControl = new ErrorControl("");
 		JLabel status = new JLabel();
 		JLabel info = new JLabel();
 		JLabel watch = new JLabel();
@@ -281,7 +280,8 @@ public class Prompt {
 		}
 
 		manager = new ConvertManager(null);
-		playList = new HistoryDeque<File>(null);
+		autoPlay = new AutoPlay(setting.isAutoPlay());
+		autoPlay.setStatus(status);
 		String url = MainFrame.treatUrlHttp(tag);
 		boolean isMylist = url.startsWith("http");
 		index = url.indexOf('#');
@@ -314,7 +314,8 @@ public class Prompt {
 					status3,
 					cuiStop,
 					null,
-					playList,
+					autoPlay,
+					errorControl,
 					sbReturn);
 			while(converter!=null && !converter.isDone()){
 				try {
@@ -349,6 +350,7 @@ public class Prompt {
 					setting,
 					status3,
 					cuiStop,
+					errorControl,
 					sbReturn);
 				mylistGetter.execute();
 				cuiStop.go();		//mylistGetterは無条件に実行
@@ -384,11 +386,9 @@ public class Prompt {
 				}
 			}
 			String[] lists = text.split("\n");
-			int nConvert = lists.length;
+			//int nConvert = lists.length;
 			JPanel activityPane = new JPanel();
-			ConvertWorker[] converterList = new ConvertWorker[nConvert];
-			StringBuffer[] sbRetList = new StringBuffer[nConvert];
-			String[] vids = new String[nConvert];
+			ArrayList<ConvertWorker> converterList = new ArrayList<>();
 			stopButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -419,67 +419,82 @@ public class Prompt {
 					status3,
 					autoStop,
 					null,
-					playList,
+					autoPlay,
+					errorControl,
 					sbRet);
-				converterList[indexNow] = converter;
-				sbRetList[indexNow] = sbRet;
-				vids[indexNow] = vid;
+				converterList.add(converter);
 				flags.add(autoStop);
 				// return to dispatch
 	 		}
 
 			int codes = 0;
 			int code = 0;
+			String results = "";
+			String result = "";
 			do{
-				for(int j = 0; j<convNo;j++){
-					ConvertWorker conv = converterList[j];
+				ArrayList<ConvertWorker> doneList = new ArrayList<>();
+				for(ConvertWorker conv: converterList){
 					if(conv!=null && conv.isDone()){
 						try{
+							int j = conv.getId();
 							System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-							System.out.println("Finished. ("+j+") "+vids[j]);
-							if(sbRetList[j]==null){
+							System.out.println("Finished. ("+j+") "+conv.getVid());
+							StringBuffer sbRet = conv.getSbRet();
+							if(sbRet==null){
 								System.out.println("エラー：ret=null");
-								continue;
-							}
-							String[] ret = sbRetList[j].toString().split("\n");
-							code = 0;
-							for(int l=0;l<ret.length;l++){
-								System.out.println(ret[l]);
-								String[] s = ret[l].split("=");
-								if("RESULT".equals(s[0]) && !"0".equals(s[1])){
-									code = Integer.parseInt(s[1],16);
+								code = -1;
+								result = "-1";
+							}else{
+								String[] ret = sbRet.toString().split("\n");
+								code = 0;
+								result = "";
+								for(int l=0;l<ret.length;l++){
+									System.out.println(ret[l]);
+									String[] s = ret[l].split("=");
+									if("RESULT".equals(s[0]) && !"0".equals(s[1])){
+										code = Integer.parseInt(s[1],16);
+										result = s[1];
+										break;
+									}
 								}
 							}
 						}catch(Exception e1){
-							e1.printStackTrace();
 							code = -999;
+							result = "-999";
+							e1.printStackTrace();
 						}finally{
 							if(code!=0 && codes==0) codes = code;	//最初のエラーコード
-							converterList[j] = null;
+							if(!result.isEmpty()&&results.isEmpty())
+								results = result;
+							doneList.add(conv);
 						}
 					}
 				}
-				while(manager.isWaitManager() && manager.getNumThread()==1){
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-				}
-				if(aborted || (manager.getNumReq() == 0 && manager.getNumRun()==0))
+				converterList.removeAll(doneList);
+				if(converterList.isEmpty())
 					break;
-			}while(manager.getNumFinish() < convNo);
+				// manager待ち
+				manager.waitActivity();
+				if(manager.getNumReq() > 0)
+					continue;
+				if(manager.getNumRun() > 0)
+					continue;
+				if(manager.getNumFinish() < convNo)
+					continue;
+			}while(true);
 			if(aborted){
 				codes = 255;
-				System.out.println("中止\nRESULTS="+code);
+				results = "FF";
+				System.out.println("中止\nRESULTS="+results);
 			}else {
-				System.out.println("終了\nRESULTS="+code);
+				System.out.println("終了\nRESULTS="+results);
 			}
 			if(codes!=0){
-				errorList.save();
 				System.out.println("エラーがありました");
+				if(errorControl.save())
+					System.out.println("エラーリストを保存しました");
 			}
-			exit(code);
+			exit(codes);
 		}
 	}
 

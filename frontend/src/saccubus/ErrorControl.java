@@ -13,16 +13,16 @@ import saccubus.net.Path;
  * データ StringBuffer, JLabel
  * メソッドappend, getString
  */
-public class ErrorList {
+public class ErrorControl {
 	private StringBuffer errList;
 	private JLabel st;
 
-	public ErrorList(String initial) {
+	public ErrorControl(String initial) {
 		st = new JLabel();
 		errList = new StringBuffer(initial);
 	}
 
-	public ErrorList(JLabel label){
+	public ErrorControl(JLabel label){
 		st = label;
 		errList = new StringBuffer();
 	}
@@ -35,12 +35,16 @@ public class ErrorList {
 		return errList.append(s);
 	}
 
+	public void setError(String code, String mes){
+		setError(mes+"\t"+code);
+	}
+
 	public String getString(){
 		return errList.substring(0);
 	}
 
 	private void setText(){
-		st.setText(errList.substring(0).replace("\n", "　"));
+		st.setText(errList.substring(0).replace("\n", "　").replace("\t", "_"));
 	}
 
 	public void setError(String s){
@@ -61,7 +65,7 @@ public class ErrorList {
 		errList.delete(0, errList.length());
 	}
 
-	public void save() {
+	public boolean save() {
 		Path errlistSave = new Path("エラー"+WayBackDate.formatNow()+".txt");
 		String text = errList.substring(0);
 		try {
@@ -69,8 +73,10 @@ public class ErrorList {
 			pw.print(text);
 			pw.flush();
 			pw.close();
+			return true;
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
+			return false;
 		}
 	}
 }

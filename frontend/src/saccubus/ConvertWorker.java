@@ -57,6 +57,7 @@ import saccubus.util.Util;
  */
 public class ConvertWorker extends SwingWorker<String, String> {
 	private ConvertingSetting Setting;
+	private String Vid;
 	private String Tag;
 	private String VideoID;
 	private String VideoTitle;
@@ -119,22 +120,22 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private double fpsMin = 0.0;
 	private boolean checkFps;
 	private String lastFrame = "";
-	private HistoryDeque<File> playList;
+	private AutoPlay autoPlay;
 	private ArrayList<CommentReplace> CommentReplaceList = new ArrayList<CommentReplace>();
 	private File imgDir;
 	private Aspect outAspect;
-	private VPlayer vplayer = null;
 	private String alternativeTag = "";
 	private final ConvertManager manager;
 	private Gate gate;
-	private ErrorList errorList;
+	private ErrorControl errorControl;
 	private String lowVideoID;
 	private int tid;
 
 	public ConvertWorker(int worker_id,
 			String url, String time, ConvertingSetting setting,
 			JLabel[] jLabels, ConvertStopFlag flag,	MainFrame frame,
-			HistoryDeque<File> play_list, ConvertManager conv, StringBuffer sb) {
+			AutoPlay autoplay, ConvertManager conv, ErrorControl errcon, StringBuffer sb) {
+		Vid = url;
 		url = url.trim();
 		//watchvideo = !url.startsWith("http");
 		int index = 0;
@@ -163,10 +164,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		MovieInfo.setText(" ");
 		stopwatch = new Stopwatch(jLabels[2]);
 		manager = conv;
-		playList = play_list;
+		autoPlay = autoplay;
 		parent = frame;
 		sbRet = sb;
-		errorList = Setting.getErrorList();
+		errorControl = errcon;
 		tid = worker_id;
 	}
 	private File VideoFile = null;
@@ -1742,10 +1743,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		result = "FF";
 		sendtext("[FF]Converter cancelled.");
 		System.out.println("LastStatus:[FF]Converter cancelled.");
-		if(sbRet!=null){
-			sbRet.append("RESULT=[FF]\n");
-		}
-		errorList.setError(Tag+WatchInfo+"\n");
+		sbRet.append("RESULT=[FF]\n");
+		errorControl.setError(result,Tag+WatchInfo+"\n");
 	}
 
 	@Override
@@ -1904,7 +1903,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (convertVideo()) {
 				// ïœä∑ê¨å˜
 				result = "0";
-				playList.offer(ConvertedVideoFile);
+				autoPlay.offer(ConvertedVideoFile);
 				if (isDeleteCommentAfterConverting())
 					deleteCommentFile();
 				if (isDeleteVideoAfterConverting())
@@ -1914,49 +1913,50 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				deleteFile(OptionalMiddleFile);
 				deleteFile(CombinedCommentFile);
 				deleteFile(CombinedOptionalFile);
-				if(parent==null && Setting.isAutoPlay()
-				 ||parent!=null && parent.getSetting().isAutoPlay()){
-					playConvertedVideo();
-				}
+				return result;
 			}
-			return result;
 		} catch (IOException ex) {
 			ex.printStackTrace();
-			if("0".equals(result)) result = "EX";
+			if("0".equals(result))
+				result = "EX";
 		} finally {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					StopFlag.finish();
-					StopFlag.setButtonEnabled(false);
-				}
-			});
-
-			if(isConverting){
-				manager.decNumConvert();
-				isConverting = false;
+			sbRet.append("RESULT=" + result + "\n");
+			if(!dateUserFirst.isEmpty()){
+				sbRet.append("DATEUF=" + dateUserFirst + "\n");
 			}
-			manager.reqDone(result, StopFlag);
+			if(!result.equals("0"))
+				errorControl.setError(result,Tag+WatchInfo+"\n");
+			else {
+				autoPlay.playAuto();
+			}
+			synchronized(StopFlag){
+				StopFlag.finish();
+				StopFlag.setButtonEnabled(false);
+			}
 			stopwatch.show();
 			stopwatch.stop();
-			gate.exit(result);
-			manager.sendTimeInfo();
 			System.out.println("ïœä∑éûä‘Å@" + stopwatch.formatLatency());
 			System.out.println("LastStatus:[" + result + "]" + Status.getText());
 			System.out.println("VideoInfo: " + MovieInfo.getText());
 			System.out.println("LastFrame: "+ lastFrame);
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					gate.exit(result);
+					if(isConverting){
+						manager.decNumConvert();
+						isConverting = false;
+					}
+				}
+			});
+
 			//end alarm
 			File wav = new File("end.wav");
 			if(wav.exists()){
 				if(!AudioPlay.playWav(wav)){
 					sendtext("wav error");
 				};
-			}
-			if(sbRet!=null){
-				sbRet.append("RESULT=" + result + "\n");
-				if(!dateUserFirst.isEmpty()){
-					sbRet.append("DATEUF=" + dateUserFirst + "\n");
-				}
 			}
 //			File exe = new File("end.exe");
 //			File bat = new File("end.bat");
@@ -1987,41 +1987,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			System.out.println("ConvertWorker#done.ret==null. ConvertWorker might had Exception!");
 		else {
 			System.out.println("["+retStr+"]Converter.done! "+Tag);
-			if(!retStr.equals("0")){
-				errorList.setError(Tag+WatchInfo+"\n");
-			}else
-				if(parent!=null){
-					parent.setPlayList();
-				}
 		}
+		manager.reqDone(result, StopFlag);
+		manager.sendTimeInfo();
 	}
 
-	// ïœä∑ìÆâÊçƒê∂
-	public void playConvertedVideo() {
-		try {
-			File convertedVideo = playList.next();
-			if(convertedVideo==null){
-				convertedVideo = ConvertedVideoFile;
-			}
-			if(convertedVideo==null){
-				sendtext("ïœä∑å„ÇÃìÆâÊÇ™Ç†ÇËÇ‹ÇπÇÒ");
-				return;
-			}
-			if(!convertedVideo.canRead()){
-				sendtext("ïœä∑å„ÇÃìÆâÊÇ™ì«ÇﬂÇ‹ÇπÇÒÅF" + convertedVideo.getName());
-				return;
-			}
-			if(vplayer!=null && vplayer.isAlive()){
-				vplayer.interrupt();
-			}
-			vplayer = new VPlayer(convertedVideo, Status);
-			vplayer.start();
-			return ;
-		} catch(NullPointerException ex){
-			sendtext("playConvertedVideo: NullPo.");
-			ex.printStackTrace();
-		}
-	}
 	private void deleteList(ArrayList<File> list){
 		if (list== null || list.isEmpty())
 			return;
@@ -3678,6 +3648,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	public int getId() {
 		return tid;
+	}
+	public String getVid() {
+		return Vid;
+	}
+	public StringBuffer getSbRet() {
+		return sbRet;
 	}
 
 }

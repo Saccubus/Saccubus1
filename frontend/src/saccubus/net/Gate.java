@@ -95,7 +95,7 @@ public class Gate extends Thread {
 	 * exit(miliseconds)
 	 * @param miliseconds 次の enterを待たせるミリ秒数、エラー終了後は待つこと
 	 */
-	public void exit(int miliseconds){
+	private void exit(int miliseconds){
 		if(entered){
 			entered = false;
 			if(miliseconds > 0){

@@ -1,6 +1,5 @@
 package saccubus;
 
-import java.io.File;
 import java.util.Hashtable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -55,7 +54,8 @@ public class ConvertManager extends Thread {
 		JLabel[] status3,
 		ConvertStopFlag flag,
 		MainFrame frame,
-		HistoryDeque<File> play_list,
+		AutoPlay autoplay,
+		ErrorControl errcon,
 		StringBuffer sbret
 		)
 	{
@@ -68,8 +68,9 @@ public class ConvertManager extends Thread {
 				status3,
 				flag,
 				frame,
-				play_list,
+				autoplay,
 				this,
+				errcon,
 				sbret);
 		flagTable.put(flag, converter);
 		if(flag.isPending()){
@@ -106,11 +107,11 @@ public class ConvertManager extends Thread {
 		numRun.decrementAndGet();
 		numFinish.incrementAndGet();
 		queueCheckAndGo();
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// e.printStackTrace();
-		}	//500ms 待機
+//		try {
+//			Thread.sleep(500);
+//		} catch (InterruptedException e) {
+//			// e.printStackTrace();
+//		}	//500ms 待機
 	}
 
 	public int notice(Object num) {
@@ -129,8 +130,8 @@ public class ConvertManager extends Thread {
 		ConvertWorker conv = null;
 		for(int count = 0;count < (numThread.get()+2);count++){
 			sendTimeInfo();
+			setWaitManager(true);
 			while(numRun.get() < numThread.get() && getNumReq() > 0){
-				setWaitManager(true);
 				conv = reqQueue.poll();
 				if(conv==null){
 					System.out.println("Error: manager#queueGo null  "+getTimeInfo());
@@ -138,7 +139,6 @@ public class ConvertManager extends Thread {
 					break;
 				}
 				numRun.incrementAndGet();
-				setWaitManager(false);
 				ConvertStopFlag flag = conv.getStopFlag();
 				synchronized(flag){
 					flag.go();
@@ -153,6 +153,8 @@ public class ConvertManager extends Thread {
 					// e.printStackTrace();
 				}	//100ms 待機
 			}
+			setWaitManager(false);
+			doActivity();
 		}
 		return;
 	}
@@ -208,6 +210,7 @@ public class ConvertManager extends Thread {
 		numError.set(0);
 		numConvert.set(0);
 		sendTimeInfo();
+		doActivity();
 	}
 
 	public static NicoClient getManagerClient(ConvertWorker conv){
@@ -287,6 +290,7 @@ public class ConvertManager extends Thread {
 		numFinish.set(0);
 		numConvert.set(0);
 		sendTimeInfo();
+		doActivity();
 	}
 
 	public int getNumRun() {
@@ -295,6 +299,7 @@ public class ConvertManager extends Thread {
 
 	public void clearError() {
 		numError.set(0);
+		doActivity();
 	}
 
 	public void incNumConvert(){
@@ -313,5 +318,31 @@ public class ConvertManager extends Thread {
 
 	public int getNumFinish() {
 		return numFinish.get();
+	}
+/*
+	public int getNumFinish() {
+		return numFinish.get();
+	}
+*/
+	private boolean wait1 = true;
+	private Object lock = new Object();
+	private void doActivity(){
+		synchronized(lock){
+			wait1 = false;
+			lock.notifyAll();
+		}
+	}
+	public void waitActivity() {
+		synchronized(lock){
+			wait1 = true;
+			try {
+				while(wait1){
+					lock.wait(30000);	//30秒またはどれかのworkerが終わるまで待つ
+					lock.notifyAll();
+				}
+			} catch (InterruptedException e) {
+				System.out.println("manager#interrupted:");
+			}
+		}
 	}
 }
