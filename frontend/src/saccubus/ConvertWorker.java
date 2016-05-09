@@ -232,7 +232,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private boolean isConverting = false;
 	private boolean isDebugNet = false;
 	private boolean isLive = false;
-	private String watchThread = "";
 
 	public File getVideoFile() {
 		return VideoFile;
@@ -1041,11 +1040,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			return false;
 		}
 		log.println("reading:" + thumbInfo);
-		if(watchThread.isEmpty()){
-			watchThread = client.getWatchThread();
-			if(!watchThread.isEmpty())
-				log.println("watch_thread is watch/" + watchThread);
-		}
 		boolean isOK = true;
 		if(!saveThumbUser(thumbInfo, client)){
 			log.println("ìäçeé“èÓïÒÇÃéÊìæÇ…é∏îs");
@@ -1810,7 +1804,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 			//	Gate.resetLimit();
 				do{
-					success = client.getVideoInfo(Tag, WatchInfo, Time, Setting.isSaveWatchPage(),null);
+					success = client.getVideoInfo(Tag, WatchInfo, Time, Setting.isSaveWatchPage());
 				}while (!success && canRetry(client, gate));
 				if (!success) {
 					if(Tag==null || Tag.isEmpty()){

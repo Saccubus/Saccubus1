@@ -437,8 +437,19 @@ public class NicoClient {
 		return getVideoHistoryAndTitle1(tag, watchInfo, saveWatchPage);
 	}
 	private String watchThread = "";
-	public String getWatchThread() {
+	private String getWatchThread() {
 		return watchThread;
+	}
+	private String getThread(String url){
+		if(url!=null && !url.isEmpty()){
+			int index = (url+"?").indexOf('?');
+			url = (url+"?").substring(0,index);
+			index = url.lastIndexOf("/");
+			url = url.substring(Math.min(index+1, url.length()));
+			if(Pattern.matches("[1-9][0-9]+", url))
+				return url;
+		}
+		return "";
 	}
 	public boolean getVideoHistoryAndTitle1(String tag, String watchInfo, boolean saveWatchPage) {
 		String thumbTitle = getVideoTitle();
@@ -449,34 +460,20 @@ public class NicoClient {
 		boolean zero_title = false;
 		try {
 			HttpURLConnection con = urlConnectGET(url);
-			if(con == null){
-				log.println("ng.\ncon==null, Can't getVideoHistory:" + url);
-				return false;
-			}
-			while (con.getResponseCode() != HttpURLConnection.HTTP_OK){
+			while (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
 				log.println("ng.\nCan't getVideoHistory:" + url);
+				if(con == null) return false;
 				Cookie.update(detectCookie(con));
 				String location = nicomap.get("Location");
 				if(location==null || url.equals(location))
 					return false;
 				url = location;
-				log.print("Redirect to "+url);
+				log.println("Redirect to "+url);
 				con = urlConnectGET(url);
-				if(con == null){
-					log.println("ng.\ncon==null, Can't getVideoHistory:" + url);
-					return false;
-				}
 			}
 			Cookie.update(detectCookie(con));
-			String stmp = url;
-			int i2 = (stmp+"?").indexOf('?');
-			stmp = (stmp+"?").substring(0, i2);
-			i2 = stmp.lastIndexOf('/');
-			stmp = stmp.substring(i2+1);
-			if(Pattern.matches("[1-9][0-9]+", stmp)){
-				watchThread = stmp;
-				log.print("ok.\nChange Tag to thread "+ watchThread+"  ");
-			}
+			if(getWatchThread().isEmpty())
+				watchThread = getThread(url);
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
 				encoding = "UTF-8";
@@ -578,14 +575,14 @@ public class NicoClient {
 	private String OptionalThraedID = "";	// normal Comment ID when Community DOUGA
 	private boolean economy = false;
 	private String ownerFilter = "";			// video owner filter（replace）
-	public boolean getVideoInfo(String tag, String watchInfo, String time, boolean saveWatchPage, String altThread) {
+	public boolean getVideoInfo(String tag, String watchInfo, String time, boolean saveWatchPage) {
 		if (!getVideoHistoryAndTitle(tag, watchInfo, saveWatchPage)) {
 			return false;
 		}
 		try {
 			String url = "http://flapi.nicovideo.jp/api/getflv/" + tag;
-			if (tag.startsWith("so") && !watchThread.isEmpty()){
-				url = "http://flapi.nicovideo.jp/api/getflv/" + watchThread;
+			if (!getWatchThread().isEmpty()){
+				url = "http://flapi.nicovideo.jp/api/getflv/" + getWatchThread();
 				log.println("\ntry url="+url);
 			}
 			if (tag.startsWith("nm")) {
@@ -1390,17 +1387,8 @@ public class NicoClient {
 			if(ContentType==null){
 				ContentType = getXmlElement(s, "movie_type");
 			}
-			if(watchThread.isEmpty()){
-				String watch_url = getXmlElement(s, "watch_url");
-				if(watch_url!=null){
-					int index2 = watch_url.lastIndexOf("/");
-					if(index2 >= 0){
-						watch_url = watch_url.substring(index2);
-						if(Pattern.matches("[1-9][0-9]+", watch_url))
-							watchThread = watch_url;
-					}
-				}
-			}
+			if(getWatchThread().isEmpty())
+				watchThread = getThread(getXmlElement(s, "watch_url"));
 			thumbXml  = Path.mkTemp(tag + "_" + title + ".xml");
 			if(s.indexOf("status=\"ok\"") < 0 && titleHtml!=null){
 				// 可能ならthumbXmlをtitleHtmlから構成する
