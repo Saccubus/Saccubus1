@@ -9,6 +9,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 import saccubus.SharedNgScore;
+import saccubus.util.Logger;
 
 /**
  * <p>
@@ -65,7 +66,10 @@ public class NicoXMLReader extends DefaultHandler {
 	private String[] voteStr = null;
 	private String[] voteRate = null;
 
-	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd, int scoreLimit, boolean liveOp, boolean prem_color_check){
+	private Logger log;
+
+	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd,
+		int scoreLimit, boolean liveOp, boolean prem_color_check, Logger logger){
 		this.packet = packet;
 		NG_Word = ngWordPat;
 		NG_ID = ngIdPat;
@@ -75,9 +79,10 @@ public class NicoXMLReader extends DefaultHandler {
 		premium = "";
 		liveConversion = liveOp;
 		premiumColorCheck = prem_color_check;
+		log = logger;
 	}
 
-	public static final Pattern makePattern(String word) throws PatternSyntaxException{
+	public static final Pattern makePattern(String word, Logger logger) throws PatternSyntaxException{
 		if (word == null || word.length() <= 0) {
 			return null;
 		}
@@ -119,7 +124,7 @@ public class NicoXMLReader extends DefaultHandler {
 		StringBuffer regb = new StringBuffer();
 		for (int i = 0; i < elt.length; i++) {
 			String e = elt[i];
-			System.out.println(e);
+			logger.println(e);
 			if (i > 0) {
 				regb.append("|");
 			}
@@ -133,7 +138,7 @@ public class NicoXMLReader extends DefaultHandler {
 			}
 		}
 		String reg = regb.substring(0);
-		System.out.println("reg:" + reg);
+		logger.println("reg:" + reg);
 		Pattern pat;
 		pat = Pattern.compile(reg);
 		return pat;
@@ -151,7 +156,7 @@ public class NicoXMLReader extends DefaultHandler {
 	 */
 	@Override
 	public void startDocument() {
-		System.out.println("Start converting to intermediate file.");
+		log.println("Start converting to intermediate file.");
 	}
 
 	/**
@@ -168,14 +173,14 @@ public class NicoXMLReader extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) {
-		// System.out.println("<"+qName);
+		// log.println("<"+qName);
 		// for (int i = 0; i < attributes.getLength(); i++) {
-		// 	System.out.println(" [" + attributes.getQName(i)+"=" + attributes.getValue(i)+"]");
+		// 	log.println(" [" + attributes.getQName(i)+"=" + attributes.getValue(i)+"]");
 		// }
-		// System.out.println(">");
+		// log.println(">");
 		if (qName.toLowerCase().equals("chat")) {
-			// System.out.println("----------");
-			item = new Chat();
+			// log.println("----------");
+			item = new Chat(log);
 			item_kicked = false;
 			item_fork = false;
 			is_button = false;
@@ -353,7 +358,7 @@ public class NicoXMLReader extends DefaultHandler {
 	public void endElement(String uri, String localName, String qName) {
 		if (qName.toLowerCase().equals("chat")) {
 			String com = sb.substring(0);
-			// System.out.println("\t| "+com+" |");
+			// log.println("\t| "+com+" |");
 			boolean script = false;
 			//ニワン語処理
 			if (item_fork && com.startsWith("/")){
@@ -370,7 +375,7 @@ public class NicoXMLReader extends DefaultHandler {
 				}
 				if(com.startsWith("replace(",1) && com.endsWith(")")){
 					// /replace実装 コメントは /replace()だけの場合
-					System.out.println("Converting: " + com);
+					log.println("Converting: " + com);
 					item.addCmd(Chat.CMD_LOC_SCRIPT);
 					script = true;
 					com = com.replaceFirst("^/replace\\(", "").replaceFirst("\\)[ 　]*$", "");
@@ -390,7 +395,7 @@ public class NicoXMLReader extends DefaultHandler {
 					String rpos = "";
 					String ret;
 					for(String term:terms){
-			//			System.out.println("Converting3: " + term);
+			//			log.println("Converting3: " + term);
 						if ((ret = niwango(term,"src:"))!=null){
 							src = ret;
 						}
@@ -423,16 +428,16 @@ public class NicoXMLReader extends DefaultHandler {
 							rpos = ret;
 						}
 						else{
-							System.out.println("Warning: /replace() contains " + term);
+							log.println("Warning: /replace() contains " + term);
 						}
 					}
 					int vpos = item.getVpos();
-					System.out.println("Converted:" +vpos +":/replace(src:"+src +",dest:"+dest
+					log.println("Converted:" +vpos +":/replace(src:"+src +",dest:"+dest
 						+",enabled:"+enabled +",target:"+target +",fill:"+fill +",partial:"+partial
 						+",color:"+rcolor +",size:" +rsize+",pos:" +rpos+").");
 					com = "/r," + src + "," + dest + "," + fill;
 					item.setMail(rcolor + " " + rsize + " " + rpos);
-					//System.out.println("Converted-Comment: " + com);
+					//log.println("Converted-Comment: " + com);
 					CommentReplace comrpl = new CommentReplace(item,src,dest,enabled,partial,target,fill);
 					packet.addReplace(comrpl);
 				}else{
@@ -513,7 +518,7 @@ public class NicoXMLReader extends DefaultHandler {
 									try{
 										rate = Integer.valueOf(s);
 									}catch(NumberFormatException e){
-										e.printStackTrace();
+										log.printStackTrace(e);
 									}
 								}
 								voteRate[i] = String.format("% 11.1f%%",(rate/10.0));
@@ -601,7 +606,7 @@ public class NicoXMLReader extends DefaultHandler {
 						item.setMail("");	//リセットサイズ、ロケーション、色
 						item.addCmd(Chat.CMD_LOC_SCRIPT);
 						script = true;
-						System.out.println("Converting＠置換: " + com);
+						log.println("Converting＠置換: " + com);
 						com = com.replaceFirst("^[@＠]置換[ 　]", "");
 						String src = "";
 						String dest = "";
@@ -640,7 +645,7 @@ public class NicoXMLReader extends DefaultHandler {
 						int vpos = item.getVpos();
 						item.setMail("");	//リセットサイズ、ロケーション、色
 						item.addCmd(Chat.CMD_LOC_SCRIPT);
-						System.out.println("Converted:" +vpos +":＠置換 「"+src +"」「 "+dest
+						log.println("Converted:" +vpos +":＠置換 「"+src +"」「 "+dest
 							+"」 "+target +" fill:"+fill +" partial:"+partial+").");
 						com = "/r," + src + "," + dest + "," + fill;
 						CommentReplace comrpl = new CommentReplace(item,src,dest,"T",partial,target,fill);
@@ -711,7 +716,7 @@ public class NicoXMLReader extends DefaultHandler {
 							fill = "T";
 							src = src.substring(1);
 						}
-						System.out.println("Converted:0" +":フィルター \""+src +"\" \""+dest
+						log.println("Converted:0" +":フィルター \""+src +"\" \""+dest
 								+"\" "+target +" fill:"+fill +" partial:T).");
 						com = "/r," + src + "," + dest + "," + fill;
 						CommentReplace comrpl = new CommentReplace(item, src, dest, "T", "T", target, fill);
@@ -732,12 +737,12 @@ public class NicoXMLReader extends DefaultHandler {
 				}
 			}
 			item.setComment(com);
-			// System.out.println("\tpreimum="+premium+"| item="+item.toString()+" |");
+			// log.println("\tpreimum="+premium+"| item="+item.toString()+" |");
 			if (!item_kicked) {
 				packet.addChat(item);
 			}
 			item = null;
-			// System.out.println("</"+qName+">");
+			// log.println("</"+qName+">");
 		}
 	}
 
@@ -746,10 +751,10 @@ public class NicoXMLReader extends DefaultHandler {
 	 */
 	@Override
 	public void endDocument() {
-		// System.out.println("----------");
-		System.out.println("Converting finished. "
+		// log.println("----------");
+		log.println("Converting finished. "
 			+ packet.size() + " items.");
-		System.out.println("Deleted NG Word:"+countNG_Word
+		log.println("Deleted NG Word:"+countNG_Word
 			+" ID:"+countNG_ID+" Score:"+countNG_Score);
 	}
 

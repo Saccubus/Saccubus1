@@ -38,6 +38,7 @@ import saccubus.net.NicoClient;
 import saccubus.net.Path;
 import saccubus.util.AudioPlay;
 import saccubus.util.Cws2Fws;
+import saccubus.util.Logger;
 import saccubus.util.Stopwatch;
 import saccubus.util.Util;
 
@@ -78,12 +79,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private static final String TMP_COMBINED_XML2 = "_tmp_optional.xml";
 	private static final String TMP_COMBINED_XML3 = "_tmp_comment2.xml";
 	private static final String TMP_COMBINED_XML4 = "_tmp_optiona2.xml";
+	static final String TMP_LOG_FRONTEND = "frontend.txt";
 	private static final String THUMB_INFO = "_thumb_info";
 	private String OtherVideo;
 	private final String WatchInfo;
 	private InfoStack infoStack;
 	private BrowserCookieKind BrowserKind = BrowserCookieKind.NONE;
-	private final BrowserInfo browserInfo = new BrowserInfo();
+	private final BrowserInfo browserInfo;
 	private String UserSession = "";	//ブラウザから取得したユーザーセッション
 	private final Stopwatch stopwatch;
 	private File selectedVhook;
@@ -130,6 +132,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private ErrorControl errorControl;
 	private String lowVideoID;
 	private int tid;
+	private Logger log;
 
 	public ConvertWorker(int worker_id,
 			String url, String time, ConvertingSetting setting,
@@ -169,6 +172,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		sbRet = sb;
 		errorControl = errcon;
 		tid = worker_id;
+		log = new Logger(Tag, tid, TMP_LOG_FRONTEND);
+		browserInfo = new BrowserInfo(log);
 	}
 	private File VideoFile = null;
 	private File CommentFile = null;
@@ -406,7 +411,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					return false;
 				}
 				if(!gulimFont.equals(saveGulimFont)){
-					System.out.println("CA用フォント" + saveGulimFont.getPath() + "を" + gulimFont.getName() + "で代替します。");
+					log.println("CA用フォント" + saveGulimFont.getPath() + "を" + gulimFont.getName() + "で代替します。");
 				}
 				arialFont = new File(fontDir, "ARIAL.TTF");
 				if(!arialFont.canRead()){
@@ -425,7 +430,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + georgiaFont.getPath());
 					//retValue = "14";
 					//return false;
-					System.out.println("CA用フォント" + georgiaFont.getPath() + "を" + gothicFont.getName() + "で代替します。");
+					log.println("CA用フォント" + georgiaFont.getPath() + "を" + gothicFont.getName() + "で代替します。");
 					georgiaFont = gothicFont;
 				}
 				nirmalaFont = new File(fontDir,"Nirmala.ttf");
@@ -437,7 +442,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + devabagariFont.getPath());
 					//retValue = "15";
 					//return false;
-					System.out.println("CA用フォント" + devabagariFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					log.println("CA用フォント" + devabagariFont.getPath() + "を" + arialFont.getName() + "で代替します。");
 					devabagariFont = arialFont;
 				}
 				tahomaFont = new File(fontDir, "tahoma.ttf");
@@ -445,7 +450,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + tahomaFont.getPath());
 					//retValue = "16";
 					//return false;
-					System.out.println("CA用フォント" + tahomaFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					log.println("CA用フォント" + tahomaFont.getPath() + "を" + arialFont.getName() + "で代替します。");
 					tahomaFont = arialFont;
 				}
 				mingliuFont = new File(fontDir, "mingliu.ttc");
@@ -453,7 +458,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + mingliuFont.getPath());
 					//retValue = "17";
 					//return false;
-					System.out.println("CA用フォント" + mingliuFont.getPath() + "を" + simsunFont.getName() + "で代替します。");
+					log.println("CA用フォント" + mingliuFont.getPath() + "を" + simsunFont.getName() + "で代替します。");
 					mingliuFont = simsunFont;
 				}
 				newMinchoFont = new File(fontDir, "SIMSUN.TTC");	//NGULIM.TTFが無かった
@@ -461,7 +466,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + newMinchoFont.getPath());
 					//retValue = "18";
 					//return false;
-					System.out.println("CA用フォント" + newMinchoFont.getPath() + "を" + simsunFont.getName() + "で代替します。");
+					log.println("CA用フォント" + newMinchoFont.getPath() + "を" + simsunFont.getName() + "で代替します。");
 					newMinchoFont = simsunFont;
 				}
 				estrangeloEdessaFont = new File(fontDir, "estre.ttf");
@@ -472,7 +477,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + estrangeloEdessaFont.getPath());
 					//retValue = "19";
 					//return false;
-					System.out.println("CA用フォント" + estrangeloEdessaFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					log.println("CA用フォント" + estrangeloEdessaFont.getPath() + "を" + arialFont.getName() + "で代替します。");
 					estrangeloEdessaFont = arialFont;
 				}
 				arialUnicodeFont = new File(fontDir, "arialuni.ttf");
@@ -480,7 +485,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + arialUnicodeFont.getPath());
 					//retValue = "20";
 					//return false;
-					System.out.println("CA用フォント" + arialUnicodeFont.getPath() + "を" + arialFont.getName() + "で代替します。");
+					log.println("CA用フォント" + arialUnicodeFont.getPath() + "を" + arialFont.getName() + "で代替します。");
 					arialUnicodeFont = arialFont;
 				}
 				gujaratiFont = new File(fontDir, "shruti.ttf");
@@ -491,7 +496,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + gujaratiFont.getPath());
 					//retValue = "21";
 					//return false;
-					System.out.println("CA用フォント" + gujaratiFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					log.println("CA用フォント" + gujaratiFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					gujaratiFont = arialUnicodeFont;
 				}
 				bengalFont = new File(fontDir, "vrinda.ttf");
@@ -502,7 +507,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + bengalFont.getPath());
 					//retValue = "22";
 					//return false;
-					System.out.println("CA用フォント" + bengalFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					log.println("CA用フォント" + bengalFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					bengalFont = arialUnicodeFont;
 				}
 				tamilFont = new File(fontDir, "latha.ttf");
@@ -513,7 +518,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + tamilFont.getPath());
 					//retValue = "23";
 					//return false;
-					System.out.println("CA用フォント" + tamilFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					log.println("CA用フォント" + tamilFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					tamilFont = arialUnicodeFont;
 				}
 				laooFont = new File(fontDir, "laoui.ttf");
@@ -524,7 +529,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + laooFont.getPath());
 					//retValue = "24";
 					//return false;
-					System.out.println("CA用フォント" + laooFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					log.println("CA用フォント" + laooFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					laooFont = arialUnicodeFont;
 				}
 				gurmukhiFont = new File(fontDir, "raavi.ttf");
@@ -535,7 +540,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + gurmukhiFont.getPath());
 					//retValue = "25";
 					//return false;
-					System.out.println("CA用フォント" + gurmukhiFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					log.println("CA用フォント" + gurmukhiFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					gurmukhiFont = arialUnicodeFont;
 				}
 				kannadaFont = new File(fontDir, "tunga.ttf");
@@ -546,7 +551,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + kannadaFont.getPath());
 					//retValue = "26";
 					//return false;
-					System.out.println("CA用フォント" + kannadaFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					log.println("CA用フォント" + kannadaFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					kannadaFont = arialUnicodeFont;
 				}
 				thaanaFont = new File(fontDir, "mvboli.ttf");
@@ -554,7 +559,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + thaanaFont.getPath());
 					//retValue = "27";
 					//return false;
-					System.out.println("CA用フォント" + thaanaFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					log.println("CA用フォント" + thaanaFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					thaanaFont = arialUnicodeFont;
 				}
 				malayalamFont = new File(fontDir, "kartika.ttf");
@@ -565,7 +570,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + malayalamFont.getPath());
 					//retValue = "28";
 					//return false;
-					System.out.println("CA用フォント" + malayalamFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					log.println("CA用フォント" + malayalamFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					malayalamFont = arialUnicodeFont;
 				}
 				teluguFont = new File(fontDir, "gautami.ttf");
@@ -576,7 +581,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("警告　CA用フォントが見つかりません。" + teluguFont.getPath());
 					//retValue = "29";
 					//return false;
-					System.out.println("CA用フォント" + teluguFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					log.println("CA用フォント" + teluguFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					teluguFont = arialUnicodeFont;
 				}
 			}else{
@@ -645,9 +650,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			NicoClient client = null;
 			if (BrowserKind != BrowserCookieKind.NONE){
 				// セッション共有、ログイン済みのNicoClientをclientに返す
-				client = new NicoClient(BrowserKind, UserSession, proxy, proxy_port, stopwatch);
+				client = new NicoClient(BrowserKind, UserSession, proxy, proxy_port, stopwatch, log);
 			} else {
-				client = new NicoClient(mailAddress, password, proxy, proxy_port, stopwatch);
+				client = new NicoClient(mailAddress, password, proxy, proxy_port, stopwatch, log);
 			}
 			if (!client.isLoggedIn()) {
 				sendtext("ログイン失敗 " + BrowserKind.getName() + " " + client.getExtraError());
@@ -668,7 +673,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (isSaveVideo()) {
 				if (isVideoFixFileName()) {
 					if (folder.mkdir()) {
-						System.out.println("Folder created: " + folder.getPath());
+						log.println("Folder created: " + folder.getPath());
 					}
 					if (!folder.isDirectory()) {
 						sendtext("動画の保存先フォルダが作成できません。");
@@ -691,7 +696,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				if(VideoFile.isFile() && VideoFile.canRead()){
 					sendtext("動画は既に存在します");
-					System.out.println("動画は既に存在します。ダウンロードをスキップします");
+					log.println("動画は既に存在します。ダウンロードをスキップします");
 				}else{
 					sendtext("動画のダウンロード開始中");
 					if (client == null){
@@ -704,7 +709,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 					if(client.isEco() && lowVideoFile.isFile() && lowVideoFile.canRead()){
 						sendtext("エコノミーモードでエコ動画は既に存在します");
-						System.out.println("エコ動画は既に存在します。ダウンロードをスキップします");
+						log.println("エコ動画は既に存在します。ダウンロードをスキップします");
 						VideoFile = lowVideoFile;
 					}else{
 						VideoFile = client.getVideo(lowVideoFile, Status, StopFlag,
@@ -760,7 +765,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			sendtext("動画の保存を終了");
 		}catch(NullPointerException e){
 			sendtext("(´∀｀)＜ぬるぽ\nガッ\n");
-			e.printStackTrace();
+			log.printStackTrace(e);
 		}
 		return true;
 	}
@@ -776,7 +781,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (isSaveComment()) {
 			if (isCommentFixFileName()) {
 				if (folder.mkdir()) {
-					System.out.println("Folder created: " + folder.getPath());
+					log.println("Folder created: " + folder.getPath());
 				}
 				if (!folder.isDirectory()) {
 					sendtext("コメントの保存先フォルダが作成できません。");
@@ -958,7 +963,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (isSaveOwnerComment()) {
 			if (isCommentFixFileName()) {
 				if (folder.mkdir()) {
-					System.out.println("Folder created: " + folder.getPath());
+					log.println("Folder created: " + folder.getPath());
 				}
 				if (!folder.isDirectory()) {
 					sendtext("投稿者コメントの保存先フォルダが作成できません。");
@@ -983,7 +988,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			if (OwnerCommentFile == null) {
 				sendtext("投稿者コメントのダウンロードに失敗");
-				System.out.println("投稿者コメントのダウンロードに失敗");
+				log.println("投稿者コメントのダウンロードに失敗");
 				//result = "63";
 				return true;
 			}
@@ -1002,7 +1007,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		File folder = Setting.getVideoFixFileNameFolder();
 		if (isVideoFixFileName()) {
 			if (folder.mkdir()) {
-				System.out.println("Folder created: " + folder.getPath());
+				log.println("Folder created: " + folder.getPath());
 			}
 			if (!folder.isDirectory()) {
 				sendtext("動画情報の保存先フォルダが作成できません。");
@@ -1034,14 +1039,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			result = "A4";
 			return false;
 		}
-		System.out.println("reading:" + thumbInfo);
+		log.println("reading:" + thumbInfo);
 		boolean isOK = true;
 		if(!saveThumbUser(thumbInfo, client)){
-			System.out.println("投稿者情報の取得に失敗");
+			log.println("投稿者情報の取得に失敗");
 			isOK = false;
 		}
 		if(!saveThumbnailJpg(thumbInfo, client)){
-			System.out.println("サムネイル画像の取得に失敗");
+			log.println("サムネイル画像の取得に失敗");
 			isOK = false;
 		}
 		if(!isOK) return false;
@@ -1055,12 +1060,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			pw.flush();
 			pw.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 			isOK = false;
 		}
 		if(!isOK) return false;
 		if(thumbInfo.delete()){
-			System.out.println("Deleted:" + thumbInfo);
+			log.println("Deleted:" + thumbInfo);
 		}
 		sendtext("動画情報の保存終了");
 		return true;
@@ -1102,10 +1107,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				result = "A5";
 				return false;
 			}
-			System.out.println("投稿者:"+userID);
+			log.println("投稿者:"+userID);
 			File userFolder = new File(Setting.getUserFolder());
 			if (userFolder.mkdirs()){
-				System.out.println("Folder created: " + userFolder.getPath());
+				log.println("Folder created: " + userFolder.getPath());
 			}
 			if(!userFolder.isDirectory()){
 				sendtext("ユーザーフォルダが作成できません");
@@ -1157,7 +1162,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				pw.flush();
 				pw.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.printStackTrace(e);
 				return false;
 			}
 		}
@@ -1169,7 +1174,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (isVideoFixFileName()) {
 			File folder = Setting.getVideoFixFileNameFolder();
 			if (folder.mkdir()) {
-				System.out.println("Folder created: " + folder.getPath());
+				log.println("Folder created: " + folder.getPath());
 			}
 			if (!folder.isDirectory()) {
 				sendtext("サムネイル画像の保存先フォルダが作成できません。");
@@ -1227,8 +1232,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			String def_regex = "/((docomo|iPhone|softbank|device:3DS) (white )?)?18[46]|18[46]( (iPhone|device:3DS))?/";
 			String ngWord = Setting.getNG_Word().replaceFirst("^all", all_regex).replace(" all", all_regex);
 			ngWord = ngWord.replaceFirst("^default", def_regex).replace(" default", def_regex);
-			ngWordPat = NicoXMLReader.makePattern(ngWord);
-			ngIDPat = NicoXMLReader.makePattern(Setting.getNG_ID());
+			ngWordPat = NicoXMLReader.makePattern(ngWord, log);
+			ngIDPat = NicoXMLReader.makePattern(Setting.getNG_ID(), log);
 			ngCmd = new CommandReplace(Setting.getNGCommand(), Setting.getReplaceCommand());
 		}catch (Exception e) {
 			sendtext("NGパターン作成に失敗。おそらく正規表現の間違い？");
@@ -1387,7 +1392,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					ArrayList<String> pathlist = detectFilelistFromOptionalThread(folder);
 					if (pathlist == null || pathlist.isEmpty()){
 						sendtext(Tag + ": オプショナルスレッド・過去ログが存在しません。");
-						System.out.println("No optional thread.");
+						log.println("No optional thread.");
 						OptionalThreadFile = null;
 						return true;
 					}
@@ -1412,7 +1417,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					String filename = detectTitleFromOptionalThread(folder);
 					if (filename == null || filename.isEmpty()){
 						sendtext(Tag + ": オプショナルスレッドがフォルダに存在しません。");
-						System.out.println("No optional thread.");
+						log.println("No optional thread.");
 						OptionalThreadFile = null;
 						return true;
 					}
@@ -1427,7 +1432,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				OptionalThreadFile = getOptionalThreadFile(Setting.getCommentFile());
 				if (!OptionalThreadFile.exists()){
 					sendtext("オプショナルスレッドが存在しません。");
-					System.out.println("No optional thread.");
+					log.println("No optional thread.");
 					OptionalThreadFile = null;
 					return true;
 				}
@@ -1473,7 +1478,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						sendtext("投稿者コメントファイルがフォルダに存在しません。");
 					//	retValue = "80";
 					//	return false;
-						System.out.println("投稿者コメントファイルがフォルダに存在しません。");
+						log.println("投稿者コメントファイルがフォルダに存在しません。");
 						OwnerCommentFile = null;
 						return true;
 					}
@@ -1490,7 +1495,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						sendtext("投稿者コメントファイルが存在しません。");
 					//	retValue = "82";
 					//	return false;
-						System.out.println("投稿者コメントファイルが存在しません。");
+						log.println("投稿者コメントファイルが存在しません。");
 						OwnerCommentFile = null;
 						return true;
 					}
@@ -1519,7 +1524,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					ownerCommentNum = Util.readInt(fos);
 					fos.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.printStackTrace(e);
 					OwnerMiddleFile = null;
 					result = "84";
 					return false;
@@ -1531,14 +1536,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private void deleteCommentFile(){
 		if (CommentFile != null && CommentFile.delete()) {
-			System.out.println("Deleted: " + CommentFile.getPath());
+			log.println("Deleted: " + CommentFile.getPath());
 		}
 		if (OptionalThreadFile != null && OptionalThreadFile.delete()){
-			System.out.println("Deleted: " + OptionalThreadFile.getPath());
+			log.println("Deleted: " + OptionalThreadFile.getPath());
 		}
 		deleteList(listOfCommentFile);
 		if (OwnerCommentFile != null && OwnerCommentFile.delete()) {
-			System.out.println("Deleted: " + OwnerCommentFile.getPath());
+			log.println("Deleted: " + OwnerCommentFile.getPath());
 		}
 	}
 
@@ -1546,7 +1551,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile, CommentReplaceList,
 				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit(),
-				Setting.isLiveOperationConversion(), Setting.isPremiumColorCheck())){
+				Setting.isLiveOperationConversion(), Setting.isPremiumColorCheck(),
+				log)){
 			return false;
 		}
 		//コメント数が0の時削除する
@@ -1556,11 +1562,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			fis.close();
 			if(comment_num == 0){
 				if(middlefile.delete()){
-					System.out.println("Deleted 0 comment-file: " + middlefile.getPath());
+					log.println("Deleted 0 comment-file: " + middlefile.getPath());
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 			return false;
 		}
 		return true;
@@ -1582,7 +1588,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 		if (Setting.isConvFixFileName()) {
 			if (folder.mkdir()) {
-				System.out.println("Created folder: " + folder.getPath());
+				log.println("Created folder: " + folder.getPath());
 			}
 			if (!folder.isDirectory()) {
 				sendtext("変換後の保存先フォルダが作成できません。");
@@ -1613,7 +1619,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				conv_name = conv_name.trim();	// In Windows API, cant make dir as " ABC" nor "ABC "
 				folder = new File(folder, conv_name);
 				if (folder.mkdir()) {
-					System.out.println("Created folder: " + folder.getPath());
+					log.println("Created folder: " + folder.getPath());
 				}
 				if (!folder.isDirectory()) {
 					sendtext("動画(FFmpeg設定名)ファイルの保存先フォルダが作成できません。");
@@ -1657,14 +1663,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 		if(ConvertedVideoFile.isFile() && ConvertedVideoFile.canRead()){
 			sendtext("変換後のファイルは既に存在します");
-			System.out.println("変換後のファイルは既に存在します");
+			log.println("変換後のファイルは既に存在します");
 			String otherFilename = "1"+ ConvertedVideoFile.getName();
 			if(ConvertedVideoFile.renameTo(new File(ConvertedVideoFile.getParentFile(),otherFilename))){
 				sendtext("同名のファイルをリネームしました");
-				System.out.println("同名のファイルをリネームしました"+otherFilename);
+				log.println("同名のファイルをリネームしました"+otherFilename);
 			}else{
 				sendtext("同名のファイルをリネーム出来ませんでした。上書きします");
-				System.out.println("同名のファイルをリネーム出来ませんでした。上書きします");
+				log.println("同名のファイルをリネーム出来ませんでした。上書きします");
 			}
 		}
 		int code = converting_video();
@@ -1677,11 +1683,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			Path.fileCopy(video_vhext, log_vhext);
 		}else{
-			System.out.println(Tag+"[log]vhext.txt が有りません.");
+			log.println(Tag+"[log]vhext.txt が有りません.");
 		}
 		if (code == 0) {
 			sendtext("変換が正常に終了しました。");
-			System.out.println(lastFrame);
+			log.println(lastFrame);
 			return true;
 		} else if (code == CODE_CONVERTING_ABORTED) { /*中断*/
 			result = "97";
@@ -1742,13 +1748,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		StopFlag.setButtonEnabled(false);
 		result = "FF";
 		sendtext("[FF]Converter cancelled.");
-		System.out.println("LastStatus:[FF]Converter cancelled.");
+		log.println("LastStatus:[FF]Converter cancelled.");
 		sbRet.append("RESULT=[FF]\n");
 		errorControl.setError(result,Tag+WatchInfo);
 	}
 
 	@Override
 	protected String doInBackground() throws Exception {
+		log = new Logger(null);
 		synchronized (StopFlag) {
 			while(StopFlag.isPending()){
 				StopFlag.wait();
@@ -1764,12 +1771,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(!watchvideo){
 			//not watch video get try mylist
 			sendtext("バグ URL振り分け失敗");
-			System.out.println("バグ URL振り分け失敗");
+			log.println("バグ URL振り分け失敗");
 			result = "-1";
 			return result;
 		}
 	*/
-		gate = Gate.open(tid);
+		log = new Logger(Tag, tid, TMP_LOG_FRONTEND);
+		gate = Gate.open(tid,log);
 		stopwatch.clear();
 		stopwatch.start();
 		manager.sendTimeInfo();
@@ -1845,7 +1853,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			stopwatch.show();
 			if(!saveThumbInfo(client, Tag)){
 				if(isSaveConverted())
-					System.out.println("追加情報の取得に失敗しましたが続行します。");
+					log.println("追加情報の取得に失敗しましたが続行します。");
 				else {
 					String tstr = Status.getText();
 					if(isSaveComment()) {
@@ -1856,7 +1864,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 					tstr = "[警告]動画情報の取得失敗　" + tstr;
 					sendtext(tstr);
-					System.out.println(tstr);
+					log.println(tstr);
 					return result;
 				}
 			}
@@ -1865,7 +1873,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 
 			stopwatch.show();
-			System.out.println("変換前時間　" + stopwatch.formatElapsedTime());
+			log.println("変換前時間　" + stopwatch.formatElapsedTime());
 
 			gate.exit(result);
 			manager.sendTimeInfo();
@@ -1916,7 +1924,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return result;
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			if("0".equals(result))
 				result = "EX";
 		} finally {
@@ -1935,10 +1943,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			stopwatch.show();
 			stopwatch.stop();
-			System.out.println("変換時間　" + stopwatch.formatLatency());
-			System.out.println("LastStatus:[" + result + "]" + Status.getText());
-			System.out.println("VideoInfo: " + MovieInfo.getText());
-			System.out.println("LastFrame: "+ lastFrame);
+			log.println("変換時間　" + stopwatch.formatLatency());
+			log.println("LastStatus:[" + result + "]" + Status.getText());
+			log.println("VideoInfo: " + MovieInfo.getText());
+			log.println("LastFrame: "+ lastFrame);
 
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
@@ -1981,31 +1989,33 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		try {
 			retStr = get();
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-		if(retStr == null)
-			System.out.println("ConvertWorker#done.ret==null. ConvertWorker might had Exception!");
-		else {
-			System.out.println("["+retStr+"]Converter.done! "+Tag);
+			log.printStackTrace(e);
 		}
 		manager.reqDone(result, StopFlag);
 		manager.sendTimeInfo();
+		if(retStr == null)
+			log.println("ConvertWorker#done.ret==null. ConvertWorker might had Exception!");
+		else {
+			System.out.println("["+retStr+"]Converter.done! "+Tag);
+			if(result.equals("0") && !isDebugNet)
+				log.deleteLog();
+		}
 	}
 
 	private void deleteList(ArrayList<File> list){
 		if (list== null || list.isEmpty())
 			return;
-		System.out.print("Deleted: ");
+		log.print("Deleted: ");
 		for (File file : list){
 			if(file.delete())
-				System.out.print(file.getName()+" ");
+				log.print(file.getName()+" ");
 		}
-		System.out.println("done.");
+		log.println("done.");
 	}
 	private void deleteFile(File file){
 		if (file != null && file.canWrite()
 		 && file.delete())
-			System.out.println("Deleted: " + file.getPath());
+			log.println("Deleted: " + file.getPath());
 	}
 
 	/**
@@ -2023,7 +2033,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		try {
 			fwsFile = Cws2Fws.createFws(video);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 		}
 		if (fwsFile != null){
 //			VideoFile = fwsFile;
@@ -2034,7 +2044,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				//return false;
 			}
 		}
-		VideofileInfo info = new VideofileInfo(video, ffmpeg, Status, StopFlag, stopwatch);
+		VideofileInfo info = new VideofileInfo(video, ffmpeg, Status, StopFlag, stopwatch, log);
 		videoAspect = info.getAspect();
 		if(videoLength <= 0){
 			videoLength = info.getDuration();
@@ -2043,7 +2053,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		checkFps = Setting.enableCheckFps();
 		fpsUp = Setting.getFpsUp();
 		fpsMin = Setting.getFpsMin();
-		System.out.println("frameRate:"+frameRate+",fpsUp:"+fpsUp+",fpsMin:"+fpsMin);
+		log.println("frameRate:"+frameRate+",fpsUp:"+fpsUp+",fpsMin:"+fpsMin);
 		String str;
 		if (videoAspect == null || videoAspect == Aspect.ERROR){
 			str = "Analize Error   ";
@@ -2111,7 +2121,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				if(((ac = getAudioCodecKV(optmap))!=null) && (ac[1].contains("aac"))){
 					replaceOption(optmap,ac[0],"copy");
-					System.out.println("Changed: "+ac[0]+" "+ac[1]+" -> copy");
+					log.println("Changed: "+ac[0]+" "+ac[1]+" -> copy");
 				}
 			}
 		}
@@ -2125,7 +2135,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				if(((ac = getAudioCodecKV(optmap))!=null) && (ac[1].contains("aac")) && !ac[1].contains("he")){
 					replaceOption(optmap,ac[0],"copy");
-					System.out.println("Changed: "+ac[0]+" "+ac[1]+" -> copy");
+					log.println("Changed: "+ac[0]+" "+ac[1]+" -> copy");
 				}
 			}
 		}
@@ -2184,7 +2194,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		// ropt
 		String ropt = getRopt();
 		if(!ropt.isEmpty()){
-			System.out.println(" framerate="+ropt);
+			log.println(" framerate="+ropt);
 		}
 		return true;
 	}
@@ -2199,9 +2209,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		aspect = toAspect(sizestr, aspect);
 		int width = aspect.getWidth();
 		int height = aspect.getHeight();
-		System.out.println("Output Video Area " + width + ":" + height);
+		log.println("Output Video Area " + width + ":" + height);
 		//width heightは出力動画の大きさ(outs指定時はそのサイズ)
-		System.out.println("Video "+aspect.getSize());
+		log.println("Video "+aspect.getSize());
 		double rate;
 		if (Setting.isZqPlayer()){
 			if(aspect.isQWide()){
@@ -2220,7 +2230,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				width = toMod2(commentWidth * rate);
 			}
 		}
-		System.out.println("Output Commetnt Area " + width + ":" + height + " Wide? " + isPlayerWide);
+		log.println("Output Commetnt Area " + width + ":" + height + " Wide? " + isPlayerWide);
 		//width heightは出力コメントの大きさ（動画をはみ出さない）
 		return;
 	}
@@ -2240,7 +2250,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			try {
 				width = Integer.parseInt(list[0]);
 			} catch (NumberFormatException e){
-				e.printStackTrace();
+				log.printStackTrace(e);
 			}
 		}
 		int height = defaultAspect.getHeight();
@@ -2248,7 +2258,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			try {
 				height = Integer.parseInt(list[1]);
 			} catch(NumberFormatException e){
-				e.printStackTrace();
+				log.printStackTrace(e);
 			}
 		}
 		return new Aspect(width, height);
@@ -2392,8 +2402,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private int execOption(){
 		int code;
-		System.out.println("arg:" + ffmpeg.getCmd());
-		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, stopwatch);
+		log.println("arg:" + ffmpeg.getCmd());
+		code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, stopwatch, log);
 		errorLog = ffmpeg.getErrotLog().toString();
 		lastFrame = ffmpeg.getLastFrame();
 		return code;
@@ -2482,7 +2492,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(videoLength > 0 && frame > 1){
 			rate = (double)frame / (double)videoLength;
 		}
-		System.out.printf("Frame= %d, Rate= %.5f(fps)\n", frame, rate);
+		log.printf("Frame= %d, Rate= %.5f(fps)\n", frame, rate);
 		String out_t = outputOptionMap.get("-t");
 		double t0 = 0.0;
 		if(out_t!=null){
@@ -2499,11 +2509,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			tl = Math.min(t0, tl);
 		// tl==0(情報なし) または tlは最小長
 		double length_frame = 1.0 /rate;
-		System.out.printf("Frame= %.2f(sec/frame), Rate= %.5f(fps)\n", length_frame, rate);
+		log.printf("Frame= %.2f(sec/frame), Rate= %.5f(fps)\n", length_frame, rate);
 	//	if(tl != 0.0){
 	//		tl += length_frame;
 	//	}
-		System.out.printf("Frame= %d, Rate= %.5f(fps)\n", frame, rate);
+		log.printf("Frame= %d, Rate= %.5f(fps)\n", frame, rate);
 
 		//File outputAvi = new File(imgDir,"huffyuv.avi");
 		ffmpeg.setCmd(" -loop 1 -r " + Double.toString(rate));
@@ -2573,11 +2583,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 		}else{
 			String currect_dir = System.getenv("CD");
-			System.out.println("CD:"+currect_dir);
+			log.println("CD:"+currect_dir);
 			thumbfile = new File(currect_dir, thumbname);
 		}
 		if(!thumbfile.canRead()){
-			System.out.println("サムネイルが読めません："+thumbfile.getPath());
+			log.println("サムネイルが読めません："+thumbfile.getPath());
 			sendtext("サムネイルが読めません");
 			thumbfile = new Path(".\\bin\\b32.jpg");
 		}else{
@@ -2597,7 +2607,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				copyok = true;
 			}catch(IOException e){
-				e.printStackTrace();
+				log.printStackTrace(e);
 			}finally{
 				try{
 					if(fis!=null){
@@ -2616,7 +2626,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 		if(!thumbfile.canRead()){
 			//どうしても読めない場合
-			System.out.println("サムネイルが読めません："+thumbfile.getPath());
+			log.println("サムネイルが読めません："+thumbfile.getPath());
 			sendtext("代替サムネイルが読めません");
 			errorLog = "代替サムネイルが読めません";
 			code = 198;
@@ -2669,7 +2679,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				//FPS変換必要
 				if(Setting.isUseFpsFilter()){
 					//FPS Filter選択
-					System.out.println("FPS filter");
+					log.println("FPS filter");
 					String vfoptsave = getFFmpegVfOption();
 					String vfopt = "fps=fps="+fpsUp
 						+ ",scale="+outAspect.getSize();	// -s オプションを -vf scale=w:h として先に追加
@@ -2691,14 +2701,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						//fpsfilter変換成功
 						return code;
 					}
-					System.out.println("("+code+")fps filterに失敗 ");
+					log.println("("+code+")fps filterに失敗 ");
 					errorLog += "\nfps filterに失敗 "+ getLastError();
-					System.out.println("続行\n");	//続行モード
+					log.println("続行\n");	//続行モード
 				}
 
 				// 2パスFPS変換
 				File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
-				System.out.println("FLV Up "+fpsUp+"fps");
+				log.println("FLV Up "+fpsUp+"fps");
 				infoStack.pushText("FLV "+fpsUp);
 				code = conv_fpsUp(input, outputFps);
 				infoStack.popText();
@@ -2707,10 +2717,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				if(code != 0){
 					//error
-					System.out.println("("+code+")fps変換に失敗 ");
+					log.println("("+code+")fps変換に失敗 ");
 					errorLog += "\nfps変換に失敗 "+ getLastError();
 					if(Setting.canSoundOnly()){
-						System.out.println("コメントと音声だけを合成します");
+						log.println("コメントと音声だけを合成します");
 						infoStack.pushText("SoundOnly");
 						code = convFLV_audio(input, ConvertedVideoFile, Setting.getDefaultThumbnail());
 						infoStack.popText();
@@ -2727,7 +2737,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			/*
 			 * ffmpeg.exe -y mainoption inoption -i infile outoptiont [vhookOption] outfile
 			 */
-			System.out.println("FLV 従来通り");
+			log.println("FLV 従来通り");
 			String vfoptsave = getFFmpegVfOption();
 			if(checkFps && Setting.isUseFpsFilter()){
 				String vfopt = "";
@@ -2736,7 +2746,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					vfopt = "fps=fps="+ropt
 						+ ",scale="+outAspect.getSize();
 					// -s オプションも -vf scale=w:h として先に追加
-					System.out.println("FPS filter -r "+ropt);
+					log.println("FPS filter -r "+ropt);
 					if(!vfoptsave.isEmpty()){
 						vfopt += "," + vfoptsave;
 					}
@@ -2756,7 +2766,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					 * ffmpeg -r 25.0
 					 */
 					File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
-					System.out.println("FWS fpsUp");
+					log.println("FWS fpsUp");
 					infoStack.pushText("FWS fpsUp");
 					code = conv_fpsUp(input, outputFps);
 					infoStack.popText();
@@ -2764,10 +2774,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						return code;
 					}
 					if (code != 0){
-						System.out.println("("+code+")fps変換に失敗 ");
+						log.println("("+code+")fps変換に失敗 ");
 						errorLog += "\nfps変換に失敗 "+ getLastError();
 						if(Setting.canSoundOnly()){
-							System.out.println("コメントと音声だけを合成します");
+							log.println("コメントと音声だけを合成します");
 							infoStack.pushText("SoundOnly");
 							code = convFLV_audio(input, ConvertedVideoFile, Setting.getDefaultThumbnail());
 							infoStack.popText();
@@ -2782,13 +2792,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				/*
 				 * ffmpeg.exe -y mainoption inoption -i infile outoptiont [vhookOption] outfile
 				 */
-				System.out.println("FWS 従来通り");
+				log.println("FWS 従来通り");
 				infoStack.pushText("FWS");
 				code = convFLV(input, ConvertedVideoFile);
 				infoStack.popText();
 				return code;
 			} else {
-				System.out.println("FWS 3path");
+				log.println("FWS 3path");
 				// try 3 path
 				/*
 				 * SWFファイルをJPEG形式に合成
@@ -2797,10 +2807,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				//出力先を作る
 				imgDir = Path.mkTemp("IMG"+VideoID);
 				if(imgDir.mkdir())
-					System.out.println("Created folder - " + imgDir);
+					log.println("Created folder - " + imgDir);
 				File outputImg = new File(imgDir,"%03d.jpeg");
-				System.out.println("outputImg="+outputImg);
-				System.out.println("Tring SWF to .number.JPG");
+				log.println("outputImg="+outputImg);
+				log.println("Tring SWF to .number.JPG");
 				infoStack.pushText("SWF->JPG");
 				code = convSWF_JPG(input, outputImg);
 				infoStack.popText();
@@ -2820,9 +2830,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				 */
 				//出力
 				File outputAvi = new File(imgDir,"huffyuv.mp4");
-				System.out.println("outputImg="+outputImg);
-				System.out.println("outputAvi="+outputAvi);
-				System.out.println("Tring JPG to .MP4");
+				log.println("outputImg="+outputImg);
+				log.println("outputAvi="+outputAvi);
+				log.println("Tring JPG to .MP4");
 				infoStack.pushText("JPG->MP4");
 				code = convJPG_MP4(outputImg, outputAvi);
 				infoStack.popText();
@@ -2842,7 +2852,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 				 */
 				File outputMix = new File(imgDir,"mix.mp4");
-				System.out.println("Tring MP4+sound to .MP4");
+				log.println("Tring MP4+sound to .MP4");
 				infoStack.pushText("MP4 Mix");
 				code = convMix(outputAvi, input, outputMix);
 				infoStack.popText();
@@ -2860,7 +2870,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				 * ffmpeg.exe -y -i fws_tmp.swf -itsoffset 1.0 -i avi4.avi
 				 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 				 */
-				System.out.println("Tring MIX & comment to .mp4");
+				log.println("Tring MIX & comment to .mp4");
 				infoStack.pushText("FWS comment");
 				code = convFLV(outputMix,ConvertedVideoFile);
 				infoStack.popText();
@@ -3134,7 +3144,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			ffmpeg.addCmd("|--end-of-argument\"");
 			return true;
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 			return false;
 		}
 	}
@@ -3253,7 +3263,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			switch(flag){
 			case 0:
 				if(c!='-'){
-					System.out.print("警告　キーワードではありません:"+w);
+					log.print("警告　キーワードではありません:"+w);
 					non_keyword += w + " ";
 					continue;
 				}
@@ -3272,7 +3282,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						flag = 1;
 						continue;
 					}
-					System.out.print("警告　'-'使っています:"+w);
+					log.print("警告　'-'使っています:"+w);
 				}
 				parameter = w + " ";
 				flag = 2;
@@ -3294,7 +3304,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				flag = 2;
 				continue;
 			}
-			System.out.println("バグってる");
+			log.println("バグってる");
 		}
 		//parameterが残っていたら登録(出力ファイル?)
 		if(parameter!=null){
@@ -3348,7 +3358,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				ffmpegOptionName = option_file.getName().replace(".xml", "");
 			} catch (IOException ex) {
-				ex.printStackTrace();
+				log.printStackTrace(ex);
 				return false;
 			}
 		}
@@ -3484,7 +3494,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		//	if (index >= 0){
 		//		videoTitle = videoTitle.substring(0, index);
 		//	}
-			System.out.println("Title<" + videoTitle + ">");
+			log.println("Title<" + videoTitle + ">");
 			VideoTitle = videoTitle;
 		}
 	}

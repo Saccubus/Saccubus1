@@ -27,6 +27,7 @@ import saccubus.json.Mson;
 import saccubus.net.Gate;
 import saccubus.net.Loader;
 import saccubus.net.Path;
+import saccubus.util.Logger;
 
 //import saccubus.util.Stopwatch;
 
@@ -56,6 +57,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 	private Gate gate;
 	private final int id;
 	private final ErrorControl errorControl;
+	private Logger log;
 
 	public MylistGetter(int worker_id, String url0, MainFrame frame,
 		JLabel[] in_status,ConvertStopFlag flag, ErrorControl error_control,
@@ -80,6 +82,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		Setting = frame.getSetting();
 		ret = sb;
 		errorControl = error_control;
+		log = new Logger("mylist", id, ConvertWorker.TMP_LOG_FRONTEND);
 	}
 
 	public MylistGetter(int worker_id, String tag, String info, ConvertingSetting setting,
@@ -95,6 +98,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		Setting = setting;
 		ret = sb;
 		errorControl = errcon;
+		log = new Logger("mylistB", id, ConvertWorker.TMP_LOG_FRONTEND);
 	}
 
 	//	private void sendtext(String text) {
@@ -125,8 +129,8 @@ public class MylistGetter extends SwingWorker<String, String> {
 		String autolist = "auto";
 		Path file = Path.mkTemp(url.replace("http://","").replace("nicovideo.jp/","")
 				.replaceAll("[/\\:\\?=\\&]+", "_") + ".html");
-		Loader loader = new Loader(Setting, status3);
-		gate = Gate.open(id);
+		Loader loader = new Loader(Setting, status3, log);
+		gate = Gate.open(id,log);
 		if(!loader.load(url,file)){
 			addError("E1",url);
 			sendtext("[E1]load失敗 "+url);
@@ -214,51 +218,51 @@ public class MylistGetter extends SwingWorker<String, String> {
 						if(title.isEmpty()){
 							//keyのみ登録済み→削除
 							map.remove(key);
-							System.out.println("title isEmpty() ERROR map.remove("+key+")");
+							log.println("title isEmpty() ERROR map.remove("+key+")");
 							errorSet.add(key);	//error登録
 						}else{
 							//タイトル登録済み
-							//System.out.println("title isEmpty() title("+key+","+map.get(key)+") duplicated key");
+							//log.println("title isEmpty() title("+key+","+map.get(key)+") duplicated key");
 						}
 					}else{
 						// タイトル抽出ok
 						if(title.isEmpty()){
 							//タイトル未登録
 							map.put(key, val);
-							System.out.println("map.put("+key+",\""+val+"\")");
+							log.println("map.put("+key+",\""+val+"\")");
 						}else if(!title.equals(val)){
 							//タイトル登録済み
 							if(title.length()>val.length()){
 								map.put(key, val);
-								System.out.println("map.put("+key+",\""+val+"\")");
+								log.println("map.put("+key+",\""+val+"\")");
 							}
 							//else
-							//	System.out.println("title("+key+") found \""+val+"\" but title was \""+title+"\"");
+							//	log.println("title("+key+") found \""+val+"\" but title was \""+title+"\"");
 						}
 					}
 				}
 				i1 = m.end();
 				key = m.group(1);
-				//System.out.println("key= "+key);
+				//log.println("key= "+key);
 				if(key==null || key.isEmpty()){
 					// keyは見つからない
-					System.out.println("key is empty ");
+					log.println("key is empty ");
 					i1 = 0;
 				}else if(!MainFrame.idcheck(key)){
 					// keyは動画IDではない
-					System.out.println("key idcheck() ERROR "+key);
+					log.println("key idcheck() ERROR "+key);
 					i1 = 0;
 					//errorSet.add(key);	//error登録
 				}else{
 					if(map.containsKey(key)){
 						// key登録済み
 						//String ttl = map.get(key);
-						//System.out.println("key map.containsKey("+key+","+ttl+")");
+						//log.println("key map.containsKey("+key+","+ttl+")");
 					}else{
 						// key登録
 						map.put(key, "");
 					}
-					//System.out.println("key map.put( "+key+")");
+					//log.println("key map.put( "+key+")");
 					errorSet.remove(key);
 				}
 			}
@@ -267,7 +271,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 			text = text.substring(0,text.lastIndexOf("watch/1"));
 			// うまく取れない場合に別の検索を行う
 			if(errorSet.size()>map.size()){
-				System.out.println("Retry title check: "+url);
+				log.println("Retry title check: "+url);
 				//別の抽出
 				// <a href="watch/sm999999">タイトル</a>
 				map.clear();
@@ -277,12 +281,12 @@ public class MylistGetter extends SwingWorker<String, String> {
 				while(m.find()){
 					key = m.group(2);
 					val = m.group(4);
-					System.out.println("key="+key+",val=\""+val+"\"");
+					log.println("key="+key+",val=\""+val+"\"");
 					if(!map.containsKey(key) ||
 						map.get(key).isEmpty())
 					{
 						map.put(key, val);
-						System.out.println("map.put("+key+",\""+val+"\")");
+						log.println("map.put("+key+",\""+val+"\")");
 					}
 				}
 				map.remove("1");	//delete sentinel
@@ -359,8 +363,8 @@ public class MylistGetter extends SwingWorker<String, String> {
 					});
 				}
 				//
-				System.out.println("get mylist/"+mylistID);
-				System.out.println("mson: "+text.length());
+				log.println("get mylist/"+mylistID);
+				log.println("mson: "+text.length());
 				if(StopFlag.needStop()) {
 					return "FF";
 				}
@@ -370,7 +374,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				try{
 					mson = Mson.parse(text);
 				}catch(Exception e){
-					e.printStackTrace();
+					log.printStackTrace(e);
 				}
 				if(mson==null){
 					addError("E3",url);
@@ -391,13 +395,13 @@ public class MylistGetter extends SwingWorker<String, String> {
 				String[] keys = {"watch_id","title"};
 				ArrayList<String[]> id_title_list = mson.getListString(keys);	// List of id & title
 				for(String[] vals:id_title_list){
-				//	System.out.println("Getting ["+ vals[0] + "]"+ vals[1]);
+				//	log.println("Getting ["+ vals[0] + "]"+ vals[1]);
 					plist.add(0, vals);
 				}
 
 				int sz = plist.size();
 				sendtext("抽出成功 "+mylistID + "　"+sz+"個　"+ url);
-				System.out.println("Success mylist/"+mylistID+" item:"+sz);
+				log.println("Success mylist/"+mylistID+" item:"+sz);
 				if(sz == 0){
 					addError("E4",url);
 					sendtext("[E4]動画がありません。"+mylistID);
@@ -407,13 +411,13 @@ public class MylistGetter extends SwingWorker<String, String> {
 					id_title_list = mson.getListString(keys);	// List of id & title
 					plist.clear();
 					for(String[] vals:id_title_list){
-					//	System.out.println("Getting ["+ vals[0] + "]"+ vals[1]);
+					//	log.println("Getting ["+ vals[0] + "]"+ vals[1]);
 						plist.add(0, vals);
 					}
 
 					sz = plist.size();
 					sendtext("抽出成功 "+mylistID + "　"+sz+"個　"+ url);
-					System.out.println("Success mylist/"+mylistID+" item:"+sz);
+					log.println("Success mylist/"+mylistID+" item:"+sz);
 					if(sz == 0){
 						addError("E4",url);
 						sendtext("[E4]動画がありません。"+mylistID);
@@ -466,7 +470,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 		} finally{
 
 		}
@@ -485,17 +489,17 @@ public class MylistGetter extends SwingWorker<String, String> {
 		try {
 			result = get();
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 		}
 		StopFlag.finish();
 		StopFlag.setButtonEnabled(false);
 		if (result==null){
-			System.out.println("done#get()==null バグ?");
+			log.println("done#get()==null バグ?");
 		}else{
-			System.out.println("done#get() "+result);
+			log.println("done#get() "+result);
 		}
 		if(parent!=null){
-			parent.myListGetterDone(ret);
+			parent.myListGetterDone(ret, log);
 		}
 	}
 
@@ -504,7 +508,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		final String CMD_LINE = "%CMD% ";
 		File autolist = new File(".\\"+autoname+".bat");
 		if(!autobat.canRead()){
-			System.out.println("auto.batがないので"+autoname+".batが出力できません:"+mylistID);
+			log.println("auto.batがないので"+autoname+".batが出力できません:"+mylistID);
 			sendtext("出力失敗 "+autoname+".bat:"+mylistID);
 			return false;
 		}
@@ -571,14 +575,14 @@ public class MylistGetter extends SwingWorker<String, String> {
 			else
 				return saveListtxt(autoname,mylist);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 		} finally {
 			try{
 				br.close();
 				pw.flush();
 				pw.close();
 			}catch(Exception ex){
-				ex.printStackTrace();
+				log.printStackTrace(ex);
 			}
 		}
 		return false;
@@ -602,14 +606,14 @@ public class MylistGetter extends SwingWorker<String, String> {
 			sendtext("出力成功 "+autoname+".txt:"+mylistID);
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 		} finally {
 			if (pw!=null) {
 				try{
 					pw.flush();
 					pw.close();
 				}catch(Exception ex){
-					ex.printStackTrace();
+					log.printStackTrace(ex);
 				}
 			}
 		}

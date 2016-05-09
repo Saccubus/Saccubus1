@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
+import saccubus.util.Logger;
 import saccubus.util.Util;
 
 /**
@@ -151,19 +152,21 @@ public class Chat {
 
 	private String Comment = "";
 
-	public Chat() {
+	private Logger log;
+	public Chat(Logger logger) {
+		log = logger;
 	}
 /*
 	public void setDate(String date_str) {
 		Date = Integer.parseInt(date_str);
-		// System.out.println("date:" + date_str);
+		// log.println("date:" + date_str);
 	}
 */
  	String strsec = "";
 	int sec = 0;
 
 	public void setMail(String mail_str) {
-		// System.out.println("mail:" + mail_str);
+		// log.println("mail:" + mail_str);
 		Color = CMD_COLOR_DEF;
 		Size = CMD_SIZE_DEF;
 		Location = CMD_LOC_DEF;
@@ -192,8 +195,8 @@ public class Chat {
 						sec = Integer.parseInt(strsec) + 1;	// @0 -> 1
 						Location |= ((sec & CMD_MAX_SECONDS) << CMD_LOC_SECONDS_BITS) & CMD_LOC_SECONDS_MASK;
 					} catch(NumberFormatException e){
-						// e.printStackTrace();
-						System.out.println("\nChat: 変換エラー @"+strsec+" at No:"+No);
+						// log.printStackTrace(e);
+						log.println("\nChat: 変換エラー @"+strsec+" at No:"+No);
 					}
 				}
 			}
@@ -234,14 +237,14 @@ public class Chat {
 			} else {
 				int color = getColorNumber(str);
 				if (color == CMD_COLOR_NONE){
-					// System.out.println("Unknown command:" + str);
+					// log.println("Unknown command:" + str);
 					continue;
 				}
 				if (isColorAssigned){
 					// color set more than twice
-					System.out.println("[Chat.java]COLOR twice=" + str + ",mail=" + mail_str);
+					log.println("[Chat.java]COLOR twice=" + str + ",mail=" + mail_str);
 				} else if (color == CMD_COLOR_ERROR){
-					System.out.println("[Chat.java]COLOR warning str=" + str + ",mail=" + mail_str);
+					log.println("[Chat.java]COLOR warning str=" + str + ",mail=" + mail_str);
 					Color = CMD_COLOR_DEF;
 					isColorAssigned = true;
 				} else {
@@ -258,7 +261,7 @@ public class Chat {
 		} catch (Exception e) {
 			No = -1;
 		}
-		// System.out.println("no:" + no_str);
+		// log.println("no:" + no_str);
 	}
 	public void setNo(int n){
 		No = n;
@@ -268,7 +271,7 @@ public class Chat {
 	}
 /*
 	public void setUserID(String user_id_str) {
-		// System.out.println("user_id:" + user_id_str);
+		// log.println("user_id:" + user_id_str);
 		try {
 			UserID = Integer.parseInt(user_id_str);
 		} catch (Exception e) {
@@ -277,7 +280,7 @@ public class Chat {
 	}
 */
 	public void setVpos(String vpos_str) {
-		// System.out.println("vpos:" + vpos_str);
+		// log.println("vpos:" + vpos_str);
 		try {
 			Vpos = Integer.parseInt(vpos_str);
 		} catch (Exception e) {
@@ -287,7 +290,7 @@ public class Chat {
 	}
 
 	public void setComment(String com_str) {
-		// System.out.println("Comment[" + com_str.length() + "]:" + com_str);
+		// log.println("Comment[" + com_str.length() + "]:" + com_str);
 		//Comment += com_str.replace("\t", "\u2001\u2001");
 		//Comment += com_str.replace("\t", "      ");	//0x20 6文字
 		Comment += com_str;
@@ -298,7 +301,7 @@ public class Chat {
 		try {
 			a = (Comment + "\0").getBytes("UnicodeLittleUnmarked");
 		} catch (UnsupportedEncodingException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			//throw new IOException("[Chat/write:1]Processing:"+No+"<"+Comment+">");
 		}
 		Util.writeInt(os, No);
@@ -433,7 +436,7 @@ public class Chat {
 			return color + Integer.MIN_VALUE;
 		} catch(NumberFormatException e){
 			// error
-			//e.printStackTrace();
+			//log.printStackTrace(e);
 			return CMD_COLOR_ERROR;	// error default
 		}
 	}

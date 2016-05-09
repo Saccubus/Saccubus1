@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 
 import saccubus.ConvertingSetting;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
+import saccubus.util.Logger;
 import saccubus.util.Stopwatch;
 
 /**
@@ -35,8 +36,10 @@ public class Loader {
 	private int proxyPort;
 	private String userSession;
 	private BrowserCookieKind browserKind;
+	private Logger log;
 
-	public Loader(ConvertingSetting setting, JLabel[] status3) {
+	public Loader(ConvertingSetting setting, JLabel[] status3, Logger logger) {
+		log = logger;
 		this.setting = setting;
 		this.status = status3[0];
 		stopwatch = new Stopwatch(status3[1]);
@@ -58,7 +61,7 @@ public class Loader {
 		if (!check(setting)){
 			return false;
 		}
-		NicoClient client = getNicoClient();
+		NicoClient client = getNicoClient(log);
 		if(client == null){
 			return false;
 		}
@@ -71,7 +74,7 @@ public class Loader {
 	 * @return true if OK.
 	 */
 	private boolean check(ConvertingSetting setting) {
-		BrowserInfo browser = new BrowserInfo();
+		BrowserInfo browser = new BrowserInfo(log);
 		userSession = browser.getUserSession(setting);
 		browserKind = browser.getValidBrowser();
 		if (browserKind == BrowserCookieKind.NONE){
@@ -101,18 +104,18 @@ public class Loader {
 		return true;
 	}
 
-	private NicoClient getNicoClient(){
+	private NicoClient getNicoClient(Logger log){
 		sendtext("ログイン中");
 		NicoClient client = null;
 		if (browserKind != BrowserCookieKind.NONE){
 			// セッション共有、ログイン済みのNicoClientをclientに返す
-			client = new NicoClient(browserKind, userSession, proxy, proxyPort, stopwatch);
+			client = new NicoClient(browserKind, userSession, proxy, proxyPort, stopwatch, log);
 		} else {
-			client = new NicoClient(mailAddress, password, proxy, proxyPort, stopwatch);
+			client = new NicoClient(mailAddress, password, proxy, proxyPort, stopwatch, log);
 		}
 		if (!client.isLoggedIn()) {
 			sendtext("ログイン失敗 " + browserKind.getName() + " " + client.getExtraError());
-			System.out.println("\nLogin failed.");
+			log.println("\nLogin failed.");
 			return null;
 		} else {
 			sendtext("ログイン成功 " + browserKind.getName());
@@ -128,14 +131,14 @@ public class Loader {
 	 */
 	private boolean loadToFile(NicoClient client, String url, Path file) {
 		try {
-			System.out.print("Loading...");
+			log.print("Loading...");
 			HttpURLConnection con = client.urlConnectGET(url);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-				System.out.println("ng.\nCan't get URL Object:" + url);
+				log.println("ng.\nCan't get URL Object:" + url);
 				return false;
 			}
 			if (file.canRead() && file.delete()) {
-				System.out.print("previous file " + file.getRelativePath() + " deleted...");
+				log.print("previous file " + file.getRelativePath() + " deleted...");
 			}
 			String encoding = con.getContentEncoding();
 			if (encoding == null){
@@ -146,20 +149,20 @@ public class Loader {
 			String ret;
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(
 				new FileOutputStream(file), encoding));			if(client.Debug){
-				System.out.println();
-				new NicoMap().putConnection(con, System.out);
+				log.println();
+				new NicoMap().putConnection(con, log);
 			}
 			while ((ret = br.readLine()) != null) {
 				pw.println(ret);
 			}
-			System.out.println("ok.");
+			log.println("ok.");
 			br.close();
 			pw.flush();
 			pw.close();
 			con.disconnect();
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 		}
 		return false;
 	}

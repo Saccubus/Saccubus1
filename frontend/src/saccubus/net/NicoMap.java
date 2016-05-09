@@ -3,12 +3,13 @@
  */
 package saccubus.net;
 
-import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+
+import saccubus.util.Logger;
 
 /**
  * Map<String Key, String Value><br/>
@@ -41,19 +42,19 @@ public class NicoMap {
 	}
 	/**
 	 * 全マッピングをプリントアウトする
-	 * @param out
+	 * @param log
 	 */
-	public void printAll(PrintStream out) {
-		if(out==null) return;
+	public void printAll(Logger log) {
+		if(log==null) return;
 		for (String key: map.keySet()){
 			String value = this.get(key);
 			if(!key.startsWith("_"))
-				debugOut(out, key, value);
+				debugOut(log, key, value);
 		}
 	}
-	private void debugOut(PrintStream out, String key, String value){
-		if(out!=null)
-			out.println("■map:<" + key + "> <" + value + ">");
+	private void debugOut(Logger log, String key, String value){
+		if(log!=null)
+			log.println("■map:<" + key + "> <" + value + ">");
 	}
 	/**
 	 * ニコマップが空ならtrue
@@ -194,21 +195,21 @@ public class NicoMap {
 	 * HttpURLConnectionのヘッダーを全部addし outがnullでないならprintlnする。
 	 * @param con　connect後のHttpURLConnection
 	 */
-	public void putConnection(HttpURLConnection con, PrintStream out){
+	public void putConnection(HttpURLConnection con, Logger log){
 		String key;
 		String value;
 		key = con.getHeaderFieldKey(0);
 		value = con.getHeaderField(0);
 		if (key == null){
-			debugOut(out,"_Response",value);
+			debugOut(log,"_Response",value);
 		} else {
 			this.add(key, value);
-			debugOut(out,key,value);
+			debugOut(log,key,value);
 		}
 		for (int i = 1; (key = con.getHeaderFieldKey(i)) != null; i++){
 			value = con.getHeaderField(i);
 			this.add(key, value);
-			debugOut(out,key,value);
+			debugOut(log,key,value);
 		}
 	}
 	/**

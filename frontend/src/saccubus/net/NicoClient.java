@@ -28,6 +28,7 @@ import saccubus.ConvertWorker;
 import saccubus.WayBackDate;
 import saccubus.conv.ChatSave;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
+import saccubus.util.Logger;
 import saccubus.util.Stopwatch;
 
 /**
@@ -59,6 +60,7 @@ public class NicoClient {
 	private final NicoMap nicomap;
 	private Stopwatch Stopwatch;
 	private Path titleHtml = null;
+	private Logger log;
 
 	public static final String DEBUG_PROXY = "debug";	// debug paramerter end with '/'
 
@@ -70,7 +72,9 @@ public class NicoClient {
 	 * @param proxy_port
 	 */
 	public NicoClient(final String user, final String pass,
-			final String proxy, final int proxy_port, final Stopwatch stopwatch) {
+			final String proxy, final int proxy_port, final Stopwatch stopwatch,
+			Logger logger) {
+		log = logger;
 		User = user;
 		Pass = pass;
 		Stopwatch = stopwatch;
@@ -83,7 +87,7 @@ public class NicoClient {
 	private Proxy conProxy(String proxy, final int proxy_port){
 		Proxy tmpProxy;
 		if (proxy != null && proxy.startsWith(DEBUG_PROXY)){
-			System.out.println("Print debug information.");
+			log.println("Print debug information.");
 			Debug = true;
 			proxy = proxy.substring(proxy.indexOf('/', DEBUG_PROXY.length())+1);
 		}
@@ -95,8 +99,8 @@ public class NicoClient {
 				//ConProxy = tmpProxy;
 				return tmpProxy;
 			} catch(Exception ex){
-				ex.printStackTrace();
-				System.out.println("Unable to make Proxy. maybe bug.");
+				log.printStackTrace(ex);
+				log.println("Unable to make Proxy. maybe bug.");
 				return null;
 			}
 		} else {
@@ -116,14 +120,16 @@ public class NicoClient {
 	 * @param proxy_port : int
 	 */
 	public NicoClient(final BrowserCookieKind browser_kind, final String user_session,
-			final String proxy, final int proxy_port, final Stopwatch stopwatch) {
+			final String proxy, final int proxy_port, final Stopwatch stopwatch,
+			Logger logger) {
+		log = logger;
 		User = "";
 		Pass = "";
 		Stopwatch = stopwatch;
 		nicomap = new NicoMap();
 		ConProxy = conProxy(proxy, proxy_port);
 		if (user_session == null || user_session.isEmpty()){
-			System.out.println("Invalid user session" + browser_kind.toString());
+			log.println("Invalid user session" + browser_kind.toString());
 			setExtraError("セッションを取得出来ません");
 			Logged_in = false;
 		} else {
@@ -138,7 +144,7 @@ public class NicoClient {
 						return;
 					}
 					Cookie = new NicoCookie();
-					System.out.println("Fault user session" + browser_kind.toString());
+					log.println("Fault user session" + browser_kind.toString());
 					setExtraError("セッションが無効です");
 				}
 			}
@@ -148,7 +154,7 @@ public class NicoClient {
 
 	void debug(String messege){
 		if (Debug){
-			System.out.print(messege);
+			log.print(messege);
 		}
 	}
 
@@ -234,19 +240,19 @@ public class NicoClient {
 				debug("■Response:" + Integer.toString(code) + " " + con.getResponseMessage() + "\n");
 				return con;
 			} else {
-				System.out.println("Error Response:" + Integer.toString(code) + " " + con.getResponseMessage());
+				log.println("Error Response:" + Integer.toString(code) + " " + con.getResponseMessage());
 				setExtraError("" + code);
 				return null;
 			}
 		} catch(IOException ex){
 			if(Debug)
-				ex.printStackTrace();
-			System.out.println("Connection error. Check proxy ?");
+				log.printStackTrace(ex);
+			log.println("Connection error. Check proxy ?");
 			setExtraError("コネクションエラー。プロキシが不正？");
 		} catch(IllegalStateException ex){
 			if(Debug)
-				ex.printStackTrace();
-			System.out.println("Connection error. Check proxy ?");
+				log.printStackTrace(ex);
+			log.println("Connection error. Check proxy ?");
 			setExtraError("コネクションエラー。プロキシが不正？");
 		}
 		return null;
@@ -268,13 +274,13 @@ public class NicoClient {
 			con.disconnect();
 			return ret;
 		} catch(IOException ex){
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 		}
 		return "";
 	}
 
 	private NicoCookie detectCookie(HttpURLConnection con){
-		nicomap.putConnection(con, (Debug? System.out:null));
+		nicomap.putConnection(con, (Debug? log:null));
 		NicoCookie cookie = new NicoCookie();
 		nicomap.setCookie(cookie);
 	//	debug("■<NicoCookie><" + cookie.toString() + ">\n");
@@ -283,7 +289,7 @@ public class NicoClient {
 
 	private boolean login() {
 		try {
-			System.out.print("Trying login...");
+			log.print("Trying login...");
 			String url = "https://account.nicovideo.jp/api/v1/login?show_button_twitter=1&site=niconico&show_button_facebook=1";
 			debug("\n■HTTPS<" + url + ">\n");
 			HttpURLConnection con = (HttpsURLConnection) (new URL(url))
@@ -314,18 +320,18 @@ public class NicoClient {
 			String mes = con.getResponseMessage();
 			debug("■Response:" + Integer.toString(code) + " " + mes + "\n");
 			if (code < HttpURLConnection.HTTP_OK || code >= HttpURLConnection.HTTP_BAD_REQUEST) { // must 200 <= <400
-				System.out.println("Can't login:" + mes);
+				log.println("Can't login:" + mes);
 				return false;
 			}
 			Cookie = detectCookie(con);
 			con.disconnect();
 			if (Cookie == null || Cookie.isEmpty()) {
-				System.out.println("Can't login: cannot set cookie.");
+				log.println("Can't login: cannot set cookie.");
 				return false;
 			}
-		//	System.out.println("Logged in.");
+		//	log.println("Logged in.");
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			return false;
 		}
 		return true;
@@ -395,7 +401,7 @@ public class NicoClient {
 				b = s.getBytes(encoding);		// to encoding
 				len = b.length;
 			} catch (IOException e) {
-				// e.printStackTrace();
+				// log.printStackTrace(e);
 			}
 			if (len == 1 && b[0] == '?'){	// illegal char -> '?', but it's not safe, -> '-'
 				b[0] = '-';
@@ -404,7 +410,7 @@ public class NicoClient {
 			/*
 			if ("MS932".equals(encoding) && len == 2 &&
 					(b[1] == 0x5C || b[1] == 0x7C)){
-				System.out.println("Checked Danger Byte Code<" + b[1] + ">, better to fix?");
+				log.println("Checked Danger Byte Code<" + b[1] + ">, better to fix?");
 			}
 			*/
 			sb.append(s);
@@ -435,12 +441,12 @@ public class NicoClient {
 		VideoTitle = null;
 		boolean found = false;
 		String url = "http://www.nicovideo.jp/watch/" + tag + watchInfo;
-		System.out.print("Getting video history...");
+		log.print("Getting video history...");
 		boolean zero_title = false;
 		try {
 			HttpURLConnection con = urlConnectGET(url);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-				System.out.println("ng.\nCan't getVideoHistory:" + url);
+				log.println("ng.\nCan't getVideoHistory:" + url);
 				return false;
 			}
 			Cookie.update(detectCookie(con));
@@ -450,7 +456,7 @@ public class NicoClient {
 			}
 			BufferedReader br = new BufferedReader(new InputStreamReader(con
 					.getInputStream(), encoding));
-			System.out.print("ok.\nChecking VideoTitle...");
+			log.print("ok.\nChecking VideoTitle...");
 			debug("\n");
 			String ret;
 			int index = -1;
@@ -482,7 +488,7 @@ public class NicoClient {
 					if(getVideoTitle()==null){
 						VideoTitle = safeFileName(ret);
 					}
-					System.out.print("<" + VideoTitle + ">...");
+					log.print("<" + VideoTitle + ">...");
 					continue;
 				}
 				if (ret.contains(TITLE_PARSE_STR_START)) {
@@ -496,7 +502,7 @@ public class NicoClient {
 					if(getVideoTitle()==null){
 						VideoTitle = safeFileName(ret.substring(index,index2));
 					}
-					System.out.print("<" + VideoTitle + ">...");
+					log.print("<" + VideoTitle + ">...");
 					continue;
 				}
 			}
@@ -518,12 +524,12 @@ public class NicoClient {
 				pw.flush();
 				pw.close();
 				if(!found)
-					System.out.print(" Title not found.");
-				System.out.println(" <" + Path.toUnixPath(titleHtml) + "> saved.");
+					log.print(" Title not found.");
+				log.println(" <" + Path.toUnixPath(titleHtml) + "> saved.");
 			}
-			System.out.println("ok.");
+			log.println("ok.");
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			return false;
 		}
 		return true;
@@ -557,12 +563,12 @@ public class NicoClient {
 			if (url.contains("?") && !watchInfo.isEmpty()){
 				watchInfo = "&" + watchInfo.substring(1);
 			}
-			System.out.print("Getting video informations...");
+			log.print("Getting video informations...");
 			HttpURLConnection con = urlConnectGET(url + watchInfo);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-				System.out.println("ng.\nCan't getVideoInfo:" + url + watchInfo);
+				log.println("ng.\nCan't getVideoInfo:" + url + watchInfo);
 				if(con == null || !loginCheck(con)){
-					System.out.println("Can't login.");
+					log.println("Can't login.");
 					return false;
 				}
 			}
@@ -572,12 +578,12 @@ public class NicoClient {
 			}
 			String ret = readConnection(con);
 			if (ret == null || ret.isEmpty()){
-				System.out.println("ng.\nCan't getVideoInfo: null respense.");
+				log.println("ng.\nCan't getVideoInfo: null respense.");
 				return false;
 			}
 			nicomap.putArrayURLDecode(ret, encoding);
 			if (Debug){
-				nicomap.printAll(System.out);
+				nicomap.printAll(log);
 			}
 			ThreadID = nicomap.get("thread_id");
 			VideoUrl = nicomap.get("url");
@@ -598,25 +604,25 @@ public class NicoClient {
 			ownerFilter = nicomap.get("ng_up");
 			if (ThreadID == null || VideoUrl == null
 				|| MsgUrl == null || UserID == null) {
-				System.out.println("ng.\nCan't get video information keys.");
+				log.println("ng.\nCan't get video information keys.");
 				con = urlConnectGET(url + watchInfo);
 				if(!loginCheck(con)){
-					System.out.println("Can't logged In.");
+					log.println("Can't logged In.");
 				}
 				return false;
 			}
 			economy  = VideoUrl.toLowerCase().contains("low");
-			System.out.println("ok.");
-			System.out.println("Video:<" + VideoUrl + ">; Comment:<" + MsgUrl
+			log.println("ok.");
+			log.println("Video:<" + VideoUrl + ">; Comment:<" + MsgUrl
 					+ (NeedsKey ? ">; needs_key=1" : ">"));
-			System.out.println("Video time length: " + VideoLength + "sec");
-			System.out.println("ThreadID:<" + ThreadID + "> Maybe uploaded on "
+			log.println("Video time length: " + VideoLength + "sec");
+			log.println("ThreadID:<" + ThreadID + "> Maybe uploaded on "
 					+ WayBackDate.format(ThreadID));
 			if (OptionalThraedID!=null && !OptionalThraedID.isEmpty()){
-				System.out.println("OptionalThreadID:<" + OptionalThraedID + ">");
+				log.println("OptionalThreadID:<" + OptionalThraedID + ">");
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			return false;
 		}
 		return true;
@@ -631,17 +637,17 @@ public class NicoClient {
 	public File getVideo(File file, final JLabel status, final ConvertStopFlag flag,
 			boolean renameMp4) {
 		try {
-			System.out.print("Getting video size...");
+			log.print("Getting video size...");
 			if (VideoUrl == null) {
-				System.out.println("Video url is not detected.");
+				log.println("Video url is not detected.");
 				return null;
 			}
 			if (file.canRead() && file.delete()) { // ファイルがすでに存在するなら削除する。
-				System.out.print("previous video deleted...");
+				log.print("previous video deleted...");
 			}
 			HttpURLConnection con = urlConnect(VideoUrl, "GET", Cookie, true, false, null);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK) {
-				System.out.println("Can't get video:" + VideoUrl);
+				log.println("Can't get video:" + VideoUrl);
 				String ecode = getExtraError();
 				if(ecode==null){
 
@@ -654,13 +660,13 @@ public class NicoClient {
 					try {
 						Thread.sleep(5000);
 					} catch (InterruptedException e) {
-						// e.printStackTrace();
+						// log.printStackTrace(e);
 					}
 				}
 				return null;
 			}
 			InputStream is = con.getInputStream();
-			new NicoMap().putConnection(con, (Debug? System.out:null));
+			new NicoMap().putConnection(con, (Debug? log:null));
 
 			if(ContentType==null){
 				ContentType = con.getHeaderField("Content-Type");
@@ -668,9 +674,9 @@ public class NicoClient {
 			}
 			ContentDisp = con.getHeaderField("Content-Disposition");
 			int max_size = con.getContentLength();	// -1 when invalid
-			System.out.print("size="+(max_size/1000)+"Kbytes");
-			System.out.println(", type=" + ContentType + ", " + ContentDisp);
-			System.out.print("Downloading video...");
+			log.print("size="+(max_size/1000)+"Kbytes");
+			log.println(", type=" + ContentType + ", " + ContentDisp);
+			log.print("Downloading video...");
 			if(renameMp4 && ContentType.contains("mp4")){
 				String filepath = file.getPath();
 				int index = filepath.lastIndexOf(".");
@@ -690,28 +696,28 @@ public class NicoClient {
 				sendStatus(status, "動画", max_size, size);
 				Stopwatch.show();
 				if (flag.needStop()) {
-					System.out.println("\nStopped.");
+					log.println("\nStopped.");
 					is.close();
 					os.flush();
 					os.close();
 					con.disconnect();
 					if (file.delete()){
-						System.out.println("video deleted.");
+						log.println("video deleted.");
 					}
 					return null;
 				}
 			}
 			debugsOut("\n■read+write statistics(bytes) ");
-			System.out.println("ok.");
+			log.println("ok.");
 			is.close();
 			os.flush();
 			os.close();
 			con.disconnect();
 			return file;
 		} catch (FileNotFoundException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 		} finally{
 		//	debug("■read+write statistics(bytes) ");
 		//	debugsOut();
@@ -747,7 +753,7 @@ public class NicoClient {
 			final String time, final ConvertStopFlag flag, final int comment_mode, boolean isAppend) {
 		if (time != null && !time.isEmpty() && "0".equals(WayBackKey)){
 			if (!getWayBackKey(time)) { // WayBackKey
-				System.out.println("It may be wrong Date.");
+				log.println("It may be wrong Date.");
 				//return null;
 			}
 		}
@@ -772,7 +778,7 @@ public class NicoClient {
 		if (time != null && !time.isEmpty()){
 		 	WayBackKey = "0";
 			if (!getWayBackKey(time)) { // WayBackKey
-				System.out.println("It may be wrong Date.");
+				log.println("It may be wrong Date.");
 				//return null;
 			}
 		}
@@ -858,7 +864,7 @@ public class NicoClient {
 	private File downloadComment(final File file, final JLabel status,
 			String back_comment, CommentType commentType, final ConvertStopFlag flag,
 			boolean useNewComment, boolean isAppend) {
-		System.out.print("Downloading " + commentType.toString().toLowerCase()
+		log.print("Downloading " + commentType.toString().toLowerCase()
 				+" comment, size:" + back_comment + "...");
 		//String official = "";	/* 公式動画用のkey追加 */
 		if(NeedsKey && Official.isEmpty()){
@@ -878,7 +884,7 @@ public class NicoClient {
 						lastNo = ConvertWorker.getNoUserLastChat(file);
 				}else{
 					if (file.delete()) {	//	ファイルがすでに存在するなら削除する。
-						System.out.print("previous " + commentType.toString().toLowerCase() + " comment deleted...");
+						log.print("previous " + commentType.toString().toLowerCase() + " comment deleted...");
 					}
 				}
 			}
@@ -896,12 +902,12 @@ public class NicoClient {
 			if (useNewComment) {
 				req = commentCommand2009(commentType, back_comment, lastNo);
 				if (lastNo.isEmpty())
-					System.out.print("New comment mode...");
+					log.print("New comment mode...");
 				else
-					System.out.print("Append new comment mode...");
+					log.print("Append new comment mode...");
 			} else {
 				req = commentCommand2006(commentType, back_comment);
-				System.out.print("Old comment mode...");
+				log.print("Old comment mode...");
 			}
 			debug("\n■write:" + req + "\n");
 			os.write(req.getBytes());
@@ -909,7 +915,7 @@ public class NicoClient {
 			os.close();
 			debug("■Response:" + Integer.toString(con.getResponseCode()) + " " + con.getResponseMessage() + "\n");
 			if (con.getResponseCode() != HttpURLConnection.HTTP_OK) {
-				System.out.println("ng.\nCan't download " + commentType.toString().toLowerCase() + " comment:" + MsgUrl);
+				log.println("ng.\nCan't download " + commentType.toString().toLowerCase() + " comment:" + MsgUrl);
 				return null;
 			}
 			InputStream is = con.getInputStream();
@@ -928,20 +934,20 @@ public class NicoClient {
 				sendStatus(status, commentType.dlmsg(), max_size, size);
 				Stopwatch.show();
 				if (flag.needStop()) {
-					System.out.println("\nStopped.");
+					log.println("\nStopped.");
 					is.close();
 					os.flush();
 					os.close();
 					con.disconnect();
 					fos.close();
 					if (file.delete()){
-						System.out.println(commentType.toString().toLowerCase() + " comment deleted.");
+						log.println(commentType.toString().toLowerCase() + " comment deleted.");
 					}
 					return null;
 				}
 			}
 			debugsOut("■read+write statistics(bytes) ");
-			System.out.println("ok.");
+			log.println("ok.");
 			is.close();
 			fos.flush();
 			if(ownerFilter!=null && commentType==CommentType.OWNER){
@@ -963,12 +969,12 @@ public class NicoClient {
 			con.disconnect();
 			return file;
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			if(ex.toString().contains("Unexpected")){	//"Unexpected end of file from server"
 				setExtraError("サーバーから切断されました。タイムアウト？");
 			}
 		} catch(NumberFormatException ex){
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 		}
 		finally{
 			if (fos != null){
@@ -985,34 +991,34 @@ public class NicoClient {
 	private boolean getOfficialOption(String threadId) {
 		String url = "http://flapi.nicovideo.jp/api/getthreadkey?thread="
 			+threadId;
-		System.out.print("\nGetting Official options (threadkey)...");
+		log.print("\nGetting Official options (threadkey)...");
 		try {
 			if (force184 != null && threadKey != null){
-				System.out.println("ok. But this call twice, not necessary.");
+				log.println("ok. But this call twice, not necessary.");
 				return true;
 			}
 			HttpURLConnection con = urlConnectGET(url);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-					System.out.println("ng.\nCan't get Oficial option:" + url);
+					log.println("ng.\nCan't get Oficial option:" + url);
 					return false;
 			}
 			String ret = readConnection(con);
 			if (ret == null || ret.isEmpty()){
-				System.out.println("ng.\nNull response.");
+				log.println("ng.\nNull response.");
 				return false;
 			}
 			nicomap.splitAndPut(ret, "&");
 			threadKey = nicomap.get("threadkey");
 			force184 = nicomap.get("force_184");
 			if (threadKey == null || force184 == null) {
-				System.out.println("ng.\nCan't get Oficial option.");
-				System.out.println("ret: " + ret);
+				log.println("ng.\nCan't get Oficial option.");
+				log.println("ret: " + ret);
 				return false;
 			}
-			System.out.println("ok.  Thread Key: " + threadKey);
+			log.println("ok.  Thread Key: " + threadKey);
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 		}
 		return false;
 	}
@@ -1030,62 +1036,62 @@ public class NicoClient {
 	 * @return
 	 */
 	private boolean getWayBackKey(String time) {
-		System.out.print("Setting wayback time...");
+		log.print("Setting wayback time...");
 		try {
 			if(!"0".equals(WayBackKey)){
-				System.out.println("ok. But this call twice, not necessary.");
+				log.println("ok. But this call twice, not necessary.");
 				hasNewCommentBegun = true;
 				return true;
 			}
 			WayBackDate wayback = new WayBackDate(time);
 			if (!wayback.isValid()){
-				System.out.println("ng.\nCannot parse time.\"" + time + "\"");
+				log.println("ng.\nCannot parse time.\"" + time + "\"");
 				setExtraError("過去ログ指定文字列が違います");
 				return false;
 			}
 			String waybacktime = wayback.getWayBackTime();
-			System.out.println("ok. [" + wayback.format() + "]: " + waybacktime);
-			System.out.print("Getting wayback key...");
+			log.println("ok. [" + wayback.format() + "]: " + waybacktime);
+			log.print("Getting wayback key...");
 			String url = "http://flapi.nicovideo.jp/api/getwaybackkey?thread="
 					+ ThreadID;
 			HttpURLConnection con = urlConnectGET(url);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-				System.out.println("ng.\nCan't open connection: " + url);
+				log.println("ng.\nCan't open connection: " + url);
 				return false;
 			}
 			String ret = readConnection(con);
 			if (ret == null) {
-				System.out.println("ng.\nCannot find waybackkey from response.");
+				log.println("ng.\nCannot find waybackkey from response.");
 				return false;
 			}
 			nicomap.splitAndPut(ret, "&");
 			String waybackkey = nicomap.get("waybackkey");
 			if (waybackkey == null || waybackkey.isEmpty()) {
-				System.out.println("ng.\nCannot get wayback key. it's invalid");
+				log.println("ng.\nCannot get wayback key. it's invalid");
 				if ("0".equals(Premium)){
 					setExtraError("一般会員は過去ログ不可です");
 				}
 				return false;
 			}
-			System.out.println("ok.  Wayback key: " + waybackkey);
+			log.println("ok.  Wayback key: " + waybackkey);
 			WayBackTime = waybacktime;
 			WayBackKey = waybackkey;
 			hasNewCommentBegun = wayback.getSecond() > NEW_COMMENT_BEGIN_SECOND;
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 		}
 		return false;
 	}
 
 	public boolean loginCheck() {
 		String url = "http://www.nicovideo.jp/";
-		System.out.print("Checking login...");
+		log.print("Checking login...");
 		// GET (NO_POST), UTF-8, AllowAutoRedirect,
 			HttpURLConnection con = urlConnectGET(url);
 			// response 200, 302 is OK
 			if (con == null){
-				System.out.println("ng.\nCan't read TopPage at loginCheck:" + url);
+				log.println("ng.\nCan't read TopPage at loginCheck:" + url);
 				return false;
 			}
 		return loginCheck(con);
@@ -1094,19 +1100,19 @@ public class NicoClient {
 	private boolean loginCheck(HttpURLConnection con) {
 		NicoCookie new_cookie = detectCookie(con);
 		if (new_cookie == null || new_cookie.isEmpty()) {
-			System.out.print(" new_cookie isEmpty. ");
+			log.print(" new_cookie isEmpty. ");
 			// but continue
 		}
 		String auth = nicomap.get("x-niconico-authflag");
 		if(auth==null || auth.isEmpty() || auth.equals("0")){
-			System.out.println("ng. Not logged in. authflag=" + auth);
+			log.println("ng. Not logged in. authflag=" + auth);
 			con.disconnect();
 			return false;
 		}
 		Cookie.update(new_cookie);
 
 		debug("\n■Now Cookie is<" + Cookie.toString() + ">\n");
-		System.out.println("ok.");
+		log.println("ok.");
 		return true;
 	}
 
@@ -1142,12 +1148,12 @@ public class NicoClient {
 	}
 	private void debugsOut(String header){
 		if(!Debug) return;
-		System.out.print(header);
+		log.print(header);
 		if(dsCount==0){
-			System.out.println("Count 0");
+			log.println("Count 0");
 		} else {
-			System.out.print("Count "+dsCount+", Min "+dsMin+", Max "+dsMax);
-			System.out.println(", Sum "+dsSum+", Avg "+dsSum/dsCount);
+			log.print("Count "+dsCount+", Min "+dsMin+", Max "+dsMax);
+			log.println(", Sum "+dsSum+", Avg "+dsSum/dsCount);
 		}
 	}
 
@@ -1230,7 +1236,7 @@ public class NicoClient {
 					try {
 						v = Integer.parseInt(src.substring(i+2, i+6),16);
 					} catch(NumberFormatException e){
-						e.printStackTrace();
+						log.printStackTrace(e);
 					}
 					sb.append((char)v);
 					p = 6;
@@ -1301,7 +1307,7 @@ public class NicoClient {
 			pw.flush();
 			pw.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 			return null;
 		}
 		return filePath;
@@ -1311,12 +1317,12 @@ public class NicoClient {
 	public Path getThumbInfoFile(String tag){
 		final String THUMBINFO_URL = "http://ext.nicovideo.jp/api/getthumbinfo/";
 		String url = THUMBINFO_URL + tag;
-		System.out.print("Getting thumb Info...");
+		log.print("Getting thumb Info...");
 		Path thumbXml = null;
 		try {
 			HttpURLConnection con = urlConnectGET(url);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-				System.out.println("ng.\nCan't getThumbInfo:" + url);
+				log.println("ng.\nCan't getThumbInfo:" + url);
 				return null;
 			}
 		//	Cookie.update(detectCookie(con));
@@ -1327,7 +1333,7 @@ public class NicoClient {
 			}
 			BufferedReader br = new BufferedReader(new InputStreamReader(con
 					.getInputStream(), encoding));
-			System.out.print("ok.\nSaving thumb Info...");
+			log.print("ok.\nSaving thumb Info...");
 			String ret;
 			StringBuilder sb = new StringBuilder();
 			while ((ret = br.readLine()) != null) {
@@ -1426,12 +1432,12 @@ public class NicoClient {
 			pw.flush();
 			pw.close();
 			if(s.indexOf("status=\"ok\"") < 0)
-				System.out.println("ng.\nSee file:" + thumbXml);
+				log.println("ng.\nSee file:" + thumbXml);
 			else
-				System.out.println("ok.");
+				log.println("ok.");
 			return thumbXml;
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			return null;
 		}
 	}
@@ -1500,12 +1506,12 @@ public class NicoClient {
 	public Path getThumbUserFile(String userID, File userFolder){
 		final String THUMBUSER_URL = "http://ext.nicovideo.jp/thumb_user/";
 		String url = THUMBUSER_URL + userID;
-		System.out.print("Getting thumb User...");
+		log.print("Getting thumb User...");
 		Path userHtml = null;
 		try {
 			HttpURLConnection con = urlConnectGET(url);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-				System.out.println("ng.\nCan't getThumbUser:" + url);
+				log.println("ng.\nCan't getThumbUser:" + url);
 				return null;
 			}
 		//	Cookie.update(detectCookie(con));
@@ -1516,7 +1522,7 @@ public class NicoClient {
 			}
 			BufferedReader br = new BufferedReader(new InputStreamReader(con
 					.getInputStream(), encoding));
-			System.out.print("ok.\nSaving thumb user...");
+			log.print("ok.\nSaving thumb user...");
 			String ret;
 			StringBuilder sb = new StringBuilder();
 			while ((ret = br.readLine()) != null) {
@@ -1531,9 +1537,9 @@ public class NicoClient {
 			pw.write(sb.toString());
 			pw.flush();
 			pw.close();
-			System.out.println("ok.");
+			log.println("ok.");
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			return null;
 		}
 		return userHtml;
@@ -1542,12 +1548,12 @@ public class NicoClient {
 	public Path getUserInfoFile(String userID, File userFolder) {
 		final String USER_URL = "http://www.nicovideo.jp/user/";
 		String url = USER_URL + userID;
-		System.out.print("Getting User Info...");
+		log.print("Getting User Info...");
 		Path userHtml = null;
 		try {
 			HttpURLConnection con = urlConnectGET(url);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-				System.out.println("ng.\nCan't getUserInfo:" + url);
+				log.println("ng.\nCan't getUserInfo:" + url);
 				return null;
 			}
 		//	Cookie.update(detectCookie(con));
@@ -1558,7 +1564,7 @@ public class NicoClient {
 			}
 			BufferedReader br = new BufferedReader(new InputStreamReader(con
 					.getInputStream(), encoding));
-			System.out.print("ok.\nSaving user info...");
+			log.print("ok.\nSaving user info...");
 			String ret;
 			StringBuilder sb = new StringBuilder();
 			while ((ret = br.readLine()) != null) {
@@ -1582,20 +1588,20 @@ public class NicoClient {
 			pw.write(text);
 			pw.flush();
 			pw.close();
-			System.out.println("ok.");
+			log.println("ok.");
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			return null;
 		}
 		return userHtml;
 	}
 
 	public boolean getThumbnailJpg(String url, File thumbnalJpgFile) {
-		System.out.print("Getting thumbnail...");
+		log.print("Getting thumbnail...");
 		try {
 			HttpURLConnection con = urlConnectGET(url);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-				System.out.println("ng.\nCan't getThumbnailJpg:" + url);
+				log.println("ng.\nCan't getThumbnailJpg:" + url);
 				return false;
 			}
 		//	Cookie.update(detectCookie(con));
@@ -1603,19 +1609,19 @@ public class NicoClient {
 			InputStream is = con.getInputStream();
 			FileOutputStream fos = new FileOutputStream(thumbnalJpgFile);
 			byte[] buf = new byte[4096];
-			System.out.print("ok.\nSaving thumbnail...");
+			log.print("ok.\nSaving thumbnail...");
 			int len = 0;
 			while ((len = is.read(buf, 0, buf.length)) > 0) {
 				fos.write(buf, 0, len);
 				Stopwatch.show();
 			}
-			System.out.println("ok.");
+			log.println("ok.");
 			is.close();
 			fos.flush();
 			fos.close();
 			con.disconnect();
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			return false;
 		}
 		return true;

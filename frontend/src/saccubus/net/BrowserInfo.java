@@ -6,6 +6,7 @@ package saccubus.net;
 import java.io.File;
 
 import saccubus.ConvertingSetting;
+import saccubus.util.Logger;
 
 /**
  * <p>
@@ -62,9 +63,11 @@ public class BrowserInfo {
 */
 	public static final BrowserCookieKind[] ALL_BROWSER = BrowserCookieKind.values();
 	public static final int NUM_BROWSER = ALL_BROWSER.length;
+	private Logger log;
 
-	public BrowserInfo(){
+	public BrowserInfo(Logger logger){
 		validBrowser = BrowserCookieKind.NONE;
+		log = logger;
 	}
 
 	//private static final String NICOVIDEO_URL = "http://www.nicovideo.jp";
@@ -162,7 +165,7 @@ public class BrowserInfo {
 	    	}
 	        return user_session;
 	    } catch(Exception e){
-	    	e.printStackTrace();
+	    	log.printStackTrace(e);
 	        return user_session;
 	    } finally {
             if (!user_session.isEmpty()){
@@ -194,7 +197,7 @@ public class BrowserInfo {
         	return user_session;
         }
         catch (Exception e) {
-        	e.printStackTrace();
+        	log.printStackTrace(e);
         }
     	return user_session;
     }
@@ -232,7 +235,7 @@ public class BrowserInfo {
             return user_session;
         }
         catch (Exception e) {
-        	e.printStackTrace();
+        	log.printStackTrace(e);
         	return "";
         }
     }
@@ -396,7 +399,7 @@ public class BrowserInfo {
                     {
                         user_session = CutUserSession(Path.ReadAllText(fullname, "MS932"), "");
                         if (!user_session.isEmpty()){
-                        	System.out.println("Found cookie in " + fullname.replace("\\", "/"));
+                        	log.println("Found cookie in " + fullname.replace("\\", "/"));
                         	return user_session;
                         }
                     }
@@ -407,7 +410,7 @@ public class BrowserInfo {
             }
         }
         catch (Exception e) {
-        	e.printStackTrace();
+        	log.printStackTrace(e);
         }
         return "";
     }
@@ -458,7 +461,7 @@ public class BrowserInfo {
 			}
 			return user_session;
 		} catch(Exception e){
-			e.printStackTrace();
+			log.printStackTrace(e);
 			return user_session;
 		}
 	}
@@ -497,7 +500,7 @@ public class BrowserInfo {
 	        }
 	        return user_session;
         } catch(Exception e){
-        	e.printStackTrace();
+        	log.printStackTrace(e);
 	        return user_session;
         }
     }
@@ -524,7 +527,7 @@ public class BrowserInfo {
 	        }
 	        return "";
         } catch(Exception e){
-        	e.printStackTrace();
+        	log.printStackTrace(e);
 	        return "";
         }
     }
@@ -552,7 +555,7 @@ public class BrowserInfo {
             // C# ÇÃ string.SubString( , ) Ç∆ Java ÇÃ String.substring( , ) ÇÕà·Ç§ÇÃÇ≈íçà”ÅI
             start = str.indexOf("user_session_", index);
             if (!ret.isEmpty() && !filename.isEmpty()){
-            	System.out.println("Cookie found: " + filename);
+            	log.println("Cookie found: " + filename);
                 sb.append(ret + " ");
             }
         }

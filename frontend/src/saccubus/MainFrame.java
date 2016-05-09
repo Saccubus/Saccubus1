@@ -65,6 +65,7 @@ import saccubus.net.Gate;
 import saccubus.net.Loader;
 import saccubus.net.Path;
 import saccubus.util.FileDropTarget;
+import saccubus.util.Logger;
 
 /**
  * <p>
@@ -275,6 +276,7 @@ public class MainFrame extends JFrame {
 	public static final String THUMB_DEFALT_STRING = "<自動>";
 	private static final String MY_MYLIST = "my/mylist";
 	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
+	private static final Logger log = Logger.MainLog;
 
 	private String url;
 	private JPanel activityPane;
@@ -2193,7 +2195,7 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Gate.setNumGate(downloadDownCheckBox.isSelected()? 1:2);
+					Gate.setNumGate(downloadDownCheckBox.isSelected()? 1:2, log);
 					convertManager.sendTimeInfo();
 				}
 			});
@@ -2374,7 +2376,7 @@ public class MainFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					StringBuffer vlist = new StringBuffer(errorControl.getString());
-					myListGetterDone(vlist);
+					myListGetterDone(vlist, log);
 					errorControl.clear();
 					convertManager.clearError();
 				}
@@ -3137,25 +3139,25 @@ public class MainFrame extends JFrame {
 	private String watchInfo;
 	private boolean PendingMode;
 
-	public void myListGetterDone(StringBuffer vList) {
+	public void myListGetterDone(StringBuffer vList, Logger log) {
 		PendingMode = getSetting().isPendingMode();
-		myListGetterDone(vList, PendingMode);
+		myListGetterDone(vList, PendingMode, log);
 	}
 
-	public void myListGetterDone(StringBuffer vList, boolean pending) {
+	public void myListGetterDone(StringBuffer vList, boolean pending, Logger log) {
 		// mylist読み込み終了　結果を受け取る
 		if(vList==null){
-			System.out.println("マイリスト結果受け取り失敗　バグ?");
+			log.println("マイリスト結果受け取り失敗　バグ?");
 			sendtext("マイリスト結果受け取り失敗　バグ?");
 			return;
 		}
 		String str = vList.substring(0);
 		vList = new StringBuffer();
-		System.out.println(str);
+		log.println(str);
 		String[] lists = str.split("\n");
 		for(String id_title:lists){
 			if(id_title.isEmpty()) continue;
-			System.out.println("登録\t"+id_title);
+			log.println("登録\t"+id_title);
 			String[] ss = id_title.split("\t");
 			String vid = ss[0];
 			String title = ss.length>1 ? ss[1] : "";
@@ -3177,7 +3179,7 @@ public class MainFrame extends JFrame {
 				}
 			});
 			int indexNow = convNo++;
-			//System.out.println(">"+indexNow+"個目の要求: "+vid);
+			//log.println(">"+indexNow+"個目の要求: "+vid);
 			sendtext(">"+indexNow+"個目の要求: "+vid);
 			ConvertStopFlag stopFlag =
 				new ConvertStopFlag(stopButton,"停","待","終", "変", pending);
@@ -3214,7 +3216,7 @@ public class MainFrame extends JFrame {
 		if(obj instanceof JButton){
 			ConvertStopFlag flag = buttonTable.get((JButton)obj);
 			if(flag==null){
-				System.out.println("stopButton が登録されていません");
+				log.println("stopButton が登録されていません");
 				return;
 			}
 			convertManager.buttonPushed(flag);
@@ -3246,7 +3248,7 @@ public class MainFrame extends JFrame {
 				url = "";
 			if(url.isEmpty()){
 				sendtext("URL/IDが入力されていません");
-				System.out.println("変換ボタンが押されたがURL/ID欄が入力されていません");
+				log.println("変換ボタンが押されたがURL/ID欄が入力されていません");
 				return;
 			}
 			requestHistory.add(url);
@@ -3276,7 +3278,7 @@ public class MainFrame extends JFrame {
 				}
 			});
 			int indexNow = convNo++;
-			//System.out.println(">"+indexNow+"個目の要求: "+vid);
+			//log.println(">"+indexNow+"個目の要求: "+vid);
 			sendtext(">"+indexNow+"個目の要求: "+vid);
 			ConvertStopFlag stopFlag =
 				new ConvertStopFlag(stopButton,"停","待","終", "変", PendingMode);
@@ -3306,8 +3308,8 @@ public class MainFrame extends JFrame {
 				// url = "sm1234567?req=mylist" など
 				// url = "1234567" マイメモリーこっち
 				sendtext(">同時変換数　"+numThread+" "+indexNow);
-				System.out.println(">同時変換数　"+numThread+" "+url);
-				System.out.println(">"+indexNow+" "+url);
+				log.println(">同時変換数　"+numThread+" "+url);
+				log.println(">"+indexNow+" "+url);
 				StringBuffer sbret = new StringBuffer();
 				convertManager.request(
 					indexNow,
@@ -3327,7 +3329,7 @@ public class MainFrame extends JFrame {
 		}catch(Exception ex){
 			ex.printStackTrace();
 			sendtext("MainFrame error");
-			System.out.println("MainFrame error");
+			log.println("MainFrame error");
 		}
 		finally{
 			DoButton.setEnabled(true);
@@ -3340,7 +3342,7 @@ public class MainFrame extends JFrame {
 			String vid;
 			String regex = "[]):/\\\\_\\t\\.\\?].*$";
 			String Tag = localFile.getName().replaceFirst(regex, "").trim();
-			System.out.println("Tag:"+Tag);
+			log.println("Tag:"+Tag);
 			if(Tag.charAt(0)=='('){
 				vid = Tag.substring(1);
 				Tag += ')';
@@ -3350,8 +3352,8 @@ public class MainFrame extends JFrame {
 			} else {
 				vid = Tag;
 			}
-			System.out.println("Tag:"+Tag);
-			System.out.println("vid:"+vid);
+			log.println("Tag:"+Tag);
+			log.println("vid:"+vid);
 			if(idcheck(vid)){
 				url = vid;
 			} else {
@@ -3455,7 +3457,7 @@ public class MainFrame extends JFrame {
 	private boolean parseUrlMylist() {
 		url = treatUrlHttp(url);
 		boolean isMylist = url.startsWith("http");
-		System.out.println("Url:"+url+" isMylist="+isMylist);
+		log.println("Url:"+url+" isMylist="+isMylist);
 		int index = 0;
 		index = url.indexOf('#');
 		if(index >= 0){
@@ -3473,7 +3475,7 @@ public class MainFrame extends JFrame {
 		}
 		if(Tag.contains("/")||Tag.contains(":")){
 			Tag = Tag.replace("/","_").replace(":","_");
-			System.out.println("BUG Tag changed: "+Tag);
+			log.println("BUG Tag changed: "+Tag);
 		}
 		return isMylist;
 	}
@@ -3628,14 +3630,14 @@ public class MainFrame extends JFrame {
 		}
 		FFmpeg ffmpeg = new FFmpeg(path);
 		ffmpeg.setCmd(parameter);
-	//	System.out.println("execute:" + ffmpeg.getCmd());
+	//	log.println("execute:" + ffmpeg.getCmd());
 		ffmpeg.exec(new FFmpeg.Callback() {
 				@Override
-				public void doEveryLoop(String e) {
-				//	System.out.println(e);
+				public void doEveryLoop(String e, Logger log) {
+				//	log.println(e);
 					output.add(e.trim() + "\n");
 				}
-		});
+		}, log);
 		return output;
 	}
 
@@ -5113,7 +5115,8 @@ class MainFrame_LoadNGConfig implements ActionListener {
 		JLabel watch = mainFrame.elapsedTimeBar;
 		mainFrame.sendtext("ニコニコ動画のNG設定保存");
 		Loader loader = new Loader(mainFrame.getSetting(),
-			new JLabel[]{mainFrame.statusBar, new JLabel(), watch, new JLabel()});
+			new JLabel[]{mainFrame.statusBar, new JLabel(), watch, new JLabel()},
+			Logger.MainLog);
 		Path file = new Path("configNG.xml");
 		String url = "http://ext.nicovideo.jp/api/configurengclient?mode=get";
 		if (loader.load(url, file)){

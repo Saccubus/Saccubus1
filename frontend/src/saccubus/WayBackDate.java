@@ -82,13 +82,11 @@ public class WayBackDate {
 				// wayBackTime = "0";	// no need
 				// date = null;	// no need
 				// not set time
-				// System.out.println("ng.\nCannot parse time." + time);
 				return false;
 			}
 		}
 		this.time = time;
 		date = tmpdate;
-//		System.out.println("ok.(" + format(date) + "):" + wayBackTime);
 		return true;
 	}
 
@@ -149,7 +147,6 @@ public class WayBackDate {
 //		try {
 //			return MyDateFmt.parse(time);
 //		} catch (ParseException e) {
-//			e.printStackTrace();
 //			return null;
 //		}
 //	}

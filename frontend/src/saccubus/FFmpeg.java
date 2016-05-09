@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 
+import saccubus.util.Logger;
 import saccubus.util.Stopwatch;
 
 /**
@@ -88,12 +89,12 @@ public class FFmpeg {
 		public void doAbort(String text);
 	}
 
-	public int exec(int abortedCode, CallbackInterface callback) {
+	public int exec(int abortedCode, CallbackInterface callback, Logger log) {
 		ProcessBuilder pb = null;
 		Process process = null;
 		BufferedReader ebr = null;
 		try {
-	//		System.out.println("\n\n----\nProcessing FFmpeg...\n----\n\n");
+	//		log.println("\n\n----\nProcessing FFmpeg...\n----\n\n");
 	//		process = Runtime.getRuntime().exec(getCmd());
 			pb = new ProcessBuilder(getCmdArrayList());
 			pb.redirectErrorStream(true);
@@ -101,7 +102,7 @@ public class FFmpeg {
 			ebr = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
 			String e;
 			while ((e = ebr.readLine()) != null) {
-				callback.doEveryLoop(e);
+				callback.doEveryLoop(e, log);
 				//Stopwatch.show();				// must be set in callback.doEveryLoop
 				if (callback.checkStop()) {
 					process.destroy();
@@ -112,24 +113,24 @@ public class FFmpeg {
 			process.waitFor();
 			return process.exitValue();
 		} catch (InterruptedException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			return -1;
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			return -1;
 		} finally {
 			try {
 				ebr.close();
 				process.getInputStream().close();
 			} catch(Exception ex){
-				ex.printStackTrace();
+				log.printStackTrace(ex);
 			}
 		}
 	}
 
 	private StringBuffer errorLogging = null;
 //	private int videoLength = 0;
-	public int exec(JLabel status, int abortedCode, ConvertStopFlag flag, Stopwatch watch) {
+	public int exec(JLabel status, int abortedCode, ConvertStopFlag flag, Stopwatch watch, Logger log) {
 
 		class FFmpegCallback implements CallbackInterface {
 			private JLabel status;
@@ -152,7 +153,7 @@ public class FFmpeg {
 				}
 			}
 			@Override
-			public void doEveryLoop(String e) {
+			public void doEveryLoop(String e, Logger log) {
 				stopwatch.show();
 				if (e.startsWith("frame=")) { //
 					LastFrame = e;
@@ -163,7 +164,7 @@ public class FFmpeg {
 					LastError = e;
 					errorLogging.append(LastError + "\n");
 					if(!e.endsWith("No accelerated colorspace conversion found")){
-						System.out.println(e);
+						log.println(e);
 					}
 				}
 			}
@@ -172,8 +173,8 @@ public class FFmpeg {
 		LastError = "ÉGÉâÅ[èÓïÒÇ™Ç†ÇËÇ‹ÇπÇÒ";
 		LastFrame = "";
 		errorLogging = new StringBuffer();
-		System.out.println("\n\n----\nProcessing FFmpeg...\n----\n\n");
-		return exec(abortedCode, new FFmpegCallback(status, flag, watch));
+		log.println("\n\n----\nProcessing FFmpeg...\n----\n\n");
+		return exec(abortedCode, new FFmpegCallback(status, flag, watch), log);
 	}
 
 	public String getLastFrame() {
@@ -189,7 +190,7 @@ public class FFmpeg {
 	}
 
 	public interface Callback {
-		void doEveryLoop(String e);
+		void doEveryLoop(String e, Logger log);
 	}
 
 	/**
@@ -197,7 +198,7 @@ public class FFmpeg {
 	 * @param callback
 	 * @return
 	 */
-	public int exec(Callback callback){
+	public int exec(Callback callback, Logger log){
 		ProcessBuilder pb = null;
 		Process process = null;
 		BufferedReader ebr = null;
@@ -209,15 +210,15 @@ public class FFmpeg {
 			ebr = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String e;
 			while ((e = ebr.readLine()) != null) {
-				callback.doEveryLoop(e);
+				callback.doEveryLoop(e, log);
 			}
 			process.waitFor();
 			return process.exitValue();
 		} catch (InterruptedException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			return -1;
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			log.printStackTrace(ex);
 			return -1;
 		} finally {
 			try {
@@ -225,7 +226,7 @@ public class FFmpeg {
 	//			process.getErrorStream().close();
 				process.getInputStream().close();
 			} catch(Exception ex){
-				ex.printStackTrace();
+				log.printStackTrace(ex);
 			}
 		}
 	}

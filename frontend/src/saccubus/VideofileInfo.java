@@ -15,6 +15,7 @@ import saccubus.FFmpeg.Aspect;
 import saccubus.FFmpeg.CallbackInterface;
 import saccubus.util.BitReader;
 import saccubus.util.Cws2Fws;
+import saccubus.util.Logger;
 import saccubus.util.Stopwatch;
 
 /**
@@ -37,25 +38,28 @@ public class VideofileInfo {
 	private final JLabel status;
 	private final ConvertStopFlag flag;
 	private final Stopwatch watch;
+	private Logger log;
 
-	public VideofileInfo(File videofile,FFmpeg ffmpeg, JLabel status, ConvertStopFlag flag, Stopwatch watch){
+	public VideofileInfo(File videofile,FFmpeg ffmpeg, JLabel status,
+		ConvertStopFlag flag, Stopwatch watch, Logger logger){
 		this.videoFile = videofile;
 		this.ffmpeg = ffmpeg;
 		this.status = status;
 		this.flag = flag;
 		this.watch = watch;
 		this.output = new StringBuffer();
-		initInfoMap(VIDEOINFO_KEYS);
+		log = logger;
+		initInfoMap(VIDEOINFO_KEYS, log);
 	}
 
-	public void initInfoMap(final String[] infokeys) {
+	public void initInfoMap(final String[] infokeys, Logger log) {
 		class InfoMapCallback implements CallbackInterface {
 			@Override
-			public void doEveryLoop(String e) {
+			public void doEveryLoop(String e, Logger log) {
 				watch.show();
 				for(String key : infokeys){
 					if (e.contains(key)){
-						System.out.println(" " + e.trim());
+						log.println(" " + e.trim());
 						output.append(e.trim() + "\n");
 						e = e.replace(key, "").trim();
 						LinkedList<String> list = new LinkedList<String>();
@@ -79,9 +83,9 @@ public class VideofileInfo {
 
 		ffmpeg.setCmd("-y -i ");
 		ffmpeg.addFile(videoFile);
-		System.out.println("get Info:" + ffmpeg.getCmd());
+		log.println("get Info:" + ffmpeg.getCmd());
 		int abortedCode = 0;
-		ffmpeg.exec(abortedCode, new InfoMapCallback());
+		ffmpeg.exec(abortedCode, new InfoMapCallback(), log);
 		src = output.toString();
 	}
 
@@ -97,7 +101,7 @@ public class VideofileInfo {
 		long height = 0;
 		if (Cws2Fws.isFws(videoFile)){	// swf, maybe NMM
 			FileInputStream fis = null;
-			System.out.println("get aspect from FWS(swf)");
+			log.println("get aspect from FWS(swf)");
 			try {
 				fis = new FileInputStream(videoFile);
 				BitReader br = new BitReader(fis);
@@ -111,7 +115,7 @@ public class VideofileInfo {
 				height = br.readBit(bit);		// ymax is height
 				height /= 20;	// From swip to pixel
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.printStackTrace(e);
 				return Aspect.ERROR;
 			} finally {
 				if (fis != null){
@@ -140,7 +144,7 @@ public class VideofileInfo {
 							width = Long.parseLong(list[0]);
 							height = Long.parseLong(list[1]);
 						} catch(NumberFormatException e){
-							e.printStackTrace();
+							log.printStackTrace(e);
 							//return null;
 						}
 						if(width!=0L && height!=0L) break;
@@ -149,7 +153,7 @@ public class VideofileInfo {
 			}
 		}
 		Aspect asp = new Aspect((int)width, (int)height);
-		System.out.println(asp.explain());
+		log.println(asp.explain());
 		return asp;
 	}
 
@@ -195,7 +199,7 @@ public class VideofileInfo {
 			if(!duration.isEmpty())
 				it += Integer.parseInt(duration) * 3600;	//hour
 		}catch(NumberFormatException e){
-			e.printStackTrace();
+			log.printStackTrace(e);
 		}
 		return it;
 	}
@@ -212,10 +216,10 @@ public class VideofileInfo {
 		double r = 0.0;
 		if (strs==null)
 			return r;
-		System.out.println("getFramerate: videoInfoMap");
+		log.println("getFramerate: videoInfoMap");
 		try {
 			for(String str:strs){
-				System.out.print(str+",");
+				log.print(str+",");
 				if(!str.contains("tbr")) continue;
 				str = str.replace("tbr", "").replace("k", "").trim();
 				r = Double.parseDouble(str);

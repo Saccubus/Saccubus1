@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities;
 
 import saccubus.net.Gate;
 import saccubus.net.NicoClient;
+import saccubus.util.Logger;
 
 public class ConvertManager extends Thread {
 	private static AtomicInteger numThread = new AtomicInteger(1);
@@ -27,8 +28,10 @@ public class ConvertManager extends Thread {
 	private AtomicInteger numError = new AtomicInteger(0);
 	private AtomicInteger numConvert = new AtomicInteger(0);
 	private AtomicBoolean waitManager = new AtomicBoolean(false);
+	private static Logger log;
 
 	public ConvertManager(JLabel[] st3){
+		log = Logger.MainLog;
 		if(st3!=null){
 			int len = st3.length;
 			if (len > 0) managerStatus = st3[0];
@@ -91,15 +94,15 @@ public class ConvertManager extends Thread {
 			flagTable.remove(flag);
 		}
 		if("0".equals(result)){
-			System.out.println("manager#reqDone("+wid+") OK. [0]"+getTimeInfo());
+			log.println("manager#reqDone("+wid+") OK. [0]"+getTimeInfo());
 		}else{
 			numError.incrementAndGet();
-			System.out.println("manager#reqDone("+wid+") ["+result+"] "+getTimeInfo());
+			log.println("manager#reqDone("+wid+") ["+result+"] "+getTimeInfo());
 			if(!"FF".equals(result)){
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					// e.printStackTrace();
+					// log.printStackTrace(e);
 				}	//1•b ‘Ò‹@
 			}
 		}
@@ -110,7 +113,7 @@ public class ConvertManager extends Thread {
 //		try {
 //			Thread.sleep(500);
 //		} catch (InterruptedException e) {
-//			// e.printStackTrace();
+//			// log.printStackTrace(e);
 //		}	//500ms ‘Ò‹@
 	}
 
@@ -121,7 +124,7 @@ public class ConvertManager extends Thread {
 			numThread.set(nMax);
 			queueCheckAndGo();
 		} catch(NumberFormatException e){
-			e.printStackTrace();
+			log.printStackTrace(e);
 		}
 		return nMax;
 	}
@@ -134,7 +137,7 @@ public class ConvertManager extends Thread {
 			while(numRun.get() < numThread.get() && getNumReq() > 0){
 				conv = reqQueue.poll();
 				if(conv==null){
-					System.out.println("Error: manager#queueGo null  "+getTimeInfo());
+					log.println("Error: manager#queueGo null  "+getTimeInfo());
 					sendTimeInfo();
 					break;
 				}
@@ -145,12 +148,12 @@ public class ConvertManager extends Thread {
 					flag.notify();
 				}
 				conv.execute();
-				System.out.println("manager#queueGo ("+conv.getId()+")excute  "+getTimeInfo());
+				log.println("manager#queueGo ("+conv.getId()+")excute  "+getTimeInfo());
 				sendTimeInfo();
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// e.printStackTrace();
+					// log.printStackTrace(e);
 				}	//100ms ‘Ò‹@
 			}
 			setWaitManager(false);
@@ -196,11 +199,11 @@ public class ConvertManager extends Thread {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					log.printStackTrace(e);
 				}
 			}
 		}
-		Gate.init();
+		Gate.init(log);
 	}
 
 	public void init(){
@@ -237,7 +240,7 @@ public class ConvertManager extends Thread {
 					numFinish.incrementAndGet();
 					flagTable.remove(flag);
 				}
-				System.out.println("manager#cancel pending  "+getTimeInfo());
+				log.println("manager#cancel pending  "+getTimeInfo());
 				sendTimeInfo();
 			}else
 			if(reqQueue.remove(conv)){
@@ -248,7 +251,7 @@ public class ConvertManager extends Thread {
 					numFinish.incrementAndGet();
 					flagTable.remove(flag);
 				}
-				System.out.println("manager#cancel reqQueue  "+getTimeInfo());
+				log.println("manager#cancel reqQueue  "+getTimeInfo());
 				sendTimeInfo();
 			}else{
 				// executed
@@ -341,7 +344,7 @@ public class ConvertManager extends Thread {
 					lock.notifyAll();
 				}
 			} catch (InterruptedException e) {
-				System.out.println("manager#interrupted:");
+				log.println("manager#interrupted:");
 			}
 		}
 	}
