@@ -113,6 +113,7 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuHelpReadmeNew = new JMenuItem();
 	JMenuItem jMenuHelpReadmePlus = new JMenuItem();
 	JMenuItem jMenuHelpReadmeFirst = new JMenuItem();
+	JMenuItem jMenuHelpErrorTable = new JMenuItem();
 	JMenuItem jMenuHelpFF = new JMenuItem();
 	JMenuItem jMenuHelpFormats = new JMenuItem();
 	JMenuItem jMenuHelpCodecs = new JMenuItem();
@@ -794,6 +795,13 @@ public class MainFrame extends JFrame {
 				showReadme_actionPerformed("最初に必ず読んで.txt");
 			}
 		});
+		jMenuHelpErrorTable.setText("エラーコード　表示");
+		jMenuHelpErrorTable.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showReadme_actionPerformed("エラーコード.txt");
+			}
+		});
 		jMenuHelpFF.setText("FFmpegヘルプ表示");
 		jMenuHelpFF.addActionListener(new ActionListener(){
 			@Override
@@ -1387,6 +1395,7 @@ public class MainFrame extends JFrame {
 		jMenuHelp.add(jMenuHelpReadme);
 		jMenuHelp.add(jMenuHelpReadmePlus);
 		jMenuHelp.add(jMenuHelpReadmeFirst);
+		jMenuHelp.add(jMenuHelpErrorTable);
 		jMenuHelp.add(jMenuHelpFF);
 		jMenuHelp.add(jMenuHelpFormats);
 		jMenuHelp.add(jMenuHelpCodecs);

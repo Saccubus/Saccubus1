@@ -141,7 +141,7 @@ readmeNew.txt
 
 □改造部分について
 【ライセンス】
-１．ffmpeg79097h.exe、Saccubus.jar（ソース同梱）は
+１．ffmpeg79635.exe、Saccubus.jar（ソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
 （ソースはGithubレポジトリ　https://github.com/Saccubus　）
 ２．nicovideoE.dll、Bin.jar、Saccubus.exe（全てソース同梱）は
@@ -210,7 +210,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
-　・配布形態　　ffmpeg79097h同梱版
+　・配布形態　　ffmpeg79635同梱版
 　・本Rev.は確定版SDLライブラリ（2012/11/02版）を同梱しています。（binフォルダ内）
 　・本Rev.はffmpeg 21400用optionファイルを削除しました。
 　・optionFFAAC（79097h用 2016/03/20版）optionFDev（実験用 2015/03/08版）を同梱。
@@ -230,10 +230,19 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　・移動したオプションファイルをコピーして戻して下さい。
 　・初期化用にsaccubus.iniが入っています。
 　　saccubus.xmlがない時とメニューから初期化を実行した時に
-　　saccubus.iniを読み込んでffmpeg79097h(78605h)用にoptionフォルダと
+　　saccubus.iniを読み込んでffmpeg79635(78605h)用にoptionフォルダと
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・再生リスト、エラーリスト、bat関係修正
+　・生放送コメントを遅くする(issue #15) vposを +1
+　・デバッグ時以外デフォルトでコメントダブり削除
+　・コミュ専用動画チャンネル動画情報修正
+　・コミュニティ動画でも動画情報のxmlを取得できるように(issue #14)
+　・ヘルプのURLリンク先をGithubに変更
+　・ローカル変換の方法D追加
+　・運営コメント簡易変更でコメントが」を含むときに途中で切れるバグ修正
+　・ffmpeg79635(内蔵AAC、UtVideo15.5.0対応)
 　・生放送アンケート対応(仮) (issue #5) 
 　・vhook blue2 コマンドの色修正(動画のみ) issue #12
 　・キーワードをURLエンコードする(issue #11)
