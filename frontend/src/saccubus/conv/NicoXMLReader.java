@@ -448,8 +448,8 @@ public class NicoXMLReader extends DefaultHandler {
 			}
 			//運営コメント
 			if(liveConversion && !premium.isEmpty() && !premium.equals("1")){
-				if(com.startsWith("/") && premium.equals("3")){
-					//運営コマンド
+				if(com.startsWith("/")){
+					//運営コマンド premium="3" or "6" only? not check
 					String[] list = com.trim().split(" +");
 					if(list[0].equals("/perm")){
 						// prem
@@ -580,10 +580,8 @@ public class NicoXMLReader extends DefaultHandler {
 				}
 				else if(!premium.equals("1")){
 					//運営コメント(生主 or BSP?) コマンドなし
-					if(premium.equals("3"))
-						item.setMail("ue ender @12");	//4秒でいい？
-					else
-						item.setMail("ue ender @4");
+					// premium="3" or "6" ? not check
+					item.setMail("ue ender @12");	//4秒でいい？
 					item_fork = true;
 					if(com.contains("」"))
 						com = "@ボタン 「["+com.replaceAll("「", "『").replaceAll("」", "』")+"]」";
