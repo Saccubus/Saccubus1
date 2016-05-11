@@ -447,7 +447,7 @@ public class Prompt {
 							}else{
 								String[] ret = sbRet.toString().split("\n");
 								code = 0;
-								result = "";
+								result = "0";
 								for(int l=0;l<ret.length;l++){
 									System.out.println(ret[l]);
 									String[] s = ret[l].split("=");
