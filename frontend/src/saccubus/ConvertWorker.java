@@ -258,8 +258,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 //		Status.setText(text);
 //	}
 
+	private String mySendedText;
 	private void sendtext(final String text){
+		mySendedText = text;
 		publish(text);
+	}
+	private String gettext(){
+		return mySendedText;
 	}
 	protected void process(List<String> chunk){
 		while(!chunk.isEmpty())
@@ -1042,33 +1047,25 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		log.println("reading:" + thumbInfo);
 		boolean isOK = true;
 		if(!saveThumbUser(thumbInfo, client)){
+			sendtext("投稿者情報の取得に失敗");
 			log.println("投稿者情報の取得に失敗");
 			isOK = false;
 		}
 		if(!saveThumbnailJpg(thumbInfo, client)){
+			sendtext("サムネイル画像の取得に失敗");
 			log.println("サムネイル画像の取得に失敗");
 			isOK = false;
 		}
-		if(!isOK) return false;
-		//Path.fileCopy(thumbInfo, thumbInfoFile);
-		String text = Path.readAllText(thumbInfo.getPath(), "UTF-8");
-		text = text.replace("\n", "\r\n");
-		PrintWriter pw;
-		try {
-			pw = new PrintWriter(thumbInfoFile, "UTF-8");
-			pw.write(text);
-			pw.flush();
-			pw.close();
-		} catch (IOException e) {
-			log.printStackTrace(e);
+		if(Path.fileCopy(thumbInfo, thumbInfoFile)){
+			if(thumbInfo.delete()){
+				log.println("Deleted:" + thumbInfo);
+			}
+		}
+		else
 			isOK = false;
-		}
-		if(!isOK) return false;
-		if(thumbInfo.delete()){
-			log.println("Deleted:" + thumbInfo);
-		}
-		sendtext("動画情報の保存終了");
-		return true;
+		if(isOK)
+			sendtext("動画情報の保存終了");
+		return isOK;
 	}
 
 	private boolean saveThumbInfo(NicoClient client, String vtag) {
@@ -1085,11 +1082,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean saveThumbUser(Path infoFile, NicoClient client) {
-		sendtext("投稿者情報の保存");
-		Path userThumbFile = null;
-		boolean isUser = true;
-		String ownerName = null;
 		if(Setting.isSaveThumbUser()){
+			sendtext("投稿者情報の保存");
+			Path userThumbFile = null;
+			boolean isUser = true;
+			String ownerName = null;
 			String infoXml = Path.readAllText(infoFile.getPath(), "UTF-8");
 			String userID = NicoClient.getXmlElement(infoXml, "user_id");
 			String user_nickname = NicoClient.getXmlElement(infoXml, "user_nickname");
@@ -1165,8 +1162,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				log.printStackTrace(e);
 				return false;
 			}
+			sendtext("投稿者情報の保存終了");
 		}
-		sendtext("投稿者情報の保存終了");
 		return true;
 	}
 
@@ -1194,9 +1191,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean saveThumbnailJpg(Path infoFile, NicoClient client) {
-		sendtext("サムネイル画像の保存");
-		thumbnailJpg = null;
 		if(Setting.isSaveThumbnailJpg()){
+			sendtext("サムネイル画像の保存");
+			thumbnailJpg = null;
 			String infoXml = Path.readAllText(infoFile.getPath(), "UTF-8");
 			String url = NicoClient.getXmlElement(infoXml, "thumbnail_url");
 			if(url==null || url.isEmpty() || !url.startsWith("http")){
@@ -1213,8 +1210,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				result = "AA";
 				return false;
 			}
+			sendtext("サムネイル画像の保存終了");
 		}
-		sendtext("サムネイル画像の保存終了");
 		return true;
 	}
 
@@ -1855,14 +1852,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(isSaveConverted())
 					log.println("追加情報の取得に失敗しましたが続行します。");
 				else {
-					String tstr = Status.getText();
+					String tstr = gettext();
 					if(isSaveComment()) {
 						tstr = "コメント取得成功　" + tstr;
 					}
 					if(isSaveVideo()) {
 						tstr = "動画取得成功　" + tstr;
 					}
-					tstr = "[警告]動画情報の取得失敗　" + tstr;
+					tstr = "[警告]" + tstr;
 					sendtext(tstr);
 					log.println(tstr);
 					return result;
@@ -1944,7 +1941,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			stopwatch.show();
 			stopwatch.stop();
 			log.println("変換時間　" + stopwatch.formatLatency());
-			log.println("LastStatus:[" + result + "]" + Status.getText());
+			log.println("LastStatus:[" + result + "]" + gettext());
 			log.println("VideoInfo: " + MovieInfo.getText());
 			log.println("LastFrame: "+ lastFrame);
 
@@ -2576,7 +2573,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 				}else {
 					NicoClient client = ConvertManager.getManagerClient(this);
-					if(saveThumbInfo0(client, Tag) && saveThumbnailJpg(thumbInfo, client)){
+					if(thumbInfoFile==null || !thumbInfoFile.canRead())
+						saveThumbInfo0(client, Tag);
+					if(saveThumbnailJpg(thumbInfo, client)){
 						thumbfile = thumbnailJpg;
 					}
 				}
