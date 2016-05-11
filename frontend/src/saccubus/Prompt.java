@@ -447,7 +447,7 @@ public class Prompt {
 							}else{
 								String[] ret = sbRet.toString().split("\n");
 								code = 0;
-								result = "0";
+								result = "";
 								for(int l=0;l<ret.length;l++){
 									System.out.println(ret[l]);
 									String[] s = ret[l].split("=");
@@ -464,7 +464,7 @@ public class Prompt {
 							e1.printStackTrace();
 						}finally{
 							if(code!=0 && codes==0) codes = code;	//最初のエラーコード
-							if(!result.isEmpty()&&results.isEmpty())
+							if(results.isEmpty() && !result.equals("0"))
 								results = result;
 							doneList.add(conv);
 						}
@@ -487,6 +487,8 @@ public class Prompt {
 				results = "FF";
 				System.out.println("中止\nRESULTS="+results);
 			}else {
+				if(results.isEmpty())
+					results = "0";
 				System.out.println("終了\nRESULTS="+results);
 			}
 			if(codes!=0){
