@@ -37,7 +37,7 @@ import saccubus.util.Logger;
 public class ConvertToVideoHook {
 	public static boolean convert(File file, File out, ArrayList<CommentReplace> list, Pattern ng_id,
 			Pattern ng_word, CommandReplace ng_cmd, int score_limit, boolean live_op,
-			boolean premium_color_check, Logger log) {
+			boolean premium_color_check, String duration, Logger log) {
 		try {
 			Packet packet = new Packet(list);
 			// SAXパーサーファクトリを生成
@@ -48,7 +48,7 @@ public class ConvertToVideoHook {
 			NicoXMLReader nico_reader = null;
 			try {
 				nico_reader = new NicoXMLReader(packet, ng_id, ng_word, ng_cmd, score_limit,
-								live_op, premium_color_check, log);
+								live_op, premium_color_check, duration, log);
 			} catch (java.util.regex.PatternSyntaxException e) {
 				e.printStackTrace();
 				return false;

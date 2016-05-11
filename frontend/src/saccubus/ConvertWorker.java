@@ -1545,11 +1545,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean convertToCommentMiddle(File commentfile, File middlefile) {
+		String duration = "";
+		if(Setting.changedLiveOperationDuration())
+			duration = Setting.getLiveOperationDuration();
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile, CommentReplaceList,
 				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit(),
 				Setting.isLiveOperationConversion(), Setting.isPremiumColorCheck(),
-				log)){
+				duration, log)){
 			return false;
 		}
 		//ƒRƒƒ“ƒg”‚ª0‚Ìíœ‚·‚é

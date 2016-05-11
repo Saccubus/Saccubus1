@@ -185,6 +185,9 @@ public class ConvertingSetting {
 	private boolean OneLineMode;
 	private String errorList;
 	private boolean liveFlag;
+	private boolean forceLiveComment;
+	private boolean changeLiveOperationDuration;
+	private String liveOperationDuration;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -407,7 +410,10 @@ public class ConvertingSetting {
 			int n_thread,
 			boolean pending_mode,
 			boolean one_line_mode,
-			String error_list
+			String error_list,
+			boolean change_live_operation_duration,
+			boolean force_live_comment,
+			String live_convert_setting_file
 		)
 	{
 		this(	mailaddress,
@@ -541,11 +547,13 @@ public class ConvertingSetting {
 		PendingMode = pending_mode;
 		OneLineMode = one_line_mode;
 		errorList = error_list;
-		liveFlag = true;
-		if(savevideo || savecomment || save_thumb_info){
-			//ÉçÅ[ÉJÉãïœä∑=ê∂ï˙ëóÇ≈îªíf(âº)
-			liveFlag = false;
-		}
+		changeLiveOperationDuration = change_live_operation_duration;
+		forceLiveComment = force_live_comment;
+		if(forceLiveComment)
+			liveFlag = true;
+		else
+			liveFlag = !(savevideo || savecomment || save_thumb_info);	//ÉçÅ[ÉJÉãïœä∑=ê∂ï˙ëóÇ≈îªíf(âº)
+		liveOperationDuration = live_convert_setting_file;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -927,6 +935,15 @@ public class ConvertingSetting {
 	public boolean isLive(){
 		return liveFlag;
 	}
+	public boolean changedLiveOperationDuration() {
+		return changeLiveOperationDuration;
+	}
+	public boolean isForcedLiveComment(){
+		return forceLiveComment;
+	}
+	public String getLiveOperationDuration(){
+		return liveOperationDuration;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1077,6 +1094,9 @@ public class ConvertingSetting {
 	static final String PROP_PENDING_MODE = "PendingMode";
 	static final String PROP_ONE_LINE_MODE = "OneLineMode";
 	static final String PROP_ERROR_LIST = "ErrorList";
+	static final String PROP_LIVE_CONVERT_FILE_SETTING = "LiveConvertFileSetting";
+	static final String PROP_FORCE_LIVE_COMMENT = "ForceLiveComment";
+	static final String PROP_LIVE_OPERATIONDURATION = "LiveOperationDuration";
 	// ì«Ç›çûÇﬁÇæÇØÅAï€ë∂ÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1286,6 +1306,9 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_PENDING_MODE, Boolean.toString(setting.isPendingMode()));
 		prop.setProperty(PROP_ONE_LINE_MODE, Boolean.toString(setting.isOneLineMode()));
 		prop.setProperty(PROP_ERROR_LIST, setting.getErrorList());
+		prop.setProperty(PROP_LIVE_CONVERT_FILE_SETTING, Boolean.toString(setting.changedLiveOperationDuration()));
+		prop.setProperty(PROP_FORCE_LIVE_COMMENT, Boolean.toString(setting.isForcedLiveComment()));
+		prop.setProperty(PROP_LIVE_OPERATIONDURATION, setting.getLiveOperationDuration());
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1540,8 +1563,11 @@ public class ConvertingSetting {
 			Integer.parseInt(prop.getProperty(PROP_NUM_THREAD, "1")),
 			Boolean.parseBoolean(prop.getProperty(PROP_PENDING_MODE, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ONE_LINE_MODE, "false")),
-			prop.getProperty(PROP_ERROR_LIST, "")
-			);
+			prop.getProperty(PROP_ERROR_LIST, ""),
+			Boolean.parseBoolean(prop.getProperty(PROP_LIVE_CONVERT_FILE_SETTING, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_FORCE_LIVE_COMMENT, "false")),
+			prop.getProperty(PROP_LIVE_OPERATIONDURATION,"")
+		);
 	}
 
 	public static ConvertingSetting loadSetting(String user, String password) {

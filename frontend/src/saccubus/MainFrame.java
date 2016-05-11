@@ -252,6 +252,11 @@ public class MainFrame extends JFrame {
 	private JCheckBox autoPlayCheckBox = new JCheckBox();
 	private JCheckBox autoPlay2CheckBox = new JCheckBox();
 	private JCheckBox liveOperationCheckBox = new JCheckBox();
+	private JLabel liveOperationLabel = new JLabel();
+	private JTextField liveOperationDurationFileField = new JTextField();
+	private JCheckBox liveCommentModeCheckBox = new JCheckBox();
+	private JPanel liveConvertInfoPanel = new JPanel();
+	private JCheckBox liveOparationDurationChangeCheckBox = new JCheckBox();
 	private JCheckBox premiumColorCheckBox = new JCheckBox();
 	private JCheckBox appendCommentCheckBox = new JCheckBox();
 	private JSpinner nThreadSpinner;
@@ -268,6 +273,7 @@ public class MainFrame extends JFrame {
 	private static final Insets INSETS_0_0_0_0 = new Insets(0, 0, 0, 0);
 	private static final Insets INSETS_5_5_5_5 = new Insets(5, 5, 5, 5);
 	private static final Insets INSETS_0_25_0_5 = new Insets(0, 25, 0, 5);
+	private static final Insets INSETS_0_50_0_5 = new Insets(0, 50, 0, 5);
 	private static final String[] commentModeArray = {
 		"0：コメント表示自動選択（2010年12月22日以後は新表示）",
 		"1：新コメント表示（毎分最新100コメント＋旧表示）",
@@ -542,7 +548,7 @@ public class MainFrame extends JFrame {
 		grid5_x0_y7_42.gridy = 7;
 		GridBagConstraints grid5_x0_y6_41 = new GridBagConstraints(0, 6,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 50, 0, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
 		GridBagConstraints grid5_x2_y6 = new GridBagConstraints(2, 6,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 0);
@@ -552,10 +558,10 @@ public class MainFrame extends JFrame {
 		gird5_x0_y5_89.gridwidth = 4;
 		gird5_x0_y5_89.anchor = GridBagConstraints.WEST;
 		gird5_x0_y5_89.fill = GridBagConstraints.NONE;
-		gird5_x0_y5_89.insets = new Insets(0, 50, 0, 5);
+		gird5_x0_y5_89.insets = INSETS_0_50_0_5;
 		GridBagConstraints grid5_x0_y4_39 = new GridBagConstraints();
 		grid5_x0_y4_39.gridx = 0;
-		grid5_x0_y4_39.insets = new Insets(0, 50, 0, 5);
+		grid5_x0_y4_39.insets = INSETS_0_50_0_5;
 		grid5_x0_y4_39.fill = GridBagConstraints.HORIZONTAL;
 		grid5_x0_y4_39.weightx = 1.0;
 		grid5_x0_y4_39.gridwidth = 4;
@@ -659,7 +665,7 @@ public class MainFrame extends JFrame {
 		grid4_x0_y13_20.gridy = 13;
 		GridBagConstraints grid4_x0_y12_19 = new GridBagConstraints(0, 12,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 50, 0, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
 		grid4_x0_y12_19.gridy = 12;
 		GridBagConstraints grid4_x2_y12 = new GridBagConstraints(2, 12,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
@@ -674,7 +680,7 @@ public class MainFrame extends JFrame {
 		grid4_x0_y10_17.gridwidth = 1;
 		grid4_x0_y10_17.anchor = GridBagConstraints.CENTER;
 		grid4_x0_y10_17.fill = GridBagConstraints.BOTH;
-		grid4_x0_y10_17.insets = new Insets(0, 50, 0, 5);
+		grid4_x0_y10_17.insets = INSETS_0_50_0_5;
 		GridBagConstraints grid4_x1_y10_22 = new GridBagConstraints();
 		//grid4_x1_y10_22.gridx = 1;
 		grid4_x1_y10_22.gridy = 10;
@@ -1154,9 +1160,20 @@ public class MainFrame extends JFrame {
 		grid14_x2_y5.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(thumbTextFiled, grid14_x2_y5);
 
-		liveOperationCheckBox.setText("運営コメ簡易変更");
-		liveOperationCheckBox.setForeground(Color.blue);
-		liveOperationCheckBox.setToolTipText("運営コメントのコマンドを少し変更します(ニコ生と同じではありません)");
+		JPanel liveOperationPanel0 = new JPanel();
+		liveOperationPanel0.setLayout(new BorderLayout());
+		liveOperationLabel.setText("運営コメ簡易変更");
+		liveOperationLabel.setForeground(Color.blue);
+		liveOperationLabel.setToolTipText("コメント付き動画設定タブに移動しました");
+		liveOperationPanel0.add(liveOperationLabel, BorderLayout.CENTER);
+		BasicArrowButton liveOperationArrow = new BasicArrowButton(SwingConstants.SOUTH);
+		liveOperationArrow.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openConvertedVideoSavingTabbedPanel();
+			}
+		});
+		liveOperationPanel0.add(liveOperationArrow, BorderLayout.WEST);
 		GridBagConstraints grid14_x0_y6 = new GridBagConstraints();
 		grid14_x0_y6.gridx = 0;
 		grid14_x0_y6.gridy = 6;
@@ -1165,7 +1182,7 @@ public class MainFrame extends JFrame {
 		grid14_x0_y6.anchor = GridBagConstraints.NORTH;
 		grid14_x0_y6.fill = GridBagConstraints.HORIZONTAL;
 		grid14_x0_y6.insets = INSETS_0_5_0_5;
-		updateInfoPanel.add(liveOperationCheckBox, grid14_x0_y6);
+		updateInfoPanel.add(liveOperationPanel0, grid14_x0_y6);
 
 		premiumColorCheckBox.setText("プレミアムカラーチェック有効");
 		premiumColorCheckBox.setForeground(Color.blue);
@@ -2177,7 +2194,7 @@ public class MainFrame extends JFrame {
 			grid400.gridwidth = 1;
 			grid400.gridheight = 1;
 			grid400.weightx = 0.0;
-			grid400.anchor = GridBagConstraints.NORTH;
+			grid400.anchor = GridBagConstraints.WEST;
 			grid400.fill = GridBagConstraints.HORIZONTAL;
 			grid400.insets = INSETS_0_0_0_0;
 			managementControl.add(new JLabel("同時変換"),grid400);
@@ -2187,9 +2204,9 @@ public class MainFrame extends JFrame {
 			grid401.gridwidth = 6;
 			grid401.gridheight = 1;
 			grid401.weightx = 0.0;
-			grid401.anchor = GridBagConstraints.NORTH;
+			grid401.anchor = GridBagConstraints.WEST;
 			grid401.fill = GridBagConstraints.HORIZONTAL;
-			grid401.insets = INSETS_0_5_0_0;
+			grid401.insets = INSETS_0_5_0_5;
 			SpinnerNumberModel model = new SpinnerNumberModel(0, null, null, 1);
 			nThreadSpinner = new JSpinner(model);
 			changeListener = (new ChangeListener() {
@@ -2733,6 +2750,19 @@ public class MainFrame extends JFrame {
 			numThread = 1;
 		}
 		autoPlay.setCheckBox(autoPlayCheckBox);
+		// 運営コメント設定チェック
+		String duration = liveOperationDurationFileField.getText();
+		int live_op_duration = 0;
+		try {
+			live_op_duration = Integer.valueOf(duration);
+			if(live_op_duration <= 0)
+				duration = "";
+			else
+				duration = "" + live_op_duration;
+		} catch(NumberFormatException e){
+			//log.printStackTrace(e);
+			duration = "";
+		}
 		return new ConvertingSetting(
 			MailAddrField.getText(),
 			new String(PasswordField.getPassword()),
@@ -2853,7 +2883,10 @@ public class MainFrame extends JFrame {
 			numThread,
 			PendingModeCheckbox.isSelected(),
 			OneLineCheckbox.isSelected(),
-			errorControl.getString()
+			errorControl.getString(),
+			liveOparationDurationChangeCheckBox.isSelected(),
+			liveCommentModeCheckBox.isSelected(),
+			duration
 		);
 	}
 
@@ -3022,6 +3055,9 @@ public class MainFrame extends JFrame {
 		PendingModeCheckbox.setSelected(setting.isPendingMode());
 		OneLineCheckbox.setSelected(setting.isOneLineMode());
 		errorControl.setError(setting.getErrorList());
+		liveOparationDurationChangeCheckBox.setSelected(setting.changedLiveOperationDuration());
+		liveCommentModeCheckBox.setSelected(setting.isForcedLiveComment());
+		liveOperationDurationFileField.setText((setting.getLiveOperationDuration()));
 	}
 
 	/**
@@ -4115,7 +4151,7 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y4_29.gridy = 4;
 			GridBagConstraints grid_x0_y3_28 = new GridBagConstraints(0,
 					3, 2, 1, 1.0, 0.0, GridBagConstraints.WEST,
-					GridBagConstraints.BOTH, new Insets(0, 50, 0, 5), 0, 0);
+					GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
 			GridBagConstraints grid_x0_y2_27 = new GridBagConstraints(0,
 					1, 4, 1, 1.0, 0.0, GridBagConstraints.WEST,
 					GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0,
@@ -4258,10 +4294,74 @@ s	 * @return javax.swing.JPanel
 			grid_x_y__.fill = GridBagConstraints.HORIZONTAL;
 			grid_x_y__.insets = INSETS_0_5_0_5;
 			grid_x_y__.weightx = 1.0;
-			grid_x_y__.weighty = 1.0;
+			grid_x_y__.weighty = 0.0;
 			ConvertedVideoSavingTabbedPanel.add(OptionalThreadInfoPanel, grid_x_y__);
+
+			liveConvertInfoPanel.setBorder(BorderFactory.createTitledBorder(
+					BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+					"生放送変換設定", TitledBorder.LEADING, TitledBorder.TOP,
+					getFont(), Color.red));
+			liveConvertInfoPanel.setLayout(new GridBagLayout());
+			liveOperationCheckBox.setText("運営コメ簡易変更");
+			liveOperationCheckBox.setForeground(Color.blue);
+			liveOperationCheckBox.setToolTipText("運営コメントのコマンドを少し変更します(ニコ生と同じではありません)");
+			GridBagConstraints grid14_x0_y1 = new GridBagConstraints();
+			grid14_x0_y1.gridx = 0;
+			grid14_x0_y1.gridy = 1;
+			grid14_x0_y1.gridwidth = 1;
+			grid14_x0_y1.weightx = 0.0;
+			grid14_x0_y1.anchor = GridBagConstraints.NORTHWEST;
+			grid14_x0_y1.fill = GridBagConstraints.HORIZONTAL;
+			grid14_x0_y1.insets = INSETS_0_5_0_5;
+			liveConvertInfoPanel.add(liveOperationCheckBox, grid14_x0_y1);
+			liveOparationDurationChangeCheckBox.setText("運営コメントの秒数を自分で設定する");
+			liveOparationDurationChangeCheckBox.setForeground(Color.blue);
+			GridBagConstraints grid14_x0_y3 = new GridBagConstraints();
+			grid14_x0_y3.gridx = 0;
+			grid14_x0_y3.gridy = 3;
+			grid14_x0_y3.weightx = 0.0;
+			grid14_x0_y3.anchor = GridBagConstraints.NORTHWEST;
+			grid14_x0_y3.fill = GridBagConstraints.HORIZONTAL;
+			grid14_x0_y3.insets = INSETS_0_25_0_5;
+			liveConvertInfoPanel.add(liveOparationDurationChangeCheckBox,grid14_x0_y3);
+			liveOperationDurationFileField = new JTextField();
+			GridBagConstraints grid14_x0_y4 = (GridBagConstraints)grid14_x0_y1.clone();
+			grid14_x0_y4.gridx = 0;
+			grid14_x0_y4.gridy = 4;
+			grid14_x0_y4.gridwidth = 1;
+			grid14_x0_y4.weightx = 1.0;
+			grid14_x0_y4.insets = INSETS_0_50_0_5;
+			liveConvertInfoPanel.add(liveOperationDurationFileField, grid14_x0_y4);
+			liveCommentModeCheckBox.setText("生コメ強制　運営コメ変更とは独立、動画でも強制的にニコ生コメントで");
+			liveCommentModeCheckBox.setForeground(Color.blue);
+			liveCommentModeCheckBox.setToolTipText("通常は自動判定,nakaコメ1秒遅延,blue2の色変更等");
+			GridBagConstraints grid14_x0_y6 = new GridBagConstraints();
+			grid14_x0_y6.gridx = 0;
+			grid14_x0_y6.gridy = 6;
+			grid14_x0_y6.gridwidth = 5;
+			grid14_x0_y6.weightx = 1.0;
+			grid14_x0_y6.anchor = GridBagConstraints.NORTHWEST;
+			grid14_x0_y6.fill = GridBagConstraints.HORIZONTAL;
+			grid14_x0_y6.insets = INSETS_0_5_0_5;
+			liveConvertInfoPanel.add(liveCommentModeCheckBox, grid14_x0_y6);
+			GridBagConstraints grid_x0_y2 = new GridBagConstraints();
+			grid_x0_y2.gridx = 0;
+			grid_x0_y2.gridy = 2;
+			grid_x0_y2.gridwidth = 1;
+			grid_x0_y2.gridheight = 1;
+			grid_x0_y2.anchor = GridBagConstraints.NORTH;
+			grid_x0_y2.fill = GridBagConstraints.HORIZONTAL;
+			grid_x0_y2.insets = INSETS_0_5_0_5;
+			grid_x0_y2.weightx = 1.0;
+			grid_x0_y2.weighty = 1.0;
+			ConvertedVideoSavingTabbedPanel.add(liveConvertInfoPanel, grid_x0_y2);
 		}
 		return ConvertedVideoSavingTabbedPanel;
+	}
+
+	private void openConvertedVideoSavingTabbedPanel(){
+		MainTabbedPane.setSelectedComponent(SavingInfoTabPanel);
+		SaveInfoTabPaneEach.setSelectedComponent(ConvertedVideoSavingTabbedPanel);
 	}
 
 	/**

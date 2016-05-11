@@ -66,10 +66,11 @@ public class NicoXMLReader extends DefaultHandler {
 	private String[] voteStr = null;
 	private String[] voteRate = null;
 
+	private String liveOpDuration = "";	// 0以上なら適用
 	private Logger log;
 
 	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd,
-		int scoreLimit, boolean liveOp, boolean prem_color_check, Logger logger){
+		int scoreLimit, boolean liveOp, boolean prem_color_check, String duration, Logger logger){
 		this.packet = packet;
 		NG_Word = ngWordPat;
 		NG_ID = ngIdPat;
@@ -79,6 +80,7 @@ public class NicoXMLReader extends DefaultHandler {
 		premium = "";
 		liveConversion = liveOp;
 		premiumColorCheck = prem_color_check;
+		liveOpDuration = duration;
 		log = logger;
 	}
 
@@ -448,12 +450,16 @@ public class NicoXMLReader extends DefaultHandler {
 			}
 			//運営コメント
 			if(liveConversion && !premium.isEmpty() && !premium.equals("1")){
+				String duration = "4";
 				if(com.startsWith("/")){
 					//運営コマンド premium="3" or "6" only? not check
 					String[] list = com.trim().split(" +");
 					if(list[0].equals("/perm")){
 						// prem
-						item.setMail("@10");
+						duration = "10";
+						if(!liveOpDuration.isEmpty())
+							duration = liveOpDuration;
+						item.setMail("@"+duration);
 					}
 					else if(list[0].equals("/vote")){
 						int lfLim = 4;
@@ -570,7 +576,11 @@ public class NicoXMLReader extends DefaultHandler {
 					}
 					else {
 						//運営コマンド該当無し
-						item.setMail("ue ender @4");
+						// /disconnect など?
+						duration = "4";
+						if(!liveOpDuration.isEmpty())
+							duration = liveOpDuration;
+						item.setMail("ue ender @"+duration);
 						item_fork = true;
 						if(com.contains("」"))
 							com = "@ボタン 「["+com.replaceAll("「", "『").replaceAll("」", "』")+"]」";
@@ -581,7 +591,10 @@ public class NicoXMLReader extends DefaultHandler {
 				else if(!premium.equals("1")){
 					//運営コメント(生主 or BSP?) コマンドなし
 					// premium="3" or "6" ? not check
-					item.setMail("ue ender @12");	//4秒でいい？
+					duration = "12";
+					if(!liveOpDuration.isEmpty())
+						duration = liveOpDuration;
+					item.setMail("ue ender @"+duration);	//4秒でいい？
 					item_fork = true;
 					if(com.contains("」"))
 						com = "@ボタン 「["+com.replaceAll("「", "『").replaceAll("」", "』")+"]」";
