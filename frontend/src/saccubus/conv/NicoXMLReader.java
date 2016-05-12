@@ -2,6 +2,7 @@ package saccubus.conv;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -68,6 +69,7 @@ public class NicoXMLReader extends DefaultHandler {
 
 	private String liveOpDuration = "";	// 0以上なら適用
 	private Logger log;
+	private String duration = "";
 
 	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd,
 		int scoreLimit, boolean liveOp, boolean prem_color_check, String duration, Logger logger){
@@ -241,6 +243,13 @@ public class NicoXMLReader extends DefaultHandler {
 				return;
 			}
 			mail = NG_Cmd.replace(mail);
+			if(mail.contains("@")){
+				Matcher m = Pattern.compile(".*@([0-9]+).*").matcher(mail);
+				if(m.matches())
+					duration = m.group(1);
+			}
+			else if(liveConversion && !liveOpDuration.isEmpty())
+				duration = liveOpDuration;
 			item.setMail(mail);
 			item.setNo(attributes.getValue("no"));
 			String forkval = attributes.getValue("fork");
@@ -450,15 +459,13 @@ public class NicoXMLReader extends DefaultHandler {
 			}
 			//運営コメント
 			if(liveConversion && !premium.isEmpty() && !premium.equals("1")){
-				String duration = "4";
 				if(com.startsWith("/")){
 					//運営コマンド premium="3" or "6" only? not check
 					String[] list = com.trim().split(" +");
 					if(list[0].equals("/perm")){
 						// prem
-						duration = "10";
-						if(!liveOpDuration.isEmpty())
-							duration = liveOpDuration;
+						if(duration.isEmpty())
+							duration = "10";
 						item.setMail("@"+duration);
 					}
 					else if(list[0].equals("/vote")){
@@ -577,9 +584,8 @@ public class NicoXMLReader extends DefaultHandler {
 					else {
 						//運営コマンド該当無し
 						// /disconnect など?
-						duration = "4";
-						if(!liveOpDuration.isEmpty())
-							duration = liveOpDuration;
+						if(duration.isEmpty())
+							duration = "4";
 						item.setMail("ue ender @"+duration);
 						item_fork = true;
 						if(com.contains("」"))
@@ -591,9 +597,8 @@ public class NicoXMLReader extends DefaultHandler {
 				else if(!premium.equals("1")){
 					//運営コメント(生主 or BSP?) コマンドなし
 					// premium="3" or "6" ? not check
-					duration = "12";
-					if(!liveOpDuration.isEmpty())
-						duration = liveOpDuration;
+					if(duration.isEmpty())
+						duration = "12";
 					item.setMail("ue ender @"+duration);	//4秒でいい？
 					item_fork = true;
 					if(com.contains("」"))
