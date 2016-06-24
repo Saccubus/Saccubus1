@@ -10,5 +10,5 @@
 	<entry key="EXT">avi</entry>
 	<entry key="MAIN" />
 	<entry key="IN">-analyzeduration 10M</entry>
-	<entry key="OUT">-qscale 0 -samx</entry>
+	<entry key="OUT">-qscale 0 -samx -vcodec utvideo</entry>
 </properties>

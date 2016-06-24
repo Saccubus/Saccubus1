@@ -1,107 +1,17 @@
 readmeNew.txt
-
-【ニコニコ】コメント付動画作成ツール さきゅばすスレ(前前スレ)
+【ニコニコ】コメント付動画作成ツール さきゅばすスレ(前スレ)
 <http://anago.2ch.net/test/read.cgi/software/1235626069/>
 の３４１氏の 1.22r3 を元に、NicoBrowser拡張1.4.4および
 いんきゅばす1.7.2（作者：雪羽氏）の一部機能を借用して改造しました。
 また、ニコニコランキングメーカーnicorankから機能を借用しました。
 本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-■readmeNew.txt 目次
-　動作が変なときは
-　auto.batで動作が変な時は
-　設定を初期化するには
-　改造部分について
-　サポート解説など
-　動作環境
-　●注意●
-　Javaのパスの設定(参考)
-　インストール方法と拡張機能設定
-　　1.22r3以降をご使用中の方
-　　拡張機能（概要）追加分
-　　初めてさきゅばすを使う方
-　起動までの準備について
-　起動
-　拡張機能（変更点）説明
-　　生放送アンケート対応(仮) (issue #5) 
-　　vhook blue2 コマンドの色修正(動画のみ) issue #12
-　　キーワードをURLエンコードする(issue #11)
-　　視聴履歴ページを変換可能、検索とautolist0出力
-　　auto.batの同時変換数1の時のバグ修正
-　　FFmpeg3.0対応(内蔵AAC)オプションをoptionFFAACに
-　　saccubus2風文字影(影の種類04番)追加
-　　auto.batでURLが使えない件修正(1.64以前と同じ)
-　　wavファイルで終了通知可
-　　auto.batで並行実行可
-　　エラー終了IDの一括再変換予約
-　　HTTP503 504 エラーのリトライ
-　　管理タブに再生ボタン設置
-　　エコノミー時の動画ファイル名にlowを付加
-　　PC__入力同サイズアス比共通_mp4 オプション追加
-　　同時変換数設定により並行実行
-　　変換ボタンにより登録(変換予約)、停止は個別ボタンで
-　　ログイン処理修正(メールアドレス・パスワードログイン)
-　　コメント追加モード
-　　入力出力ともに音声codecがAACの場合にcopyするオプション-aacpを追加。
-　　Windows10TP でのCA用代替フォント対応
-　　プレミアムカラーの一般会員使用チェック追加(バグ修正)
-　　ffmpeg更新に対応してオプションと引数渡しを変更
-　　変換後自動再生機能追加
-　　ニコ生運営コメント簡易変更機能追加
-　　エクスプローラーでフォルダ表示ボタン追加
-　　Jsonのライブラリーにgsonを使う変更（gson jar,License追加)
-　　明朝体MingLiuフォント変化修正
-　　CAの弾幕化モード抑え気味
-　　boldフォントをnormal化可能
-　　mylist変換をあとでまとめてautolist.batでできるように出力(暫定)
-　　mylist処理少し追加
-　　動画設定タブに再生ボタン追加
-　　映像ストリームが認識できない場合に音声のみコメント付き可能に
-　　NM動画に少しだけ対応
-　　フレームレート変換
-　　コメント不透明時のアルファ値（不透明度）を小数点数で指定できます。
-　　投稿者フィルター追加しました。
-　　enderコマンド（リサイズしない新コマンド）を実装しました。
-　　mp3エンコードを行うオプションを変更及び削除しました。
-　　＠ボタン(投稿者コメント)スクリプト　対応しました。
-　　＠置換スクリプト　対応しました。
-　　マイリスト処理追加（実験的）
-　　FFmpeg設定にアス比共通画面追加
-　　変換時 -samx オプションにより動画アス比保持可能
-　　オプションファイル５つ追加　　PCx3,PSPx2
-　　＠ボタン(視聴者コメント)に対応しました
-　　/replace(投稿者ニワン語)に対応しました
-　　ヘルプメニューからffmpegヘルプ/readmeを参照可能です。
-　　CA（コメントアート）フォント暫定的対応　その7
-　　投稿者コメントのニコスクリプト機能追加
-　　保存設定―ページ情報
-　　ニコニコ動画エイプリルフールを再現
-　　CUIで設定項目をオーバーライド
-　　FFmpegオプション追加設定
-　　設定ファイルの読み込み・追加(new)・保存・別名保存・初期化
-　　CA（コメントアート）フォント暫定的対応　その６
-　　コメントに黄枠を付加。コメントアート研究用。
-　　NGコマンド
-　　NG共有レベル
-　　NGワード
-　　ニコニコ動画のNG設定ダウンロード・保存
-　　パスワード簡易暗号化
-　　エコノミーモード時に中止
-　　フォントサイズ自動調整時の拡大機能を元に戻しました。
-　　コメント速度を独自に指定可能になりました。
-　　コメントスコア読み込み
-　　新コメント表示対応（その３）
-　　不適切な動画の読み込みで失敗をメッセージに明示する
-　　コミュニティ動画の通常コメント表示機能について
-　　２プロセス自動実行について
-　　ブラウザのセッション共有機能について
-　　拡張Vhook統合版 (nicovideoE.dll)について
-　　拡張Vhookワイド（nicovideo16x9.dll）について
-　　過去ログを複数ファイルに保存する
-　機能確認
-　収録物
-　関連リンク
-　変更履歴・修正・改変点
+1.50(2014/5/11)
+　Jsonのライブラリーにgsonを使う変更（gson jar,License追加)
+　Vhook 1.50.5 MingLiuフォント変化修正
+　CAの弾幕化モード抑え気味
+　boldフォントをnormal化可能
+
 
 ■動作が変なときは
 　・通常の Saccubus.exe の起動では、
@@ -116,13 +26,6 @@ readmeNew.txt
 　・nicovideoE.dllは[log]vhext.txtを tempフォルダの下に 動画ID[log]vhext.txtとして保存します。
 　　エラー終了した場合はtemp\動画ID[log]vhext.txtを調べて下さい。
 　・色々設定を変更した時は、設定を初期化してみて下さい。
-
-■詳細デバッグ
-　・プロキシを使うをオンにして、プロキシに　debug/ 
-　　プロキシポート番号 80 を設定すると
-　　ダウンロード関連のデバッグ詳細情報を出力します。([log]frontend.txt)
-　・変換設定　追加モード　に　-debug　を指定すると、
-　　コメント変換の詳細情報を出力します。（[log]vhext.txt)
 
 ■auto.batで動作が変な時は
 　Javaにパスが通っていないとエラーになります。
@@ -141,9 +44,8 @@ readmeNew.txt
 
 □改造部分について
 【ライセンス】
-１．ffmpeg80611.exe、Saccubus.jar（ソース同梱）は
+１．ffmpeg56884w.exe（ソースはGithubレポジトリ）、Saccubus.jar（ソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
-（ソースはGithubレポジトリ　https://github.com/Saccubus　）
 ２．nicovideoE.dll、Bin.jar、Saccubus.exe（全てソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)と
 二条項BSDライセンス(http://opensource.org/licenses/BSD-2-Clause)のデュアルライセンスです。
@@ -158,44 +60,36 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 □サポート解説など
 　さきゅばすの使い方などに関しては、
 　上の[メニュー][readmeNew]から参照できます。また
-　公式サイト　http://saccubus.osdn.jp/
-　レポジトリ　https://github.com/Saccubus　
-　同梱のrewdmeNew.txt、さきゅばす1.50のreadme150.txt
-　さきゅばす1.22rのreadme.txt、1.22r3のreadme+.txtをご覧下さい。
-　不具合報告等は2chさきゅばすスレでお願いします。
-　2ch【ニコニコ】コメント付動画作成ツール さきゅばす5
-　　http://potato.2ch.net/test/read.cgi/software/1449586179/
-　(http://anago.2ch.net/test/read.cgi/software/1346798166/　前スレ)
+　公式サイト　http://saccubus.sourceforge.jp/
+　同梱の最初に必ず読んで.txt、さきゅばす1.22rのreadme.txt、
+　1.22r3のreadme+.txtをご覧下さい。
+　1.22r3e、1.23以降の不具合報告等は2chさきゅばすスレでお願いします。
+　2ch【ニコニコ】コメント付動画作成ツール さきゅばす
+　　http://anago.2ch.net/test/read.cgi/software/1346798166/
 
 □動作環境
-　Windows XP/7/8/8.1/10 desktop　（多分Vistaも動くはず）
+　Windows XP/7/8/8.1 desktop　（多分Vistaも動くはず）
 
 ●注意●
-　Javaランタイム Java8 JRE8 または JDK1.8が必要です。
+　Javaランタイム Java7 - JRE7 または JDK1.7が必要です。
+　Java8 JRE8 と JDK1.8も確認済みです。
+　Java6 JRE6 と JDK1.6は非推奨です。
 　最近アップデートしていない場合は必ず更新して下さい。
-　Java7 - JRE7 と JDK1.7はPublicUpdate終了のため非推奨。
-　JRE6 JDK1.6 JRE5 JDK1.5はテストしていません。
+　JRE5 JDK1.5はテストしていません。
 　　http://java.com/ja/
 　からインストールして下さい。通常は32bit版です。
 　64bit版をダウンロードするには説明を読んで従って下さい。
 
 ◆Javaのパスの設定(参考)
-　auto.batやdebug.batを実行するにはjava.exeがPathに設定されていることが必要です。
+　auto.batやdebug.batを実行するにはjava.exeがパスに設定されていることが必要です。
 　win7まではsystem32にjava.exeが自動でインストールされますが
 　場合によってはされないこともあります。またwin8以降ではされません。
-　最近Java8ではまたJavaインストール時にPathが通るように成ったようです。
-　「java.exe は、内部コマンドまたは外部コマンド、
-　操作可能なプログラムまたはバッチ ファイルとして認識されていません。」
-　のエラーが出る場合Javaをパスに設定するには以下のページを参考にしてください。
+　Javaをパスに設定するには以下のページを参考にしてください。
 　参考：Windows 7 にパス(Path)を設定する
 　　http://blog.cnu.jp/2009/11/06/windows-7-path/
 　　http://blog.cnu.jp/2010/11/10/shortcut-environment/
 　参考：Windows8にjava7を入れてみたよ（Windows 8以降）
 　　http://javatechnology.net/tool/windows8-java7-install/
-　参考:Windows10で環境変数（システム環境変数、ユーザ環境変数）を追加
-　　http://www.wannko.net/windows10/etc/kankyo.html
-　参考:Windows 10プリインストール機初期設定の留意点(Win10環境変数エディタ)
-　　http://pc.watch.impress.co.jp/docs/column/win10uw/20151224_736655.html
 
 ◆注意◆16:9黒枠なしの（PSPなどの）動画について
 　　初期化した後の変換オプション設定（従来）ではコメントは
@@ -204,89 +98,34 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　コメント全体を画面内に収まるよう縮小しています。
 
 ●注意●
-　　Windows8/8.1/10はデスクトップUIでのIE11/Firefoxで確認しました。
-　　Windows8スタイルUIではIEとのブラウザ共有は出来ませんでした。Chromeは不可です。
-　　Windows10でEdge(Spartan)とのブラウザ共有は不可、IE11は可能です。
+　　Windows8/8.1はデスクトップUIでのIE11/Firefoxで確認しました。Windows8スタイルUIでは
+　　IEとのブラウザ共有は出来ませんでした。Chromeは不可です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
-　・配布形態　　ffmpeg80611同梱版
-　・本Rev.は確定版SDLライブラリ（2012/11/02版）を同梱しています。（binフォルダ内）
+　・配布形態　　ffmpeg56884w同梱版
+　・本Rev.は確定版SDLライブラリ（2011/11/02版）を同梱しています。（binフォルダ内）
 　・本Rev.はffmpeg 21400用optionファイルを削除しました。
-　・optionFFAAC（79097/80611用 2016/06/25版）optionFDev（実験用 2015/03/08版）を同梱。
+　・optionVo（ffmpeg56884w用、2013/08/01版）optionDev（実験用2011/3/30版）を同梱。
 
 □インストール方法と拡張機能設定
 　◆1.22r2以前のさきゅばすを使用中の方
 　　「初めてさきゅばすを使う方」を実行して下さい。
 
 　◆1.22r3以降をご使用中の方
-　【注意】今回の変更は　ffmpeg80611(n3.1-dev相当)用となるため
+　【注意】今回の変更は主にffmpeg56884w/ffmpeg55686用となるため
 　他のffmpegでは使用出来ない可能性があります。ご了承ください。
-　・自分で修正したオプションファイル(optionVOファルダ/optionF)をお持ちの方は
-　　ffmpeg80611に合わせて変更が必要な場合があります。
-    (optionFFAACフォルダ参照)(optionFフォルダそのまま使用は可能)
+　・自分で修正したオプションファイル(optionVOファルダ)をお持ちの方は
+　　自分が使用するオプションファイルだけ別の場所に移動して下さい。
 　・「saccubus」内のファイルを以前のさきゅばすフォルダに
 　　■全て上書き■して下さい。
 　・移動したオプションファイルをコピーして戻して下さい。
 　・初期化用にsaccubus.iniが入っています。
 　　saccubus.xmlがない時とメニューから初期化を実行した時に
-　　saccubus.iniを読み込んでffmpeg80611用にoptionフォルダと
-　　ffmpegを設定します。
+　　saccubus.iniを読み込んでffmpeg56884w用にoptionフォルダと
+　　ffmpegを設定します。使用しない場合は■削除■して下さい。
 
 　◆拡張機能（概要）追加分
-　・PCオプションの入力に -analyzeduration 10M追加
-　・Analize Error時 fps sizeのデフォルト値を適用
-　・ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)
-　・生放送運営コメントの元の@秒数表示を優先する
-　・再生リスト、エラーリスト、bat関係修正
-　・生放送コメントを遅くする(issue #15) vposを +1
-　・デバッグ時以外デフォルトでコメントダブり削除
-　・コミュ専用動画チャンネル動画情報修正
-　・コミュニティ動画でも動画情報のxmlを取得できるように(issue #14)
-　・ヘルプのURLリンク先をGithubに変更
-　・ローカル変換の方法D追加
-　・運営コメント簡易変更でコメントが」を含むときに途中で切れるバグ修正
-　・生放送アンケート対応(仮) (issue #5) 
-　・vhook blue2 コマンドの色修正(動画のみ) issue #12
-　・キーワードをURLエンコードする(issue #11)
-　・視聴履歴ページを変換可能、検索とautolist0出力
-　・FFmpeg3.0対応(内蔵AAC)オプションをoptionFFAACに
-　・auto.batの同時変換数1の時のバグ修正
-　・saccubus2風文字影(影の種類04番)追加
-　・auto.batでURLが使えない件修正(1.64以前と同じ)
-　・wavファイルで終了通知可
-　・auto.batで並行実行可
-　・エラー終了IDの一括再変換予約
-　・HTTP503 504 エラーのリトライ
-　・管理タブに再生ボタン設置
-　・エコノミー時の動画ファイル名にlowを付加
-　・PC__入力同サイズアス比共通_mp4 オプション追加
-　・同時変換数設定により並行実行
-　・変換ボタンにより登録(変換予約)、停止は個別ボタンで
-　・ログイン処理修正(メールアドレス・パスワードログイン)
-　・コメント追加モード
-　・さきゅばす用ffmpegの修正(toolbox削除)に合わせて修正。
-　・nicovideoE.dllをffmpeg新(Jenkins自動ビルド)旧(70404f/65520w)両方に対応。
-　・コメントサーバー nmsg.nicovideo.jp/api/ に対応修正。
-　・生放送タイムシフトログの部屋別コメント合成を可能に。
-　・入力出力ともに音声codecがAAC-LCの場合にcopyするオプション-alcpを追加。
-　・入力出力ともに音声codecがAAC(LC,HE,HEv2)の場合にcopyするオプション-aacpを追加。
-　・PC用オプションに-aacp追加。(outオプションの最後に追加するだけ)
-　・Windows10TP でのCA用代替フォント対応
-　・プレミアムカラーの一般会員使用チェック追加(バグ修正)
-　・black2コマンド追加(バグ修正)
-　・ffmpeg更新　x265 libutvideo追加
-　・ffmpeg更新に対応してオプションと引数渡しを変更
-　・fps変更時ffmpeg内蔵fps filter選択可(対応ffmpegのみ nm動画非対応)
-　・ライセンス及び旧readmeを docフォルダに移動 メニュー表示の対応
-　・初期設定値のmp3をvo_aacencに変更(.iniファイルは以前に変更済み)
-　・変換後自動再生機能追加
-　・エクスプローラーでフォルダ表示ボタン追加
-　・ニコ生運営コメント簡易変更機能追加
-　・Windows8以降のIE11クッキー取得バグ修正(仮)
-　・マルチログイン時のクッキー処理バグ修正
-　・色名pink2,cyan2追加
-　・wakuコマンドで-frameオプション時の既定をred 細枠(1pixel)に(CA研究用)
 　・Jsonのライブラリーにgsonを使う変更（gson jar,License追加)
 　・Vhook 1.50.5 MingLiuフォント変化修正
 　・CAの弾幕化モード抑え気味
@@ -373,7 +212,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ファイアフォールをJavaに対して許可しなければならない
 　　場合があります。
 
-　　[基本設定]の「ブラウザ情報共有設定」でブラウザ共有を選択するか、
+　　「基本設定」の「ブラウザ情報共有設定」でブラウザ共有を選択するか、
 　　または「ユーザ情報」メールアドレス、パスワードを設定します。
 　　上のURL/ID欄に動画URL（動画id）を入力します。後ろに?hogehogeがついてもOKです。
 　　不適切な内容が含まれている（所謂通報されている）場合は、ブラウザで動画内容を確認後
@@ -381,159 +220,11 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　過去ログをダウンロードするには（プレミアム会員のみ）日付を
 　　2009/7/7 7:7:7 や 2009/7/7 7:7 や 2009/7/7 のように入力します。
 
-　　右上の[変換]ボタンをクリックすると[管理]タブが開きダウンロードと変換が開始します。
+　　右上の「変換」ボタンをクリックするとダウンロードと変換が開始します。
+
 
 
 □拡張機能（変更点）説明
-●ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)
-　古いflv動画のデコードエラー修正。-analyzeduration 10Mをworkaroundとして追加
-　libutvideoコーデックは内蔵のutvideoに変更された
-
-●生放送運営コメントの元の@秒数表示を優先する
-
-●生放送コメントを遅くする(issue #15) vposを +1
-
-●コミュニティ動画でも動画情報のxmlを取得できるように(issue #14)
-
-●ヘルプのURLリンク先をGithubに変更
-
-●生放送アンケート対応(仮) (issue #5)
-　運営コメント簡易対応で生放送のアンケート結果をそれっぽく表示 
-
-●vhook blue2 コマンドの色修正(動画のみバグ修正) issue #12
-　(ローカル変換の場合にsm0(～sm8)などは修正しない＝生放送と同じ)
-
-●キーワードをURLエンコードする(issue #11)
-　URL/ID欄に
-　http://www.nicovideo.jp/search/キーワード 
-　http://www.nicovideo.jp/tag/タグ
-　を入れるとマイリストのように変換する。
-
-●視聴履歴ページを変換可能、検索とautolist0出力
-　URL/ID欄に
-　http://www.nicovideo.jp/my/history
-　を入れるとマイリストのように変換する。
-
-●FFmpeg3.0対応(内蔵AAC)オプションをoptionFFAACに
-
-●PC__入力同サイズアス比共通_mp4 オプション追加
-
-●管理タブに再生ボタン設置
-　変換動画確認用（自動再生チェックボックスは前のチェックボックスと同じです）
-
-●エコノミー動画の保存ファイル名にlowを付加します。
-　エコノミー時に通常動画又はlow動画が存在するときはダウンロードをスキップします。
-　通常時は通常動画が存在した時だけスキップします。low動画があっても無視します。
-
-●wavファイルで終了通知ができます。
-　さきゅばすフォルダに end.wav という名前のWAVEファイルがあれば
-　１つ動画変換が終わる度に再生します
-
-●同時変換数設定により並行実行([管理]タブ)
-　変換数は無制限,ダウンロードは 2 までしかできません（内部固定）
-　サーバー負荷を上げないため
-　普通は変換時間の方が長いので3以上を指定しても問題とはならないでしょう
-　通信エラーが頻発するときは逆に 1 にした方が良いかもしれません
-　変換数 1でも予約、マイリスト登録は同じように使えます。
-　HTTP503 504エラーは3回少し間を開けて自動リトライします。
-　（リトライ待ち中にダウンロード数が増えてるように見える場合がありますが
-　　実際にダウンロードしているのは最大２です。）
-　それ以外は自動リトライしません
-
-●auto.batも並行実行に対応しました。
-　記述法(2)を使って下さい（auto.batに説明があります)。従来通り記述法(1)も使えます。
-　記述法(2)ではauto.txtに動画IDだけを1行に1動画ずつ何行でも書いてください。
-　auto実行前にログインできるか(しているか)確認して下さい。
-
-●[管理]タブ 管理制御　情報表示　エラー情報行
-　変換ボタンは変換(予約)専用　停止は状況表示に表示される[停]ボタン
-　開始時保留オン(マイリスト一括登録など)時は登録後に[変]ボタンで変換開始
-　全制御欄の　[変換]ボタンで制限数まで一斉開始、[停止]で全停止、[消去]でクリア
-　[保存]で登録IDリストの保存(結果の正常/エラーは区別しません)
-　URL/IDの右端の小三角形は登録IDリストの履歴を表示します。
-　状況表示ステータスは動画毎に3行　又は　1行(１行表示チェックボックスオン)
-　エラーした変換の再登録は下方のエラー情報行の[再登録]でできます。
-　HTTP503 504エラーステータス表示の場合は3回自動リトライするので
-　エラーしたかどうかはエラー情報行で判定して下さい
-　(エラー原因により再実行してもダメな場合があります。)
-　[消去]でエラー情報のクリア　[保存]でエラーIDリストの保存。
-
-●ID/URL欄および[管理]タブの空白部分はURLドロップ可能
-　右クリックでクリップボードからペーストも可能（読み取りは不可）
-
-●ログイン処理修正(メールアドレス・パスワードログイン)
-
-●コメント追加保存モード
-　追加モードは指定ファイルにコメントを追加保存します。
-　日時付加ありで追加モードにすると変換時にフォルダ合成しません。
-　「変換後にコメントファイルを削除する」にチェックを入れると
-　変換実行の成功後、指定したファイルの追加されたコメントを含む
-　全てのコメントファイルが削除されます。
-　┏━━━━━━━━┯━━━━━━━━━━━━━━━┯━━━━━━━━━━━━━━━┓
-　┃　　　　　　　　│追加モードなし　　　　　　　　│追加モード(新機能)　　　　　　┃
-　┠────────┼───────────────┼───────────────┨
-　┃フォルダ指定　　│保存　コメントファイル　　　　│保存　コメントファイル　に追加┃
-　┃　日時を付加なし├───────────────┼───────────────┨
-　┃　　　　　　　　│変換　通常　　　　　　　　　　│変換　通常　　　　　　　　　　┃
-　┠────────┼───────────────┼───────────────┨
-　┃フォルダ指定　　│保存　コメントファイル[日時]　│保存　コメントファイル[日時]　┃
-　┃　保存日時を付加│　　　　　　　　　　　　　　　│　　　(同一日時はいつでも同じ)┃
-　┃　　　　　　　　├───────────────┼───────────────┨
-　┃　　　　　　　　│変換　フォルダ内ファイルで　　│変換　フォルダ合成しない(通常)┃
-　┃　　　　　　　　│　　　同一sm番号コメントを合成│　　　　　　　　　　　　　　　┃
-　┠────────┼───────────────┼───────────────┨
-　┃ファイル指定　　│保存　指定ファイル名　　　　　│保存　指定ファイル名に追加　　┃
-　┃　日時を付加なし├───────────────┼───────────────┨
-　┃(日時を付加の　)│変換　通常　　　　　　　　　　│変換　通常　　　　　　　　　　┃
-　┃(指定しても無視)│　　　　　　　　　　　　　　　│　　　　　　　　　　　　　　　┃
-　┗━━━━━━━━┷━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━┛
-　ヒント：
-　通常では追加モードにしていても問題ないが変換後削除時に全部削除されることに注意
-　(コメントファイルが1つしかないため)追加モード時は削除にチェックを入れない方が安全。
-　保存日時付加の追加モードでは変換時にコメント複数ファイルの合成しなくなる
-　（今DLしたものだけ変換したい場合に使用）
-
-●生放送ログの部屋別コメント合成を可能に。
-　保存設定→保存するフォルダを指定してファイル名は自動で決定する
-　　→コメントファイル名に日時を付加する　にチェックを入れれば
-　同じフォルダにあるファイルで名前の先頭の[sm番号]が同じであれば
-　　　　　　　　　　　　　　　　^^^^^^^^^^^^^^^^^^^^^^^^
-　生放送コメントでも複数のxmlファイルを合成できる。(vpos基準)
-　ローカル変換の場合　動画/コメントをダウンロードする　はオフにすることに注意
-
-●入力出力ともに音声codecがAAC-LCの場合にcopyするオプション-alcpを追加。
-　HE-AAC非対応デバイス用のつもりだったがサンプル周波数等が考慮できてないので
-　配布オプションには未採用
-
-●入力出力ともに音声codecがAACの場合にcopyするオプション-aacpを追加。
-　現状入力音声がHE-AAC/HE-AACv2の場合にHEで再エンコード出来ないので
-　入力音声がAACならそのままcopyするオプション(AAC-LCもcopyする。)
-　入力音声がAAC以外ならcopyせず指定の音声エンコードを行う。
-　PC用オプション(5つ)に-aacp追加。(outオプションの最後に追加しただけ)
-
-●Windows10TP でのCA用代替フォント対応
-　Windows10IP_10240インストールフォントでのCA用代替フォント対応。
-　丸文字GulimはMalgun、繁体字MingLiuはSimsunで代用。(ニコ動とは異なる)
-
-●プレミアムカラーの一般会員使用チェック追加(バグ修正)
-　チェックを入れると一般会員コメントでのプレミアムカラーコマンド及び
-　24ビットカラーコードを無効にする。カラーは白になる。(ニコ動と同じ)
-
-●ffmpeg更新に対応してオプションと引数渡しを変更
-　library x265 libutvideo追加　デコード確認のみ
-
-●変換後自動再生機能追加
-　コメント付き変換した時は自動で変換後の動画を再生します。
-　既定はオフ。
-
-●ニコ生運営コメント簡易変更機能追加
-　ニコ生の運営コメント(premium="2"以上の属性を持つ)に対して
-　ueまたはshitaの枠付きで表示します。（変更不可・既定はオフ）
-　ニコ生と同じではありません。
-
-●エクスプローラーでフォルダ表示ボタン追加
-　保存タブにそれぞれ設定されたフォルダまたはファイルのあるフォルダを開きます。
-
 ●Jsonのライブラリーにgsonを使う変更（gson jar,License追加)
 　今までの手製のJson処理の代わりにgoogle gson(ApacheLicense2.0)を使います。
 　少し容量が増えましたがJson処理の追加がしやすくなりました
@@ -893,9 +584,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　　コメントは取得できない。（無意味）
 　■本機能は「いんきゅばす1.7.2」とcoroid project wikiを
 　　参考にしました。感謝。以下に説明があります。
-　　　http://osdn.jp/projects/coroid/wiki/NicoApiSpec
+　　　http://sourceforge.jp/projects/coroid/wiki/NicoApiSpec
 　　coroid project　「いんきゅばす」を含む　ライセンス AGPLv3
-　　　http://osdn.jp/projects/coroid/
+　　　http://sourceforge.jp/projects/coroid/
 
 ●不適切な動画の読み込みで失敗をメッセージに明示する
 　・｢不適切な内容が含まれている｣動画をダウンロードするには
@@ -957,8 +648,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ニコニコランキングメーカー配布サイト↓
 　　http://www.daily-vocaran.info/nicorank/
 　　ソースファイル↓
-　　http://osdn.jp/projects/nicorank/downloads/40282/nicorank186_src.zip/
-　　（最新版ソースは SVN　http://svn.osdn.jp/svnroot/nicorank/）
+　　http://sourceforge.jp/projects/nicorank/downloads/40282/nicorank186_src.zip/
+　　（最新版ソースは SVN　http://svn.sourceforge.jp/svnroot/nicorank/）
 
 
 ●拡張Vhook統合版 (nicovideoE.dll)について
@@ -998,15 +689,14 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ■機能確認
 　・ブラウザのセッション共有機能確認は
-　　Win10 pro 64bit + IE11,
 　　Win8 pro desktop 64bit + IE10,
 　　Win7 Home 64bit + IE9, Firefox19.0, SRware 及び
-　　(XP SP3 Home 32bit + IE8, Firefox19.0, SRware)
+　　XP SP3 Home 32bit + IE8, Firefox19.0, SRware
 　　で行いました。
 　（GoogleChromeは Ver.33.0.xxからクッキーが暗号化されて保存されるため
 　　ファイルからセッションを検索できないので共有できません。
 　　Opera20.0以降も共有できません）
-　・動画変換確認は、ffmpeg76711fで行いました。
+　・動画変換確認は、ffmpeg56884wで行いました。
 　　Win7 64 Corei7
 　・但し再生確認はPC上だけで、携帯その他では未確認
 　・前スレ>>670(SVN-25041) は変換エラーする動画(Decoder not found)がありました。
@@ -1018,98 +708,75 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 ■収録物
-　　ffmpeg76711f同梱版
+　　ffmpeg56884w同梱版
 □フォルダ構成
-　saccubus1.64.zip
-　├読んで下さいtxt
-　└saccubus　　  本体exe jar xml bat
-　　├bin          実行ファイルフォルダ exe dll
-　　├doc          ドキュメントフォルダ
-　　├optionF      オプションフォルダ(70404f/65220w用)
-　　├optionFDev   オプションフォルダ(開発用)　CA用設定サンプル５種
-　　└Saccubus_lib Javaライブラリーフォルダ jar
+　saccubus1.49.zip
+　├ffmpeg56884w同梱版  表示
+　├最初に必ず読んで.txt
+　├ToDO.txt
+　└saccubus　　本体exe jar xml bat
+　　├bin        実行ファイルフォルダ exe dll
+　　├optionDev  オプションフォルダ(開発用)　CA用設定サンプル５種
+　　├optionVO   オプションフォルダ(56884w/55686用)
+　　└Saccubus_lib   Javaライブラリーフォルダ jar
 
 □内容
 ・License.txt　　　　　　　 さきゅばすライセンス（プロジェクト）
+・2-clause BSD License.txt　さきゅばす２条項BSDライセンス
+・GPL v3.txt 　　　　　　　 さきゅばすGPLライセンス
 ・Saccubus.jar　　　　　　　本体
 ・Bin.jar　　　　　　　　　 ランタイムライブラリ
-・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
-・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
-・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
-・saccubus.ini　　　　　　　80611向け初期設定
-・saccubus2っぽい描画.xml
-・最初に必ず読んで.txt
 ・bin フォルダ配下
-　　ffmpeg80611.exe ライセンスGPLV3
-　　　library80611.txt　　外部ライブラリーバージョン
-　　nicovideoE.dll(2015.08.31版)統合版拡張Vhookライブラリ
+　　ffmpeg56884w.exe ライセンスGPLV3
+　　nicovideoE.dll(2014.01.28版)統合版拡張Vhookライブラリ
 　　SDL.dll(2011.11.02ビルド)、COPYNG、README-SDL.txt
 　　　ライセンスはLGPL
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYING.sdl_ttf
 　　　ライセンスはzlib
 　　SDL_gfx.dll(2013.05.29ビルド)、LICENSE.gfx
 　　　グラフィックライブラリ、ライセンスはzlib
-　　b32.jpg、b32.png　SoundOnly用画像
-・optionFFAAC フォルダ配下　　 変換オプションファイル
-　　　（80611用 2016.06.25版）
-・optionFDev フォルダ配下 　開発用ファイル
 ・Saccubus_libフォルダ配下
 　　gson-2.2.4.jar、LICENSE、README.txt
 　　　ライセンスはApache License2.0(GPLV3適用)
-・doc
-　　2-clause BSD License.txt さきゅばす２条項BSDライセンス
-　　GPL v3.txt 　　　　　　　さきゅばすGPLライセンス
-　　QandA質問応答記録.txt
-　　readmeNew.txt(最新)
-　　readme+.txt(1.22r3)
-　　readme.txt(1.22r)
-　　ToDo.txt
-　　オプションファイル見本.xml　（1.22rの物）
-　　ローカル変換追加説明.txt
-　　最初に必ず読んで.txt　　　　　(コピー)
-　　変換リストが起動しない場合.txt
+・optionDev フォルダ配下 　 開発用ファイル
+・optionVO フォルダ配下　　 変換オプションファイル
+　　　（N56884w用 2014.03.24版）
+・readmeNew.txt(最新)、readme.txt(1.22r)、readme+.txt(1.22r3)
+・最初に必ず読んで.txt
+・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
+・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
+・AUTO2PROC.BAT　　　　　　 ２プロセス自動実行本体
+・AUTO2PROCDEBUG.BAT　　　  ２プロセス自動実行時のログ記録用
+・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
+・saccubus.ini　　　　　　　N56884w向け初期設定
+・オプションファイル見本.xml　　　　　　（1.22rの物）
+・変換リストが起動しない場合.txt
+・ローカル変換追加説明.txt
+・saccubus_src.zip
+　　Saccubus.jar　のjavaソースファイル、eclipseプロジェクトファイル
+　　nicovideoE.dll　のソースファイル、eclipseプロジェクトファイル
+　　Bin.jar　のjavaソースファイル、eclipseプロジェクトファイル
+　　Saccubus.exe　のCソースファイル(launcher)、makeファイル、リソース
 
 関連リンク
 ・ソースコード
-　http://osdn.jp/projects/saccubus/svn/view/branches/dev_branch
-　(http://osdn.jp/projects/saccubus/scm/svn/tree/head/branches/dev_branch/　WebUI新バージョン)
-　(SVN：svn checkout http://svn.osdn.jp/svnroot/branches/dev_branch )
-　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1 
+　http://sourceforge.jp/projects/saccubus/svn/view/branches/dev_branch
+　(SVN：svn checkout http://svn.sourceforge.jp/svnroot/branches/dev_branch )
+　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1 (未更新)
 
 ・ダウンロード
+　公式最新(Vista・Win7では追加ファイルが必要。公式ユーザーページ参照)
+　1.22r 　　http://sourceforge.jp/projects/saccubus/downloads/30757/Saccubus-1.22r.zip/
 　改造版の元
 　1.22r3　(ffmpeg.exe SVN-r21400を含む)
 　　http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip
-　公式最新(Vista・Win7では追加ファイルが必要。公式ユーザーページ参照)
-　1.22r 　　http://osdn.jp/projects/saccubus/downloads/30757/Saccubus-1.22r.zip/
 　参考ffmpeg
+　r23386(libfaacあり)　http://www1.axfc.net/uploader/Ne/so/82882.zip
 　N55686(libfaac無し、libvo_aacencあり)+optionVO(古い)
 　　http://www1.axfc.net/uploader/Ne/so/122583.zip&key=saccubus
-　FFmpeg評価用(2013/6/16)
-　　http://www1.axfc.net/uploader/so/2936495.zip
-　FFmpeg65220w配布2.zip(2014/7/1)
-　　http://osdn.jp/users/orz-/pf/beta_oryzanol/files/?id=5537
-　FFmpeg74211f配布ZIP(2015/8/2)
-　　http://www1.axfc.net/u/3510584.zip
-　Jenkins自動ビルド（毎朝4:00に最新のFFmpeg.gitから自動ビルド）
-　　http://ci.ledyba.org/job/SaccubusFFmpegBuild_1.x/
-　　下の方の[最新の安定ビルド]リンクをダウンロードして下さい。
-　　（.7zは圧縮ファイル 7zipなどで展開できる）
-　　さきゅばす1.xx系は1.63以降から対応(1.62以前は不可)
-
+　FFmpeg評価用(2013/6/16)　http://www1.axfc.net/uploader/so/2936495.zip
 
 　改造版
-　1.65.5.2　https://github.com/Saccubus/Saccubus1.x/releases/tag/1.65.5.2
-　1.65.2　　https://github.com/Saccubus/Saccubus1.x/releases/tag/1.65.2
-　1.65.1　　http://www1.axfc.net/u/3613928.zip
-　1.65.0　　http://www1.axfc.net/u/3611115.zip
-　1.64.2　　http://www1.axfc.net/u/3582177.zip
-　1.63　　　http://www1.axfc.net/u/3526594.zip
-　1.62　　　http://www1.axfc.net/u/3509654.zip
-　1.61　　　http://www1.axfc.net/u/3502367.zip
-　　　　　　http://osdn.jp/users/orz-/pf/beta_oryzanol/files/?id=8837
-　1.60　　　http://www1.axfc.net/u/3426513.zip
-　1.50　　　http://www1.axfc.net/u/3239184.zip
 　1.49　　　http://www1.axfc.net/u/3227458.zip
 　1.48　　　http://www1.axfc.net/u/3210572.zip
 　1.47r3　　http://www1.axfc.net/u/3206385.zip
@@ -1161,107 +828,16 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ・サイト
 　さきゅばす公式
-　　http://saccubus.osdn.jp/
+　　http://saccubus.sourceforge.jp/
 　2ch【ニコニコ】コメント付動画作成ツール さきゅばす
 　　http://anago.2ch.net/test/read.cgi/software/1346798166/
 　coroid project　「いんきゅばす」を含む
-　　http://osdn.jp/projects/coroid/
+　　http://sourceforge.jp/projects/coroid/
 　ニコニコランキングメーカー(nicorank)配布サイト
 　　http://www.daily-vocaran.info/nicorank/
 
 
 変更履歴・修正・改変点
-1.65.6.0(2016/06/25)
-　PCオプションの入力に -analyzeduration 10M追加
-　Analize Error時 fps sizeのデフォルト値を適用
-　ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)
-　生放送運営コメントの元の@秒数表示を優先する
-
-1.65.2.9(2016/03/23)
-　auto.batで同時実行数 1 (デフォルト)の時に動画1つ変換で終了してしまうバグ修正
-
-1.65.2.8b(2016/03/21)
-　Bin.jar(debug.batに必要)を入れ忘れたので追加しました。
-
-1.65.2.8(2016/03/20)
-　saccubus2風文字影追加 (issue#3)
-　生放送タイムシフトでコメント番号-1のコメントが透明(issue #8) 
-　待機中からの変換が保留中の他の変換を追い越しできない(issue #2)
-　ブラウザからインターネットショートカット(.URL)をD&Dした時の動作(issue#1)
-　auto.batでURLが使えない(issue#4)処置
-　マルチスレッド内部実装を変更
-　FFmpeg3.0対応(内蔵AAC)、UtVideo 15.5.0に対応
-
-1.65.1.2(2016/02/06)
-　HTTP503 504 エラーのリトライ時のバグ修正
-
-1.65.1.1(2016/02/05)
-　wavファイルで終了通知可
-　auto.batで並列実行可
-　エラー終了IDの一括再変換予約
-　HTTP503 504 エラーのリトライ
-　管理タブに再生ボタン設置
-　エコノミー時の動画ファイル名にlowを付加
-　PC__入力同サイズアス比共通_mp4 オプション追加
-
-1.65.0.2(2016/01/31)
-　指定数まで同時変換並列実行
-　変換ボタンで変換予定登録
-
-1.64.2.0(2015/12/13)
-　MSPGothicチェック追加(nicovideoE.dll)
-
-1.64.1.0(2015/12/11)
-　ログイン処理再修正(クッキー処理修正)
-
-1.64.0.4(2015/12/10)
-　ログイン処理修正(メールアドレス・パスワードログイン)
-　ブラウザセッション検索漏れ修正
-　コメント追加モード
-　MsgBox.java 追加
-　デフォルトコマンドチェックにdevice:3DS追加（）
-　スレッドIDからVideoID検索（コメントView_Counter）
-　コメントダブり削除再修正
-
-1.63.0.7c(2015/08/31)
-　さきゅばす用ffmpegの修正(toolbox削除)に合わせて修正。
-　nicovideoE.dllをffmpeg新(Jenkins自動ビルド)旧(70404f/65520w)両方に対応。
-　コメントサーバー nmsg.nicovideo.jp/api/ に対応修正。
-　生放送タイムシフトログの部屋別コメント合成を可能に。
-　auto.batやConvList実行時にも変換後再生オプションが有効可能に
-　AAC-LCのみcopyするオプション -alcp 追加（配布オプションには未採用）
-
-1.62.0.2(2015/07/31)
-　入力出力ともに音声codecがAACの場合にcopyするオプション-aacpを追加。
-　PC用オプションに-aacp追加。(outオプションの最後に追加するだけ)
-
-1.61.0.9(2015/07/18)
-　Windows10TP でのCA用代替フォント対応
-　プレミアムカラーの一般会員使用チェック追加(バグ修正)
-　black2コマンド追加(バグ修正)
-
-1.60.0(2015/3/08)
-　ffmpeg更新に対応してオプションと引数渡しを変更
-　(library x265 libutvideo追加)
-　fps変更時ffmpeg内蔵fps filter選択可(対応ffmpegのみ nm動画非対応)
-　ライセンス及び旧readmeを docフォルダに移動 メニュー表示の対応
-　初期設定値のmp3をvo_aacencに変更(.iniファイルは以前に対応済み)
-　変換後自動再生機能
-　エクスプローラーでフォルダ表示ボタン追加
-　ニコ生運営コメント簡易変更
-　Windows8以降のIE11クッキー取得バグ修正(仮)
-　マルチログイン時のクッキー処理バグ修正
-
-1.51(2015/2/07)
-　色名pink2,cyan2追加
-　wakuコマンドで-frameオプション時の既定をred 細枠(1pixel)に
-
-1.50(2014/5/11)
-　Jsonのライブラリーにgsonを使う変更（gson jar,License追加)
-　Vhook 1.50.5 MingLiuフォント変化修正
-　CAの弾幕化モード抑え気味
-　boldフォントをnormal化可能
-
 1.49(2014/4/20)
 　mylist変換をあとでまとめてautolist.batでできるように出力
 　mylist処理少し追加
