@@ -2053,15 +2053,19 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		checkFps = Setting.enableCheckFps();
 		fpsUp = Setting.getFpsUp();
 		fpsMin = Setting.getFpsMin();
+		if(frameRate == 0.0){
+			frameRate = 25.0;
+			log.println("frameRate error, set frameRate to Default");
+		}
 		log.println("frameRate:"+frameRate+",fpsUp:"+fpsUp+",fpsMin:"+fpsMin);
 		String str;
-		if (videoAspect == null || videoAspect == Aspect.ERROR){
+		if (videoAspect == null || videoAspect.isInvalid()){
 			str = "Analize Error   ";
-			videoAspect = Aspect.NORMAL;
+			videoAspect = Aspect.ERROR;
 		} else {
 			str = videoAspect.explain() + "  ";
 		}
-		isPlayerWide = videoAspect.isWide();
+		isPlayerWide = videoAspect.isWide() || videoAspect.isInvalid();
 		if (Setting.isZqPlayer()){
 			//
 		} else {
@@ -2088,13 +2092,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 		if (Setting.isZqPlayer()){
 			selectedVhook = VhookQ;
-			MovieInfo.setText(auto + "ägí£Vhook Q " + str);
 		} else if (isPlayerWide){
 			selectedVhook = VhookWide;
-			MovieInfo.setText(auto + "ägí£Vhook ÉèÉCÉh " + str);
 		} else {
 			selectedVhook = VhookNormal;
-			MovieInfo.setText(auto + "ägí£Vhook è]óà " + str);
 		}
 		if (!detectOption(isPlayerWide,Setting.isZqPlayer())){
 			sendtext("ïœä∑ÉIÉvÉVÉáÉìÉtÉ@ÉCÉãÇÃì«Ç›çûÇ›Ç…é∏îsÇµÇ‹ÇµÇΩÅB");
@@ -2155,7 +2156,27 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			setSize = outSize;
 			printOutputSize(setSize,outAspect);
 			outputOptionMap.put("-s", setSize.replace(':', 'x'));
-			return true;
+			//return true;
+		}
+		if(videoAspect.isInvalid() && !outAspect.isInvalid()){
+			videoAspect = outAspect;
+			inSize = outAspect.getSize();
+		}
+		if(videoAspect.isInvalid()){ // and outAspect is also invalid
+			if(selectedVhook==VhookNormal)
+				inSize = "512:384";
+			else
+				inSize = "640:360";
+			videoAspect = toAspect(inSize, Aspect.WIDE);
+			outAspect = videoAspect;
+		}
+		str = videoAspect.explain() + "  ";
+		if (Setting.isZqPlayer()){
+			MovieInfo.setText(auto + "ägí£Vhook Q " + str);
+		} else if (isPlayerWide){
+			MovieInfo.setText(auto + "ägí£Vhook ÉèÉCÉh " + str);
+		} else {
+			MovieInfo.setText(auto + "ägí£Vhook è]óà " + str);
 		}
 		if (getSameAspectMaxFlag()){
 			//Outoption contains "-samx"
@@ -2458,7 +2479,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private int convSWF_JPG(File videoin, File videoout){
 		int code = -1;
 		//èoóÕ
-		ffmpeg.setCmd("-y -i ");
+		ffmpeg.setCmd("-y -analyzeduration 10M -i ");
 		ffmpeg.addFile(videoin);
 		ffmpeg.addCmd(ConvertingSetting.getDefOptsSwfJpeg());
 		// -an -vcodec copy -r 1 -f image2
@@ -2518,7 +2539,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		//File outputAvi = new File(imgDir,"huffyuv.avi");
 		ffmpeg.setCmd(" -loop 1 -r " + Double.toString(rate));
 		ffmpeg.addCmd(" -itsoffset " + Double.toString(length_frame));
-		ffmpeg.addCmd(" -y -i ");
+		ffmpeg.addCmd(" -y -analyzeduration 10M -i ");
 		ffmpeg.addFile(videoin);
 		ffmpeg.addCmd(" -shortest ");
 		if(tl!=0.0)
@@ -2541,7 +2562,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		 * ffmpeg.exe -shortest -y -i fws_tmp.swf -itsoffset 1.0 -i avi4.avi
 		 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 		 */
-		ffmpeg.setCmd("-y -i ");
+		ffmpeg.setCmd("-y -analyzeduration 10M -i ");
 		ffmpeg.addFile(audioin);	// audio, must be FWS_SWF
 		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(videoin);	// visual

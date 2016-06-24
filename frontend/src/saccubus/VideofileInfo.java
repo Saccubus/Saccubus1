@@ -81,7 +81,7 @@ public class VideofileInfo {
 			}
 		}
 
-		ffmpeg.setCmd("-y -i ");
+		ffmpeg.setCmd("-y -analyzeduration 10M -i ");	//workaround input option
 		ffmpeg.addFile(videoFile);
 		log.println("get Info:" + ffmpeg.getCmd());
 		int abortedCode = 0;

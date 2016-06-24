@@ -252,7 +252,7 @@ public class FFmpeg {
 		public Aspect(int x, int y){
 			width = x;
 			height = y;
-			if ( y != 0){
+			if ( x !=0 && y != 0){
 				aspect = (double)x / (double)y;
 			} else {
 				aspect = 0.0;
@@ -276,7 +276,11 @@ public class FFmpeg {
 			return "(" + width + "x" + height + ")" + String.format("%.3f", aspect);
 		}
 		public String getSize(){
+			if(isInvalid()) return null;
 			return "" + width + ":" + height;
+		}
+		public boolean isInvalid(){
+			return (aspect<=0.0);
 		}
 		public static final Aspect NORMAL = new Aspect(4, 3);
 		public static final Aspect WIDE = new Aspect(16, 9);
