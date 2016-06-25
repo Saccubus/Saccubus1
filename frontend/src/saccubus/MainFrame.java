@@ -3639,7 +3639,7 @@ public class MainFrame extends JFrame {
 				return;
 			}
 			textout.setText(inputVideo.getName() + "\n");
-			ArrayList<String> list = execFFmpeg("-y -i \"" + inputVideo.getPath() + "\"");
+			ArrayList<String> list = execFFmpeg("-y -analyzeduration 10M -i \"" + inputVideo.getPath() + "\"");
 			for (String line : list){
 				if (line.contains("Stream ")){
 					textout.append(line.replace("Stream ", "").trim() + "\n");
