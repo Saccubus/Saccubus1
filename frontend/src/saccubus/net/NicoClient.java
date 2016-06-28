@@ -1413,7 +1413,11 @@ public class NicoClient {
 				int end = (text+json_end).indexOf(json_end, start);	// end of JSON
 				text = (text+json_end).substring(start, end);
 				text = text.replace("&quot;", "\"");
-				text = URLDecoder.decode(text, encoding);	// decode URLEncode
+				try {
+					text = URLDecoder.decode(text, encoding);	// decode URLEncode
+				} catch(Exception e){
+					log.println("caught exception in json URLdecode");
+				}
 				//JsonâêÕ
 				Path file = new Path(titleHtml.getRelativePath()+"J.xml");
 				Path.unescapeStoreXml(file, text, url);		//xml is property key:json val:JSON
