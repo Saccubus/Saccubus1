@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +59,19 @@ import saccubus.util.Util;
  *  JLabelの表示書き換えなど
  */
 public class ConvertWorker extends SwingWorker<String, String> {
+
+	class Tick extends TimerTask {
+		private String timerString = "";
+		private int tick = 0;
+		public Tick(String s){
+			timerString = s;
+		}
+		@Override
+		public void run() {
+			sendtext(timerString + (tick++) +"秒");
+		}
+	}
+
 	private ConvertingSetting Setting;
 	private String Vid;
 	private String Tag;
@@ -649,9 +664,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	public synchronized NicoClient getNicoClient() {
+
 		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
 			|| Setting.isSaveThumbInfo()) {
 			sendtext("ログイン中");
+			TimerTask task = new Tick("ログイン待ち　");
+			Timer timer = new Timer("ログイン秒間隔タイマー");
+			timer.schedule(task, 0, 1000);	// 1000 miliseconds
 			NicoClient client = null;
 			if (BrowserKind != BrowserCookieKind.NONE){
 				// セッション共有、ログイン済みのNicoClientをclientに返す
@@ -659,6 +678,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			} else {
 				client = new NicoClient(mailAddress, password, proxy, proxy_port, stopwatch, log);
 			}
+			timer.cancel();
 			if (!client.isLoggedIn()) {
 				sendtext("ログイン失敗 " + BrowserKind.getName() + " " + client.getExtraError());
 			} else {
@@ -1719,9 +1739,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean canRetry(NicoClient client, Gate gate){
+
 		//ゲート制限超えないならリトライ可能
 		String ecode;
 		if(client==null) return false;
+		gate.setError();
 		ecode = client.getExtraError();
 		if(ecode==null) {
 			// illegal error code, cannnot retry
@@ -1732,11 +1754,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			//  サービスが一時的に過負荷 ゲートウェイタイムアウト
 			// retry count check
 			sendtext("リトライ待ち中");
+			TimerTask task = new Tick("リトライ待ち　");
+			Timer timer = new Timer("リトライ秒間隔タイマー");
+			timer.schedule(task, 0, 1000);	// 1000 miliseconds
 			if(gate.notExceedLimiterGate()){
 				// can retry
 				client.setExtraError("retry,");
+				timer.cancel();
 				return true;
 			}
+			timer.cancel();
 			sendtext("リトライ失敗");
 		}
 		// not error or other error,cannnot retry
@@ -1820,6 +1847,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if (stopFlagReturn()) {
 					return "97";
 				}
+				gate.resetError();
 				VideoTitle = client.getVideoTitle();
 				VideoBaseName = Setting.isChangeTitleId()?
 					VideoTitle + VideoID : VideoID + VideoTitle;
@@ -1835,6 +1863,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				success = saveVideo(client);
 			}while (!stopFlagReturn() && !success && canRetry(client, gate));
 			if(!success) return result;
+			gate.resetError();
 
 			stopwatch.show();
 			success = false;
@@ -1842,6 +1871,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				success = saveComment(client);
 			}while (!stopFlagReturn() && !success && canRetry(client, gate));
 			if(!success) return result;
+			gate.resetError();
 
 			stopwatch.show();
 			success = false;
@@ -1849,6 +1879,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				success = saveOwnerComment(client);
 			}while (!stopFlagReturn() && !success && canRetry(client, gate));
 			if(!success) return result;
+			gate.resetError();
 
 			stopwatch.show();
 			if(!saveThumbInfo(client, Tag)){

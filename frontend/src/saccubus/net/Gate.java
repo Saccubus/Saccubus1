@@ -1,5 +1,6 @@
 package saccubus.net;
 
+import java.util.Date;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,8 +24,12 @@ public class Gate extends Thread {
 	}
 	private final static AtomicBoolean waitSetNumGate = new AtomicBoolean(false);
 	public final static int RETRY_WAIT_MILISECOND = 5000;	//5秒
-	public final static int ERROR_WAIT_MILISECOND = 1000;	//5秒
+	public final static int ERROR_WAIT_MILISECOND = 1000;	//1秒
+	private final static int MAX_RETRY_WAIT_MILISECOND = 120000;	//2分間
 	private Logger log;
+	private static Date lastErrorDate = new Date();
+	private static int lastErrorWaittime = ERROR_WAIT_MILISECOND;
+	private static boolean isLastError = false;
 
 	public Gate(){
 		entered = false;
@@ -132,14 +137,56 @@ public class Gate extends Thread {
 			return false;
 
 		log.println("Gate#notExceedLimitterGate("+id+") waiting");
-		exit(RETRY_WAIT_MILISECOND);		//　5秒待機後、ロック開放
+		exit(getErrorRetryWait());		//　待機後、ロック開放
 		if(count++ > limitter){	//retry数超えたら false
+			log.println("Gate#notExceedLimitterGate("+id+") limmiter("+limitter
+					+") over, wait: "+lastErrorWaittime/1000+"sec.");
 			count = 0;
 			return false;
 		}
 		// retry
 		enter();
 		return true;
+	}
+
+	private int getErrorRetryWait() {
+		synchronized (lastErrorDate) {
+			try {
+				if(isLastError){
+					lastErrorWaittime = Math.min(lastErrorWaittime*2,MAX_RETRY_WAIT_MILISECOND);
+					long now = (new Date()).getTime();
+					long waitend = lastErrorDate.getTime() + lastErrorWaittime;
+					return (int)Math.max(0, waitend - now) + RETRY_WAIT_MILISECOND;
+				}else{
+					isLastError = true;
+					return lastErrorWaittime;	//5秒待機
+				}
+			} finally {
+				lastErrorDate = new Date();
+			}
+		}
+	}
+
+	public void setError(){
+		if(!entered) throw new RuntimeException("Gate#setError() while !enterd. ");
+		synchronized (lastErrorDate) {
+			lastErrorDate = new Date();
+			isLastError = true;
+		}
+	}
+
+	public void resetError(){
+		if(!entered) throw new RuntimeException("Gate#resetError() while !enterd. ");
+		synchronized (lastErrorDate) {
+			if(isLastError){
+				long now = (new Date()).getTime();
+				if (lastErrorDate.getTime() + MAX_RETRY_WAIT_MILISECOND < now){
+					lastErrorWaittime = Math.max(lastErrorWaittime/2,ERROR_WAIT_MILISECOND);
+				}
+				lastErrorDate = new Date();
+				isLastError = false;
+			}
+		}
 	}
 
 	public synchronized static void setNumGate(int nGate, final Logger log){
