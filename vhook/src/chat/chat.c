@@ -218,7 +218,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		}else{
 			//naka
 			if(is_live){	// vpos‚æ‚è‘‚­•\Ž¦‚Å‚«‚È‚¢‚Ì‚Åvpos‚ð1•b’x‚­‚·‚é
-				item->vpos += TEXT_AHEAD_SEC;
+				vpos = item->vpos += TEXT_AHEAD_SEC;
 			}
 			item->vstart = vpos - TEXT_AHEAD_SEC;	//‚P•b‘O‚©‚ç
 			// item->vend = vpos + TEXT_SHOW_SEC_S - 1;
