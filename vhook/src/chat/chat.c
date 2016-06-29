@@ -13,7 +13,8 @@ SDL_Color convColor24(int color);
  * 出力 CHAT chat 領域確保、項目設定
  * 出力 CHAT_SLOT chat->slot ← slot ポインタ設定のみ
  */
-int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,int cid,const char* com_type,int toLeft,int is_live){
+int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,
+		int cid,const char* com_type,int toLeft,int is_live,int vpos_shift){
 	int i;
 	int max_no = INTEGER_MIN;
 	int min_no = INTEGER_MAX;
@@ -193,6 +194,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			}
 		}
 		location = GET_CMD_LOC(location);
+		vpos += vpos_shift;
 
 		//変数セット
 		item->no = no;

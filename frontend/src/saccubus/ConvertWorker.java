@@ -3096,6 +3096,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(convertIsLive()){
 				ffmpeg.addCmd("|--live");
 			}
+			if(Setting.isEnableCommentVposShift()){
+				ffmpeg.addCmd("|--comment-shift:"
+					+ URLEncoder.encode(Setting.getCommentVposShiftString(), encoding));
+			}
 			String extra = Setting.getExtraMode();
 			if(extra.contains("-April=")){
 				int index = extra.indexOf("-April=");

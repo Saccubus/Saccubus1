@@ -253,8 +253,10 @@ public class MainFrame extends JFrame {
 	private JCheckBox autoPlay2CheckBox = new JCheckBox();
 	private JCheckBox liveOperationCheckBox = new JCheckBox();
 	private JLabel liveOperationLabel = new JLabel();
-	private JTextField liveOperationDurationFileField = new JTextField();
+	private JTextField liveOperationDurationTextField = new JTextField();
 	private JCheckBox liveCommentModeCheckBox = new JCheckBox();
+	private JCheckBox liveCommentVposShiftCheckBox = new JCheckBox();
+	private JTextField liveCommentVposShiftTextField = new JTextField();
 	private JPanel liveConvertInfoPanel = new JPanel();
 	private JCheckBox liveOparationDurationChangeCheckBox = new JCheckBox();
 	private JCheckBox premiumColorCheckBox = new JCheckBox();
@@ -2751,10 +2753,9 @@ public class MainFrame extends JFrame {
 		}
 		autoPlay.setCheckBox(autoPlayCheckBox);
 		// 運営コメント設定チェック
-		String duration = liveOperationDurationFileField.getText();
+		String duration = liveOperationDurationTextField.getText();
 		int live_op_duration = 0;
 		try {
-			live_op_duration = Integer.valueOf(duration);
 			if(live_op_duration <= 0)
 				duration = "";
 			else
@@ -2762,6 +2763,15 @@ public class MainFrame extends JFrame {
 		} catch(NumberFormatException e){
 			//log.printStackTrace(e);
 			duration = "";
+		}
+		String vposshift = liveCommentVposShiftTextField.getText();
+		double vpos_shift_sec = 0.0;
+		try {
+			vpos_shift_sec = Double.valueOf(vposshift);
+			vposshift = Double.toString(vpos_shift_sec);
+		} catch(NumberFormatException e){
+			vposshift = "";
+			log.println("VPOSシフト値が不正");
 		}
 		return new ConvertingSetting(
 			MailAddrField.getText(),
@@ -2886,7 +2896,9 @@ public class MainFrame extends JFrame {
 			errorControl.getString(),
 			liveOparationDurationChangeCheckBox.isSelected(),
 			liveCommentModeCheckBox.isSelected(),
-			duration
+			duration,
+			liveCommentVposShiftCheckBox.isSelected(),
+			vposshift
 		);
 	}
 
@@ -3057,7 +3069,9 @@ public class MainFrame extends JFrame {
 		errorControl.setError(setting.getErrorList());
 		liveOparationDurationChangeCheckBox.setSelected(setting.changedLiveOperationDuration());
 		liveCommentModeCheckBox.setSelected(setting.isForcedLiveComment());
-		liveOperationDurationFileField.setText((setting.getLiveOperationDuration()));
+		liveOperationDurationTextField.setText((setting.getLiveOperationDuration()));
+		liveCommentVposShiftCheckBox.setSelected(setting.isEnableCommentVposShift());
+		liveCommentVposShiftTextField.setText(setting.getCommentVposShiftString());
 	}
 
 	/**
@@ -4308,7 +4322,7 @@ s	 * @return javax.swing.JPanel
 			GridBagConstraints grid14_x0_y1 = new GridBagConstraints();
 			grid14_x0_y1.gridx = 0;
 			grid14_x0_y1.gridy = 1;
-			grid14_x0_y1.gridwidth = 1;
+			grid14_x0_y1.gridwidth = 5;
 			grid14_x0_y1.weightx = 0.0;
 			grid14_x0_y1.anchor = GridBagConstraints.NORTHWEST;
 			grid14_x0_y1.fill = GridBagConstraints.HORIZONTAL;
@@ -4319,19 +4333,20 @@ s	 * @return javax.swing.JPanel
 			GridBagConstraints grid14_x0_y3 = new GridBagConstraints();
 			grid14_x0_y3.gridx = 0;
 			grid14_x0_y3.gridy = 3;
+			grid14_x0_y3.gridwidth = 5;
 			grid14_x0_y3.weightx = 0.0;
 			grid14_x0_y3.anchor = GridBagConstraints.NORTHWEST;
 			grid14_x0_y3.fill = GridBagConstraints.HORIZONTAL;
 			grid14_x0_y3.insets = INSETS_0_25_0_5;
 			liveConvertInfoPanel.add(liveOparationDurationChangeCheckBox,grid14_x0_y3);
-			liveOperationDurationFileField = new JTextField();
+			liveOperationDurationTextField = new JTextField();
 			GridBagConstraints grid14_x0_y4 = (GridBagConstraints)grid14_x0_y1.clone();
 			grid14_x0_y4.gridx = 0;
 			grid14_x0_y4.gridy = 4;
-			grid14_x0_y4.gridwidth = 1;
+			grid14_x0_y4.gridwidth = 5;
 			grid14_x0_y4.weightx = 1.0;
 			grid14_x0_y4.insets = INSETS_0_50_0_5;
-			liveConvertInfoPanel.add(liveOperationDurationFileField, grid14_x0_y4);
+			liveConvertInfoPanel.add(liveOperationDurationTextField, grid14_x0_y4);
 			liveCommentModeCheckBox.setText("生コメ強制　運営コメ変更とは独立、動画でも強制的にニコ生コメントで");
 			liveCommentModeCheckBox.setForeground(Color.blue);
 			liveCommentModeCheckBox.setToolTipText("通常は自動判定,nakaコメ1秒遅延,blue2の色変更等");
@@ -4344,6 +4359,27 @@ s	 * @return javax.swing.JPanel
 			grid14_x0_y6.fill = GridBagConstraints.HORIZONTAL;
 			grid14_x0_y6.insets = INSETS_0_5_0_5;
 			liveConvertInfoPanel.add(liveCommentModeCheckBox, grid14_x0_y6);
+			liveCommentVposShiftCheckBox.setText("コメVPOSシフト(秒)");
+			liveCommentVposShiftCheckBox.setForeground(Color.blue);
+			liveCommentVposShiftCheckBox.setToolTipText("コメントのVPOS値(時刻)を秒単位(小数点値可能)で変更します");
+			GridBagConstraints grid14_x0_y7 = new GridBagConstraints();
+			grid14_x0_y7.gridx = 0;
+			grid14_x0_y7.gridy = 7;
+			grid14_x0_y7.gridwidth = 1;
+			grid14_x0_y7.weightx = 0.0;
+			grid14_x0_y7.anchor = GridBagConstraints.NORTHWEST;
+			grid14_x0_y7.fill = GridBagConstraints.HORIZONTAL;
+			grid14_x0_y7.insets = INSETS_0_5_0_5;
+			liveConvertInfoPanel.add(liveCommentVposShiftCheckBox,grid14_x0_y7);
+			GridBagConstraints grid14_x2_y7 = new GridBagConstraints();
+			grid14_x2_y7.gridx = 1;
+			grid14_x2_y7.gridy = 7;
+			grid14_x2_y7.gridwidth = 4;
+			grid14_x2_y7.weightx = 1.0;
+			grid14_x2_y7.anchor = GridBagConstraints.NORTHWEST;
+			grid14_x2_y7.fill = GridBagConstraints.HORIZONTAL;
+			grid14_x2_y7.insets = INSETS_0_5_0_5;
+			liveConvertInfoPanel.add(liveCommentVposShiftTextField,grid14_x2_y7);
 			GridBagConstraints grid_x0_y2 = new GridBagConstraints();
 			grid_x0_y2.gridx = 0;
 			grid_x0_y2.gridy = 2;

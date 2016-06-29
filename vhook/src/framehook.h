@@ -149,4 +149,7 @@ void exitExtProcess();
 #define FRAMEHOOK_OPT_LIVE		"--live"
 #define FRAMEHOOK_OPT_LIVE_LEN	strlen(FRAMEHOOK_OPT_LIVE)
 
+#define FRAMEHOOK_OPT_COMMENT_SHIFT	"--comment-shift:"
+#define FRAMEHOOK_OPT_COMMENT_SHIFT_LEN	strlen(FRAMEHOOK_OPT_COMMENT_SHIFT)
+
 #endif /*FRAMEHOOK_H_*/

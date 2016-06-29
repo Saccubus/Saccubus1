@@ -466,7 +466,7 @@ public class NicoXMLReader extends DefaultHandler {
 						// prem
 						if(duration.isEmpty())
 							duration = "10";
-						item.setMail("@"+duration);
+						item.setMail("ue ender @"+duration);
 					}
 					else if(list[0].equals("/vote")){
 						int lfLim = 4;

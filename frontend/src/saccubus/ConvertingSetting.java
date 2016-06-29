@@ -188,6 +188,8 @@ public class ConvertingSetting {
 	private boolean forceLiveComment;
 	private boolean changeLiveOperationDuration;
 	private String liveOperationDuration;
+	private boolean enableCommentVposShift;
+	private String commentVposShiftString;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -413,7 +415,9 @@ public class ConvertingSetting {
 			String error_list,
 			boolean change_live_operation_duration,
 			boolean force_live_comment,
-			String live_convert_setting_file
+			String live_operation_duration,
+			boolean enable_comment_vpos_shift,
+			String vpos_shift_sec
 		)
 	{
 		this(	mailaddress,
@@ -553,7 +557,9 @@ public class ConvertingSetting {
 			liveFlag = true;
 		else
 			liveFlag = !(savevideo || savecomment || save_thumb_info);	//ÉçÅ[ÉJÉãïœä∑=ê∂ï˙ëóÇ≈îªíf(âº)
-		liveOperationDuration = live_convert_setting_file;
+		liveOperationDuration = live_operation_duration;
+		enableCommentVposShift = enable_comment_vpos_shift;
+		commentVposShiftString = vpos_shift_sec;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -944,6 +950,12 @@ public class ConvertingSetting {
 	public String getLiveOperationDuration(){
 		return liveOperationDuration;
 	}
+	public boolean isEnableCommentVposShift(){
+		return enableCommentVposShift;
+	}
+	public String getCommentVposShiftString(){
+		return commentVposShiftString;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1097,6 +1109,8 @@ public class ConvertingSetting {
 	static final String PROP_LIVE_CONVERT_FILE_SETTING = "LiveConvertFileSetting";
 	static final String PROP_FORCE_LIVE_COMMENT = "ForceLiveComment";
 	static final String PROP_LIVE_OPERATIONDURATION = "LiveOperationDuration";
+	static final String PROP_ENABLE_COMMENT_VPOS_SHIFT = "EnableCommentVposShift";
+	static final String PROP_COMMENT_VPOS_SHIFT = "CommentVposShiftDuration";
 	// ì«Ç›çûÇﬁÇæÇØÅAï€ë∂ÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1308,6 +1322,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ERROR_LIST, setting.getErrorList());
 		prop.setProperty(PROP_LIVE_CONVERT_FILE_SETTING, Boolean.toString(setting.changedLiveOperationDuration()));
 		prop.setProperty(PROP_FORCE_LIVE_COMMENT, Boolean.toString(setting.isForcedLiveComment()));
+		prop.setProperty(PROP_ENABLE_COMMENT_VPOS_SHIFT, Boolean.toString(setting.isEnableCommentVposShift()));
 		prop.setProperty(PROP_LIVE_OPERATIONDURATION, setting.getLiveOperationDuration());
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
@@ -1566,7 +1581,9 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_ERROR_LIST, ""),
 			Boolean.parseBoolean(prop.getProperty(PROP_LIVE_CONVERT_FILE_SETTING, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_FORCE_LIVE_COMMENT, "false")),
-			prop.getProperty(PROP_LIVE_OPERATIONDURATION,"")
+			prop.getProperty(PROP_LIVE_OPERATIONDURATION,""),
+			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_COMMENT_VPOS_SHIFT,"false")),
+			prop.getProperty(PROP_COMMENT_VPOS_SHIFT, "")
 		);
 	}
 
