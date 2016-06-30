@@ -1106,9 +1106,9 @@ public class ConvertingSetting {
 	static final String PROP_PENDING_MODE = "PendingMode";
 	static final String PROP_ONE_LINE_MODE = "OneLineMode";
 	static final String PROP_ERROR_LIST = "ErrorList";
-	static final String PROP_LIVE_CONVERT_FILE_SETTING = "LiveConvertFileSetting";
+	static final String PROP_LIVE_CONVERT_SETTING = "LiveConvertSetting";
 	static final String PROP_FORCE_LIVE_COMMENT = "ForceLiveComment";
-	static final String PROP_LIVE_OPERATIONDURATION = "LiveOperationDuration";
+	static final String PROP_LIVE_OPERATION_DURATION = "LiveOperationDuration";
 	static final String PROP_ENABLE_COMMENT_VPOS_SHIFT = "EnableCommentVposShift";
 	static final String PROP_COMMENT_VPOS_SHIFT = "CommentVposShiftDuration";
 	// ì«Ç›çûÇﬁÇæÇØÅAï€ë∂ÇµÇ»Ç¢
@@ -1320,10 +1320,11 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_PENDING_MODE, Boolean.toString(setting.isPendingMode()));
 		prop.setProperty(PROP_ONE_LINE_MODE, Boolean.toString(setting.isOneLineMode()));
 		prop.setProperty(PROP_ERROR_LIST, setting.getErrorList());
-		prop.setProperty(PROP_LIVE_CONVERT_FILE_SETTING, Boolean.toString(setting.changedLiveOperationDuration()));
+		prop.setProperty(PROP_LIVE_CONVERT_SETTING, Boolean.toString(setting.changedLiveOperationDuration()));
+		prop.setProperty(PROP_LIVE_OPERATION_DURATION, setting.getLiveOperationDuration());
 		prop.setProperty(PROP_FORCE_LIVE_COMMENT, Boolean.toString(setting.isForcedLiveComment()));
 		prop.setProperty(PROP_ENABLE_COMMENT_VPOS_SHIFT, Boolean.toString(setting.isEnableCommentVposShift()));
-		prop.setProperty(PROP_LIVE_OPERATIONDURATION, setting.getLiveOperationDuration());
+		prop.setProperty(PROP_COMMENT_VPOS_SHIFT, setting.getCommentVposShiftString());
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1579,11 +1580,11 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_PENDING_MODE, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ONE_LINE_MODE, "false")),
 			prop.getProperty(PROP_ERROR_LIST, ""),
-			Boolean.parseBoolean(prop.getProperty(PROP_LIVE_CONVERT_FILE_SETTING, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_LIVE_CONVERT_SETTING, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_FORCE_LIVE_COMMENT, "false")),
-			prop.getProperty(PROP_LIVE_OPERATIONDURATION,""),
+			prop.getProperty(PROP_LIVE_OPERATION_DURATION,""),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_COMMENT_VPOS_SHIFT,"false")),
-			prop.getProperty(PROP_COMMENT_VPOS_SHIFT, "")
+			prop.getProperty(PROP_COMMENT_VPOS_SHIFT, "0.0")
 		);
 	}
 
