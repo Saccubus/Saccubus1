@@ -3404,6 +3404,10 @@ public class MainFrame extends JFrame {
 			String regex = "[]):/\\\\_\\t\\.\\?].*$";
 			String Tag = localFile.getName().replaceFirst(regex, "").trim();
 			log.println("Tag:"+Tag);
+			int i0 = Tag.indexOf('(');
+			if(i0 > 0) Tag = Tag.substring(0,i0);
+			i0 = Tag.indexOf('[');
+			if(i0 > 0) Tag = Tag.substring(0,i0);
 			if(Tag.charAt(0)=='('){
 				vid = Tag.substring(1);
 				Tag += ')';
