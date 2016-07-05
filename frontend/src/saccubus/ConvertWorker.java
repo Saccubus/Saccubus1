@@ -2443,7 +2443,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(!addVhookSetting(ffmpeg, selectedVhook, isPlayerWide)){
 				return false;
 			}
-		} else {
+		} else if(!getFFmpegVfOption().isEmpty()){
 			ffmpeg.addCmd(" "+vfilter_flag+" ");
 			ffmpeg.addCmd(getFFmpegVfOption());
 		}
@@ -3002,7 +3002,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (!getFFmpegVfOption().isEmpty()){
 				ffmpeg.addCmd(getFFmpegVfOption());
 				ffmpeg.addCmd(",");
-			}else{
+			}else if(!outAspect.isInvalid()){
 				// -s ƒIƒvƒVƒ‡ƒ“‚ğ -vf scale=w:h ‚Æ‚µ‚Äæ‚É’Ç‰Á
 				ffmpeg.addCmd("scale="+outAspect.getSize());
 				ffmpeg.addCmd(",");
