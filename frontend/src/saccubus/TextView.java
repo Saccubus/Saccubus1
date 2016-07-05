@@ -1,15 +1,22 @@
 package saccubus;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import psi.lib.swing.PopupRightClick;
 
@@ -20,24 +27,17 @@ import psi.lib.swing.PopupRightClick;
  */
 public class TextView extends JDialog implements ActionListener {
 
-	private final Frame parent;
+	private final MainFrame parent;
 	public JTextArea textArea1;
+	final JTextField inputFeild = new JTextField();
 	private static final double WIDTH_RATE = 1.2;
 	private static final double HEIGHT_RATE = 0.9;
 
-//	public MainFrame_TextView(Frame owner) {
-//		this(owner,"テキスト情報");
-//	}
-
-	public TextView(Frame owner, String title) {
+	public TextView(MainFrame owner, String title) {
 		this(owner, title, false);
 	}
 
-//	public MainFrame_TextView(Frame owner, boolean modal) {
-//		this(owner,"テキスト情報", modal);
-//	}
-
-	public TextView(Frame owner, String title, boolean modal) {
+	public TextView(MainFrame owner, String title, boolean modal) {
 		super(owner, title, modal);
 		parent = owner;
 		init();
@@ -57,6 +57,28 @@ public class TextView extends JDialog implements ActionListener {
 		textArea1.setOpaque(false);
 		textArea1.addMouseListener(new PopupRightClick(textArea1));
 		add(new JScrollPane(textArea1), BorderLayout.CENTER);
+		JPanel inputPanel = new JPanel();
+		inputPanel.setFont(new Font(f.getFontName(), f.getStyle(), f.getSize()+1));
+		inputPanel.setLayout(new BorderLayout());
+		inputPanel.setBackground(Color.cyan);
+		inputPanel.setBorder(BorderFactory.createEtchedBorder());
+		JLabel inputTitle = new JLabel("実行したいヘルプ項目を選択しコピー(Ctrl+C)し下にペースト(Ctrl+V)して実行");
+		inputTitle.setHorizontalAlignment(JLabel.CENTER);
+		inputTitle.setForeground(Color.blue);
+		inputPanel.add(inputTitle, BorderLayout.NORTH);
+		inputPanel.add(new JLabel(" コマンド実行>>　ffmpeg "), BorderLayout.WEST);
+		inputFeild.addMouseListener(new PopupRightClick(inputFeild));
+		inputPanel.add(inputFeild, BorderLayout.CENTER);
+		JButton submitButton = new JButton();
+		submitButton.setText("実行");
+		submitButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				help_actionPerformed(inputFeild.getText());
+			}
+		});
+		inputPanel.add(submitButton, BorderLayout.EAST);
+		add(inputPanel, BorderLayout.SOUTH);
 		pack();
 		Dimension dim = parent.getSize();
 		dim.width = (int)(WIDTH_RATE * dim.width);
@@ -76,4 +98,25 @@ public class TextView extends JDialog implements ActionListener {
 		dispose();
 	}
 
+	/* FFmpeg help 表示 */
+	public void help_actionPerformed(String s){
+		try{
+			textArea1.setText(null);
+			s = s.replace("ffmpeg", "").trim();
+			if(!s.isEmpty() && s.charAt(0)!='-'){
+				s = "-".concat(s);
+			}
+			ArrayList<String> list = parent.execFFmpeg(s);
+			for(String line:list){
+				textArea1.append(line);
+			}
+			textArea1.setCaretPosition(0);
+		} catch(NullPointerException ex){
+			parent.sendtext("(´∀｀)＜ぬるぽ\nガッ\n");
+			ex.printStackTrace();
+		} catch (FileNotFoundException ex) {
+			textArea1.setText(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
 }

@@ -119,6 +119,9 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuHelpCodecs = new JMenuItem();
 	JMenuItem jMenuHelpProtocols = new JMenuItem();
 	JMenuItem jMenuHelpFilters = new JMenuItem();
+	JMenuItem jMenuHelpEncoders = new JMenuItem();
+	JMenuItem jMenuHelpPixformats = new JMenuItem();
+	JMenuItem jMenuHelpHwaccels = new JMenuItem();
 	JMenu jMenuDetail = new JMenu();
 	JMenuItem jMenuNGConfig = new JMenuItem();
 	JMenuItem jMenuAprilFool = new JMenuItem();
@@ -803,7 +806,7 @@ public class MainFrame extends JFrame {
 				showReadme_actionPerformed("最初に必ず読んで.txt");
 			}
 		});
-		jMenuHelpErrorTable.setText("エラーコード　表示");
+		jMenuHelpErrorTable.setText("エラーコード表　表示");
 		jMenuHelpErrorTable.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -834,6 +837,21 @@ public class MainFrame extends JFrame {
 		jMenuHelpFilters.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){ FFhelp_actionPerformed("-filters"); }
+		});
+		jMenuHelpEncoders.setText("　FFmpegエンコーダ");
+		jMenuHelpEncoders.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) { FFhelp_actionPerformed("-encoders"); }
+		});
+		jMenuHelpPixformats.setText("　FFmpegピクセルフォーマット");
+		jMenuHelpPixformats.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) { FFhelp_actionPerformed("-pix_fmts"); }
+		});
+		jMenuHelpHwaccels.setText("　FFmpegHW支援");
+		jMenuHelpHwaccels.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) { FFhelp_actionPerformed("-hwaccels"); }
 		});
 		jMenuDetail.setText("詳細設定");
 		jMenuNGConfig.setText("ニコニコ動画のNG設定保存");
@@ -1420,6 +1438,9 @@ public class MainFrame extends JFrame {
 		jMenuHelp.add(jMenuHelpCodecs);
 		jMenuHelp.add(jMenuHelpProtocols);
 		jMenuHelp.add(jMenuHelpFilters);
+		jMenuHelp.add(jMenuHelpEncoders);
+		jMenuHelp.add(jMenuHelpPixformats);
+		jMenuHelp.add(jMenuHelpHwaccels);
 		setJMenuBar(jMenuBar1);
 		/* ビデオグループ */
 		VideoSaveButtonGroup.add(Video_SaveFileRadioButton);
@@ -3682,7 +3703,7 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	private ArrayList<String> execFFmpeg(String parameter)
+	ArrayList<String> execFFmpeg(String parameter)
 			throws FileNotFoundException {
 		final ArrayList<String> output = new ArrayList<String>();
 
