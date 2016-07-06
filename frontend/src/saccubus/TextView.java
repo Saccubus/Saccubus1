@@ -111,6 +111,7 @@ public class TextView extends JDialog implements ActionListener {
 				textArea1.append(line);
 			}
 			textArea1.setCaretPosition(0);
+			MainFrame.log.println(textArea1.getText());
 		} catch(NullPointerException ex){
 			parent.sendtext("(ÅLÅÕÅM)ÅÉÇ ÇÈÇ€\nÉKÉb\n");
 			ex.printStackTrace();

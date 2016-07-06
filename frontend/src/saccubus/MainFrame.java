@@ -288,7 +288,7 @@ public class MainFrame extends JFrame {
 	public static final String THUMB_DEFALT_STRING = "<Ž©“®>";
 	private static final String MY_MYLIST = "my/mylist";
 	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
-	private static final Logger log = Logger.MainLog;
+	static final Logger log = Logger.MainLog;
 
 	private String url;
 	private JPanel activityPane;
