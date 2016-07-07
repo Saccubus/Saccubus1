@@ -133,7 +133,7 @@
 
 □改造部分について
 【ライセンス】
-１．ffmpeg80611.exe、Saccubus.jar（ソース同梱）は
+１．ffmpeg80914d.exe、Saccubus.jar（ソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
 （ソースはGithubレポジトリ　https://github.com/Saccubus　）
 ２．nicovideoE.dll、Bin.jar、Saccubus.exe（全てソース同梱）は
@@ -202,30 +202,32 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
-　・配布形態　　ffmpeg80611同梱版
+　・配布形態　　ffmpeg80914d同梱版
 　・本Rev.は確定版SDLライブラリ（2012/11/02版）を同梱しています。（binフォルダ内）
 　・本Rev.はffmpeg 21400用optionファイルを削除しました。
-　・optionFFAAC（79097/80611用 2016/06/25版）optionFDev（実験用 2015/03/08版）を同梱。
+　・optionFFAAC（80914d用 2016/07/07版）optionFDev（実験用 2015/03/08版）を同梱。
 
 □インストール方法と拡張機能設定
 　◆1.22r2以前のさきゅばすを使用中の方
 　　「初めてさきゅばすを使う方」を実行して下さい。
 
 　◆1.22r3以降をご使用中の方
-　【注意】今回の変更は　ffmpeg80611(n3.1-dev相当)用となるため
+　【注意】今回の変更は　ffmpeg80914d(n3.2-dev相当)用となるため
 　他のffmpegでは使用出来ない可能性があります。ご了承ください。
 　・自分で修正したオプションファイル(optionVOファルダ/optionF)をお持ちの方は
-　　ffmpeg80611に合わせて変更が必要な場合があります。
+　　ffmpeg80914dに合わせて変更が必要な場合があります。
     (optionFFAACフォルダ参照)(optionFフォルダそのまま使用は可能)
 　・「saccubus」内のファイルを以前のさきゅばすフォルダに
 　　■全て上書き■して下さい。
 　・移動したオプションファイルをコピーして戻して下さい。
 　・初期化用にsaccubus.iniが入っています。
 　　saccubus.xmlがない時とメニューから初期化を実行した時に
-　　saccubus.iniを読み込んでffmpeg80611用にoptionフォルダと
+　　saccubus.iniを読み込んでffmpeg80914d用にoptionフォルダと
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・実行中にログview表示オン
+　・ffmpeg80914d(nvenc、intel-qsv対応)とh264_nvenc,h264_qsv用オプション
 　・PCオプションの入力に -analyzeduration 10M追加
 　・Analize Error時 fps sizeのデフォルト値を適用
 　・ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)

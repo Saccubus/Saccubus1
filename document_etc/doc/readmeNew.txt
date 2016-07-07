@@ -141,7 +141,7 @@ readmeNew.txt
 
 □改造部分について
 【ライセンス】
-１．ffmpeg80611.exe、Saccubus.jar（ソース同梱）は
+１．ffmpeg80914d.exe、Saccubus.jar（ソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
 （ソースはGithubレポジトリ　https://github.com/Saccubus　）
 ２．nicovideoE.dll、Bin.jar、Saccubus.exe（全てソース同梱）は
@@ -210,32 +210,33 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
-　・配布形態　　ffmpeg80611同梱版
+　・配布形態　　ffmpeg80914d同梱版
 　・本Rev.は確定版SDLライブラリ（2012/11/02版）を同梱しています。（binフォルダ内）
 　・本Rev.はffmpeg 21400用optionファイルを削除しました。
-　・optionFFAAC（79097/80611用 2016/06/25版）optionFDev（実験用 2015/03/08版）を同梱。
+　・optionFFAAC（80914d用 2016/07/07版）optionFDev（実験用 2015/03/08版）を同梱。
 
 □インストール方法と拡張機能設定
 　◆1.22r2以前のさきゅばすを使用中の方
 　　「初めてさきゅばすを使う方」を実行して下さい。
 
 　◆1.22r3以降をご使用中の方
-　【注意】今回の変更は　ffmpeg80611(n3.1-dev相当)用となるため
+　【注意】今回の変更は　ffmpeg80914d(n3.2-dev相当)用となるため
 　他のffmpegでは使用出来ない可能性があります。ご了承ください。
 　・自分で修正したオプションファイル(optionVOファルダ/optionF)をお持ちの方は
-　　ffmpeg80611に合わせて変更が必要な場合があります。
+　　ffmpeg80914dに合わせて変更が必要な場合があります。
     (optionFFAACフォルダ参照)(optionFフォルダそのまま使用は可能)
 　・「saccubus」内のファイルを以前のさきゅばすフォルダに
 　　■全て上書き■して下さい。
 　・移動したオプションファイルをコピーして戻して下さい。
 　・初期化用にsaccubus.iniが入っています。
 　　saccubus.xmlがない時とメニューから初期化を実行した時に
-　　saccubus.iniを読み込んでffmpeg80611用にoptionフォルダと
+　　saccubus.iniを読み込んでffmpeg80914d用にoptionフォルダと
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・実行中にログview表示オン
+　・ffmpeg80914d(nvenc、intel-qsv対応)とh264_nvenc,h264_qsv用オプション
 　・PCオプションの入力に -analyzeduration 10M追加
-　・Analize Error時 fps sizeのデフォルト値を適用
 　・ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)
 　・生放送運営コメントの元の@秒数表示を優先する
 　・再生リスト、エラーリスト、bat関係修正
@@ -1036,12 +1037,11 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
 ・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
-・saccubus.ini　　　　　　　80611向け初期設定
-・saccubus2っぽい描画.xml
+・saccubus.ini　　　　　　　76711f向け初期設定
 ・最初に必ず読んで.txt
 ・bin フォルダ配下
-　　ffmpeg80611.exe ライセンスGPLV3
-　　　library80611.txt　　外部ライブラリーバージョン
+　　ffmpeg76711f.exe ライセンスGPLV3
+　　　library76711f.txt　　外部ライブラリーバージョン
 　　nicovideoE.dll(2015.08.31版)統合版拡張Vhookライブラリ
 　　SDL.dll(2011.11.02ビルド)、COPYNG、README-SDL.txt
 　　　ライセンスはLGPL
@@ -1050,8 +1050,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　SDL_gfx.dll(2013.05.29ビルド)、LICENSE.gfx
 　　　グラフィックライブラリ、ライセンスはzlib
 　　b32.jpg、b32.png　SoundOnly用画像
-・optionFFAAC フォルダ配下　　 変換オプションファイル
-　　　（80611用 2016.06.25版）
+・optionF フォルダ配下　　 変換オプションファイル
+　　　（N70404f/N65220w用 2015.07.31版）
 ・optionFDev フォルダ配下 　開発用ファイル
 ・Saccubus_libフォルダ配下
 　　gson-2.2.4.jar、LICENSE、README.txt
@@ -1068,6 +1068,11 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ローカル変換追加説明.txt
 　　最初に必ず読んで.txt　　　　　(コピー)
 　　変換リストが起動しない場合.txt
+　　・saccubus_src.zip
+　　　Saccubus.jar　のjavaソースファイル、eclipseプロジェクトファイル
+　　　nicovideoE.dll　のソースファイル、eclipseプロジェクトファイル
+　　　Bin.jar　のjavaソースファイル、eclipseプロジェクトファイル
+　　　Saccubus.exe　のCソースファイル(launcher)、makeファイル、リソース
 
 関連リンク
 ・ソースコード
@@ -1099,7 +1104,6 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 　改造版
-　1.65.5.2　https://github.com/Saccubus/Saccubus1.x/releases/tag/1.65.5.2
 　1.65.2　　https://github.com/Saccubus/Saccubus1.x/releases/tag/1.65.2
 　1.65.1　　http://www1.axfc.net/u/3613928.zip
 　1.65.0　　http://www1.axfc.net/u/3611115.zip
@@ -1171,12 +1175,6 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 変更履歴・修正・改変点
-1.65.6.0(2016/06/25)
-　PCオプションの入力に -analyzeduration 10M追加
-　Analize Error時 fps sizeのデフォルト値を適用
-　ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)
-　生放送運営コメントの元の@秒数表示を優先する
-
 1.65.2.9(2016/03/23)
 　auto.batで同時実行数 1 (デフォルト)の時に動画1つ変換で終了してしまうバグ修正
 
