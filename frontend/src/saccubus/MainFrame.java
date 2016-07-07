@@ -125,6 +125,8 @@ public class MainFrame extends JFrame {
 	JMenu jMenuDetail = new JMenu();
 	JMenuItem jMenuNGConfig = new JMenuItem();
 	JMenuItem jMenuAprilFool = new JMenuItem();
+	JMenu jMenuAction = new JMenu();
+	JMenuItem jMenuLogview = new JMenuItem();
 	public JLabel statusBar = new JLabel();
 	public JLabel elapsedTimeBar = new JLabel();
 	JLabel vhookInfoBar = new JLabel();
@@ -289,6 +291,7 @@ public class MainFrame extends JFrame {
 	private static final String MY_MYLIST = "my/mylist";
 	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
 	static final Logger log = Logger.MainLog;
+	static MainFrame MasterMainFrame = null;
 
 	private String url;
 	private JPanel activityPane;
@@ -852,6 +855,14 @@ public class MainFrame extends JFrame {
 		jMenuHelpHwaccels.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) { FFhelp_actionPerformed("-hwaccels"); }
+		});
+		jMenuAction.setText("アクション");
+		jMenuLogview.setText("ログView ON");
+		jMenuLogview.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Logger.setViewVisislbe(true);
+			}
 		});
 		jMenuDetail.setText("詳細設定");
 		jMenuNGConfig.setText("ニコニコ動画のNG設定保存");
@@ -1426,6 +1437,8 @@ public class MainFrame extends JFrame {
 		jMenuBar1.add(jMenuDetail);
 		jMenuDetail.add(jMenuNGConfig);
 		jMenuDetail.add(jMenuAprilFool);
+		jMenuBar1.add(jMenuAction);
+		jMenuAction.add(jMenuLogview);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
 		jMenuHelp.add(jMenuHelpReadmeNew);
@@ -5095,6 +5108,14 @@ s	 * @return javax.swing.JPanel
 		notice = string;
 	}
 
+	static void setMaster(MainFrame frame) {
+		if(frame!=null && MasterMainFrame==null)
+			MasterMainFrame = frame;
+	}
+
+	public static MainFrame getMaster(){
+		return MasterMainFrame;
+	}
 }
 
 class MainFrame_ShowSavingVideoFolderDialogButton_actionAdapter implements

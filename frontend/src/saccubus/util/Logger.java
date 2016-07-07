@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
+import saccubus.MainFrame;
+import saccubus.TextView;
 import saccubus.net.Path;
 
 /**
@@ -16,6 +18,11 @@ public class Logger {
 	public static final Logger MainLog = new Logger(Path.mkTemp("main[log]frontend.txt"));
 	private PrintStream out;
 	private File logfile;
+	private static TextView logview = null;
+	private StringBuilder logbuf = new StringBuilder();
+	private int loglength = 0;
+	private static final int LOG_LIMIT = 1000000;
+	private static final int LOG_CONTINUE = 10000;
 
 	public Logger(File file){
 		logfile = file;
@@ -43,12 +50,44 @@ public class Logger {
 		if(out!=null)
 			out.print(s);
 		System.out.print(s);
+		logPrint(s);
+	}
+
+	private void logPrint(String s){
+		if(loglength > LOG_LIMIT ){
+			logbuf.delete(0, logbuf.length() - LOG_CONTINUE);
+			loglength = logbuf.length();
+		}
+		logbuf.append(s);
+		loglength += s.length();
+		if(existLogview()){
+			if(loglength > LOG_LIMIT ){
+				logview.clearlog();
+				logview.print(logbuf.substring(0));
+			} else {
+				logview.print(s);
+			}
+		}
+	}
+
+	private static boolean existLogview(){
+		if(logview==null){
+			logview = new TextView(MainFrame.getMaster(), "ÉçÉOView", false, false);
+			if(logview==null){
+				System.out.print("ÉçÉOViewÇ™çÏÇÍÇ‹ÇπÇÒ");
+			}
+		}
+		return logview!=null;
+	}
+
+	public static void setViewVisislbe(boolean visible){
+		if(existLogview())
+			logview.setVisible(visible);
 	}
 
 	public void println(String s){
 		print(s + "\n");
 	}
-
 
 	public void println() {
 		println("");
