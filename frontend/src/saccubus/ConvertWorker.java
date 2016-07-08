@@ -2510,7 +2510,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private int convSWF_JPG(File videoin, File videoout){
 		int code = -1;
 		//出力
-		ffmpeg.setCmd("-y -analyzeduration 10M -i ");
+		//ffmpeg.setCmd("-y -analyzeduration 10M -i ");
+		ffmpeg.setCmd("-y -i ");	//swfの場合、解析時間はもとのままにする
 		ffmpeg.addFile(videoin);
 		ffmpeg.addCmd(ConvertingSetting.getDefOptsSwfJpeg());
 		// -an -vcodec copy -r 1 -f image2
@@ -2570,7 +2571,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		//File outputAvi = new File(imgDir,"huffyuv.avi");
 		ffmpeg.setCmd(" -loop 1 -r " + Double.toString(rate));
 		ffmpeg.addCmd(" -itsoffset " + Double.toString(length_frame));
-		ffmpeg.addCmd(" -y -analyzeduration 10M -i ");
+		ffmpeg.addCmd(" -y -i ");
 		ffmpeg.addFile(videoin);
 		ffmpeg.addCmd(" -shortest ");
 		if(tl!=0.0)
@@ -2593,7 +2594,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		 * ffmpeg.exe -shortest -y -i fws_tmp.swf -itsoffset 1.0 -i avi4.avi
 		 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 		 */
-		ffmpeg.setCmd("-y -analyzeduration 10M -i ");
+		//ffmpeg.setCmd("-y -analyzeduration 10M -i ");
+		ffmpeg.setCmd("-y -i ");	//swfの場合、解析時間はもとのままにする
 		ffmpeg.addFile(audioin);	// audio, must be FWS_SWF
 		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(videoin);	// visual
@@ -2877,6 +2879,35 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						code = convFLV_audio(input, ConvertedVideoFile);
 					}
 					return code;
+				}
+				/*
+				 * video lengthが0の時には音声を先に抽出する。
+				 */
+				if(videoLength==0){
+					File tempAudio = new File(imgDir,"audio.m4a");
+					log.println("tempAudio="+tempAudio);
+					log.println("Tring SWF to audio(M4A)");
+					infoStack.pushText("SWF->audio");
+					/*
+					 * ffmpeg -y -i input temp.m4a
+					 */
+					ffmpeg.setCmd("-y -i ");
+					ffmpeg.addFile(input);
+					ffmpeg.addCmd(" ");
+					ffmpeg.addFile(tempAudio);
+					log.println("arg:" + ffmpeg.getCmd());
+					code = ffmpeg.exec(Status, CODE_CONVERTING_ABORTED, StopFlag, stopwatch, log);
+					errorLog = ffmpeg.getErrotLog().toString();
+					lastFrame = ffmpeg.getLastFrame();
+					infoStack.popText();
+					if(code != 0)
+						return code;
+					VideofileInfo audioinfo = new VideofileInfo(tempAudio, ffmpeg, Status, StopFlag, stopwatch, log);
+					videoLength = audioinfo.getDuration();
+					if(videoLength <= 0){
+						if(code == 0) code = -999;
+						return code;
+					}
 				}
 				/*
 				 * JPEGファイルをMP4形式に合成

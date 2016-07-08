@@ -174,6 +174,8 @@ public class VideofileInfo {
 		duration = src.substring(index, src.indexOf(",", index)).trim();
 		String tms = "";
 		int it = 0;
+		if(duration.contains("NA")||duration.contains("N/A"))
+			return 0;
 		try{
 			index = duration.lastIndexOf(":");	//for min:sec
 			if(index < 0){
