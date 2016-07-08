@@ -426,6 +426,7 @@ public class NicoClient {
 	//RC2になってタイトルが変更、使わなくなった。
 	//private static final String TITLE_PARSE_STR_END = "</title>";
 	private static final String TITLE_END = "‐";
+	private static final String TITLE_END2 = "- ニコニコ動画";
 	private static final String TITLE_ZERO_DIV = "id=\"videoHeaderDetail\"";
 	private static final String TITLE_ZERO_DUMMY = "<title>ニコニコ動画:Zero</title>";
 	private static final String TITLE_GINZA_DIV = "DataContainer\"";
@@ -517,14 +518,19 @@ public class NicoClient {
 				}
 				if (ret.contains(TITLE_PARSE_STR_START)) {
 					ret = getXmlElement(ret, "title");
+					if(ret==null)
+						continue;
+					found = true;
 					index = 0;
 					int index2 = ret.lastIndexOf(TITLE_END);
-					if (index2 < 0){
-						continue;
+					String title1 = ret;
+					if (index2 >= 0){
+						title1 = title1.substring(index,index2);
+					}else{
+						title1 = (title1.trim()+"<").replace(TITLE_END2+"<", "").replace("<", "");
 					}
-					found = true;
 					if(getVideoTitle()==null){
-						VideoTitle = safeFileName(ret.substring(index,index2));
+						VideoTitle = safeFileName(title1);
 					}
 					log.print("<" + VideoTitle + ">...");
 					continue;
@@ -1378,7 +1384,7 @@ public class NicoClient {
 				}
 				if(title==null){
 					boolean saveHtml = titleHtml==null || !titleHtml.canRead();
-					if(getVideoHistoryAndTitle1(tag, "", saveHtml))
+					if(getVideoHistoryAndTitle1(tag, "?watch_harmful=1", saveHtml))
 						title = getVideoTitle();
 					else
 						title = VideoTitle;
