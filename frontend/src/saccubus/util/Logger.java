@@ -19,7 +19,7 @@ public class Logger {
 	private PrintStream out;
 	private File logfile;
 	private static TextView logview = null;
-	private StringBuilder logbuf = new StringBuilder();
+	private StringBuffer logbuf = new StringBuffer();
 	private int loglength = 0;
 	private static final int LOG_LIMIT = 1000000;
 	private static final int LOG_CONTINUE = 10000;
@@ -54,18 +54,16 @@ public class Logger {
 	}
 
 	private void logPrint(String s){
-		if(loglength > LOG_LIMIT ){
-			logbuf.delete(0, logbuf.length() - LOG_CONTINUE);
-			loglength = logbuf.length();
-		}
 		logbuf.append(s);
 		loglength += s.length();
 		if(existLogview()){
-			if(loglength > LOG_LIMIT ){
-				logview.clearlog();
-				logview.print(logbuf.substring(0));
-			} else {
-				logview.print(s);
+			logview.print(s);
+		}
+		if(loglength > LOG_LIMIT ){
+			logbuf.delete(0, loglength - LOG_CONTINUE);
+			loglength = logbuf.length();
+			if(existLogview()){
+				logview.setText(logbuf.substring(0));
 			}
 		}
 	}

@@ -137,29 +137,36 @@ public class TextView extends JDialog implements ActionListener {
 		}
 	}
 
-	public void print(final String s){
-		synchronized(textArea1){
-			if(!isVisible() || SwingUtilities.isEventDispatchThread()){
-				textArea1.append(s);
-			}
-			else
-				try {
-					SwingUtilities.invokeAndWait(new Runnable() {
-						@Override
-						public void run() {
-							textArea1.append(s);
-						}
-					});
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-		}
+	private void doPaint(String s, boolean clear){
+		if(clear)
+			textArea1.setText(null);
+		textArea1.append(s);
 		repaint();
+	};
+
+	private synchronized void print(final String s, final boolean clear){
+
+		if(SwingUtilities.isEventDispatchThread()){
+			doPaint(s, clear);
+		}
+		else
+			try {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						doPaint(s, clear);
+					}
+				});
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 	}
 
-	public void clearlog() {
-		synchronized(textArea1){
-			textArea1.setText(null);
-		}
+	public void print(String s){
+		print(s, false);
+	}
+
+	public void setText(String s) {
+		print(s, true);
 	}
 }
