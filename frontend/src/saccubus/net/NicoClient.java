@@ -522,12 +522,15 @@ public class NicoClient {
 						continue;
 					found = true;
 					index = 0;
-					int index2 = ret.lastIndexOf(TITLE_END);
 					String title1 = ret;
+					int index2 = ret.lastIndexOf(TITLE_END);
+					if (index2 < 0)
+						index2 = ret.lastIndexOf(TITLE_END2);
 					if (index2 >= 0){
 						title1 = title1.substring(index,index2);
 					}else{
-						title1 = (title1.trim()+"<").replace(TITLE_END2+"<", "").replace("<", "");
+						String re = "[‐-]\\h*ニコニコ動画\\h*(:\\h*[\\w]+)?$";
+						title1 = title1.replaceAll(re, "").trim();
 					}
 					if(getVideoTitle()==null){
 						VideoTitle = safeFileName(title1);
