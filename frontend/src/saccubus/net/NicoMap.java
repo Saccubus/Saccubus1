@@ -117,7 +117,7 @@ public class NicoMap {
 	 * @param key
 	 * @return
 	 */
-	String get(String key){
+	public String get(String key){
 		return map.get(key.toLowerCase());
 	}
 	/**

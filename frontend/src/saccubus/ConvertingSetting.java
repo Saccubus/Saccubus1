@@ -13,6 +13,7 @@ import java.util.Properties;
 
 import saccubus.net.BrowserInfo;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
+import saccubus.net.NicoClient;
 import saccubus.util.Encryption;
 
 /**
@@ -782,9 +783,9 @@ public class ConvertingSetting {
 	public String getCommentSpeed(){
 		return commentSpeed;
 	}
-//	public String getDebugNicovideo(){
-//		return debugNicovideo;
-//	}
+	public boolean isDebugNicovideo(){
+		return getProxy().startsWith(NicoClient.DEBUG_PROXY);
+	}
 	public boolean isEnableCA(){
 		return enableCA;
 	}

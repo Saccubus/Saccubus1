@@ -13,7 +13,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.Proxy;
+import java.net.URL;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JLabel;
 
 import saccubus.ConvertingSetting;
@@ -37,12 +40,14 @@ public class Loader {
 	private String userSession;
 	private BrowserCookieKind browserKind;
 	private Logger log;
+	private boolean Debug = false;
 
 	public Loader(ConvertingSetting setting, JLabel[] status3, Logger logger) {
 		log = logger;
 		this.setting = setting;
 		this.status = status3[0];
 		stopwatch = new Stopwatch(status3[1]);
+		Debug = setting.isDebugNicovideo();
 	}
 
 	void sendtext(String text){
@@ -166,4 +171,52 @@ public class Loader {
 		}
 		return false;
 	}
+
+	public NicoMap loadHttpsUrl(String url){
+		NicoMap map = new NicoMap();
+		try {
+			debug("\nÅ•HTTPS<" + url + ">\n");
+			HttpURLConnection con = (HttpsURLConnection)(new URL(url)).openConnection(Proxy.NO_PROXY);
+			con.setDoInput(true);
+			con.setInstanceFollowRedirects(false);
+			con.setRequestMethod("GET");
+			con.addRequestProperty("Connection", "close");
+			debug("Å•Connect: GET,DoInput,Connection close\n");
+			con.connect();
+			int code = con.getResponseCode();
+			String mes = con.getResponseMessage();
+			debug("Å•Response:" + Integer.toString(code) + " " + mes + "\n");
+			if (code < HttpURLConnection.HTTP_OK || code >= HttpURLConnection.HTTP_BAD_REQUEST) { // must 200 <= <400
+				log.println("Can't access:" + mes + " to <"+url+">");
+				map.put("_RESPONSE_", mes);
+				return map;
+			}
+			map.putConnection(con, Debug?log:null);
+			if(code >= HttpURLConnection.HTTP_MULT_CHOICE){	// code >= 300
+				log.println("locaciton is "+map.get("location"));
+				map.put("_RESPONSE_", mes);
+				return map;
+			}
+			StringBuffer sb = new StringBuffer();
+			BufferedReader br = new BufferedReader(
+					new InputStreamReader(con.getInputStream()));
+			String ret;
+			while((ret = br.readLine())!=null){
+				sb.append(ret+"\n");
+				debug(" Å•"+ret+"\n");
+			}
+			map.put("_RESPONSE_", sb.substring(0));
+			br.close();
+			con.disconnect();
+		} catch (IOException ex) {
+			log.printStackTrace(ex);
+		}
+		return map;
+	}
+	private void debug(String messege){
+		if (Debug){
+			log.print(messege);
+		}
+	}
+
 }

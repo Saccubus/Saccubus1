@@ -3,6 +3,7 @@ package saccubus;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -24,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -63,6 +65,7 @@ import javax.swing.plaf.basic.BasicArrowButton;
 import psi.lib.swing.PopupRightClick;
 import saccubus.net.Gate;
 import saccubus.net.Loader;
+import saccubus.net.NicoMap;
 import saccubus.net.Path;
 import saccubus.util.FileDropTarget;
 import saccubus.util.Logger;
@@ -127,6 +130,7 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuAprilFool = new JMenuItem();
 	JMenu jMenuAction = new JMenu();
 	JMenuItem jMenuLogview = new JMenuItem();
+	JMenuItem jMenuLatestCheck = new JMenuItem();
 	public JLabel statusBar = new JLabel();
 	public JLabel elapsedTimeBar = new JLabel();
 	JLabel vhookInfoBar = new JLabel();
@@ -348,6 +352,7 @@ public class MainFrame extends JFrame {
 	 * @throws java.lang.Exception
 	 */
 	private void jbInit() throws Exception {
+		final MainFrame self = this;
 		GridBagConstraints grid8_x1_y6_73 = new GridBagConstraints();
 		grid8_x1_y6_73.fill = GridBagConstraints.HORIZONTAL;
 		grid8_x1_y6_73.gridy = 6;
@@ -862,6 +867,52 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Logger.setViewVisislbe(true);
+			}
+		});
+		jMenuLatestCheck.setText("最新バージョンチェック");
+		jMenuLatestCheck.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String url = "https://github.com/Saccubus/Saccubus1.x/releases/latest";
+					log.println("Access "+url);
+					Loader loader = new Loader(
+							self.getSetting(), new JLabel[]{statusBar,elapsedTimeBar,new JLabel()}, log);
+					NicoMap map = loader.loadHttpsUrl(url);
+					String location = map.get("location");
+					if(location==null)
+						return;
+					String latest;
+					if(location.endsWith("/") && location.length()>=2){
+						latest = location.substring(0,location.length()-1);
+					}
+					if(location.contains("/"))
+						latest = location.substring(location.lastIndexOf("/")+1);
+					else
+						latest = "";
+					String rev = MainFrame_AboutBox.rev;
+					String buf;
+					if(rev.equals(latest)){
+						buf = "Rev."+rev+"は最新です";
+						log.println(buf);
+						JOptionPane.showMessageDialog(self, buf);
+					}
+					else {
+						buf = "現在Rev."+rev+"です。最新はRev."+latest+"です";
+						log.println(buf);
+						if(latest.isEmpty()){
+							JOptionPane.showMessageDialog(self, buf);
+						}else{
+							int rc = JOptionPane.showConfirmDialog(
+								self,buf+"\nページを表示しますか?","選択",JOptionPane.YES_NO_OPTION);
+							if(rc == 0){
+								Desktop.getDesktop().browse(URI.create(url));
+							}
+						}
+					}
+				}catch(Exception e2){
+					log.printStackTrace(e2);
+				}
 			}
 		});
 		jMenuDetail.setText("詳細設定");
@@ -1439,6 +1490,7 @@ public class MainFrame extends JFrame {
 		jMenuDetail.add(jMenuAprilFool);
 		jMenuBar1.add(jMenuAction);
 		jMenuAction.add(jMenuLogview);
+		jMenuAction.add(jMenuLatestCheck);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
 		jMenuHelp.add(jMenuHelpReadmeNew);
