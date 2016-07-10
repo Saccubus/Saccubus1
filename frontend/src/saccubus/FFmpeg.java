@@ -74,7 +74,7 @@ public class FFmpeg {
 
 	private ArrayList<String> parse(String cmd) {
 		// 引用符で囲まれた文字列かスペースで区切られたトークンごとにArrayList要素にする
-		String reg = "(\"[^\"]*\")|([^ ]+)";
+		String reg = "(\"[^\"]*[^\\\\]\")|([^ ]+)";
 		Pattern p = Pattern.compile(reg);
 		Matcher m = p.matcher(cmd);
 		sa = new ArrayList<String>();

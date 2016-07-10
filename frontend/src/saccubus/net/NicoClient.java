@@ -1351,6 +1351,7 @@ public class NicoClient {
 	}
 */
 
+	private String thumbInfoData;
 	public Path getThumbInfoFile(String tag){
 		final String THUMBINFO_URL = "http://ext.nicovideo.jp/api/getthumbinfo/";
 		String url = THUMBINFO_URL + tag;
@@ -1391,6 +1392,10 @@ public class NicoClient {
 						title = getVideoTitle();
 					else
 						title = VideoTitle;
+				} else if(!title.isEmpty()
+						&& (VideoTitle==null || VideoTitle.equals("null"))){
+					VideoTitle = title;
+					thumbInfoData = s;
 				}
 			}
 			if(ContentType==null){
@@ -1480,8 +1485,10 @@ public class NicoClient {
 			pw.close();
 			if(s.indexOf("status=\"ok\"") < 0)
 				log.println("ng.\nSee file:" + thumbXml);
-			else
+			else {
 				log.println("ok.");
+				thumbInfoData = s;
+			}
 			return thumbXml;
 		} catch (IOException ex) {
 			log.printStackTrace(ex);
@@ -1672,5 +1679,9 @@ public class NicoClient {
 			return false;
 		}
 		return true;
+	}
+
+	public String getThumbInfoData() {
+		return thumbInfoData;
 	}
 }

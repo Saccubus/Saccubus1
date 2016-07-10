@@ -43,6 +43,7 @@ public class ConvertingSetting {
 	static final String DEF_OPTS_SWF_JPEG = " -an -vcodec copy -r 1 -f image2 ";
 	static final String DEF_OPTS_JPEG_MP4 = " -an -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ";
 	static final String DEF_OPTS_MIX = " -acodec copy -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ";
+	static final boolean DEF_OPTS_SAVE_THUMBINFO_METADATA = false;
 	static final String DEFAULT_CMDLINE_OUT="-threads 0 -s 512x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -aspect 16:9 -pix_fmt yuv420p";
 	static final String DEFAULT_WIDE_CMDLINE_OUT = "-threads 0 -s 640x360 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -aspect 16:9 -pix_fmt yuv420p";
 	static final String DEFAULT_ZQ_CMDLINE_OUT = "-threads 0 -s 640x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -samx -pix_fmt yuv420p";
@@ -174,6 +175,7 @@ public class ConvertingSetting {
 	private static String defOptsSwfJpeg = DEF_OPTS_SWF_JPEG;
 	private static String defOptsJpegMp4 = DEF_OPTS_JPEG_MP4;
 	private static String defOptsMix = DEF_OPTS_MIX;
+	private static boolean defOptsSaveThumbinfoMetadata = DEF_OPTS_SAVE_THUMBINFO_METADATA;
 	private Map<String, String> replaceOptions;
 	private boolean liveOparetionConversion;
 	private boolean premiumColorCheck;
@@ -970,6 +972,9 @@ public class ConvertingSetting {
 	public static String getDefOptsMix(){
 		return defOptsMix;
 	}
+	public boolean getDefOptsSaveThumbinfoMetadata(){
+		return defOptsSaveThumbinfoMetadata;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -1117,6 +1122,7 @@ public class ConvertingSetting {
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
 	public static final String PROP_OPTS_JPEG_MP4 = "OutOptionJpegMp4";
 	public static final String PROP_OPTS_MIX = "OutOptionMix";
+	public static final String PROP_OPTS_SAVE_THUMBINFO_METADATA = "SaveThumbinfoMetadata";
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
 	 */
@@ -1331,6 +1337,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
 		prop.setProperty(PROP_OPTS_MIX, defOptsMix);
 		prop.setProperty(PROP_OPTS_SWF_JPEG, defOptsSwfJpeg);
+		prop.setProperty(PROP_OPTS_SAVE_THUMBINFO_METADATA, Boolean.toString(defOptsSaveThumbinfoMetadata));
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1447,6 +1454,8 @@ public class ConvertingSetting {
 		defOptsSwfJpeg = prop.getProperty(PROP_OPTS_SWF_JPEG, DEF_OPTS_SWF_JPEG);
 		defOptsJpegMp4 = prop.getProperty(PROP_OPTS_JPEG_MP4, DEF_OPTS_JPEG_MP4);
 		defOptsMix = prop.getProperty(PROP_OPTS_MIX, DEF_OPTS_MIX);
+		defOptsSaveThumbinfoMetadata = Boolean.valueOf(prop.getProperty(
+			PROP_OPTS_SAVE_THUMBINFO_METADATA,Boolean.toString(DEF_OPTS_SAVE_THUMBINFO_METADATA)));
 
 		File option_file = null;
 		if (option_file_name != null) {

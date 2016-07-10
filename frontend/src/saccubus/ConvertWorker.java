@@ -148,6 +148,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String lowVideoID;
 	private int tid;
 	private Logger log;
+	private String thumbInfoData;
 
 	public ConvertWorker(int worker_id,
 			String url, String time, ConvertingSetting setting,
@@ -1849,6 +1850,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				gate.resetError();
 				VideoTitle = client.getVideoTitle();
+				thumbInfoData = client.getThumbInfoData();
 				VideoBaseName = Setting.isChangeTitleId()?
 					VideoTitle + VideoID : VideoID + VideoTitle;
 				sendtext(Tag + "‚Ìî•ñ‚Ìæ“¾‚É¬Œ÷");
@@ -2434,7 +2436,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		ffmpeg.addCmd(" -metadata");
 		ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
 		ffmpeg.addCmd(" -metadata");
-		ffmpeg.addCmd(" \"comment="+"["+alternativeTag+"]"+"\"");
+		ffmpeg.addCmd(" \"comment=["+alternativeTag+"]\"");
+		if(Setting.getDefOptsSaveThumbinfoMetadata()){
+			ffmpeg.addCmd(" -metadata");
+			ffmpeg.addCmd(" \"description="+(thumbInfoData.replace("\"","\\\""))+"\"");
+		}
 		ffmpeg.addCmd(" ");
 	}
 
