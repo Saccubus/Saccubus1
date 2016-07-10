@@ -1112,7 +1112,7 @@ public class ConvertingSetting {
 	static final String PROP_LIVE_OPERATION_DURATION = "LiveOperationDuration";
 	static final String PROP_ENABLE_COMMENT_VPOS_SHIFT = "EnableCommentVposShift";
 	static final String PROP_COMMENT_VPOS_SHIFT = "CommentVposShiftDuration";
-	// ì«Ç›çûÇﬁÇæÇØÅAï€ë∂ÇµÇ»Ç¢
+	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
 	public static final String PROP_OPTS_JPEG_MP4 = "OutOptionJpegMp4";
@@ -1326,6 +1326,11 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_FORCE_LIVE_COMMENT, Boolean.toString(setting.isForcedLiveComment()));
 		prop.setProperty(PROP_ENABLE_COMMENT_VPOS_SHIFT, Boolean.toString(setting.isEnableCommentVposShift()));
 		prop.setProperty(PROP_COMMENT_VPOS_SHIFT, setting.getCommentVposShiftString());
+		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
+		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
+		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
+		prop.setProperty(PROP_OPTS_MIX, defOptsMix);
+		prop.setProperty(PROP_OPTS_SWF_JPEG, defOptsSwfJpeg);
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
