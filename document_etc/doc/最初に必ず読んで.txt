@@ -151,10 +151,12 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　さきゅばすの使い方などに関しては、
 　上の[メニュー][readmeNew]から参照できます。また
 　公式サイト　http://saccubus.osdn.jp/
-　レポジトリ　https://github.com/Saccubus　
+　レポジトリ　https://github.com/Saccubus/Saccubus1.x　
+　Wiki　https://github.com/Saccubus/Saccubus1.x/wiki
 　同梱のrewdmeNew.txt、さきゅばす1.50のreadme150.txt
 　さきゅばす1.22rのreadme.txt、1.22r3のreadme+.txtをご覧下さい。
-　不具合報告等は2chさきゅばすスレでお願いします。
+　不具合報告等はissues(https://github.com/Saccubus/Saccubus1.x/issues)
+　または2chさきゅばすスレでお願いします。
 　2ch【ニコニコ】コメント付動画作成ツール さきゅばす5
 　　http://potato.2ch.net/test/read.cgi/software/1449586179/
 　(http://anago.2ch.net/test/read.cgi/software/1346798166/　前スレ)
@@ -226,12 +228,20 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・タイトル解析失敗修正　タイトル末尾削除
+　・localでのswf変換失敗修正
+　・ログviewのフリーズ修正
 　・実行中にログview表示オン
 　・ffmpeg80914d(nvenc、intel-qsv対応)とh264_nvenc,h264_qsv用オプション
 　・PCオプションの入力に -analyzeduration 10M追加
 　・Analize Error時 fps sizeのデフォルト値を適用
 　・ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)
 　・生放送運営コメントの元の@秒数表示を優先する
+　・運営コメ簡易変更の表示時間を変更(issue #17)
+　・動画情報保存バグ修正(issue #21)
+　・運営コメ簡易変換バグ修正
+　・redirect location から thread番号取得
+　・ログ出力を動画別に切り分け(issue #19)
 　・再生リスト、エラーリスト、bat関係修正
 　・生放送コメントを遅くする(issue #15) vposを +1
 　・デバッグ時以外デフォルトでコメントダブり削除
@@ -240,6 +250,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　・ヘルプのURLリンク先をGithubに変更
 　・ローカル変換の方法D追加
 　・運営コメント簡易変更でコメントが」を含むときに途中で切れるバグ修正
+　・ffmpeg79635(内蔵AAC、UtVideo15.5.0対応)
 　・生放送アンケート対応(仮) (issue #5) 
 　・vhook blue2 コマンドの色修正(動画のみ) issue #12
 　・キーワードをURLエンコードする(issue #11)
