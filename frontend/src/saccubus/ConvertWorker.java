@@ -787,24 +787,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 					}
 					setVideoTitleIfNull(VideoFile.getName());
-					//ローカル時のthumbInfoDataセット
-					if(thumbInfoData==null){
-						String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
-						if(thumbInfoFile==null){
-							thumbInfoFile = getReplacedExtFile(VideoFile, ext);
-						}
-						if(thumbInfoFile!=null && thumbInfoFile.isFile() && thumbInfoFile.canRead()){
-							thumbInfoData = Path.readAllText(thumbInfoFile, "UTF-8");
-						}
-						if(thumbInfoData!=null
-						  && !thumbInfoData.contains("status=\"ok\"")
-						  && !thumbInfoData.contains("放送")){
-							// 生放送ではなくthumbinfoロード失敗またはcommentfileだったら
-							// 動画のメタデータを入れておく
-							thumbInfoData=null;
-						}
-					}
-
 				}
 			}
 			sendtext("動画の保存を終了");
@@ -1957,6 +1939,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			stopwatch.show();
 			if (!convertOprionalThread() || stopFlagReturn()) {
 				return result;
+			}
+			//ローカル時のthumbInfoDataセット
+			if(thumbInfoData==null){
+				String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
+				if(thumbInfoFile==null)
+					thumbInfoFile = getReplacedExtFile(VideoFile, ext);
+				if(thumbInfoFile!=null  && thumbInfoFile.equals(CommentFile) && thumbInfoFile.canRead())
+					thumbInfoData = Path.readAllText(thumbInfoFile, "UTF-8");
+				if(thumbInfoData!=null
+				  && !thumbInfoData.contains("status=\"ok\"")){
+					// 生放送ではなくthumbinfoロード失敗またはcommentfileだったら
+					// 動画のメタデータを入れておく
+					thumbInfoData=null;
+				}
 			}
 
 			stopwatch.show();
