@@ -1,0 +1,77 @@
+さきゅばす1.xx用ffmpegのHW支援
+https://github.com/Saccubus/Saccubus1.x/wiki/補足3　FFmpegのHW支援機能
+
+saccubus1.65.7.1(2016/07/07)から
+ (https://github.com/Saccubus/Saccubus1.x/releases/tag/1.65.7.1)
+HW支援なので使えるHWの条件がそれぞれあります
+
+- DXVA2 (threads 1で使うこと)
+　Windows DirectXのHWアクセラレーション
+　　オプション未実施
+　　（入力オプションに -hwaccel dxva2 -threads 1 と手動で追加すれ使えます）
+　　出力は-threads 0でも可(DXVA2利用の出力エンコーダはまだない)
+
+ *1 `-threads 1` を入力オプションに入れれば出力をフレームスレッディングしても問題ないようです
+
+
+- NVENC
+　NVIDIA のグラフィックスのHW支援
+　h264_nvenc の付いているオプションで使用できます。
+　(出力オプションの -vcodec libx264 -pix_fmt yuv420p を -vcodec h264_nvenc -pix_fmt nv12 に変更)
+・SDK6.0です。使用可能なNVIDIA グラフィックボードは  
+　https://developer.nvidia.com/nvidia-video-codec-sdk#gpulist  
+　を見て下さい。
+
+　　グラフィックボードの種類により並列エンコード数に制限があり
+　　それ以上の実行を行うとffmpegがエラー終了します。
+　　（Desktop&Mobile-GeForce (Kepler & Maxwell)は 2まで）
+　　さきゅばすの同時変換数を制限値”2”以下にして下さい。
+　　(GTX TITANXの場合は3でエラー 2は正常実行でした)
+
+ *2 オプション -pix_fmt yuv420p を指定すると画面下半分の色が変になる。 nv12なら問題なさそう
+
+
+- Intel QSV
+　Intel CPU内蔵GPUのHW支援
+　h264_qsvの付いているオプションで使用できます。
+　（出力オプションの -vcodec libx264 -pix_fmt yuv420p を
+　　-vcodec h264_qsv -look_ahead 0 に変更）
+
+ -- Intel CPUで使用可能なものは以下でCPUの型番を検索して
+　　クイックシンクビデオ(Quick Sync Video)の項目を確認して下さい。
+　　http://ark.intel.com/ja#@Processors
+　　「グラフィックスの仕様」「インテル クイック・シンク・ビデオ」
+　　の右側にに「はい」が書いてあれば使用可能です。（Windows XPを除く）
+
+ -- Windowsデバイスマネージャで「ディスプレイアダプター」の項目に
+　　「Intel(R)」のグラフィックスチップが表示されているか確認して下さい。
+　　もし表示がない場合はPCマザーボードのBIOSで「チップセット」項目の中の
+　　「iGPU MultiMonitor」を有効にして下さい。
+　　BIOSの変更は自己責任でお願いします。
+
+****************************************************************************
+
+### 1380964938(sm9マイメモ)を512x384コメント付きエンコード比較  
+Windows10 64bit core-i7 6700k (skylake) NVIDIA GTX TITANX  
+配布オプション　PC_640x384アス比共通による 
+変換時間	
+　libx264　　1分55秒　　66MB  
+　NVENC　　　1分40秒　　60MB  
+　QSV　　　　1分36秒　　62MB  
+
+### ユーザー生放送タイムシフト(30分)を640x360(入力音声サイズ)でコメント付きエンコード比較
+　　　　　変換時間　変換後サイズ　変換中使用率  
+libx264　　3分36秒　82MB　　CPU70%  
+NVENC　　　3分48秒　314MB(＊4)　CPU20%-GTX50%  
+QSV　　　　3分45秒　293MB(＊4)　CPU20%-GTX0%-iGPU??%  
+＊4 -crfオプションがうまく効いてない可能性
+
+
+### 参考サイト
+- Jenkinsビルドさきゅばす1.xx用ffmpeg [ffmpeg_1.x_20160704_050323](http://ci.ledyba.org/job/SaccubusFFmpegBuild_1.x/542/)
+
+- [ffmpegのHW支援wiki(英語)](https://trac.ffmpeg.org/wiki/HWAccelIntro)
+
+- [QSVEncC 導入・使用方法について rigayaの日記兼メモ帳](http://rigaya34589.blog135.fc2.com/blog-entry-704.html)
+
+- [QSVEnc 2.53(AviUtlプラグイン) rigayaの日記兼メモ帳](http://rigaya34589.blog135.fc2.com/blog-entry-801.html)
