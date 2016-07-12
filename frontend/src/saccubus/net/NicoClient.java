@@ -1483,7 +1483,7 @@ public class NicoClient {
 			pw.write(s);
 			pw.flush();
 			pw.close();
-			if(s.indexOf("status=\"ok\"") < 0)
+			if(s==null || s.indexOf("status=\"ok\"") < 0)
 				log.println("ng.\nSee file:" + thumbXml);
 			else {
 				log.println("ok.");

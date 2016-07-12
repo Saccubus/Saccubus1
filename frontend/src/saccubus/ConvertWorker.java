@@ -275,6 +275,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 //	}
 
 	private String mySendedText;
+	private Path metaDataFile = null;
 	private void sendtext(final String text){
 		mySendedText = text;
 		publish(text);
@@ -786,6 +787,24 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 					}
 					setVideoTitleIfNull(VideoFile.getName());
+					//ローカル時のthumbInfoDataセット
+					if(thumbInfoData==null){
+						String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
+						if(thumbInfoFile==null){
+							thumbInfoFile = getReplacedExtFile(VideoFile, ext);
+						}
+						if(thumbInfoFile!=null && thumbInfoFile.isFile() && thumbInfoFile.canRead()){
+							thumbInfoData = Path.readAllText(thumbInfoFile, "UTF-8");
+						}
+						if(thumbInfoData!=null
+						  && !thumbInfoData.contains("status=\"ok\"")
+						  && !thumbInfoData.contains("放送")){
+							// 生放送ではなくthumbinfoロード失敗またはcommentfileだったら
+							// 動画のメタデータを入れておく
+							thumbInfoData=null;
+						}
+					}
+
 				}
 			}
 			sendtext("動画の保存を終了");
@@ -2077,7 +2096,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				//return false;
 			}
 		}
-		VideofileInfo info = new VideofileInfo(video, ffmpeg, Status, StopFlag, stopwatch, log);
+		metaDataFile = mkTemp("METADATA");
+		VideofileInfo info = new VideofileInfo(video, ffmpeg, Status, StopFlag, stopwatch, metaDataFile, log);
 		videoAspect = info.getAspect();
 		if(videoLength <= 0){
 			videoLength = info.getDuration();
@@ -2438,10 +2458,32 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		ffmpeg.addCmd(" -metadata");
 		ffmpeg.addCmd(" \"comment=["+alternativeTag+"]\"");
 		if(Setting.getDefOptsSaveThumbinfoMetadata()){
-			ffmpeg.addCmd(" -metadata");
-			ffmpeg.addCmd(" \"description="+(thumbInfoData.replace("\"","\\\""))+"\"");
+			if(thumbInfoData==null){
+				if(metaDataFile!=null && metaDataFile.canRead()){
+					thumbInfoData = Path.readAllText(metaDataFile, "UTF-8");
+					thumbInfoData = escapeMetadata(thumbInfoData);
+				}
+			}
+			if(thumbInfoData!=null){
+				ffmpeg.addCmd(" -metadata");
+				ffmpeg.addCmd(" \"description="+escapeQuote(thumbInfoData)+"\"");
+			}
 		}
 		ffmpeg.addCmd(" ");
+	}
+
+	private String escapeMetadata(String info){
+//		info = info.replace("\\", "\\\\")
+//				.replace(";", "\\;")
+//				.replace("=", "\\=")
+//				.replace("\n", "\\\n")
+//				.replace("#", "\\#");
+		return info;
+	}
+
+	private String escapeQuote(String info){
+		info = info.replace("\"", "\\\"");
+		return info;
 	}
 
 	private boolean setOption3(File outfile){
@@ -2908,7 +2950,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					infoStack.popText();
 					if(code != 0)
 						return code;
-					VideofileInfo audioinfo = new VideofileInfo(tempAudio, ffmpeg, Status, StopFlag, stopwatch, log);
+					VideofileInfo audioinfo = new VideofileInfo(tempAudio, ffmpeg, Status, StopFlag, stopwatch, metaDataFile, log);
 					videoLength = audioinfo.getDuration();
 					if(videoLength <= 0){
 						if(code == 0) code = -999;

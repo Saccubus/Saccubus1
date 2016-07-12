@@ -39,9 +39,10 @@ public class VideofileInfo {
 	private final ConvertStopFlag flag;
 	private final Stopwatch watch;
 	private Logger log;
+	private File metadataFile;
 
 	public VideofileInfo(File videofile,FFmpeg ffmpeg, JLabel status,
-		ConvertStopFlag flag, Stopwatch watch, Logger logger){
+		ConvertStopFlag flag, Stopwatch watch, File metadataf, Logger logger){
 		this.videoFile = videofile;
 		this.ffmpeg = ffmpeg;
 		this.status = status;
@@ -49,6 +50,7 @@ public class VideofileInfo {
 		this.watch = watch;
 		this.output = new StringBuffer();
 		log = logger;
+		metadataFile = metadataf;
 		initInfoMap(VIDEOINFO_KEYS, log);
 	}
 
@@ -83,6 +85,10 @@ public class VideofileInfo {
 
 		ffmpeg.setCmd("-y -analyzeduration 10M -i ");	//workaround input option
 		ffmpeg.addFile(videoFile);
+		if(metadataFile!=null){
+			ffmpeg.addCmd(" -f ffmetadata ");
+			ffmpeg.addFile(metadataFile);
+		}
 		log.println("get Info:" + ffmpeg.getCmd());
 		int abortedCode = 0;
 		ffmpeg.exec(abortedCode, new InfoMapCallback(), log);
