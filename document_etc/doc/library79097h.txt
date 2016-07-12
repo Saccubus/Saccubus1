@@ -1,0 +1,57 @@
+
+ffmpeg version N-79097-ge69e446-_/usr/local/src/build7/../ffmpeg_saccubus/ffmpeg Copyright (c) 2000-2016 the FFmpeg developers
+built with gcc 5.3.0 (Rev2, Built by MSYS2 project)
+configuration: --enable-gpl --enable-version3 --enable-postproc --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libgsm --enable-libspeex --enable-libvorbis --enable-libtheora --enable-libopus --enable-libvo-aacenc --enable-libxvid --enable-libvpx --enable-libx264 --enable-hwaccel=h264_dxva2 --enable-libx265 --enable-hwaccel=hevc_dxva2 --enable-libutvideo --enable-libopenjpeg --disable-ffserver --disable-ffplay --disable-ffprobe --enable-avisynth --enable-w32threads --extra-ldflags='-static -static-libgcc' --extra-cflags='-march=i686 -mtune=generic -mfpmath=sse -msse' --enable-extra-warnings --disable-debug --enable-runtime-cpudetect --optflags='-O2 -finline-functions' --pkg-config-flags=--static --extra-version=_/usr/local/src/build7/../ffmpeg_saccubus/ffmpeg
+libavutil      55. 19.100 / 55. 19.100
+libavcodec     57. 28.103 / 57. 28.103
+libavformat    57. 28.102 / 57. 28.102
+libavdevice    57.  0.101 / 57.  0.101
+libavfilter     6. 39.102 /  6. 39.102
+libswscale      4.  0.100 /  4.  0.100
+libswresample   2.  0.101 /  2.  0.101
+libpostproc    54.  0.100 / 54.  0.100
+
+nasm 2.12-1
+yasm 1.3.0-2
+gsm 1.0.13-3
+speex 1.2rc2-2
+opencore-amr-0.1.3
+vo-aacenc 1.3.0
+libvorbis 1.3.5-1
+libtheora 1.1.1-3
+libogg 1.3.2-2
+opus 1.1.2-3
+libvpx 1.5.0-1
+openjpeg 1.5.2-6
+x264 0.148.2665 a01e339
+x265 1.9-1
+xvidcore 1.4.0
+utvideo 15.4.0
+zlib1.2.8
+bzip2-1.0.6
+FFMpeg“à‘  AAC
+
+
+FFmpeg
+URL: https://github.com/Saccubus/ffmpeg.git
+commit e69e44666b31f338035b5b65b9f1980d3be9b420
+Author: U-NIKUMAN\orz_e <orz-@users.osdn.me>
+Date:   Sun Mar 20 09:34:30 2016 +0900
+    add again libvo_aacenc
+
+commit fafddd190448e4371ae02d93905f34769c79cacd
+Author: U-NIKUMAN\orz_e <orz-@users.osdn.me>
+Date:   Sun Feb 21 00:11:45 2016 +0900
+    patch for utvideo 15.4.0
+
+commit 0ffa9e6ebae3be30ac84aed489ad723567a68f3d
+Author: Michael Niedermayer <michael@niedermayer.cc>
+Date:   Sat Mar 19 22:11:34 2016 +0100
+    avformat/utils: Do not wait for more than 1 frame on attachments
+    Signed-off-by: Michael Niedermayer <michael@niedermayer.cc>
+
+
+libutvideo:
+URL: git://github.com/qyot27/libutvideo.git
+UtVideo: 
+URL: https://github.com/umezawatakeshi/utvideo.git (merged)
