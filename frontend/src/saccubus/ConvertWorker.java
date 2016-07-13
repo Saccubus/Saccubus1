@@ -1705,7 +1705,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			Path.fileCopy(video_vhext, log_vhext);
 		}else{
-			log.println(Tag+"[log]vhext.txt が有りません.");
+			video_vhext = Path.mkTemp("sm0[log]vhext.txt");
+			if(video_vhext.exists()){
+				if(log_vhext.delete()){
+				}
+				Path.fileCopy(video_vhext, log_vhext);
+			}
+			else
+				log.println(Tag+"[log]vhext.txt が有りません.");
 		}
 		if (code == 0) {
 			sendtext("変換が正常に終了しました。");
