@@ -41,6 +41,7 @@ public class Loader {
 	private BrowserCookieKind browserKind;
 	private Logger log;
 	private boolean Debug = false;
+	private NicoClient client;
 
 	public Loader(ConvertingSetting setting, JLabel[] status3, Logger logger) {
 		log = logger;
@@ -66,7 +67,7 @@ public class Loader {
 		if (!check(setting)){
 			return false;
 		}
-		NicoClient client = getNicoClient(log);
+		client = getNicoClient(log);
 		if(client == null){
 			return false;
 		}
@@ -217,6 +218,12 @@ public class Loader {
 		if (Debug){
 			log.print(messege);
 		}
+	}
+
+	public boolean isLoggedIn() {
+		if(client==null)
+			return false;
+		return client.isLoggedIn();
 	}
 
 }

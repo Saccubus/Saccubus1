@@ -1531,7 +1531,7 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_CHROMIUM, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_OPERA, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_COOKIE_PATH, "false")),
-			prop.getProperty(PROP_BROWSER_COOKIE_PATH,"－場所は自分で捜して下さい－"),
+			prop.getProperty(PROP_BROWSER_COOKIE_PATH,"他のブラウザCookieのファイル/フォルダを指定"),
 			prop.getProperty(PROP_OPTION_FOLDER, DEFAULT_OPTION_FOLDER),
 			wide_option_file,
 			prop.getProperty(PROP_WIDE_CMDLINE_EXT, "mp4"),

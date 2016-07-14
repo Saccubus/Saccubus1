@@ -151,6 +151,9 @@ public class MainFrame extends JFrame {
 	public static final String DoButtonWaitString = "待機";
 	public static final String DoButtonDoneString = "終了";
 	GridBagLayout gridBagLayout2 = new GridBagLayout();
+	JPanel loginCheckPanel = new JPanel();
+	JButton loginCheckButton = new JButton();
+	JLabel loginStatusLabel = new JLabel();
 	JPanel UserInfoPanel = new JPanel();
 	GridBagLayout gridBagLayout3 = new GridBagLayout();
 	JLabel MailAddrLabel = new JLabel();
@@ -972,6 +975,20 @@ public class MainFrame extends JFrame {
 		DoButton.setText(DoButtonDefString);
 		DoButton.addActionListener(new MainFrame_DoButton_actionAdapter(this));
 		SavingInfoTabPanel.setLayout(gridBagLayout2);
+		loginCheckPanel.setLayout(new GridBagLayout());
+		loginCheckButton.setText("ログインチェック");
+		loginCheckButton.setForeground(Color.blue);
+		loginCheckButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainFrame_loginCheck(loginStatusLabel);
+			}
+		});
+		loginCheckPanel.add(loginCheckButton,
+			new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, INSETS_0_5_0_5, 0, 0));
+		loginStatusLabel.setText("");
+		loginCheckPanel.add(loginStatusLabel,
+			new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0));
 		UserInfoPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
 				.createEtchedBorder(), "ユーザ設定"));
 		UserInfoPanel.setLayout(gridBagLayout3);
@@ -1050,27 +1067,27 @@ public class MainFrame extends JFrame {
 		grid13_x0_y5_101.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y5_101.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserChromiumCheckBox, grid13_x0_y5_101);
-		BrowserOtherCheckBox.setText("上記以外のブラウザのCookieのファイル又はフォルダを指定");
+		BrowserOtherCheckBox.setText("");
 		BrowserOtherCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y6_102 = new GridBagConstraints();
 		grid13_x0_y6_102.gridx = 0;
 		grid13_x0_y6_102.gridy = 6;
-		grid13_x0_y6_102.gridwidth = 2;
-		grid13_x0_y6_102.weightx = 1.0;
+		grid13_x0_y6_102.gridwidth = 1;
+		grid13_x0_y6_102.weightx = 0.0;
 		grid13_x0_y6_102.anchor = GridBagConstraints.NORTH;
-		grid13_x0_y6_102.fill = GridBagConstraints.HORIZONTAL;
+		grid13_x0_y6_102.fill = GridBagConstraints.NONE;
 		grid13_x0_y6_102.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserOtherCheckBox, grid13_x0_y6_102);
-		BrowserCookieField.setText("－場所は自分で捜して下さい－");
+		BrowserCookieField.setText("他のブラウザCookieのファイル/フォルダを指定");
 		BrowserCookieField.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y7_103 = new GridBagConstraints();
-		grid13_x0_y7_103.gridx = 0;
-		grid13_x0_y7_103.gridy = 7;
+		grid13_x0_y7_103.gridx = 1;
+		grid13_x0_y7_103.gridy = 6;
 		grid13_x0_y7_103.gridwidth = 1;
 		grid13_x0_y7_103.weightx = 1.0;
 		grid13_x0_y7_103.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y7_103.fill = GridBagConstraints.HORIZONTAL;
-		grid13_x0_y7_103.insets = INSETS_0_25_0_5;
+		grid13_x0_y7_103.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserCookieField, grid13_x0_y7_103);
 		BrowserCookieDialogButton.setText("参照");
 		BrowserCookieDialogButton.setForeground(Color.blue);
@@ -1081,8 +1098,8 @@ public class MainFrame extends JFrame {
 				}
 			});
 		GridBagConstraints grid13_x1_y7_104 = new GridBagConstraints();
-		grid13_x1_y7_104.gridx = 1;
-		grid13_x1_y7_104.gridy = 7;
+		grid13_x1_y7_104.gridx = 2;
+		grid13_x1_y7_104.gridy = 6;
 		grid13_x1_y7_104.gridwidth = 1;
 		grid13_x1_y7_104.weightx = 0.0;
 		grid13_x1_y7_104.anchor = GridBagConstraints.SOUTH;
@@ -1675,10 +1692,6 @@ public class MainFrame extends JFrame {
 		grid90_x1_y1_.fill = GridBagConstraints.HORIZONTAL;
 		grid90_x1_y1_.insets = INSETS_0_5_0_5;
 		additionalOptionPanel.add(wideAdditionalOptionFiled, grid90_x1_y1_);
-// Added FFmpegPathSettingPanel form here
-//		FFmpegPathSettingPanel.add(FFmpegPathLabel, new GridBagConstraints(0, 0, 1,
-//				1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
-//				INSETS_0_5_0_5, 0, 0));
 		FFmpegPathSettingPanel.add(FFmpegPathField, new GridBagConstraints(0, 1, 2,
 				1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_5_0_0, 0, 0));
@@ -1691,6 +1704,10 @@ public class MainFrame extends JFrame {
 				0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 				INSETS_0_0_0_0, 0, 0));
 		VideoInfoPanel.add(DoButton, grid1_x1_y0_71);
+		GridBagConstraints grid1_x0_y2_100 = new GridBagConstraints(
+				0, 2, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,
+				GridBagConstraints.HORIZONTAL,INSETS_0_5_0_5, 0, 0);
+		VideoInfoPanel.add(loginCheckPanel, grid1_x0_y2_100);
 		OpPanel.add(VideoID_Label, grid10_x0_y0_67);
 		OpPanel.add(VideoID_TextField, grid10_x1_y0_68);
 		OpPanel.add(historyBackButton, grid10_x1_y0_68B);
@@ -1976,30 +1993,7 @@ public class MainFrame extends JFrame {
 		gird_x0_y2_0.insets = INSETS_0_0_0_5;
 		zqFFmpegSettingPanel.add(zqAdditionalOptionFiled, gird_x0_y2_0);
 		zqFFmpegSettingPanel.setForeground(Color.blue);
-/*
- * 		デバッグ中 保留
-		gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0.gridy = 7;
-		gird_x0_y2_0.gridx = 0;
-		gird_x0_y2_0.weightx = 0.0;
-		gird_x0_y2_0.weighty = 0.0;
-		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
-		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_5_0_5;
-		zqFFmpegSettingPanel.add(new JLabel("注釈"), gird_x0_y2_0);
-		gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0.gridy = 7;
-		gird_x0_y2_0.gridx = 1;
-		gird_x0_y2_0.gridwidth = 1;
-		gird_x0_y2_0.weightx = 1.0;
-		gird_x0_y2_0.weighty = 0.0;
-		gird_x0_y2_0.gridwidth =3;
-		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
-		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_0_0_5;
-		zqFFmpegSettingPanel.add(zqOptionFileDescription, gird_x0_y2_0);
-		zqFFmpegSettingPanel.setForeground(Color.blue);
-*/
+
 		gird_x0_y2_0 = new GridBagConstraints();
 		gird_x0_y2_0.gridx = 0;
 		gird_x0_y2_0.gridy = 4;
@@ -2262,6 +2256,20 @@ public class MainFrame extends JFrame {
 		experimentPanel.add(extraModeField, grid20_x1_y12);
 
 		convertManager = new ConvertManager(new JLabel[] {statusBar, elapsedTimeBar, infoBar});
+	}
+
+	private void mainFrame_loginCheck(JLabel status) {
+		status.setText("ログインチェック中");
+		Path file = Path.mkTemp("mytop");
+		String url = "http://www.nicovideo.jp/my/top";
+		Loader loader = new Loader(getSetting(),
+			new JLabel[]{status, elapsedTimeBar, new JLabel()},log);
+		if (loader.load(url, file) || loader.isLoggedIn()){
+			status.setText(status.getText()+"　ログイン済み");
+			file.delete();
+			return;
+		}
+		status.setText(status.getText()+"　ログインしていません");
 	}
 
 	private JPanel getManagentPanel() {
@@ -4087,7 +4095,7 @@ s	 * @return javax.swing.JPanel
 			grid_x1_y2_12.fill = GridBagConstraints.HORIZONTAL;
 			grid_x1_y2_12.gridy = 1;
 			grid_x1_y2_12.weightx = 1.0;
-			grid_x1_y2_12.insets = new Insets(5, 0, 5, 5);
+			grid_x1_y2_12.insets = INSETS_0_5_5_5;
 			grid_x1_y2_12.gridx = 2;
 			GridBagConstraints grid_x0_y2_10 = new GridBagConstraints();
 			grid_x0_y2_10.gridx = 1;
@@ -4099,7 +4107,7 @@ s	 * @return javax.swing.JPanel
 			grid_x1_y1_9.fill = GridBagConstraints.BOTH;
 			grid_x1_y1_9.gridy = 0;
 			grid_x1_y1_9.weightx = 1.0;
-			grid_x1_y1_9.insets = INSETS_0_0_0_5;
+			grid_x1_y1_9.insets = INSETS_0_5_5_5;
 			grid_x1_y1_9.gridx = 2;
 			GridBagConstraints grid_x0_y1_8 = new GridBagConstraints();
 			grid_x0_y1_8.gridx = 1;
@@ -5360,7 +5368,7 @@ class MainFrame_LoadNGConfig implements ActionListener {
 		JLabel watch = mainFrame.elapsedTimeBar;
 		mainFrame.sendtext("ニコニコ動画のNG設定保存");
 		Loader loader = new Loader(mainFrame.getSetting(),
-			new JLabel[]{mainFrame.statusBar, new JLabel(), watch, new JLabel()},
+					new JLabel[]{mainFrame.statusBar, new JLabel(), watch, new JLabel()},
 			Logger.MainLog);
 		Path file = new Path("configNG.xml");
 		String url = "http://ext.nicovideo.jp/api/configurengclient?mode=get";
