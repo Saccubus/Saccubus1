@@ -104,10 +104,13 @@ public class MylistGetter extends SwingWorker<String, String> {
 	//	private void sendtext(String text) {
 //		Status.setText(text);
 //	}
-
+	private String mySendText = "";
 	private void sendtext(String text) {
-	//	Status.setText(text);
+		mySendText = text;
 		publish(text);
+	}
+	private String gettext(){
+		return mySendText;
 	}
 
 	protected void process(List<String> lists){
@@ -209,7 +212,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 							val2 = "";
 						else if("キャッシュ".equals(val2)||"マイリストコメント一覧".equals(val2))
 							val2 = "";
-						if(!val2.isEmpty() && (val.isEmpty() || val.length() > val2.length())){
+						if(!val2.isEmpty() && (val.isEmpty() || val.length() < val2.length())){
 							val = val2;
 						}
 					}
@@ -232,7 +235,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 							log.println("map.put("+key+",\""+val+"\")");
 						}else if(!title.equals(val)){
 							//タイトル登録済み
-							if(title.length()>val.length()){
+							if(title.length()<val.length()){
 								map.put(key, val);
 								log.println("map.put("+key+",\""+val+"\")");
 							}
@@ -480,7 +483,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 	}
 
 	private void addError(String code, String errorID) {
-		errorControl.setError(code,errorID+watchInfo);
+		errorControl.setError(code,errorID+watchInfo,gettext());
 	}
 
 	//終了時EDTで自動実行される

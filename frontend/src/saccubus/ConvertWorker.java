@@ -23,7 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import saccubus.FFmpeg.Aspect;
@@ -1785,8 +1784,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		result = "FF";
 		sendtext("[FF]Converter cancelled.");
 		log.println("LastStatus:[FF]Converter cancelled.");
-		sbRet.append("RESULT=[FF]\n");
-		errorControl.setError(result,Tag+WatchInfo);
+		sbRet.append("RESULT=FF\n");
+		errorControl.setError(result,Tag+WatchInfo,gettext());
 	}
 
 	@Override
@@ -1798,20 +1797,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			if(stopFlagReturn()){
 				abortByCancel();
-				manager.reqDone(result, StopFlag);
+				manager.reqDone(result, StopFlag, isConverting);
 				return "FF";
 			}
 			StopFlag.start();
 		}
-	/*
-		if(!watchvideo){
-			//not watch video get try mylist
-			sendtext("ÉoÉO URLêUÇËï™ÇØé∏îs");
-			log.println("ÉoÉO URLêUÇËï™ÇØé∏îs");
-			result = "-1";
-			return result;
-		}
-	*/
+
 		log = new Logger(Tag, tid, TMP_LOG_FRONTEND);
 		gate = Gate.open(tid,log);
 		stopwatch.clear();
@@ -1987,8 +1978,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(!dateUserFirst.isEmpty()){
 				sbRet.append("DATEUF=" + dateUserFirst + "\n");
 			}
+			if(result.equals("97"))
+				errorControl.setError(result,Tag+WatchInfo,"íÜé~ÇµÇ‹ÇµÇΩ");
+			else
 			if(!result.equals("0"))
-				errorControl.setError(result,Tag+WatchInfo);
+				errorControl.setError(result,Tag+WatchInfo,gettext());
 			else {
 				autoPlay.playAuto();
 			}
@@ -2003,16 +1997,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			log.println("VideoInfo: " + MovieInfo.getText());
 			log.println("LastFrame: "+ lastFrame);
 
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					gate.exit(result);
-					if(isConverting){
-						manager.decNumConvert();
-						isConverting = false;
-					}
-				}
-			});
+			gate.exit(result);
+			manager.reqDone(result, StopFlag, isConverting);
+			isConverting = false;
+			manager.sendTimeInfo();
 
 			//end alarm
 			File wav = new File("end.wav");
@@ -2037,17 +2025,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	public void done(){
-		if("FF".equals(result)){
-			return;
-		}
 		String retStr = null;
 		try {
 			retStr = get();
 		} catch (InterruptedException | ExecutionException e) {
 			log.printStackTrace(e);
 		}
-		manager.reqDone(result, StopFlag);
-		manager.sendTimeInfo();
 		if(retStr == null)
 			log.println("ConvertWorker#done.ret==null. ConvertWorker might had Exception!");
 		else {

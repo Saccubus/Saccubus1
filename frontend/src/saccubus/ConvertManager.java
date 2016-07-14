@@ -86,18 +86,20 @@ public class ConvertManager extends Thread {
 		return converter;	//実行したものではなく要求を受け付けたもの
 	}
 
-	public void reqDone(String result, ConvertStopFlag flag){
+	public void reqDone(String result, ConvertStopFlag flag, boolean isConverting){
 		int wid = -99;
 		if(flag!=null){
 			wid = flagTable.get(flag).getId();
 			//table から削除
 			flagTable.remove(flag);
 		}
+		if(isConverting)
+			decNumConvert();
 		if("0".equals(result)){
-			log.println("manager#reqDone("+wid+") OK. [0]"+getTimeInfo());
+			log.println("manager#reqDone("+wid+") OK. [0]");
 		}else{
 			numError.incrementAndGet();
-			log.println("manager#reqDone("+wid+") ["+result+"] "+getTimeInfo());
+			log.println("manager#reqDone("+wid+") ["+result+"] ");
 			if(!"FF".equals(result)){
 				try {
 					Thread.sleep(1000);
@@ -131,8 +133,9 @@ public class ConvertManager extends Thread {
 
 	void queueCheckAndGo(){
 		ConvertWorker conv = null;
+		log.println("manager#queueGo "+getTimeInfo());
+		sendTimeInfo();
 		for(int count = 0;count < (numThread.get()+2);count++){
-			sendTimeInfo();
 			setWaitManager(true);
 			while(numRun.get() < numThread.get() && getNumReq() > 0){
 				conv = reqQueue.poll();
@@ -169,27 +172,20 @@ public class ConvertManager extends Thread {
 		return waitManager.get();
 	}
 
-	private void sendTime(final String text) {
-		if(SwingUtilities.isEventDispatchThread()){
-			managerTime.setText(text);
-			managerTime.repaint();
-		}else{
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					managerTime.setText(text);
-					managerTime.repaint();
-				}
-			});
-		}
-	}
 	private String getTimeInfo(){
 		return "Thr:"+numThread.get()+" Fin:"+numFinish.get()+"(Err:"+numError.get()
 				+") Run:"+numRun.get()+"(Conv:"+numConvert.get()+" Net:"+Gate.getNumRun()
 				+" Wait:"+Gate.getNumReq()+") Req:"+getNumReq()+" Pending:"+numPending.get();
 	}
 	void sendTimeInfo(){
-		sendTime(getTimeInfo());
+		final String timeinfo = getTimeInfo();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				managerTime.setText(timeinfo);
+				managerTime.repaint();
+			}
+		});
 	}
 
 	public void cancelAllRequest() {
@@ -307,12 +303,10 @@ public class ConvertManager extends Thread {
 
 	public void incNumConvert(){
 		numConvert.incrementAndGet();
-		sendTimeInfo();
 	}
 
-	public void decNumConvert(){
+	private void decNumConvert(){
 		numConvert.decrementAndGet();
-		sendTimeInfo();
 	}
 
 	public int getNumThread(){
@@ -335,11 +329,11 @@ public class ConvertManager extends Thread {
 			lock.notifyAll();
 		}
 	}
-	public void waitActivity() {
+	public void waitActivity(int loop) {
 		synchronized(lock){
 			wait1 = true;
 			try {
-				while(wait1){
+				while(wait1 && loop-->0){
 					lock.wait(30000);	//30秒またはどれかのworkerが終わるまで待つ
 					lock.notifyAll();
 				}

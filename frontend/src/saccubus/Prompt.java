@@ -434,7 +434,12 @@ public class Prompt {
 			do{
 				ArrayList<ConvertWorker> doneList = new ArrayList<>();
 				for(ConvertWorker conv: converterList){
-					if(conv!=null && conv.isDone()){
+					if(conv==null){
+						doneList.add(conv);
+						continue;
+					}
+					ConvertStopFlag flag = conv.getStopFlag();
+					if(conv.isDone()|| flag==null || flag.isFinished()){
 						try{
 							int j = conv.getId();
 							System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
@@ -474,14 +479,19 @@ public class Prompt {
 				if(converterList.isEmpty())
 					break;
 				// manager‘Ò‚¿
-				manager.waitActivity();
+				manager.waitActivity(1);
 				if(manager.getNumReq() > 0)
 					continue;
 				if(manager.getNumRun() > 0)
 					continue;
 				if(manager.getNumFinish() < convNo)
 					continue;
-			}while(true);
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}while(!converterList.isEmpty());
 			if(aborted){
 				codes = 255;
 				results = "FF";
