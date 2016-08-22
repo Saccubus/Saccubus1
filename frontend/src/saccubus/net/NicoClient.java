@@ -798,9 +798,6 @@ public class NicoClient {
 				log.println("Video url(DMC) is not detected.");
 				return null;
 			}
-			Path fileXml = Path.mkTemp(videoTag+"_videoDmc.xml");
-			debug("\nÅ°video sessionDmcXml is <"+fileXml.getPath()+">");
-			fos = new FileOutputStream(fileXml, false);
 			String url = apiSessionUrl;
 			int index1 = url.indexOf("/","http://".length());
 			String host_url = url.substring(0, index1);
@@ -881,19 +878,19 @@ public class NicoClient {
 				log.println("Can't get DMC session:" + mes);
 				return null;
 			}
-			String responseXml = readConnection(con);
-		// videoDmcXmlÇì«ÇﬁÅB
-			debug("Å°session response:\n"+responseXml);
-			String contentUri = getXmlElement(responseXml, "content_uri");
+			String responseXmlData = readConnection(con);
+			// save all responce
+			Path responseXml = Path.mkTemp(videoTag+"_DmcResponse.xml");
+			pw = new PrintWriter(responseXml);
+			pw.write(responseXmlData);
+			pw.flush();
+			pw.close();
+			debug("\nÅ°session response:\n"+responseXmlData);
+			debug("Refer dmc responceXml <"+responseXml.getPath()+">");
+			String contentUri = getXmlElement(responseXmlData, "content_uri");
 			if(contentUri==null){
-				String resStatus = getXmlElement(responseXml, "object");
-				Path statusXml = Path.mkTemp(videoTag+"_DmcResponse.xml");
-				pw = new PrintWriter(statusXml);
-				pw.write(responseXml);
-				pw.flush();
-				pw.close();
+				String resStatus = getXmlElement(responseXmlData, "object");
 				log.println("\nDmcHttpResponse: "+resStatus);
-				log.println("Refer responceXml <"+statusXml.getPath()+">");
 				return null;
 			}
 		//	GET content_uri
@@ -1946,7 +1943,7 @@ public class NicoClient {
 		text = (text+json_end).substring(start, end);
 		text = text.replace("&quot;", S_QUOTE2);
 		// URLDecodeÇµÇ»Ç¢
-		Path file = Path.mkTemp(videoTag+"watch_J.xml");
+		Path file = Path.mkTemp(videoTag+"_watchJ.xml");
 		Path.unescapeStoreXml(file, text, comment);		//xml is property key:json val:JSON
 		log.println("Saved watchApiData to "+file.getPath());
 		return file;
@@ -1965,7 +1962,8 @@ public class NicoClient {
 			r = getJsonValue0(input, key);
 			return unquote(r);
 		} catch(Exception e){
-			Logger.MainLog.println("getJsonValue0: exception: "+e.toString());
+			if(Debug)
+				Logger.MainLog.printStackTrace(e);
 			r = getJsonValue1(input, key);
 			return unquote(r);
 		}

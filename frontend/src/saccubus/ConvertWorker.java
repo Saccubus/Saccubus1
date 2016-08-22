@@ -801,7 +801,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 					log.println("高画質サーバ(dmc)からのダウンロードに失敗しました。通常サーバ(smile)からダウンロードします");
 					sendtext("高画質動画のダウンロードに失敗" + client.getExtraError());
-					VideoFile = client.getVideo(lowVideoFile, Status, StopFlag, renameMp4);
+					VideoFile = client.getVideo(VideoFile, Status, StopFlag, renameMp4);
 					if (stopFlagReturn()) {
 						result = "43";
 						return false;
