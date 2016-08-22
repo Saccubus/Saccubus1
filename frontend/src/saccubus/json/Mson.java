@@ -18,13 +18,13 @@ public class Mson {
 //	private final static boolean DEBUG = false;
 	private JsonElement json;
 	public Mson(JsonElement je) {
-		json = je;
+		setJson(je);
 	}
 	public String toString(){
-		if(json==null)
+		if(getJson()==null)
 			return "[]";
 		else
-			return json.toString();
+			return getJson().toString();
 	}
 /*
 	private Mson add(JsonElement elem) throws Exception {
@@ -77,8 +77,52 @@ public class Mson {
 	}
 	public void prettyPrint(PrintStream ps){
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String js = gson.toJson(json);
+		String js = gson.toJson(getJson());
 		ps.println(js);
+	}
+	public static void prettyPrint(String input, PrintStream ps) {
+		try {
+			Mson m = parse(input);
+			m.prettyPrint(ps);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static JsonElement get(JsonElement je, String key) throws Exception{
+		if(je.isJsonObject()){
+			JsonObject jo = je.getAsJsonObject();
+			for(Entry<String, JsonElement> ent:jo.entrySet()){
+				if(key.equals(ent.getKey()))
+					return ent.getValue();
+				JsonElement joe = get(ent.getValue(), key);
+				if(joe!=null)
+					return joe;
+			}
+			return null;
+		}
+		if(je.isJsonArray()){
+			JsonArray ja = je.getAsJsonArray();
+			for(JsonElement jae : ja){
+				JsonElement jee = get(jae, key);
+				if(jee!=null)
+					return jee;
+			}
+			return null;
+		}
+		return null;
+	}
+	public JsonElement get(String key) throws Exception{
+		return Mson.get(getJson(), key);
+	}
+	public static String getValue(JsonElement json, String key) throws Exception{
+		JsonElement je = get(json, key);
+		if(je==null)
+			return "[]";
+		else
+			return je.toString();
+	}
+	public String getValue(String key) throws Exception {
+		return Mson.getValue(getJson(), key);
 	}
 	public static ArrayList<String[]> getListString(JsonElement json,String[] keys) throws Exception{
 		ArrayList<String[]> ret = new ArrayList<String[]>();
@@ -117,7 +161,7 @@ public class Mson {
 		return ret;
 	}
 	public ArrayList<String[]> getListString(String[] keys) throws Exception {
-		return Mson.getListString(json, keys);
+		return Mson.getListString(getJson(), keys);
 	}
 	/*
 	 *
@@ -144,4 +188,10 @@ public class Mson {
 		System.out.println("End");
 	}
 	 */
+	public JsonElement getJson() {
+		return json;
+	}
+	public void setJson(JsonElement json) {
+		this.json = json;
+	}
 }

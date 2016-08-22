@@ -107,4 +107,8 @@ public class Logger {
 			e.printStackTrace(out);
 		e.printStackTrace();
 	}
+
+	public PrintStream getPS() {
+		return out;
+	}
 }

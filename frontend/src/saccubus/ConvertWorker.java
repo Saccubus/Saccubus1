@@ -145,6 +145,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private Gate gate;
 	private ErrorControl errorControl;
 	private String lowVideoID;
+	private String dmcVideoID;
 	private int tid;
 	private Logger log;
 	private String thumbInfoData;
@@ -169,6 +170,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 		VideoID = "[" + Tag + "]";
 		lowVideoID = VideoID + "low_";
+		dmcVideoID = VideoID + "dmc_";
 		DefaultVideoIDFilter = new VideoIDFilter(VideoID);
 		if (time.equals("000000") || time.equals("0")){		// for auto.bat
 			Time = "";
@@ -244,6 +246,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File appendCommentFile;
 	private File appendOptionalFile;
 	private File lowVideoFile;
+	private File dmcVideoFile;
 	private boolean isConverting = false;
 	private boolean isDebugNet = false;
 	private boolean isLive = false;
@@ -706,44 +709,55 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						result = "40";
 						return false;
 					}
-					lowVideoFile = null;
-					if(client.isEco()){
+					if(client!=null && client.isEco()){
 						if(Setting.isDisableEco()){
 							sendtext("エコノミーモードなので中止します");
 							result = "42";
 							return false;
-						}else{
-							lowVideoFile = new File(folder, lowVideoID+VideoTitle+".flv");
 						}
+						lowVideoFile = new File(folder, lowVideoID+VideoTitle+".flv");
+					} else {
+						lowVideoFile = null;
 					}
 					VideoFile = new File(folder, getVideoBaseName() + ".flv");
+					dmcVideoFile = new File(folder, dmcVideoID+VideoTitle+".flv");
 				} else {
 					VideoFile = Setting.getVideoFile();
+					String name = VideoFile.getPath();
+					if(name.contains(dmcVideoID)){
+						dmcVideoFile = VideoFile;
+					}else{
+						dmcVideoFile = new File(name.replace(VideoID, dmcVideoID));
+					}
 				}
-				if(VideoFile.isFile() && VideoFile.canRead()){
+				if(client!=null && !client.severIsDmc() && VideoFile.isFile() && VideoFile.canRead()){
 					sendtext("動画は既に存在します");
 					log.println("動画は既に存在します。ダウンロードをスキップします");
-				}else{
-					sendtext("動画のダウンロード開始中");
-					if (client == null){
-						sendtext("ログインしてないのに動画の保存になりました");
-						result = "41";
+					return true;
+				}
+				if(lowVideoFile==null){
+					lowVideoFile = VideoFile;
+				}
+				if(client!=null && client.isEco() && lowVideoFile.isFile() && lowVideoFile.canRead()){
+					sendtext("エコノミーモードでエコ動画は既に存在します");
+					log.println("エコノミーモードで動画は既に存在します。ダウンロードをスキップします");
+					VideoFile = lowVideoFile;
+					return true;
+				}
+				if (client == null){
+					sendtext("ログインしてないのに動画の保存になりました");
+					result = "41";
+					return false;
+				}
+				sendtext("動画のダウンロード開始中");
+				boolean renameMp4 = isVideoFixFileName() && Setting.isChangeMp4Ext();
+				if(!client.severIsDmc()){
+					// 通常サーバ
+					lowVideoFile.renameTo(VideoFile);
+					VideoFile = client.getVideo(VideoFile, Status, StopFlag, renameMp4);
+					if (stopFlagReturn()) {
+						result = "43";
 						return false;
-					}
-					if(lowVideoFile==null){
-						lowVideoFile = VideoFile;
-					}
-					if(client.isEco() && lowVideoFile.isFile() && lowVideoFile.canRead()){
-						sendtext("エコノミーモードでエコ動画は既に存在します");
-						log.println("エコ動画は既に存在します。ダウンロードをスキップします");
-						VideoFile = lowVideoFile;
-					}else{
-						VideoFile = client.getVideo(lowVideoFile, Status, StopFlag,
-								isVideoFixFileName() && Setting.isChangeMp4Ext());
-							if (stopFlagReturn()) {
-								result = "43";
-								return false;
-							}
 					}
 					if (VideoFile == null) {
 						sendtext("動画のダウンロードに失敗" + client.getExtraError());
@@ -751,12 +765,59 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						return false;
 					}
 					resultBuffer.append("video: "+VideoFile.getName()+"\n");
+					if (optionalThreadID == null || optionalThreadID.isEmpty()) {
+						optionalThreadID = client.getOptionalThreadID();
+					}
+					videoLength = client.getVideoLength();
+					setVideoTitleIfNull(VideoFile.getName());
+				}else{
+					// dmc
+					File smileVideoFile = new File(VideoFile.getPath().replace(VideoID, VideoID+"sml_"));
+					if(dmcVideoFile.isFile() && dmcVideoFile.canRead()){
+						sendtext("高画質動画は既に存在します");
+						log.println("高画質(dmc)動画は既に存在します。");
+					} else {
+						dmcVideoFile = client.getVideoDmc(dmcVideoFile, Status, StopFlag, renameMp4);
+						if (stopFlagReturn()) {
+							result = "43";
+							return false;
+						}
+					}
+					if(dmcVideoFile!=null){
+						log.println("高画質サーバ(dmc)からのダウンロードに成功しました。");
+						sendtext("高画質動画のダウンロードに成功");
+						if(!VideoFile.exists() || !VideoFile.canRead()
+							|| dmcVideoFile.length() > VideoFile.length()){
+							String videoFilename = VideoFile.getPath();
+							String smileVideoFilename = smileVideoFile.getPath();
+							VideoFile.renameTo(new File(smileVideoFilename));
+							dmcVideoFile.renameTo(new File(videoFilename));
+							VideoFile = dmcVideoFile;
+							return true;
+						}
+						log.println("変換にはサイズが大きい通常動画(smile)を使います");
+						sendtext("変換にはサイズが大きい通常動画を使います");
+						return true;
+					}
+					log.println("高画質サーバ(dmc)からのダウンロードに失敗しました。通常サーバ(smile)からダウンロードします");
+					sendtext("高画質動画のダウンロードに失敗" + client.getExtraError());
+					VideoFile = client.getVideo(lowVideoFile, Status, StopFlag, renameMp4);
+					if (stopFlagReturn()) {
+						result = "43";
+						return false;
+					}
+					if (VideoFile == null) {
+						sendtext("動画のダウンロードに失敗" + client.getExtraError());
+						result = "44";
+						return false;
+					}
+					resultBuffer.append("video: "+VideoFile.getName()+"\n");
+					if (optionalThreadID == null || optionalThreadID.isEmpty()) {
+						optionalThreadID = client.getOptionalThreadID();
+					}
+					videoLength = client.getVideoLength();
+					setVideoTitleIfNull(VideoFile.getName());
 				}
-				if (optionalThreadID == null || optionalThreadID.isEmpty()) {
-					optionalThreadID = client.getOptionalThreadID();
-				}
-				videoLength = client.getVideoLength();
-				setVideoTitleIfNull(VideoFile.getName());
 			} else {
 				if (isSaveConverted()) {
 					if (isVideoFixFileName()) {
@@ -1109,12 +1170,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			boolean isUser = true;
 			String ownerName = null;
 			String infoXml = Path.readAllText(infoFile.getPath(), "UTF-8");
-			String userID = NicoClient.getXmlElement(infoXml, "user_id");
-			String user_nickname = NicoClient.getXmlElement(infoXml, "user_nickname");
+			String userID = client.getXmlElement(infoXml, "user_id");
+			String user_nickname = client.getXmlElement(infoXml, "user_nickname");
 			if(userID==null || userID.isEmpty()){
 				isUser = false;
-				userID = NicoClient.getXmlElement(infoXml, "ch_id");
-				ownerName = NicoClient.getXmlElement(infoXml, "ch_name");
+				userID = client.getXmlElement(infoXml, "ch_id");
+				ownerName = client.getXmlElement(infoXml, "ch_name");
 				if(userID!=null && !userID.isEmpty())
 					userID = "ch"+userID;
 				else
@@ -1143,14 +1204,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				if(userThumbFile != null && userThumbFile.canRead()){
 					html = Path.readAllText(userThumbFile.getPath(), "UTF-8");
-					ownerName = NicoClient.getXmlElement(html, "title");
+					ownerName = client.getXmlElement(html, "title");
 				}
 				if(ownerName == null || ownerName.contains("非公開プロフィール")){
 					ownerName = null;
 					userThumbFile = client.getUserInfoFile(userID, userFolder);
 					if(userThumbFile != null && userThumbFile.canRead()){
 						html = Path.readAllText(userThumbFile.getPath(), "UTF-8");
-						ownerName = NicoClient.getXmlElement(html, "title");
+						ownerName = client.getXmlElement(html, "title");
 					}
 					if(ownerName==null){
 						sendtext("投稿者の情報の入手に失敗");
@@ -1216,7 +1277,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			sendtext("サムネイル画像の保存");
 			thumbnailJpg = null;
 			String infoXml = Path.readAllText(infoFile.getPath(), "UTF-8");
-			String url = NicoClient.getXmlElement(infoXml, "thumbnail_url");
+			String url = client.getXmlElement(infoXml, "thumbnail_url");
 			if(url==null || url.isEmpty() || !url.startsWith("http")){
 				sendtext("サムネイル画像の情報がありません");
 				result = "A8";

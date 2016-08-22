@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -27,6 +28,7 @@ import saccubus.ConvertStopFlag;
 import saccubus.ConvertWorker;
 import saccubus.WayBackDate;
 import saccubus.conv.ChatSave;
+import saccubus.json.Mson;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.util.Logger;
 import saccubus.util.Stopwatch;
@@ -63,6 +65,11 @@ public class NicoClient {
 	private Logger log;
 
 	public static final String DEBUG_PROXY = "debug";	// debug paramerter end with '/'
+	static final String S_QUOTE2 = "\"";
+	static final char C_QUOTE2 = '"';
+	static final String S_ESCAPE = "\\";
+	static final char C_ESCAPE = '\\';
+	static final String JSON_START = "{&quot;flashvars&quot;:";
 
 	/**
 	 * ブラウザ共有しないでログイン
@@ -546,23 +553,33 @@ public class NicoClient {
 				VideoTitle = thumbTitle;
 				found = getVideoTitle()!=null;
 			}
+			String ss = sb.substring(0);
 			if(altTag.isEmpty())
-				altTag = getAltTag(sb.substring(0));
+				altTag = getAltTag(ss);
 
 			PrintWriter pw;
 			if(!found || saveWatchPage){
 				titleHtml = Path.mkTemp(tag + "watch.htm");
 				pw = new PrintWriter(titleHtml, encoding);
-				pw.write(sb.toString());
+				pw.write(ss);
 				pw.flush();
 				pw.close();
 				if(!found)
 					log.print(" Title not found.");
 				log.println(" <" + Path.toUnixPath(titleHtml) + "> saved.");
 			}
-			log.println("ok.");
+			//Json解析
+			if(!ss.contains(JSON_START)){
+				log.println("動画ページ視聴不可？");
+			}else{
+				extractWatchApiJson(ss, encoding, url);
+				log.println("ok.");
+			}
 		} catch (IOException ex) {
 			log.printStackTrace(ex);
+			return false;
+		} catch (Exception e) {
+			log.printStackTrace(e);
 			return false;
 		}
 		return true;
@@ -650,6 +667,9 @@ public class NicoClient {
 			}
 			economy  = VideoUrl.toLowerCase().contains("low");
 			log.println("ok.");
+			if(severIsDmc()){
+				log.println("Video:<" + apiSessionUrl + ">;");
+			}
 			log.println("Video:<" + VideoUrl + ">; Comment:<" + MsgUrl
 					+ (NeedsKey ? ">; needs_key=1" : ">"));
 			log.println("Video time length: " + VideoLength + "sec");
@@ -670,7 +690,11 @@ public class NicoClient {
 	private String VideoUrl = null;
 	private String ContentType = null;
 	private String ContentDisp;
+	private int dmcVideoLength = -1;
 
+	public int getDmcVideoLength(){
+		return dmcVideoLength;
+	}
 	public File getVideo(File file, final JLabel status, final ConvertStopFlag flag,
 			boolean renameMp4) {
 		try {
@@ -758,6 +782,221 @@ public class NicoClient {
 		} finally{
 		//	debug("■read+write statistics(bytes) ");
 		//	debugsOut();
+		}
+		return null;
+	}
+	public File getVideoDmc(File video, JLabel status, ConvertStopFlag flag, boolean renameMp4) {
+		FileOutputStream fos = null;
+		OutputStream os = null;
+		HttpURLConnection con = null;
+		BufferedReader br = null;
+		PrintWriter pw = null;
+		InputStream is = null;
+		try {
+			log.print("Getting video size...");
+			if (apiSessionUrl == null || apiSessionUrl.isEmpty()) {
+				log.println("Video url(DMC) is not detected.");
+				return null;
+			}
+			Path fileXml = Path.mkTemp(videoTag+"_videoDmc.xml");
+			debug("\n■video sessionDmcXml is <"+fileXml.getPath()+">");
+			fos = new FileOutputStream(fileXml, false);
+			String url = apiSessionUrl;
+			int index1 = url.indexOf("/","http://".length());
+			String host_url = url.substring(0, index1);
+			// GET /crossdomain.xml HTTP/1.1
+			// Host: api.dmc.nico:2805
+			// User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:48.0) Gecko/20100101 Firefox/48.0
+			// Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+			// Accept-Language: ja,en-US;q=0.7,en;q=0.3
+			// Accept-Encoding: gzip, deflate
+			// DNT: 1
+			// Referer: http://res.nimg.jp/swf/player/nicoplayer.swf?ts=59e6229f239741dda87bff0f8ce2dfb7
+			// Connection: keep-alive
+			url = host_url + "/crossdomain.xml";
+			con = urlConnectGET(url);
+			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
+				log.println("ng.\nCan't crossdomain.xml:" + url);
+				return null;
+			}
+			String encoding = con.getContentEncoding();
+			if (encoding == null){
+				encoding = "UTF-8";
+			}
+			br = new BufferedReader(new InputStreamReader(con.getInputStream(), encoding));
+			log.print("ok.\nSaving crossdomain.xml...");
+			String ret;
+			StringBuilder sb = new StringBuilder();
+			while ((ret = br.readLine()) != null) {
+				Stopwatch.show();
+				sb.append(ret + "\n");
+			}
+			br.close();
+			con.disconnect();
+			File crossdomain = Path.mkTemp(videoTag+"_crossdomain.xml");
+			pw = new PrintWriter(crossdomain, encoding);
+			pw.write(sb.substring(0));
+			pw.flush();
+			pw.close();
+			//
+			//	POST /api/sessions?suppress_response_codes=true&_format=xml HTTP/1.1
+			//	Host: api.dmc.nico:2805
+			//	User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:48.0) Gecko/20100101 Firefox/48.0
+			//	Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+			//	Accept-Language: ja,en-US;q=0.7,en;q=0.3
+			//	Accept-Encoding: gzip, deflate
+			//	DNT: 1
+			//	Connection: keep-alive
+			//  Content-type: application/x-www-form-urlencoded
+			//
+			url = apiSessionUrl + "?suppress_response_codes=true&_format=xml";
+			debug("\n■URL<" + url + ">\n");
+			//	con = urlConnect(url, "POST", null, true, true, "keep-alive", false);
+			con = (HttpURLConnection) (new URL(url)).openConnection(ConProxy);
+			con.setDoOutput(true);
+			HttpURLConnection.setFollowRedirects(false);
+			con.setInstanceFollowRedirects(false);
+			con.setRequestMethod("POST");
+			con.setRequestProperty("User-Agent", "Java/Saccubus-1.65.xx");
+			con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+			con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
+			con.setRequestProperty("Accept-Encoding", "gzip, deflate");
+		//	con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			con.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
+			con.addRequestProperty("DNT", "1");
+			con.addRequestProperty("Connection", "keep-alive");
+			debug("■Connect: POST,DoOutput,Connection keep-alive\n");
+			connect(con);
+			String poststr = sessionData;
+			debug("■write:" + poststr + "\n");
+			os = con.getOutputStream();
+			os.write(poststr.getBytes());
+			os.flush();
+			os.close();
+			Stopwatch.show();
+			int code = con.getResponseCode();
+			String mes = con.getResponseMessage();
+			debug("■Response:" + Integer.toString(code) + " " + mes + "\n");
+			if (code < HttpURLConnection.HTTP_OK || code >= HttpURLConnection.HTTP_BAD_REQUEST) { // must 200 <= <400
+				log.println("Can't get DMC session:" + mes);
+				return null;
+			}
+			String responseXml = readConnection(con);
+		// videoDmcXmlを読む。
+			debug("■session response:\n"+responseXml);
+			String contentUri = getXmlElement(responseXml, "content_uri");
+			if(contentUri==null){
+				String resStatus = getXmlElement(responseXml, "object");
+				Path statusXml = Path.mkTemp(videoTag+"_DmcResponse.xml");
+				pw = new PrintWriter(statusXml);
+				pw.write(responseXml);
+				pw.flush();
+				pw.close();
+				log.println("\nDmcHttpResponse: "+resStatus);
+				log.println("Refer responceXml <"+statusXml.getPath()+">");
+				return null;
+			}
+		//	GET content_uri
+			if (video.canRead() && video.delete()) { // ファイルがすでに存在するなら削除する。
+				log.print("previous video("+video.getPath()+") deleted...");
+			}
+			url = contentUri + "&starti=0&start=0";
+			con = urlConnect(url, "GET", null, true, false, null);
+			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK) {
+				log.println("Can't get video(dmc):" + url);
+				String ecode = getExtraError();
+				if(ecode==null){
+				}
+				else if (ecode.contains("403")){
+					setExtraError("=不適切な動画の可能性。readmeNew.txt参照");
+				}
+				else if(ecode.contains("50")){
+					// 5秒待機
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						// log.printStackTrace(e);
+					}
+				}
+				return null;
+			}
+			is = con.getInputStream();
+			new NicoMap().putConnection(con, (Debug? log:null));
+			if(ContentType==null){
+				ContentType = con.getHeaderField("Content-Type");
+				if(ContentType == null) ContentType = "";
+			}
+			ContentDisp = con.getHeaderField("Content-Disposition");
+			int max_size = con.getContentLength();	// -1 when invalid
+			if(max_size > 0)
+				dmcVideoLength = max_size;
+			log.print("size="+(max_size/1000)+"Kbytes");
+			log.println(", type=" + ContentType + ", " + ContentDisp);
+			log.print("Downloading video...");
+			if(renameMp4 && ContentType.contains("mp4")){
+				String filepath = video.getPath();
+				int index = filepath.lastIndexOf(".");
+				if(filepath.lastIndexOf(File.separator) < index){
+					filepath = filepath.substring(0, index) + ".mp4";
+				}
+				video = new File(filepath);
+			}
+			os = new FileOutputStream(video);
+			int size = 0;
+			int read = 0;
+			debugsInit();
+			while ((read = is.read(buf, 0, buf.length)) > 0) {
+				debugsAdd(read);
+				size += read;
+				os.write(buf, 0, read);
+				sendStatus(status, "動画", max_size, size);
+				Stopwatch.show();
+				if (flag.needStop()) {
+					log.println("\nStopped.");
+					is.close();
+					os.flush();
+					os.close();
+					con.disconnect();
+					if (video.delete()){
+						log.println("video deleted.");
+					}
+					return null;
+				}
+			}
+			debugsOut("\n■read+write statistics(bytes) ");
+			if(size < max_size){
+				log.println("\nDownload stopped less than max_size. "+size+"<"+max_size);
+				Stopwatch.show();
+				is.close();
+				os.flush();
+				os.close();
+				con.disconnect();
+				return null;
+			}
+			log.println("ok.");
+			is.close();
+			os.flush();
+			os.close();
+			con.disconnect();
+			return video;
+		} catch (FileNotFoundException ex) {
+			log.printStackTrace(ex);
+		} catch (IOException ex) {
+			log.printStackTrace(ex);
+		} finally{
+			try {
+				if(fos!=null) fos.close();
+			}catch(IOException e){}
+			try {
+				if(os!=null) os.close();
+			}catch(IOException e){}
+			try {
+				if(br!=null) br.close();
+			}catch(IOException e){}
+			if(pw!=null) pw.close();
+			try {
+				if(is!=null) is.close();
+			}catch(IOException e){}
 		}
 		return null;
 	}
@@ -913,6 +1152,9 @@ public class NicoClient {
 					+ "\" threadkey=\"" + threadKey;
 		}
 		FileOutputStream fos = null;
+		InputStream is = null;
+		OutputStream os = null;
+		HttpURLConnection con = null;
 		try {
 			String lastNo = "";
 			if (file.canRead()){
@@ -926,8 +1168,8 @@ public class NicoClient {
 				}
 			}
 			fos = new FileOutputStream(file, isAppend);
-			HttpURLConnection con = urlConnect(MsgUrl, "POST", Cookie, true, true, "keep-alive",true);
-			OutputStream os = con.getOutputStream();
+			con = urlConnect(MsgUrl, "POST", Cookie, true, true, "keep-alive",true);
+			os = con.getOutputStream();
 			/*
 			 * 投稿者コメントは2006versionを使用するらしい。「いんきゅばす1.7.0」
 			 * 過去ログ新表示、チャンネル＋コミュニティ新表示。「coroid　いんきゅばす1.7.2」
@@ -955,7 +1197,7 @@ public class NicoClient {
 				log.println("ng.\nCan't download " + commentType.toString().toLowerCase() + " comment:" + MsgUrl);
 				return null;
 			}
-			InputStream is = con.getInputStream();
+			is = con.getInputStream();
 			int read = 0;
 			int max_size = 0;
 			String content_length_str = con.getHeaderField("Content-length");
@@ -1016,6 +1258,12 @@ public class NicoClient {
 		finally{
 			if (fos != null){
 				try { fos.close(); } catch (IOException e) {}
+			}
+			if (is != null){
+				try { is.close(); } catch (IOException e) {}
+			}
+			if (os != null){
+				try { os.close(); } catch (IOException e) {}
 			}
 		}
 
@@ -1082,7 +1330,7 @@ public class NicoClient {
 			}
 			WayBackDate wayback = new WayBackDate(time);
 			if (!wayback.isValid()){
-				log.println("ng.\nCannot parse time.\"" + time + "\"");
+				log.println("ng.\nCannot parse time.\"" + time + S_QUOTE2);
 				setExtraError("過去ログ指定文字列が違います");
 				return false;
 			}
@@ -1235,126 +1483,35 @@ public class NicoClient {
 		return economy;
 	}
 
-/*
-	private String getKeyValue(String src, String keyword, char delimc){
-		String dest = null;
-		char escapec = '\\';
-		int index = src.indexOf(keyword);
-		index += keyword.length();
-		int endIx = src.indexOf(delimc, index);
-		if(index < 0 || endIx < 0)
-			return null;
-		dest = src.substring(index).trim();	//trim
-		return getUniValue(dest, delimc, escapec);
-	}
-	private String getUniValue(String src, char delimc, char escapec){
-		StringBuilder sb = new StringBuilder();
-		char stop = 0;
-		int p = 1;
-		for(int i = 0; i < src.length(); i+=p){
-			char c = src.charAt(i);
-			if(stop == 0){
-				if(c == '\''){
-					sb.append(c);
-					stop = c;
-					p = 1;
-					continue;
-				}
-				stop = delimc;
-			}
-			if( c == stop){
-				sb.append(c);
-				break;
-			}
-			if(c == escapec){
-				c = src.charAt(i+1);
-				if ( c == 'u'){
-					int v = -1;
-					try {
-						v = Integer.parseInt(src.substring(i+2, i+6),16);
-					} catch(NumberFormatException e){
-						log.printStackTrace(e);
-					}
-					sb.append((char)v);
-					p = 6;
-					continue;
-				}
-				// c was escaped, just append
-				sb.append(c);
-				p = 2;
-				continue;
-			}
-			sb.append(c);
-			p = 1;
-		}
-		return sb.toString();
-	}
-	private String getHtmlElement(String src, String keyword){
-		String dest;
-		int index = src.indexOf(keyword);
-		int endIx = src.indexOf("</", index);
-		if(index < 0 || endIx < 0)
-			return null;
-		index += keyword.length();
-		dest = src.substring(index, endIx).replace("\\", "");
-		return dest;
-	}
-	public Path getWatchPage() {
-		Path filePath = null;
-		if(thumbxml  == null)
-			return null;
-		try {
-			String text = Path.readAllText(thumbxml.getPath(),"UTF-8");
-			int index;
-			String threadId = getKeyValue(text, "v:", ',');
-			String videoId = getKeyValue(text, "id:\t", ',');
-			String titleStr = getKeyValue(text, "title:", ',');
-			String uploadComment = getKeyValue(text, "description:", ',');
-			String thumbnail  = getKeyValue(text, "thumbnail:", ',');
-			String postedAt  = getKeyValue(text, "postedAt:", ',');
-			String timeLength  = getKeyValue(text, "length:", ',');
-			String viewCount = getKeyValue(text, "viewCount:", ',');
-			String commentCount = getKeyValue(text, "commentCount:", ',');
-			String mylistCount = getKeyValue(text, "mylistCount:", ',');
-			String ownerName = getHtmlElement(text,"<p class=\"font12\"><a href=\"user/");
-			ownerName = ("user/" + ownerName).replace("\"><strong>", "' '");
-			String tags = getKeyValue(text, "tags:", ']');
-			//tags = convertUniList(tags);
-			String fileName = thumbxml.getPath();
-			index = fileName.lastIndexOf(".");
-			if (index >= thumbxml.getPath().lastIndexOf(File.separator)) {
-				fileName = fileName.substring(0, index);
-			}
-			fileName += ".txt";
-			filePath = new Path(fileName);
-			PrintWriter pw = new PrintWriter(filePath, "UTF-8");
-			pw.printf("Encode: UTF-8\n");
-			pw.printf("v:     %s\n", threadId);
-			pw.printf("ID:     %s\n", videoId);
-			pw.printf("タイトル:  %s\n", titleStr);
-			pw.printf("動画説明：   %s\n", uploadComment);
-			pw.printf("サムネ:    %s\n", thumbnail);
-			pw.printf("投稿日:   %s\n", postedAt);
-			pw.printf("時間(秒):  %s\n", timeLength);
-			pw.printf("再生数：    %s\n", viewCount);
-			pw.printf("コメント数：  %s\n", commentCount);
-			pw.printf("マイリスト数： %s\n", mylistCount);
-			pw.printf("投稿者:    '%s'\n", ownerName);
-			pw.printf("タグ:     %s\n", tags);
-			pw.flush();
-			pw.close();
-		} catch (IOException e) {
-			log.printStackTrace(e);
-			return null;
-		}
-		return filePath;
-	}
-*/
-
 	private String thumbInfoData;
+	private String watchApiJson;
+	private String flvInfo;
+	private String flvInfoArrays;
+	private String isDmc;
+	private String dmcInfo;
+	private String dmcInfoArrays;
+	private String dmcInfoDec;
+	private String dmcToken;
+	private String dmcTokenUnEscape;
+	private String sessionApi;
+	private Path sessionXml;
+	private String video_src;
+	private String audio_src;
+	private String videos;
+	private String audios;
+	private String apiUrls;
+	private String sessionData;
+	private String player_id;
+	private String apiSessionUrl;
+	private String videoTag;
+	public boolean severIsDmc(){
+		return "1".equals(isDmc);
+	}
 	public Path getThumbInfoFile(String tag){
 		final String THUMBINFO_URL = "http://ext.nicovideo.jp/api/getthumbinfo/";
 		String url = THUMBINFO_URL + tag;
+		if(videoTag==null)
+			videoTag = tag;
 		log.print("Getting thumb Info...");
 		Path thumbXml = null;
 		try {
@@ -1404,41 +1561,14 @@ public class NicoClient {
 			if(getWatchThread().isEmpty())
 				watchThread = getThread(getXmlElement(s, "watch_url"));
 			thumbXml  = Path.mkTemp(tag + "_" + title + ".xml");
-			if(s.indexOf("status=\"ok\"") < 0 && titleHtml!=null){
-				// 可能ならthumbXmlをtitleHtmlから構成する
-				//
+			if(titleHtml!=null){
 				String html = Path.readAllText(titleHtml, encoding);
 				if(html==null)
 					return null;
-				String text = html;
-				// 動画ページのJSONを取り出す
-				text = getXmlElement1(text, "body");	//body
-				if(text==null)
-					return null;
-				text = getXmlElement1(text, "div");
-					//div id="watchAPIDataContainer" style="display:none"
-				if(text==null)
-					return null;
-				String json_start = "{&quot;flashvars&quot;:";
-				int start = text.indexOf(json_start);
-				if(start < 0)
-					return null;
-				String json_end = "<";
-				int end = (text+json_end).indexOf(json_end, start);	// end of JSON
-				text = (text+json_end).substring(start, end);
-				text = text.replace("&quot;", "\"");
-				try {
-					text = URLDecoder.decode(text, encoding);	// decode URLEncode
-				} catch(Exception e){
-					log.println("caught exception in json URLdecode");
-				}
-				//Json解析
-				Path file = new Path(titleHtml.getRelativePath()+"J.xml");
-				Path.unescapeStoreXml(file, text, url);		//xml is property key:json val:JSON
-				Properties prop = new Properties();
-				prop.loadFromXML(new FileInputStream(file));		//read JSON xml
-				text = prop.getProperty("json", "0");
-
+				extractWatchApiJson(html, encoding, url);
+			}
+			if(s.indexOf("status=\"ok\"") < 0 && titleHtml!=null){
+				// 可能ならthumbXmlをtitleHtmlから構成する
 				sb = new StringBuilder();
 				sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 				sb.append("<nicovideo_thumb_response status=\"ok\">\n");
@@ -1446,7 +1576,10 @@ public class NicoClient {
 				sb.append(makeNewXmlElement(s,"code"));
 				sb.append("<video_id>"+tag+"</video_id>\n");
 				sb.append("<title>"+title+"</title>\n");
+				String text = getWatchApiJson();
 				String description = getJsonValue(text,"description");
+				if(description==null)
+					description = "";
 				description = description.replace("&quot;", "”")
 					.replace("&lt;", "(").replace("&gt;", ")")
 					.replaceAll("\\(br ?/?\\)","\n");
@@ -1493,10 +1626,427 @@ public class NicoClient {
 		} catch (IOException ex) {
 			log.printStackTrace(ex);
 			return null;
+		} catch (Exception e) {
+			log.printStackTrace(e);
+			return null;
 		}
 	}
 
-	public static String getXmlElement(String input, String key){
+	private void extractWatchApiJson(String html, String encoding, String url){
+		Path file = getWatchApiData(html, encoding, url);
+		if(file==null) return;
+		extractJson(file, encoding);
+	}
+	private String getWatchApiJson(){
+		if(watchApiJson==null){
+			String encoding = "UTF-8";
+			if(titleHtml==null)
+				return null;
+			String html = Path.readAllText(titleHtml, encoding);
+			if(html==null)
+				return null;
+			extractWatchApiJson(html, encoding, "getWatchApiJson");
+		}
+		return watchApiJson;
+	}
+	private String extractJson(Path xml, String encoding) {
+		//Json解析
+		Properties prop = new Properties();
+		try {
+			prop.loadFromXML(new FileInputStream(xml));
+		} catch (IOException e) {
+			log.printStackTrace(e);
+		}		//read JSON xml
+		if(watchApiJson==null){
+			watchApiJson = prop.getProperty("json", "0");
+			debug("\n■watchAPIData_JSON:\n "+watchApiJson);
+			if(flvInfo==null){
+				flvInfo = getJsonValue(watchApiJson, "flvInfo");
+				String s = flvInfo;
+				s = unquote(s);
+				StringBuffer sb = new StringBuffer();
+				try {
+					String dec = URLDecoder.decode(s, encoding);
+					String[] sa = dec.split("&");
+					for(String v: sa){
+						sb.append(URLDecoder.decode(v, encoding));
+						sb.append("\n ");
+					}
+				} catch (UnsupportedEncodingException e) {
+					log.printStackTrace(e);
+				}
+				flvInfoArrays = sb.substring(0).trim();
+				debug("\n■flvInfo:\n "+flvInfo);
+				debug("\n■flvInfos:\n [\n "+flvInfoArrays);
+				debug("\n■]\n");
+			}
+			isDmc = getJsonValue(watchApiJson, "isDmc");
+			log.println("\nisDmc: "+isDmc);
+			if(isDmc!=null && isDmc.equals("1")){
+				if(dmcInfo==null){
+					dmcInfo = getJsonValue(watchApiJson, "dmcInfo");
+					String s = dmcInfo;
+					s = unquote(s);
+					StringBuffer sb = new StringBuffer();
+					try {
+						s = URLDecoder.decode(s, encoding);
+					} catch (UnsupportedEncodingException e) {
+						log.printStackTrace(e);
+					}
+					dmcInfoDec = s;
+					if(s.contains("&")){
+						String[] sa = s.split("&");
+						for(String v: sa){
+							try {
+								sb.append(URLDecoder.decode(v, encoding));
+								sb.append("\n ");
+							} catch (UnsupportedEncodingException e) {
+								log.printStackTrace(e);
+							}
+						}
+						dmcInfoArrays = "[ "+sb.substring(0).trim()+ " ]";
+					}
+					else if (s.startsWith("{")){
+						dmcInfoArrays = prettyBufferPrint(s);
+					}
+					debug("\n■dmcInfo:\n "+dmcInfo);
+					debug("\n■dmcInfos:\n "+dmcInfoArrays);
+					if(dmcInfoDec!=null){
+						dmcToken = getJsonValue(dmcInfoDec, "token");
+						debug("\n■dmcToken:\n "+dmcToken);
+						s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
+						dmcTokenUnEscape = s;
+						log.print("\ndmcTokenUnEscape:\n "+dmcTokenUnEscape);
+						sessionApi = getJsonValue(dmcInfoDec, "session_api");
+						debug("\n■session_api:\n "+sessionApi);
+						videos = getJsonValue(sessionApi, "videos");
+						log.print("\nvideos:\n "+videos);
+						audios = getJsonValue(sessionApi, "audios");
+						log.print("\naudios:\n "+audios);
+						apiUrls = getJsonValue(sessionApi, "api_urls").trim();
+						if(apiUrls.startsWith("[") && apiUrls.endsWith("]")){
+							apiUrls = apiUrls.substring(1, apiUrls.length()-1);
+						}
+						if(!apiUrls.contains(",")){
+							apiSessionUrl = unquote(apiUrls);
+						}
+						debug("\n■apiUrls:\n "+apiUrls);
+						debug("\n■apiSessionUrl:\n "+apiSessionUrl);
+						player_id = getJsonValue(sessionApi, "player_id");
+						debug("\n■player_id:\n "+player_id);
+						sessionXml = new Path(titleHtml.getPath()+"_session.xml");
+						sessionData = makeSessionXml(sessionXml, sessionApi);
+						log.println("\nsessionXML save to "+sessionXml.getPath());
+					}
+				}
+			}
+		}
+		return watchApiJson;
+	}
+
+	private String unquote(String str) {
+		if(str==null) return null;
+		str = str.trim();
+		if(str.startsWith(S_QUOTE2) && str.endsWith(S_QUOTE2)){
+			str = str.substring(1, str.length()-1);
+		}
+		return str;
+	}
+
+	private String makeSessionXml(Path xml, String json) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<session>\n");
+		sb.append("  "+makeNewJsonValue(json, "recipe_id"));
+		sb.append("  <content_id>out1</content_id>\n");
+		sb.append("  <content_type>movie</content_type>\n");
+		sb.append("  <protocol>\n");
+		sb.append("    <name>http</name>\n");
+		sb.append("    <parameters>\n");
+		sb.append("      <http_parameters>\n");
+		sb.append("        <method>GET</method>\n");
+		sb.append("        <parameters>\n");
+		sb.append("          <http_output_download_parameters>\n");
+		sb.append("            <file_extension>flv</file_extension>\n");
+		sb.append("          </http_output_download_parameters>\n");
+		sb.append("        </parameters>\n");
+		sb.append("      </http_parameters>\n");
+		sb.append("    </parameters>\n");
+		sb.append("  </protocol>\n");
+		sb.append("  <priority>0.8</priority>\n");
+		sb.append("  <content_src_id_sets>\n");
+		sb.append("    <content_src_id_set>\n");
+		sb.append("      <content_src_ids>\n");
+		sb.append("        <src_id_to_mux>\n");
+		sb.append("          <video_src_ids>\n");
+		video_src = videos.replace("[\"","            <string>").replace("\"]","</string>\n")
+				.replace("\",\"", "</string>\n            <string>");
+		sb.append(video_src);
+		sb.append("          </video_src_ids>\n");
+		sb.append("          <audio_src_ids>\n");
+		audio_src = audios.replace("[\"","            <string>").replace("\"]","</string>\n")
+				.replace("\",\"", "</string>\n            <string>");
+		sb.append(audio_src);
+		sb.append("          </audio_src_ids>\n");
+		sb.append("        </src_id_to_mux>\n");
+		sb.append("      </content_src_ids>\n");
+		sb.append("    </content_src_id_set>\n");
+		sb.append("  </content_src_id_sets>\n");
+		sb.append("  <keep_method>\n");
+		sb.append("    <heartbeat>\n");
+		sb.append("      <lifetime>60000</lifetime>\n");
+		sb.append("    </heartbeat>\n");
+		sb.append("  </keep_method>\n");
+		sb.append("  <timing_constraint>unlimited</timing_constraint>\n");
+		sb.append("  <session_operation_auth>\n");
+		sb.append("    <session_operation_auth_by_signature>\n");
+		sb.append("      "+makeNewElement("token", dmcTokenUnEscape));
+		sb.append("      "+makeNewJsonValue(json, "signature"));
+		sb.append("    </session_operation_auth_by_signature>\n");
+		sb.append("  </session_operation_auth>\n");
+		sb.append("  <content_auth>\n");
+		sb.append("    <auth_type>ht2</auth_type>\n");
+		sb.append("    <service_id>nicovideo</service_id>\n");
+		sb.append("    "+makeNewJsonValue(json,"service_user_id"));
+		sb.append("    <max_content_count>10</max_content_count>\n");
+		sb.append("    <content_key_timeout>600000</content_key_timeout>\n");
+		sb.append("  </content_auth>\n");
+		sb.append("  <client_info>\n");
+		sb.append("    "+makeNewJsonValue(json, "player_id"));
+		sb.append("  </client_info>\n");
+		sb.append("</session>");
+		String s = sb.substring(0);
+		try {
+			PrintWriter pw = new PrintWriter(xml);
+			pw.write(s);
+			pw.flush();
+			pw.close();
+		} catch (FileNotFoundException e) {
+			log.printStackTrace(e);
+		}
+		return s;
+	}
+
+	String prettyBufferPrint(String s){
+		StringBuffer sb = new StringBuffer();
+		s = prettyBufferPrint(s, sb, 1);
+		if(s==null) s = "";
+		if(!s.isEmpty())
+			s = "\nREST:"+s;
+		return sb.substring(0)+ s;
+	}
+
+	String prettyBufferPrint(String s, StringBuffer sb, int indent){
+		String head = s.substring(0, 1);
+		String ids = String.format("%"+indent+"s", " ");
+		if(head.equals(S_QUOTE2)){
+			int i = 1;
+			while(i < s.length()){
+				String s1 = s.substring(i,i+1);
+				if(s1.equals(S_QUOTE2))
+					break;
+				if(s1.equals(S_ESCAPE))
+					i+=2;
+				else
+					i++;
+			}
+			sb.append(s.substring(0, i+1));
+			return s.substring(i+1);
+		}
+		String HASH1 = "{";
+		String HASH2 = "}";
+		String PAIR = ":";
+		String COMMA = ",";
+		if(head.equals(HASH1)){
+			sb.append(HASH1+"\n"+ids);
+			do {
+				s = prettyBufferPrint(s.substring(1),sb,indent+1);
+				if(s==null) return null;
+				head = s.substring(0, 1);
+				if(!head.equals(PAIR)){
+					log.println("ERROR prettyBufferPrint >"+s);
+					return null;
+				}
+				sb.append(PAIR);
+				s = prettyBufferPrint(s.substring(1),sb,indent+1);
+				if(s==null) return null;
+				head = s.substring(0, 1);
+				if(head.equals(COMMA)){
+					sb.append(COMMA+"\n"+ids);
+					continue;
+				}
+				if(head.equals(HASH2)){
+					sb.append("\n"+ids+HASH2);
+					return s.substring(1);
+				}
+				log.println("ERROR prettyBufferPrint >"+s);
+				return null;
+			}while(s!=null);
+			return null;
+		}
+		String ARRAY1 = "[";
+		String ARRAY2 = "]";
+		if(head.equals(ARRAY1)){
+			sb.append(ARRAY1+"\n"+ids);
+			do {
+				s = prettyBufferPrint(s.substring(1),sb,indent+1);
+				if(s==null) return null;
+				head = s.substring(0, 1);
+				if(head.equals(COMMA)){
+					sb.append(COMMA+"\n"+ids);
+					continue;
+				}
+				if(head.equals(ARRAY2)){
+					sb.append("\n"+ids+ARRAY2);
+					return s.substring(1);
+				}
+			}while(s!=null);
+			return null;
+		}
+		if("0123456789.".contains(head)){
+			int i = 0;
+			while(Character.isDigit(s.charAt(i)) || s.charAt(i)=='.'){
+				sb.append(s.charAt(i++));
+			}
+			s = s.substring(i);
+			return s;
+		}
+		if(s.startsWith("null")){
+			sb.append("null");
+			s = s.substring(4);
+			return s;
+		}
+		if(s.startsWith("true")){
+			sb.append("true");
+			s = s.substring(4);
+			return s;
+		}
+		if(s.startsWith("false")){
+			sb.append("false");
+			s = s.substring(5);
+			return s;
+		}
+		return s;
+	}
+
+	private Path getWatchApiData(String html, String encoding, String comment) {
+		String text = html;
+		// 動画ページのJSONを取り出す
+		text = getXmlElement1(text, "body");	//body
+		if(text==null)
+			return null;
+		text = getXmlElement1(text, "div");
+			//div id="watchAPIDataContainer" style="display:none"
+		if(text==null)
+			return null;
+		int start = text.indexOf(JSON_START);
+		if(start < 0)
+			return null;
+		String json_end = "<";
+		int end = (text+json_end).indexOf(json_end, start);	// end of JSON
+		text = (text+json_end).substring(start, end);
+		text = text.replace("&quot;", S_QUOTE2);
+		// URLDecodeしない
+		Path file = new Path(titleHtml.getRelativePath()+"J.xml");
+		Path.unescapeStoreXml(file, text, comment);		//xml is property key:json val:JSON
+		log.println("Saved watchApiData to "+file.getPath());
+		return file;
+	}
+
+	private String makeNewElement(String key, String val){
+		if(val==null)
+			val = "";
+		return "<"+key+">"+val+"</"+key+">\n";
+	}
+	public String getJsonValue(String input, String key) {
+		String r = null;
+		if(input==null)
+			return null;
+		try {
+			r = getJsonValue0(input, key);
+			return unquote(r);
+		} catch(Exception e){
+			Logger.MainLog.println("getJsonValue0: exception: "+e.toString());
+			r = getJsonValue1(input, key);
+			return unquote(r);
+		}
+	}
+	public String getJsonValue0(String input, String key) throws Exception {
+		Mson m = Mson.parse(input);
+		return m.getValue(key);
+	}
+	public String getJsonValue1(String input, String key){
+		String key1 = S_QUOTE2+key+S_QUOTE2+":";
+		int index1 = input.indexOf(key1);
+		if(index1 < 0) return null;
+		int index2 = index1 + key1.length();
+		char c2 = input.charAt(index2);
+		String tail = input.substring(index2);
+		if(c2=='{'){
+			int count = 1;
+			int i = index2+1;
+			while(count > 0 && i < input.length()){
+				char ce = input.charAt(i++);
+				if(ce=='{') count++;
+				else if(ce=='}') count--;
+				else if(ce==C_ESCAPE) i++;
+			}
+			String r = (input+'}').substring(index2, i);
+			return r;	// ハッシュ {x:v, y:u}
+		}
+		if(c2=='['){
+			int count = 1;
+			int i = index2+1;
+			while(count > 0 && i < input.length()){
+				char ce = input.charAt(i++);
+				if(ce=='[') count++;
+				else if(ce==']') count--;
+				else if(ce==C_ESCAPE) i++;
+			}
+			String r = (input+']').substring(index2, i);
+			return r;	// 配列 [X,Y,Z]
+		}
+		if(c2==C_QUOTE2){
+			int i = index2+1;
+			while(i < input.length()){
+				char ce = input.charAt(i++);
+				if(ce==C_QUOTE2) break;
+				if(ce==C_ESCAPE) i++;
+			}
+			String r = (input + S_QUOTE2).substring(index2, i);
+			return r;	// 文字列 "ABC"
+		}
+		// キーワード
+		if(tail.startsWith("null")){
+			return "null";
+		}
+		if(tail.startsWith("true")){
+			return "true";
+		}
+		if(tail.startsWith("false")){
+			return "false";
+		}
+		// else 他の文字 {
+		if('0' <= c2 && c2 <= '9') {
+			int i = index2 + 1;
+			while(i < input.length()){
+				char ce = input.charAt(i);
+				if(ce!='.' && (ce < '0' || ce > '9')) break;
+				i++;
+			}
+			String r = input.substring(index2, i);
+			return r;	// 数字
+		}
+		return null;
+	}
+
+	private String makeNewJsonValue(String html, String key) {
+		return makeNewElement(key, getJsonValue(html, key));
+	}
+
+	private String makeNewXmlElement(String html, String key) {
+		return makeNewElement(key, getXmlElement(html, key));
+	}
+	public String getXmlElement(String input, String key){
 		Pattern p = Pattern.compile("<"+key+">(.*)</"+key+">",Pattern.DOTALL);
 		Matcher m = p.matcher(input);
 		if(m.find()){
@@ -1505,32 +2055,7 @@ public class NicoClient {
 		return null;
 	}
 
-	private static String makeNewXmlElement(String html, String key) {
-		String val = getXmlElement(html, key);
-		if(val==null)
-			val = "";
-		return "<"+key+">"+val+"</"+key+">\n";
-	}
-
-	public static String getJsonValue(String input, String key){
-		Pattern p = Pattern.compile("\""+key+"\":\"?([^,}]+)\"?[,}]",Pattern.DOTALL);
-		Matcher m = p.matcher(input);
-		String val = "";
-		if(m.find()){
-			val = m.group(1).replace("\"", "");
-			return val;
-		}
-		return null;
-	}
-
-	private static String makeNewJsonValue(String html, String key) {
-		String val = getJsonValue(html, key);
-		if(val==null)
-			val = "";
-		return "<"+key+">"+val+"</"+key+">\n";
-	}
-
-	public static String getXmlElement1(String xml, String key){
+	public String getXmlElement1(String xml, String key){
 		Pattern p = Pattern.compile("<"+key+"[^>]*>(.*)</"+key,Pattern.DOTALL);
 		Matcher m = p.matcher(xml);
 		String dest = "";
@@ -1541,7 +2066,7 @@ public class NicoClient {
 		return dest;
 	}
 
-	public static String getXmlElement2(String input, String key){
+	public String getXmlElement2(String input, String key){
 		Pattern p = Pattern.compile("<"+key+"[^>]*>([^<]*)</",Pattern.DOTALL);
 		Matcher m = p.matcher(input);
 		if(m.find())
@@ -1549,7 +2074,7 @@ public class NicoClient {
 		return null;
 	}
 
-	public static String getXmlAttribute(String input, String atribname){
+	public String getXmlAttribute(String input, String atribname){
 		Pattern p = Pattern.compile("<[^>]*"+atribname+"=\"([^\"]+)\"[^>]*>",Pattern.DOTALL);
 		Matcher m = p.matcher(input);
 		if(m.find())
@@ -1684,4 +2209,5 @@ public class NicoClient {
 	public String getThumbInfoData() {
 		return thumbInfoData;
 	}
+
 }
