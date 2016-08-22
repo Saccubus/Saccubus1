@@ -1734,7 +1734,7 @@ public class NicoClient {
 						debug("\nÅ°apiSessionUrl:\n "+apiSessionUrl);
 						player_id = getJsonValue(sessionApi, "player_id");
 						debug("\nÅ°player_id:\n "+player_id);
-						sessionXml = new Path(titleHtml.getPath()+"_session.xml");
+						sessionXml = Path.mkTemp(videoTag+"_session.xml");
 						sessionData = makeSessionXml(sessionXml, sessionApi);
 						log.println("\nsessionXML save to "+sessionXml.getPath());
 					}
@@ -1946,7 +1946,7 @@ public class NicoClient {
 		text = (text+json_end).substring(start, end);
 		text = text.replace("&quot;", S_QUOTE2);
 		// URLDecodeÇµÇ»Ç¢
-		Path file = new Path(titleHtml.getRelativePath()+"J.xml");
+		Path file = Path.mkTemp(videoTag+"watch_J.xml");
 		Path.unescapeStoreXml(file, text, comment);		//xml is property key:json val:JSON
 		log.println("Saved watchApiData to "+file.getPath());
 		return file;
