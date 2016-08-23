@@ -730,7 +730,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						dmcVideoFile = new File(name.replace(VideoID, dmcVideoID));
 					}
 				}
-				if(client!=null && !client.severIsDmc() && VideoFile.isFile() && VideoFile.canRead()){
+				if(client!=null && !client.serverIsDmc() && VideoFile.isFile() && VideoFile.canRead()){
 					sendtext("動画は既に存在します");
 					log.println("動画は既に存在します。ダウンロードをスキップします");
 					return true;
@@ -751,7 +751,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				sendtext("動画のダウンロード開始中");
 				boolean renameMp4 = isVideoFixFileName() && Setting.isChangeMp4Ext();
-				if(!client.severIsDmc()){
+				if(!client.serverIsDmc()){
 					// 通常サーバ
 					lowVideoFile.renameTo(VideoFile);
 					VideoFile = client.getVideo(VideoFile, Status, StopFlag, renameMp4);

@@ -17,7 +17,11 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -667,7 +671,7 @@ public class NicoClient {
 			}
 			economy  = VideoUrl.toLowerCase().contains("low");
 			log.println("ok.");
-			if(severIsDmc()){
+			if(serverIsDmc()){
 				log.println("Video:<" + apiSessionUrl + ">;");
 			}
 			log.println("Video:<" + VideoUrl + ">; Comment:<" + MsgUrl
@@ -691,6 +695,16 @@ public class NicoClient {
 	private String ContentType = null;
 	private String ContentDisp;
 	private int dmcVideoLength = -1;
+	private String sessionID;
+	private String video_src_ids;
+	private String audio_src_ids;
+	private String[] video_srcs;
+	private String[] audio_srcs;
+	private String contentUri;
+	private String expire_time;
+	private String responseToken;
+	private String signature;
+	private String r_created_time;
 
 	public int getDmcVideoLength(){
 		return dmcVideoLength;
@@ -785,15 +799,82 @@ public class NicoClient {
 		}
 		return null;
 	}
+
 	public File getVideoDmc(File video, JLabel status, ConvertStopFlag flag, boolean renameMp4) {
+		class HeartBeatDmc extends TimerTask {
+			private String dmcHBUrl = "";
+			private Path postXml = null;
+			public HeartBeatDmc(String url, Path xml){
+				dmcHBUrl = url;
+				postXml = xml;
+			}
+			@Override
+			public void run() {
+				OutputStream os = null;
+				PrintWriter pw = null;
+				Path response = Path.mkTemp(videoTag+"_HBresponce.xml");
+				// POST dmcHBUrl
+				try {
+					String url = dmcHBUrl;
+					debug("\n■heartbeat URL<" + url + ">\n");
+					//	con = urlConnect(url, "POST", null, true, true, "keep-alive", false);
+					HttpURLConnection con = (HttpURLConnection) (new URL(url)).openConnection(ConProxy);
+					con.setDoOutput(true);
+					HttpURLConnection.setFollowRedirects(false);
+					con.setInstanceFollowRedirects(false);
+					con.setRequestMethod("POST");
+					con.setRequestProperty("User-Agent", "Java/Saccubus-1.65.xx");
+					con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+					con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
+					con.setRequestProperty("Accept-Encoding", "gzip, deflate");
+				//	con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+					con.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
+					con.addRequestProperty("DNT", "1");
+					con.addRequestProperty("Connection", "keep-alive");
+					debug("\n■heartbeat Connect: POST,DoOutput,Connection keep-alive\n");
+					connect(con);
+					String postData = makeHeartBeatData(postXml);
+					debug("\n■heartbeat write:" + postData + "\n");
+					os = con.getOutputStream();
+					os.write(postData.getBytes());
+					os.flush();
+					os.close();
+					int code = con.getResponseCode();
+					String mes = con.getResponseMessage();
+					debug("\n■heartbeat Response:" + Integer.toString(code) + " " + mes + "\n");
+					if (code < HttpURLConnection.HTTP_OK || code >= HttpURLConnection.HTTP_BAD_REQUEST) { // must 200 <= <400
+						log.println("\nheartbeat Can't get HeartBeat response:" + mes);
+						con.disconnect();
+						return;
+					}
+					String responseData = readConnection(con);
+					// save all response
+					pw = new PrintWriter(response);
+					pw.write(responseData);
+					pw.flush();
+					pw.close();
+					debug("\n■heartbeat session response:\n"+responseData);
+					con.disconnect();
+				} catch (IOException e) {
+					log.printStackTrace(e);
+				}finally{
+					try{
+						if(os!=null) os.close();
+					} catch(IOException e){};
+					if(pw!=null) pw.close();
+				}
+			}
+		}
+
 		FileOutputStream fos = null;
 		OutputStream os = null;
 		HttpURLConnection con = null;
 		BufferedReader br = null;
 		PrintWriter pw = null;
 		InputStream is = null;
+		Timer timer = null;
 		try {
-			log.print("Getting video size...");
+			log.print("Getting video url...");
 			if (apiSessionUrl == null || apiSessionUrl.isEmpty()) {
 				log.println("Video url(DMC) is not detected.");
 				return null;
@@ -879,20 +960,42 @@ public class NicoClient {
 				return null;
 			}
 			String responseXmlData = readConnection(con);
-			// save all responce
+			// save all response
 			Path responseXml = Path.mkTemp(videoTag+"_DmcResponse.xml");
 			pw = new PrintWriter(responseXml);
 			pw.write(responseXmlData);
 			pw.flush();
 			pw.close();
 			debug("\n■session response:\n"+responseXmlData);
-			debug("Refer dmc responceXml <"+responseXml.getPath()+">");
-			String contentUri = getXmlElement(responseXmlData, "content_uri");
+			debug("Refer dmc responseXml <"+responseXml.getPath()+">");
+			contentUri = getXmlElement(responseXmlData, "content_uri");
 			if(contentUri==null){
 				String resStatus = getXmlElement(responseXmlData, "object");
 				log.println("\nDmcHttpResponse: "+resStatus);
 				return null;
 			}
+			index1 = contentUri.lastIndexOf('=');
+			content_auth_value = contentUri.substring(index1+1);
+
+			sessionID = getXmlElement(responseXmlData, "id");
+			video_src_ids = getXmlElement(responseXmlData, "video_src_ids")
+				.replace("<string>", "").replace("</string>", " ").trim();
+			video_srcs = video_src_ids.split("\\W+");
+			audio_src_ids = getXmlElement(responseXmlData, "audio_src_ids")
+				.replace("<string>", "").replace("</string>", " ").trim();
+			audio_srcs = audio_src_ids.split("\\W+");
+			int pos = responseXmlData.lastIndexOf("<token>");
+			r_created_time = getXmlElement(responseXmlData.substring(pos), "created_time");
+			expire_time = getXmlElement(responseXmlData, "expire_time");
+			responseToken = getXmlElement(responseXmlData, "token");
+			signature = getXmlElement(responseXmlData, "signature");
+			log.println(" ID:"+sessionID);
+			log.println(" video_src_ids:"+Arrays.asList(video_srcs));
+			log.println(" audio_src_ids:"+Arrays.asList(audio_srcs));
+			log.println(" created_time(response):"+r_created_time);
+			log.println(" expire_time:"+expire_time);
+			log.println(" responseToken:"+responseToken);
+			log.println(" signature:"+signature);
 		//	GET content_uri
 			if (video.canRead() && video.delete()) { // ファイルがすでに存在するなら削除する。
 				log.print("previous video("+video.getPath()+") deleted...");
@@ -938,6 +1041,14 @@ public class NicoClient {
 				}
 				video = new File(filepath);
 			}
+			// heartbeat thread を起動してバックグランド実行
+			String hbUrl = apiSessionUrl + "/" + sessionID
+				+ "?suppress_response_codes=true&_format=xml&_method=PUT";
+			Path xml = Path.mkTemp(videoTag+"_HeartBeatPostData.xml");
+			TimerTask task = new HeartBeatDmc(hbUrl, xml);
+			timer = new Timer("リトライ分間隔タイマー");
+			timer.schedule(task, 0, 30000);	// 30 seconds
+
 			os = new FileOutputStream(video);
 			int size = 0;
 			int read = 0;
@@ -950,6 +1061,7 @@ public class NicoClient {
 				Stopwatch.show();
 				if (flag.needStop()) {
 					log.println("\nStopped.");
+					timer.cancel();
 					is.close();
 					os.flush();
 					os.close();
@@ -961,6 +1073,7 @@ public class NicoClient {
 				}
 			}
 			debugsOut("\n■read+write statistics(bytes) ");
+			timer.cancel();
 			if(size < max_size){
 				log.println("\nDownload stopped less than max_size. "+size+"<"+max_size);
 				Stopwatch.show();
@@ -994,6 +1107,9 @@ public class NicoClient {
 			try {
 				if(is!=null) is.close();
 			}catch(IOException e){}
+			try {
+				if(timer!=null) timer.cancel();
+			}catch(Exception e){}
 		}
 		return null;
 	}
@@ -1501,7 +1617,11 @@ public class NicoClient {
 	private String player_id;
 	private String apiSessionUrl;
 	private String videoTag;
-	public boolean severIsDmc(){
+	private String recipe_id;
+	private String content_auth_value;
+	private String t_created_time;
+	private String service_user_id;
+	public boolean serverIsDmc(){
 		return "1".equals(isDmc);
 	}
 	public Path getThumbInfoFile(String tag){
@@ -1648,93 +1768,96 @@ public class NicoClient {
 	}
 	private String extractJson(Path xml, String encoding) {
 		//Json解析
-		Properties prop = new Properties();
-		try {
-			prop.loadFromXML(new FileInputStream(xml));
-		} catch (IOException e) {
-			log.printStackTrace(e);
-		}		//read JSON xml
 		if(watchApiJson==null){
+			Properties prop = new Properties();
+			try {
+				prop.loadFromXML(new FileInputStream(xml));
+			} catch (IOException e) {
+				log.printStackTrace(e);
+			}		//read JSON xml
 			watchApiJson = prop.getProperty("json", "0");
 			debug("\n■watchAPIData_JSON:\n "+watchApiJson);
-			if(flvInfo==null){
-				flvInfo = getJsonValue(watchApiJson, "flvInfo");
-				String s = flvInfo;
-				s = unquote(s);
-				StringBuffer sb = new StringBuffer();
+			// flvInfo
+			flvInfo = getJsonValue(watchApiJson, "flvInfo");
+			String s = flvInfo;
+			s = unquote(s);
+			StringBuffer sb = new StringBuffer();
+			try {
+				String dec = URLDecoder.decode(s, encoding);
+				String[] sa = dec.split("&");
+				for(String v: sa){
+					sb.append(URLDecoder.decode(v, encoding));
+					sb.append("\n ");
+				}
+			} catch (UnsupportedEncodingException e) {
+				log.printStackTrace(e);
+			}
+			flvInfoArrays = sb.substring(0).trim();
+			debug("\n■flvInfo:\n "+flvInfo);
+			debug("\n■flvInfos:\n [\n "+flvInfoArrays);
+			debug("\n■]\n");
+			// dmcInfo
+			isDmc = getJsonValue(watchApiJson, "isDmc");
+			log.println("\nisDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc());
+			if(serverIsDmc()){
+				dmcInfo = getJsonValue(watchApiJson, "dmcInfo");
+				s = unquote(dmcInfo);
+				sb = new StringBuffer();
 				try {
-					String dec = URLDecoder.decode(s, encoding);
-					String[] sa = dec.split("&");
-					for(String v: sa){
-						sb.append(URLDecoder.decode(v, encoding));
-						sb.append("\n ");
-					}
+					s = URLDecoder.decode(s, encoding);
 				} catch (UnsupportedEncodingException e) {
 					log.printStackTrace(e);
 				}
-				flvInfoArrays = sb.substring(0).trim();
-				debug("\n■flvInfo:\n "+flvInfo);
-				debug("\n■flvInfos:\n [\n "+flvInfoArrays);
-				debug("\n■]\n");
-			}
-			isDmc = getJsonValue(watchApiJson, "isDmc");
-			log.println("\nisDmc: "+isDmc);
-			if(isDmc!=null && isDmc.equals("1")){
-				if(dmcInfo==null){
-					dmcInfo = getJsonValue(watchApiJson, "dmcInfo");
-					String s = dmcInfo;
-					s = unquote(s);
-					StringBuffer sb = new StringBuffer();
-					try {
-						s = URLDecoder.decode(s, encoding);
-					} catch (UnsupportedEncodingException e) {
-						log.printStackTrace(e);
-					}
-					dmcInfoDec = s;
-					if(s.contains("&")){
-						String[] sa = s.split("&");
-						for(String v: sa){
-							try {
-								sb.append(URLDecoder.decode(v, encoding));
-								sb.append("\n ");
-							} catch (UnsupportedEncodingException e) {
-								log.printStackTrace(e);
-							}
+				dmcInfoDec = s;
+				if(s.contains("&")){
+					String[] sa = s.split("&");
+					for(String v: sa){
+						try {
+							sb.append(URLDecoder.decode(v, encoding));
+							sb.append("\n ");
+						} catch (UnsupportedEncodingException e) {
+							log.printStackTrace(e);
 						}
-						dmcInfoArrays = "[ "+sb.substring(0).trim()+ " ]";
 					}
-					else if (s.startsWith("{")){
-						dmcInfoArrays = prettyBufferPrint(s);
+					dmcInfoArrays = "[ "+sb.substring(0).trim()+ " ]";
+				}
+				else if (s.startsWith("{")){
+					dmcInfoArrays = prettyBufferPrint(s);
+				}
+				debug("\n■dmcInfo:\n "+dmcInfo);
+				debug("\n■dmcInfos:\n "+dmcInfoArrays);
+				if(dmcInfoDec!=null){
+					dmcToken = getJsonValue(dmcInfoDec, "token");
+					debug("\n■dmcToken:\n "+dmcToken);
+					s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
+					dmcTokenUnEscape = s;
+					log.print("\ndmcTokenUnEscape:\n "+dmcTokenUnEscape);
+					sessionApi = getJsonValue(dmcInfoDec, "session_api");
+					debug("\n■session_api:\n "+sessionApi);
+					recipe_id = getJsonValue(sessionApi, "recipe_id");
+					log.print("\nrecipe_id: "+recipe_id);
+					videos = getJsonValue(sessionApi, "videos");
+					log.print("\nvideos:\n "+videos);
+					audios = getJsonValue(sessionApi, "audios");
+					log.print("\naudios:\n "+audios);
+					apiUrls = getJsonValue(sessionApi, "api_urls").trim();
+					if(apiUrls.startsWith("[") && apiUrls.endsWith("]")){
+						apiUrls = apiUrls.substring(1, apiUrls.length()-1);
 					}
-					debug("\n■dmcInfo:\n "+dmcInfo);
-					debug("\n■dmcInfos:\n "+dmcInfoArrays);
-					if(dmcInfoDec!=null){
-						dmcToken = getJsonValue(dmcInfoDec, "token");
-						debug("\n■dmcToken:\n "+dmcToken);
-						s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
-						dmcTokenUnEscape = s;
-						log.print("\ndmcTokenUnEscape:\n "+dmcTokenUnEscape);
-						sessionApi = getJsonValue(dmcInfoDec, "session_api");
-						debug("\n■session_api:\n "+sessionApi);
-						videos = getJsonValue(sessionApi, "videos");
-						log.print("\nvideos:\n "+videos);
-						audios = getJsonValue(sessionApi, "audios");
-						log.print("\naudios:\n "+audios);
-						apiUrls = getJsonValue(sessionApi, "api_urls").trim();
-						if(apiUrls.startsWith("[") && apiUrls.endsWith("]")){
-							apiUrls = apiUrls.substring(1, apiUrls.length()-1);
-						}
-						if(!apiUrls.contains(",")){
-							apiSessionUrl = unquote(apiUrls);
-						}
-						debug("\n■apiUrls:\n "+apiUrls);
-						debug("\n■apiSessionUrl:\n "+apiSessionUrl);
-						player_id = getJsonValue(sessionApi, "player_id");
-						debug("\n■player_id:\n "+player_id);
-						sessionXml = Path.mkTemp(videoTag+"_session.xml");
-						sessionData = makeSessionXml(sessionXml, sessionApi);
-						log.println("\nsessionXML save to "+sessionXml.getPath());
+					t_created_time = getJsonValue(dmcTokenUnEscape, "created_time");
+					log.print("\ntoken created_time:\n "+t_created_time);
+					if(!apiUrls.contains(",")){
+						apiSessionUrl = unquote(apiUrls);
 					}
+					debug("\n■apiUrls:\n "+apiUrls);
+					debug("\n■apiSessionUrl:\n "+apiSessionUrl);
+					player_id = getJsonValue(sessionApi, "player_id");
+					debug("\n■player_id:\n "+player_id);
+					service_user_id = getJsonValue(sessionApi, "service_user_id");
+					debug("\n■service_user_id:\n "+service_user_id);
+					sessionXml = Path.mkTemp(videoTag+"_session.xml");
+					sessionData = makeSessionXml(sessionXml, sessionApi);
+					log.println("\nsessionXML save to "+sessionXml.getPath());
 				}
 			}
 		}
@@ -1753,7 +1876,7 @@ public class NicoClient {
 	private String makeSessionXml(Path xml, String json) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<session>\n");
-		sb.append("  "+makeNewJsonValue(json, "recipe_id"));
+		sb.append("  "+makeNewElement("recipe_id", recipe_id));
 		sb.append("  <content_id>out1</content_id>\n");
 		sb.append("  <content_type>movie</content_type>\n");
 		sb.append("  <protocol>\n");
@@ -1810,6 +1933,101 @@ public class NicoClient {
 		sb.append("  <client_info>\n");
 		sb.append("    "+makeNewJsonValue(json, "player_id"));
 		sb.append("  </client_info>\n");
+		sb.append("</session>");
+		String s = sb.substring(0);
+		try {
+			PrintWriter pw = new PrintWriter(xml);
+			pw.write(s);
+			pw.flush();
+			pw.close();
+		} catch (FileNotFoundException e) {
+			log.printStackTrace(e);
+		}
+		return s;
+	}
+
+	String makeHeartBeatData(Path xml) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<session>\n");
+		sb.append(makeNewElement("id", sessionID));
+		sb.append(makeNewElement("recipe_id", recipe_id));
+		sb.append("  <content_id>out1</content_id>\n");
+		sb.append("  <content_src_id_sets>\n");
+		sb.append("    <content_src_id_set>\n");
+		sb.append("      <content_src_ids>\n");
+		sb.append("        <src_id_to_mux>\n");
+		sb.append("          <video_src_ids>\n");
+		for(String v:video_srcs)
+			sb.append("            <string>"+v+"</string>\n");
+		sb.append("          </video_src_ids>\n");
+		sb.append("          <audio_src_ids>\n");
+		for(String a:audio_srcs)
+			sb.append("            <string>"+a+"</string>\n");
+		sb.append("          </audio_src_ids>\n");
+		sb.append("        </src_id_to_mux>\n");
+		sb.append("      </content_src_ids>\n");
+		sb.append("    </content_src_id_set>\n");
+		sb.append("  </content_src_id_sets>\n");
+		sb.append("  <content_type>movie</content_type>\n");
+		sb.append("  <timing_constraint>unlimited</timing_constraint>\n");
+		sb.append("  <keep_method>\n");
+		sb.append("    <heartbeat>\n");
+		sb.append("      <lifetime>60000</lifetime>\n");
+		sb.append("      <onetime_token/>");
+		sb.append("    </heartbeat>\n");
+		sb.append("  </keep_method>\n");
+		sb.append("  <protocol>\n");
+		sb.append("    <name>http</name>\n");
+		sb.append("    <parameters>\n");
+		sb.append("      <http_parameters>\n");
+		sb.append("        <method>GET</method>\n");
+		sb.append("        <parameters>\n");
+		sb.append("          <http_output_download_parameters>\n");
+		sb.append("            <file_extension>flv</file_extension>\n");
+		sb.append("            <transfer_preset/>\n");
+		sb.append("          </http_output_download_parameters>\n");
+		sb.append("        </parameters>\n");
+		sb.append("      </http_parameters>\n");
+		sb.append("    </parameters>\n");
+		sb.append("  </protocol>\n");
+		sb.append("  <play_seek_time>0</play_seek_time>\n");
+		sb.append("  <play_speed>1.0</play_speed>\n");
+		sb.append("  "+makeNewElement("content_uri", contentUri));
+		sb.append("  <session_operation_auth>\n");
+		sb.append("    <session_operation_auth_by_signature>\n");
+		sb.append("      "+makeNewElement("created_time", t_created_time));
+		sb.append("      "+makeNewElement("expire_time", expire_time));
+		sb.append("      "+makeNewElement("token", responseToken));
+		sb.append("      "+makeNewElement("signature",signature));
+		sb.append("    </session_operation_auth_by_signature>\n");
+		sb.append("  </session_operation_auth>\n");
+		sb.append("  <content_auth>\n");
+		sb.append("    <auth_type>ht2</auth_type>\n");
+		sb.append("    <max_content_count>10</max_content_count>\n");
+		sb.append("    <content_key_timeout>600000</content_key_timeout>\n");
+		sb.append("    <service_id>nicovideo</service_id>\n");
+		sb.append("    "+makeNewElement("service_user_id", service_user_id));
+		sb.append("    <content_auth_info>\n");
+		sb.append("      <method>query</method>\n");
+		sb.append("      <name>ht2_nicovideo</name>\n");
+		sb.append("      "+makeNewElement("value", content_auth_value));
+		sb.append("    </content_auth_info>\n");
+		sb.append("  </content_auth>\n");
+		sb.append("  <runtime_info>\n");
+		sb.append("    <node_id/>\n");
+		sb.append("    <execution_history/>\n");
+		sb.append("  </runtime_info>\n");
+		sb.append("  <client_info>\n");
+		sb.append("    "+makeNewElement("player_id", player_id));
+		sb.append("    <remote_ip/>\n");
+		sb.append("    <tracking_info/>\n");
+		sb.append("  </client_info>\n");
+		sb.append("  "+makeNewElement("created_time", r_created_time));
+		long modefied_time = (new Date()).getTime();
+		sb.append("  "+makeNewElement("created_time", ""+modefied_time));
+		sb.append("  <priority>0.8000000000000000444</priority>\n");
+		sb.append("  <content_route>0</content_route>\n");
+		sb.append("  <version/>\n");
 		sb.append("</session>");
 		String s = sb.substring(0);
 		try {
@@ -1962,8 +2180,7 @@ public class NicoClient {
 			r = getJsonValue0(input, key);
 			return unquote(r);
 		} catch(Exception e){
-			if(Debug)
-				Logger.MainLog.printStackTrace(e);
+			debug("\ngetJsonValue0: error\n");
 			r = getJsonValue1(input, key);
 			return unquote(r);
 		}
