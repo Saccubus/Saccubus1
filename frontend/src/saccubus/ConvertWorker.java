@@ -709,7 +709,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						result = "40";
 						return false;
 					}
-					if(client!=null && client.isEco()){
+					if (client == null){
+						sendtext("ログインしてないのに動画の保存になりました");
+						result = "41";
+						return false;
+					}
+					if(client.isEco()){
 						if(Setting.isDisableEco()){
 							sendtext("エコノミーモードなので中止します");
 							result = "42";
@@ -730,31 +735,26 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						dmcVideoFile = new File(name.replace(VideoID, dmcVideoID));
 					}
 				}
-				if(client!=null && !client.serverIsDmc() && VideoFile.isFile() && VideoFile.canRead()){
-					sendtext("動画は既に存在します");
-					log.println("動画は既に存在します。ダウンロードをスキップします");
-					return true;
-				}
-				if(lowVideoFile==null){
-					lowVideoFile = VideoFile;
-				}
-				if(client!=null && client.isEco() && lowVideoFile.isFile() && lowVideoFile.canRead()){
+				if(client.isEco() && lowVideoFile.isFile() && lowVideoFile.canRead()){
 					sendtext("エコノミーモードでエコ動画は既に存在します");
 					log.println("エコノミーモードで動画は既に存在します。ダウンロードをスキップします");
 					VideoFile = lowVideoFile;
 					return true;
 				}
-				if (client == null){
-					sendtext("ログインしてないのに動画の保存になりました");
-					result = "41";
-					return false;
-				}
 				sendtext("動画のダウンロード開始中");
 				boolean renameMp4 = isVideoFixFileName() && Setting.isChangeMp4Ext();
-				if(!client.serverIsDmc()){
+				log.println("serverIsDmc: "+client.serverIsDmc()
+					+", preferSmile: "+Setting.isSmilePreferable());
+				if(!client.serverIsDmc() || Setting.isSmilePreferable()){
 					// 通常サーバ
-					lowVideoFile.renameTo(VideoFile);
-					VideoFile = client.getVideo(VideoFile, Status, StopFlag, renameMp4);
+					if(VideoFile.isFile() && VideoFile.canRead()){
+						sendtext("動画は既に存在します");
+						log.println("動画は既に存在します。ダウンロードをスキップします");
+						return true;
+					}
+					if(lowVideoFile==null)
+						lowVideoFile = VideoFile;
+					VideoFile = client.getVideo(lowVideoFile, Status, StopFlag, renameMp4);
 					if (stopFlagReturn()) {
 						result = "43";
 						return false;
@@ -772,51 +772,63 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					setVideoTitleIfNull(VideoFile.getName());
 				}else{
 					// dmc
-					File smileVideoFile = new File(VideoFile.getPath().replace(VideoID, VideoID+"sml_"));
+					long dmc_size = 0;
+					long video_size = 0;
+					long size_high = client.getSizeHigh();
+				//	smileVideoFile = new File(VideoFile.getPath().replace(VideoID, VideoID+"sml_"));
 					if(dmcVideoFile.isFile() && dmcVideoFile.canRead()){
-						sendtext("高画質動画は既に存在します");
-						log.println("高画質(dmc)動画は既に存在します。");
+						log.println("dmc動画は既に存在します。");
+						sendtext("dmc動画は既に存在します");
+						dmc_size = dmcVideoFile.length();
 					} else {
 						dmcVideoFile = client.getVideoDmc(dmcVideoFile, Status, StopFlag, renameMp4);
 						if (stopFlagReturn()) {
 							result = "43";
 							return false;
 						}
-					}
-					if(dmcVideoFile!=null){
-						log.println("高画質サーバ(dmc)からのダウンロードに成功しました。");
-						sendtext("高画質動画のダウンロードに成功");
-						if(!VideoFile.exists() || !VideoFile.canRead()
-							|| dmcVideoFile.length() > VideoFile.length()){
-							String videoFilename = VideoFile.getPath();
-							String smileVideoFilename = smileVideoFile.getPath();
-							VideoFile.renameTo(new File(smileVideoFilename));
-							dmcVideoFile.renameTo(new File(videoFilename));
-							VideoFile = dmcVideoFile;
-							return true;
+						if(dmcVideoFile==null){
+							log.println("dmc動画サーバからのダウンロードに失敗しました。");
+							sendtext("dmc動画のダウンロードに失敗" + client.getExtraError());
+						}else{
+							videoLength = client.getDmcVideoLength();
+							dmc_size = dmcVideoFile.length();
 						}
-						log.println("変換にはサイズが大きい通常動画(smile)を使います");
-						sendtext("変換にはサイズが大きい通常動画を使います");
-						return true;
 					}
-					log.println("高画質サーバ(dmc)からのダウンロードに失敗しました。通常サーバ(smile)からダウンロードします");
-					sendtext("高画質動画のダウンロードに失敗" + client.getExtraError());
-					VideoFile = client.getVideo(VideoFile, Status, StopFlag, renameMp4);
-					if (stopFlagReturn()) {
-						result = "43";
-						return false;
+					if(VideoFile.exists() && VideoFile.canRead()){
+						video_size = VideoFile.length();
 					}
-					if (VideoFile == null) {
+					if(size_high > dmc_size && size_high > video_size){
+						// smile動画の方が高画質で未ダウンロードの場合
+						if(lowVideoFile==null)
+							lowVideoFile = VideoFile;
+						VideoFile = client.getVideo(lowVideoFile, Status, StopFlag, renameMp4);
+						if (stopFlagReturn()) {
+							result = "43";
+							return false;
+						}
+						if (VideoFile == null) {
+							log.println("smile動画サーバからのダウンロードに失敗しました。");
+							sendtext("smile動画のダウンロードに失敗" + client.getExtraError());
+						}else{
+							videoLength = client.getVideoLength();
+							video_size = VideoFile.length();
+						}
+					}
+					if(dmc_size==0 && video_size==0){
 						sendtext("動画のダウンロードに失敗" + client.getExtraError());
 						result = "44";
 						return false;
 					}
-					resultBuffer.append("video: "+VideoFile.getName()+"\n");
+					setVideoTitleIfNull(VideoFile.getName());
+					if(dmc_size > video_size){
+						log.println("変換にはサイズが大きい動画を使います");
+						sendtext("変換にはサイズが大きい動画を使います");
+						VideoFile = dmcVideoFile;
+					}
 					if (optionalThreadID == null || optionalThreadID.isEmpty()) {
 						optionalThreadID = client.getOptionalThreadID();
 					}
-					videoLength = client.getVideoLength();
-					setVideoTitleIfNull(VideoFile.getName());
+					resultBuffer.append("video: "+VideoFile.getName()+"\n");
 				}
 			} else {
 				if (isSaveConverted()) {
@@ -851,7 +863,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			sendtext("動画の保存を終了");
 		}catch(NullPointerException e){
-			sendtext("(´∀｀)＜ぬるぽ\nガッ\n");
 			log.printStackTrace(e);
 		}
 		return true;

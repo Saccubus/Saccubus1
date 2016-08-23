@@ -216,6 +216,7 @@ public class MainFrame extends JFrame {
 	JTextField commentSpeedTextField = new JTextField();
 	JCheckBox enableCA_CheckBox = new JCheckBox();
 	JCheckBox disableEcoCheckBox = new JCheckBox();
+	JCheckBox preferSmileCheckBox = new JCheckBox();
 	JCheckBox fontWidthFixCheckBox = new JCheckBox();
 	JTextField fontWidthRatioTextField = new JTextField();
 	JCheckBox useLineskipAsFontsizeCheckBox = new JCheckBox();
@@ -1297,8 +1298,11 @@ public class MainFrame extends JFrame {
 		updateInfoPanel.add(premiumColorCheckBox, grid14_x2_y6);
 
 		SavingVideoCheckBox.setText("動画をダウンロードする");
-		disableEcoCheckBox.setText("エコノミー時は中止");
+		disableEcoCheckBox.setText("エコノミー時中止");
 		disableEcoCheckBox.setForeground(Color.blue);
+		preferSmileCheckBox.setText("smile");
+		preferSmileCheckBox.setForeground(Color.blue);
+		preferSmileCheckBox.setToolTipText("dmcサーバにある動画でもsmileサーバから読みます。dmcサーバは遅いので");
 		ShowSavingVideoFileDialogButton.setText("参照");
 		ShowSavingVideoFileDialogButton
 				.addActionListener(new MainFrame_ShowSavingVideoDialogButton_actionAdapter(
@@ -2994,7 +2998,8 @@ public class MainFrame extends JFrame {
 			liveCommentModeCheckBox.isSelected(),
 			duration,
 			liveCommentVposShiftCheckBox.isSelected(),
-			vposshift
+			vposshift,
+			preferSmileCheckBox.isSelected()
 		);
 	}
 
@@ -3168,6 +3173,7 @@ public class MainFrame extends JFrame {
 		liveOperationDurationTextField.setText((setting.getLiveOperationDuration()));
 		liveCommentVposShiftCheckBox.setSelected(setting.isEnableCommentVposShift());
 		liveCommentVposShiftTextField.setText(setting.getCommentVposShiftString());
+		preferSmileCheckBox.setSelected(setting.isSmilePreferable());
 	}
 
 	/**
@@ -4281,9 +4287,14 @@ s	 * @return javax.swing.JPanel
 			GridBagConstraints grid_x1_y0_34_2 = new GridBagConstraints();
 			grid_x1_y0_34_2.insets = INSETS_0_5_0_5;
 			grid_x1_y0_34_2.gridy = 0;
-			grid_x1_y0_34_2.weightx = 1.0;
 			grid_x1_y0_34_2.fill = GridBagConstraints.HORIZONTAL;
 			grid_x1_y0_34_2.gridx = 1;
+			GridBagConstraints grid_x3_y0_34_3 = new GridBagConstraints();
+			grid_x3_y0_34_3.insets = INSETS_0_5_0_5;
+			grid_x3_y0_34_3.gridy = 0;
+			grid_x3_y0_34_3.weightx = 1.0;
+			grid_x3_y0_34_3.fill = GridBagConstraints.HORIZONTAL;
+			grid_x3_y0_34_3.gridx = 3;
 			GridBagConstraints grid_x2_y3 = new GridBagConstraints(2,
 					3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 0);
@@ -4302,6 +4313,7 @@ s	 * @return javax.swing.JPanel
 				//	new Font("MS UI Gothic", Font.PLAIN, 12), Color.black));
 			VideoSaveInfoPanel.add(SavingVideoCheckBox, grid_x0_y0_34);
 			VideoSaveInfoPanel.add(disableEcoCheckBox, grid_x1_y0_34_2);
+			VideoSaveInfoPanel.add(preferSmileCheckBox, grid_x3_y0_34_3);
 			VideoSaveInfoPanel.add(getDelVideoCheckBox(), grid_x0_y1_15);
 			VideoSaveInfoPanel.add(Video_SaveFolderRadioButton,
 					grid_x0_y2_27);

@@ -193,6 +193,7 @@ public class ConvertingSetting {
 	private String liveOperationDuration;
 	private boolean enableCommentVposShift;
 	private String commentVposShiftString;
+	private boolean smilePreferable;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -420,7 +421,8 @@ public class ConvertingSetting {
 			boolean force_live_comment,
 			String live_operation_duration,
 			boolean enable_comment_vpos_shift,
-			String vpos_shift_sec
+			String vpos_shift_sec,
+			boolean smile_preferable
 		)
 	{
 		this(	mailaddress,
@@ -563,6 +565,7 @@ public class ConvertingSetting {
 		liveOperationDuration = live_operation_duration;
 		enableCommentVposShift = enable_comment_vpos_shift;
 		commentVposShiftString = vpos_shift_sec;
+		smilePreferable = smile_preferable;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -959,6 +962,9 @@ public class ConvertingSetting {
 	public String getCommentVposShiftString(){
 		return commentVposShiftString;
 	}
+	public boolean isSmilePreferable(){
+		return smilePreferable;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1117,6 +1123,7 @@ public class ConvertingSetting {
 	static final String PROP_LIVE_OPERATION_DURATION = "LiveOperationDuration";
 	static final String PROP_ENABLE_COMMENT_VPOS_SHIFT = "EnableCommentVposShift";
 	static final String PROP_COMMENT_VPOS_SHIFT = "CommentVposShiftDuration";
+	static final String PROP_PREFER_SMILE = "PreferSmileServer";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1332,6 +1339,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_FORCE_LIVE_COMMENT, Boolean.toString(setting.isForcedLiveComment()));
 		prop.setProperty(PROP_ENABLE_COMMENT_VPOS_SHIFT, Boolean.toString(setting.isEnableCommentVposShift()));
 		prop.setProperty(PROP_COMMENT_VPOS_SHIFT, setting.getCommentVposShiftString());
+		prop.setProperty(PROP_PREFER_SMILE, Boolean.toString(setting.isSmilePreferable()));
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1599,7 +1607,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_FORCE_LIVE_COMMENT, "false")),
 			prop.getProperty(PROP_LIVE_OPERATION_DURATION,""),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_COMMENT_VPOS_SHIFT,"false")),
-			prop.getProperty(PROP_COMMENT_VPOS_SHIFT, "0.0")
+			prop.getProperty(PROP_COMMENT_VPOS_SHIFT, "0.0"),
+			Boolean.parseBoolean(prop.getProperty(PROP_PREFER_SMILE, "false"))
 		);
 	}
 

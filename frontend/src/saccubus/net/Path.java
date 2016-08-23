@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Properties;
@@ -408,6 +407,7 @@ public class Path extends File{
 	 * @param destfile
 	 * @return
 	 */
+	/*
 	public static boolean fileCopy(File srcfile, File destfile) {
 		FileChannel srcch = null, destch = null;
 		FileInputStream fis = null;
@@ -430,15 +430,17 @@ public class Path extends File{
 			if (fis != null) try { fis.close(); } catch(Exception e3) {e3.printStackTrace();};
 		}
 	}
-	/*
-	public static void fileCopy(File srcfile, File destfile) {
+	*/
+	public static boolean fileCopy(File srcfile, File destfile) {
 		try {
 			Files.copy(srcfile.toPath(), destfile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
-	 */
+
 	/**
 	 * unescape Unicode-Escape like "\u0061"
 	 */
