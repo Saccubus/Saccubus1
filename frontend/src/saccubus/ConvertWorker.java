@@ -797,6 +797,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							//dmc_size = 0;
 							String ecode = client.getExtraError();
 							if(ecode.contains("97")){
+								dmc_size = limits[1];
 								log.println(ecode);
 								sendtext(ecode);
 							}else{
