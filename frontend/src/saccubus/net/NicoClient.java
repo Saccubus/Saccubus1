@@ -816,7 +816,8 @@ public class NicoClient {
 		return null;
 	}
 
-	public File getVideoDmc(File video, JLabel status, ConvertStopFlag flag, boolean renameMp4) {
+	public File getVideoDmc(File video, JLabel status, ConvertStopFlag flag,
+			boolean renameMp4, long[] limits) {
 
 		class HeartBeatDmc extends TimerTask {
 			private String dmcHBUrl1 = "";
@@ -905,6 +906,7 @@ public class NicoClient {
 		PrintWriter pw = null;
 		InputStream is = null;
 		Timer timer = null;
+		long min_size = limits[0];
 		try {
 			log.print("Getting video url...");
 			if (apiSessionUrl == null || apiSessionUrl.isEmpty()) {
@@ -1072,8 +1074,16 @@ public class NicoClient {
 			}
 			ContentDisp = con.getHeaderField("Content-Disposition");
 			int max_size = con.getContentLength();	// -1 when invalid
-			if(max_size > 0 && sizeDmc <= 0)
+			if(max_size > 0 && sizeDmc <= 0){
+				if(max_size < min_size){
+					setExtraError("97 最小限度サイズより小さいのでダウンロード中止");
+					limits[1] = max_size;
+					con.disconnect();
+					return null;
+				}
+				// 続行
 				sizeDmc = max_size;
+			}
 			log.print("size="+(max_size/1000)+"Kbytes");
 			log.println(", type=" + ContentType + ", " + ContentDisp);
 			log.print("Downloading dmc video...");
@@ -1117,6 +1127,9 @@ public class NicoClient {
 				os.flush();
 				os.close();
 				con.disconnect();
+				if (video.delete()){
+					log.println("video fragment deleted.");
+				}
 				return null;
 			}
 			log.println("ok.");
@@ -1775,10 +1788,16 @@ public class NicoClient {
 				thumbInfoData = s;
 			}
 			if(thumbInfoData!=null){
-				String size_high = getXmlElement(thumbInfoData, "size_high");
 				try {
+					String size_high = null;
+					if(isEco())
+						size_high =  getXmlElement(thumbInfoData, "size_low");
+					else
+						size_high = getXmlElement(thumbInfoData, "size_high");
 					sizeHigh = (int)Integer.valueOf(size_high);
 				} catch(NumberFormatException e){
+					sizeHigh = 0;
+				} catch(RuntimeException e){
 					sizeHigh = 0;
 				}
 			}
