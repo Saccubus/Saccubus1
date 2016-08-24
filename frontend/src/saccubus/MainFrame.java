@@ -217,6 +217,7 @@ public class MainFrame extends JFrame {
 	JCheckBox enableCA_CheckBox = new JCheckBox();
 	JCheckBox disableEcoCheckBox = new JCheckBox();
 	JCheckBox preferSmileCheckBox = new JCheckBox();
+	JCheckBox foceDmcDlCheckBox = new JCheckBox();
 	JCheckBox fontWidthFixCheckBox = new JCheckBox();
 	JTextField fontWidthRatioTextField = new JTextField();
 	JCheckBox useLineskipAsFontsizeCheckBox = new JCheckBox();
@@ -1297,12 +1298,15 @@ public class MainFrame extends JFrame {
 		grid14_x2_y6.insets = INSETS_0_5_0_5;
 		updateInfoPanel.add(premiumColorCheckBox, grid14_x2_y6);
 
-		SavingVideoCheckBox.setText("動画をダウンロードする");
-		disableEcoCheckBox.setText("エコノミー時中止");
+		SavingVideoCheckBox.setText("動画ダウンロード");
+		disableEcoCheckBox.setText("eco時中止");
 		disableEcoCheckBox.setForeground(Color.blue);
 		preferSmileCheckBox.setText("smile");
 		preferSmileCheckBox.setForeground(Color.blue);
-		preferSmileCheckBox.setToolTipText("dmcサーバにある動画でもsmileサーバから読みます。dmcサーバは遅いので");
+		preferSmileCheckBox.setToolTipText("dmcサーバに有ってもsmileサーバから読みます。");
+		foceDmcDlCheckBox.setText("dmc");
+		foceDmcDlCheckBox.setForeground(Color.blue);
+		foceDmcDlCheckBox.setToolTipText("dmcサーバ強制ダウンロード。変換に使うのはサイズの大きい方。");
 		ShowSavingVideoFileDialogButton.setText("参照");
 		ShowSavingVideoFileDialogButton
 				.addActionListener(new MainFrame_ShowSavingVideoDialogButton_actionAdapter(
@@ -2999,7 +3003,8 @@ public class MainFrame extends JFrame {
 			duration,
 			liveCommentVposShiftCheckBox.isSelected(),
 			vposshift,
-			preferSmileCheckBox.isSelected()
+			preferSmileCheckBox.isSelected(),
+			foceDmcDlCheckBox.isSelected()
 		);
 	}
 
@@ -3174,6 +3179,7 @@ public class MainFrame extends JFrame {
 		liveCommentVposShiftCheckBox.setSelected(setting.isEnableCommentVposShift());
 		liveCommentVposShiftTextField.setText(setting.getCommentVposShiftString());
 		preferSmileCheckBox.setSelected(setting.isSmilePreferable());
+		foceDmcDlCheckBox.setSelected(setting.doesDmcforceDl());
 	}
 
 	/**
@@ -4252,28 +4258,29 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y1_15.gridy = 1;
 			grid_x0_y1_15.weightx = 1.0;
 			grid_x0_y1_15.insets = INSETS_0_25_0_5;
-			GridBagConstraints grid_x2_y5 = new GridBagConstraints(2,
+			GridBagConstraints grid_x2_y5 = new GridBagConstraints(3,
 					5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, INSETS_0_0_5_0, 0, 0);
 			GridBagConstraints grid_x3_y5_32 = new GridBagConstraints(3,
 					4, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH,
 					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
-			grid_x3_y5_32.gridx = 3;
+			grid_x3_y5_32.gridx = 4;
+			grid_x3_y5_32.gridwidth = 2;
 			grid_x3_y5_32.insets = INSETS_0_0_5_5;
 			grid_x3_y5_32.gridy = 5;
 			GridBagConstraints grid_x0_y5_30 = new GridBagConstraints(0,
-					5, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+					5, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 					GridBagConstraints.BOTH, new Insets(0, 50, 5, 5), 0, 0);
 			GridBagConstraints grid_x0_y4_29 = new GridBagConstraints(0,
-					3, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+					3, 5, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 					GridBagConstraints.BOTH, INSETS_0_25_0_5, 0, 0);
 			grid_x0_y4_29.gridx = 0;
 			grid_x0_y4_29.gridy = 4;
 			GridBagConstraints grid_x0_y3_28 = new GridBagConstraints(0,
-					3, 2, 1, 1.0, 0.0, GridBagConstraints.WEST,
+					3, 3, 1, 1.0, 0.0, GridBagConstraints.WEST,
 					GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
 			GridBagConstraints grid_x0_y2_27 = new GridBagConstraints(0,
-					1, 4, 1, 1.0, 0.0, GridBagConstraints.WEST,
+					1, 5, 1, 1.0, 0.0, GridBagConstraints.WEST,
 					GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0,
 					0);
 			grid_x0_y2_27.gridx = 0;
@@ -4281,7 +4288,6 @@ s	 * @return javax.swing.JPanel
 			GridBagConstraints grid_x0_y0_34 = new GridBagConstraints();
 			grid_x0_y0_34.insets = INSETS_0_5_0_5;
 			grid_x0_y0_34.gridy = 0;
-			grid_x0_y0_34.weightx = 0.0;
 			grid_x0_y0_34.fill = GridBagConstraints.HORIZONTAL;
 			grid_x0_y0_34.gridx = 0;
 			GridBagConstraints grid_x1_y0_34_2 = new GridBagConstraints();
@@ -4292,17 +4298,21 @@ s	 * @return javax.swing.JPanel
 			GridBagConstraints grid_x3_y0_34_3 = new GridBagConstraints();
 			grid_x3_y0_34_3.insets = INSETS_0_5_0_5;
 			grid_x3_y0_34_3.gridy = 0;
-			grid_x3_y0_34_3.weightx = 1.0;
 			grid_x3_y0_34_3.fill = GridBagConstraints.HORIZONTAL;
-			grid_x3_y0_34_3.gridx = 3;
-			GridBagConstraints grid_x2_y3 = new GridBagConstraints(2,
+			grid_x3_y0_34_3.gridx = 2;
+			GridBagConstraints grid_x4_y0_34_4 = new GridBagConstraints();
+			grid_x4_y0_34_4.insets = INSETS_0_5_0_5;
+			grid_x4_y0_34_4.gridy = 0;
+			grid_x4_y0_34_4.fill = GridBagConstraints.HORIZONTAL;
+			grid_x4_y0_34_4.gridx = 4;
+			GridBagConstraints grid_x2_y3 = new GridBagConstraints(3,
 					3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 0);
 			GridBagConstraints grid_x3_y3_31 = new GridBagConstraints(3,
 					2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
 			grid_x3_y3_31.gridy = 3;
-			grid_x3_y3_31.gridx = 3;
+			grid_x3_y3_31.gridx = 4;
 			VideoSaveInfoPanel = new JPanel();
 			VideoSaveInfoPanel.setLayout(new GridBagLayout());
 			VideoSaveInfoPanel.setBorder(BorderFactory.createTitledBorder(
@@ -4314,6 +4324,7 @@ s	 * @return javax.swing.JPanel
 			VideoSaveInfoPanel.add(SavingVideoCheckBox, grid_x0_y0_34);
 			VideoSaveInfoPanel.add(disableEcoCheckBox, grid_x1_y0_34_2);
 			VideoSaveInfoPanel.add(preferSmileCheckBox, grid_x3_y0_34_3);
+			VideoSaveInfoPanel.add(foceDmcDlCheckBox, grid_x4_y0_34_4);
 			VideoSaveInfoPanel.add(getDelVideoCheckBox(), grid_x0_y1_15);
 			VideoSaveInfoPanel.add(Video_SaveFolderRadioButton,
 					grid_x0_y2_27);

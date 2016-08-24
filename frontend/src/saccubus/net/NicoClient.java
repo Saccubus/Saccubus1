@@ -819,7 +819,7 @@ public class NicoClient {
 	public File getVideoDmc(File video, JLabel status, ConvertStopFlag flag,
 			boolean renameMp4, long[] limits) {
 
-		class HeartBeatDmc extends TimerTask {
+		class HeartBeatDmc extends TimerTask implements Runnable {
 			private String dmcHBUrl1 = "";
 			private String dmcHBUrl2 = "";
 			private Path postXml = null;
@@ -1008,7 +1008,7 @@ public class NicoClient {
 			Path xml = Path.mkTemp(videoTag+"_HeartBeatPostData.xml");
 			TimerTask task = new HeartBeatDmc(hbUrl1, hbUrl2, xml);
 			timer = new Timer("リトライ分間隔タイマー");
-			timer.schedule(task, 10, 10000);	// 10 seconds
+			timer.schedule(task, 10000, 10000);	// 10 seconds
 
 			Path responseXml = Path.mkTemp(videoTag+"_DmcResponse.xml");
 			pw = new PrintWriter(responseXml);
@@ -1095,6 +1095,7 @@ public class NicoClient {
 				}
 				video = new File(filepath);
 			}
+
 			os = new FileOutputStream(video);
 			int size = 0;
 			int read = 0;

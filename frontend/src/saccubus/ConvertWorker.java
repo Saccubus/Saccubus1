@@ -745,7 +745,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				boolean renameMp4 = isVideoFixFileName() && Setting.isChangeMp4Ext();
 				log.println("serverIsDmc: "+client.serverIsDmc()
 					+", preferSmile: "+Setting.isSmilePreferable());
-				if(!client.serverIsDmc() || Setting.isSmilePreferable()){
+				if(!client.serverIsDmc() || Setting.isSmilePreferable() && !Setting.doesDmcforceDl()){
 					// 通常サーバ
 					if(VideoFile.isFile() && VideoFile.canRead()){
 						sendtext("動画は既に存在します");
@@ -777,6 +777,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					long size_high = client.getSizeHigh();
 					log.println("smile size: "+size_high);
 					if(VideoFile.isFile() && VideoFile.canRead()){
+						log.println("動画は既に存在します。");
 						sendtext("動画は既に存在します");
 						video_size = VideoFile.length();
 						log.println("video size: "+video_size);
@@ -788,6 +789,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					} else {
 						long min_size = Math.max(video_size, size_high);
 						long[] limits = {min_size, 0};	// limits[1] is return value
+						if(Setting.doesDmcforceDl())
+							limits[0] = 0;	//途中で中止しない
 						dmcVideoFile = client.getVideoDmc(dmcVideoFile, Status, StopFlag, renameMp4, limits);
 						if (stopFlagReturn()) {
 							result = "43";
@@ -810,8 +813,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 					}
 					log.println("dmc size: "+dmc_size);
-					if(size_high > dmc_size && size_high > video_size){
-						// smile動画の方が高画質で未ダウンロードの場合
+					if (size_high > video_size &&
+						(size_high > dmc_size || Setting.isSmilePreferable())){
+						// smile動画をダウンロード
 						if(lowVideoFile==null)
 							lowVideoFile = VideoFile;
 						VideoFile = client.getVideo(lowVideoFile, Status, StopFlag, renameMp4);

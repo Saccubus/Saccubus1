@@ -194,6 +194,7 @@ public class ConvertingSetting {
 	private boolean enableCommentVposShift;
 	private String commentVposShiftString;
 	private boolean smilePreferable;
+	private boolean forceDmcDl;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -422,7 +423,8 @@ public class ConvertingSetting {
 			String live_operation_duration,
 			boolean enable_comment_vpos_shift,
 			String vpos_shift_sec,
-			boolean smile_preferable
+			boolean smile_preferable,
+			boolean force_dmc_dl
 		)
 	{
 		this(	mailaddress,
@@ -566,6 +568,7 @@ public class ConvertingSetting {
 		enableCommentVposShift = enable_comment_vpos_shift;
 		commentVposShiftString = vpos_shift_sec;
 		smilePreferable = smile_preferable;
+		forceDmcDl = force_dmc_dl;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -965,6 +968,9 @@ public class ConvertingSetting {
 	public boolean isSmilePreferable(){
 		return smilePreferable;
 	}
+	public boolean doesDmcforceDl(){
+		return forceDmcDl;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1124,6 +1130,7 @@ public class ConvertingSetting {
 	static final String PROP_ENABLE_COMMENT_VPOS_SHIFT = "EnableCommentVposShift";
 	static final String PROP_COMMENT_VPOS_SHIFT = "CommentVposShiftDuration";
 	static final String PROP_PREFER_SMILE = "PreferSmileServer";
+	static final String PROP_FORCE_DMC_DL = "ForceDmcDownload";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1340,6 +1347,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ENABLE_COMMENT_VPOS_SHIFT, Boolean.toString(setting.isEnableCommentVposShift()));
 		prop.setProperty(PROP_COMMENT_VPOS_SHIFT, setting.getCommentVposShiftString());
 		prop.setProperty(PROP_PREFER_SMILE, Boolean.toString(setting.isSmilePreferable()));
+		prop.setProperty(PROP_FORCE_DMC_DL, Boolean.toString(setting.doesDmcforceDl()));
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1608,7 +1616,8 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_LIVE_OPERATION_DURATION,""),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_COMMENT_VPOS_SHIFT,"false")),
 			prop.getProperty(PROP_COMMENT_VPOS_SHIFT, "0.0"),
-			Boolean.parseBoolean(prop.getProperty(PROP_PREFER_SMILE, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_PREFER_SMILE, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_FORCE_DMC_DL, "false"))
 		);
 	}
 
