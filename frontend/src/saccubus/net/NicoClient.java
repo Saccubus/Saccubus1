@@ -215,7 +215,7 @@ public class NicoClient {
 			con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
 		//	con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 			con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
-			con.setRequestProperty("Accept-Encoding", "deflate");
+		//	con.setRequestProperty("Accept-Encoding", "deflate");
 		//	/* gzip deflateを受付可能にしたらコメント取得が早くなる？ 実際にdeflateで来るかは確かめてない */
 			con.setRequestProperty("DNT", "1");
 		//	con.setRequestProperty("Pragma", "no-cache");
@@ -850,7 +850,7 @@ public class NicoClient {
 					con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
 					con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 					con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
-					con.setRequestProperty("Accept-Encoding", "deflate");
+				//	con.setRequestProperty("Accept-Encoding", "deflate");
 				//	con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 					con.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
 					con.addRequestProperty("DNT", "1");
@@ -973,7 +973,7 @@ public class NicoClient {
 			con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
 			con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 			con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
-			con.setRequestProperty("Accept-Encoding", "deflate");
+		//	con.setRequestProperty("Accept-Encoding", "deflate");
 		//	con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			con.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
 			con.addRequestProperty("DNT", "1");
