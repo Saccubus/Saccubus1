@@ -2,53 +2,26 @@
 変更内容
 
 
-1.65.7.3a(2016/07/10)
-・タイトル解析失敗修正　タイトル末尾削除
-・localでのswf変換失敗修正
-・ログviewのフリーズ修正
-
-HW支援についてwikiに追加しました。
-https://github.com/Saccubus/Saccubus1.x/wiki/ 補足 3 FFmpegのHW支援機能
-
-HW支援なので使えるHWの条件がそれぞれあります
-・DXVA2　Windows DirectXのHWアクセラレーション
-　オプション未実施
-　（入力オプションに -hwaccel dxva2 -threads 1 追加して使えます）
-　出力は-threads 0でも可
-
-・NVENC　NVIDIA のグラフィックスのHW支援
-　h264_nvenc の付いているオプションで使用できます。
-　（出力オプションの -vcodec libx264 -pix_fmt yuv420p を
-　　-vcodec h264_nvenc -pix_fmt nv12 に変更）
-　SDK6.0です。使用可能なNVIDIA グラフィックボードは
-　https://developer.nvidia.com/nvidia-video-codec-sdk#gpulist
-　を見て下さい。
-　●グラフィックボードの種類により並列エンコード数に制限がありそれ以上の実行を行うと
-　●ffmpegがエラー終了します。Desktop&Mobile-GeForce (Kepler & Maxwell)は 2まで
-　●さきゅばすの同時変換数を制限値”2”以下にして下さい。
-
-・Intel QSV　Intel CPU内蔵GPUのHW支援
-　h264_qsvの付いているオプションで使用できます。
-　（出力オプションの -vcodec libx264 -pix_fmt yuv420p を
-　　-vcodec h264_qsv -look_ahead 0 に変更）
-　* Intel CPUで使用可能なものは以下でCPUの型番を検索して
-　　クイックシンクビデオ(Quick Sync Video)の項目を確認して下さい。
-　　http://ark.intel.com/ja#@Processors
-　　「グラフィックスの仕様
-　　インテル クイック・シンク・ビデオ」
-　　の右側にに「はい」が書いてあれば使用可能です。（Windows XPを除く）
-　* Windowsデバイスマネージャで「ディスプレイアダプター」の項目に
-　　「Intel(R)」のグラフィックスチップが表示されているか確認して下さい。
-　　もし表示がない場合はPCマザーボードのBIOSで「チップセット」項目の中の
-　　「iGPU MultiMonitor」を有効にして下さい。
-　　BIOSの変更は自己責任でお願いします。
+1.65.8.5(2016/08/25)
+・dmcサーバ動画対応
+　　dmcサーバ動画とsmileサーバ動画のファイルザイズの大きい方をダウンロードし変換する。
+　　[保存設定][動画・コメント]タブsmileまたはdmcチェックボックスに
+　　チェックが入っているとサイズが小さくてもダウンロードする。
+　　（強制ダウンロード指定）
+　　ダウンロードが成功した動画の中でファイルサイズの大きい方を変換に使う。
+　　自動で解像度やビットレートの比較は行わないので厳密に画質の良い方が欲しいなら
+　　両方を強制ダウンロードした後でローカル変換で別途変換する必要がある。
+　　（コメントが多い場合など画質影響度は変換エンコード設定が大きく
+　　　ファイルサイズ比較で問題ない場合が多いため)
 
 使い方はsaccubusフォルダの中の
 最初に必ず読んで.txt
+doc\readmeNew.txt
 をお読み下さい。
 
-docフォルダの中には更に詳しい説明
-readmeNew.txt
-や他の文書が有ります。
+docフォルダの中には更に他の文書が有ります。
 
 また起動画面の [ヘルプ]メニューからもお読み頂けます。
+
+VirunTotal 検出率: 0 / 54
+https://www.virustotal.com/ja/file/e8bf7930b80a4bc3fdd612f076f6937cc701753f47ae860c7771a35556c1ce52/analysis/1472077792/

@@ -23,6 +23,33 @@ readmeNew.txt
 　起動までの準備について
 　起動
 　拡張機能（変更点）説明
+　　dmcサーバ動画対応
+　　ログインチェックボタン追加
+　　メニュー項目にLatestRelease更新追加
+　　SaveThumbinfoMetadata=trueの時thumbInfoデータをメタデータ<description>として埋め込む(暫定)
+　　タイトル解析失敗修正　タイトル末尾削除
+　　localでのswf変換失敗修正
+　　ログviewのフリーズ修正
+　　実行中にログview表示オン
+　　ffmpeg80914d(nvenc、intel-qsv対応)とh264_nvenc,h264_qsv用オプション
+　　PCオプションの入力に -analyzeduration 10M追加
+　　Analize Error時 fps sizeのデフォルト値を適用
+　　ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)
+　　生放送運営コメントの元の@秒数表示を優先する
+　　運営コメ簡易変更の表示時間を変更(issue #17)
+　　動画情報保存バグ修正(issue #21)
+　　運営コメ簡易変換バグ修正
+　　redirect location から thread番号取得
+　　ログ出力を動画別に切り分け(issue #19)
+　　再生リスト、エラーリスト、bat関係修正
+　　生放送コメントを遅くする(issue #15) vposを +1
+　　デバッグ時以外デフォルトでコメントダブり削除
+　　コミュ専用動画チャンネル動画情報修正
+　　コミュニティ動画でも動画情報のxmlを取得できるように(issue #14)
+　　ヘルプのURLリンク先をGithubに変更
+　　ローカル変換の方法D追加
+　　運営コメント簡易変更でコメントが」を含むときに途中で切れるバグ修正
+　　ffmpeg79635(内蔵AAC、UtVideo15.5.0対応)
 　　生放送アンケート対応(仮) (issue #5) 
 　　vhook blue2 コマンドの色修正(動画のみ) issue #12
 　　キーワードをURLエンコードする(issue #11)
@@ -159,10 +186,12 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　さきゅばすの使い方などに関しては、
 　上の[メニュー][readmeNew]から参照できます。また
 　公式サイト　http://saccubus.osdn.jp/
-　レポジトリ　https://github.com/Saccubus　
+　レポジトリ　https://github.com/Saccubus/Saccubus1.x　
+　Wiki　https://github.com/Saccubus/Saccubus1.x/wiki
 　同梱のrewdmeNew.txt、さきゅばす1.50のreadme150.txt
 　さきゅばす1.22rのreadme.txt、1.22r3のreadme+.txtをご覧下さい。
-　不具合報告等は2chさきゅばすスレでお願いします。
+　不具合報告等はissues(https://github.com/Saccubus/Saccubus1.x/issues)
+　または2chさきゅばすスレでお願いします。
 　2ch【ニコニコ】コメント付動画作成ツール さきゅばす5
 　　http://potato.2ch.net/test/read.cgi/software/1449586179/
 　(http://anago.2ch.net/test/read.cgi/software/1346798166/　前スレ)
@@ -234,11 +263,24 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・dmcサーバ動画対応
+　・ログインチェックボタン追加
+　・メニュー項目にLatestRelease更新追加
+　・SaveThumbinfoMetadata=trueの時thumbInfoデータをメタデータ<description>として埋め込む(暫定)
+　・タイトル解析失敗修正　タイトル末尾削除
+　・localでのswf変換失敗修正
+　・ログviewのフリーズ修正
 　・実行中にログview表示オン
 　・ffmpeg80914d(nvenc、intel-qsv対応)とh264_nvenc,h264_qsv用オプション
 　・PCオプションの入力に -analyzeduration 10M追加
+　・Analize Error時 fps sizeのデフォルト値を適用
 　・ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)
 　・生放送運営コメントの元の@秒数表示を優先する
+　・運営コメ簡易変更の表示時間を変更(issue #17)
+　・動画情報保存バグ修正(issue #21)
+　・運営コメ簡易変換バグ修正
+　・redirect location から thread番号取得
+　・ログ出力を動画別に切り分け(issue #19)
 　・再生リスト、エラーリスト、bat関係修正
 　・生放送コメントを遅くする(issue #15) vposを +1
 　・デバッグ時以外デフォルトでコメントダブり削除
@@ -247,6 +289,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　・ヘルプのURLリンク先をGithubに変更
 　・ローカル変換の方法D追加
 　・運営コメント簡易変更でコメントが」を含むときに途中で切れるバグ修正
+　・ffmpeg79635(内蔵AAC、UtVideo15.5.0対応)
 　・生放送アンケート対応(仮) (issue #5) 
 　・vhook blue2 コマンドの色修正(動画のみ) issue #12
 　・キーワードをURLエンコードする(issue #11)
@@ -386,6 +429,41 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 □拡張機能（変更点）説明
+●dmcサーバ動画対応
+　　dmcサーバ動画とsmileサーバ動画のファイルザイズの大きい方をダウンロードし変換する。
+　　[保存設定][動画・コメント]タブsmileまたはdmcチェックボックスに
+　　チェックが入っているとサイズが小さくてもダウンロードする。
+　　（強制ダウンロード指定）
+　　ダウンロードが成功した動画の中でファイルサイズの大きい方を変換に使う。
+　　自動で解像度やビットレートの比較は行わないので厳密に画質の良い方が欲しいなら
+　　両方を強制ダウンロードした後でローカル変換で別途変換する必要がある。
+　　（コメントが多い場合など画質影響度は変換エンコード設定が大きく
+　　　ファイルサイズ比較で問題ない場合が多いため)
+　dmcサーバエンコードについては下記参照
+　　ニコニコインフォ　http://blog.nicovideo.jp/niconews/ni062609.html
+　　ニコニコ動画まとめwiki　http://nicowiki.com/encode.html#d6da8a29
+
+●ログインチェックボタン追加
+
+●メニュー項目にLatestRelease更新追加
+
+●thumbInfoデータ埋め込み
+　saccubus.xmlの中のエントリSaveThumbinfoMetadata=trueの時
+　thumbInfoデータをメタデータ<description>として埋め込む(暫定)
+　GUIは用意してないのでやりたい人だけxmlを手動修正して
+　必要ならiniにもコピーしておく(ZIPから上書き更新時も書き換えが必要)
+
+●タイトル解析失敗修正　タイトル末尾削除
+　（ニコニコのwatchページの<title>仕様変わった？)
+
+●実行中にログview表示オン
+　メニューの[アクション][ログview ON]を押すとログviewウィンドウを表示します。
+　1.65.7.3aでのフリーズバグを修正
+
+●ffmpeg80914d(nvenc、intel-qsv対応)とh264_nvenc,h264_qsv用オプション
+　HW支援についてはwikiをお読み下さい。(配布ZIPの読んで下さい.txtにもあります)
+　https://github.com/Saccubus/Saccubus1.x/wiki/ 補足 3 FFmpegのHW支援機能
+
 ●ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)
 　古いflv動画のデコードエラー修正。-analyzeduration 10Mをworkaroundとして追加
 　libutvideoコーデックは内蔵のutvideoに変更された
@@ -397,6 +475,20 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ●コミュニティ動画でも動画情報のxmlを取得できるように(issue #14)
 
 ●ヘルプのURLリンク先をGithubに変更
+
+●運営コメ簡易変更の表示時間を変更(issue #17)
+　設定を追加したので[基本情報]タブから[保存設定][コメント付き動画]タブに移動
+　表示時間の指定、生コメ強制設定追加
+　運営コメ簡易変換バグ修正
+　(premium=3限定してたが 1以外は運営コメントとした)
+
+●動画情報保存バグ修正(issue #21)
+
+●redirect location から thread番号取得
+　sm以外でgetflv情報が取れない件の対策
+
+●ログ出力を動画別に切り分け(issue #19)
+　tempフォルダに 動画ID[log番号]frontend.txt を動画別に保存します。
 
 ●生放送アンケート対応(仮) (issue #5)
 　運営コメント簡易対応で生放送のアンケート結果をそれっぽく表示 
@@ -1007,7 +1099,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　（GoogleChromeは Ver.33.0.xxからクッキーが暗号化されて保存されるため
 　　ファイルからセッションを検索できないので共有できません。
 　　Opera20.0以降も共有できません）
-　・動画変換確認は、ffmpeg76711fで行いました。
+　・動画変換確認は、ffmpeg80914dで行いました。
 　　Win7 64 Corei7
 　・但し再生確認はPC上だけで、携帯その他では未確認
 　・前スレ>>670(SVN-25041) は変換エラーする動画(Decoder not found)がありました。
@@ -1019,14 +1111,14 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 ■収録物
-　　ffmpeg76711f同梱版
+　　ffmpeg80914d同梱版
 □フォルダ構成
-　saccubus1.64.zip
+　saccubus1.65.7.8.zip
 　├読んで下さいtxt
 　└saccubus　　  本体exe jar xml bat
 　　├bin          実行ファイルフォルダ exe dll
 　　├doc          ドキュメントフォルダ
-　　├optionF      オプションフォルダ(70404f/65220w用)
+　　├optionFFAAC  オプションフォルダ(80914d用)
 　　├optionFDev   オプションフォルダ(開発用)　CA用設定サンプル５種
 　　└Saccubus_lib Javaライブラリーフォルダ jar
 
@@ -1037,21 +1129,23 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
 ・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
-・saccubus.ini　　　　　　　76711f向け初期設定
+・saccubus.ini　　　　　　　80914d向け初期設定
 ・最初に必ず読んで.txt
 ・bin フォルダ配下
-　　ffmpeg76711f.exe ライセンスGPLV3
-　　　library76711f.txt　　外部ライブラリーバージョン
-　　nicovideoE.dll(2015.08.31版)統合版拡張Vhookライブラリ
-　　SDL.dll(2011.11.02ビルド)、COPYNG、README-SDL.txt
+　　ffmpeg80914d.exe ライセンスGPLV3
+　　　library80914d.txt　　外部ライブラリーバージョン
+　　nicovideoE.dll(2016.04.29版)統合版拡張Vhookライブラリ
+　　SDL.dll(2012.01.16ビルド)、COPYNG、README-SDL.txt
 　　　ライセンスはLGPL
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYING.sdl_ttf
 　　　ライセンスはzlib
 　　SDL_gfx.dll(2013.05.29ビルド)、LICENSE.gfx
 　　　グラフィックライブラリ、ライセンスはzlib
 　　b32.jpg、b32.png　SoundOnly用画像
-・optionF フォルダ配下　　 変換オプションファイル
-　　　（N70404f/N65220w用 2015.07.31版）
+　　mfx_dispatch_copying　libmfx(Intel-qsv用)copying
+　　nvenc_license　NVIDIA SDK 6.0　ライセンス
+・optionFFAAC フォルダ配下　　 変換オプションファイル
+　　　（FFmpegN3.1用 2016.07.07版）
 ・optionFDev フォルダ配下 　開発用ファイル
 ・Saccubus_libフォルダ配下
 　　gson-2.2.4.jar、LICENSE、README.txt
@@ -1060,6 +1154,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　2-clause BSD License.txt さきゅばす２条項BSDライセンス
 　　GPL v3.txt 　　　　　　　さきゅばすGPLライセンス
 　　QandA質問応答記録.txt
+　　auto.txtサンプル.txt
+　　option説明.txt
 　　readmeNew.txt(最新)
 　　readme+.txt(1.22r3)
 　　readme.txt(1.22r)
@@ -1068,17 +1164,12 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ローカル変換追加説明.txt
 　　最初に必ず読んで.txt　　　　　(コピー)
 　　変換リストが起動しない場合.txt
-　　・saccubus_src.zip
-　　　Saccubus.jar　のjavaソースファイル、eclipseプロジェクトファイル
-　　　nicovideoE.dll　のソースファイル、eclipseプロジェクトファイル
-　　　Bin.jar　のjavaソースファイル、eclipseプロジェクトファイル
-　　　Saccubus.exe　のCソースファイル(launcher)、makeファイル、リソース
+　　(ソースファイルは全て https://github.com/Saccubus/Saccubus1.x で
+　　　公開しているため添付中止)
 
 関連リンク
 ・ソースコード
-　http://osdn.jp/projects/saccubus/svn/view/branches/dev_branch
-　(http://osdn.jp/projects/saccubus/scm/svn/tree/head/branches/dev_branch/　WebUI新バージョン)
-　(SVN：svn checkout http://svn.osdn.jp/svnroot/branches/dev_branch )
+　https://github.com/Saccubus/Saccubus1.x/tree/master
 　FFmpeg Git:https://github.com/Saccubus/ffmpeg/tree/Saccubus1 
 
 ・ダウンロード
@@ -1104,6 +1195,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 　改造版
+　1.65.3以降はgithubの　https://github.com/Saccubus/Saccubus1.x/releases/ で
 　1.65.2　　https://github.com/Saccubus/Saccubus1.x/releases/tag/1.65.2
 　1.65.1　　http://www1.axfc.net/u/3613928.zip
 　1.65.0　　http://www1.axfc.net/u/3611115.zip
@@ -1166,6 +1258,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・サイト
 　さきゅばす公式
 　　http://saccubus.osdn.jp/
+　さきゅばす1.x　Wiki(Github)
+　　https://github.com/Saccubus/Saccubus1.x/wiki
 　2ch【ニコニコ】コメント付動画作成ツール さきゅばす
 　　http://anago.2ch.net/test/read.cgi/software/1346798166/
 　coroid project　「いんきゅばす」を含む
@@ -1175,6 +1269,52 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 変更履歴・修正・改変点
+1.65.7.8(2016/08/06)
+　ログインチェックボタン追加
+　メニュー項目にLatestRelease更新追加
+　SaveThumbinfoMetadata=trueの時thumbInfoデータをメタデータ<description>として埋め込む(暫定)
+　その他バグ修正
+
+1.65.7.1(2016/07/07)
+　実行中にログview表示オン
+　ffmpeg80914d(nvenc、intel-qsv対応)とh264_nvenc,h264_qsv用オプション
+　HW支援についてwikiに追加
+
+1.65.6.0(2016/06/25)
+　PCオプションの入力に -analyzeduration 10M追加
+　Analize Error時 fps sizeのデフォルト値を適用
+　ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)
+　上記により生放送タイムシフトのflvデコード強化（されたはず)
+　生放送運営コメントの元の@秒数表示を優先する
+
+1.65.5.2(2016/5/12)
+　運営コメ簡易変更の表示時間を変更(issue #17)
+　動画情報保存バグ修正(issue #21)
+　redirect location から thread番号取得
+　ログ出力を動画別に切り分け(issue #19)
+1.65.4.5
+　エラーコード表　追加
+　再生リスト、エラーリスト、bat関係修正(AutoPlay.java ErrorControl.java 追加)
+　生放送nakaコメントを遅くする(issue #15) vposを +1
+　デバッグ時以外デフォルトでコメントダブり削除
+　コミュ専用動画情報修正
+　チャンネル動画情報は投稿者名の代わりにチャンネル名称を使う。
+
+1.65.4.0
+　コミュニティ動画でも動画情報のxmlを取得できるように(issue #14)
+
+1.65.3.4
+　ヘルプのURLリンク先をGithubに変更
+　ローカル変換の方法D追加
+　運営コメント簡易変更でコメントが」を含むときに途中で切れるバグ修正
+　ffmpeg79635(内蔵AAC、UtVideo15.5.0対応)
+
+1.65.3.3
+　生放送アンケート対応(仮) (issue #5)
+　blue2 コマンドの色修正(動画のみ) issue #12
+　キーワードをURLエンコードする(issue #11)
+　視聴履歴ページを変換可能、検索とautolist0出力
+
 1.65.2.9(2016/03/23)
 　auto.batで同時実行数 1 (デフォルト)の時に動画1つ変換で終了してしまうバグ修正
 
