@@ -744,7 +744,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				sendtext("動画のダウンロード開始中");
 				boolean renameMp4 = isVideoFixFileName() && Setting.isChangeMp4Ext();
 				log.println("serverIsDmc: "+client.serverIsDmc()
-					+", preferSmile: "+Setting.isSmilePreferable());
+					+", preferSmile: "+Setting.isSmilePreferable()
+					+", forceDMC:" + Setting.doesDmcforceDl());
 				if(!client.serverIsDmc() || Setting.isSmilePreferable() && !Setting.doesDmcforceDl()){
 					// 通常サーバ
 					if(VideoFile.isFile() && VideoFile.canRead()){
@@ -813,8 +814,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 					}
 					log.println("dmc size: "+dmc_size);
-					if (size_high > video_size &&
-						(size_high > dmc_size || Setting.isSmilePreferable())){
+					if ((size_high > video_size && size_high > dmc_size)
+						||(size_high != video_size && Setting.isSmilePreferable())){
 						// smile動画をダウンロード
 						if(lowVideoFile==null)
 							lowVideoFile = VideoFile;

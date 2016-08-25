@@ -576,8 +576,8 @@ public class NicoClient {
 			if(!ss.contains(JSON_START)){
 				log.println("動画ページ視聴不可？");
 			}else{
-				extractWatchApiJson(ss, encoding, url);
-				log.println("ok.");
+				if(extractWatchApiJson(ss, encoding, url)!=null)
+					log.println("ok.");
 			}
 		} catch (IOException ex) {
 			log.printStackTrace(ex);
@@ -928,6 +928,7 @@ public class NicoClient {
 			// DNT: 1
 			// Referer: http://res.nimg.jp/swf/player/nicoplayer.swf?ts=59e6229f239741dda87bff0f8ce2dfb7
 			// Connection: keep-alive
+			log.print("Getting crossdomain.xml...");
 			url = host_url + "/crossdomain.xml";
 			con = urlConnectGET(url);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
@@ -948,6 +949,7 @@ public class NicoClient {
 			}
 			br.close();
 			con.disconnect();
+			log.println("ok.");
 			File crossdomain = Path.mkTemp(videoTag+"_crossdomain.xml");
 			pw = new PrintWriter(crossdomain, encoding);
 			pw.write(sb.substring(0));
@@ -1005,8 +1007,8 @@ public class NicoClient {
 			// heartbeat thread を起動してバックグランド実行
 			String hbUrl1 = apiSessionUrl + "/";
 			String hbUrl2 = "?suppress_response_codes=true&_format=xml&_method=PUT";
-			Path xml = Path.mkTemp(videoTag+"_HeartBeatPostData.xml");
-			TimerTask task = new HeartBeatDmc(hbUrl1, hbUrl2, xml);
+			Path hbxml = Path.mkTemp(videoTag+"_HeartBeatPostData.xml");
+			TimerTask task = new HeartBeatDmc(hbUrl1, hbUrl2, hbxml);
 			timer = new Timer("リトライ分間隔タイマー");
 			timer.schedule(task, 10000, 10000);	// 10 seconds
 
@@ -1016,7 +1018,7 @@ public class NicoClient {
 			pw.flush();
 			pw.close();
 			debug("\n■session response:\n"+responseXmlData+"\n");
-			log.println("\nRefer dmc responseXml <"+responseXml.getPath()+">");
+			log.println("Refer dmc responseXml <"+responseXml.getPath()+">");
 			contentUri = getXmlElement(responseXmlData, "content_uri");
 			if(contentUri==null){
 				String resStatus = getXmlElement(responseXmlData, "object");
@@ -1029,19 +1031,9 @@ public class NicoClient {
 			String audio_src_ids = getXmlElement(responseXmlData, "audio_src_ids")
 				.replace("<string>", "").replace("</string>", " ").trim();
 			audio_srcs = audio_src_ids.split("\\W+");
-		//	int pos = responseXmlData.lastIndexOf("<token>");
-		//	r_created_time = getXmlElement(responseXmlData.substring(pos), "created_time");
-		//	expire_time = getXmlElement(responseXmlData, "expire_time");
-		//	responseToken = getXmlElement(responseXmlData, "token");
-		//	signature = getXmlElement(responseXmlData, "signature");
 			debug(" ID:"+sessionID+"\n");
 			log.println(" video_src_ids:"+Arrays.asList(video_srcs));
 			log.println(" audio_src_ids:"+Arrays.asList(audio_srcs));
-		//	debug("\n■created_time(response):"+r_created_time);
-		//	debug("\n■expire_time:"+expire_time);
-		//	debug("\n■responseToken:"+responseToken);
-		//	debug("\n■signature:"+signature);
-		//	debug("\n");
 		//	GET content_uri to download video
 			if (video.canRead() && video.delete()) { // ファイルがすでに存在するなら削除する。
 				log.print("previous video("+video.getPath()+") deleted...");
@@ -1134,6 +1126,19 @@ public class NicoClient {
 				return null;
 			}
 			log.println("ok.");
+			if(!Debug){
+				// delete work files
+				log.print("delete workfiles...");
+				if(sessionXml!=null && sessionXml.delete())
+					log.print(sessionXml+", ");
+				if(crossdomain!=null && crossdomain.delete())
+					log.print(crossdomain+", ");
+				if(hbxml!=null && hbxml.delete())
+					log.print(hbxml+", ");
+				if(responseXml.delete())
+					log.print(responseXml+", ");
+				log.println();
+			}
 			is.close();
 			os.flush();
 			os.close();
@@ -1729,9 +1734,9 @@ public class NicoClient {
 			thumbXml  = Path.mkTemp(tag + "_" + title + ".xml");
 			if(titleHtml!=null){
 				String html = Path.readAllText(titleHtml, encoding);
-				if(html==null)
-					return null;
-				extractWatchApiJson(html, encoding, url);
+				if(html==null) return null;
+				String r = extractWatchApiJson(html, encoding, url);
+				if(r==null) return null;
 			}
 			if(s.indexOf("status=\"ok\"") < 0 && titleHtml!=null){
 				// 可能ならthumbXmlをtitleHtmlから構成する
@@ -1812,10 +1817,10 @@ public class NicoClient {
 		}
 	}
 
-	private void extractWatchApiJson(String html, String encoding, String url){
+	private String extractWatchApiJson(String html, String encoding, String url){
 		Path file = getWatchApiData(html, encoding, url);
-		if(file==null) return;
-		extractJson(file, encoding);
+		if(file==null) return null;
+		return extractJson(file, encoding);
 	}
 	private String getWatchApiJson(){
 		if(watchApiJson==null){
@@ -1823,9 +1828,9 @@ public class NicoClient {
 			if(titleHtml==null)
 				return null;
 			String html = Path.readAllText(titleHtml, encoding);
-			if(html==null)
+			String r = extractWatchApiJson(html, encoding, "getWatchApiJson");
+			if(r==null)
 				return null;
-			extractWatchApiJson(html, encoding, "getWatchApiJson");
 		}
 		return watchApiJson;
 	}
@@ -1837,9 +1842,13 @@ public class NicoClient {
 				prop.loadFromXML(new FileInputStream(xml));
 			} catch (IOException e) {
 				log.printStackTrace(e);
-			}		//read JSON xml
+			}
 			watchApiJson = prop.getProperty("json", "0");
 			debug("\n■watchAPIData_JSON:\n "+watchApiJson);
+			if(watchApiJson==null || watchApiJson.isEmpty()){
+				log.println("watchAPIData_JSON error ");
+				return null;
+			}
 			// flvInfo
 			flvInfo = getJsonValue(watchApiJson, "flvInfo");
 			String s = flvInfo;
@@ -1861,7 +1870,7 @@ public class NicoClient {
 			debug("\n ]\n");
 			// dmcInfo
 			isDmc = getJsonValue(watchApiJson, "isDmc");
-			log.println("isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc());
+			debug("\n■isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc()+"\n");
 			if(serverIsDmc()){
 				dmcInfo = getJsonValue(watchApiJson, "dmcInfo");
 				s = unquote(dmcInfo);
