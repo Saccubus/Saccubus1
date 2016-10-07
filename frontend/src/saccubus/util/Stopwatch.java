@@ -70,7 +70,7 @@ public class Stopwatch {
 		}
 	}
 
-	private long getStartTime() {
+	public long getStartTime() {
 		return startedDate.getTime();
 	}
 
@@ -78,11 +78,15 @@ public class Stopwatch {
 		return stopedDate.getTime();
 	}
 
-	private long getElapsedTime(){
+	public long getElapsedTime(){
 		return new Date().getTime() - getStartTime();
 	}
 
-//	private static String FMT1 = "s•bSSSƒ~ƒŠ";
+	public long getElapsedTime(long startMilisec){
+		return new Date().getTime() - startMilisec;
+	}
+
+	//	private static String FMT1 = "s•bSSSƒ~ƒŠ";
 	private static String FMT1 = "%d•b%03dƒ~ƒŠ";
 //	private static String FMT2 = "m•ªss•bSSSƒ~ƒŠ";
 	private static String FMT2 = "%d•ª%02d•b%03dƒ~ƒŠ";

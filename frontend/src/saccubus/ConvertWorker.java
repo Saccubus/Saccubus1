@@ -60,14 +60,27 @@ import saccubus.util.Util;
 public class ConvertWorker extends SwingWorker<String, String> {
 
 	class Tick extends TimerTask {
+		private JLabel label;
 		private String timerString = "";
 		private int tick = 0;
-		public Tick(String s){
+		private int up = 1;
+		public Tick(JLabel status, String s){
+			label = status;
 			timerString = s;
+		}
+		public Tick(JLabel status, String s, int initial_tick){
+			this(status, s);
+			tick = initial_tick;
+			up = -1;
 		}
 		@Override
 		public void run() {
-			sendtext(timerString + (tick++) +"秒");
+
+			sendTimer(label, timerString + tick +"秒");
+			tick += up;
+		}
+		private void sendTimer(final JLabel l, final String s){
+			l.setText(s);
 		}
 	}
 
@@ -672,9 +685,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
 			|| Setting.isSaveThumbInfo()) {
 			sendtext("ログイン中");
-			TimerTask task = new Tick("ログイン待ち　");
-			Timer timer = new Timer("ログイン秒間隔タイマー");
-			timer.schedule(task, 0, 1000);	// 1000 miliseconds
 			NicoClient client = null;
 			if (BrowserKind != BrowserCookieKind.NONE){
 				// セッション共有、ログイン済みのNicoClientをclientに返す
@@ -682,7 +692,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			} else {
 				client = new NicoClient(mailAddress, password, proxy, proxy_port, stopwatch, log);
 			}
-			timer.cancel();
 			if (!client.isLoggedIn()) {
 				sendtext("ログイン失敗 " + BrowserKind.getName() + " " + client.getExtraError());
 			} else {
@@ -774,8 +783,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}else{
 					// dmc
 					long dmc_size = 0;
+					long resume_size = 0;
 					long video_size = 0;
 					long size_high = client.getSizeHigh();
+					int retry = 0;
 					log.println("smile size: "+size_high);
 					if(VideoFile.isFile() && VideoFile.canRead()){
 						log.println("動画は既に存在します。");
@@ -789,32 +800,86 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						dmc_size = dmcVideoFile.length();
 					} else {
 						long min_size = Math.max(video_size, size_high);
-						long[] limits = {min_size, 0};	// limits[1] is return value
+						long[] limits = {min_size, 0, 0};	// limits[1] is return value
 						if(Setting.doesDmcforceDl())
 							limits[0] = 0;	//途中で中止しない
-						dmcVideoFile = client.getVideoDmc(dmcVideoFile, Status, StopFlag, renameMp4, limits);
-						if (stopFlagReturn()) {
-							result = "43";
-							return false;
-						}
-						if(dmcVideoFile==null){
-							//dmc_size = 0;
-							String ecode = client.getExtraError();
-							if(ecode.contains("97")){
+						if(Setting.canSeqResume()){
+							do {
+								limits[2] = resume_size;
+								File video = client.getVideoDmc(
+									dmcVideoFile, Status, StopFlag, renameMp4, limits,
+									Setting.canRangeRequest(), true, resume_size);
+								if (stopFlagReturn()) {
+									result = "43";
+									return false;
+								}
 								dmc_size = limits[1];
-								log.println(ecode);
-								sendtext(ecode);
-							}else{
-								log.println("dmc動画サーバからのダウンロードに失敗しました。");
-								sendtext("dmc動画のダウンロードに失敗" + ecode);
-							}
-						}else{
-							videoLength = client.getDmcVideoLength();
-							dmc_size = dmcVideoFile.length();
+								if(video==null){
+									//dmc_size = 0;
+									String ecode = client.getExtraError();
+									if(ecode.contains("97")){
+										log.println(ecode);
+										sendtext(ecode);
+										break;
+									} else {
+										log.println("dmc動画サーバからのダウンロードに失敗しました。");
+										sendtext("dmc動画のダウンロードに失敗" + ecode);
+										if(retry++ > 2)
+											break;
+										// dmc1分待ち
+										log.println("dmcリトライ待ち 1分");
+										sendtext("dmcリトライ待ち 1分");
+										for(int l=0; l < 120; l++){
+											try {
+												Thread.sleep(500);
+												sendtext(String.format("dmcリトライ待ち %d 秒",l/2));
+												stopwatch.show();
+												if(stopFlagReturn()){
+													break;
+												}
+											} catch (InterruptedException e) {
+												log.printStackTrace(e);
+											}
+										}
+										resume_size = dmcVideoFile.length();
+									}
+								}else{
+									videoLength = client.getDmcVideoLength();
+									dmcVideoFile = video;
+									resume_size = dmcVideoFile.length();
+								}
+								// watchページ更新チェック
+								if(!client.getVideoHistoryAndTitle1(Tag,"?watch_harmful=1",true)){
+									break;
+								}
+							} while(resume_size < dmc_size);
+						} else {
+							dmcVideoFile = client.getVideoDmc(
+									dmcVideoFile, Status, StopFlag, renameMp4, limits,
+									Setting.canRangeRequest(), false, 0);
+								if (stopFlagReturn()) {
+									result = "43";
+									return false;
+								}
+								if(dmcVideoFile==null){
+									//dmc_size = 0;
+									String ecode = client.getExtraError();
+									if(ecode.contains("97")){
+										dmc_size = limits[1];
+										log.println(ecode);
+										sendtext(ecode);
+									}else{
+										log.println("dmc動画サーバからのダウンロードに失敗しました。");
+										sendtext("dmc動画のダウンロードに失敗" + ecode);
+									}
+								}else{
+									videoLength = client.getDmcVideoLength();
+									dmc_size = dmcVideoFile.length();
+								}
 						}
 					}
 					log.println("dmc size: "+dmc_size);
-					if ((size_high > video_size && size_high > dmc_size)
+					if ( (size_high > video_size && size_high > dmc_size && !Setting.isInhibitSmaller())
 						||(size_high != video_size && Setting.isSmilePreferable())){
 						// smile動画をダウンロード
 						if(lowVideoFile==null)
@@ -1856,7 +1921,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			//  サービスが一時的に過負荷 ゲートウェイタイムアウト
 			// retry count check
 			sendtext("リトライ待ち中");
-			TimerTask task = new Tick("リトライ待ち　");
+			TimerTask task = new Tick(Status, "リトライ待ち　");
 			Timer timer = new Timer("リトライ秒間隔タイマー");
 			timer.schedule(task, 0, 1000);	// 1000 miliseconds
 			if(gate.notExceedLimiterGate()){

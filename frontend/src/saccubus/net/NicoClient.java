@@ -17,16 +17,25 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
+import saccubus.ConvertManager;
 import saccubus.ConvertStopFlag;
 import saccubus.ConvertWorker;
 import saccubus.MainFrame_AboutBox;
@@ -155,7 +164,7 @@ public class NicoClient {
 						return;
 					}
 					Cookie = new NicoCookie();
-					log.println("Fault user session" + browser_kind.toString());
+					log.println("Fault user session " + browser_kind.toString());
 					setExtraError("セッションが無効です");
 				}
 			}
@@ -181,11 +190,23 @@ public class NicoClient {
 
 	private HttpURLConnection urlConnect(String url, String method, NicoCookie cookieProp,
 			boolean doInput, boolean doOutput, String connectionProp){
-		return urlConnect(url,method,cookieProp,doInput,doOutput,connectionProp,false);
+		return urlConnect(url,method,cookieProp,doInput,doOutput,connectionProp,"",false);
 	}
 
 	private HttpURLConnection urlConnect(String url, String method, NicoCookie cookieProp,
-			boolean doInput, boolean doOutput, String connectionProp, boolean followRedirect){
+			boolean doInput, boolean doOutput, String connectionProp, String range){
+		return urlConnect(url,method,cookieProp,doInput,doOutput,connectionProp,range,false);
+	}
+
+	private HttpURLConnection urlConnect(String url, String method, NicoCookie cookieProp,
+			boolean doInput, boolean doOutput, String connectionProp, boolean followRedirect)
+	{
+		return urlConnect(url,method,cookieProp,doInput,doOutput,connectionProp,"",followRedirect);
+	}
+
+	private HttpURLConnection urlConnect(String url, String method, NicoCookie cookieProp,
+			boolean doInput, boolean doOutput, String connectionProp, String range,
+			boolean followRedirect){
 
 		try {
 			debug("\n■URL<" + url + ">\n");
@@ -207,6 +228,7 @@ public class NicoClient {
 	//Content-Type: text/plain; charset=UTF-8
 	//Cookie: __utmc=8292653; nicosid=1440976771.UserID数字; nicorepo_filter=all;
 	//Connection: keep-alive
+	//Range: bytes=0-1048576	// byte=1MB
 	// the following commented source code lines can be made valid in the future, and it would be ok (already tested).
 			con.setRequestMethod(method);
 			if (cookieProp != null)
@@ -231,14 +253,20 @@ public class NicoClient {
 				con.setDoOutput(true);
 			}
 			HttpURLConnection.setFollowRedirects(followRedirect);
+			if(range==null)
+				range = "";
+			if(!range.isEmpty()){
+				range = "bytes="+range;
+				con.addRequestProperty("Range", range);
+			}
 
-			debug("■Connect: " + method + ","
-				+ (cookieProp == null ? "" : "Cookie<" + cookieProp.get(url) +">,")
-				+ (doInput ? "DoInput," : "")
-				+ (doOutput ? "DoOutput," : "")
-				+ (followRedirect ? "FollowRedirects," : "")
-				+ (connectionProp == null ?
-					"" : "Connection " + connectionProp)
+			debug("■Connect: " + method
+				+ (cookieProp==null? "" : ",Cookie<" + cookieProp.get(url) +">")
+				+ (doInput? ",DoInput" : "")
+				+ (doOutput? ",DoOutput" : "")
+				+ (followRedirect? ",FollowRedirects" : "")
+				+ (connectionProp==null? "" : ",Connection " + connectionProp)
+				+ (range.isEmpty()? "":(",Range: "+range))
 				+ "\n");
 
 			connect(con);
@@ -442,6 +470,8 @@ public class NicoClient {
 	private static final String TITLE_ZERO_DUMMY = "<title>ニコニコ動画:Zero</title>";
 	private static final String TITLE_GINZA_DIV = "DataContainer\"";
 	private static final String TITLE_GINZA_DUMMY = "<title>ニコニコ動画:GINZA</title>";
+	private static final int SPLIT_TEST_SIZE = 4096;	//4k
+	private static final int SPLITS = 2;
 	public boolean getVideoHistoryAndTitle(String tag, String watchInfo, boolean saveWatchPage) {
 		if(getThumbInfoFile(tag) != null && titleHtml!=null){
 			return true;
@@ -710,6 +740,8 @@ public class NicoClient {
 	private int sizeHigh;
 	private int sizeDmc;
 	private int sizeVideo;
+	private int downloadLimit;
+	private Path crossdomain;
 
 	public int getDmcVideoLength(){
 		return dmcVideoLength;
@@ -734,6 +766,7 @@ public class NicoClient {
 			if (file.canRead() && file.delete()) { // ファイルがすでに存在するなら削除する。
 				log.print("previous video deleted...");
 			}
+			long startTime = Stopwatch.getElapsedTime(0);
 			HttpURLConnection con = urlConnect(VideoUrl, "GET", Cookie, true, false, null);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK) {
 				log.println("Can't get video:" + VideoUrl);
@@ -765,8 +798,8 @@ public class NicoClient {
 			int max_size = con.getContentLength();	// -1 when invalid
 			if(max_size > 0 && sizeVideo <= 0)
 				sizeVideo = max_size;
-			log.print("size="+(max_size/1000)+"Kbytes");
-			log.println(", type=" + ContentType + ", " + ContentDisp);
+			log.println("size="+(max_size/1000)+"Kbytes"
+				+", type=" + ContentType + ", " + ContentDisp);
 			log.print("Downloading smile video...");
 			if(renameMp4 && ContentType.contains("mp4")){
 				String filepath = file.getPath();
@@ -784,7 +817,7 @@ public class NicoClient {
 				debugsAdd(read);
 				size += read;
 				os.write(buf, 0, read);
-				sendStatus(status, "動画", max_size, size);
+				sendStatus(status, "動画", max_size, size, startTime);
 				Stopwatch.show();
 				if (flag.needStop()) {
 					log.println("\nStopped.");
@@ -816,88 +849,9 @@ public class NicoClient {
 		return null;
 	}
 
-	public File getVideoDmc(File video, JLabel status, ConvertStopFlag flag,
-			boolean renameMp4, long[] limits) {
-
-		class HeartBeatDmc extends TimerTask implements Runnable {
-			private String dmcHBUrl1 = "";
-			private String dmcHBUrl2 = "";
-			private Path postXml = null;
-
-			public HeartBeatDmc(String url1, String url2, Path xml){
-				dmcHBUrl1 = url1;
-				dmcHBUrl2 = url2;
-				postXml = xml;
-			}
-
-			@Override
-			public void run() {
-				OutputStream os = null;
-				PrintWriter pw = null;
-				Path response = Path.mkTemp(videoTag+"_HBresponce.xml");
-				String url = null;
-				HttpURLConnection con = null;
-				// POST dmcHBUrl
-				try {
-					url = dmcHBUrl1+sessionID+dmcHBUrl2;
-					debug("\n");
-					debug("■heartbeat URL<" + url + ">\n");
-					//	con = urlConnect(url, "POST", null, true, true, "keep-alive", false);
-					con = (HttpURLConnection)(new URL(url)).openConnection(ConProxy);
-					con.setDoOutput(true);
-					HttpURLConnection.setFollowRedirects(false);
-					con.setInstanceFollowRedirects(false);
-					con.setRequestMethod("POST");
-					con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
-					con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-					con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
-				//	con.setRequestProperty("Accept-Encoding", "deflate");
-				//	con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-					con.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
-					con.addRequestProperty("DNT", "1");
-					con.addRequestProperty("Connection", "keep-alive");
-					debug("■heartbeat Connect: POST,DoOutput,Connection keep-alive\n");
-					connect(con);
-					debug("■heartbeat write: " + postXmlData.length()+"\n");
-					os = con.getOutputStream();
-					os.write(postXmlData.getBytes());
-					os.flush();
-					os.close();
-					int code = con.getResponseCode();
-					String mes = con.getResponseMessage();
-					debug("■heartbeat Response: " + Integer.toString(code) + " " + mes+"\n");
-					if (code < HttpURLConnection.HTTP_OK || code >= HttpURLConnection.HTTP_BAD_REQUEST) { // must 200 <= <400
-						log.println("\nheartbeat Can't get HeartBeat response:" + mes);
-						throw new IOException("Heartbeat response error");
-					}
-					responseXmlData = readConnection(con);
-					con.disconnect();
-					postXmlData = "<session>"+getXmlElement(responseXmlData, "session")+"</session>";
-					sessionID = getXmlElement(responseXmlData, "id");
-					if(sessionID==null){
-						throw new IOException("Heartbeat data error");
-					}
-					debug("■heartbeat sessionID: "+sessionID+"\n");
-					// save all response
-					pw = new PrintWriter(response);
-					pw.write(responseXmlData);
-					pw.flush();
-					pw.close();
-					debug("■heartbeat session response: "+responseXmlData.length()+"\n");
-					debug("■heartbeat response write to: "+postXml.getPath()+"\n");
-				} catch (IOException e) {
-					log.printStackTrace(e);
-				}finally{
-					try{
-						if(con!=null) con.disconnect();
-					} catch(Exception e){};
-					try{
-						if(os!=null) os.close();
-					} catch(IOException e){};
-					if(pw!=null) pw.close();
-				}
-			}
-		}
+	public File getVideoDmc(File video, final JLabel status, final ConvertStopFlag flag,
+			boolean renameMp4, long[] limits,
+			boolean canRangeReq, boolean tryResume, long resume_size) {
 
 		FileOutputStream fos = null;
 		OutputStream os = null;
@@ -906,8 +860,10 @@ public class NicoClient {
 		PrintWriter pw = null;
 		InputStream is = null;
 		Timer timer = null;
+		Path hbxml = null;
 		long min_size = limits[0];
 		try {
+		// 動画URL
 			log.print("Getting video url...");
 			if (apiSessionUrl == null || apiSessionUrl.isEmpty()) {
 				log.println("Video url(DMC) is not detected.");
@@ -928,33 +884,35 @@ public class NicoClient {
 			// DNT: 1
 			// Referer: http://res.nimg.jp/swf/player/nicoplayer.swf?ts=59e6229f239741dda87bff0f8ce2dfb7
 			// Connection: keep-alive
+		//クロスドメイン
 			log.print("Getting crossdomain.xml...");
 			url = host_url + "/crossdomain.xml";
-			con = urlConnectGET(url);
+			con = urlConnect(url, "GET", null, true, false, null);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
 				log.println("ng.\nCan't crossdomain.xml:" + url);
-				return null;
+				// error but skip
+			}else{
+				String encoding = con.getContentEncoding();
+				if (encoding == null){
+					encoding = "UTF-8";
+				}
+				br = new BufferedReader(new InputStreamReader(con.getInputStream(), encoding));
+				log.print("ok.\nSaving crossdomain.xml...");
+				String ret;
+				StringBuilder sb = new StringBuilder();
+				while ((ret = br.readLine()) != null) {
+				//	Stopwatch.show();
+					sb.append(ret + "\n");
+				}
+				br.close();
+				con.disconnect();
+				log.println("ok.");
+				crossdomain = Path.mkTemp(videoTag+"_crossdomain.xml");
+				pw = new PrintWriter(crossdomain, encoding);
+				pw.write(sb.substring(0));
+				pw.flush();
+				pw.close();
 			}
-			String encoding = con.getContentEncoding();
-			if (encoding == null){
-				encoding = "UTF-8";
-			}
-			br = new BufferedReader(new InputStreamReader(con.getInputStream(), encoding));
-			log.print("ok.\nSaving crossdomain.xml...");
-			String ret;
-			StringBuilder sb = new StringBuilder();
-			while ((ret = br.readLine()) != null) {
-				Stopwatch.show();
-				sb.append(ret + "\n");
-			}
-			br.close();
-			con.disconnect();
-			log.println("ok.");
-			File crossdomain = Path.mkTemp(videoTag+"_crossdomain.xml");
-			pw = new PrintWriter(crossdomain, encoding);
-			pw.write(sb.substring(0));
-			pw.flush();
-			pw.close();
 			//
 			//	POST /api/sessions?suppress_response_codes=true&_format=xml HTTP/1.1
 			//	Host: api.dmc.nico:2805
@@ -964,8 +922,9 @@ public class NicoClient {
 			//	Accept-Encoding: gzip, deflate
 			//	DNT: 1
 			//	Connection: keep-alive
-			//  Content-type: application/x-www-form-urlencoded
+			//	Content-type: application/x-www-form-urlencoded
 			//
+		//セッション
 			url = apiSessionUrl + "?suppress_response_codes=true&_format=xml";
 			debug("\n■URL<" + url + ">\n");
 			//	con = urlConnect(url, "POST", null, true, true, "keep-alive", false);
@@ -1004,14 +963,6 @@ public class NicoClient {
 			// from <session> to </session> copied
 			postXmlData = "<session>"+getXmlElement(responseXmlData, "session")+"</session>";
 			sessionID = getXmlElement(responseXmlData, "id");
-			// heartbeat thread を起動してバックグランド実行
-			String hbUrl1 = apiSessionUrl + "/";
-			String hbUrl2 = "?suppress_response_codes=true&_format=xml&_method=PUT";
-			Path hbxml = Path.mkTemp(videoTag+"_HeartBeatPostData.xml");
-			TimerTask task = new HeartBeatDmc(hbUrl1, hbUrl2, hbxml);
-			timer = new Timer("リトライ分間隔タイマー");
-			timer.schedule(task, 10000, 10000);	// 10 seconds
-
 			Path responseXml = Path.mkTemp(videoTag+"_DmcResponse.xml");
 			pw = new PrintWriter(responseXml);
 			pw.write(responseXmlData);
@@ -1019,6 +970,7 @@ public class NicoClient {
 			pw.close();
 			debug("\n■session response:\n"+responseXmlData+"\n");
 			log.println("Refer dmc responseXml <"+responseXml.getPath()+">");
+		//動画サーバ
 			contentUri = getXmlElement(responseXmlData, "content_uri");
 			if(contentUri==null){
 				String resStatus = getXmlElement(responseXmlData, "object");
@@ -1034,51 +986,147 @@ public class NicoClient {
 			debug(" ID:"+sessionID+"\n");
 			log.println(" video_src_ids:"+Arrays.asList(video_srcs));
 			log.println(" audio_src_ids:"+Arrays.asList(audio_srcs));
-		//	GET content_uri to download video
-			if (video.canRead() && video.delete()) { // ファイルがすでに存在するなら削除する。
-				log.print("previous video("+video.getPath()+") deleted...");
+			int max_size = 0;
+		//	部分ダウンロード設定
+			boolean isSplittable = canRangeReq;
+			int gaten = Gate.getNumGate();
+			int runn = Gate.getNumRun();
+			int threadn = (new ConvertManager(null)).getNumThread();
+			int convn = (new ConvertManager(null)).getNumRun();
+			if(runn >= gaten || convn >= threadn){
+				// 同時ダウンロード数不足
+				isSplittable = false;
 			}
+			// Rangeヘッダーチェック
 			url = contentUri + "&starti=0&start=0";
-			con = urlConnect(url, "GET", null, true, false, null);
-			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK) {
-				log.println("\nCan't get video(dmc):" + url);
-				String ecode = getExtraError();
-				if(ecode==null){
-				}
-				else if (ecode.contains("403")){
-					setExtraError("=不適切な動画の可能性。readmeNew.txt参照");
-				}
-				else if(ecode.contains("50")){
-					// 5秒待機
-					try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-						// log.printStackTrace(e);
-					}
-				}
+			con = urlConnect(url, "GET", null, true, false, null, "0-"+(SPLIT_TEST_SIZE-1));
+			if (con == null) {
+				// コネクションエラー
+				log.println("\nConnection Error. Can't get video(dmc):" + url);
 				return null;
 			}
-			is = con.getInputStream();
-			new NicoMap().putConnection(con, (Debug? log:null));
+			int rcode = con.getResponseCode();
+			if (rcode == HttpURLConnection.HTTP_OK) {
+				// 部分ダウンロード不可
+				log.println("\ntest Response(dmc) HTTP_OK");
+				canRangeReq = false;
+			}
+			if(canRangeReq){
+				if (rcode == HttpURLConnection.HTTP_PARTIAL){
+					// Rangeヘッダー受領　部分ダウンロード可能
+					log.println("\ntest Response(dmc) HTTP_PARTIAL");
+					//isSplittable = true;
+				}
+				else { //エラー
+					log.println("\nCan't get video(dmc):" + url);
+					String ecode = getExtraError();
+					if(ecode==null){
+					}
+					else if (ecode.contains("403")){
+						setExtraError("=不適切な動画の可能性。readmeNew.txt参照");
+					}
+					else if(ecode.contains("50")){
+						// 5秒待機
+						try {
+							Thread.sleep(5000);
+						} catch (InterruptedException e) {
+							// log.printStackTrace(e);
+						}
+					}
+					return null;
+				}
+			}
+			NicoMap dmcmap = new NicoMap();
+			dmcmap.putConnection(con, (Debug? log:null));
 			if(ContentType==null){
 				ContentType = con.getHeaderField("Content-Type");
 				if(ContentType == null) ContentType = "";
 			}
 			ContentDisp = con.getHeaderField("Content-Disposition");
-			int max_size = con.getContentLength();	// -1 when invalid
+			String acceptRange = "";
+			String contentLength = "";
+			String contentRange = "";
+			int sizeRanged = 0;
+			int sizeAll = 0;
+			//レスポンスヘッダ
+			// Accept-Ranges: bytes
+			// Content-Length: 100
+			// Content-Range: bytes 101-200/3024
+			acceptRange = dmcmap.get("Accept-Ranges");
+			contentLength = dmcmap.get("Content-Length");
+			contentRange = dmcmap.get("Content-Range");
+			if(acceptRange==null || contentLength==null || contentRange==null){
+				canRangeReq = false;
+			}
+			else if(acceptRange.equals("bytes")){
+				// Response header check
+				try {
+					log.println("test(dmc) Content-Length: " + contentLength);
+					sizeRanged = Integer.decode(contentLength);
+				}catch(Exception e){
+					sizeRanged = 0;
+					log.println("error Response header(dmc) Content-Length: " + sizeRanged);
+				}
+				if(contentRange.contains("/")){
+					String allsize = contentRange.substring(contentRange.lastIndexOf("/")+1);
+					try {
+						log.println("test(dmc) Content-Range: " + contentRange);
+						sizeAll = Integer.decode(allsize);
+					} catch(Exception ex){
+						sizeAll = 0;
+						log.println("error Response header(dmc) Content-Range: " + sizeAll);
+					}
+				}
+				if(sizeRanged == 0 || sizeAll == 0) {
+					canRangeReq = false;
+				}
+			}
+			max_size = con.getContentLength();	// -1 when invalid
+		//	ダミーリード
+			int dummy = 0;
+			is = con.getInputStream();
+			File dummyfile = Path.mkTemp("dummy["+videoTag+"].flv");
+			os = new FileOutputStream(dummyfile);
+			while((dummy = is.read(buf, 0, SPLIT_TEST_SIZE)) > 0){
+				os.write(buf, 0, dummy);
+			}
+			is.close();
+			os.flush();
+			os.close();
+			con.disconnect();	//テスト終了
+			if(sizeAll > max_size)
+				max_size = sizeAll;
+			if(sizeRanged > max_size)
+				max_size = sizeRanged;
 			if(max_size > 0 && sizeDmc <= 0){
+				limits[1] = max_size;
 				if(max_size < min_size){
 					setExtraError("97 最小限度サイズより小さいのでダウンロード中止");
-					limits[1] = max_size;
-					con.disconnect();
 					return null;
 				}
 				// 続行
 				sizeDmc = max_size;
 			}
-			log.print("size="+(max_size/1000)+"Kbytes");
-			log.println(", type=" + ContentType + ", " + ContentDisp);
-			log.print("Downloading dmc video...");
+			log.println("size="+(max_size/1000)+"Kbytes.");
+			// ダウンロードリミット設定
+			int videolen = getDmcVideoLength();
+			if(videolen > 0){
+				double bitrate = (double)max_size / videolen;
+				downloadLimit = (int)(bitrate * 55)+1;
+				if(tryResume || resume_size>0)
+					log.println("setting download limit = "+downloadLimit);
+			}
+			if(dummyfile==null){
+				log.println("Error:test download(dmc) failed.");
+				return null;
+			}
+			if(dummyfile.length() != SPLIT_TEST_SIZE){
+				log.println("Error:test download(dmc) size("+dummyfile.length()+")mismatch.");
+				return null;
+			}
+			if(dummyfile.delete())
+				log.println("deleted test(dmc) file.");
+		// 拡張子変更チェック
 			if(renameMp4 && ContentType.contains("mp4")){
 				String filepath = video.getPath();
 				int index = filepath.lastIndexOf(".");
@@ -1086,46 +1134,401 @@ public class NicoClient {
 					filepath = filepath.substring(0, index) + ".mp4";
 				}
 				video = new File(filepath);
+				log.println("video will save to "+video.getPath());
 			}
-
-			os = new FileOutputStream(video);
-			int size = 0;
-			int read = 0;
-			debugsInit();
-			while ((read = is.read(buf, 0, buf.length)) > 0) {
-				debugsAdd(read);
-				size += read;
-				os.write(buf, 0, read);
-				sendStatus(status, "dmc動画", max_size, size);
-				Stopwatch.show();
-				if (flag.needStop()) {
-					log.println("\nStopped.");
-					timer.cancel();
+			// heartbeat thread を起動してバックグランド実行
+			String hbUrl1 = apiSessionUrl + "/";
+			String hbUrl2 = "?suppress_response_codes=true&_format=xml&_method=PUT";
+			hbxml = Path.mkTemp(videoTag+"_HeartBeatPostData.xml");
+			TimerTask task = new HeartBeatDmc(hbUrl1, hbUrl2, hbxml);
+			timer = new Timer("リトライ分間隔タイマー");
+			timer.schedule(task, 10000, 10000);	// 10 seconds
+			log.println("heartbeat thread will start in "+10+" seconds.");
+			if(!canRangeReq || !isSplittable){
+			//	部分ダウンロードではないならもう一度ダウンロードを実行する
+			//	GET content_uri to download video
+				long starttime = Stopwatch.getStartTime();
+				url = contentUri + "&starti=0&start=0";
+				con = urlConnect(url, "GET", null, true, false, null, "");
+				if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK) {
+					log.println("\nCan't get video(dmc):" + url);
+					String ecode = getExtraError();
+					if(ecode==null){
+					}
+					else if (ecode.contains("403")){
+						setExtraError("=不適切な動画の可能性。readmeNew.txt参照");
+					}
+					else if(ecode.contains("50")){
+						// 5秒待機
+						try {
+							Thread.sleep(5000);
+						} catch (InterruptedException e) {
+							// log.printStackTrace(e);
+						}
+					}
+					return null;
+				}
+				// ファイルがすでに存在するなら削除する。
+				if (video.canRead() && video.delete()) {
+					log.print("previous video("+video.getPath()+") deleted...");
+				}
+				is = con.getInputStream();
+				new NicoMap().putConnection(con, (Debug? log:null));
+				if(ContentType==null){
+					ContentType = con.getHeaderField("Content-Type");
+					if(ContentType == null) ContentType = "";
+				}
+				ContentDisp = con.getHeaderField("Content-Disposition");
+				log.println("ContentType:" + ContentType + ", " + ContentDisp);
+				log.print("Downloading dmc video...");
+				os = new FileOutputStream(video);
+				int size = 0;
+				int read = 0;
+				debugsInit();
+				while ((read = is.read(buf, 0, buf.length)) > 0) {
+					debugsAdd(read);
+					size += read;
+					os.write(buf, 0, read);
+					sendStatus(status, "dmc動画", max_size, size, starttime);
+					Stopwatch.show();
+					if (flag.needStop()) {
+						log.println("\nStopped.");
+						timer.cancel();
+						is.close();
+						os.flush();
+						os.close();
+						con.disconnect();
+						if (video.delete()){
+							log.println("video deleted.");
+						}
+						return null;
+					}
+				}
+				debugsOut("\n■read+write statistics(bytes) ");
+				timer.cancel();
+				log.println("heartbeat thread stopped.");
+				if(size < max_size){
+					log.println("\nDownload stopped less than max_size. "+size+"<"+max_size+"\n");
+					Stopwatch.show();
 					is.close();
 					os.flush();
 					os.close();
 					con.disconnect();
 					if (video.delete()){
-						log.println("video deleted.");
+						log.println("video fragment deleted.");
 					}
 					return null;
 				}
-			}
-			debugsOut("\n■read+write statistics(bytes) ");
-			timer.cancel();
-			if(size < max_size){
-				log.println("\nDownload stopped less than max_size. "+size+"<"+max_size+"\n");
-				Stopwatch.show();
+				log.println("ok.");
+				if(!Debug){
+					// delete work files
+					log.print("delete workfiles...");
+					if(sessionXml!=null && sessionXml.delete())
+						log.print(sessionXml+", ");
+					if(crossdomain!=null && crossdomain.delete())
+						log.print(crossdomain+", ");
+					if(hbxml!=null && hbxml.delete())
+						log.print(hbxml+", ");
+					if(responseXml.delete())
+						log.print(responseXml+", ");
+					log.println();
+				}
 				is.close();
 				os.flush();
 				os.close();
 				con.disconnect();
-				if (video.delete()){
-					log.println("video fragment deleted.");
-				}
-				return null;
+				return video;
 			}
-			log.println("ok.");
+			if(resume_size!=0 || tryResume && downloadLimit > 0){
+			//	シーケンシャルリジューム
+				int resumed = (int)resume_size;
+				int resumelimit = resumed + downloadLimit;
+				long starttime = Stopwatch.getStartTime();
+				url = contentUri;
+				con = urlConnect(url, "GET", null, true, false, null, ""+resumed+"-"+(max_size-1));
+				if(con==null){
+					log.println("Can't get video(dmc):" + url);
+					return null;
+				}
+				rcode = con.getResponseCode();
+				if (rcode == HttpURLConnection.HTTP_PARTIAL) {
+					// success range downlaod
+				}
+				else if (rcode == HttpURLConnection.HTTP_OK) {
+					// not ranged
+					log.println("Not ranged video(dmc):" + url);
+					return null;
+				}
+				else {
+					log.println("Can't get video(dmc)"+rcode+":" + url);
+					return null;
+				}
+				is = con.getInputStream();
+				new NicoMap().putConnection(con, (Debug? log:null));
+				if(ContentType==null){
+					ContentType = con.getHeaderField("Content-Type");
+					if(ContentType == null) ContentType = "";
+				}
+				ContentDisp = con.getHeaderField("Content-Disposition");
+				log.println("ContentType:" + ContentType + ", " + ContentDisp);
+				log.print("resume Downloading dmc(S) video...");
+				os = new FileOutputStream(video, true);
+				int read = 0;
+				while ((read = is.read(buf, 0, buf.length)) > 0) {
+					debugsAdd(read);
+					resumed += read;
+					os.write(buf, 0, read);
+					sendStatus(status, "dmc動画(S)", max_size, resumed, starttime);
+					Stopwatch.show();
+					if (flag.needStop()) {
+						log.println("Stopped.");
+						timer.cancel();
+						log.println("heartbeat thread stopped.");
+						is.close();
+						os.flush();
+						os.close();
+						con.disconnect();
+						if (video.delete()){
+							log.println("video flagment deleted.");
+						}
+						return null;
+					}
+					if (resumed > resumelimit){
+						log.println("Suspended at "+resumed+" bytes.");
+						timer.cancel();
+						log.println("heartbeat thread stopped.");
+						is.close();
+						os.flush();
+						os.close();
+						con.disconnect();
+						limits[1] = max_size;
+						apiSessionUrl = null;
+						return video;
+					}
+				}
+				debugsOut("\n■read+write statistics(bytes) ");
+				timer.cancel();
+				log.println("heartbeat thread stopped.");
+				log.println("resumed size = "+resumed+", max_size="+max_size+"\n");
+				if(resumed < max_size){
+					log.println("Download not finished.");
+					Stopwatch.show();
+					timer.cancel();
+					log.println("heartbeat thread stopped.");
+					is.close();
+					os.flush();
+					os.close();
+					con.disconnect();
+					limits[1] = max_size;
+					return video;
+				}
+				log.println("resume ok.");
+				if(!Debug){
+					// delete work files
+					log.print("delete workfiles...");
+					if(sessionXml!=null && sessionXml.delete())
+						log.print(sessionXml+", ");
+					if(crossdomain!=null && crossdomain.delete())
+						log.print(crossdomain+", ");
+					if(hbxml!=null && hbxml.delete())
+						log.print(hbxml+", ");
+					if(responseXml.delete())
+						log.print(responseXml+", ");
+					log.println();
+				}
+				is.close();
+				os.flush();
+				os.close();
+				con.disconnect();
+				return video;
+			}
+		//	部分ダウンロードならスレッド2分割して実行
+			int subsize = (max_size + SPLITS - 1) / SPLITS;
+			log.println("subsize="+(subsize/1000)+"Kbytes.");
+			final int totalSize = max_size;
+
+			class SubDownload implements Callable<File> {
+				private String url;
+				private HttpURLConnection con;
+				private InputStream is;
+				private OutputStream os;
+				private int max_size = totalSize;
+				private final int downloadID;
+				private final String downloadRange;
+				private File downloadVideo;
+				private final Logger dlog;
+
+				public SubDownload(final int subID, final int subsize, File video, Logger sublog) {
+					downloadID = subID;
+					int from = subsize * subID;
+					int to = from + subsize - 1;
+					if(to > (max_size - 1))
+						to = max_size - 1;
+					downloadRange = "" + from + "-" + to;
+					downloadVideo = video;
+					dlog = sublog;
+				}
+				private int dsSubCount = 0;
+				private int dsSubMax;
+				private int dsSubMin;
+				private int dsSubSum;
+				private synchronized void debugSubInit(){
+					dsSubCount = dsSubMax = dsSubSum = 0;
+					dsSubMin = Integer.MAX_VALUE;
+				}
+				private synchronized void debugSubAdd(int data){
+					debugsAdd(data);
+					dsSubSum += data;
+					if(!Debug) return;
+					dsSubCount++;
+					dsSubMax = Math.max(dsSubMax, data);
+					dsSubMin = Math.min(dsSubMin, data);
+				}
+				private synchronized void debugSubOut(String header){
+					if(!Debug) return;
+					dlog.print(header);
+					if(dsSubCount==0){
+						dlog.println("Count 0");
+					} else {
+						dlog.print("Count "+dsSubCount+", Min "+dsSubMin+", Max "+dsSubMax);
+						dlog.println(", Sum "+dsSubSum+", Avg "+dsSubSum/dsSubCount);
+					}
+				}
+				private synchronized void sendSubStatus(JLabel status, String msg, long t){
+					sendStatus(status, msg, max_size, dsSum, t);
+				}
+				@Override
+				public File call() throws Exception {
+					url = contentUri;
+					long started = Stopwatch.getElapsedTime(0);
+					con = urlConnect(url, "GET", null, true, false, null, downloadRange);
+					if (con != null && con.getResponseCode() == HttpURLConnection.HTTP_PARTIAL) {
+						// success range downlaod
+					}
+					else if (con != null && con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+						// not ranged
+						dlog.println("Not ranged video(dmc):" + url);
+						return null;
+					}
+					else {
+						dlog.println("Can't get video(dmc):" + url);
+						return null;
+					}
+					is = con.getInputStream();
+					NicoMap dmcmap = new NicoMap();
+					dmcmap.putConnection(con, (Debug? dlog:null));
+					String acceptRange = dmcmap.get("Accept-Ranges");
+					dlog.println("Accept-Ranges: "+acceptRange);
+					String contentLength = dmcmap.get("Content-Length");
+					dlog.println("Content-Length: "+contentLength);
+					String contentRange = dmcmap.get("Content-Range");
+					dlog.println("Content-Range: "+contentRange);
+					if(ContentType==null){
+						ContentType = con.getHeaderField("Content-Type");
+						if(ContentType == null) ContentType = "";
+					}
+					ContentDisp = con.getHeaderField("Content-Disposition");
+					dlog.println("Content-Type: " + ContentType + ", " + ContentDisp);
+					dlog.print("Downloading dmc video...");
+
+					os = new FileOutputStream(downloadVideo);
+					int read = 0;
+					debugSubInit();
+					int len = buf.length / SPLITS;
+					int offset = downloadID * len;
+					while ((read = is.read(buf, offset, len)) > 0) {
+						os.write(buf, offset, read);
+						debugSubAdd(read);
+						sendSubStatus(status, "dmc動画(R)", started);
+						Stopwatch.show();
+						if (flag.needStop()) {
+							dlog.println("Stopped.");
+							is.close();
+							os.flush();
+							os.close();
+							con.disconnect();
+							if (downloadVideo.delete()){
+								dlog.println("video("+downloadID+") deleted. :"+downloadVideo);
+							}
+							return null;
+						}
+					}
+					debugSubOut("\n■sub read+write statistics(bytes) ");
+				//	timer.cancel();
+					dlog.println("ok.");
+					is.close();
+					os.flush();
+					os.close();
+					con.disconnect();
+					return downloadVideo;
+				}
+			};
+
+			String videoname = video.getPath();
+			ExecutorService pool = Executors.newFixedThreadPool(SPLITS);
+			debugsInit();
+			try {
+				List<Future<File>> list = new ArrayList<>();
+				List<File> videolist = new ArrayList<>();
+				for(int i=0; i<SPLITS; i++){
+					File subvideo = new File(videoname + "_dmc_" + i);
+					videolist.add(subvideo);
+					Logger sublog = new Logger(videoTag+"_dmc", i, "sub_frontend.txt");
+					//スレッド生成　実行開始
+					Future<File> future =
+						pool.submit(new SubDownload(i, subsize, subvideo, sublog));
+					log.println("submit subDownload("+i+"): "+subvideo.getName());
+					//プール
+					list.add(future);
+				}
+				// ファイルがすでに存在するなら削除する。
+				if (video.canRead() && video.delete()) {
+					log.println("previous video("+video.getPath()+") deleted.");
+				}
+				// ファイルの結合
+				log.println("Combining dmc(R) video.");
+				for(Future<File> future : list){
+					try {
+						File result = future.get();
+						if(result==null){
+							log.println("Error Split Download");
+						}
+					} catch(InterruptedException|ExecutionException e){
+						log.printStackTrace(e);
+					}
+				}
+				for(File subvideo : videolist){
+					try {
+						is = new FileInputStream(subvideo);
+						os = new FileOutputStream(video, true);
+						int read;
+						while ((read = is.read(buf, 0, buf.length)) > 0) {
+							os.write(buf, 0, read);
+						}
+						log.println("Combined "+subvideo.getName());
+						if(!Debug && subvideo.delete())
+							log.println("video flagment deleted: "+subvideo);
+					} catch(Exception e) {
+						log.printStackTrace(e);
+					} finally {
+						is.close();
+						os.flush();
+						os.close();
+					}
+				}
+			} finally {
+				pool.shutdown();
+			}
+			debugsOut("\n■read+write statistics(bytes) ");
+			timer.cancel();	// timer is single
+			log.println("heartbeat thread stopped.");
+			log.println("video.length="+video.length()+", sizeDmc="+sizeDmc+".");
+			if(video.length()!=sizeDmc){
+				log.println("video.length does not equal sizeDmc.");
+				// but continue
+			}else{
+				log.println("ok.");
+			}
 			if(!Debug){
 				// delete work files
 				log.print("delete workfiles...");
@@ -1142,7 +1545,6 @@ public class NicoClient {
 			is.close();
 			os.flush();
 			os.close();
-			con.disconnect();
 			return video;
 		} catch (FileNotFoundException ex) {
 			log.printStackTrace(ex);
@@ -1150,10 +1552,10 @@ public class NicoClient {
 			log.printStackTrace(ex);
 		} finally{
 			try {
-				if(fos!=null) fos.close();
+				if(fos!=null) {fos.flush(); fos.close();}
 			}catch(IOException e){}
 			try {
-				if(os!=null) os.close();
+				if(os!=null) {os.flush(); os.close();}
 			}catch(IOException e){}
 			try {
 				if(br!=null) br.close();
@@ -1325,6 +1727,7 @@ public class NicoClient {
 		HttpURLConnection con = null;
 		try {
 			String lastNo = "";
+			long start0 = Stopwatch.getElapsedTime(0);
 			if (file.canRead()){
 				if(isAppend && useNewComment){
 					if(commentType != CommentType.OWNER)
@@ -1378,10 +1781,10 @@ public class NicoClient {
 				debugsAdd(read);
 				fos.write(buf, 0, read);
 				size += read;
-				sendStatus(status, commentType.dlmsg(), max_size, size);
+				sendStatus(status, commentType.dlmsg(), max_size, size, start0);
 				Stopwatch.show();
 				if (flag.needStop()) {
-					log.println("\nStopped.");
+					log.println("Stopped.");
 					is.close();
 					os.flush();
 					os.close();
@@ -1587,19 +1990,18 @@ public class NicoClient {
 	private int dsMax;
 	private int dsMin;
 	private int dsSum;
-	private void debugsInit(){
-		if(!Debug) return;
+	private synchronized void debugsInit(){
 		dsCount = dsMax = dsSum = 0;
 		dsMin = Integer.MAX_VALUE;
 	}
-	private void debugsAdd(int data){
+	private synchronized void debugsAdd(int data){
+		dsSum += data;
 		if(!Debug) return;
 		dsCount++;
-		dsSum += data;
 		dsMax = Math.max(dsMax, data);
 		dsMin = Math.min(dsMin, data);
 	}
-	private void debugsOut(String header){
+	private synchronized void debugsOut(String header){
 		if(!Debug) return;
 		log.print(header);
 		if(dsCount==0){
@@ -1613,22 +2015,28 @@ public class NicoClient {
 	/*
 	 * msg = "動画" または "コメント" または "投稿者コメント"
 	 */
-	private void sendStatus(JLabel status, String msg,
-			int max_size, int size){
-		if (max_size > 0) {
-			String per = Double.toString((((double) size) * 100)
-					/ max_size);
-			per = per.substring(0, Math.min(per.indexOf(".") + 3, per
-					.length()));
-			synchronized (status) {
-				status.setText(msg + "ダウンロード：" + per + "パーセント完了");
-			}
-		} else {
-			synchronized (status) {
-				status.setText(msg + "ダウンロード中：" + Integer.toString(size >> 10)
-						+ "kbytesダウンロード");
-			}
+	private void sendtext(final JLabel status, final String s){
+		if(!SwingUtilities.isEventDispatchThread()){
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					status.setText(s);
+				}
+			});
+		}else{
+			status.setText(s);
 		}
+	}
+	private synchronized void sendStatus(JLabel status, String msg,
+			int max_size, int size, long start_mili){
+		String per = "";
+		if (max_size > 0) {
+			per = String.format("%.2f%%, ",((double)size * 100)/ max_size);
+		}
+		long milisec = Stopwatch.getElapsedTime(start_mili);
+		if(milisec==0) milisec=1;
+		String spd = String.format("%dKbps", size*8/milisec);
+		sendtext(status, msg+"ダウンロード："+per+(size >> 10)+"KiB, "+spd);
 	}
 
 	public void setExtraError(String extraError) {
@@ -1836,7 +2244,7 @@ public class NicoClient {
 	}
 	private String extractJson(Path xml, String encoding) {
 		//Json解析
-		if(watchApiJson==null){
+	//	if(watchApiJson==null){
 			Properties prop = new Properties();
 			try {
 				prop.loadFromXML(new FileInputStream(xml));
@@ -1937,7 +2345,7 @@ public class NicoClient {
 					debug("\n");
 				}
 			}
-		}
+	//	}
 		return watchApiJson;
 	}
 
@@ -2405,6 +2813,86 @@ public class NicoClient {
 
 	public String getThumbInfoData() {
 		return thumbInfoData;
+	}
+
+	class HeartBeatDmc extends TimerTask implements Runnable {
+		private String dmcHBUrl1 = "";
+		private String dmcHBUrl2 = "";
+		private Path postXml = null;
+
+		public HeartBeatDmc(String url1, String url2, Path xml){
+			dmcHBUrl1 = url1;
+			dmcHBUrl2 = url2;
+			postXml = xml;
+		}
+
+		@Override
+		public void run() {
+			OutputStream os = null;
+			PrintWriter pw = null;
+			Path response = Path.mkTemp(videoTag+"_HBresponce.xml");
+			String url = null;
+			HttpURLConnection con = null;
+			// POST dmcHBUrl
+			try {
+				url = dmcHBUrl1+sessionID+dmcHBUrl2;
+				debug("\n");
+				debug("■heartbeat URL<" + url + ">\n");
+				//	con = urlConnect(url, "POST", null, true, true, "keep-alive", false);
+				con = (HttpURLConnection)(new URL(url)).openConnection(ConProxy);
+				con.setDoOutput(true);
+				HttpURLConnection.setFollowRedirects(false);
+				con.setInstanceFollowRedirects(false);
+				con.setRequestMethod("POST");
+				con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
+				con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+				con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
+			//	con.setRequestProperty("Accept-Encoding", "deflate");
+			//	con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+				con.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
+				con.addRequestProperty("DNT", "1");
+				con.addRequestProperty("Connection", "keep-alive");
+				debug("■heartbeat Connect: POST,DoOutput,Connection keep-alive\n");
+				connect(con);
+				debug("■heartbeat write: " + postXmlData.length()+"\n");
+				os = con.getOutputStream();
+				os.write(postXmlData.getBytes());
+				os.flush();
+				os.close();
+				int code = con.getResponseCode();
+				String mes = con.getResponseMessage();
+				debug("■heartbeat Response: " + Integer.toString(code) + " " + mes+"\n");
+				if (code < HttpURLConnection.HTTP_OK || code >= HttpURLConnection.HTTP_BAD_REQUEST) { // must 200 <= <400
+					log.println("\nheartbeat Can't get HeartBeat response:" + mes);
+					throw new IOException("Heartbeat response error");
+				}
+				responseXmlData = readConnection(con);
+				con.disconnect();
+				postXmlData = "<session>"+getXmlElement(responseXmlData, "session")+"</session>";
+				sessionID = getXmlElement(responseXmlData, "id");
+				if(sessionID==null){
+					throw new IOException("Heartbeat data error");
+				}
+				debug("■heartbeat sessionID: "+sessionID+"\n");
+				// save all response
+				pw = new PrintWriter(response);
+				pw.write(responseXmlData);
+				pw.flush();
+				pw.close();
+				debug("■heartbeat session response: "+responseXmlData.length()+"\n");
+				debug("■heartbeat response write to: "+postXml.getPath()+"\n");
+			} catch (IOException e) {
+				log.printStackTrace(e);
+			}finally{
+				try{
+					if(con!=null) con.disconnect();
+				} catch(Exception e){};
+				try{
+					if(os!=null) os.close();
+				} catch(IOException e){};
+				if(pw!=null) pw.close();
+			}
+		}
 	}
 
 }

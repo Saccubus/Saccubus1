@@ -4,6 +4,8 @@
 package saccubus.net;
 
 import java.io.File;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import saccubus.ConvertingSetting;
 import saccubus.util.Logger;
@@ -209,7 +211,7 @@ public class BrowserInfo {
     private String getUserSessionFromFilefox4()
     {
         String user_session = "";
-        StringBuffer sb = new StringBuffer();
+    	Set<String> us = new LinkedHashSet<>();
         try
         {
             String app_dir = System.getenv("APPDATA");
@@ -226,12 +228,12 @@ public class BrowserInfo {
                     String dataStr = Path.readAllText(sqlist_filename, "US-ASCII");
                     user_session = cutUserSession(dataStr, sqlist_filename);
                     if (!user_session.isEmpty()){
-       	            	sb.append(user_session+" ");
+                    	us.add(user_session);
                     }
                     // else continue
                 }
             }
-            user_session = sb.substring(0).trim();
+            user_session = String.join(" ",us);
             return user_session;
         }
         catch (Exception e) {
@@ -283,7 +285,7 @@ public class BrowserInfo {
     private String getUserSessionFromMSIE()
     {
         String user_session = " ";
-        StringBuffer sb = new StringBuffer();
+        Set<String> us = new LinkedHashSet<>();
         String profile_dir = null;
         final String WINDOWS_DIR = "\\Microsoft\\Windows";
 
@@ -291,31 +293,31 @@ public class BrowserInfo {
         if (profile_dir != null && !profile_dir.isEmpty()){
             user_session = getUserSessionFromMSIE(profile_dir + WINDOWS_DIR);
             if(!user_session.isEmpty()){
-            	sb.append(user_session+" ");
+            	us.add(user_session);
             }
         }
         profile_dir = System.getenv("LOCALAPPDATA");    // userfolder/appdata/local
         if (profile_dir != null && !profile_dir.isEmpty()){
             user_session = getUserSessionFromMSIE(profile_dir + WINDOWS_DIR);
             if(!user_session.isEmpty()){
-            	sb.append(user_session+" ");
+            	us.add(user_session);
             }
         }
         profile_dir = System.getenv("PROFILE");    // userfolder
         if (profile_dir != null && !profile_dir.isEmpty()){
             user_session = getUserSessionFromMSIE(profile_dir);
             if(!user_session.isEmpty()){
-            	sb.append(user_session+" ");
+            	us.add(user_session);
             }
         }
         profile_dir = System.getenv("USERPROFILE");    // userfolder
         if (profile_dir != null && !profile_dir.isEmpty()){
             user_session = getUserSessionFromMSIE(profile_dir);
             if(!user_session.isEmpty()){
-            	sb.append(user_session+" ");
+            	us.add(user_session);
             }
         }
-        user_session = sb.substring(0).trim();
+        user_session = String.join(" ",us);
         return user_session;
     }
     /**
@@ -327,18 +329,18 @@ public class BrowserInfo {
         final String COOKIE_DIR = "\\Cookies";
         final String COOKIE_DIR2 = "\\InetCookies";
         String user_session = "";
-        StringBuilder sb1 = new StringBuilder();
+        Set<String> us = new LinkedHashSet<>();
         if(folder==null || folder.isEmpty())
         	return "";
         user_session = getUserSessionFromMSIE2(folder + COOKIE_DIR);
         if(!user_session.isEmpty()){
-        	sb1.append(user_session+" ");
+        	us.add(user_session);
         }
         user_session = getUserSessionFromMSIE2(folder + COOKIE_DIR2);
         if(!user_session.isEmpty()){
-        	sb1.append(user_session+" ");
+        	us.add(user_session);
         }
-        user_session = sb1.substring(0).trim();
+        user_session = String.join(" ",us);
         return user_session;
     }
     /**
@@ -348,18 +350,18 @@ public class BrowserInfo {
     private String getUserSessionFromMSIE2(String folder)
     {
     	String user_session = null;
-        StringBuilder sb2 = new StringBuilder();
+        Set<String> us = new LinkedHashSet<>();
         user_session = getUserSessionFromDirectory(folder + "\\");
         if (!user_session.isEmpty())
         {
-        	sb2.append(user_session+" ");
+        	us.add(user_session);
         }
         user_session = getUserSessionFromDirectory(folder + "\\Low\\");
         if (!user_session.isEmpty())
         {
-        	sb2.append(user_session+" ");
+        	us.add(user_session);
         }
-        user_session = sb2.substring(0).trim();
+        user_session = String.join(" ", us);
         return user_session;
     }
 
@@ -371,7 +373,7 @@ public class BrowserInfo {
     private String getUserSessionFromDirectory(String dir_name)
     {
         String user_session = "";
-        StringBuffer sb = new StringBuffer();
+        Set<String> us = new LinkedHashSet<>();
         try {
 	        if (Path.isDirectory(dir_name))
 	        {
@@ -390,7 +392,7 @@ public class BrowserInfo {
                 		return "";
                     user_session = cutUserSession(Path.readAllText(fullname, "MS932"), fullname);
                     if (!user_session.isEmpty()){
-                    	sb.append(user_session+" ");
+                    	us.add(user_session);
                     }
 
                     /*	Obsolete after WindowsUpdate Aug 2011
@@ -405,7 +407,7 @@ public class BrowserInfo {
                     }
                     */
                 }
-                user_session = sb.substring(0).trim();
+                user_session = String.join(" ", us);
                 return user_session;
             }
         }
@@ -540,7 +542,7 @@ public class BrowserInfo {
     private String cutUserSession(String str, String filename)
     {
     	String ret = "";
-    	StringBuffer sb = new StringBuffer("");
+    	Set<String> us = new LinkedHashSet<>();
         int start = str.indexOf("user_session_");
         while (start >= 0)
         {
@@ -555,11 +557,13 @@ public class BrowserInfo {
             // C# ÇÃ string.SubString( , ) Ç∆ Java ÇÃ String.substring( , ) ÇÕà·Ç§ÇÃÇ≈íçà”ÅI
             start = str.indexOf("user_session_", index);
             if (!ret.isEmpty() && !filename.isEmpty()){
-            	log.println("Cookie found: " + filename);
-                sb.append(ret + " ");
+                if(!us.contains(ret)){
+                	log.println("Cookie found: " + filename+" "+ret.substring(ret.length()- 4));
+                    us.add(ret);
+                }
             }
         }
-        return sb.toString();
+        return String.join(" ", us);
     }
 
 }

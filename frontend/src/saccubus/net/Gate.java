@@ -228,6 +228,10 @@ public class Gate extends Thread {
 		return numReq.get();
 	}
 
+	public static int getNumGate(){
+		return numGate.get();
+	}
+
 	public void exit(String result) {
 		if("0".equals(result)){
 			exit(0);
