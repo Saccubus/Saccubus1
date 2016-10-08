@@ -1010,8 +1010,9 @@ public class NicoClient {
 				// 部分ダウンロード不可
 				log.println("\ntest Response(dmc) HTTP_OK");
 				canRangeReq = false;
+				tryResume = false;
 			}
-			if(canRangeReq){
+			else{
 				if (rcode == HttpURLConnection.HTTP_PARTIAL){
 					// Rangeヘッダー受領　部分ダウンロード可能
 					log.println("\ntest Response(dmc) HTTP_PARTIAL");
@@ -1057,6 +1058,7 @@ public class NicoClient {
 			contentRange = dmcmap.get("Content-Range");
 			if(acceptRange==null || contentLength==null || contentRange==null){
 				canRangeReq = false;
+				tryResume = false;
 			}
 			else if(acceptRange.equals("bytes")){
 				// Response header check
@@ -1079,6 +1081,7 @@ public class NicoClient {
 				}
 				if(sizeRanged == 0 || sizeAll == 0) {
 					canRangeReq = false;
+					tryResume = false;
 				}
 			}
 			max_size = con.getContentLength();	// -1 when invalid
@@ -1144,101 +1147,6 @@ public class NicoClient {
 			timer = new Timer("リトライ分間隔タイマー");
 			timer.schedule(task, 10000, 10000);	// 10 seconds
 			log.println("heartbeat thread will start in "+10+" seconds.");
-			if(!canRangeReq || !isSplittable){
-			//	部分ダウンロードではないならもう一度ダウンロードを実行する
-			//	GET content_uri to download video
-				long starttime = Stopwatch.getStartTime();
-				url = contentUri + "&starti=0&start=0";
-				con = urlConnect(url, "GET", null, true, false, null, "");
-				if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK) {
-					log.println("\nCan't get video(dmc):" + url);
-					String ecode = getExtraError();
-					if(ecode==null){
-					}
-					else if (ecode.contains("403")){
-						setExtraError("=不適切な動画の可能性。readmeNew.txt参照");
-					}
-					else if(ecode.contains("50")){
-						// 5秒待機
-						try {
-							Thread.sleep(5000);
-						} catch (InterruptedException e) {
-							// log.printStackTrace(e);
-						}
-					}
-					return null;
-				}
-				// ファイルがすでに存在するなら削除する。
-				if (video.canRead() && video.delete()) {
-					log.print("previous video("+video.getPath()+") deleted...");
-				}
-				is = con.getInputStream();
-				new NicoMap().putConnection(con, (Debug? log:null));
-				if(ContentType==null){
-					ContentType = con.getHeaderField("Content-Type");
-					if(ContentType == null) ContentType = "";
-				}
-				ContentDisp = con.getHeaderField("Content-Disposition");
-				log.println("ContentType:" + ContentType + ", " + ContentDisp);
-				log.print("Downloading dmc video...");
-				os = new FileOutputStream(video);
-				int size = 0;
-				int read = 0;
-				debugsInit();
-				while ((read = is.read(buf, 0, buf.length)) > 0) {
-					debugsAdd(read);
-					size += read;
-					os.write(buf, 0, read);
-					sendStatus(status, "dmc動画", max_size, size, starttime);
-					Stopwatch.show();
-					if (flag.needStop()) {
-						log.println("\nStopped.");
-						timer.cancel();
-						is.close();
-						os.flush();
-						os.close();
-						con.disconnect();
-						if (video.delete()){
-							log.println("video deleted.");
-						}
-						return null;
-					}
-				}
-				debugsOut("\n■read+write statistics(bytes) ");
-				timer.cancel();
-				log.println("heartbeat thread stopped.");
-				if(size < max_size){
-					log.println("\nDownload stopped less than max_size. "+size+"<"+max_size+"\n");
-					Stopwatch.show();
-					is.close();
-					os.flush();
-					os.close();
-					con.disconnect();
-					if (video.delete()){
-						log.println("video fragment deleted.");
-					}
-					return null;
-				}
-				log.println("ok.");
-				if(!Debug){
-					// delete work files
-					log.print("delete workfiles...");
-					if(sessionXml!=null && sessionXml.delete())
-						log.print(sessionXml+", ");
-					if(crossdomain!=null && crossdomain.delete())
-						log.print(crossdomain+", ");
-					if(hbxml!=null && hbxml.delete())
-						log.print(hbxml+", ");
-					if(responseXml.delete())
-						log.print(responseXml+", ");
-					log.println();
-				}
-				is.close();
-				os.flush();
-				os.close();
-				con.disconnect();
-				return video;
-			}
 			if(resume_size!=0 || tryResume && downloadLimit > 0){
 			//	シーケンシャルリジューム
 				int resumed = (int)resume_size;
@@ -1320,9 +1228,105 @@ public class NicoClient {
 					os.close();
 					con.disconnect();
 					limits[1] = max_size;
+					apiSessionUrl = null;
 					return video;
 				}
 				log.println("resume ok.");
+				if(!Debug){
+					// delete work files
+					log.print("delete workfiles...");
+					if(sessionXml!=null && sessionXml.delete())
+						log.print(sessionXml+", ");
+					if(crossdomain!=null && crossdomain.delete())
+						log.print(crossdomain+", ");
+					if(hbxml!=null && hbxml.delete())
+						log.print(hbxml+", ");
+					if(responseXml.delete())
+						log.print(responseXml+", ");
+					log.println();
+				}
+				is.close();
+				os.flush();
+				os.close();
+				con.disconnect();
+				return video;
+			}
+			if(!canRangeReq || !isSplittable){
+			//	部分ダウンロードではないならもう一度ダウンロードを実行する
+			//	GET content_uri to download video
+				long starttime = Stopwatch.getStartTime();
+				url = contentUri + "&starti=0&start=0";
+				con = urlConnect(url, "GET", null, true, false, null, "");
+				if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK) {
+					log.println("\nCan't get video(dmc):" + url);
+					String ecode = getExtraError();
+					if(ecode==null){
+					}
+					else if (ecode.contains("403")){
+						setExtraError("=不適切な動画の可能性。readmeNew.txt参照");
+					}
+					else if(ecode.contains("50")){
+						// 5秒待機
+						try {
+							Thread.sleep(5000);
+						} catch (InterruptedException e) {
+							// log.printStackTrace(e);
+						}
+					}
+					return null;
+				}
+				// ファイルがすでに存在するなら削除する。
+				if (video.canRead() && video.delete()) {
+					log.print("previous video("+video.getPath()+") deleted...");
+				}
+				is = con.getInputStream();
+				new NicoMap().putConnection(con, (Debug? log:null));
+				if(ContentType==null){
+					ContentType = con.getHeaderField("Content-Type");
+					if(ContentType == null) ContentType = "";
+				}
+				ContentDisp = con.getHeaderField("Content-Disposition");
+				log.println("ContentType:" + ContentType + ", " + ContentDisp);
+				log.print("Downloading dmc video...");
+				os = new FileOutputStream(video);
+				int size = 0;
+				int read = 0;
+				debugsInit();
+				while ((read = is.read(buf, 0, buf.length)) > 0) {
+					debugsAdd(read);
+					size += read;
+					os.write(buf, 0, read);
+					sendStatus(status, "dmc動画", max_size, size, starttime);
+					Stopwatch.show();
+					if (flag.needStop()) {
+						log.println("\nStopped.");
+						timer.cancel();
+						is.close();
+						os.flush();
+						os.close();
+						con.disconnect();
+						if (video.delete()){
+							log.println("video deleted.");
+						}
+						return null;
+					}
+				}
+				debugsOut("\n■read+write statistics(bytes) ");
+				timer.cancel();
+				log.println("heartbeat thread stopped.");
+				if(size < max_size){
+					log.println("\nDownload stopped less than max_size. "+size+"<"+max_size+"\n");
+					Stopwatch.show();
+					is.close();
+					os.flush();
+					os.close();
+					con.disconnect();
+					if (video.delete()){
+						log.println("video fragment deleted.");
+					}
+					return null;
+				}
+				log.println("ok.");
 				if(!Debug){
 					// delete work files
 					log.print("delete workfiles...");
@@ -1429,7 +1433,7 @@ public class NicoClient {
 					}
 					ContentDisp = con.getHeaderField("Content-Disposition");
 					dlog.println("Content-Type: " + ContentType + ", " + ContentDisp);
-					dlog.print("Downloading dmc video...");
+					dlog.print("Downloading dmc(R) video...");
 
 					os = new FileOutputStream(downloadVideo);
 					int read = 0;

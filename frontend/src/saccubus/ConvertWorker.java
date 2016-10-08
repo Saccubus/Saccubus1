@@ -850,9 +850,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								}
 								// watchページ更新チェック
 								if(!client.getVideoHistoryAndTitle1(Tag,"?watch_harmful=1",true)){
+									log.println("dmc(S) watchページ更新チェック　エラー");
+									sendtext("dmc(S) watchページ更新チェック　エラー");
 									break;
 								}
 							} while(resume_size < dmc_size);
+							if(resume_size != dmc_size){
+								log.println("dmc(S) resume失敗!");
+								sendtext("dmc(S) resume失敗!");
+								dmc_size = 0;
+							}
 						} else {
 							dmcVideoFile = client.getVideoDmc(
 									dmcVideoFile, Status, StopFlag, renameMp4, limits,
