@@ -920,19 +920,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									sendtext("dmc動画のダウンロードに失敗" + ecode);
 								}
 							}else{
-								if(dmcVideoFile.length()!=dmc_size){
-									log.println("dmc download "+dmcVideoFile.length()+"bytes");
-									log.println("dmc動画サーバからのダウンロードに失敗しました。");
-									sendtext("dmc動画のダウンロードに失敗。サイズエラー");
-									dmc_size = 0;
-								} else{
-									videoLength = client.getDmcVideoLength();
-									dmc_size = dmcVideoFile.length();
-								}
+								log.println("dmc download "+dmcVideoFile.length()+"bytes");
+								videoLength = client.getDmcVideoLength();
+								dmc_size = dmcVideoFile.length();
 							}
 						}
 					}
-					log.println("dmc size: "+dmc_size);
 					if ( (size_high > video_size && size_high > dmc_size && !Setting.isInhibitSmaller())
 						||(size_high != video_size && Setting.isSmilePreferable())){
 						// smile動画をダウンロード
@@ -945,7 +938,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 						if (VideoFile == null) {
 							log.println("smile動画サーバからのダウンロードに失敗しました。");
-							sendtext("smile動画のダウンロードに失敗" + client.getExtraError());
+							sendtext("smile動画のダウンロードに失敗　" + client.getExtraError());
 							video_size = 0;
 						}else{
 							videoLength = client.getVideoLength();
@@ -953,18 +946,19 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 					}
 					if(dmc_size==0 && video_size==0){
-						sendtext("動画のダウンロードに失敗" + client.getExtraError());
+						sendtext("動画のダウンロードに失敗　" + client.getExtraError());
 						result = "44";
 						return false;
 					}
 					setVideoTitleIfNull(VideoFile.getName());
+					if(dmc_size!=0)
+						log.println("dmc size: "+dmc_size+" bytes.");
+					if(video_size!=0)
+						log.println("smile size: "+video_size+" bytes.");
 					if(dmc_size > video_size){
-						log.println("変換にはサイズが大きいdmc動画を使います");
-						sendtext("変換にはサイズが大きいdmc動画を使います");
+						log.println("変換にはdmc動画を使います");
+						sendtext("変換にはdmc動画を使います");
 						VideoFile = dmcVideoFile;
-					}else{
-						log.println("変換にはサイズが大きい動画を使います");
-						sendtext("変換にはサイズが大きい動画を使います");
 					}
 					if (optionalThreadID == null || optionalThreadID.isEmpty()) {
 						optionalThreadID = client.getOptionalThreadID();

@@ -1109,12 +1109,12 @@ public class NicoClient {
 					setExtraError("97 最小限度サイズより小さいのでダウンロード中止");
 					return null;
 				}
+				// 続行
+				sizeDmc = max_size;
 				if(max_size == resume_size){
 					setExtraError("97 ダウンロード完了済み");
 					return video;
 				}
-				// 続行
-				sizeDmc = max_size;
 			}
 			log.println("max_size="+(max_size/1000)+"Kbytes.");
 			// ダウンロードリミット設定
@@ -1122,21 +1122,6 @@ public class NicoClient {
 			if(videolen > 0){
 				double bitrate = (double)max_size / videolen;
 				downloadLimit = (int)(bitrate * 60)+1;
-				if(videolen > 3659){
-					if(downloadLimit < (2<<20))
-						downloadLimit = (2<<20);
-				}
-				else if(videolen > 1859){
-					if(downloadLimit < (4<<20))
-						downloadLimit = (4<<20);
-				}
-				else if(videolen > 959){
-					if(downloadLimit < (8<<20))
-						downloadLimit = (8<<20);
-				} else if(videolen > 399){
-					if(downloadLimit < (16<<20))
-						downloadLimit = (16<<20);
-				}
 				if(tryResume || resume_size>0)
 					log.println("setting download limit = "+downloadLimit);
 			}
@@ -1498,8 +1483,6 @@ public class NicoClient {
 							os.write(buf, 0, read);
 						}
 						log.println("Combined "+subvideo.getName());
-						if(!Debug && subvideo.delete())
-							log.println("video flagment deleted: "+subvideo);
 					} catch(Exception e) {
 						log.printStackTrace(e);
 					} finally {
@@ -1507,6 +1490,10 @@ public class NicoClient {
 						os.flush();
 						os.close();
 					}
+				}
+				for(File subvideo : videolist){
+					if(subvideo.delete())
+						log.println("video flagment deleted: "+subvideo);
 				}
 			} finally {
 				pool.shutdown();
