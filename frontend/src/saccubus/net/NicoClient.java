@@ -763,6 +763,12 @@ public class NicoClient {
 				log.println("Video url is not detected.");
 				return null;
 			}
+			if(VideoUrl.contains("rtmp")||VideoUrl.contains("rtmpe")){
+				// rtmp(e) はダウンロード不可
+				log.println("Can't get video:" + VideoUrl);
+				setExtraError("　ストリーミング動画は保存できません。");
+				return null;
+			}
 			if (file.canRead() && file.delete()) { // ファイルがすでに存在するなら削除する。
 				log.print("previous video deleted...");
 			}
@@ -790,10 +796,8 @@ public class NicoClient {
 			InputStream is = con.getInputStream();
 			new NicoMap().putConnection(con, (Debug? log:null));
 
-			if(ContentType==null){
-				ContentType = con.getHeaderField("Content-Type");
-				if(ContentType == null) ContentType = "";
-			}
+			ContentType = con.getHeaderField("Content-Type");
+			if(ContentType == null) ContentType = "";
 			ContentDisp = con.getHeaderField("Content-Disposition");
 			int max_size = con.getContentLength();	// -1 when invalid
 			if(max_size > 0 && sizeVideo <= 0)
@@ -1008,14 +1012,14 @@ public class NicoClient {
 			int rcode = con.getResponseCode();
 			if (rcode == HttpURLConnection.HTTP_OK) {
 				// 部分ダウンロード不可
-				log.println("\ntest Response(dmc) HTTP_OK");
+				debug("\ntest Response(dmc) HTTP_OK");
 				canRangeReq = false;
 				tryResume = false;
 			}
 			else{
 				if (rcode == HttpURLConnection.HTTP_PARTIAL){
 					// Rangeヘッダー受領　部分ダウンロード可能
-					log.println("\ntest Response(dmc) HTTP_PARTIAL");
+					debug("\ntest Response(dmc) HTTP_PARTIAL");
 					//isSplittable = true;
 				}
 				else { //エラー
@@ -1039,10 +1043,8 @@ public class NicoClient {
 			}
 			NicoMap dmcmap = new NicoMap();
 			dmcmap.putConnection(con, (Debug? log:null));
-			if(ContentType==null){
-				ContentType = con.getHeaderField("Content-Type");
-				if(ContentType == null) ContentType = "";
-			}
+			ContentType = con.getHeaderField("Content-Type");
+			if(ContentType == null) ContentType = "";
 			ContentDisp = con.getHeaderField("Content-Disposition");
 			String acceptRange = "";
 			String contentLength = "";
@@ -1063,20 +1065,20 @@ public class NicoClient {
 			else if(acceptRange.equals("bytes")){
 				// Response header check
 				try {
-					log.println("test(dmc) Content-Length: " + contentLength);
+					debug("\ntest(dmc) Content-Length: " + contentLength);
 					sizeRanged = Integer.decode(contentLength);
 				}catch(Exception e){
 					sizeRanged = 0;
-					log.println("error Response header(dmc) Content-Length: " + sizeRanged);
+					debug("\nerror Response header(dmc) Content-Length: " + sizeRanged);
 				}
 				if(contentRange.contains("/")){
 					String allsize = contentRange.substring(contentRange.lastIndexOf("/")+1);
 					try {
-						log.println("test(dmc) Content-Range: " + contentRange);
+						debug("\test(dmc) Content-Range: " + contentRange);
 						sizeAll = Integer.decode(allsize);
 					} catch(Exception ex){
 						sizeAll = 0;
-						log.println("error Response header(dmc) Content-Range: " + sizeAll);
+						debug("\nerror Response header(dmc) Content-Range: " + sizeAll);
 					}
 				}
 				if(sizeRanged == 0 || sizeAll == 0) {
@@ -1107,15 +1109,34 @@ public class NicoClient {
 					setExtraError("97 最小限度サイズより小さいのでダウンロード中止");
 					return null;
 				}
+				if(max_size == resume_size){
+					setExtraError("97 ダウンロード完了済み");
+					return video;
+				}
 				// 続行
 				sizeDmc = max_size;
 			}
-			log.println("size="+(max_size/1000)+"Kbytes.");
+			log.println("max_size="+(max_size/1000)+"Kbytes.");
 			// ダウンロードリミット設定
 			int videolen = getDmcVideoLength();
 			if(videolen > 0){
 				double bitrate = (double)max_size / videolen;
-				downloadLimit = (int)(bitrate * 55)+1;
+				downloadLimit = (int)(bitrate * 60)+1;
+				if(videolen > 3659){
+					if(downloadLimit < (2<<20))
+						downloadLimit = (2<<20);
+				}
+				else if(videolen > 1859){
+					if(downloadLimit < (4<<20))
+						downloadLimit = (4<<20);
+				}
+				else if(videolen > 959){
+					if(downloadLimit < (8<<20))
+						downloadLimit = (8<<20);
+				} else if(videolen > 399){
+					if(downloadLimit < (16<<20))
+						downloadLimit = (16<<20);
+				}
 				if(tryResume || resume_size>0)
 					log.println("setting download limit = "+downloadLimit);
 			}
@@ -1128,7 +1149,7 @@ public class NicoClient {
 				return null;
 			}
 			if(dummyfile.delete())
-				log.println("deleted test(dmc) file.");
+				debug("\ndeleted test(dmc) file.");
 		// 拡張子変更チェック
 			if(renameMp4 && ContentType.contains("mp4")){
 				String filepath = video.getPath();
@@ -1149,6 +1170,7 @@ public class NicoClient {
 			log.println("heartbeat thread will start in "+10+" seconds.");
 			if(resume_size!=0 || tryResume && downloadLimit > 0){
 			//	シーケンシャルリジューム
+				debugsInit((int)video.length());
 				int resumed = (int)resume_size;
 				int resumelimit = resumed + downloadLimit;
 				long starttime = Stopwatch.getStartTime();
@@ -1173,10 +1195,8 @@ public class NicoClient {
 				}
 				is = con.getInputStream();
 				new NicoMap().putConnection(con, (Debug? log:null));
-				if(ContentType==null){
-					ContentType = con.getHeaderField("Content-Type");
-					if(ContentType == null) ContentType = "";
-				}
+				ContentType = con.getHeaderField("Content-Type");
+				if(ContentType == null) ContentType = "";
 				ContentDisp = con.getHeaderField("Content-Disposition");
 				log.println("ContentType:" + ContentType + ", " + ContentDisp);
 				log.print("resume Downloading dmc(S) video...");
@@ -1196,9 +1216,7 @@ public class NicoClient {
 						os.flush();
 						os.close();
 						con.disconnect();
-						if (video.delete()){
-							log.println("video flagment deleted.");
-						}
+						// stopped video won't be delete
 						return null;
 					}
 					if (resumed > resumelimit){
@@ -1281,10 +1299,8 @@ public class NicoClient {
 				}
 				is = con.getInputStream();
 				new NicoMap().putConnection(con, (Debug? log:null));
-				if(ContentType==null){
-					ContentType = con.getHeaderField("Content-Type");
-					if(ContentType == null) ContentType = "";
-				}
+				ContentType = con.getHeaderField("Content-Type");
+				if(ContentType == null) ContentType = "";
 				ContentDisp = con.getHeaderField("Content-Disposition");
 				log.println("ContentType:" + ContentType + ", " + ContentDisp);
 				log.print("Downloading dmc video...");
@@ -1372,35 +1388,6 @@ public class NicoClient {
 					downloadVideo = video;
 					dlog = sublog;
 				}
-				private int dsSubCount = 0;
-				private int dsSubMax;
-				private int dsSubMin;
-				private int dsSubSum;
-				private synchronized void debugSubInit(){
-					dsSubCount = dsSubMax = dsSubSum = 0;
-					dsSubMin = Integer.MAX_VALUE;
-				}
-				private synchronized void debugSubAdd(int data){
-					debugsAdd(data);
-					dsSubSum += data;
-					if(!Debug) return;
-					dsSubCount++;
-					dsSubMax = Math.max(dsSubMax, data);
-					dsSubMin = Math.min(dsSubMin, data);
-				}
-				private synchronized void debugSubOut(String header){
-					if(!Debug) return;
-					dlog.print(header);
-					if(dsSubCount==0){
-						dlog.println("Count 0");
-					} else {
-						dlog.print("Count "+dsSubCount+", Min "+dsSubMin+", Max "+dsSubMax);
-						dlog.println(", Sum "+dsSubSum+", Avg "+dsSubSum/dsSubCount);
-					}
-				}
-				private synchronized void sendSubStatus(JLabel status, String msg, long t){
-					sendStatus(status, msg, max_size, dsSum, t);
-				}
 				@Override
 				public File call() throws Exception {
 					url = contentUri;
@@ -1427,23 +1414,20 @@ public class NicoClient {
 					dlog.println("Content-Length: "+contentLength);
 					String contentRange = dmcmap.get("Content-Range");
 					dlog.println("Content-Range: "+contentRange);
-					if(ContentType==null){
-						ContentType = con.getHeaderField("Content-Type");
-						if(ContentType == null) ContentType = "";
-					}
+					ContentType = con.getHeaderField("Content-Type");
+					if(ContentType == null) ContentType = "";
 					ContentDisp = con.getHeaderField("Content-Disposition");
 					dlog.println("Content-Type: " + ContentType + ", " + ContentDisp);
 					dlog.print("Downloading dmc(R) video...");
 
 					os = new FileOutputStream(downloadVideo);
 					int read = 0;
-					debugSubInit();
 					int len = buf.length / SPLITS;
 					int offset = downloadID * len;
 					while ((read = is.read(buf, offset, len)) > 0) {
 						os.write(buf, offset, read);
-						debugSubAdd(read);
-						sendSubStatus(status, "dmc動画(R)", started);
+						debugsAdd(read);
+						sendStatus(status, "dmc動画(R)", max_size, dsSum, started);
 						Stopwatch.show();
 						if (flag.needStop()) {
 							dlog.println("Stopped.");
@@ -1457,7 +1441,7 @@ public class NicoClient {
 							return null;
 						}
 					}
-					debugSubOut("\n■sub read+write statistics(bytes) ");
+					debugsOut("\n■sub read+write statistics(bytes) ");
 				//	timer.cancel();
 					dlog.println("ok.");
 					is.close();
@@ -1503,6 +1487,10 @@ public class NicoClient {
 				}
 				for(File subvideo : videolist){
 					try {
+						if(!subvideo.canRead()){
+							log.println("sub-video: "+subvideo+" can't read.");
+							break;
+						}
 						is = new FileInputStream(subvideo);
 						os = new FileOutputStream(video, true);
 						int read;
@@ -1571,6 +1559,11 @@ public class NicoClient {
 			try {
 				if(timer!=null) timer.cancel();
 			}catch(Exception e){}
+			if(responseXmlData.contains("token_accept_time_limit")){
+				setExtraError("98 dmc Token timeout");
+				String resStatus = getXmlElement(responseXmlData, "object");
+				log.println("DmcHttpResponse: "+resStatus);
+			}
 		}
 		return null;
 	}
@@ -1994,6 +1987,12 @@ public class NicoClient {
 	private int dsMax;
 	private int dsMin;
 	private int dsSum;
+	private int resume_start=-1;
+	private synchronized void debugsInit(int resume_size){
+		if(resume_start==-1)
+			resume_start = resume_size;
+		debugsInit();
+	}
 	private synchronized void debugsInit(){
 		dsCount = dsMax = dsSum = 0;
 		dsMin = Integer.MAX_VALUE;
@@ -2039,7 +2038,7 @@ public class NicoClient {
 		}
 		long milisec = Stopwatch.getElapsedTime(start_mili);
 		if(milisec==0) milisec=1;
-		String spd = String.format("%dKbps", size*8/milisec);
+		String spd = String.format("%dKbps", (size - resume_start)/milisec*8);
 		sendtext(status, msg+"ダウンロード："+per+(size >> 10)+"KiB, "+spd);
 	}
 
@@ -2872,10 +2871,17 @@ public class NicoClient {
 				}
 				responseXmlData = readConnection(con);
 				con.disconnect();
-				postXmlData = "<session>"+getXmlElement(responseXmlData, "session")+"</session>";
-				sessionID = getXmlElement(responseXmlData, "id");
-				if(sessionID==null){
-					throw new IOException("Heartbeat data error");
+				if(responseXmlData.contains("status=\"20")){
+					postXmlData = "<session>"+getXmlElement(responseXmlData, "session")+"</session>";
+					sessionID = getXmlElement(responseXmlData, "id");
+					if(sessionID==null){
+						throw new IOException("Heartbeat data error");
+					}
+				}else{
+					// BAD response not replace POST DATA
+					if(responseXmlData.contains("token_accept_time_limit")){
+						setExtraError("98 dmc Token timeout");
+					}
 				}
 				debug("■heartbeat sessionID: "+sessionID+"\n");
 				// save all response

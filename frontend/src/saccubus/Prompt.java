@@ -305,26 +305,46 @@ public class Prompt {
 		System.out.println("Tag:"+tag+" watchinfo="+watchinfo);
 		String text;
 		if(!tag.startsWith("auto") && !isMylist){
-			converter = manager.request(
-					-1,
-					setting.getNumThread(),
-					tag+watchinfo,
-					time,
-					setting,
-					status3,
-					cuiStop,
-					null,
-					autoPlay,
-					errorControl,
-					sbReturn);
-			while(converter!=null && !converter.isDone()){
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// e.printStackTrace();
-					// continue;
+			int retry = 0;
+			do{
+				converter = manager.request(
+						-1,
+						setting.getNumThread(),
+						tag+watchinfo,
+						time,
+						setting,
+						status3,
+						cuiStop,
+						null,
+						autoPlay,
+						errorControl,
+						sbReturn);
+				while(converter!=null && !converter.isDone()){
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// e.printStackTrace();
+						// continue;
+					}
 				}
-			}
+				if(sbReturn.substring(0).startsWith("RESULT=98")){
+					//dmc リトライ
+					retry++;
+					status3 = new JLabel[]{status, info, watch};
+					cuiStop = new ConvertStopFlag(stopButton, "停止", "待機", "終了", "変換", false);
+					stopButton = new JButton();
+					stopButton.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							synchronized(cuiStop){
+								cuiStop.stop();
+								cuiStop.notify();
+							}
+						}
+					});
+				}else
+					retry = 0;
+			} while(retry > 0 && retry < 10);
 			popup.dispose();
 
 			System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
@@ -395,6 +415,8 @@ public class Prompt {
 					AllCancel_ActionHandler(e);
 				}
 			});
+			final ConvertStopFlag autoStop
+				= new ConvertStopFlag(new JButton(), "停止", "待機", "終了", "変換", false);
 			for(int k=0; k<lists.length; k++){
 				String id_title = lists[k];
 				if(id_title.isEmpty()) continue;
@@ -409,7 +431,6 @@ public class Prompt {
 				System.out.println(">"+indexNow+" "+vid+watchinfo);
 				// ConverManager処理を要求
 				StringBuffer sbRet = new StringBuffer();
-				final ConvertStopFlag autoStop = new ConvertStopFlag(new JButton(), "停止", "待機", "終了", "変換", false);
 				converter = manager.request(
 					indexNow,
 					setting.getNumThread(),
@@ -449,7 +470,24 @@ public class Prompt {
 								System.out.println("エラー：ret=null");
 								code = -1;
 								result = "-1";
-							}else{
+							}else if(sbRet.toString().startsWith("RESULT=98")){
+								// dmc リトライ
+								status3 = new JLabel[]{status, info, watch};
+								converter = manager.request(
+										convNo++,
+										setting.getNumThread(),
+										conv.getVid()+watchinfo,
+										time,
+										setting,
+										status3,
+										autoStop,
+										null,
+										autoPlay,
+										errorControl,
+										sbRet);
+								converterList.add(converter);
+								flags.add(autoStop);
+							}else {
 								String[] ret = sbRet.toString().split("\n");
 								code = 0;
 								result = "";
