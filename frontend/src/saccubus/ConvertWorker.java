@@ -166,7 +166,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	public ConvertWorker(int worker_id,
 			String url, String time, ConvertingSetting setting,
 			JLabel[] jLabels, ConvertStopFlag flag,	MainFrame frame,
-			AutoPlay autoplay, ConvertManager conv, ErrorControl errcon, StringBuffer sb) {
+			AutoPlay autoplay, ConvertManager conv, ErrorControl errcon,
+			StringBuffer sb, Logger logger) {
 		Vid = url;
 		url = url.trim();
 		//watchvideo = !url.startsWith("http");
@@ -203,6 +204,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		errorControl = errcon;
 		tid = worker_id;
 		log = new Logger(Tag, tid, TMP_LOG_FRONTEND);
+		log.addSysout(logger);
 		browserInfo = new BrowserInfo(log);
 	}
 	private File VideoFile = null;
@@ -892,6 +894,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 											break;
 										}
 									}
+									sendtext("98 dmc(S)エラーリトライ　");
 									return false;
 								}
 							} while(resume_size < dmc_size);
@@ -2191,6 +2194,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				StringBuffer sb = new StringBuffer(Tag+"\tリトライ\t"+WatchInfo);
 				if(parent!=null){
 					parent.myListGetterDone(sb, log);
+				}else{
+					errorControl.setError(result,Tag+WatchInfo,"サスペンド\t"+resumeDmcFile);
 				}
 			}
 			else

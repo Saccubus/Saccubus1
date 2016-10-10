@@ -2,6 +2,7 @@ package saccubus.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 import saccubus.MainFrame;
@@ -23,14 +24,21 @@ public class Logger {
 	private int loglength = 0;
 	private static final int LOG_LIMIT = 1000000;
 	private static final int LOG_CONTINUE = 10000;
+	private boolean enableLogview = true;
+	private Logger sysout;
 
 	public Logger(File file){
+		this(file, true, false);
+	}
+
+	public Logger(File file, boolean enableView, boolean append){
+		enableLogview = enableView;
 		logfile = file;
 		if(file==null){
 			out = null;
 		}else
 		try {
-			out = new PrintStream(file);
+			out = new PrintStream(new FileOutputStream(file, append), true);
 		} catch (FileNotFoundException e) {
 			out = null;
 			e.printStackTrace();
@@ -49,8 +57,12 @@ public class Logger {
 	public void print(String s){
 		if(out!=null)
 			out.print(s);
-		System.out.print(s);
-		logPrint(s);
+		if(sysout == null)
+			System.out.print(s);
+		else
+			sysout.print(s);
+		if(enableLogview)
+			logPrint(s);
 	}
 
 	private void logPrint(String s){
@@ -110,5 +122,12 @@ public class Logger {
 
 	public PrintStream getPS() {
 		return out;
+	}
+
+	public void addSysout(Logger logger) {
+		if(sysout == null)
+			sysout = logger;
+		else
+			sysout.addSysout(logger);
 	}
 }

@@ -59,7 +59,8 @@ public class ConvertManager extends Thread {
 		MainFrame frame,
 		AutoPlay autoplay,
 		ErrorControl errcon,
-		StringBuffer sbret
+		StringBuffer sbret,
+		Logger logger
 		)
 	{
 		numThread.set(nThread);
@@ -74,7 +75,8 @@ public class ConvertManager extends Thread {
 				autoplay,
 				this,
 				errcon,
-				sbret);
+				sbret,
+				logger);
 		flagTable.put(flag, converter);
 		if(flag.isPending()){
 			numPending.incrementAndGet();

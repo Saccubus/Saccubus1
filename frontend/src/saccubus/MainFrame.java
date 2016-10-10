@@ -3383,7 +3383,8 @@ public class MainFrame extends JFrame {
 				this,
 				autoPlay,
 				errorControl,
-				vList);
+				vList,
+				log);
 			// return to dispatch
  		}
 
@@ -3508,7 +3509,8 @@ public class MainFrame extends JFrame {
 					this,
 					autoPlay,
 					errorControl,
-					sbret);
+					sbret,
+					log);
 				// ConverManagerèàóùÇóvãÅ
 				// return to dispatch
 			}
@@ -3767,7 +3769,8 @@ public class MainFrame extends JFrame {
 					autoPlay,
 					new ConvertManager(null),
 					errorControl,
-					new StringBuffer());
+					new StringBuffer(),
+					Logger.MainLog);
 			if (setting.isVideoFixFileName()) {
 				File folder = setting.getVideoFixFileNameFolder();
 				String path = conv.detectTitleFromVideo(folder);

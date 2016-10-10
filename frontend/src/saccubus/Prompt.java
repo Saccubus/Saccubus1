@@ -7,9 +7,10 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -19,7 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import saccubus.net.Path;
-import saccubus.util.DuplicatedOutput;
+import saccubus.util.Logger;
 
 /**
  * <p>
@@ -43,8 +44,6 @@ import saccubus.util.DuplicatedOutput;
  */
 public class Prompt {
 	private static final String LOGFILE = ".\\log.txt";
-	private static final String LOGFILE2 = ".\\sacclog.txt";
-	private static DuplicatedOutput dout = null;
 	private static String logname = LOGFILE;
 	private static int maxsize = 1000000;
 	private static boolean enablePupup = false;
@@ -69,17 +68,23 @@ public class Prompt {
 	private static AutoPlay autoPlay;
 	private static ErrorControl errorControl;
 	private static boolean aborted = false;
+	private static ArrayList<String> retryList = new ArrayList<>();
+	private static Logger log;
 
-	public static void main(String[] args) {
-		if(!setLog(logname)){
-			if(!setLog(LOGFILE2)){
-				exit(1);
-			}
-		}
-		System.out.println(WayBackDate.formatNow());
+	public static void main(String[] args){
+		int code = 0;
+		do {
+			code = main1(args.clone());
+		}while(code==0x98);
+		System.exit(code);
+	}
+
+	public static int main1(String[] args) {
+		log = setLog(logname);
+		log.println(WayBackDate.formatNow());
 		if (args.length < 3){
-			System.out.println("Error. MailAddress, Password, VideoID must be specified.");
-			exit(2);
+			log.println("Error. MailAddress, Password, VideoID must be specified.");
+			return exit(2);
 		}
 		String mail = "";
 		String pass = "";
@@ -104,8 +109,8 @@ public class Prompt {
 	//	tag = args[2];
 	//	time = args.length < 4 ? "" : args[3];
 		if (mail.isEmpty() || pass.isEmpty() || tag.isEmpty()){
-			System.out.println("Error. MailAddress, Password, VideoID must be specified.");
-			exit(2);
+			log.println("Error. MailAddress, Password, VideoID must be specified.");
+			return exit(2);
 		}
 		int index;
 		String key, value;
@@ -119,20 +124,20 @@ public class Prompt {
 			if(arg.equals("@NDL")){
 				downloadMap.put(ConvertingSetting.PROP_SAVE_VIDEO, "false");
 				downloadMap.put(ConvertingSetting.PROP_SAVE_COMMENT, "false");
-				System.out.println("Set No Download.");
+				log.println("Set No Download.");
 				continue;
 			}
 			if(arg.equals("@DLO")){
 				downloadMap.put(ConvertingSetting.PROP_SAVE_VIDEO, "true");
 				downloadMap.put(ConvertingSetting.PROP_SAVE_COMMENT, "true");
 				downloadMap.put(ConvertingSetting.PROP_SAVE_CONVERTED,"false");
-				System.out.println("Set Download Only.");
+				log.println("Set Download Only.");
 				continue;
 			}
 			if(arg.equals("@DLC")){
 				downloadMap.put(ConvertingSetting.PROP_SAVE_COMMENT, "true");
 				downloadMap.put(ConvertingSetting.PROP_SAVE_CONVERTED,"false");
-				System.out.println("Set Download Comment Only.");
+				log.println("Set Download Comment Only.");
 				continue;
 			}
 			if(arg.equals("@PUP")){
@@ -141,12 +146,12 @@ public class Prompt {
 			}
 			if(arg.startsWith("@SET=")){
 				propFile  = arg.substring(arg.indexOf('=')+1);
-				System.out.println("Set Setting Property File:" + propFile + ".");
+				log.println("Set Setting Property File:" + propFile + ".");
 				continue;
 			}
 			if(arg.startsWith("@ADD=")){
 				addPropFile = arg.substring(arg.indexOf('=')+1);
-				System.out.println("Set Adding Property File:" + addPropFile + ".");
+				log.println("Set Adding Property File:" + addPropFile + ".");
 				continue;
 			}
 			if(arg.startsWith("-") && arg.contains("=")){
@@ -177,7 +182,7 @@ public class Prompt {
 				optionFilePrefix = arg.trim();
 				continue;
 			}
-			System.out.println("Undefined Argument: <" + arg + ">");
+			log.println("Undefined Argument: <" + arg + ">");
 		}
 		prop = ConvertingSetting.loadProperty(propFile, true);
 		//option prefix 設定
@@ -244,40 +249,27 @@ public class Prompt {
 		popup.setVisible(enablePupup);
 		sbReturn = new StringBuffer(16);
 
-		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-		System.out.println("Saccubus on CUI");
-		System.out.println();
-		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-		System.out.println("Mailaddr: " + mail);
-		System.out.println("Password: hidden");
-		System.out.println("VideoID: " + tag);
-		System.out.println("WaybackTime: " + time);
+		log.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+		log.println("Saccubus on CUI");
+		log.println();
+		log.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+		log.println("Mailaddr: " + mail);
+		log.println("Password: hidden");
+		log.println("VideoID: " + tag);
+		log.println("WaybackTime: " + time);
 		if(!optionFilePrefix.isEmpty()){
-			System.out.println("OptionPrefix: " + optionFilePrefix);
+			log.println("OptionPrefix: " + optionFilePrefix);
 		}
 		if(!atArgs.isEmpty()){
-			System.out.print("Other args:");
+			log.print("Other args:");
 			for(String arg : atArgs){
-				System.out.print(" " + arg);
+				log.print(" " + arg);
 			}
-			System.out.println();
+			log.println();
 		}
-		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-		System.out.println("Version " + MainFrame_AboutBox.rev );
-		System.out.println();
-		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-		System.out.println("VideoID: " + tag);
-		System.out.println("WaybackTime: " + time);
-		if(!optionFilePrefix.isEmpty()){
-			System.out.println("OptionPrefix: " + optionFilePrefix);
-		}
-		if(!atArgs.isEmpty()){
-			System.out.print("Other args:");
-			for(String arg : atArgs){
-				System.out.print(" " + arg);
-			}
-			System.out.println();
-		}
+		log.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+		log.println("Version " + MainFrame_AboutBox.rev );
+		log.println();
 
 		manager = new ConvertManager(null);
 		autoPlay = new AutoPlay(setting.isAutoPlay());
@@ -302,64 +294,45 @@ public class Prompt {
 				tag = url.substring(index2+1);
 			}
 		}
-		System.out.println("Tag:"+tag+" watchinfo="+watchinfo);
+		log.println("Tag:"+tag+" watchinfo="+watchinfo);
 		String text;
 		if(!tag.startsWith("auto") && !isMylist){
-			int retry = 0;
-			do{
-				converter = manager.request(
-						-1,
-						setting.getNumThread(),
-						tag+watchinfo,
-						time,
-						setting,
-						status3,
-						cuiStop,
-						null,
-						autoPlay,
-						errorControl,
-						sbReturn);
-				while(converter!=null && !converter.isDone()){
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						// e.printStackTrace();
-						// continue;
-					}
+			converter = manager.request(
+					-1,
+					setting.getNumThread(),
+					tag+watchinfo,
+					time,
+					setting,
+					status3,
+					cuiStop,
+					null,
+					autoPlay,
+					errorControl,
+					sbReturn,
+					log);
+			while(converter!=null && !converter.isDone()){
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// e.printStackTrace();
+					// continue;
 				}
-				if(sbReturn.substring(0).startsWith("RESULT=98")){
-					//dmc リトライ
-					retry++;
-					status3 = new JLabel[]{status, info, watch};
-					cuiStop = new ConvertStopFlag(stopButton, "停止", "待機", "終了", "変換", false);
-					stopButton = new JButton();
-					stopButton.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							synchronized(cuiStop){
-								cuiStop.stop();
-								cuiStop.notify();
-							}
-						}
-					});
-				}else
-					retry = 0;
-			} while(retry > 0 && retry < 10);
+			}
 			popup.dispose();
 
-			System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-			System.out.println("Finished.");
-			System.out.println();
+			log.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+			log.println("Finished.");
+			log.println();
 			String[] ret = sbReturn.toString().split("\n");
 			int code = 0;
 			for(int l=0;l<ret.length;l++){
-				System.out.println(ret[l]);
+				log.println(ret[l]);
 				String[] s = ret[l].split("=");
 				if("RESULT".equals(s[0]) && !"0".equals(s[1])){
 					code = Integer.parseInt(s[1],16);
 				}
 			}
-			exit(code);
+			return exit(code);
 		}else{
 			if (isMylist){
 				// "http://www/nicovideo.jp/mylist/1234567?watch_harmful=1" など
@@ -382,27 +355,27 @@ public class Prompt {
 						// e.printStackTrace();
 					}
 					if(++count > 120){
-						System.out.println("Error: マイリストが取得できません(１分経過)");
-						exit(251);
+						log.println("Error: マイリストが取得できません(１分経過)");
+						return exit(251);
 					}
 				}
 				text = status3[0].getText();
 				if(text==null||!text.equals("[00]")){
-					System.out.println("Error: result="+text);
-					exit(252);
+					log.println("Error: result="+text);
+					return exit(252);
 				}
 				text = sbReturn.substring(0);
 			} else {
 				// auto
 				localListFile= new File( tag + ".txt");
 				if(!localListFile.exists()){
-					System.out.println("Error: "+localListFile.getAbsolutePath()+"がありません .");
-					exit(253);
+					log.println("Error: "+localListFile.getAbsolutePath()+"がありません .");
+					return exit(253);
 				}
 				text = Path.readAllText(localListFile, "MS932");
 				if(text.isEmpty()){
-					System.out.println("Error: "+localListFile.getAbsolutePath()+"に動画がありません. 書式が違っていないか確認して下さい");
-					exit(254);
+					log.println("Error: "+localListFile.getAbsolutePath()+"に動画がありません. 書式が違っていないか確認して下さい");
+					return exit(254);
 				}
 			}
 			String[] lists = text.split("\n");
@@ -415,8 +388,6 @@ public class Prompt {
 					AllCancel_ActionHandler(e);
 				}
 			});
-			final ConvertStopFlag autoStop
-				= new ConvertStopFlag(new JButton(), "停止", "待機", "終了", "変換", false);
 			for(int k=0; k<lists.length; k++){
 				String id_title = lists[k];
 				if(id_title.isEmpty()) continue;
@@ -428,9 +399,10 @@ public class Prompt {
 				listInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
 				activityPane.add(listInfo);
 				int indexNow = convNo++;
-				System.out.println(">"+indexNow+" "+vid+watchinfo);
+				log.println(">"+indexNow+" "+vid+watchinfo);
 				// ConverManager処理を要求
 				StringBuffer sbRet = new StringBuffer();
+				final ConvertStopFlag autoStop = new ConvertStopFlag(new JButton(), "停止", "待機", "終了", "変換", false);
 				converter = manager.request(
 					indexNow,
 					setting.getNumThread(),
@@ -442,7 +414,8 @@ public class Prompt {
 					null,
 					autoPlay,
 					errorControl,
-					sbRet);
+					sbRet,
+					log);
 				converterList.add(converter);
 				flags.add(autoStop);
 				// return to dispatch
@@ -452,6 +425,7 @@ public class Prompt {
 			int code = 0;
 			String results = "";
 			String result = "";
+			String vid = "";
 			do{
 				ArrayList<ConvertWorker> doneList = new ArrayList<>();
 				for(ConvertWorker conv: converterList){
@@ -463,36 +437,20 @@ public class Prompt {
 					if(conv.isDone()|| flag==null || flag.isFinished()){
 						try{
 							int j = conv.getId();
-							System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-							System.out.println("Finished. ("+j+") "+conv.getVid());
+							log.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+							log.println("Finished. ("+j+") "+conv.getVid());
 							StringBuffer sbRet = conv.getSbRet();
 							if(sbRet==null){
-								System.out.println("エラー：ret=null");
+								log.println("エラー：ret=null");
 								code = -1;
 								result = "-1";
-							}else if(sbRet.toString().startsWith("RESULT=98")){
-								// dmc リトライ
-								status3 = new JLabel[]{status, info, watch};
-								converter = manager.request(
-										convNo++,
-										setting.getNumThread(),
-										conv.getVid()+watchinfo,
-										time,
-										setting,
-										status3,
-										autoStop,
-										null,
-										autoPlay,
-										errorControl,
-										sbRet);
-								converterList.add(converter);
-								flags.add(autoStop);
-							}else {
+							}else{
 								String[] ret = sbRet.toString().split("\n");
 								code = 0;
 								result = "";
+								vid = conv.getVid();
 								for(int l=0;l<ret.length;l++){
-									System.out.println(ret[l]);
+									log.println(ret[l]);
 									String[] s = ret[l].split("=");
 									if("RESULT".equals(s[0]) && !"0".equals(s[1])){
 										code = Integer.parseInt(s[1],16);
@@ -507,6 +465,10 @@ public class Prompt {
 							e1.printStackTrace();
 						}finally{
 							if(code!=0 && codes==0) codes = code;	//最初のエラーコード
+							if(code==0x98){
+								// リトライリストにvid登録
+								retryList.add(vid);
+							}
 							if(results.isEmpty() && !result.equals("0"))
 								results = result;
 							doneList.add(conv);
@@ -533,18 +495,47 @@ public class Prompt {
 			if(aborted){
 				codes = 255;
 				results = "FF";
-				System.out.println("中止\nRESULTS="+results);
+				log.println("中止\nRESULTS="+results);
+			}else if(!retryList.isEmpty()){
+				//リトライ要求が有る
+				codes = 0x98;
+				results = "98";
+				log.println("サスペンド\nRESULTS="+results);
 			}else {
 				if(results.isEmpty())
 					results = "0";
-				System.out.println("終了\nRESULTS="+results);
+				log.println("終了\nRESULTS="+results);
 			}
 			if(codes!=0){
-				System.out.println("エラーがありました");
+				log.println("エラーがありました");
 				if(errorControl.save())
-					System.out.println("エラーリストを保存しました");
+					log.println("エラーリストを保存しました");
 			}
-			exit(codes);
+			if(!retryList.isEmpty()){
+				codes = 0x98;
+				log.println("サスペンドした動画をリトライします");
+				if(localListFile.renameTo(new File(localListFile.getPath()+"_sav")))
+					log.println("autolistをリネームしました。");
+				PrintWriter pw = null;
+				try {
+					pw = new PrintWriter(localListFile);
+					pw.println(":retryList "+(new Date().toString()));
+					for(String videoid: retryList){
+						pw.println(videoid);
+					}
+					pw.flush();
+					pw.close();
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				} finally {
+					if(pw!=null) {
+						pw.flush();
+						pw.close();
+					}
+				}
+				retryList.clear();
+			}
+			return exit(codes);
 		}
 	}
 
@@ -591,51 +582,19 @@ public class Prompt {
 		return value;
 	}
 
-	private static void exit(int status) {
-		if(dout != null){
-			dout.flush();
-			dout.close();
+	private static Logger setLog(String name){
+		int logsize = getLogsize();
+		String text = Path.readAllText(name, "MS932");
+		int len = text.length();
+		if(len > logsize){
+			text = text.substring(len - logsize);
+			Path.writeAllText(name, text, "MS932");
 		}
-		System.exit(status);
+		return new Logger(new File(name), false, true);
 	}
 
-	private static boolean setLog(String path) {
-		File log = new File(path);
-		if(log.exists() && log.canRead()){
-			String text = Path.readAllText(path, "MS932");
-			int len = text.length();
-			if(len > getLogsize()){
-				text = text.substring(len - getLogsize());
-				if(log.delete()){
-					try {
-						PrintStream ps = new PrintStream(log);
-						ps.print(text);
-						ps.flush();
-						ps.close();
-						dout = new DuplicatedOutput(log);
-						//PrintStream ps = new PrintStream(new FileOutputStream(log, true));
-						System.setErr(dout.dup(System.err));
-						System.setOut(dout.dup(System.out));
-						return true;
-					} catch (IOException e) {
-						e.printStackTrace();
-						return false;
-					}
-				}
-			}
-		}
-		if(!log.exists() || log.canWrite()){
-			try {
-				dout = new DuplicatedOutput(log);
-				//PrintStream ps = new PrintStream(new FileOutputStream(log, true));
-				System.setErr(dout.dup(System.err));
-				System.setOut(dout.dup(System.out));
-				return true;
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				return false;
-			}
-		}
-		return true;
+	private static int exit(int status) {
+		return status;
 	}
+
 }
