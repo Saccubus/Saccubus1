@@ -1643,7 +1643,7 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_PREFER_SMILE, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_FORCE_DMC_DL, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_RANGE,"false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_SEQ_RESUME, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_SEQ_RESUME, "true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_INHIBIT_SMALLER_VIDEO, "false"))
 		);
 	}

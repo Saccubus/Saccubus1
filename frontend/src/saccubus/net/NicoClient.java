@@ -1119,12 +1119,16 @@ public class NicoClient {
 			log.println("max_size="+(max_size/1000)+"Kbytes.");
 			// ダウンロードリミット設定
 			int videolen = getDmcVideoLength();
+			int byterate = 0;
 			if(videolen > 0){
-				double bitrate = (double)max_size / videolen;
-				downloadLimit = (int)(bitrate * 60)+1;
-				if(tryResume || resume_size>0)
-					log.println("setting download limit = "+downloadLimit);
+				byterate = (int)((double)max_size / videolen);
+				downloadLimit = byterate * 60;
+			} else {
+				downloadLimit = 4096*1024;
+				byterate = downloadLimit / 60;
 			}
+			if(tryResume || resume_size>0)
+				log.println("setting download limit = "+downloadLimit);
 			if(dummyfile==null){
 				log.println("Error:test download(dmc) failed.");
 				return null;
@@ -1153,87 +1157,94 @@ public class NicoClient {
 			timer = new Timer("リトライ分間隔タイマー");
 			timer.schedule(task, 10000, 10000);	// 10 seconds
 			log.println("heartbeat thread will start in "+10+" seconds.");
-			if(resume_size!=0 || tryResume && downloadLimit > 0){
+			if(tryResume || resume_size > 0){
 			//	シーケンシャルリジューム
 				debugsInit((int)video.length());
-				int resumed = (int)resume_size;
-				int resumelimit = resumed + downloadLimit;
 				long starttime = Stopwatch.getStartTime();
+				int resumed = (int)resume_size;
 				url = contentUri;
-				con = urlConnect(url, "GET", null, true, false, null, ""+resumed+"-"+(max_size-1));
-				if(con==null){
-					log.println("Can't get video(dmc):" + url);
-					return null;
-				}
-				rcode = con.getResponseCode();
-				if (rcode == HttpURLConnection.HTTP_PARTIAL) {
-					// success range downlaod
-				}
-				else if (rcode == HttpURLConnection.HTTP_OK) {
-					// not ranged
-					log.println("Not ranged video(dmc):" + url);
-					return null;
-				}
-				else {
-					log.println("Can't get video(dmc)"+rcode+":" + url);
-					return null;
-				}
-				is = con.getInputStream();
-				new NicoMap().putConnection(con, (Debug? log:null));
-				ContentType = con.getHeaderField("Content-Type");
-				if(ContentType == null) ContentType = "";
-				ContentDisp = con.getHeaderField("Content-Disposition");
-				log.println("ContentType:" + ContentType + ", " + ContentDisp);
-				log.print("resume Downloading dmc(S) video...");
-				os = new FileOutputStream(video, true);
-				int read = 0;
-				while ((read = is.read(buf, 0, buf.length)) > 0) {
-					debugsAdd(read);
-					resumed += read;
-					os.write(buf, 0, read);
-					sendStatus(status, "dmc動画(S)", max_size, resumed, starttime);
-					Stopwatch.show();
-					if (flag.needStop()) {
-						log.println("Stopped.");
-						timer.cancel();
-						log.println("heartbeat thread stopped.");
-						is.close();
-						os.flush();
-						os.close();
-						con.disconnect();
-						// stopped video won't be delete
+				do {
+					int resumelimit = resumed + downloadLimit;
+					if (resumelimit > max_size)
+						resumelimit = max_size;
+					con = urlConnect(url, "GET", null, true, false, "keep-alive", ""+resumed+"-"+(resumelimit-1));
+					if(con==null){
+						log.println("Can't get video(dmc):" + url);
 						return null;
 					}
-					if (resumed > resumelimit){
-						log.println("Suspended at "+resumed+" bytes.");
-						timer.cancel();
-						log.println("heartbeat thread stopped.");
-						is.close();
-						os.flush();
-						os.close();
-						con.disconnect();
-						limits[1] = max_size;
-						apiSessionUrl = null;
-						return video;
+					rcode = con.getResponseCode();
+					if (rcode == HttpURLConnection.HTTP_PARTIAL) {
+						// success range downlaod
 					}
-				}
-				debugsOut("\n■read+write statistics(bytes) ");
-				timer.cancel();
-				log.println("heartbeat thread stopped.");
-				log.println("resumed size = "+resumed+", max_size="+max_size+"\n");
-				if(resumed < max_size){
-					log.println("Download not finished.");
-					Stopwatch.show();
-					timer.cancel();
-					log.println("heartbeat thread stopped.");
+					else if (rcode == HttpURLConnection.HTTP_OK) {
+						// not ranged
+						log.println("Not ranged video(dmc):" + url);
+						return null;
+					}
+					else {
+						log.println("Can't get video(dmc)"+rcode+":" + url);
+						return null;
+					}
+					is = con.getInputStream();
+					dmcmap = new NicoMap();
+					dmcmap.putConnection(con, (Debug? log:null));
+					ContentType = con.getHeaderField("Content-Type");
+					if(ContentType == null) ContentType = "";
+					ContentDisp = con.getHeaderField("Content-Disposition");
+					log.println("ContentType:" + ContentType + ", " + ContentDisp);
+					contentRange = dmcmap.get("Content-Range");
+					log.println("Content-Range: "+contentRange);
+					log.println("Download limit = "+(downloadLimit>>10)+"KiB, bitrate = "+(byterate/125)+"kbps");
+					log.print("resume Downloading dmc(S) video...");
+					os = new FileOutputStream(video, true);
+					int read = 0;
+					while ((read = is.read(buf, 0, buf.length)) > 0) {
+						debugsAdd(read);
+						resumed += read;
+						os.write(buf, 0, read);
+						sendStatus(status, "dmc動画(S)", max_size, resumed, starttime);
+						Stopwatch.show();
+						if (flag.needStop()) {
+							log.println("Stopped.");
+							timer.cancel();
+							log.println("heartbeat thread stopped.");
+							is.close();
+							os.flush();
+							os.close();
+							con.disconnect();
+							// stopped video won't be delete
+							return null;
+						}
+						if (resumed > resumelimit){
+							log.println("Suspended at "+resumed+" bytes.");
+							timer.cancel();
+							log.println("heartbeat thread stopped.");
+							is.close();
+							os.flush();
+							os.close();
+							con.disconnect();
+							limits[1] = max_size;
+							apiSessionUrl = null;
+							return video;
+						}
+					}
+					debugsOut("\n■read+write statistics(bytes) ");
+					log.println("resumed size = "+resumed+", max_size="+max_size+"\n");
 					is.close();
 					os.flush();
 					os.close();
-					con.disconnect();
-					limits[1] = max_size;
-					apiSessionUrl = null;
-					return video;
-				}
+					//con.disconnect();
+					if(resumed < max_size)
+						log.println("Download not finished, continue.");
+					Stopwatch.show();
+				} while (resumed < max_size);
+				log.println("Download finished.");
+				timer.cancel();
+				log.println("heartbeat thread stopped.");
+				is.close();
+				os.flush();
+				os.close();
+				con.disconnect();
 				log.println("resume ok.");
 				if(!Debug){
 					// delete work files
@@ -1248,10 +1259,6 @@ public class NicoClient {
 						log.print(responseXml+", ");
 					log.println();
 				}
-				is.close();
-				os.flush();
-				os.close();
-				con.disconnect();
 				return video;
 			}
 			if(!canRangeReq || !isSplittable){
