@@ -1195,7 +1195,7 @@ public class NicoClient {
 					contentRange = dmcmap.get("Content-Range");
 					log.println("Content-Range: "+contentRange);
 					log.println("Download limit = "+(downloadLimit>>10)+"KiB, bitrate = "+(byterate/125)+"kbps");
-					log.print("resume Downloading dmc(S) video...");
+					log.println("resume Downloading dmc(S) video...");
 					os = new FileOutputStream(video, true);
 					int read = 0;
 					while ((read = is.read(buf, 0, buf.length)) > 0) {
@@ -1228,14 +1228,14 @@ public class NicoClient {
 							return video;
 						}
 					}
-					debugsOut("\nÅ°read+write statistics(bytes) ");
-					log.println("resumed size = "+resumed+", max_size="+max_size+"\n");
+					debugsOut("\nÅ°read+write statistics(bytes) \n");
+					log.println("resumed size = "+resumed+", max_size="+max_size);
 					is.close();
 					os.flush();
 					os.close();
 					//con.disconnect();
 					if(resumed < max_size)
-						log.println("Download not finished, continue.");
+						log.println("Download not finished, continue.\n");
 					Stopwatch.show();
 				} while (resumed < max_size);
 				log.println("Download finished.");

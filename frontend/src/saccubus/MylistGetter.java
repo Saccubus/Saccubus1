@@ -61,7 +61,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 
 	public MylistGetter(int worker_id, String url0, MainFrame frame,
 		JLabel[] in_status,ConvertStopFlag flag, ErrorControl error_control,
-		StringBuffer sb)
+		StringBuffer sb, Logger logger)
 	{
 		id = worker_id;
 		url = url0;
@@ -83,10 +83,12 @@ public class MylistGetter extends SwingWorker<String, String> {
 		ret = sb;
 		errorControl = error_control;
 		log = new Logger("mylist", id, ConvertWorker.TMP_LOG_FRONTEND);
+		log.addSysout(logger);
 	}
 
 	public MylistGetter(int worker_id, String tag, String info, ConvertingSetting setting,
-			JLabel[] in_status, ConvertStopFlag flag, ErrorControl errcon, StringBuffer sb)
+			JLabel[] in_status, ConvertStopFlag flag, ErrorControl errcon, StringBuffer sb,
+			Logger logger)
 	{
 		id = worker_id;
 		url = tag;
@@ -99,6 +101,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		ret = sb;
 		errorControl = errcon;
 		log = new Logger("mylistB", id, ConvertWorker.TMP_LOG_FRONTEND);
+		log.addSysout(logger);
 	}
 
 	//	private void sendtext(String text) {

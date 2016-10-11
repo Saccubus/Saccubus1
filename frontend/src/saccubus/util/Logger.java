@@ -18,31 +18,34 @@ public class Logger {
 
 	public static final Logger MainLog = new Logger(Path.mkTemp("main[log]frontend.txt"));
 	private PrintStream out;
-	private File logfile;
+	private final File logfile;
 	private static TextView logview = null;
 	private StringBuffer logbuf = new StringBuffer();
 	private int loglength = 0;
 	private static final int LOG_LIMIT = 1000000;
 	private static final int LOG_CONTINUE = 10000;
-	private boolean enableLogview = true;
+	private static boolean enableLogview = true;
 	private Logger sysout;
 
 	public Logger(File file){
-		this(file, true, false);
+		this(file, false);
 	}
 
-	public Logger(File file, boolean enableView, boolean append){
-		enableLogview = enableView;
+	public Logger(File file, boolean append){
 		logfile = file;
 		if(file==null){
 			out = null;
 		}else
 		try {
-			out = new PrintStream(new FileOutputStream(file, append), true);
+			out = new PrintStream(new FileOutputStream(logfile, append), true);
 		} catch (FileNotFoundException e) {
 			out = null;
 			e.printStackTrace();
 		}
+	}
+
+	public static void setLogviewVisible(boolean visible){
+		enableLogview = visible;
 	}
 
 	// sm12345[log1]frontend.txt
@@ -57,10 +60,10 @@ public class Logger {
 	public void print(String s){
 		if(out!=null)
 			out.print(s);
-		if(sysout == null)
-			System.out.print(s);
-		else
+		if(sysout != null)
 			sysout.print(s);
+		else
+			System.out.print(s);
 		if(enableLogview)
 			logPrint(s);
 	}
@@ -81,7 +84,7 @@ public class Logger {
 	}
 
 	private static boolean existLogview(){
-		if(logview==null){
+		if(logview==null && enableLogview){
 			logview = new TextView(MainFrame.getMaster(), "ÉçÉOView", false, false);
 			if(logview==null){
 				System.out.print("ÉçÉOViewÇ™çÏÇÍÇ‹ÇπÇÒ");
@@ -120,14 +123,20 @@ public class Logger {
 		e.printStackTrace();
 	}
 
-	public PrintStream getPS() {
-		return out;
-	}
-
 	public void addSysout(Logger logger) {
+		logger.flush();
 		if(sysout == null)
 			sysout = logger;
 		else
 			sysout.addSysout(logger);
+	}
+
+	private void flush() {
+		if(out!=null)
+			out.flush();
+		if(sysout!=null)
+			sysout.flush();
+		else
+			System.out.flush();
 	}
 }

@@ -203,8 +203,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		sbRet = sb;
 		errorControl = errcon;
 		tid = worker_id;
-		log = new Logger(Tag, tid, TMP_LOG_FRONTEND);
-		log.addSysout(logger);
+		log = logger;
 		browserInfo = new BrowserInfo(log);
 	}
 	private File VideoFile = null;
@@ -2000,6 +1999,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	@Override
 	protected String doInBackground() throws Exception {
+		Logger savelog = log;
 		log = new Logger(null);
 		synchronized (StopFlag) {
 			while(StopFlag.isPending()){
@@ -2014,6 +2014,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 
 		log = new Logger(Tag, tid, TMP_LOG_FRONTEND);
+		log.addSysout(savelog);
 		gate = Gate.open(tid,log);
 		stopwatch.clear();
 		stopwatch.start();

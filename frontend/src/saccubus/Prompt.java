@@ -284,7 +284,7 @@ public class Prompt {
 		if(isMylist){
 			tag = url;
 		}else{
-			index = tag.indexOf('?');
+			index = url.indexOf('?');
 			if(index >= 0){
 				int index2 = url.lastIndexOf('/',index);
 				tag = url.substring(index2+1,index);
@@ -344,7 +344,8 @@ public class Prompt {
 					status3,
 					cuiStop,
 					errorControl,
-					sbReturn);
+					sbReturn,
+					log);
 				mylistGetter.execute();
 				cuiStop.go();		//mylistGetterÇÕñ≥èåèÇ…é¿çs
 				int count = 0;
@@ -590,7 +591,10 @@ public class Prompt {
 			text = text.substring(len - logsize);
 			Path.writeAllText(name, text, "MS932");
 		}
-		return new Logger(new File(name), false, true);
+		Logger.setLogviewVisible(false);
+		Logger logger = new Logger(new File(name), true);
+		Logger.MainLog.addSysout(logger);
+		return Logger.MainLog;
 	}
 
 	private static int exit(int status) {

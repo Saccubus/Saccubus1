@@ -3482,7 +3482,8 @@ public class MainFrame extends JFrame {
 					status3,
 					stopFlag,
 					errorControl,
-					movieList);
+					movieList,
+					log);
 				mylistGetter.execute();
 				stopFlag.go();		//mylistGetter‚Í–³ğŒ‚ÉÀs
 				// MylistGetterÀs
