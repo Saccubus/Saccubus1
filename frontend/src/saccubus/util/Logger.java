@@ -62,10 +62,11 @@ public class Logger {
 			out.print(s);
 		if(sysout != null)
 			sysout.print(s);
-		else
+		else {
 			System.out.print(s);
-		if(enableLogview)
-			logPrint(s);
+			if(enableLogview)
+				logPrint(s);
+		}
 	}
 
 	private void logPrint(String s){

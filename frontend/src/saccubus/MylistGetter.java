@@ -215,6 +215,9 @@ public class MylistGetter extends SwingWorker<String, String> {
 							val2 = "";
 						else if("キャッシュ".equals(val2)||"マイリストコメント一覧".equals(val2))
 							val2 = "";
+						else if(val2.contains(" -"))
+							val2 = val2.substring(val2.indexOf(" -")+(" -").length());
+						val2 = val2.trim();
 						if(!val2.isEmpty() && (val.isEmpty() || val.length() < val2.length())){
 							val = val2;
 						}
@@ -238,7 +241,14 @@ public class MylistGetter extends SwingWorker<String, String> {
 							log.println("map.put("+key+",\""+val+"\")");
 						}else if(!title.equals(val)){
 							//タイトル登録済み
-							if(title.length()<val.length()){
+							if(title.length()<val.length() && val.length()<36){
+								map.put(key, val);
+								log.println("map.put("+key+",\""+val+"\")");
+							}
+							else if(title.length()<val.length()){
+								val = (title + "_" + val);
+								if(val.length()>48)
+									val = val.substring(0,48);
 								map.put(key, val);
 								log.println("map.put("+key+",\""+val+"\")");
 							}
