@@ -72,6 +72,7 @@ public class Prompt {
 	private static Logger log;
 
 	public static void main(String[] args){
+		Saccubus.initEnv();
 		int code = 0;
 		do {
 			code = main1(args.clone());

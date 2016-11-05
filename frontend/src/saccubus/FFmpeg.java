@@ -98,6 +98,8 @@ public class FFmpeg {
 	//		process = Runtime.getRuntime().exec(getCmd());
 			pb = new ProcessBuilder(getCmdArrayList());
 			pb.redirectErrorStream(true);
+			// add java.class.path to env PATH
+			pb.environment().put("PATH", Saccubus.pathenv);
 			process = pb.start();
 			ebr = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
 			String e;
@@ -206,6 +208,8 @@ public class FFmpeg {
 	//		process = Runtime.getRuntime().exec(getCmd());
 			pb = new ProcessBuilder(getCmdArrayList());
 			pb.redirectErrorStream(true);
+			// add java.class.path to env PATH
+			pb.environment().put("PATH", Saccubus.pathenv);
 			process = pb.start();
 			ebr = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String e;
