@@ -5,6 +5,9 @@ set local>nul
 cd /d %~dp0
 set log=log.txt
 
+:patch20161105
+PATH %~dp0;%PATH%
+PATH
 :default
 for %%I in (java.exe) do @set java="%%~$PATH:I"
 if not %java% == "" goto :javago

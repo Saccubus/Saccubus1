@@ -1,11 +1,13 @@
 読んで下さい.txt
 変更内容
 
-1.66.1.1(2016/10/11)
-バグ修正
-・auto.bat時のログ出力バグ修正, http://・・・smid?ref= 形式時のバグ修正
-・タイトル・タグ検索でタイトルの抽出修正
-
+1.66.1.2(2016/11/06)
+　・ffmpeg commit 3bf142c77337814458ed8e036796934032d9837f
+    "cmdutils: remove the current working directory from the DLL search path on win32"
+    http://git.videolan.org/gitweb.cgi/ffmpeg.git/?a=commit;h=3bf142c77337814458ed8e036796934032d9837f
+    に対応
+　・ffmpeg n3.2に更新　NVENC API 7.x対応(Pascal GTX 1060,1070,1080以降)
+　　オプションは変更なし
 
 使い方はsaccubusフォルダの中の
 最初に必ず読んで.txt
@@ -16,4 +18,4 @@ docフォルダの中には更に他の文書が有ります。
 
 また起動画面の [ヘルプ]メニューからもお読み頂けます。
 
-VirunTotal 検出率: 
+VirunTotal
