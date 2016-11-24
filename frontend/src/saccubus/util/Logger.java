@@ -58,8 +58,8 @@ public class Logger {
 	}
 
 	public void print(String s){
-		if(out!=null)
-			out.print(s);
+		if(getOutPrintStream()!=null)
+			getOutPrintStream().print(s);
 		if(sysout != null)
 			sysout.print(s);
 		else {
@@ -119,8 +119,8 @@ public class Logger {
 	}
 
 	public void printStackTrace(Exception e) {
-		if(out!=null)
-			e.printStackTrace(out);
+		if(getOutPrintStream()!=null)
+			e.printStackTrace(getOutPrintStream());
 		e.printStackTrace();
 	}
 
@@ -139,5 +139,9 @@ public class Logger {
 			sysout.flush();
 		else
 			System.out.flush();
+	}
+
+	public PrintStream getOutPrintStream() {
+		return out;
 	}
 }

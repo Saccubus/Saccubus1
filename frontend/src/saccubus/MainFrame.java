@@ -57,6 +57,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -155,6 +156,7 @@ public class MainFrame extends JFrame {
 	JPanel loginCheckPanel = new JPanel();
 	JButton loginCheckButton = new JButton();
 	JLabel loginStatusLabel = new JLabel();
+	final JCheckBox html5CheckBox = new JCheckBox();
 	JPanel UserInfoPanel = new JPanel();
 	GridBagLayout gridBagLayout3 = new GridBagLayout();
 	JLabel MailAddrLabel = new JLabel();
@@ -880,13 +882,14 @@ public class MainFrame extends JFrame {
 		});
 		jMenuLatestCheck.setText("最新バージョンチェック");
 		jMenuLatestCheck.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String url = "https://github.com/Saccubus/Saccubus1.x/releases/latest";
 					log.println("Access "+url);
 					Loader loader = new Loader(
-							self.getSetting(), new JLabel[]{statusBar,elapsedTimeBar,new JLabel()}, log);
+							self.getSetting(), new JLabel[]{statusBar,elapsedTimeBar,new JLabel()}, log, html5CheckBox.isSelected());
 					NicoMap map = loader.loadHttpsUrl(url);
 					String location = map.get("location");
 					if(location==null)
@@ -995,6 +998,11 @@ public class MainFrame extends JFrame {
 		loginStatusLabel.setText("");
 		loginCheckPanel.add(loginStatusLabel,
 			new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0));
+		html5CheckBox.setSelected(false);
+		html5CheckBox.setText("html5");
+		html5CheckBox.setToolTipText("html5プレイヤー使用を要求");
+		loginCheckPanel.add(html5CheckBox,
+			new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, INSETS_0_5_0_5, 0, 0));
 		UserInfoPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
 				.createEtchedBorder(), "ユーザ設定"));
 		UserInfoPanel.setLayout(gridBagLayout3);
@@ -2284,10 +2292,11 @@ public class MainFrame extends JFrame {
 		Path file = Path.mkTemp("mytop");
 		String url = "http://www.nicovideo.jp/my/top";
 		Loader loader = new Loader(getSetting(),
-			new JLabel[]{status, elapsedTimeBar, new JLabel()},log);
+			new JLabel[]{status, elapsedTimeBar, new JLabel()},log,html5CheckBox.isSelected());
 		if (loader.load(url, file) || loader.isLoggedIn()){
 			status.setText(status.getText()+"　ログイン済み");
 			file.delete();
+			loader.getIsHtml5();
 			return;
 		}
 		status.setText(status.getText()+"　ログインしていません");
@@ -3020,7 +3029,8 @@ public class MainFrame extends JFrame {
 			foceDmcDlCheckBox.isSelected(),
 			enableRangeCheckBox.isSelected(),
 			enableSeqResumeCheckBox.isSelected(),
-			inhibitSmallCheckBox.isSelected()
+			inhibitSmallCheckBox.isSelected(),
+			html5CheckBox.isSelected()
 		);
 	}
 
@@ -3199,6 +3209,7 @@ public class MainFrame extends JFrame {
 		enableRangeCheckBox.setSelected(setting.canRangeRequest());
 		enableSeqResumeCheckBox.setSelected(setting.canSeqResume());
 		inhibitSmallCheckBox.setSelected(setting.isInhibitSmaller());
+		html5CheckBox.setSelected(setting.isHtml5());
 	}
 
 	/**
@@ -5237,6 +5248,19 @@ s	 * @return javax.swing.JPanel
 	public static MainFrame getMaster(){
 		return MasterMainFrame;
 	}
+
+	public void setIsHtml5(final boolean b) {
+		if(SwingUtilities.isEventDispatchThread()){
+			html5CheckBox.setSelected(b);
+		}else{
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					html5CheckBox.setSelected(b);
+				}
+			});
+		}
+	}
 }
 
 class MainFrame_ShowSavingVideoFolderDialogButton_actionAdapter implements
@@ -5430,7 +5454,7 @@ class MainFrame_LoadNGConfig implements ActionListener {
 		mainFrame.sendtext("ニコニコ動画のNG設定保存");
 		Loader loader = new Loader(mainFrame.getSetting(),
 					new JLabel[]{mainFrame.statusBar, new JLabel(), watch, new JLabel()},
-			Logger.MainLog);
+			Logger.MainLog,mainFrame.html5CheckBox.isSelected());
 		Path file = new Path("configNG.xml");
 		String url = "http://ext.nicovideo.jp/api/configurengclient?mode=get";
 		if (loader.load(url, file)){

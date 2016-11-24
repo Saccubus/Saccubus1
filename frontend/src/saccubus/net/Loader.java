@@ -42,13 +42,15 @@ public class Loader {
 	private Logger log;
 	private boolean Debug = false;
 	private NicoClient client;
+	private boolean isHtml5;
 
-	public Loader(ConvertingSetting setting, JLabel[] status3, Logger logger) {
+	public Loader(ConvertingSetting setting, JLabel[] status3, Logger logger, boolean is_html5) {
 		log = logger;
 		this.setting = setting;
 		this.status = status3[0];
 		stopwatch = new Stopwatch(status3[1]);
 		Debug = setting.isDebugNicovideo();
+		isHtml5 = is_html5;
 	}
 
 	void sendtext(String text){
@@ -113,11 +115,12 @@ public class Loader {
 	private NicoClient getNicoClient(Logger log){
 		sendtext("ログイン中");
 		NicoClient client = null;
+		isHtml5 = setting.isHtml5();
 		if (browserKind != BrowserCookieKind.NONE){
 			// セッション共有、ログイン済みのNicoClientをclientに返す
-			client = new NicoClient(browserKind, userSession, proxy, proxyPort, stopwatch, log);
+			client = new NicoClient(browserKind, userSession, proxy, proxyPort, stopwatch, log, isHtml5);
 		} else {
-			client = new NicoClient(mailAddress, password, proxy, proxyPort, stopwatch, log);
+			client = new NicoClient(mailAddress, password, proxy, proxyPort, stopwatch, log, isHtml5);
 		}
 		if (!client.isLoggedIn()) {
 			sendtext("ログイン失敗 " + browserKind.getName() + " " + client.getExtraError());
@@ -226,4 +229,7 @@ public class Loader {
 		return client.isLoggedIn();
 	}
 
+	public boolean getIsHtml5() {
+		return isHtml5;
+	}
 }

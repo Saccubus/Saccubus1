@@ -18,6 +18,7 @@ import saccubus.util.Logger;
  *
  */
 public class NicoMap {
+	static final String SET_COOKIE = "Set-Cookie";
 	private final Map<String, String> map;
 	private int setCookieCount = 0;
 	private static final String SECURE_COOKIE = "_secure_cookie";
@@ -155,7 +156,7 @@ public class NicoMap {
 	 * @param value
 	 */
 	void add(String key, String value){
-		if(!key.equalsIgnoreCase("Set-Cookie")){
+		if(!key.equalsIgnoreCase(SET_COOKIE)){
 			this.put(key, value);
 		}else{
 			key = "_" + key + setCookieCount++;

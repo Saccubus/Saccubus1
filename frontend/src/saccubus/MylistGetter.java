@@ -135,7 +135,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		String autolist = "auto";
 		Path file = Path.mkTemp(url.replace("http://","").replace("nicovideo.jp/","")
 				.replaceAll("[/\\:\\?=\\&]+", "_") + ".html");
-		Loader loader = new Loader(Setting, status3, log);
+		Loader loader = new Loader(Setting, status3, log, Setting.isHtml5());
 		gate = Gate.open(id,log);
 		if(!loader.load(url,file)){
 			addError("E1",url);

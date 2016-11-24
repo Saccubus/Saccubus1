@@ -688,11 +688,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			|| Setting.isSaveThumbInfo()) {
 			sendtext("ログイン中");
 			NicoClient client = null;
+			boolean is_html5 = Setting.isHtml5();
 			if (BrowserKind != BrowserCookieKind.NONE){
 				// セッション共有、ログイン済みのNicoClientをclientに返す
-				client = new NicoClient(BrowserKind, UserSession, proxy, proxy_port, stopwatch, log);
+				client = new NicoClient(BrowserKind, UserSession, proxy, proxy_port, stopwatch, log, is_html5);
 			} else {
-				client = new NicoClient(mailAddress, password, proxy, proxy_port, stopwatch, log);
+				client = new NicoClient(mailAddress, password, proxy, proxy_port, stopwatch, log, is_html5);
 			}
 			if (!client.isLoggedIn()) {
 				sendtext("ログイン失敗 " + BrowserKind.getName() + " " + client.getExtraError());

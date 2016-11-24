@@ -13,7 +13,7 @@ class NicoCookie {
 	private String session_cookie;
 	private String delete_cookie;
 	private String other_cookie;
-	private String ret_cookie;
+	private String ret_cookie = "";
 
 	String get(String url){
 		ret_cookie = "";
@@ -74,5 +74,11 @@ class NicoCookie {
 	}
 	public void setSession(String session) {
 		setSessionCookie(session);
+	}
+	public void addNormalCookie(String string) {
+		if(normal_cookie==null || normal_cookie.isEmpty())
+			normal_cookie = string;
+		else if(!normal_cookie.contains(string))
+			normal_cookie += "; " + string;
 	}
 }

@@ -198,6 +198,7 @@ public class ConvertingSetting {
 	private boolean enableRange;
 	private boolean enableSeqResume;
 	private boolean inhibitSmaller;
+	private boolean isHtml5;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -430,7 +431,8 @@ public class ConvertingSetting {
 			boolean force_dmc_dl,
 			boolean enable_range,
 			boolean enable_sequential,
-			boolean inhibit_smaller
+			boolean inhibit_smaller,
+			boolean watch_html5
 		)
 	{
 		this(	mailaddress,
@@ -578,6 +580,7 @@ public class ConvertingSetting {
 		enableRange = enable_range;
 		enableSeqResume = enable_sequential;
 		inhibitSmaller = inhibit_smaller;
+		isHtml5 = watch_html5;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -989,6 +992,9 @@ public class ConvertingSetting {
 	public boolean isInhibitSmaller(){
 		return inhibitSmaller;
 	}
+	public boolean isHtml5() {
+		return isHtml5;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1152,6 +1158,7 @@ public class ConvertingSetting {
 	static final String PROP_ENABLE_RANGE = "EnableRangeRequest";
 	static final String PROP_ENABLE_SEQ_RESUME = "EnableSeqResume";
 	static final String PROP_INHIBIT_SMALLER_VIDEO = "InhibitSmallerVideo";
+	static final String PROP_WATCH_HTML5 = "WatchHtml5";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1372,6 +1379,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ENABLE_RANGE, Boolean.toString(setting.canRangeRequest()));
 		prop.setProperty(PROP_ENABLE_SEQ_RESUME, Boolean.toString(setting.canSeqResume()));
 		prop.setProperty(PROP_INHIBIT_SMALLER_VIDEO, Boolean.toString(setting.isInhibitSmaller()));
+		prop.setProperty(PROP_WATCH_HTML5, Boolean.toString(setting.isHtml5));
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1644,7 +1652,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_FORCE_DMC_DL, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_RANGE,"false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_SEQ_RESUME, "true")),
-			Boolean.parseBoolean(prop.getProperty(PROP_INHIBIT_SMALLER_VIDEO, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_INHIBIT_SMALLER_VIDEO, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_WATCH_HTML5, "false"))
 		);
 	}
 

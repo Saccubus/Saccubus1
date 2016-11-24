@@ -67,6 +67,14 @@ import saccubus.util.Stopwatch;
  * @version 1.0
  */
 public class NicoClient {
+	private static final String HTTP_WWW_NICOVIDEO_JP = "http://www.nicovideo.jp/";
+	private static final String HTTP_WWW_NICOVIDEO_WATCH = HTTP_WWW_NICOVIDEO_JP + "watch/";
+	private static final String HTTP_WWW_NICOVIDEO_USER = HTTP_WWW_NICOVIDEO_JP + "user/";
+	private static final String HTTP_FLAPI_GETFLV = "http://flapi.nicovideo.jp/api/getflv/";
+	private static final String HTTP_FLAPI_GETTHREADKEY = "http://flapi.nicovideo.jp/api/getthreadkey?thread=";
+	private static final String HTTP_FLAPI_GETWAYBACKKEY = "http://flapi.nicovideo.jp/api/getwaybackkey?thread=";
+	private static final String HTTP_EXT_THUMBINFO = "http://ext.nicovideo.jp/api/getthumbinfo/";
+	private static final String HTTP_EXT_THUMBUSER = "http://ext.nicovideo.jp/thumb_user/";
 	private final String User;
 	private final String Pass;
 	private boolean Logged_in = false;
@@ -76,6 +84,7 @@ public class NicoClient {
 	private Stopwatch Stopwatch;
 	private Path titleHtml = null;
 	private Logger log;
+	private boolean isHtml5;
 
 	public static final String DEBUG_PROXY = "debug";	// debug paramerter end with '/'
 	static final String S_QUOTE2 = "\"";
@@ -83,6 +92,7 @@ public class NicoClient {
 	static final String S_ESCAPE = "\\";
 	static final char C_ESCAPE = '\\';
 	static final String JSON_START = "{&quot;flashvars&quot;:";
+	static final String JSON_START2 = "{&quot;video&quot;:";	// HTML5(beta) 2016.11.12
 
 	/**
 	 * ブラウザ共有しないでログイン
@@ -93,13 +103,14 @@ public class NicoClient {
 	 */
 	public NicoClient(final String user, final String pass,
 			final String proxy, final int proxy_port, final Stopwatch stopwatch,
-			Logger logger) {
+			Logger logger, boolean is_html5) {
 		log = logger;
 		User = user;
 		Pass = pass;
 		Stopwatch = stopwatch;
 		nicomap = new NicoMap();
 		ConProxy = conProxy(proxy, proxy_port);
+		isHtml5 = is_html5;
 		// ログイン
 		Logged_in = login() && loginCheck();
 	}
@@ -138,15 +149,17 @@ public class NicoClient {
 	 * @param user_session : String
 	 * @param proxy : String
 	 * @param proxy_port : int
+	 * @param watch_html5
 	 */
 	public NicoClient(final BrowserCookieKind browser_kind, final String user_session,
 			final String proxy, final int proxy_port, final Stopwatch stopwatch,
-			Logger logger) {
+			Logger logger, boolean is_html5) {
 		log = logger;
 		User = "";
 		Pass = "";
 		Stopwatch = stopwatch;
 		nicomap = new NicoMap();
+		isHtml5 = is_html5;
 		ConProxy = conProxy(proxy, proxy_port);
 		if (user_session == null || user_session.isEmpty()){
 			log.println("Invalid user session" + browser_kind.toString());
@@ -159,6 +172,8 @@ public class NicoClient {
 					String this_session = "user_session=" + session;
 					Cookie = new NicoCookie();
 					Cookie.setSession(this_session);
+					if(isHtml5)
+						Cookie.addNormalCookie("watch_html5=1");
 					if(loginCheck()){
 						Logged_in = true;	// ログイン済みのハズ
 						return;
@@ -231,6 +246,12 @@ public class NicoClient {
 	//Range: bytes=0-1048576	// byte=1MB
 	// the following commented source code lines can be made valid in the future, and it would be ok (already tested).
 			con.setRequestMethod(method);
+			if(isHtml5){
+				if(cookieProp == null){
+					cookieProp = new NicoCookie();
+				}
+				cookieProp.addNormalCookie("watch_html5=1");
+			}
 			if (cookieProp != null)
 				con.addRequestProperty("Cookie", cookieProp.get(url));
  		//	con.setRequestProperty("Host", "nmsg.nicovideo.jp");
@@ -260,7 +281,7 @@ public class NicoClient {
 				con.addRequestProperty("Range", range);
 			}
 
-			debug("■Connect: " + method
+			debug("■"+(isHtml5?"HTML5":"FLASH")+" Connect: " + method
 				+ (cookieProp==null? "" : ",Cookie<" + cookieProp.get(url) +">")
 				+ (doInput? ",DoInput" : "")
 				+ (doOutput? ",DoOutput" : "")
@@ -497,7 +518,7 @@ public class NicoClient {
 		String thumbTitle = getVideoTitle();
 		VideoTitle = null;
 		boolean found = false;
-		String url = "http://www.nicovideo.jp/watch/" + tag + watchInfo;
+		String url = HTTP_WWW_NICOVIDEO_WATCH + tag + watchInfo;
 		log.print("Getting video history...");
 		boolean zero_title = false;
 		try {
@@ -603,11 +624,19 @@ public class NicoClient {
 				log.println(" <" + Path.toUnixPath(titleHtml) + "> saved.");
 			}
 			//Json解析
-			if(!ss.contains(JSON_START)){
-				log.println("動画ページ視聴不可？");
-			}else{
-				if(extractWatchApiJson(ss, encoding, url)!=null)
+			if(ss.contains(JSON_START)){
+				if(extractWatchApiJson(ss, encoding, url)!=null){
 					log.println("ok.");
+				}
+			}else{
+				log.println("JSON_START not found, try HTML5_JSON");
+				if(ss.contains(JSON_START2)){
+					if(extractDataApiDataJson(ss, encoding, url)!=null){
+						log.println("html5 ok.");
+					} else {
+						log.println("html5 NG.");
+					}
+				}
 			}
 		} catch (IOException ex) {
 			log.printStackTrace(ex);
@@ -640,9 +669,9 @@ public class NicoClient {
 			return false;
 		}
 		try {
-			String url = "http://flapi.nicovideo.jp/api/getflv/" + tag;
+			String url = HTTP_FLAPI_GETFLV + tag;
 			if (!getWatchThread().isEmpty()){
-				url = "http://flapi.nicovideo.jp/api/getflv/" + getWatchThread();
+				url = HTTP_FLAPI_GETFLV + getWatchThread();
 				log.println("\ntry url="+url);
 			}
 			if (tag.startsWith("nm")) {
@@ -1836,8 +1865,7 @@ public class NicoClient {
 	private String force184 = null;
 
 	private boolean getOfficialOption(String threadId) {
-		String url = "http://flapi.nicovideo.jp/api/getthreadkey?thread="
-			+threadId;
+		String url = HTTP_FLAPI_GETTHREADKEY+threadId;
 		log.print("\nGetting Official options (threadkey)...");
 		try {
 			if (force184 != null && threadKey != null){
@@ -1899,8 +1927,7 @@ public class NicoClient {
 			String waybacktime = wayback.getWayBackTime();
 			log.println("ok. [" + wayback.format() + "]: " + waybacktime);
 			log.print("Getting wayback key...");
-			String url = "http://flapi.nicovideo.jp/api/getwaybackkey?thread="
-					+ ThreadID;
+			String url = HTTP_FLAPI_GETWAYBACKKEY + ThreadID;
 			HttpURLConnection con = urlConnectGET(url);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
 				log.println("ng.\nCan't open connection: " + url);
@@ -1932,7 +1959,7 @@ public class NicoClient {
 	}
 
 	public boolean loginCheck() {
-		String url = "http://www.nicovideo.jp/";
+		String url = HTTP_WWW_NICOVIDEO_JP;
 		log.print("Checking login...");
 		// GET (NO_POST), UTF-8, AllowAutoRedirect,
 			HttpURLConnection con = urlConnectGET(url);
@@ -1957,7 +1984,6 @@ public class NicoClient {
 			return false;
 		}
 		Cookie.update(new_cookie);
-
 		debug("\n■Now Cookie is<" + Cookie.toString() + ">\n");
 		log.println("ok.");
 		return true;
@@ -2080,12 +2106,12 @@ public class NicoClient {
 	private String recipe_id;
 	private String t_created_time;
 	private String service_user_id;
+	private String dataApiJson;
 	public boolean serverIsDmc(){
 		return "1".equals(isDmc);
 	}
 	public Path getThumbInfoFile(String tag){
-		final String THUMBINFO_URL = "http://ext.nicovideo.jp/api/getthumbinfo/";
-		String url = THUMBINFO_URL + tag;
+		String url = HTTP_EXT_THUMBINFO + tag;
 		if(videoTag==null)
 			videoTag = tag;
 		log.print("Getting thumb Info...");
@@ -2172,7 +2198,7 @@ public class NicoClient {
 					altTag = getJsonValue(text, "watch_url");
 				if(altTag==null)
 					altTag = tag;
-				sb.append("<watch_url>http://www.nicovideo.jp/watch/"+altTag+"</watch_url>\n");
+				sb.append("<watch_url>"+HTTP_WWW_NICOVIDEO_WATCH +altTag+"</watch_url>\n");
 				sb.append("<thumb_type>video</thumb_type>\n");
 				String user_id = getJsonValue(text,"user_id");
 				if(user_id==null || user_id.isEmpty())
@@ -2220,6 +2246,224 @@ public class NicoClient {
 			log.printStackTrace(e);
 			return null;
 		}
+	}
+	private String extractDataApiDataJson(String ss, String encoding, String url) {
+		// HTML5 watchpage
+		String url1 = url.replaceAll("[./:]+", "_")+".html";
+		File dataJsonFile = Path.mkTemp(url1);
+		Path.writeAllText(dataJsonFile, ss, encoding);
+
+		Path file = getDataApiData(ss, encoding, url);
+		if(file==null) return null;
+		return extractDataJson(file, encoding);
+	}
+
+	private String extractDataJson(Path xml, String encoding) {
+		//Json解析
+	//	if(watchApiJson==null){
+			Properties prop = new Properties();
+			try {
+				prop.loadFromXML(new FileInputStream(xml));
+			} catch (IOException e) {
+				log.printStackTrace(e);
+			}
+			dataApiJson = prop.getProperty("json", "0");
+			debug("\n■dataAPIData_JSON:\n "+dataApiJson);
+			if(dataApiJson==null || dataApiJson.isEmpty()){
+				log.println("dataAPIData_JSON error ");
+				return null;
+			}
+			Mson dataApiMson = null;
+			try {
+				dataApiMson = Mson.parse(dataApiJson);
+				dataApiMson.prettyPrint(log.getOutPrintStream());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			isDmc = "0";
+			//			// flvInfo
+			//video : HASH
+			//player: HASH
+			//thread: HASH
+			//tags:   ARRAY
+			//playlist: HASH
+			//owner:  HASH
+			//viewer: HASH
+			//community: HASH
+			//channel: HASH
+			//ad:      HASH
+			//lead:    HASH
+			//maintenance: HASH
+			//context: {
+			//			"playFrom":null,
+//						"playLength":null,
+//						"returnId":null,
+//						"returnTo":null,
+//						"returnMsg":null,
+//						"watchId":"sm9",
+//						"isNoMovie":null,
+//						"isNoRelatedVideo":null,
+//						"isSlowLine":null,
+//						"isEconomy":null,
+//						"isEconomyExists":1,
+//						"isDownloadCompleteWait":null,
+//						"isNoNicotic":null,
+//						"isNeedPayment":false,
+//						"isAdultRatingNG":true,
+//						"isPlayable":null,
+//						"isTranslatable":false,
+//						"isTagUneditable":false,
+//						"isVideoOwner":false,
+//						"isThreadOwner":false,
+//						"isOwnerThreadEditable":null,
+//						"useChecklistCache":"1",
+//						"isDisabledMarquee":null,
+//						"isDictionaryDisplayable":true,
+//						"accessFrom":null,
+//						"csrfToken":"22909330-1479908423-f890d5a279a57f82c8049a7ec504a44d2523622f",
+//						"translationVersionJsonUpdateTime":1477887523,
+//						"userkey":"1479823823.~1~jsJHyIBhqwVM_mU5rZ9dpykF6nr-cz7KaS5bv-jlxXk",
+//						"watchAuthKey":"1:1479822023:1173108780:a55411d2aad2067bc64021fa3db976f3a33d29bf97640a5974dd52703eb588b4",
+//						"watchTrackId":"monLmOvIrb_1479822023165",
+//						"watchPageServerTime":1479822023270,
+//						"isAuthenticationRequired":false,
+//						"isPeakTime":true,
+//						"ngRevision":112,
+//						"categoryName":null,
+//						"categoryKey":null,
+//						"categoryGroupName":null,
+//						"categoryGroupKey":null,
+//						"yesterdayRank":null,
+//						"highestRank":null,
+//						"isMyMemory":false,
+//						"ownerNGFilters":[
+
+//			flvInfo = getJsonValue(watchApiJson, "flvInfo");
+//			String s = flvInfo;
+//			s = unquote(s);
+//			StringBuffer sb = new StringBuffer();
+//			try {
+//				String dec = URLDecoder.decode(s, encoding);
+//				String[] sa = dec.split("&");
+//				for(String v: sa){
+//					sb.append(URLDecoder.decode(v, encoding));
+//					sb.append("\n ");
+//				}
+//			} catch (UnsupportedEncodingException e) {
+//				log.printStackTrace(e);
+//			}
+//			flvInfoArrays = sb.substring(0).trim();
+//			debug("\n■flvInfo:\n "+flvInfo);
+//			debug("\n■flvInfos:\n [\n "+flvInfoArrays);
+//			debug("\n ]\n");
+//			// dmcInfo
+//			isDmc = getJsonValue(watchApiJson, "isDmc");
+//			debug("\n■isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc()+"\n");
+//			if(serverIsDmc()){
+//				dmcInfo = getJsonValue(watchApiJson, "dmcInfo");
+//				s = unquote(dmcInfo);
+//				sb = new StringBuffer();
+//				try {
+//					s = URLDecoder.decode(s, encoding);
+//				} catch (UnsupportedEncodingException e) {
+//					log.printStackTrace(e);
+//				}
+//				dmcInfoDec = s;
+//				if(s.contains("&")){
+//					String[] sa = s.split("&");
+//					for(String v: sa){
+//						try {
+//							sb.append(URLDecoder.decode(v, encoding));
+//							sb.append("\n ");
+//						} catch (UnsupportedEncodingException e) {
+//							log.printStackTrace(e);
+//						}
+//					}
+//					dmcInfoArrays = "[ "+sb.substring(0).trim()+ " ]";
+//				}
+//				else if (s.startsWith("{")){
+//					dmcInfoArrays = prettyBufferPrint(s);
+//				}
+//				debug("\n■dmcInfo:\n "+dmcInfo);
+//				debug("\n■dmcInfos:\n "+dmcInfoArrays);
+//				if(dmcInfoDec!=null){
+//					String l = getJsonValue(dmcInfoDec, "length_seconds");
+//					try {
+//						dmcVideoLength = (int)Integer.valueOf(l);
+//					} catch(NumberFormatException e){
+//						dmcVideoLength = 0;
+//					};
+//					debug("\n■dmcVideoLength: "+dmcVideoLength);
+//					dmcToken = getJsonValue(dmcInfoDec, "token");
+//					debug("\n■dmcToken:\n "+dmcToken);
+//					s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
+//					dmcTokenUnEscape = s;
+//					debug("\n■dmcTokenUnEscape:\n "+dmcTokenUnEscape);
+//					sessionApi = getJsonValue(dmcInfoDec, "session_api");
+//					debug("\n■session_api:\n "+sessionApi);
+//					recipe_id = getJsonValue(sessionApi, "recipe_id");
+//					debug("\n■recipe_id: "+recipe_id);
+//					videos = getJsonValue(sessionApi, "videos");
+//					debug("\n■videos: "+videos);
+//					audios = getJsonValue(sessionApi, "audios");
+//					debug("\n■audios: "+audios);
+//					apiUrls = getJsonValue(sessionApi, "api_urls").trim();
+//					if(apiUrls.startsWith("[") && apiUrls.endsWith("]")){
+//						apiUrls = apiUrls.substring(1, apiUrls.length()-1);
+//					}
+//					t_created_time = getJsonValue(dmcTokenUnEscape, "created_time");
+//					debug("\n■token created_time: "+t_created_time);
+//					if(!apiUrls.contains(",")){
+//						apiSessionUrl = unquote(apiUrls);
+//					}
+//					debug("\n■apiUrls: "+apiUrls);
+//					debug("\n■apiSessionUrl: "+apiSessionUrl);
+//					player_id = getJsonValue(sessionApi, "player_id");
+//					debug("\n■player_id:\n "+player_id);
+//					service_user_id = getJsonValue(sessionApi, "service_user_id");
+//					debug("\n■service_user_id:\n "+service_user_id);
+//					debug("\n");
+//				}
+//			}
+//	//	}
+		return dataApiJson;
+	}
+
+	private Path getDataApiData(String html, String encoding, String comment){
+		String text = html;
+		// 動画ページのJSONを取り出す
+		text = getXmlElement1(text, "body");	//body
+		if(text==null)
+			return null;
+		text = getXmlAttribute(html, "data-api-data");
+			//div id="js-initial-watch-data" data-api-data="{
+		if(text==null){
+			log.println("error: not found data-api-data");
+			return null;
+		}
+		int start = text.indexOf(JSON_START2);
+		if(start < 0){
+			log.println("error: not found \""+JSON_START2+"\"");
+			return null;
+		}
+		String json_end = S_QUOTE2;
+		int end = (text+json_end).indexOf(json_end, start);	// end of JSON
+		text = (text+json_end).substring(start, end);
+		if(text==null || text.isEmpty()){
+			log.println("error: not found dataApi JSON2");
+			return null;
+		}
+		text = text.replace("&quot;", S_QUOTE2);
+		if(text==null || text.isEmpty()){
+			log.println("error: replace to NULL");
+			return null;
+		}
+		// URLDecodeしない
+		Path file = Path.mkTemp(videoTag+"_dataApiJ.xml");
+		Path.unescapeStoreXml(file, text, comment);		//xml is property key:json val:JSON
+		log.println("Saved dataApiData to "+file.getPath());
+		return file;
+	//	return null;
 	}
 
 	private String extractWatchApiJson(String html, String encoding, String url){
@@ -2685,8 +2929,7 @@ public class NicoClient {
 	}
 
 	public Path getThumbUserFile(String userID, File userFolder){
-		final String THUMBUSER_URL = "http://ext.nicovideo.jp/thumb_user/";
-		String url = THUMBUSER_URL + userID;
+		String url = HTTP_EXT_THUMBUSER + userID;
 		log.print("Getting thumb User...");
 		Path userHtml = null;
 		try {
@@ -2727,8 +2970,7 @@ public class NicoClient {
 	}
 
 	public Path getUserInfoFile(String userID, File userFolder) {
-		final String USER_URL = "http://www.nicovideo.jp/user/";
-		String url = USER_URL + userID;
+		String url = HTTP_WWW_NICOVIDEO_USER + userID;
 		log.print("Getting User Info...");
 		Path userHtml = null;
 		try {
