@@ -794,7 +794,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					long resume_size = 0;
 					long video_size = 0;
 					long size_high = client.getSizeHigh();
-					log.println("smile size: "+size_high);
+					log.println("smile size: "+size_high/1000+"KBytes.");
 					if(VideoFile.isFile() && VideoFile.canRead()){
 						log.println("“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·B");
 						sendtext("“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·");

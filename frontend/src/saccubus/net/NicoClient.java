@@ -1074,7 +1074,7 @@ public class NicoClient {
 				if(contentRange.contains("/")){
 					String allsize = contentRange.substring(contentRange.lastIndexOf("/")+1);
 					try {
-						debug("\test(dmc) Content-Range: " + contentRange);
+						debug("\ntest(dmc) Content-Range: " + contentRange);
 						sizeAll = Integer.decode(allsize);
 					} catch(Exception ex){
 						sizeAll = 0;
@@ -1085,6 +1085,7 @@ public class NicoClient {
 					canRangeReq = false;
 					tryResume = false;
 				}
+				debug("\n");
 			}
 			max_size = con.getContentLength();	// -1 when invalid
 		//	ダミーリード
@@ -2026,14 +2027,18 @@ public class NicoClient {
 	}
 	private synchronized void sendStatus(JLabel status, String msg,
 			int max_size, int size, long start_mili){
-		String per = "";
+		String str = "";
 		if (max_size > 0) {
-			per = String.format("%.2f%%, ",((double)size * 100)/ max_size);
+			str = String.format("%.2f%%, ",((double)size * 100)/ max_size);
+		}
+		str += String.format("%.1fMiB", (size >> 10)/ 1024.0);	//ダウンロードサイズ
+		if (max_size > 0){
+			str += String.format("/%.1fMiB", (max_size >> 10)/ 1024.0);	//動画サイズ
 		}
 		long milisec = Stopwatch.getElapsedTime(start_mili);
-		if(milisec==0) milisec=1;
-		String spd = String.format("%dKbps", (size - resume_start)/milisec*8);
-		sendtext(status, msg+"ダウンロード："+per+(size >> 10)+"KiB, "+spd);
+		if(milisec<=0) milisec=1;
+		str += String.format(", %dKbps", (size - resume_start)/milisec*8);
+		sendtext(status, msg+"ダウンロード：" + str);
 	}
 
 	public void setExtraError(String extraError) {
