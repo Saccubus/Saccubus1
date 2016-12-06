@@ -407,7 +407,12 @@ public class NicoClient {
 		sb.append(str,old_index,str.length());
 		str = sb.toString();
 		//MS-DOSシステム(ffmpeg.exe)で扱える形に(UTF-8のまま)
-		str = toSafeString(str, "MS932");
+		str = toSafeWindowsName(str, "MS932");
+		return str;
+	}
+
+	public static String toSafeWindowsName(String str, String encoding){
+		str = toSafeString(str, encoding);
 		//ファイルシステムで扱える形に
 		str = str.replace('/', '／');
 		str = str.replace('\\', '￥');

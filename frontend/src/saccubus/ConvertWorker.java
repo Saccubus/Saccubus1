@@ -751,6 +751,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						resumeDmcFile = new File(name.substring(0,index)+".flv_dmc");
 					}
 				}
+				if(lowVideoFile!=null)
+					lowVideoFile = replaceFilenamePattern(lowVideoFile);
 				if(client.isEco() && lowVideoFile.isFile() && lowVideoFile.canRead()){
 					sendtext("エコノミーモードでエコ動画は既に存在します");
 					log.println("エコノミーモードで動画は既に存在します。ダウンロードをスキップします");
@@ -762,6 +764,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				log.println("serverIsDmc: "+client.serverIsDmc()
 					+", preferSmile: "+Setting.isSmilePreferable()
 					+", forceDMC:" + Setting.doesDmcforceDl());
+				VideoFile = replaceFilenamePattern(VideoFile);
 				if(!client.serverIsDmc() || Setting.isSmilePreferable() && !Setting.doesDmcforceDl()){
 					// 通常サーバ
 					if(VideoFile.isFile() && VideoFile.canRead()){
@@ -789,22 +792,24 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					setVideoTitleIfNull(VideoFile.getName());
 				}else{
 					// dmc
+					dmcVideoFile = replaceFilenamePattern(dmcVideoFile);
 					log.println("Dmc download start.");
 					long dmc_size = 0;
 					long resume_size = 0;
 					long video_size = 0;
 					long size_high = client.getSizeHigh();
-					log.println("smile size: "+size_high/1000+"KBytes.");
+					log.println("smile size: "+(size_high>>20)+"MiBytes.");
 					if(VideoFile.isFile() && VideoFile.canRead()){
 						log.println("動画は既に存在します。");
 						sendtext("動画は既に存在します");
 						video_size = VideoFile.length();
-						log.println("video size: "+video_size);
+						log.println("video size: "+(video_size>>20)+"MiB");
 					}
 					if(dmcVideoFile.isFile() && dmcVideoFile.canRead()){
 						log.println("dmc動画は既に存在します。");
 						sendtext("dmc動画は既に存在します");
 						dmc_size = dmcVideoFile.length();
+						log.println("dmc size: "+(dmc_size>>20)+"MiB");
 					} else {
 						long min_size = Math.max(video_size, size_high);
 						long[] limits = {min_size, 0, 0};	// limits[1] is return value
@@ -818,6 +823,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									log.println("中断したdmc動画をresumeします。");
 									sendtext("中断したdmc動画resumeします");
 									resume_size = dmcVideoFile.length();
+									log.println("resumed size: "+(resume_size>>20)+"MiB");
 								}
 							}
 							do {
@@ -834,6 +840,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									return false;
 								}
 								dmc_size = limits[1];
+								log.println("dmc size: "+(dmc_size>>20)+"MiB");
 								if(video==null){
 									//dmc_size = 0;
 									String ecode = client.getExtraError();
@@ -857,6 +864,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									videoLength = client.getDmcVideoLength();
 									dmcVideoFile = video;
 									resume_size = dmcVideoFile.length();
+									log.println("resumed size: "+(resume_size>>20)+"MiB");
 								}
 								if(resume_size == dmc_size)
 									break;
@@ -917,6 +925,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									dmc_size = limits[1];
 									log.println(ecode);
 									sendtext(ecode);
+									log.println("dmc size: "+(dmc_size>>20)+"MiB");
 								}else{
 									log.println("dmc動画サーバからのダウンロードに失敗しました。");
 									sendtext("dmc動画のダウンロードに失敗" + ecode);
@@ -925,6 +934,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								log.println("dmc download "+dmcVideoFile.length()+"bytes");
 								videoLength = client.getDmcVideoLength();
 								dmc_size = dmcVideoFile.length();
+								log.println("dmc size: "+(dmc_size>>20)+"MiB");
 							}
 						}
 					}
@@ -989,6 +999,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 					} else {
 						VideoFile = Setting.getVideoFile();
+						VideoFile = replaceFilenamePattern(VideoFile);
 						if (!VideoFile.exists()) {
 							sendtext("動画ファイルが存在しません。");
 							result = "48";
@@ -1886,8 +1897,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ConvertedVideoFile = Setting.getConvertedVideoFile();
 			}
 		}
-		String videoFilename = ConvertedVideoFile.getName();
-		videoFilename = videoFilename.replace("%ID%", Tag); 	// %ID% -> 動画ID
+		ConvertedVideoFile = replaceFilenamePattern(ConvertedVideoFile);
 		if (ConvertedVideoFile.getAbsolutePath().equals(VideoFile.getAbsolutePath())){
 			sendtext("変換後のファイル名が変換前と同じです");
 			result = "96";
@@ -1940,21 +1950,27 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return false;
 	}
 
+	/**
+	 * replaceFilenamePattern(File source)
+	 * @param file
+	 * @return
+	 *  %ID% -> Tag, %TITLE% -> VideoTitle
+	 */
+	private File replaceFilenamePattern(File file) {
+		String canonical =
+			VideoTitle.replace("　", " ").replaceAll(" +", " ").trim()
+			.replace("．", ".");
+		File parentFolder = file.getParentFile();
+		String videoFilename = file.getName();
+		videoFilename =
+			videoFilename.replace("%ID%", Tag) 	// %ID% -> 動画ID
+			.replace("%TITLE%",VideoTitle)	// %TITLE% -> 動画タイトル
+			.replace("%title%", canonical);	// %title% -> 動画タイトル（空白大文字を空白小文字に）
+		return new File(parentFolder,videoFilename);
+	}
+
 	private static String safeAsciiFileName(String str) {
-		//Windowsファイルシステムで扱えるAscii文字列に
-		str = str.replace('/', '_')
-			.replace('\\', '_')
-			.replace('?', '_')
-			.replace('*', '_')
-			.replace(':', ';')		//	:(colon) to ;(semi colon)
-			.replace('|', '_')
-			.replace('\"', '\'')
-			.replace('<', '(')
-			.replace('>', ')')
-//			.replace('.', '．')		// .(dot) is let there
-			.replaceAll(" +", " ")
-			.trim();
-		return str;
+		return NicoClient.toSafeWindowsName(str, "MS932");
 	}
 
 	private boolean canRetry(NicoClient client, Gate gate){
