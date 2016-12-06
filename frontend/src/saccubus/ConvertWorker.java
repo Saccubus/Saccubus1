@@ -1886,6 +1886,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ConvertedVideoFile = Setting.getConvertedVideoFile();
 			}
 		}
+		String videoFilename = ConvertedVideoFile.getName();
+		videoFilename = videoFilename.replace("%ID%", Tag); 	// %ID% -> 動画ID
 		if (ConvertedVideoFile.getAbsolutePath().equals(VideoFile.getAbsolutePath())){
 			sendtext("変換後のファイル名が変換前と同じです");
 			result = "96";

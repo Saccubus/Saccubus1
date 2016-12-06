@@ -56,7 +56,8 @@ public class ConvertingSetting {
 		"01:ニコニコ動画風",
 		"02:右下",
 		"03:囲い込み",
-		"04:Saccubus2風"
+		"04:Saccubus2風",
+		"05:新Saccubus2風FreeType2"
 		};
 
 	private String MailAddress;
