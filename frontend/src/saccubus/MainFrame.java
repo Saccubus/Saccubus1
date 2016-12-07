@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -4274,77 +4273,52 @@ s	 * @return javax.swing.JPanel
 	 */
 	private JPanel getVideoSaveInfoPanel() {
 		if (VideoSaveInfoPanel == null) {
-			GridBagConstraints grid_x0_y1_15 = new GridBagConstraints();
-			grid_x0_y1_15.fill = GridBagConstraints.HORIZONTAL;
-		//	grid_x0_y1_15.gridwidth = 4;
-			grid_x0_y1_15.gridx = 0;
-			grid_x0_y1_15.gridy = 1;
-			grid_x0_y1_15.weightx = 1.0;
-			grid_x0_y1_15.insets = INSETS_0_25_0_5;
-			GridBagConstraints grid_x2_y1_15_2 = new GridBagConstraints(
-				3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, INSETS_0_0_5_0, 0, 0);
-			GridBagConstraints grid_x2_y5 = new GridBagConstraints(2,
-					5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, INSETS_0_0_5_0, 0, 0);
-			GridBagConstraints grid_x3_y5_32 = new GridBagConstraints(3,
-					5, 2, 1, 0.5, 0.0, GridBagConstraints.SOUTH,
-					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
-			grid_x3_y5_32.gridx = 3;
-			grid_x3_y5_32.gridwidth = 1;
-			grid_x3_y5_32.insets = INSETS_0_0_5_5;
-			grid_x3_y5_32.gridy = 5;
-			GridBagConstraints grid_x0_y5_30 = new GridBagConstraints(0,
-					5, 1, 1, 0.5, 0.0, GridBagConstraints.CENTER,
-					GridBagConstraints.BOTH, new Insets(0, 50, 5, 5), 0, 0);
-			GridBagConstraints grid_x0_y4_29 = new GridBagConstraints(0,
-					3, 5, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-					GridBagConstraints.BOTH, INSETS_0_25_0_5, 0, 0);
-			grid_x0_y4_29.gridx = 0;
-			grid_x0_y4_29.gridy = 4;
-			GridBagConstraints grid_x0_y3_28 = new GridBagConstraints(0,
-					3, 1, 1, 0.5, 0.0, GridBagConstraints.WEST,
-					GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
-			GridBagConstraints grid_x0_y2_27 = new GridBagConstraints(0,
-					1, 6, 1, 1.0, 0.0, GridBagConstraints.WEST,
-					GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0,
-					0);
-			grid_x0_y2_27.gridx = 0;
-			grid_x0_y2_27.gridy = 2;
 			GridBagConstraints grid_x0_y0_34 = new GridBagConstraints();
 			grid_x0_y0_34.insets = INSETS_0_5_0_5;
 			grid_x0_y0_34.gridy = 0;
 			grid_x0_y0_34.fill = GridBagConstraints.HORIZONTAL;
 			grid_x0_y0_34.gridx = 0;
-			grid_x0_y0_34.gridwidth = 4;
-//			GridBagConstraints grid_x1_y0_34_2 = new GridBagConstraints();
-//			grid_x1_y0_34_2.insets = INSETS_0_5_0_5;
-//			grid_x1_y0_34_2.gridy = 0;
-//			grid_x1_y0_34_2.fill = GridBagConstraints.HORIZONTAL;
-//			grid_x1_y0_34_2.gridx = 1;
-//			GridBagConstraints grid_x3_y0_34_3 = new GridBagConstraints();
-//			grid_x3_y0_34_3.insets = INSETS_0_5_0_5;
-//			grid_x3_y0_34_3.gridy = 0;
-//			grid_x3_y0_34_3.fill = GridBagConstraints.HORIZONTAL;
-//			grid_x3_y0_34_3.gridx = 2;
-//			GridBagConstraints grid_x4_y0_34_4 = new GridBagConstraints();
-//			grid_x4_y0_34_4.insets = INSETS_0_5_0_5;
-//			grid_x4_y0_34_4.gridy = 0;
-//			grid_x4_y0_34_4.fill = GridBagConstraints.HORIZONTAL;
-//			grid_x4_y0_34_4.gridx = 4;
-//			GridBagConstraints grid_x5_y0_34_5 = new GridBagConstraints();
-//			grid_x5_y0_34_5.insets = INSETS_0_5_0_5;
-//			grid_x5_y0_34_5.gridy = 0;
-//			grid_x5_y0_34_5.fill = GridBagConstraints.HORIZONTAL;
-//			grid_x5_y0_34_5.gridx = 5;
-			GridBagConstraints grid_x2_y3 = new GridBagConstraints(2,
-					3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+			grid_x0_y0_34.gridwidth = 6;
+			GridBagConstraints grid_x0_y1_15 = new GridBagConstraints();
+			grid_x0_y1_15.fill = GridBagConstraints.HORIZONTAL;
+			grid_x0_y1_15.gridwidth = 2;
+			grid_x0_y1_15.gridx = 0;
+			grid_x0_y1_15.gridy = 1;
+			grid_x0_y1_15.weightx = 0.0;
+			grid_x0_y1_15.anchor = GridBagConstraints.WEST;
+			grid_x0_y1_15.insets = INSETS_0_25_0_5;
+			GridBagConstraints grid_x2_y1_15_2 = new GridBagConstraints();
+			grid_x2_y1_15_2.fill = GridBagConstraints.HORIZONTAL;
+			grid_x2_y1_15_2.gridwidth = 2;
+			grid_x2_y1_15_2.gridx = 2;
+			grid_x2_y1_15_2.gridy = 1;
+			grid_x2_y1_15_2.weightx = 1.0;
+			grid_x2_y1_15_2.anchor = GridBagConstraints.WEST;
+			grid_x2_y1_15_2.insets = INSETS_0_0_0_5;
+			GridBagConstraints grid_x0_y2_27 = new GridBagConstraints(
+					0, 2, 5, 1, 0.0, 0.0, GridBagConstraints.WEST,
+					GridBagConstraints.NONE, INSETS_0_25_0_5, 0, 0);
+			GridBagConstraints grid_x0_y3_28 = new GridBagConstraints(
+					0, 3, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+					GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
+			GridBagConstraints grid_x2_y3 = new GridBagConstraints(
+					2, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 0);
-			GridBagConstraints grid_x3_y3_31 = new GridBagConstraints(3,
-					3, 1, 1, 0.5, 0.0, GridBagConstraints.CENTER,
+			GridBagConstraints grid_x3_y3_31 = new GridBagConstraints(
+					3, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
-			grid_x3_y3_31.gridy = 3;
-			grid_x3_y3_31.gridx = 3;
+			GridBagConstraints grid_x0_y4_29 = new GridBagConstraints(
+					0, 4, 5, 1, 0.0, 0.0, GridBagConstraints.WEST,
+					GridBagConstraints.NONE, INSETS_0_25_0_5, 0, 0);
+			GridBagConstraints grid_x0_y5_30 = new GridBagConstraints(
+					0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+					GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
+			GridBagConstraints grid_x2_y5 = new GridBagConstraints(
+					2, 5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 0);
+			GridBagConstraints grid_x3_y5_32 = new GridBagConstraints(
+					3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
+					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
 			VideoSaveInfoPanel = new JPanel();
 			VideoSaveInfoPanel.setLayout(new GridBagLayout());
 			VideoSaveInfoPanel.setBorder(BorderFactory.createTitledBorder(
@@ -4354,14 +4328,18 @@ s	 * @return javax.swing.JPanel
 				//	, TitledBorder.LEADING, TitledBorder.TOP,
 				//	new Font("MS UI Gothic", Font.PLAIN, 12), Color.black));
 			JPanel savingVideoSubPanel = new JPanel();
-			savingVideoSubPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+			savingVideoSubPanel.setLayout(new GridBagLayout());
 			VideoSaveInfoPanel.add(savingVideoSubPanel, grid_x0_y0_34);
-			savingVideoSubPanel.add(SavingVideoCheckBox);
-			savingVideoSubPanel.add(disableEcoCheckBox);
-			savingVideoSubPanel.add(preferSmileCheckBox);
-			savingVideoSubPanel.add(foceDmcDlCheckBox);
-			savingVideoSubPanel.add(enableRangeCheckBox);
-			savingVideoSubPanel.add(enableSeqResumeCheckBox);
+			savingVideoSubPanel.add(SavingVideoCheckBox, new GridBagConstraints());
+			savingVideoSubPanel.add(disableEcoCheckBox, new GridBagConstraints());
+			savingVideoSubPanel.add(preferSmileCheckBox, new GridBagConstraints());
+			savingVideoSubPanel.add(foceDmcDlCheckBox, new GridBagConstraints());
+			savingVideoSubPanel.add(enableRangeCheckBox, new GridBagConstraints());
+			GridBagConstraints grid000_last = new GridBagConstraints();
+			grid000_last.weightx = 1.0;
+			grid000_last.fill = GridBagConstraints.NONE;
+			grid000_last.anchor = GridBagConstraints.NORTHWEST;
+			savingVideoSubPanel.add(enableSeqResumeCheckBox, grid000_last);
 			VideoSaveInfoPanel.add(getDelVideoCheckBox(), grid_x0_y1_15);
 			VideoSaveInfoPanel.add(inhibitSmallCheckBox, grid_x2_y1_15_2);
 			VideoSaveInfoPanel.add(Video_SaveFolderRadioButton,
@@ -4370,10 +4348,10 @@ s	 * @return javax.swing.JPanel
 			VideoSaveInfoPanel.add(openVideoSaveFolderButton,grid_x2_y3);
 			VideoSaveInfoPanel.add(ShowSavingVideoFolderDialogButton,
 					grid_x3_y3_31);
-			VideoSaveInfoPanel.add(openVideoSaveFileButton,grid_x2_y5);
 			VideoSaveInfoPanel.add(Video_SaveFileRadioButton,
 					grid_x0_y4_29);
 			VideoSaveInfoPanel.add(VideoSavedFileField, grid_x0_y5_30);
+			VideoSaveInfoPanel.add(openVideoSaveFileButton,grid_x2_y5);
 			VideoSaveInfoPanel.add(ShowSavingVideoFileDialogButton,
 					grid_x3_y5_32);
 		}
