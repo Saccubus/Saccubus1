@@ -1011,7 +1011,7 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid13_x0_y0_96 = new GridBagConstraints();
 		grid13_x0_y0_96.gridx = 0;
 		grid13_x0_y0_96.gridy = 0;
-		grid13_x0_y0_96.gridwidth = 2;
+		grid13_x0_y0_96.gridwidth = 3;
 		grid13_x0_y0_96.weightx = 1.0;
 		grid13_x0_y0_96.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y0_96.fill = GridBagConstraints.HORIZONTAL;
@@ -1022,18 +1022,18 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid13_x0_y1_97 = new GridBagConstraints();
 		grid13_x0_y1_97.gridx = 0;
 		grid13_x0_y1_97.gridy = 1;
-		grid13_x0_y1_97.gridwidth = 2;
+		grid13_x0_y1_97.gridwidth = 3;
 		grid13_x0_y1_97.weightx = 1.0;
 		grid13_x0_y1_97.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y1_97.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y1_97.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserIECheckBox, grid13_x0_y1_97);
-		BrowserFFCheckBox.setText("Firefox (FF3/FF4Å`36)");
+		BrowserFFCheckBox.setText("Firefox (FF3/FF4Å`50)");
 		BrowserFFCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y2_98 = new GridBagConstraints();
 		grid13_x0_y2_98.gridx = 0;
 		grid13_x0_y2_98.gridy = 2;
-		grid13_x0_y2_98.gridwidth = 2;
+		grid13_x0_y2_98.gridwidth = 3;
 		grid13_x0_y2_98.weightx = 1.0;
 		grid13_x0_y2_98.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y2_98.fill = GridBagConstraints.HORIZONTAL;
@@ -1044,7 +1044,7 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid13_x0_y3_99 = new GridBagConstraints();
 		grid13_x0_y3_99.gridx = 0;
 		grid13_x0_y3_99.gridy = 3;
-		grid13_x0_y3_99.gridwidth = 2;
+		grid13_x0_y3_99.gridwidth = 3;
 		grid13_x0_y3_99.weightx = 1.0;
 		grid13_x0_y3_99.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y3_99.fill = GridBagConstraints.HORIZONTAL;
@@ -1055,7 +1055,7 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid13_x0_y4_100 = new GridBagConstraints();
 		grid13_x0_y4_100.gridx = 0;
 		grid13_x0_y4_100.gridy = 4;
-		grid13_x0_y4_100.gridwidth = 2;
+		grid13_x0_y4_100.gridwidth = 3;
 		grid13_x0_y4_100.weightx = 1.0;
 		grid13_x0_y4_100.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y4_100.fill = GridBagConstraints.HORIZONTAL;
@@ -1066,7 +1066,7 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid13_x0_y5_101 = new GridBagConstraints();
 		grid13_x0_y5_101.gridx = 0;
 		grid13_x0_y5_101.gridy = 5;
-		grid13_x0_y5_101.gridwidth = 2;
+		grid13_x0_y5_101.gridwidth = 3;
 		grid13_x0_y5_101.weightx = 1.0;
 		grid13_x0_y5_101.anchor = GridBagConstraints.NORTH;
 		grid13_x0_y5_101.fill = GridBagConstraints.HORIZONTAL;
