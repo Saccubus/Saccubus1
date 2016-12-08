@@ -1900,6 +1900,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			ConvertedVideoFile = replaceFilenamePattern(ConvertedVideoFile);
 		}
+		if(VideoFile.getPath().contains(lowVideoID)){
+			String convname = ConvertedVideoFile.getPath();
+			if(!convname.contains(lowVideoID)){
+				if(convname.contains(VideoID)){
+					convname = convname.replace(VideoID, lowVideoID);
+				}
+				ConvertedVideoFile = new File(convname);
+			}
+		}
 		if (ConvertedVideoFile.getAbsolutePath().equals(VideoFile.getAbsolutePath())){
 			sendtext("変換後のファイル名が変換前と同じです");
 			result = "96";

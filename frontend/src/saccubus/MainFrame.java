@@ -3778,6 +3778,12 @@ public class MainFrame extends JFrame {
 				"ダウンロード動画情報").getTextArea();
 			File inputVideo = null;
 			ConvertingSetting setting = getSetting();
+			url = VideoID_TextField.getText();
+			if(url==null || url.isEmpty()){
+				sendtext("URL/IDが入力されていません");
+				log.println("変換ボタンが押されたがURL/ID欄が入力されていません");
+				return;
+			}
 			ConvertWorker conv = new ConvertWorker(
 					0,
 					url,
