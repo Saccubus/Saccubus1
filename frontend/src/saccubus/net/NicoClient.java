@@ -2090,6 +2090,8 @@ public class NicoClient {
 	private String recipe_id;
 	private String t_created_time;
 	private String service_user_id;
+	private ArrayList<String> nicoTaglist = new ArrayList<>();
+	private String nicoCat;
 	public boolean serverIsDmc(){
 		return "1".equals(isDmc);
 	}
@@ -2184,6 +2186,30 @@ public class NicoClient {
 					altTag = tag;
 				sb.append("<watch_url>http://www.nicovideo.jp/watch/"+altTag+"</watch_url>\n");
 				sb.append("<thumb_type>video</thumb_type>\n");
+				String tag_list = getJsonValue(text,"tagList");
+				if(tag_list!=null && tag_list.length()>2){
+					if(tag_list.startsWith("[{")&&tag_list.endsWith("}]")){
+						sb.append("<tags domain=\"jp\">\n");
+						String[] tags = tag_list.substring(2,tag_list.length()-2).split("\\},\\{");
+						debug("\ntags.length="+tags.length);
+						for(String tagitem: tags){
+							String hash = "{"+tagitem+"}";
+							debug("\ntagitem="+hash);
+							// hash = {"id":"120343647","tag":"ÉjÉRÉjÉRãZèpïî","cat":true,"dic":true,"lck":"1"}
+							String t = getJsonValue(hash,"tag");
+							String cat = getJsonValue(hash,"cat");
+							String lck = getJsonValue(hash,"lck");
+							if(t!=null){
+								debug("\ntag="+t);
+								sb.append("<tag");
+								if("true".equals(cat)) sb.append(" category=\"1\"");
+								if("1".equals(lck)) sb.append(" lock=\"1\"");
+								sb.append(">"+t+"</tag>\n");
+							}
+						}
+						sb.append("</tags>\n");
+					}
+				}
 				String user_id = getJsonValue(text,"user_id");
 				if(user_id==null || user_id.isEmpty())
 					user_id = getJsonValue(text,"videoUserId");
@@ -2207,6 +2233,27 @@ public class NicoClient {
 			else {
 				log.println("ok.");
 				thumbInfoData = s;
+			}
+			if(nicoTaglist.isEmpty() && thumbInfoData!=null && !thumbInfoData.isEmpty()){
+				String nico_tags = getXmlElement1(thumbInfoData, "tags");
+				if(nico_tags!=null){
+					nico_tags = nico_tags.trim();
+					debug("\n(NicoClient)nico_tags: "+nico_tags);
+					if(!nico_tags.isEmpty()){
+						nicoCat = getXmlElement2(nico_tags,"tag category=\"1\" lock=\"1\"");
+						debug("\n(NicoClient)nicoCat: "+nicoCat);
+						String[] tagarray = nico_tags.split("\n");
+						if(tagarray!=null && tagarray.length>0){
+							for(int i = 0; i < tagarray.length; i++){
+								String tl = tagarray[i];
+								String t = getXmlElement1(tl,"tag");
+								nicoTaglist.add(t);
+								debug("\n(NicoClient)tag["+i+"]: "+t);
+							}
+						}
+						debug("\n(NicoClient)nicoTaglist: "+nicoTaglist.toString());
+					}
+				}
 			}
 			if(thumbInfoData!=null){
 				try {
@@ -2577,8 +2624,9 @@ public class NicoClient {
 			r = getJsonValue0(input, key);
 			return unquote(r);
 		} catch(Exception e){
-			debug("\ngetJsonValue0: error\n");
+			debug("\ngetJsonValue0(\""+key+"\"): error\n");
 			r = getJsonValue1(input, key);
+			debug("getJsonValue1(\""+key+"\"): "+unquote(r)+"\n");
 			return unquote(r);
 		}
 	}
@@ -2822,6 +2870,13 @@ public class NicoClient {
 		return thumbInfoData;
 	}
 
+	public List<String> getNicotags(){
+		return nicoTaglist;
+	}
+
+	public String getNicocategory(){
+		return nicoCat;
+	}
 	class HeartBeatDmc extends TimerTask implements Runnable {
 		private String dmcHBUrl1 = "";
 		private String dmcHBUrl2 = "";

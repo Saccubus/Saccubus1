@@ -131,6 +131,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String aprilFool;
 	private final StringBuffer sbRet;
 	private final saccubus.MainFrame parent;
+	private List<String> nicoTagList = new ArrayList<String>();
+	private String nicoCategory = "";
 	/*
 	 * sbRet is return String value to EXTERNAL PROGRAM such as BAT file, SH script, so on.
 	 * string should be ASCII or URLEncoded in System Encoding.
@@ -751,8 +753,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						resumeDmcFile = new File(name.substring(0,index)+".flv_dmc");
 					}
 				}
-				if(lowVideoFile!=null)
-					lowVideoFile = replaceFilenamePattern(lowVideoFile);
+			//	if(lowVideoFile!=null)
+			//		lowVideoFile = replaceFilenamePattern(lowVideoFile);
 				if(client.isEco() && lowVideoFile.isFile() && lowVideoFile.canRead()){
 					sendtext("エコノミーモードでエコ動画は既に存在します");
 					log.println("エコノミーモードで動画は既に存在します。ダウンロードをスキップします");
@@ -764,7 +766,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				log.println("serverIsDmc: "+client.serverIsDmc()
 					+", preferSmile: "+Setting.isSmilePreferable()
 					+", forceDMC:" + Setting.doesDmcforceDl());
-				VideoFile = replaceFilenamePattern(VideoFile);
+			//	VideoFile = replaceFilenamePattern(VideoFile);
 				if(!client.serverIsDmc() || Setting.isSmilePreferable() && !Setting.doesDmcforceDl()){
 					// 通常サーバ
 					if(VideoFile.isFile() && VideoFile.canRead()){
@@ -792,7 +794,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					setVideoTitleIfNull(VideoFile.getName());
 				}else{
 					// dmc
-					dmcVideoFile = replaceFilenamePattern(dmcVideoFile);
+				//	dmcVideoFile = replaceFilenamePattern(dmcVideoFile);
 					log.println("Dmc download start.");
 					long dmc_size = 0;
 					long resume_size = 0;
@@ -999,7 +1001,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 					} else {
 						VideoFile = Setting.getVideoFile();
-						VideoFile = replaceFilenamePattern(VideoFile);
+					//	VideoFile = replaceFilenamePattern(VideoFile);
 						if (!VideoFile.exists()) {
 							sendtext("動画ファイルが存在しません。");
 							result = "48";
@@ -1896,8 +1898,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			} else {
 				ConvertedVideoFile = Setting.getConvertedVideoFile();
 			}
+			ConvertedVideoFile = replaceFilenamePattern(ConvertedVideoFile);
 		}
-		ConvertedVideoFile = replaceFilenamePattern(ConvertedVideoFile);
 		if (ConvertedVideoFile.getAbsolutePath().equals(VideoFile.getAbsolutePath())){
 			sendtext("変換後のファイル名が変換前と同じです");
 			result = "96";
@@ -1954,19 +1956,36 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	 * replaceFilenamePattern(File source)
 	 * @param file
 	 * @return
-	 *  %ID% -> Tag, %TITLE% -> VideoTitle
+	 *  %ID% -> Tag, %TITLE% -> VideoTitle,
+	 *  %CAT% -> もしあればカテゴリータグ, %TAGS10% ->タグ10文字
 	 */
 	private File replaceFilenamePattern(File file) {
 		String canonical =
 			VideoTitle.replace("　", " ").replaceAll(" +", " ").trim()
 			.replace("．", ".");
-		File parentFolder = file.getParentFile();
-		String videoFilename = file.getName();
+		String videoFilename = file.getPath();
+		String nicotag0 = ""+nicoCategory;
+		String nicotag1 = "";
+		if(nicoTagList.size()>0) nicotag1 = nicoTagList.get(0);
+		if(isDebugNet){
+			log.println("(ConvertWorker)nicoCategory="+nicotag0);
+			log.println("(ConvertWorker)nicoTagList="+nicotag1);
+		}
 		videoFilename =
 			videoFilename.replace("%ID%", Tag) 	// %ID% -> 動画ID
 			.replace("%TITLE%",VideoTitle)	// %TITLE% -> 動画タイトル
-			.replace("%title%", canonical);	// %title% -> 動画タイトル（空白大文字を空白小文字に）
-		return new File(parentFolder,videoFilename);
+			.replace("%title%", canonical)	// %title% -> 動画タイトル（空白大文字を空白小文字に）
+			.replace("%CAT%", nicotag0)		// %CAT% -> もしあればカテゴリータグ
+			.replace("%TAG1%", nicotag1)	//	%TAG1% ->２番めのタグ
+			;
+		File target = new File(videoFilename);
+		File parent = target.getParentFile();
+		if(!parent.isDirectory()){
+			if(parent.mkdir()){
+				log.println("folder created: "+parent.getPath());
+			}
+		}
+		return target;
 	}
 
 	private static String safeAsciiFileName(String str) {
@@ -2081,6 +2100,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				thumbInfoData = client.getThumbInfoData();
 				VideoBaseName = Setting.isChangeTitleId()?
 					VideoTitle + VideoID : VideoID + VideoTitle;
+				nicoCategory = client.getNicocategory();
+				nicoTagList = client.getNicotags();
 				sendtext(Tag + "の情報の取得に成功");
 				if(alternativeTag.isEmpty()){
 					alternativeTag = client.getAlternativeTag();

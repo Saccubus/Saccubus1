@@ -17,6 +17,8 @@ import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -563,10 +565,12 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid5_x0_y9 = new GridBagConstraints(0, 9,
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.BOTH, INSETS_0_25_0_5, 0, 0);
-		GridBagConstraints grid5_x0_y7_42 = new GridBagConstraints(0, 4,
-				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
+		GridBagConstraints grid5_x0_y7_42 = new GridBagConstraints(0, 7,
+				3, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.NONE, INSETS_0_25_0_5, 0, 0);
-		grid5_x0_y7_42.gridy = 7;
+		GridBagConstraints grid5_x2_y7_42b = new GridBagConstraints(3, 7,
+				1, 1, 1.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.NONE, INSETS_0_5_0_0, 0, 0);
 		GridBagConstraints grid5_x0_y6_41 = new GridBagConstraints(0, 6,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
@@ -1512,7 +1516,21 @@ public class MainFrame extends JFrame {
 		ShowSavingConvertedVideoFolderDialogButton
 				.addActionListener(new MainFrame_ShowSavingConvertedVideoFolderDialogButton_actionAdapter(
 						this));
-		Conv_SaveFileRadioButton.setText("保存するファイル名を指定する");
+		Conv_SaveFileRadioButton.setText("保存するファイル名を指定する(置換マクロ有り)->");
+		Conv_SaveFileRadioButton.setForeground(Color.blue);
+		convFileMacroLabel.setText("説明");
+		convFileMacroLabel.setForeground(Color.red);
+		String convFileMacro = "ファイル名置換マクロ";
+		String convFileMacroDescription =
+			"パス(フォルダ名およびファイル名)の中の以下の部分が置換されます。\n"
+			+"%ID%　→動画ID\n"
+			+"%TITLE%　→動画タイトル\n"
+			+"%title%　→全角空白を半角空白に変えた動画タイトル\n"
+			+"%CAT%　→もしあればカテゴリータグ\n"
+			+"%TAG1%　→２番めのタグ\n"
+			;
+		convFileMacroLabel.addMouseListener(
+			new ForcusedPopupBoard(this, convFileMacro, convFileMacroDescription));
 
 		BasicInfoTabPanel.setLayout(gridBagLayout12);
 		jMenuBar1.add(jMenuFile);
@@ -1842,6 +1860,7 @@ public class MainFrame extends JFrame {
 				grid5_x3_y6_44);
 		ConvertedVideoSavingInfoPanel.add(Conv_SaveFileRadioButton,
 				grid5_x0_y7_42);
+		ConvertedVideoSavingInfoPanel.add(convFileMacroLabel,grid5_x2_y7_42b);
 		ConvertedVideoSavingInfoPanel.add(ConvertedVideoSavedFileField,
 				grid5_x0_y8_43);
 		ConvertedVideoSavingInfoPanel.add(openConvSaveFileButton,
@@ -3247,6 +3266,7 @@ public class MainFrame extends JFrame {
 	GridLayout gridLayout1 = new GridLayout();
 	JRadioButton Conv_SaveFileRadioButton = new JRadioButton();
 	JRadioButton Conv_SaveFolderRadioButton = new JRadioButton();
+	JLabel convFileMacroLabel = new JLabel();
 	JTextField ConvertedVideoSavedFolderField = new JTextField();
 	BasicArrowButton openConvSaveFolderButton = new BasicArrowButton(SwingConstants.EAST);
 	BasicArrowButton openConvSaveFileButton = new BasicArrowButton(SwingConstants.EAST);
@@ -5596,6 +5616,25 @@ class AprilFool_Dioalog extends JDialog {
 
 	public void actionPerformed(ActionEvent e){
 		dispose();
+	}
+}
+
+class ForcusedPopupBoard extends MouseAdapter {
+
+	private final MainFrame frame;
+	private final String title;
+	private final String caption;
+	ForcusedPopupBoard(MainFrame frame, String t, String s){
+		this.frame = frame;
+		title = t;
+		caption = s;
+	}
+
+	public void mouseEntered(MouseEvent e){
+		//custom title, no icon
+		JOptionPane.showMessageDialog(frame,
+		    caption, title,
+		    JOptionPane.PLAIN_MESSAGE);
 	}
 }
 
