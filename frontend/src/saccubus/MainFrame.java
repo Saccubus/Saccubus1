@@ -223,6 +223,7 @@ public class MainFrame extends JFrame {
 	JCheckBox enableRangeCheckBox = new JCheckBox();
 	JCheckBox enableSeqResumeCheckBox = new JCheckBox();
 	JCheckBox inhibitSmallCheckBox = new JCheckBox();
+	JCheckBox autoFlvToMp4CheckBox = new JCheckBox();
 	JCheckBox fontWidthFixCheckBox = new JCheckBox();
 	JTextField fontWidthRatioTextField = new JTextField();
 	JCheckBox useLineskipAsFontsizeCheckBox = new JCheckBox();
@@ -306,6 +307,15 @@ public class MainFrame extends JFrame {
 	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
 	static final Logger log = Logger.MainLog;
 	static MainFrame MasterMainFrame = null;
+	static final String renameFileMacro = "ファイル名置換マクロ";
+	static final String renameFileMacroDescription =
+		"パス(フォルダ名およびファイル名)の中の以下の部分が置換されます。\n"
+		+"%ID%　→動画ID\n"
+		+"%TITLE%　→動画タイトル\n"
+		+"%title%　→全角空白を半角空白に変えた動画タイトル\n"
+		+"%CAT%　→もしあればカテゴリータグ\n"
+		+"%TAG1%　→２番めのタグ\n"
+		;
 
 	private String url;
 	private JPanel activityPane;
@@ -1323,6 +1333,9 @@ public class MainFrame extends JFrame {
 		inhibitSmallCheckBox.setText("L");
 		inhibitSmallCheckBox.setForeground(Color.green);
 		inhibitSmallCheckBox.setToolTipText("Large強制。サイズの小さい動画はダウンロードしません。他より低優先");
+		autoFlvToMp4CheckBox.setText("dmc動画mp4化");
+		autoFlvToMp4CheckBox.setForeground(Color.blue);
+		autoFlvToMp4CheckBox.setToolTipText("dmc動画のflvコンテナはDL後にmp4コンテナに変える。拡張子はflvのまま");
 		ShowSavingVideoFileDialogButton.setText("参照");
 		ShowSavingVideoFileDialogButton
 				.addActionListener(new MainFrame_ShowSavingVideoDialogButton_actionAdapter(
@@ -1337,7 +1350,12 @@ public class MainFrame extends JFrame {
 		ShowSavingVideoFolderDialogButton
 				.addActionListener(new MainFrame_ShowSavingVideoFolderDialogButton_actionAdapter(
 						this));
-		Video_SaveFileRadioButton.setText("保存するファイル名を指定する");
+		Video_SaveFileRadioButton.setText("保存するファイル名を指定する(置換マクロ有り)->");
+		Video_SaveFileRadioButton.setForeground(Color.blue);
+		videoFileMacroLabel.setText("説明");
+		videoFileMacroLabel.setForeground(Color.red);
+		videoFileMacroLabel.addMouseListener(
+				new ForcusedPopupBoard(this, renameFileMacro, renameFileMacroDescription));
 		openVideoSaveFileButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -1520,17 +1538,8 @@ public class MainFrame extends JFrame {
 		Conv_SaveFileRadioButton.setForeground(Color.blue);
 		convFileMacroLabel.setText("説明");
 		convFileMacroLabel.setForeground(Color.red);
-		String convFileMacro = "ファイル名置換マクロ";
-		String convFileMacroDescription =
-			"パス(フォルダ名およびファイル名)の中の以下の部分が置換されます。\n"
-			+"%ID%　→動画ID\n"
-			+"%TITLE%　→動画タイトル\n"
-			+"%title%　→全角空白を半角空白に変えた動画タイトル\n"
-			+"%CAT%　→もしあればカテゴリータグ\n"
-			+"%TAG1%　→２番めのタグ\n"
-			;
 		convFileMacroLabel.addMouseListener(
-			new ForcusedPopupBoard(this, convFileMacro, convFileMacroDescription));
+			new ForcusedPopupBoard(this, renameFileMacro, renameFileMacroDescription));
 
 		BasicInfoTabPanel.setLayout(gridBagLayout12);
 		jMenuBar1.add(jMenuFile);
@@ -3038,7 +3047,8 @@ public class MainFrame extends JFrame {
 			foceDmcDlCheckBox.isSelected(),
 			enableRangeCheckBox.isSelected(),
 			enableSeqResumeCheckBox.isSelected(),
-			inhibitSmallCheckBox.isSelected()
+			inhibitSmallCheckBox.isSelected(),
+			autoFlvToMp4CheckBox.isSelected()
 		);
 	}
 
@@ -3217,6 +3227,7 @@ public class MainFrame extends JFrame {
 		enableRangeCheckBox.setSelected(setting.canRangeRequest());
 		enableSeqResumeCheckBox.setSelected(setting.canSeqResume());
 		inhibitSmallCheckBox.setSelected(setting.isInhibitSmaller());
+		autoFlvToMp4CheckBox.setSelected(setting.isAutoFlvToMp4());
 	}
 
 	/**
@@ -3266,6 +3277,7 @@ public class MainFrame extends JFrame {
 	GridLayout gridLayout1 = new GridLayout();
 	JRadioButton Conv_SaveFileRadioButton = new JRadioButton();
 	JRadioButton Conv_SaveFolderRadioButton = new JRadioButton();
+	JLabel videoFileMacroLabel = new JLabel();
 	JLabel convFileMacroLabel = new JLabel();
 	JTextField ConvertedVideoSavedFolderField = new JTextField();
 	BasicArrowButton openConvSaveFolderButton = new BasicArrowButton(SwingConstants.EAST);
@@ -4248,7 +4260,7 @@ s	 * @return javax.swing.JPanel
 	private JCheckBox getDelVideoCheckBox() {
 		if (DelVideoCheckBox == null) {
 			DelVideoCheckBox = new JCheckBox();
-			DelVideoCheckBox.setText("変換後に動画ファイルを削除する");
+			DelVideoCheckBox.setText("変換後に動画削除");
 		}
 		return DelVideoCheckBox;
 	}
@@ -4307,12 +4319,20 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y0_34.gridwidth = 6;
 			GridBagConstraints grid_x0_y1_15 = new GridBagConstraints();
 			grid_x0_y1_15.fill = GridBagConstraints.HORIZONTAL;
-			grid_x0_y1_15.gridwidth = 2;
+			grid_x0_y1_15.gridwidth = 1;
 			grid_x0_y1_15.gridx = 0;
 			grid_x0_y1_15.gridy = 1;
 			grid_x0_y1_15.weightx = 0.0;
 			grid_x0_y1_15.anchor = GridBagConstraints.WEST;
 			grid_x0_y1_15.insets = INSETS_0_25_0_5;
+			GridBagConstraints grid_x1_y1_15b = new GridBagConstraints();
+			grid_x1_y1_15b.fill = GridBagConstraints.HORIZONTAL;
+			grid_x1_y1_15b.gridwidth = 1;
+			grid_x1_y1_15b.gridx = 1;
+			grid_x1_y1_15b.gridy = 1;
+			grid_x1_y1_15b.weightx = 0.0;
+			grid_x1_y1_15b.anchor = GridBagConstraints.WEST;
+			grid_x1_y1_15b.insets = INSETS_0_0_0_5;
 			GridBagConstraints grid_x2_y1_15_2 = new GridBagConstraints();
 			grid_x2_y1_15_2.fill = GridBagConstraints.HORIZONTAL;
 			grid_x2_y1_15_2.gridwidth = 2;
@@ -4334,8 +4354,11 @@ s	 * @return javax.swing.JPanel
 					3, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
 			GridBagConstraints grid_x0_y4_29 = new GridBagConstraints(
-					0, 4, 5, 1, 0.0, 0.0, GridBagConstraints.WEST,
+					0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 					GridBagConstraints.NONE, INSETS_0_25_0_5, 0, 0);
+			GridBagConstraints grid_x1_y4_29b = new GridBagConstraints(
+					3, 4, 2, 1, 1.0, 0.0, GridBagConstraints.WEST,
+					GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
 			GridBagConstraints grid_x0_y5_30 = new GridBagConstraints(
 					0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 					GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
@@ -4367,6 +4390,7 @@ s	 * @return javax.swing.JPanel
 			grid000_last.anchor = GridBagConstraints.NORTHWEST;
 			savingVideoSubPanel.add(enableSeqResumeCheckBox, grid000_last);
 			VideoSaveInfoPanel.add(getDelVideoCheckBox(), grid_x0_y1_15);
+			VideoSaveInfoPanel.add(autoFlvToMp4CheckBox, grid_x1_y1_15b);
 			VideoSaveInfoPanel.add(inhibitSmallCheckBox, grid_x2_y1_15_2);
 			VideoSaveInfoPanel.add(Video_SaveFolderRadioButton,
 					grid_x0_y2_27);
@@ -4376,6 +4400,7 @@ s	 * @return javax.swing.JPanel
 					grid_x3_y3_31);
 			VideoSaveInfoPanel.add(Video_SaveFileRadioButton,
 					grid_x0_y4_29);
+			VideoSaveInfoPanel.add(videoFileMacroLabel, grid_x1_y4_29b);
 			VideoSaveInfoPanel.add(VideoSavedFileField, grid_x0_y5_30);
 			VideoSaveInfoPanel.add(openVideoSaveFileButton,grid_x2_y5);
 			VideoSaveInfoPanel.add(ShowSavingVideoFileDialogButton,

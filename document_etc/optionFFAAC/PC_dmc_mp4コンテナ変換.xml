@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+	dmc動画のflvコンテナをmp4コンテナに変えます。拡張子はflvのまま
+	entry key="ConvertedFile"	.\[out]mp4\[%ID%]%title%.mp4
+	entry key="AddComment"		false
+	entry key="UseFpsFilter"	true
+
+-->
+<properties>
+	<entry key="EXT">mp4</entry>
+	<entry key="MAIN" />
+	<entry key="IN">-analyzeduration 10M</entry>
+	<entry key="OUT">-threads 0 -acodec copy -vcodec copy</entry>
+</properties>
