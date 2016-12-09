@@ -218,12 +218,12 @@ public class MainFrame extends JFrame {
 	JTextField commentSpeedTextField = new JTextField();
 	JCheckBox enableCA_CheckBox = new JCheckBox();
 	JCheckBox disableEcoCheckBox = new JCheckBox();
-	JCheckBox preferSmileCheckBox = new JCheckBox();
-	JCheckBox foceDmcDlCheckBox = new JCheckBox();
-	JCheckBox enableRangeCheckBox = new JCheckBox();
-	JCheckBox enableSeqResumeCheckBox = new JCheckBox();
-	JCheckBox inhibitSmallCheckBox = new JCheckBox();
-	JCheckBox autoFlvToMp4CheckBox = new JCheckBox();
+	JCheckBox preferSmileCheckBox;
+	JCheckBox forceDmcDlCheckBox;
+	JCheckBox enableRangeCheckBox;
+	JCheckBox enableSeqResumeCheckBox;
+	JCheckBox inhibitSmallCheckBox;
+	JCheckBox autoFlvToMp4CheckBox;
 	JCheckBox fontWidthFixCheckBox = new JCheckBox();
 	JTextField fontWidthRatioTextField = new JTextField();
 	JCheckBox useLineskipAsFontsizeCheckBox = new JCheckBox();
@@ -285,6 +285,8 @@ public class MainFrame extends JFrame {
 	private String notice;
 	private HistoryDeque<String> requestHistory;
 	private AutoPlay autoPlay;
+	private JPanel extraDownloadInfoPanel;
+
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -1318,24 +1320,6 @@ public class MainFrame extends JFrame {
 		SavingVideoCheckBox.setText("動画保存");
 		disableEcoCheckBox.setText("eco中止");
 		disableEcoCheckBox.setForeground(Color.blue);
-		preferSmileCheckBox.setText("smile");
-		preferSmileCheckBox.setForeground(Color.blue);
-		preferSmileCheckBox.setToolTipText("dmcサーバに有ってもsmileサーバから読みます。");
-		foceDmcDlCheckBox.setText("dmc");
-		foceDmcDlCheckBox.setForeground(Color.blue);
-		foceDmcDlCheckBox.setToolTipText("dmcサーバ強制ダウンロード。変換に使うのはサイズの大きい方。");
-		enableRangeCheckBox.setText("r");
-		enableRangeCheckBox.setForeground(Color.red);
-		enableRangeCheckBox.setToolTipText("可能ならHTTP/1.1 Rangeヘッダーを使用する(同時接続数2)");
-		enableSeqResumeCheckBox.setText("s");
-		enableSeqResumeCheckBox.setForeground(Color.cyan);
-		enableSeqResumeCheckBox.setToolTipText("可能ならSequentialResumeを行う(同時接続数1)");
-		inhibitSmallCheckBox.setText("L");
-		inhibitSmallCheckBox.setForeground(Color.green);
-		inhibitSmallCheckBox.setToolTipText("Large強制。サイズの小さい動画はダウンロードしません。他より低優先");
-		autoFlvToMp4CheckBox.setText("dmc動画mp4化");
-		autoFlvToMp4CheckBox.setForeground(Color.blue);
-		autoFlvToMp4CheckBox.setToolTipText("dmc動画のflvコンテナはDL後にmp4コンテナに変える。拡張子はflvのまま");
 		ShowSavingVideoFileDialogButton.setText("参照");
 		ShowSavingVideoFileDialogButton
 				.addActionListener(new MainFrame_ShowSavingVideoDialogButton_actionAdapter(
@@ -3044,7 +3028,7 @@ public class MainFrame extends JFrame {
 			liveCommentVposShiftCheckBox.isSelected(),
 			vposshift,
 			preferSmileCheckBox.isSelected(),
-			foceDmcDlCheckBox.isSelected(),
+			forceDmcDlCheckBox.isSelected(),
 			enableRangeCheckBox.isSelected(),
 			enableSeqResumeCheckBox.isSelected(),
 			inhibitSmallCheckBox.isSelected(),
@@ -3223,7 +3207,7 @@ public class MainFrame extends JFrame {
 		liveCommentVposShiftCheckBox.setSelected(setting.isEnableCommentVposShift());
 		liveCommentVposShiftTextField.setText(setting.getCommentVposShiftString());
 		preferSmileCheckBox.setSelected(setting.isSmilePreferable());
-		foceDmcDlCheckBox.setSelected(setting.doesDmcforceDl());
+		forceDmcDlCheckBox.setSelected(setting.doesDmcforceDl());
 		enableRangeCheckBox.setSelected(setting.canRangeRequest());
 		enableSeqResumeCheckBox.setSelected(setting.canSeqResume());
 		inhibitSmallCheckBox.setSelected(setting.isInhibitSmaller());
@@ -3590,8 +3574,8 @@ public class MainFrame extends JFrame {
 		//	Tag = url;
 			if(localFile.isFile()){
 				SavingVideoCheckBox.setSelected(false);
-				String extension = new Path(localFile).getExtension().toLowerCase();
-				if(".mp4.flv.avi".contains(extension)){
+				String extension = Path.getExtention(localFile).toLowerCase();
+				if(".mp4.flv.avi.f4v.wmv.mpg.mpeg.webm".contains(extension)){
 					VideoSavedFileField.setText(path);
 					Video_SaveFileRadioButton.setSelected(true);
 					String localComment = path.replace(extension, ".xml");
@@ -4381,17 +4365,37 @@ s	 * @return javax.swing.JPanel
 			VideoSaveInfoPanel.add(savingVideoSubPanel, grid_x0_y0_34);
 			savingVideoSubPanel.add(SavingVideoCheckBox, new GridBagConstraints());
 			savingVideoSubPanel.add(disableEcoCheckBox, new GridBagConstraints());
-			savingVideoSubPanel.add(preferSmileCheckBox, new GridBagConstraints());
-			savingVideoSubPanel.add(foceDmcDlCheckBox, new GridBagConstraints());
-			savingVideoSubPanel.add(enableRangeCheckBox, new GridBagConstraints());
+			//	savingVideoSubPanel.add(getPreferSmileCheckBox(), new GridBagConstraints());
+			//	savingVideoSubPanel.add(getForceDmcDlCheckBox(), new GridBagConstraints());
+			//	savingVideoSubPanel.add(getEnableRangeCheckBox(), new GridBagConstraints());
+
+			JPanel extraDownloadPanel0 = new JPanel();
+			extraDownloadPanel0.setLayout(new BorderLayout());
+			JLabel extraDownloadLabel = new JLabel();
+			extraDownloadLabel.setText("拡張ダウンロード設定(dmc)");
+			extraDownloadLabel.setForeground(Color.blue);
+			extraDownloadLabel.setToolTipText("ページ情報設定タブに移動しました");
+			extraDownloadPanel0.add(extraDownloadLabel, BorderLayout.CENTER);
+			BasicArrowButton extraDownloadArrow = new BasicArrowButton(SwingConstants.SOUTH);
+			extraDownloadArrow.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					openWatchPageSavingTabbedPanel();
+				}
+			});
+			extraDownloadPanel0.add(extraDownloadArrow, BorderLayout.WEST);
+
 			GridBagConstraints grid000_last = new GridBagConstraints();
 			grid000_last.weightx = 1.0;
 			grid000_last.fill = GridBagConstraints.NONE;
-			grid000_last.anchor = GridBagConstraints.NORTHWEST;
-			savingVideoSubPanel.add(enableSeqResumeCheckBox, grid000_last);
+		//	grid000_last.anchor = GridBagConstraints.WEST;
+		//	grid000_last.insets = INSETS_0_5_0_5;
+		//	savingVideoSubPanel.add(getEnableSeqResumeCheckBox(), grid000_last);
+			savingVideoSubPanel.add(extraDownloadPanel0, grid000_last);
+
 			VideoSaveInfoPanel.add(getDelVideoCheckBox(), grid_x0_y1_15);
-			VideoSaveInfoPanel.add(autoFlvToMp4CheckBox, grid_x1_y1_15b);
-			VideoSaveInfoPanel.add(inhibitSmallCheckBox, grid_x2_y1_15_2);
+		//	VideoSaveInfoPanel.add(getAutoFlvToMp4CheckBox(), grid_x1_y1_15b);
+		//	VideoSaveInfoPanel.add(getInhibitSmallCheckBox(), grid_x2_y1_15_2);
 			VideoSaveInfoPanel.add(Video_SaveFolderRadioButton,
 					grid_x0_y2_27);
 			VideoSaveInfoPanel.add(VideoSavedFolderField, grid_x0_y3_28);
@@ -4590,6 +4594,10 @@ s	 * @return javax.swing.JPanel
 		SaveInfoTabPaneEach.setSelectedComponent(ConvertedVideoSavingTabbedPanel);
 	}
 
+	private void openWatchPageSavingTabbedPanel(){
+		MainTabbedPane.setSelectedComponent(SavingInfoTabPanel);
+		SaveInfoTabPaneEach.setSelectedComponent(watchPageSavingTabbedPanel);
+	}
 	/**
 	 * getWatchPageSavingTabbedPanel
 	 * @return watchPageSavingTabbedPanel
@@ -4614,8 +4622,18 @@ s	 * @return javax.swing.JPanel
 		grid_x0_y1.fill = GridBagConstraints.HORIZONTAL;
 		grid_x0_y1.insets = INSETS_0_5_0_5;
 		grid_x0_y1.weightx = 1.0;
-		grid_x0_y1.weighty = 1.0;
+		grid_x0_y1.weighty = 0.0;
 		watchPageSavingTabbedPanel.add(getFileNameInfoPanel(),grid_x0_y1);
+
+		GridBagConstraints grid_x0_y2 = new GridBagConstraints();
+		grid_x0_y2.gridx = 0;
+		grid_x0_y2.gridy = 2;
+		grid_x0_y2.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2.fill = GridBagConstraints.HORIZONTAL;
+		grid_x0_y2.insets = INSETS_0_5_0_5;
+		grid_x0_y2.weightx = 1.0;
+		grid_x0_y2.weighty = 1.0;
+		watchPageSavingTabbedPanel.add(getExtraDownloadInfoPanel(),grid_x0_y2);
 		return watchPageSavingTabbedPanel;
 	}
 
@@ -4787,6 +4805,136 @@ s	 * @return javax.swing.JPanel
 		gridbagc.weightx = 1.0;
 		fileNameInfoPanel.add(changeTitleIdCheckBox, gridbagc);
 		return fileNameInfoPanel;
+	}
+
+	/**
+	 * getExtraDownloadInfoPanel
+	 * @return extraDownloadInfoPanel
+	 */
+	private JPanel getExtraDownloadInfoPanel(){
+		extraDownloadInfoPanel = new JPanel();
+		extraDownloadInfoPanel.setLayout(new GridBagLayout());
+		extraDownloadInfoPanel.setBorder(
+			BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"拡張ダウンロード設定(dmc)", TitledBorder.LEADING,
+				TitledBorder.TOP, getFont(), Color.blue));
+
+		GridBagConstraints gridbagc = new GridBagConstraints();
+		gridbagc.gridx = 0;
+		gridbagc.gridy = 0;
+		gridbagc.anchor = GridBagConstraints.WEST;
+		gridbagc.fill = GridBagConstraints.HORIZONTAL;
+		gridbagc.insets = INSETS_0_0_0_5;
+		gridbagc.weightx = 1.0;
+		extraDownloadInfoPanel.add(getPreferSmileCheckBox(), gridbagc);
+
+		gridbagc = new GridBagConstraints();
+		gridbagc.gridx = 0;
+		gridbagc.gridy = 1;
+		gridbagc.anchor = GridBagConstraints.WEST;
+		gridbagc.fill = GridBagConstraints.HORIZONTAL;
+		gridbagc.insets = INSETS_0_0_0_5;
+		gridbagc.weightx = 1.0;
+		extraDownloadInfoPanel.add(getForceDmcDlCheckBox(), gridbagc);
+
+		gridbagc = new GridBagConstraints();
+		gridbagc.gridx = 0;
+		gridbagc.gridy = 2;
+		gridbagc.anchor = GridBagConstraints.WEST;
+		gridbagc.fill = GridBagConstraints.HORIZONTAL;
+		gridbagc.insets = INSETS_0_0_0_5;
+		gridbagc.weightx = 1.0;
+		extraDownloadInfoPanel.add(getEnableRangeCheckBox(), gridbagc);
+
+		gridbagc = new GridBagConstraints();
+		gridbagc.gridx = 0;
+		gridbagc.gridy = 3;
+		gridbagc.anchor = GridBagConstraints.WEST;
+		gridbagc.fill = GridBagConstraints.HORIZONTAL;
+		gridbagc.insets = INSETS_0_0_0_5;
+		gridbagc.weightx = 1.0;
+		extraDownloadInfoPanel.add(getEnableSeqResumeCheckBox(), gridbagc);
+
+		gridbagc = new GridBagConstraints();
+		gridbagc.gridx = 0;
+		gridbagc.gridy = 4;
+		gridbagc.anchor = GridBagConstraints.WEST;
+		gridbagc.fill = GridBagConstraints.HORIZONTAL;
+		gridbagc.insets = INSETS_0_0_0_5;
+		gridbagc.weightx = 1.0;
+		extraDownloadInfoPanel.add(getInhibitSmallCheckBox(), gridbagc);
+
+		gridbagc = new GridBagConstraints();
+		gridbagc.gridx = 0;
+		gridbagc.gridy = 5;
+		gridbagc.anchor = GridBagConstraints.WEST;
+		gridbagc.fill = GridBagConstraints.HORIZONTAL;
+		gridbagc.insets = INSETS_0_0_0_5;
+		gridbagc.weightx = 1.0;
+		extraDownloadInfoPanel.add(getAutoFlvToMp4CheckBox(), gridbagc);
+
+		return extraDownloadInfoPanel;
+	}
+
+	private JCheckBox getPreferSmileCheckBox(){
+		if(preferSmileCheckBox==null){
+			preferSmileCheckBox = new JCheckBox();
+			preferSmileCheckBox.setText("smileサーバ強制ダウンロード");
+			preferSmileCheckBox.setForeground(Color.blue);
+			preferSmileCheckBox.setToolTipText("dmcサーバに有ってもsmileサーバから読みます。");
+		}
+		return preferSmileCheckBox;
+	}
+
+	private JCheckBox getForceDmcDlCheckBox(){
+		if(forceDmcDlCheckBox==null){
+			forceDmcDlCheckBox = new JCheckBox();
+			forceDmcDlCheckBox.setText("dmcサーバ強制ダウンロード");
+			forceDmcDlCheckBox.setForeground(Color.blue);
+			forceDmcDlCheckBox.setToolTipText("dmcサーバ動画がサイズが小さくてもダウンロードします。変換に使うのはサイズの大きい方。");
+		}
+		return forceDmcDlCheckBox;
+	}
+
+	private JCheckBox getEnableRangeCheckBox(){
+		if(enableRangeCheckBox==null){
+			enableRangeCheckBox = new JCheckBox();
+			enableRangeCheckBox.setText("dmc(R)ダウンロード(同時接続数2　非推奨。分割ダウンロード)");
+		//	enableRangeCheckBox.setForeground(Color.blue);
+			enableRangeCheckBox.setToolTipText("可能ならHTTP/1.1 Rangeヘッダーを使用する(同時接続数2)");
+		}
+		return enableRangeCheckBox;
+	}
+
+	private JCheckBox getEnableSeqResumeCheckBox(){
+		if(enableSeqResumeCheckBox==null){
+			enableSeqResumeCheckBox = new JCheckBox();
+			enableSeqResumeCheckBox.setText("dmc(S)ダウンロード(同時接続数1 resume付き。高速 )");
+			enableSeqResumeCheckBox.setForeground(Color.blue);
+			enableSeqResumeCheckBox.setToolTipText("可能ならSequentialResumeを行う(同時接続数1)");
+		}
+		return enableSeqResumeCheckBox;
+	}
+
+	private JCheckBox getInhibitSmallCheckBox(){
+		if(inhibitSmallCheckBox==null){
+			inhibitSmallCheckBox = new JCheckBox();
+			inhibitSmallCheckBox.setText("Large強制");
+			inhibitSmallCheckBox.setForeground(Color.blue);
+			inhibitSmallCheckBox.setToolTipText("サイズの小さい動画はダウンロードしません。他より低優先");
+		}
+		return inhibitSmallCheckBox;
+	}
+
+	private JCheckBox getAutoFlvToMp4CheckBox(){
+		if(autoFlvToMp4CheckBox==null){
+			autoFlvToMp4CheckBox = new JCheckBox();
+			autoFlvToMp4CheckBox.setText("dmc動画mp4コンテナ化(拡張子はflvのまま)↑のmp4設定併用可");
+			autoFlvToMp4CheckBox.setForeground(Color.blue);
+			autoFlvToMp4CheckBox.setToolTipText(
+				"dmc動画のflvコンテナはDL後にmp4コンテナに変える。拡張子はflvのまま。↑の設定と併用すれば拡張子もmp4になります。");
+		}
+		return autoFlvToMp4CheckBox;
 	}
 
 	/**

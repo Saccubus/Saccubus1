@@ -161,6 +161,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private ErrorControl errorControl;
 	private String lowVideoID;
 	private String dmcVideoID;
+	private String videoContentType;
 	private int tid;
 	private Logger log;
 	private String thumbInfoData;
@@ -793,6 +794,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						optionalThreadID = client.getOptionalThreadID();
 					}
 					videoLength = client.getVideoLength();
+					videoContentType = client.getVideoContentType();
 					setVideoTitleIfNull(VideoFile.getName());
 				}else{
 					// dmc
@@ -802,6 +804,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					long video_size = 0;
 					long size_high = client.getSizeHigh();
 					log.println("smile size: "+(size_high>>20)+"MiBytes.");
+					boolean dmcForceMp4 = renameMp4 && Setting.isAutoFlvToMp4();
 					if(VideoFile.isFile() && VideoFile.canRead()){
 						log.println("動画は既に存在します。");
 						sendtext("動画は既に存在します");
@@ -832,7 +835,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							do {
 								limits[2] = resume_size;
 								File video = client.getVideoDmc(
-									dmcVideoFile, Status, StopFlag, renameMp4, limits,
+									dmcVideoFile, Status, StopFlag, dmcForceMp4, limits,
 									Setting.canRangeRequest(), true, resume_size);
 								if (stopFlagReturn()) {
 									result = "43";
@@ -867,6 +870,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								}else{
 									// intended suspend
 									videoLength = client.getDmcVideoLength();
+									videoContentType = client.getVideoContentType();
 									dmcVideoFile = video;
 									resume_size = dmcVideoFile.length();
 									log.println("resumed size: "+(resume_size>>20)+"MiB");
@@ -910,7 +914,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									return false;
 								}
 							} while(resume_size < dmc_size);
-							if(resume_size != dmc_size){
+							if(resume_size != dmc_size || dmc_size == 0){
 								log.println("dmc(S) resume失敗!");
 								sendtext("dmc(S) resume失敗!");
 								dmc_size = 0;
@@ -921,7 +925,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						} else {
 							// not dmc(S)
 							dmcVideoFile = client.getVideoDmc(
-									dmcVideoFile, Status, StopFlag, renameMp4, limits,
+									dmcVideoFile, Status, StopFlag, dmcForceMp4, limits,
 									Setting.canRangeRequest(), false, 0);
 							if (stopFlagReturn()) {
 								result = "43";
@@ -942,6 +946,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							}else{
 								log.println("dmc download "+dmcVideoFile.length()+"bytes");
 								videoLength = client.getDmcVideoLength();
+								videoContentType = client.getVideoContentType();
 								dmc_size = dmcVideoFile.length();
 								log.println("dmc size: "+(dmc_size>>20)+"MiB");
 								if(Setting.isAutoFlvToMp4())
@@ -966,6 +971,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							video_size = 0;
 						}else{
 							videoLength = client.getVideoLength();
+							videoContentType = client.getVideoContentType();
 							video_size = VideoFile.length();
 						}
 					}
@@ -1172,7 +1178,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (file == null || file.getPath() == null) {
 			return mkTemp(OPTIONAL_EXT);
 		}
-		return getReplacedExtFile(file, OPTIONAL_EXT);
+		return Path.getReplacedExtFile(file, OPTIONAL_EXT);
 	}
 	private String getDateUserFirst(File comfile){
 		//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
@@ -1437,7 +1443,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (file == null || !file.isFile() || file.getPath() == null) {
 				thumbnailJpg = mkTemp(Tag + "_thumnail.jpg");
 			}else{
-				thumbnailJpg = getReplacedExtFile(file, ".jpg");
+				thumbnailJpg = Path.getReplacedExtFile(file, ".jpg");
 			}
 		}
 		return true;
@@ -1472,7 +1478,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (file == null || file.getPath() == null) {
 			return mkTemp(THUMB_INFO + ext);
 		}
-		return getReplacedExtFile(file, THUMB_INFO + ext);
+		return Path.getReplacedExtFile(file, THUMB_INFO + ext);
 	}
 
 	private boolean makeNGPattern() {
@@ -1496,22 +1502,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private Path mkTemp(String uniq){
 		return Path.mkTemp(Tag + uniq);
-	}
-
-	private String getRemovedExtName(String path) {
-		int index = path.lastIndexOf(".");
-		if (index > path.lastIndexOf(File.separator)) {
-			path = path.substring(0, index);		// 拡張子を削除
-		}
-		return path;
-	}
-
-	private String getReplacedExtName(String path, String ext) {
-		return getRemovedExtName(path) + ext;
-	}
-
-	private File getReplacedExtFile(File file, String ext){
-		return new File(getReplacedExtName(file.getPath(),ext));
 	}
 
 	private boolean convertComment(){
@@ -1831,6 +1821,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		Path output = Path.mkTemp("_"+VideoID+".mp4");
 		if(output.isFile())
 			output.delete();
+		if(videoContentType!=null && videoContentType.contains("mp4") && !Path.hasExt(input, ".mp4"))
+		{
+			input = Path.getReplacedExtFile(input, ".mp4");
+		}
 		//出力
 		if(ffmpeg==null){
 			String path = Setting.getFFmpegPath();
@@ -1849,9 +1843,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			log.println("dmc flv->mp4 failed! "+VideoID+", code="+code);
 			return input;
 		}
-		if(Path.fileCopy(output, input))
-			output.delete();
-		log.println("dmc flv->mp4 done: "+VideoID);
+		if(Setting.isChangeMp4Ext() && !Path.hasExt(input,".mp4")){
+			File inputmp4 = Path.getReplacedExtFile(input, ".mp4");
+			input.renameTo(inputmp4);
+			input = inputmp4;
+		}
+		if(Path.move(output, input))
+			log.println("dmc flv->mp4 done: "+VideoID);
+		else {
+			log.println("dmc flv->mp4 failed!: copy faild! "+VideoID);
+			log.println("mp4 container file is "+output.getPath());
+		}
 		return input;
 	}
 
@@ -2241,7 +2243,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(thumbInfoData==null){
 				String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
 				if(thumbInfoFile==null)
-					thumbInfoFile = getReplacedExtFile(VideoFile, ext);
+					thumbInfoFile = Path.getReplacedExtFile(VideoFile, ext);
 				if(thumbInfoFile!=null  && thumbInfoFile.equals(CommentFile) && thumbInfoFile.canRead())
 					thumbInfoData = Path.readAllText(thumbInfoFile, "UTF-8");
 				if(thumbInfoData!=null
@@ -3958,7 +3960,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				int index = path.lastIndexOf(".");
 				if (index < 0) continue;
 				String ext = path.substring(index).toLowerCase();
-				if(ext.equals(".flv") || ext.equals(".mp4")  || ext.equals(".avi")  || ext.equals(".mpg") ){
+				if(".flv.f4v.mp4.avi.mpg.mpeg.wmv.webm".contains(ext)){
 					return path;
 				}
 			}

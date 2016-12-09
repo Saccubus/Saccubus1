@@ -760,6 +760,9 @@ public class NicoClient {
 	public int getSizeVideo(){
 		return sizeVideo;
 	}
+	public String getVideoContentType() {
+		return ContentType;
+	}
 	public File getVideo(File file, final JLabel status, final ConvertStopFlag flag,
 			boolean renameMp4) {
 		try {
@@ -811,12 +814,7 @@ public class NicoClient {
 				+", type=" + ContentType + ", " + ContentDisp);
 			log.print("Downloading smile video...");
 			if(renameMp4 && ContentType.contains("mp4")){
-				String filepath = file.getPath();
-				int index = filepath.lastIndexOf(".");
-				if(filepath.lastIndexOf(File.separator) < index){
-					filepath = filepath.substring(0, index) + ".mp4";
-				}
-				file = new File(filepath);
+				file = Path.getReplacedExtFile(file,".mp4");
 			}
 			OutputStream os = new FileOutputStream(file);
 			int size = 0;
@@ -859,7 +857,7 @@ public class NicoClient {
 	}
 
 	public File getVideoDmc(File video, final JLabel status, final ConvertStopFlag flag,
-			boolean renameMp4, long[] limits,
+			boolean dmcForceMp4, long[] limits,
 			boolean canRangeReq, boolean tryResume, long resume_size) {
 
 		FileOutputStream fos = null;
@@ -1097,6 +1095,8 @@ public class NicoClient {
 			int dummy = 0;
 			is = con.getInputStream();
 			File dummyfile = Path.mkTemp("dummy["+videoTag+"].flv");
+			downloadLimit = 4096*1024;
+			int byterate = downloadLimit / 60;
 			os = new FileOutputStream(dummyfile);
 			while((dummy = is.read(buf, 0, SPLIT_TEST_SIZE)) > 0){
 				os.write(buf, 0, dummy);
@@ -1105,54 +1105,52 @@ public class NicoClient {
 			os.flush();
 			os.close();
 			con.disconnect();	//テスト終了
-			if(sizeAll > max_size)
-				max_size = sizeAll;
-			if(sizeRanged > max_size)
-				max_size = sizeRanged;
-			if(max_size > 0 && sizeDmc <= 0){
-				limits[1] = max_size;
-				if(max_size < min_size){
-					setExtraError("97 最小限度サイズより小さいのでダウンロード中止");
+			try {
+				if(sizeAll > max_size)
+					max_size = sizeAll;
+				if(sizeRanged > max_size)
+					max_size = sizeRanged;
+				if(max_size > 0 && sizeDmc <= 0){
+					limits[1] = max_size;
+					if(max_size < min_size){
+						setExtraError("97 最小限度サイズより小さいのでダウンロード中止");
+						return null;
+					}
+					// 続行
+					sizeDmc = max_size;
+					if(max_size == resume_size){
+						setExtraError("97 ダウンロード完了済み");
+						return video;
+					}
+				}
+				log.println("max_size="+(max_size/1000)+"Kbytes.");
+				// ダウンロードリミット設定
+				int videolen = getDmcVideoLength();
+				if(videolen > 0){
+					byterate = (int)((double)max_size / videolen);
+					downloadLimit = byterate * 60;
+				}
+				if(tryResume || resume_size>0)
+					log.println("setting download limit = "+downloadLimit);
+				if(dummyfile==null){
+					log.println("Error:test download(dmc) failed.");
 					return null;
 				}
-				// 続行
-				sizeDmc = max_size;
-				if(max_size == resume_size){
-					setExtraError("97 ダウンロード完了済み");
-					return video;
+				if(dummyfile.length() != SPLIT_TEST_SIZE){
+					log.println("Error:test download(dmc) size("+dummyfile.length()+")mismatch.");
+					return null;
 				}
+			} catch(Exception e){
+				log.printStackTrace(e);
+			} finally {
+				if(dummyfile!=null && dummyfile.delete())
+					debug("\ndeleted test(dmc) file.");
+				else
+					log.println("\ncan't delete dummyfile:"+dummyfile.getPath());
 			}
-			log.println("max_size="+(max_size/1000)+"Kbytes.");
-			// ダウンロードリミット設定
-			int videolen = getDmcVideoLength();
-			int byterate = 0;
-			if(videolen > 0){
-				byterate = (int)((double)max_size / videolen);
-				downloadLimit = byterate * 60;
-			} else {
-				downloadLimit = 4096*1024;
-				byterate = downloadLimit / 60;
-			}
-			if(tryResume || resume_size>0)
-				log.println("setting download limit = "+downloadLimit);
-			if(dummyfile==null){
-				log.println("Error:test download(dmc) failed.");
-				return null;
-			}
-			if(dummyfile.length() != SPLIT_TEST_SIZE){
-				log.println("Error:test download(dmc) size("+dummyfile.length()+")mismatch.");
-				return null;
-			}
-			if(dummyfile.delete())
-				debug("\ndeleted test(dmc) file.");
 		// 拡張子変更チェック
-			if(renameMp4 && ContentType.contains("mp4")){
-				String filepath = video.getPath();
-				int index = filepath.lastIndexOf(".");
-				if(filepath.lastIndexOf(File.separator) < index){
-					filepath = filepath.substring(0, index) + ".mp4";
-				}
-				video = new File(filepath);
+			if(dmcForceMp4){	// not check contenttype nor video extention
+				video = Path.getReplacedExtFile(video,".mp4");
 				log.println("video will save to "+video.getPath());
 			}
 			// heartbeat thread を起動してバックグランド実行
