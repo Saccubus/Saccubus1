@@ -502,7 +502,10 @@ public class NicoClient {
 		String thumbTitle = getVideoTitle();
 		VideoTitle = null;
 		boolean found = false;
-		String url = "http://www.nicovideo.jp/watch/" + tag + watchInfo;
+		String tag1 = tag;
+		if(!tag1.contains(watchInfo))
+			tag1 += watchInfo;
+		String url = "http://www.nicovideo.jp/watch/" + tag1;
 		log.print("Getting video history...");
 		boolean zero_title = false;
 		try {

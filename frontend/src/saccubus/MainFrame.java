@@ -154,6 +154,7 @@ public class MainFrame extends JFrame {
 	JTextField VideoID_TextField = new JTextField();
 	JButton historyBackButton = new BasicArrowButton(SwingConstants.WEST);
 	JButton historyForwardButton = new BasicArrowButton(SwingConstants.EAST);
+	JButton historyReplaceButton = new BasicArrowButton(SwingConstants.NORTH);
 	JButton DoButton = new JButton();
 	public static final String DoButtonDefString = "変換";
 	public static final String DoButtonStopString = "停止";
@@ -291,6 +292,8 @@ public class MainFrame extends JFrame {
 	private JSpinner nThreadSpinner;
 	private String notice;
 	private HistoryDeque<String> requestHistory;
+	private HistoryDeque<String> mylistHistory;
+	private boolean historyIsRequest = true;
 	private AutoPlay autoPlay;
 	private JPanelHideable extraDownloadInfoPanel;
 	private String initialPanelHideMapping;
@@ -397,7 +400,7 @@ public class MainFrame extends JFrame {
 		grid10_x1_y1_70.weightx = 1.0;
 		grid10_x1_y1_70.insets = INSETS_0_0_0_0;
 		grid10_x1_y1_70.gridx = 1;
-		grid10_x1_y1_70.gridwidth = 3;
+		grid10_x1_y1_70.gridwidth = 4;
 		GridBagConstraints grid10_x0_y1_69 = new GridBagConstraints();
 		grid10_x0_y1_69.gridx = 0;
 		grid10_x0_y1_69.ipadx = 0;
@@ -423,6 +426,12 @@ public class MainFrame extends JFrame {
 		grid10_x2_y0_68C.gridy = 0;
 		grid10_x2_y0_68C.weightx = 0.0;
 		grid10_x2_y0_68C.insets = INSETS_0_0_0_0;
+		GridBagConstraints grid10_x3_y0_68D = new GridBagConstraints();
+		grid10_x3_y0_68D.gridx = 4;
+		grid10_x3_y0_68D.fill = GridBagConstraints.NONE;
+		grid10_x3_y0_68D.gridy = 0;
+		grid10_x3_y0_68D.weightx = 0.0;
+		grid10_x3_y0_68D.insets = INSETS_0_0_0_0;
 		GridBagConstraints grid10_x0_y0_67 = new GridBagConstraints();
 		grid10_x0_y0_67.gridx = 0;
 		grid10_x0_y0_67.ipadx = 0;
@@ -897,7 +906,8 @@ public class MainFrame extends JFrame {
 		});
 		VideoInfoPanel.setLayout(gridBagLayout1);
 		VideoID_TextField.setText("http://www.nicovideo.jp/watch/");
-		requestHistory = new HistoryDeque<String>(new String());
+		requestHistory = new HistoryDeque<String>(" [リクエスト履歴終り] ", true);
+		mylistHistory = new HistoryDeque<String>(" [マイリスト履歴終り] ", true);
 		DoButton.setText(DoButtonDefString);
 		DoButton.addActionListener(new MainFrame_DoButton_actionAdapter(this));
 		SavingInfoTabPanel.setLayout(gridBagLayout2);
@@ -1457,18 +1467,43 @@ public class MainFrame extends JFrame {
 		OpPanel.add(VideoID_TextField, grid10_x1_y0_68);
 		OpPanel.add(historyBackButton, grid10_x1_y0_68B);
 		OpPanel.add(historyForwardButton, grid10_x2_y0_68C);
+		OpPanel.add(historyReplaceButton, grid10_x3_y0_68D);
+		historyReplaceButton.setForeground(Color.black);
 		historyBackButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String vid = requestHistory.back();
+				String vid;
+				if(historyIsRequest)
+					vid = requestHistory.back();
+				else
+					vid = mylistHistory.back();
 				VideoID_TextField.setText(vid);
 			}
 		});
 		historyForwardButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String vid = requestHistory.next();
+				String vid;
+				if(historyIsRequest)
+					vid = requestHistory.next();
+				else
+					vid = mylistHistory.next();
 				VideoID_TextField.setText(vid);
+			}
+		});
+		historyReplaceButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				historyIsRequest = !historyIsRequest;
+				if(historyIsRequest){
+					historyReplaceButton.setForeground(Color.black);
+					historyReplaceButton.setContentAreaFilled(false);
+					VideoID_TextField.setText(" [リクエスト履歴] ");
+				}else{
+					historyReplaceButton.setForeground(Color.yellow);
+					historyReplaceButton.setContentAreaFilled(false);
+					VideoID_TextField.setText(" [マイリスト履歴] ");
+				}
 			}
 		});
 		OpPanel.add(WayBackLabel, grid10_x0_y1_69);
@@ -3414,7 +3449,6 @@ public class MainFrame extends JFrame {
 	private LinkedHashMap<JButton, ConvertStopFlag> buttonTable = new LinkedHashMap<>();
 	private ConvertManager convertManager;
 	private String Tag;
-	@SuppressWarnings("unused")
 	private String watchInfo;
 	private boolean PendingMode;
 
@@ -3541,7 +3575,9 @@ public class MainFrame extends JFrame {
 				return;
 			}
 			boolean isMylist = parseUrlMylist();
+			// 入力データは ?以降が watchinfo それ以前が urlに Tagは url最後の/より後
 			String vid = isMylist? url : Tag;
+			log.println("url="+url+", watchinfo="+watchInfo+", Tag="+Tag);
 			managementPanel.addNotify();
 			MainTabbedPane.setSelectedComponent(managementPanel);
 			ListInfo listInfo = new ListInfo(vid,OneLineMode);
@@ -3567,10 +3603,12 @@ public class MainFrame extends JFrame {
 			if (isMylist){
 				//マイリストページ動画ID解析
 				// url = "http://www/nicovideo.jp/mylist/1234567?watch_harmful=1" など
+				mylistHistory.add(url+watchInfo);
 				movieList = new StringBuffer();
 				mylistGetter = new MylistGetter(
 					indexNow,
 					url,
+					watchInfo,
 					this,
 					status3,
 					stopFlag,
@@ -3595,7 +3633,7 @@ public class MainFrame extends JFrame {
 				convertManager.request(
 					indexNow,
 					numThread,
-					url,
+					Tag+watchInfo,
 					WayBackField.getText(),
 					setting1,
 					status3,
@@ -3723,15 +3761,14 @@ public class MainFrame extends JFrame {
 		if(url.startsWith("http://www.nicovideo.jp/tag/")
 			||url.startsWith("http://www.nicovideo.jp/search/")){
 			String keyword = url.replaceFirst("http://www.nicovideo.jp/(search|tag)/", "");
-			String watchinfo = "";
 			int index = keyword.indexOf('?');
 			if (index > 0){
-				watchinfo = keyword.substring(index);
 				keyword = keyword.substring(0, index);
 			}
 			if(!keyword.contains("%")){
 				try {
-					url = url.replace(keyword, URLEncoder.encode(keyword, "UTF-8")) + watchinfo;
+					String ek = URLEncoder.encode(keyword, "UTF-8");
+					url = url.replace(keyword, ek);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
@@ -3751,14 +3788,13 @@ public class MainFrame extends JFrame {
 		}
 		index = url.indexOf('?');
 		if(index >= 0){
-			int index2 = url.lastIndexOf('/',index);
-			Tag = url.substring(index2+1,index);
 			watchInfo = url.substring(index);
+			url = url.substring(0, index);
 		}else{
-			int index2 = url.lastIndexOf('/');
-			Tag = url.substring(index2+1);
 			watchInfo = "";
 		}
+		int index2 = url.lastIndexOf('/');
+		Tag = url.substring(index2+1);
 		if(Tag.contains("/")||Tag.contains(":")){
 			Tag = Tag.replace("/","_").replace(":","_");
 			log.println("BUG Tag changed: "+Tag);

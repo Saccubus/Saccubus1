@@ -2,16 +2,26 @@ package saccubus;
 
 import java.util.LinkedList;
 
+/*
+ * 1.66.2.7 nextも先に移動して移動先を返すことに変更 2016/12/11
+ */
 public class HistoryDeque<T> {
 	private final LinkedList<T> deque = new LinkedList<>();
 	private T now;
 	private final T initV;
 	private int index;
+	private boolean wraparound = false;
 
 	public HistoryDeque(T t){
 		initV = t;
 		now = initV;
 		index = 0;
+	}
+
+	public HistoryDeque(T t, boolean wrap){
+		this(t);
+		wraparound = wrap;
+		this.add(initV);
 	}
 
 	/**
@@ -63,7 +73,7 @@ public class HistoryDeque<T> {
 	 */
 	public T getLast(){
 		synchronized(deque){
-			index = size() - 1;
+			index = deque.size() - 1;
 			if(deque.isEmpty())
 				now = initV;
 			else
@@ -72,31 +82,45 @@ public class HistoryDeque<T> {
 		}
 	}
 	/**
+	 *  indexは次の位置に移動。
+	 *  wraparoundの場合: indexが最後尾なら先頭に戻る
 	 *  現在位置indexの値を返す
-	 *  indexは返した値の次の位置に移動。
 	 */
 	public T next(){
 		synchronized(deque){
+			index++;
 			if(index >= deque.size()){
-				index = deque.size();
-				now = initV;
-			} else {
+				if(wraparound){
+					index = 0;
+					now = deque.get(index);
+				}else{
+					index = deque.size();
+					now = initV;
+				}
+			}
+			else{
 				now = deque.get(index);
-				index++;			}
+			}
 			return now;
 		}
 	}
 	/**
-	 *  現在位置indexの前の値を返す
-	 *  indexは返した値の位置に移動。
+	 *  indexは前の位置に移動。
+	 *  wraparoundの場合：　先頭なら最後尾に移動。
+	 *  現在位置indexの値を返す
 	 */
 	public T back(){
 		synchronized(deque){
-			if(index <= 0 || deque.isEmpty()){
-				index = 0;
-				now = initV;
+			index--;
+			if(index < 0){
+				if(wraparound){
+					now = this.getLast();
+				}else{
+					index = -1;
+					now = initV;
+				}
 			}else{
-				now = deque.get(--index);
+				now = deque.get(index);
 			}
 			return now;
 		}
@@ -135,6 +159,8 @@ public class HistoryDeque<T> {
 		synchronized(deque){
 			if(!deque.isEmpty()){
 				for(T t:deque){
+					if(wraparound || t==null || t.equals(initV))
+						continue;
 					sb.append(t.toString());
 					sb.append("\n");
 				}

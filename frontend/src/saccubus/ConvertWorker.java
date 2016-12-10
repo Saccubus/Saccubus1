@@ -177,14 +177,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		int index = 0;
 		index = url.indexOf('?');
 		if(index >= 0){
-			int index2 = url.lastIndexOf('/',index);
-			Tag = url.substring(index2+1,index);
 			WatchInfo = url.substring(index);
+			url = url.substring(0, index);
 		}else{
-			int index2 = url.lastIndexOf('/');
-			Tag = url.substring(index2+1);
 			WatchInfo = "";
 		}
+		int index2 = url.lastIndexOf('/');
+		Tag = url.substring(index2+1);
 		VideoID = "[" + Tag + "]";
 		lowVideoID = VideoID + "low_";
 		dmcVideoID = VideoID + "dmc_";
@@ -858,14 +857,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									} else {
 										log.println("dmc動画サーバからの(S)ダウンロードに失敗しました。");
 										sendtext("dmc動画の(S)ダウンロードに失敗。" + ecode);
-										if(ecode.contains("98"))
-											result = "98";	// suspended, retry next
 										if(dmcVideoFile.canRead()){
 											if(dmcVideoFile.renameTo(resumeDmcFile))
 												log.println("dmcVideo renamed to "+resumeDmcFile);
 										}
-										break;
-										//return false;
+										if(ecode.contains("98")){
+											result = "98";	// suspended, retry next
+											return false;
+										}
 									}
 								}else{
 									// intended suspend
@@ -2082,7 +2081,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		sendtext("[FF]Converter cancelled.");
 		log.println("LastStatus:[FF]Converter cancelled.");
 		sbRet.append("RESULT=FF\n");
-		errorControl.setError(result,Tag+WatchInfo,gettext());
+		if(!Tag.contains(WatchInfo))
+			Tag += WatchInfo;
+		errorControl.setError(result,Tag,gettext());
 	}
 
 	@Override
@@ -2279,19 +2280,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(!dateUserFirst.isEmpty()){
 				sbRet.append("DATEUF=" + dateUserFirst + "\n");
 			}
+			String url = Tag.contains(WatchInfo)? Tag : Tag+WatchInfo;
 			if(result.equals("97"))
-				errorControl.setError(result,Tag+WatchInfo,"中止しました");
+				errorControl.setError(result,url,"中止しました");
 			else if(result.equals("98")){
 				StringBuffer sb = new StringBuffer(Tag+"\tリトライ\t"+WatchInfo);
 				if(parent!=null){
 					parent.myListGetterDone(sb, log);
 				}else{
-					errorControl.setError(result,Tag+WatchInfo,"サスペンド\t"+resumeDmcFile);
+					errorControl.setError(result,url,"サスペンド\t"+resumeDmcFile);
 				}
 			}
 			else
 			if(!result.equals("0"))
-				errorControl.setError(result,Tag+WatchInfo,gettext());
+				errorControl.setError(result,url,gettext());
 			else {
 				autoPlay.playAuto();
 			}

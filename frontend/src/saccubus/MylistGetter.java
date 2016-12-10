@@ -41,6 +41,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 
 	private static final boolean MYLIST_DEBUG = false;
 	private static final boolean MYLIST_DEBUG2 = false;
+	static final String WATCH_HARMFUL = "watch_harmful=1";
 	private String url;
 	private final MainFrame parent;
 	private final JLabel[] status3;
@@ -59,22 +60,13 @@ public class MylistGetter extends SwingWorker<String, String> {
 	private final ErrorControl errorControl;
 	private Logger log;
 
-	public MylistGetter(int worker_id, String url0, MainFrame frame,
+	public MylistGetter(int worker_id, String tag, String info, MainFrame frame,
 		JLabel[] in_status,ConvertStopFlag flag, ErrorControl error_control,
 		StringBuffer sb, Logger logger)
 	{
 		id = worker_id;
-		url = url0;
-		int index = url.indexOf('?');
-		if(index >= 0){
-		//	int index2 = url.lastIndexOf('/',index);
-		//	Tag = url.substring(index2+1,index);
-			watchInfo = url.substring(index);
-		}else{
-		//	int index2 = url.lastIndexOf('/');
-		//	Tag = url.substring(index2+1);
-			watchInfo = "";
-		}
+		url = tag;
+		watchInfo = info;
 		parent = frame;
 		status3 = in_status;
 		Status = status3[0];
@@ -104,9 +96,6 @@ public class MylistGetter extends SwingWorker<String, String> {
 		log.addSysout(logger);
 	}
 
-	//	private void sendtext(String text) {
-//		Status.setText(text);
-//	}
 	private String mySendText = "";
 	private void sendtext(String text) {
 		mySendText = text;
@@ -217,6 +206,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 							val2 = "";
 						else if(val2.contains(" -"))
 							val2 = val2.substring(val2.indexOf(" -")+(" -").length());
+						val2 = val2.replace("&nbsp;", " ").replace("&amp;", "＆");
 						val2 = val2.trim();
 						if(!val2.isEmpty() && (val.isEmpty() || val.length() < val2.length())){
 							val = val2;
@@ -335,7 +325,9 @@ public class MylistGetter extends SwingWorker<String, String> {
 				// タイトル抽出失敗またはidcheckエラー
 				StringBuffer sb = new StringBuffer();
 				for(String es:errorSet){
-					sb.append(es+watchInfo+"\n");
+					if(!watchInfo.isEmpty() && !es.contains(watchInfo.substring(1)))
+						es += watchInfo;
+					sb.append(es + "\n");
 				}
 				errorControl.setError(sb.substring(0));
 			}
@@ -496,7 +488,9 @@ public class MylistGetter extends SwingWorker<String, String> {
 	}
 
 	private void addError(String code, String errorID) {
-		errorControl.setError(code,errorID+watchInfo,gettext());
+		if(!watchInfo.isEmpty() && !errorID.contains(watchInfo.substring(1)))
+			errorID += watchInfo;
+		errorControl.setError(code,errorID,gettext());
 	}
 
 	//終了時EDTで自動実行される
@@ -560,7 +554,11 @@ public class MylistGetter extends SwingWorker<String, String> {
 					pw.println(":――――――――――――――――――");
 					pw.println(":set OPTION=過去ログ日時 他のオプション などを必要に応じ指定(readmeNew.txt参照)");
 					pw.println("set OPTION=");
-					watchInfo = watchInfo.replace('?', '&');
+					if(watchInfo.isEmpty())
+						watchInfo = "?" + WATCH_HARMFUL;
+					else if(!watchInfo.contains(WATCH_HARMFUL)){
+						watchInfo = "?" + WATCH_HARMFUL + watchInfo.replace('?', '&');
+					}
 					if(!s.contains("auto")){
 						// マイリストの%CMD%出力(記述法1)
 						pw.println(":保存変換しない行は削除してください");
@@ -568,12 +566,12 @@ public class MylistGetter extends SwingWorker<String, String> {
 							if(ds.length>1){
 								pw.println(":タイトル " + ds[1]);
 							}
-							pw.println("%CMD% "+ ds[0] + "?watch_harmful=1"+watchInfo+" %OPTION% @PUP");
+							pw.println("%CMD% "+ ds[0] + watchInfo+" %OPTION% @PUP");
 						}
 					}else{
 						// マイリストの%CMD%出力(記述法2)
 						flag2nd = true;
-						pw.print("%CMD% "+autoname+"?watch_harmful=1"+watchInfo+" %OPTION% @PUP");
+						pw.print("%CMD% "+autoname + watchInfo+" %OPTION% @PUP");
 					}
 					break;
 				}
