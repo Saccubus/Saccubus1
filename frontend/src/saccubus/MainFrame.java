@@ -2694,6 +2694,7 @@ public class MainFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					autoPlay.back();
+				//	autoPlay.setPlayList();
 				}
 			});
 			playVideoNextButton = new JButton("éü");
@@ -2702,6 +2703,7 @@ public class MainFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					autoPlay.next();
+				//	autoPlay.setPlayList();
 				}
 			});
 			playVideoPlayButton = new JButton("çƒê∂");

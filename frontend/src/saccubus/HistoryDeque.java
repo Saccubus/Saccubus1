@@ -21,7 +21,7 @@ public class HistoryDeque<T> {
 	public HistoryDeque(T t, boolean wrap){
 		this(t);
 		wraparound = wrap;
-		this.add(initV);
+		this.add(t);
 	}
 
 	/**
@@ -52,10 +52,19 @@ public class HistoryDeque<T> {
 	/**
 	 *  ÅŒã”ö‚É’Ç‰Á
 	 *  Œ»İˆÊ’uindex‚Í“®‚©‚È‚¢
+	 *  (‰Šúó‘Ô‚âƒGƒ‰[ó‘Ô‚ÍC³)
 	 */
 	public boolean offer(T t) {
+		boolean b = false;
 		synchronized(deque){
-			return deque.offer(t);
+			b = deque.offer(t);
+			if(deque.size()<=1){
+				index = 0;
+			}else if(index>=deque.size()){
+				index = deque.size() - 1;
+			}
+			now = deque.get(index);
+			return b;
 		}
 	}
 	/**

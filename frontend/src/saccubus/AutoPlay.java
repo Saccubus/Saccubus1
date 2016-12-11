@@ -43,13 +43,11 @@ public class AutoPlay {
 	}
 
 	void next() {
-		playlist.next();
-		setPlayList();
+		setPlayList(playlist.next());
 	}
 
 	void back() {
-		playlist.back();
-		setPlayList();
+		setPlayList(playlist.back());
 	}
 
 	private File getNow() {
@@ -58,12 +56,10 @@ public class AutoPlay {
 
 	public void offer(File file) {
 		playlist.offer(file);
-		setPlayList();
 	}
 
 	// ïœä∑ìÆâÊçƒê∂
-	private void setPlayList() {
-		File video = playlist.getNow();
+	private void setPlayList(File video) {
 		if(video!=null){
 			label.setText(video.getName());
 			label.setForeground(Color.blue);
@@ -74,21 +70,20 @@ public class AutoPlay {
 	}
 
 	void playVideo() {
-		setPlayList();
+		setPlayList(getNow());
 		playVideo(getNow());
 	}
 
 	void playAuto() {
 		if(isAutoPlay()){
-			playVideo(playlist.next());
-			setPlayList();
+			playVideo();
+			playlist.next();
 		}
 	}
 
-	private void playVideo(File videofile) {
-		File video = videofile;
+	private void playVideo(File video) {
 		if(video==null){
-			video = playlist.next();
+			video = playlist.getNow();
 		}
 		if(video==null){
 			sendtext("ïœä∑å„ÇÃìÆâÊÇ™Ç†ÇËÇ‹ÇπÇÒ");
@@ -108,9 +103,5 @@ public class AutoPlay {
 
 	private void sendtext(String text) {
 		status.setText(text);
-	}
-
-	public File poll() {
-		return playlist.poll();
 	}
 }
