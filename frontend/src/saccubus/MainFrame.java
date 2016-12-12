@@ -352,6 +352,7 @@ public class MainFrame extends JFrame {
 
 	private JPanel playVideoPanel;
 	private JLabel playVideoLabel;
+	private JPanel playChoicedPanel;
 	private JPanel playVideoButtonPanel;
 	private JButton playVideoPlayButton;
 	private JButton playVideoNextButton;
@@ -2694,7 +2695,6 @@ public class MainFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					autoPlay.back();
-				//	autoPlay.setPlayList();
 				}
 			});
 			playVideoNextButton = new JButton("éü");
@@ -2703,7 +2703,6 @@ public class MainFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					autoPlay.next();
-				//	autoPlay.setPlayList();
 				}
 			});
 			playVideoPlayButton = new JButton("çƒê∂");
@@ -2720,10 +2719,13 @@ public class MainFrame extends JFrame {
 			playVideoButtonPanel.add(playVideoBackButton, BorderLayout.WEST);
 			playVideoButtonPanel.add(playVideoPlayButton, BorderLayout.CENTER);
 			playVideoButtonPanel.add(playVideoNextButton, BorderLayout.EAST);
+			playChoicedPanel = new JPanel();
+			playChoicedPanel.setLayout(new BorderLayout());
+			playChoicedPanel.add(playVideoLabel,BorderLayout.WEST);
 			playVideoPanel = new JPanel();
 			playVideoPanel.setLayout(new BorderLayout());
 			playVideoPanel.add(autoPlay2CheckBox, BorderLayout.WEST);
-			playVideoPanel.add(playVideoLabel, BorderLayout.CENTER);
+			playVideoPanel.add(playChoicedPanel, BorderLayout.CENTER);
 			playVideoPanel.add(playVideoButtonPanel, BorderLayout.EAST);
 			GridBagConstraints grid43 = new GridBagConstraints();
 			grid43.gridx = 0;
@@ -2735,6 +2737,7 @@ public class MainFrame extends JFrame {
 			grid43.insets = INSETS_0_5_0_5;
 			managementPanel.add(playVideoPanel, grid43);
 			autoPlay = new AutoPlay(autoPlayCheckBox,playVideoLabel,null,statusBar);
+			playChoicedPanel.add(autoPlay.getChoiceLabel(), BorderLayout.EAST);
 		}
 		return managementPanel;
 	}

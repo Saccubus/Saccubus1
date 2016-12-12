@@ -1,6 +1,8 @@
 package saccubus;
 
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 
 import javax.swing.JCheckBox;
@@ -9,21 +11,47 @@ import javax.swing.JLabel;
 public class AutoPlay {
 	private JCheckBox checkbox;
 	private HistoryDeque<File> playlist = new HistoryDeque<>(null);
+	private HistoryDeque<File> downloadlist = new HistoryDeque<File>(null);
 	private VPlayer vplayer;
 	private JLabel label;
 	private JLabel status;
+	private boolean playDownload = false;
+	private JLabel playlistChoiceLabel;
 
 	AutoPlay(JCheckBox c, JLabel l, VPlayer p, JLabel s){
 		checkbox = c;
 		label = l;
 		vplayer = p;
 		status = s;
+		playlistChoiceLabel = new JLabel();
+		playlistChoiceLabel.addMouseListener(new  MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e){
+					playDownload = !playDownload;
+					chooseDownload(playDownload);
+				}
+			}
+		);
+		chooseDownload(false);
 	}
 	AutoPlay(boolean b) {
 		this(new JCheckBox(), new JLabel(), null, null);
 		checkbox.setSelected(b);
 	}
 
+	public void chooseDownload(boolean isDownload){
+		playDownload = isDownload;
+		String s = isDownload? "DLå„Å@":"ïœä∑å„Å@";
+		playlistChoiceLabel.setText(s);
+		Color c = isDownload? Color.red : Color.black;
+		playlistChoiceLabel.setForeground(c);
+	}
+	public JLabel getChoiceLabel(){
+		return playlistChoiceLabel;
+	}
+	public boolean isPlayDownload(){
+		return playDownload;
+	}
 	void setSelected(boolean b){
 		checkbox.setSelected(b);
 	}
@@ -43,21 +71,57 @@ public class AutoPlay {
 	}
 
 	void next() {
-		setPlayList(playlist.next());
+		if(isPlayDownload())
+			setPlayList(downloadlist.next());
+		else
+			setPlayList(playlist.next());
+	}
+	void next(boolean choose_download){
+		if(choose_download)
+			setPlayList(downloadlist.next());
+		else
+			setPlayList(playlist.next());
 	}
 
 	void back() {
-		setPlayList(playlist.back());
+		if(isPlayDownload())
+			setPlayList(downloadlist.back());
+		else
+			setPlayList(playlist.back());
+	}
+	void back(boolean choose_download) {
+		if(choose_download)
+			setPlayList(downloadlist.back());
+		else
+			setPlayList(playlist.back());
 	}
 
 	private File getNow() {
-		return playlist.getNow();
+		if(isPlayDownload())
+			return downloadlist.getNow();
+		else
+			return playlist.getNow();
+	}
+	private File getNow(boolean choose_download) {
+		if(choose_download)
+			return downloadlist.getNow();
+		else
+			return playlist.getNow();
 	}
 
-	public void offer(File file) {
-		playlist.offer(file);
+//	public void offer(File file) {
+//		if(playDownload)
+//			downloadlist.offer(file);
+//		else
+//			playlist.offer(file);
+//	}
+//
+	public void offer(File file, boolean choose_download){
+		if(choose_download)
+			downloadlist.offer(file);
+		else
+			playlist.offer(file);
 	}
-
 	// ïœä∑ìÆâÊçƒê∂
 	private void setPlayList(File video) {
 		if(video!=null){
@@ -70,20 +134,26 @@ public class AutoPlay {
 	}
 
 	void playVideo() {
-		setPlayList(getNow());
-		playVideo(getNow());
+		File video = getNow();
+		setPlayList(video);
+		playVideo(video);
+	}
+	void playVideo(boolean choose_download){
+		File video = getNow(choose_download);
+		setPlayList(video);
+		playVideo(video);
 	}
 
 	void playAuto() {
 		if(isAutoPlay()){
 			playVideo();
-			playlist.next();
+			next();
 		}
 	}
 
 	private void playVideo(File video) {
 		if(video==null){
-			video = playlist.getNow();
+			video = getNow();
 		}
 		if(video==null){
 			sendtext("ïœä∑å„ÇÃìÆâÊÇ™Ç†ÇËÇ‹ÇπÇÒ");

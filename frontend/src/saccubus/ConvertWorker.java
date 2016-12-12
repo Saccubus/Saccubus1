@@ -993,6 +993,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						optionalThreadID = client.getOptionalThreadID();
 					}
 					resultBuffer.append("video: "+VideoFile.getName()+"\n");
+					if(Path.hasExt(VideoFile, ".mp4")){	//mp4ägí£éqÇÃìÆâÊÇÃÇ›
+						autoPlay.offer(VideoFile,true);
+						if(autoPlay.isPlayDownload())
+							autoPlay.playAuto();
+					}
 				}
 			} else {
 				if (isSaveConverted()) {
@@ -2259,7 +2264,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (convertVideo()) {
 				// ïœä∑ê¨å˜
 				result = "0";
-				autoPlay.offer(ConvertedVideoFile);
+				autoPlay.offer(ConvertedVideoFile, false);
+				if(!autoPlay.isPlayDownload())
+					autoPlay.playAuto();
 				if (isDeleteCommentAfterConverting())
 					deleteCommentFile();
 				if (isDeleteVideoAfterConverting())
@@ -2294,9 +2301,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			else
 			if(!result.equals("0"))
 				errorControl.setError(result,url,gettext());
-			else {
-				autoPlay.playAuto();
-			}
 			synchronized(StopFlag){
 				StopFlag.finish();
 				StopFlag.setButtonEnabled(false);
