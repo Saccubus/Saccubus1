@@ -1997,7 +1997,19 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (!Path.hasExt(file, ExtOption)) {
 				file = Path.getReplacedExtFile(file,ExtOption);
 			}
-			ConvertedVideoFile = replaceFilenamePattern(file, Path.contains(VideoFile,"low_"));
+			boolean videoIsLow = Path.contains(VideoFile,"low_");
+			file = replaceFilenamePattern(file, videoIsLow);
+			String convfilename = file.getName();
+			folder = file.getParentFile();
+			if(videoIsLow && !convfilename.contains("low_")){
+				if(convfilename.contains(VideoID))
+					convfilename = convfilename.replace(VideoID, lowVideoID);
+				else if(convfilename.contains(Tag))
+					convfilename = convfilename.replace(Tag, Tag+"low_");
+				else
+					convfilename = "low_" + convfilename;
+			}
+			ConvertedVideoFile = new File(folder, convfilename);
 		}
 		if (ConvertedVideoFile.getAbsolutePath().equals(VideoFile.getAbsolutePath())){
 			sendtext("変換後のファイル名が変換前と同じです");
