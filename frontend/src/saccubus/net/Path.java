@@ -273,6 +273,10 @@ public class Path extends File{
 	public boolean contains(String str){
 		return indexOf(str) >= 0;
 	}
+	public static boolean contains(File file, String str){
+		String name = file.getPath();
+		return name.indexOf(str)>=0;
+	}
 	/**
 	 * search file name conteins key string among childs
 	 * @param key : target key : String

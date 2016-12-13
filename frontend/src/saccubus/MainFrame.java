@@ -323,7 +323,9 @@ public class MainFrame extends JFrame {
 	static final String renameFileMacro = "ファイル名置換マクロ";
 	static final String renameFileMacroDescription =
 		"パス(フォルダ名およびファイル名)の中の以下の部分が置換されます。\n"
-		+"%ID%　→動画ID\n"
+		+"%LOW%　→economy時　low_\n"
+		+"%ID%　→動画ID(%LOW%がなくeconomy時　動画IDlow_)\n"
+		+"%id%　→[動画ID](%LOW%がなくeconomy時　[動画ID]low_)\n"
 		+"%TITLE%　→動画タイトル\n"
 		+"%title%　→全角空白を半角空白に変えた動画タイトル\n"
 		+"%CAT%　→もしあればカテゴリータグ\n"

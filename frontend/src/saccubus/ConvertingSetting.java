@@ -50,6 +50,7 @@ public class ConvertingSetting {
 	static final String DEFAULT_OPTION_FOLDER = "./optionF";
 	static final String DEFAULT_VHOOK_PATH = "./bin/nicovideoE.dll";
 	static final String DEFAULT_FFMPEG_PATH = "./bin/ffmpeg.exe";
+	static final boolean ONLY_MP4_AUTO_PLAY = false;
 
 	public static final String[] ShadowKindArray = {
 		"00:Ç»Çµ",
@@ -177,6 +178,7 @@ public class ConvertingSetting {
 	private static String defOptsJpegMp4 = DEF_OPTS_JPEG_MP4;
 	private static String defOptsMix = DEF_OPTS_MIX;
 	private static boolean defOptsSaveThumbinfoMetadata = DEF_OPTS_SAVE_THUMBINFO_METADATA;
+	private static boolean onlyMp4AutoPlay = ONLY_MP4_AUTO_PLAY;
 	private Map<String, String> replaceOptions;
 	private boolean liveOparetionConversion;
 	private boolean premiumColorCheck;
@@ -1018,6 +1020,9 @@ public class ConvertingSetting {
 	public String getPanelHideMapping(){
 		return panelHideMapping;
 	}
+	public boolean isOnlyMp4AutoPlay() {
+		return onlyMp4AutoPlay;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -1173,6 +1178,7 @@ public class ConvertingSetting {
 	public static final String PROP_OPTS_JPEG_MP4 = "OutOptionJpegMp4";
 	public static final String PROP_OPTS_MIX = "OutOptionMix";
 	public static final String PROP_OPTS_SAVE_THUMBINFO_METADATA = "SaveThumbinfoMetadata";
+	public static final String PROP_ONLY_MP4_AUTO_PLAY = "AutoPlayOnlyMp4";
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
 	 */
@@ -1395,6 +1401,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_OPTS_MIX, defOptsMix);
 		prop.setProperty(PROP_OPTS_SWF_JPEG, defOptsSwfJpeg);
 		prop.setProperty(PROP_OPTS_SAVE_THUMBINFO_METADATA, Boolean.toString(defOptsSaveThumbinfoMetadata));
+		prop.setProperty(PROP_ONLY_MP4_AUTO_PLAY, Boolean.toString(onlyMp4AutoPlay));
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1513,6 +1520,8 @@ public class ConvertingSetting {
 		defOptsMix = prop.getProperty(PROP_OPTS_MIX, DEF_OPTS_MIX);
 		defOptsSaveThumbinfoMetadata = Boolean.valueOf(prop.getProperty(
 			PROP_OPTS_SAVE_THUMBINFO_METADATA,Boolean.toString(DEF_OPTS_SAVE_THUMBINFO_METADATA)));
+		onlyMp4AutoPlay = Boolean.valueOf(
+			prop.getProperty(PROP_ONLY_MP4_AUTO_PLAY, Boolean.toString(ONLY_MP4_AUTO_PLAY)));
 
 		File option_file = null;
 		if (option_file_name != null) {
