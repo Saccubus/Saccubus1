@@ -72,38 +72,20 @@ public class AutoPlay {
 
 	void next() {
 		if(isPlayDownload())
-			setPlayList(downloadlist.next());
+			downloadlist.next();
 		else
-			setPlayList(playlist.next());
-	}
-	void next(boolean choose_download){
-		if(choose_download)
-			setPlayList(downloadlist.next());
-		else
-			setPlayList(playlist.next());
+			playlist.next();
 	}
 
 	void back() {
 		if(isPlayDownload())
-			setPlayList(downloadlist.back());
+			downloadlist.back();
 		else
-			setPlayList(playlist.back());
-	}
-	void back(boolean choose_download) {
-		if(choose_download)
-			setPlayList(downloadlist.back());
-		else
-			setPlayList(playlist.back());
+			playlist.back();
 	}
 
 	private File getNow() {
 		if(isPlayDownload())
-			return downloadlist.getNow();
-		else
-			return playlist.getNow();
-	}
-	private File getNow(boolean choose_download) {
-		if(choose_download)
 			return downloadlist.getNow();
 		else
 			return playlist.getNow();
@@ -123,30 +105,24 @@ public class AutoPlay {
 			playlist.offer(file);
 	}
 	// ïœä∑ìÆâÊçƒê∂
-	private void setPlayList(File video) {
-		if(video!=null){
-			label.setText(video.getName());
-			label.setForeground(Color.blue);
-		}else{
-			label.setText("");
+	private void setPlayList(final File video) {
+		synchronized (label) {
+			label.setVisible(false);
+			if(video!=null){
+				label.setText(video.getName());
+				label.setForeground(Color.blue);
+			}else{
+				label.setText("");
+			}
+			label.setVisible(true);
 		}
-		label.repaint();
-	}
-
-	void playVideo() {
-		File video = getNow();
-		setPlayList(video);
-		playVideo(video);
-	}
-	void playVideo(boolean choose_download){
-		File video = getNow(choose_download);
-		setPlayList(video);
-		playVideo(video);
 	}
 
 	void playAuto() {
 		if(isAutoPlay()){
-			playVideo();
+			File video = getNow();
+			setPlayList(video);
+			playVideo(video);
 			next();
 		}
 	}

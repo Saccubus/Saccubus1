@@ -1849,7 +1849,7 @@ public class MainFrame extends JFrame {
 		playConvertedVideoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				autoPlay.playVideo();
+				autoPlay.playAuto();
 			}
 		});
 		playConvertedVideoButton.setForeground(Color.blue);
@@ -2713,9 +2713,10 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					autoPlay.playVideo();
+					autoPlay.playAuto();
 				}
 			});
+			autoPlay = new AutoPlay(autoPlayCheckBox,playVideoLabel,null,statusBar);
 			playVideoButtonPanel = new JPanel();
 			playVideoButtonPanel.setLayout(new BorderLayout());
 			playVideoButtonPanel.add(playVideoBackButton, BorderLayout.WEST);
@@ -2723,11 +2724,12 @@ public class MainFrame extends JFrame {
 			playVideoButtonPanel.add(playVideoNextButton, BorderLayout.EAST);
 			playChoicedPanel = new JPanel();
 			playChoicedPanel.setLayout(new BorderLayout());
-			playChoicedPanel.add(playVideoLabel,BorderLayout.WEST);
+			playChoicedPanel.add(autoPlay2CheckBox,BorderLayout.WEST);
+			playChoicedPanel.add(autoPlay.getChoiceLabel(), BorderLayout.CENTER);
 			playVideoPanel = new JPanel();
 			playVideoPanel.setLayout(new BorderLayout());
-			playVideoPanel.add(autoPlay2CheckBox, BorderLayout.WEST);
-			playVideoPanel.add(playChoicedPanel, BorderLayout.CENTER);
+			playVideoPanel.add(playChoicedPanel, BorderLayout.WEST);
+			playVideoPanel.add(playVideoLabel, BorderLayout.CENTER);
 			playVideoPanel.add(playVideoButtonPanel, BorderLayout.EAST);
 			GridBagConstraints grid43 = new GridBagConstraints();
 			grid43.gridx = 0;
@@ -2738,8 +2740,6 @@ public class MainFrame extends JFrame {
 			grid43.fill = GridBagConstraints.BOTH;
 			grid43.insets = INSETS_0_5_0_5;
 			managementPanel.add(playVideoPanel, grid43);
-			autoPlay = new AutoPlay(autoPlayCheckBox,playVideoLabel,null,statusBar);
-			playChoicedPanel.add(autoPlay.getChoiceLabel(), BorderLayout.EAST);
 		}
 		return managementPanel;
 	}
@@ -3330,6 +3330,7 @@ public class MainFrame extends JFrame {
 		enableSeqResumeCheckBox.setSelected(setting.canSeqResume());
 		inhibitSmallCheckBox.setSelected(setting.isInhibitSmaller());
 		autoFlvToMp4CheckBox.setSelected(setting.isAutoFlvToMp4());
+		autoFlvToMp4CheckBox.setEnabled(false);
 		initialPanelHideMapping = setting.getPanelHideMapping();
 		JPanelHideable.setHideMap(initialPanelHideMapping);
 	}
@@ -5047,10 +5048,11 @@ s	 * @return javax.swing.JPanel
 	private JCheckBox getAutoFlvToMp4CheckBox(){
 		if(autoFlvToMp4CheckBox==null){
 			autoFlvToMp4CheckBox = new JCheckBox();
-			autoFlvToMp4CheckBox.setText("dmc動画mp4コンテナ化(拡張子はflvのまま)↑のmp4設定併用可");
+			autoFlvToMp4CheckBox.setText("dmcはデフォルトでmp4に(拡張子はflvのまま)↑のmp4設定併用可");
 			autoFlvToMp4CheckBox.setForeground(Color.blue);
 			autoFlvToMp4CheckBox.setToolTipText(
-				"dmc動画のflvコンテナはDL後にmp4コンテナに変える。拡張子はflvのまま。↑の設定と併用すれば拡張子もmp4になります。");
+				"dmc動画はmp4コンテナでダウンロードできたので設定不要。拡張子はflvのまま。↑の設定と併用すれば拡張子もmp4になります。");
+			autoFlvToMp4CheckBox.setEnabled(false);
 		}
 		return autoFlvToMp4CheckBox;
 	}

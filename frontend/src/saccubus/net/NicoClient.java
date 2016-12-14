@@ -210,6 +210,9 @@ public class NicoClient {
 
 		try {
 			debug("\n■URL<" + url + ">\n");
+			String host = url.substring("http://".length())+"/";
+			host = host.substring(0,host.indexOf("/"));
+			debug("■HOST<" + host + ">\n");
 			HttpURLConnection con = (HttpURLConnection) (new URL(url))
 				.openConnection(ConProxy);
 			/* リクエストの設定 */
@@ -230,10 +233,12 @@ public class NicoClient {
 	//Connection: keep-alive
 	//Range: bytes=0-1048576	// byte=1MB
 	// the following commented source code lines can be made valid in the future, and it would be ok (already tested).
+
 			con.setRequestMethod(method);
 			if (cookieProp != null)
 				con.addRequestProperty("Cookie", cookieProp.get(url));
  		//	con.setRequestProperty("Host", "nmsg.nicovideo.jp");
+			con.addRequestProperty("HOST", host);
 			con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
 		//	con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 			con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
@@ -860,7 +865,7 @@ public class NicoClient {
 	}
 
 	public File getVideoDmc(File video, final JLabel status, final ConvertStopFlag flag,
-			boolean dmcForceMp4, long[] limits,
+			boolean renameMp4, long[] limits,
 			boolean canRangeReq, boolean tryResume, long resume_size) {
 
 		FileOutputStream fos = null;
@@ -880,7 +885,7 @@ public class NicoClient {
 				return null;
 			}
 			sessionXml = Path.mkTemp(videoTag+"_session.xml");
-			sessionData = makeSessionXml(sessionXml, sessionApi);
+			sessionData = makeSessionXml(sessionXml, sessionApi, "mp4");
 			log.println("sessionXML save to "+sessionXml.getPath());
 			String url = apiSessionUrl;
 			int index1 = url.indexOf("/","http://".length());
@@ -948,7 +953,8 @@ public class NicoClient {
 			con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
 		//	con.setRequestProperty("Accept-Encoding", "deflate");
 		//	con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			con.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
+		//	con.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
+			con.setRequestProperty("Content-Type", "application/xml");
 			con.addRequestProperty("DNT", "1");
 			con.addRequestProperty("Connection", "keep-alive");
 			debug("■Connect: POST,DoOutput,Connection keep-alive\n");
@@ -1119,6 +1125,10 @@ public class NicoClient {
 						setExtraError("97 最小限度サイズより小さいのでダウンロード中止");
 						return null;
 					}
+					if(max_size == min_size){
+						setExtraError("97 最小限度サイズと同じ。ダウンロード済みのようです");
+						return null;
+					}
 					// 続行
 					sizeDmc = max_size;
 					if(max_size == resume_size){
@@ -1152,7 +1162,7 @@ public class NicoClient {
 					log.println("\ncan't delete dummyfile:"+dummyfile.getPath());
 			}
 		// 拡張子変更チェック
-			if(dmcForceMp4){	// not check contenttype nor video extention
+			if(renameMp4){	// not check contenttype
 				video = Path.getReplacedExtFile(video,".mp4");
 				log.println("video will save to "+video.getPath());
 			}
@@ -2413,7 +2423,7 @@ public class NicoClient {
 		return str;
 	}
 
-	private String makeSessionXml(Path xml, String json) {
+	private String makeSessionXml(Path xml, String json, String file_extension) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<session>\n");
 		sb.append("  "+makeNewElement("recipe_id", recipe_id));
@@ -2426,7 +2436,7 @@ public class NicoClient {
 		sb.append("        <method>GET</method>\n");
 		sb.append("        <parameters>\n");
 		sb.append("          <http_output_download_parameters>\n");
-		sb.append("            <file_extension>flv</file_extension>\n");
+		sb.append("            <file_extension>"+file_extension+"</file_extension>\n");
 		sb.append("          </http_output_download_parameters>\n");
 		sb.append("        </parameters>\n");
 		sb.append("      </http_parameters>\n");
