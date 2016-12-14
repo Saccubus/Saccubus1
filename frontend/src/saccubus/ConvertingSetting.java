@@ -733,6 +733,9 @@ public class ConvertingSetting {
 	public String getRequestHistory() {
 		return lastHistory;
 	}
+	public void setLastHistory(String h){
+		lastHistory = h;
+	}
 	public String getVhookWidePath(){
 		return VhookWidePath;
 	}

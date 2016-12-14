@@ -126,7 +126,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				.replaceAll("[/\\:\\?=\\&]+", "_") + ".html");
 		Loader loader = new Loader(Setting, status3, log);
 		gate = Gate.open(id,log);
-		if(!loader.load(url,file)){
+		if(!loader.load(url+watchInfo,file)){
 			addError("E1",url);
 			sendtext("[E1]loadé∏îs "+url);
 			gate.exit("E1");

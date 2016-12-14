@@ -293,7 +293,9 @@ public class MainFrame extends JFrame {
 	private String notice;
 	private HistoryDeque<String> requestHistory;
 	private HistoryDeque<String> mylistHistory;
-	private boolean historyIsRequest = true;
+	private HistoryDeque<String> requestTemplete;
+	private int historyID = 0;
+	private Object[] histories = new Object[3];
 	private AutoPlay autoPlay;
 	private JPanelHideable extraDownloadInfoPanel;
 	private String initialPanelHideMapping;
@@ -332,6 +334,7 @@ public class MainFrame extends JFrame {
 		+"%TAG1%　→２番めのタグ\n"
 		;
 
+	private String input_url;
 	private String url;
 	private JPanel activityPane;
 	private JScrollPane activityScroll;
@@ -916,7 +919,27 @@ public class MainFrame extends JFrame {
 		VideoInfoPanel.setLayout(gridBagLayout1);
 		VideoID_TextField.setText("http://www.nicovideo.jp/watch/");
 		requestHistory = new HistoryDeque<String>(" [リクエスト履歴終り] ", true);
+		histories[0] = requestHistory;
 		mylistHistory = new HistoryDeque<String>(" [マイリスト履歴終り] ", true);
+		histories[1] = mylistHistory;
+		requestTemplete = new HistoryDeque<String>("[テンプレート]", true);
+		String[] REQ_TEMPLETE = {
+			"watch/動画ID",
+			"mylist/マイリストID",
+			"user/ユーザID/video",
+			"my/video",
+			"my/mylist",
+			"my/history",
+			"search/キーワードサーチ?&オプション",
+			"tag/タグサーチ?&オプション",
+			"オプションsort &n:コメ時,&v:再生数,&f:投稿日,&m:マイリス数,&r:コメ数,&l:長さ,&h:人気",
+			"オプションorder 英小文字:降順(order=d),英大文字:昇順(order=a)",
+			"オプションpage 無し,数字:開始ページ数",
+			"tag/VOCALOID?&f1 オプション実例",
+		};
+		for(String s: REQ_TEMPLETE)
+			requestTemplete.offer(s);
+		histories[2] = requestTemplete;
 		DoButton.setText(DoButtonDefString);
 		DoButton.addActionListener(new MainFrame_DoButton_actionAdapter(this));
 		SavingInfoTabPanel.setLayout(gridBagLayout2);
@@ -1481,37 +1504,36 @@ public class MainFrame extends JFrame {
 		historyBackButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String vid;
-				if(historyIsRequest)
-					vid = requestHistory.back();
-				else
-					vid = mylistHistory.back();
+				String vid = "";
+				Object obj = histories[historyID];
+				if(obj instanceof HistoryDeque<?>)
+					vid = (String) ((HistoryDeque<?>) obj).back();
 				VideoID_TextField.setText(vid);
 			}
 		});
 		historyForwardButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String vid;
-				if(historyIsRequest)
-					vid = requestHistory.next();
-				else
-					vid = mylistHistory.next();
+				String vid = "";
+				Object obj = histories[historyID];
+				if(obj instanceof HistoryDeque<?>)
+					vid = (String) ((HistoryDeque<?>) obj).next();
 				VideoID_TextField.setText(vid);
 			}
 		});
 		historyReplaceButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				historyIsRequest = !historyIsRequest;
-				if(historyIsRequest){
-					historyReplaceButton.setForeground(Color.black);
-					historyReplaceButton.setContentAreaFilled(false);
+				historyID = (historyID+1)%3;
+				switch(historyID){
+				case 0:
 					VideoID_TextField.setText(" [リクエスト履歴] ");
-				}else{
-					historyReplaceButton.setForeground(Color.yellow);
-					historyReplaceButton.setContentAreaFilled(false);
+					break;
+				case 1:
 					VideoID_TextField.setText(" [マイリスト履歴] ");
+					break;
+				case 2:
+					VideoID_TextField.setText(" [テンプレート] ");
 				}
 			}
 		});
@@ -3027,6 +3049,11 @@ public class MainFrame extends JFrame {
 				log.println("VPOSシフト値が不正");
 			}
 		}
+		String last_history = VideoID_TextField.getText();
+		if(last_history==null || last_history.isEmpty())
+			last_history = requestHistory.getLast();
+		if(last_history==null)
+			last_history = "";
 		return new ConvertingSetting(
 			MailAddrField.getText(),
 			new String(PasswordField.getPassword()),
@@ -3073,7 +3100,7 @@ public class MainFrame extends JFrame {
 			NotUseVhookCheckBox.isSelected(),
 			ShadowComboBox.getSelectedIndex(),
 			AddOption_ConvVideoFileCheckBox.isSelected(),
-			requestHistory.getLast(),
+			last_history,
 			VhookWidePathField.getText(),
 			UseVhookCheckBox.isSelected(),
 			UseVhookWideCheckBox.isSelected(),
@@ -3575,13 +3602,12 @@ public class MainFrame extends JFrame {
 			//DoButton has nolonger stop function
 			// so new video or new mylist will be converted
 			url = VideoID_TextField.getText();
-			if(url==null)
-				url = "";
-			if(url.isEmpty()){
+			if(url==null || url.isEmpty()){
 				sendtext("URL/IDが入力されていません");
 				log.println("変換ボタンが押されたがURL/ID欄が入力されていません");
 				return;
 			}
+			input_url = url;
 			requestHistory.add(url);
 			/*
 			 * URL解析
@@ -3620,7 +3646,7 @@ public class MainFrame extends JFrame {
 			if (isMylist){
 				//マイリストページ動画ID解析
 				// url = "http://www/nicovideo.jp/mylist/1234567?watch_harmful=1" など
-				mylistHistory.add(url+watchInfo);
+				mylistHistory.add(input_url);
 				movieList = new StringBuffer();
 				mylistGetter = new MylistGetter(
 					indexNow,
@@ -3778,8 +3804,10 @@ public class MainFrame extends JFrame {
 		if(url.startsWith("http://www.nicovideo.jp/tag/")
 			||url.startsWith("http://www.nicovideo.jp/search/")){
 			String keyword = url.replaceFirst("http://www.nicovideo.jp/(search|tag)/", "");
+			String param = "";
 			int index = keyword.indexOf('?');
 			if (index > 0){
+				param = keyword.substring(index+1);
 				keyword = keyword.substring(0, index);
 			}
 			if(!keyword.contains("%")){
@@ -3788,6 +3816,39 @@ public class MainFrame extends JFrame {
 					url = url.replace(keyword, ek);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
+				}
+			}
+			if(param.isEmpty())
+				return url;
+			//
+			String SEARCH_KEY = "nvfmrlhNVFMRLH";
+			String param2 = "";
+			if(param.startsWith("&") && param.length()>=2){
+				char sort = param.charAt(1);
+				int k = SEARCH_KEY.indexOf(sort);
+				char order = 'd';
+				if(k>=0){
+					if(k>=7){
+						sort = Character.toLowerCase(sort);
+						order = 'a';
+					}
+					param2 = "sort="+sort+"&order="+order;
+					String page = param.substring(2);
+					if(page.contains(" "))
+						page = page.replaceAll(" .*", "");
+					if(!page.isEmpty()){
+						int p = 0;
+						try {
+							p = Integer.decode(page);
+							if(p>=1 && p <=99){
+								param2 += "&page="+p;
+							}
+						}catch(NumberFormatException e){
+						}
+					}
+					url = url.replace(param, param2);
+					log.println("url: "+url);
+					return url;
 				}
 			}
 		}
