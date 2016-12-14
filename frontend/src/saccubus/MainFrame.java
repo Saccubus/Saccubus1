@@ -868,7 +868,9 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				JTextField propFileField = new JTextField("");
 				showSaveDialog("設定ファイルのパス", propFileField, false, false);
-				setSetting(ConvertingSetting.loadSetting(null, null, propFileField.getText()));
+				String filename = propFileField.getText();
+				if(filename!=null && !filename.isEmpty())
+					setSetting(ConvertingSetting.loadSetting(null, null, filename));
 			}
 		});
 		jMenuAdd.setText("追加 (Add)...");
@@ -878,7 +880,9 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				JTextField propFileField = new JTextField("");
 				showSaveDialog("追加用設定ファイルのパス", propFileField, false, false);
-				setSetting(ConvertingSetting.addSetting(getSetting(), propFileField.getText()));
+				String filename = propFileField.getText();
+				if(filename!=null && !filename.isEmpty())
+					setSetting(ConvertingSetting.addSetting(getSetting(), filename));
 			}
 		});
 		jMenuSave.setText("上書き保存 (Save saccubus.xml)");
@@ -896,7 +900,9 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				showSaveDialog("設定ファイルのパス", propFileField,	true, false);
-				ConvertingSetting.saveSetting(getSetting(), propFileField.getText());
+				String filename = propFileField.getText();
+				if(filename!=null && !filename.isEmpty())
+					ConvertingSetting.saveSetting(getSetting(), filename);
 			}
 		});
 		jMenuInit.setText("初期化 (Init)");
@@ -2696,7 +2702,7 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					autoPlay.back();
+					autoPlay.setBack();
 				}
 			});
 			playVideoNextButton = new JButton("次");
@@ -2704,7 +2710,7 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					autoPlay.next();
+					autoPlay.setNext();
 				}
 			});
 			playVideoPlayButton = new JButton("再生");
@@ -2917,7 +2923,10 @@ public class MainFrame extends JFrame {
 
 	private void showSaveDialog(String title, JTextField field, boolean isSave,
 			boolean isDir) {
-		File file = new File(field.getText());
+		String name = field.getText();
+		if(name==null || name.isEmpty())
+			return;
+		File file = new File(name);
 		if (file == null || !file.exists()){
 			file = CurrentDir;
 		} else if (file.isFile() || isDir){	// field is file OR want for Dir

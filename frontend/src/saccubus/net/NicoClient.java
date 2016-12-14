@@ -2101,6 +2101,7 @@ public class NicoClient {
 	private String recipe_id;
 	private String t_created_time;
 	private String service_user_id;
+	private String priority;
 	private ArrayList<String> nicoTaglist = new ArrayList<>();
 	private String nicoCat;
 	public boolean serverIsDmc(){
@@ -2407,6 +2408,8 @@ public class NicoClient {
 					debug("\nÅ°player_id:\n "+player_id);
 					service_user_id = getJsonValue(sessionApi, "service_user_id");
 					debug("\nÅ°service_user_id:\n "+service_user_id);
+					priority = getJsonValue(sessionApi, "priority");
+					debug("\nÅ°priority:\n "+priority);
 					debug("\n");
 				}
 			}
@@ -2436,13 +2439,13 @@ public class NicoClient {
 		sb.append("        <method>GET</method>\n");
 		sb.append("        <parameters>\n");
 		sb.append("          <http_output_download_parameters>\n");
-		sb.append("            <file_extension>"+file_extension+"</file_extension>\n");
+		sb.append("            "+makeNewElement("file_extension",file_extension));
 		sb.append("          </http_output_download_parameters>\n");
 		sb.append("        </parameters>\n");
 		sb.append("      </http_parameters>\n");
 		sb.append("    </parameters>\n");
 		sb.append("  </protocol>\n");
-		sb.append("  <priority>0.8</priority>\n");
+		sb.append("  "+makeNewJsonValue(json, "priority"));
 		sb.append("  <content_src_id_sets>\n");
 		sb.append("    <content_src_id_set>\n");
 		sb.append("      <content_src_ids>\n");

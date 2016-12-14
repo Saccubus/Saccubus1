@@ -70,18 +70,24 @@ public class AutoPlay {
 		return checkbox.isSelected();
 	}
 
-	void next() {
+	File next() {
 		if(isPlayDownload())
-			downloadlist.next();
+			return downloadlist.next();
 		else
-			playlist.next();
+			return playlist.next();
+	}
+	void setNext() {
+		setPlayList(next());
 	}
 
-	void back() {
+	File back() {
 		if(isPlayDownload())
-			downloadlist.back();
+			return downloadlist.back();
 		else
-			playlist.back();
+			return playlist.back();
+	}
+	void setBack() {
+		setPlayList(back());
 	}
 
 	private File getNow() {
