@@ -712,13 +712,19 @@ public class NicoClient {
 				}
 				return false;
 			}
-			economy  = VideoUrl.toLowerCase().contains("low");
+			//economy  = VideoUrl.toLowerCase().contains("low");
 			log.println("ok.");
 			if(serverIsDmc()){
 				log.println("Video:<" + apiSessionUrl + ">;");
 			}
 			log.println("Video:<" + VideoUrl + ">; Comment:<" + MsgUrl
 					+ (NeedsKey ? ">; needs_key=1" : ">"));
+			economy = VideoUrl.toLowerCase().contains("low");
+			if(economy)
+				size_high =  getXmlElement(thumbInfoData, "size_low");
+			else
+				size_high = getXmlElement(thumbInfoData, "size_high");
+			log.println("size_high: "+size_high);
 			log.println("Video time length: " + VideoLength + "sec");
 			log.println("ThreadID:<" + ThreadID + "> Maybe uploaded on "
 					+ WayBackDate.format(ThreadID));
@@ -750,7 +756,8 @@ public class NicoClient {
 //	private String r_created_time;
 	private String responseXmlData;
 	private String postXmlData;
-	private int sizeHigh;
+	private String size_high;
+	//private int sizeHigh;
 	private int sizeDmc;
 	private int sizeVideo;
 	private int downloadLimit;
@@ -759,8 +766,8 @@ public class NicoClient {
 	public int getDmcVideoLength(){
 		return dmcVideoLength;
 	}
-	public int getSizeHigh(){
-		return sizeHigh;
+	public String getSizeHigh(){
+		return size_high;
 	}
 	public int getSizeDmc(){
 		return sizeDmc;
@@ -2265,20 +2272,6 @@ public class NicoClient {
 						}
 						debug("\n(NicoClient)nicoTaglist: "+nicoTaglist.toString());
 					}
-				}
-			}
-			if(thumbInfoData!=null){
-				try {
-					String size_high = null;
-					if(isEco())
-						size_high =  getXmlElement(thumbInfoData, "size_low");
-					else
-						size_high = getXmlElement(thumbInfoData, "size_high");
-					sizeHigh = (int)Integer.valueOf(size_high);
-				} catch(NumberFormatException e){
-					sizeHigh = 0;
-				} catch(RuntimeException e){
-					sizeHigh = 0;
 				}
 			}
 			return thumbXml;
