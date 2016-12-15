@@ -203,6 +203,7 @@ public class ConvertingSetting {
 	private boolean inhibitSmaller;
 	private boolean autoFlvToMp4;
 	private String panelHideMapping;
+	private int commentEraseType;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -437,7 +438,8 @@ public class ConvertingSetting {
 			boolean enable_sequential,
 			boolean inhibit_smaller,
 			boolean auto_flv_mp4,
-			String panel_hiding
+			String panel_hiding,
+			int comment_erase_type
 		)
 	{
 		this(	mailaddress,
@@ -587,6 +589,7 @@ public class ConvertingSetting {
 		inhibitSmaller = inhibit_smaller;
 		autoFlvToMp4 = auto_flv_mp4;
 		panelHideMapping = panel_hiding;
+		commentEraseType = comment_erase_type;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1026,6 +1029,9 @@ public class ConvertingSetting {
 	public boolean isOnlyMp4AutoPlay() {
 		return onlyMp4AutoPlay;
 	}
+	public int getCommentEraseType(){
+		return commentEraseType;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -1175,6 +1181,7 @@ public class ConvertingSetting {
 	static final String PROP_INHIBIT_SMALLER_VIDEO = "InhibitSmallerVideo";
 	static final String PROP_AUTO_FLV_MP4 = "autoConvertDmcFlvToMp4";
 	static final String PROP_PANEL_HIDE_MAPPING = "panelHideMapping";
+	static final String PROP_COMMENT_ERASE_TYPE = "CommentEraseType";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1398,6 +1405,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_INHIBIT_SMALLER_VIDEO, Boolean.toString(setting.isInhibitSmaller()));
 		prop.setProperty(PROP_AUTO_FLV_MP4, Boolean.toString(setting.isAutoFlvToMp4()));
 		prop.setProperty(PROP_PANEL_HIDE_MAPPING, setting.getPanelHideMapping());
+		prop.setProperty(PROP_COMMENT_ERASE_TYPE, Integer.toString(setting.getCommentEraseType()));
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1675,7 +1683,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_SEQ_RESUME, "true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_INHIBIT_SMALLER_VIDEO, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_FLV_MP4, "true")),
-			prop.getProperty(PROP_PANEL_HIDE_MAPPING, "")
+			prop.getProperty(PROP_PANEL_HIDE_MAPPING, ""),
+			Integer.decode(prop.getProperty(PROP_COMMENT_ERASE_TYPE, "0"))
 		);
 	}
 

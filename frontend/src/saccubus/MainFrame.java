@@ -1947,7 +1947,7 @@ public class MainFrame extends JFrame {
 			grid8_x1_y1_65.fill = GridBagConstraints.HORIZONTAL;
 			grid8_x1_y1_65.gridy = 1;
 			grid8_x1_y1_65.weightx = 1.0;
-			grid8_x1_y1_65.gridwidth = 6;
+			grid8_x1_y1_65.gridwidth = 4;
 			grid8_x1_y1_65.insets = INSETS_0_0_0_5;
 			grid8_x1_y1_65.gridx = 1;
 			GridBagConstraints grid8_x4_y3_64 = new GridBagConstraints(1, 1,
@@ -1964,15 +1964,15 @@ public class MainFrame extends JFrame {
 			grid8_x0_y7_63.gridwidth = 5;
 			GridBagConstraints grid8_x1_y5_62 = new GridBagConstraints(0, 3,
 					2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-					GridBagConstraints.BOTH, INSETS_0_5_5_5, 0, 0);
+					GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0);
 			grid8_x1_y5_62.gridy = 5;
 			grid8_x1_y5_62.gridx = 1;
 			grid8_x1_y5_62.fill = GridBagConstraints.HORIZONTAL;
-			grid8_x1_y5_62.insets = INSETS_0_0_5_5;
+			grid8_x1_y5_62.insets = INSETS_0_0_0_5;
 			grid8_x1_y5_62.gridwidth = 4;
 			GridBagConstraints grid8_x0_y5_61 = new GridBagConstraints(0, 2,
 					1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-					GridBagConstraints.BOTH, INSETS_5_5_5_5, 0, 0);
+					GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0);
 			grid8_x0_y5_61.gridy = 5;
 			grid8_x0_y5_61.gridx = 0;
 			grid8_x0_y5_61.fill = GridBagConstraints.VERTICAL;
@@ -1988,9 +1988,9 @@ public class MainFrame extends JFrame {
 			grid8_x1_y3_60.gridwidth = 3;
 			GridBagConstraints grid8_x0_y3_59 = new GridBagConstraints(0, 0,
 					2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-					GridBagConstraints.HORIZONTAL, INSETS_0_5_5_5, 0, 0);
+					GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0);
 			grid8_x0_y3_59.gridy = 3;
-			grid8_x0_y3_59.insets = INSETS_5_5_5_5;
+			grid8_x0_y3_59.insets = INSETS_0_5_0_5;
 			grid8_x0_y3_59.gridx = 0;
 			grid8_x0_y3_59.fill = GridBagConstraints.NONE;
 			grid8_x0_y3_59.anchor = GridBagConstraints.WEST;
@@ -2052,11 +2052,30 @@ public class MainFrame extends JFrame {
 			grid8_x3_y9_103.anchor = GridBagConstraints.WEST;
 			grid8_x3_y9_103.fill = GridBagConstraints.HORIZONTAL;
 			grid8_x3_y9_103.insets = INSETS_0_5_0_5;
+			GridBagConstraints grid8_x0_y2 = new GridBagConstraints();
+			grid8_x0_y2.gridx = 0;
+			grid8_x0_y2.gridy = 2;
+			grid8_x0_y2.gridwidth = 1;
+			grid8_x0_y2.weightx = 0.0;
+			grid8_x0_y2.anchor = GridBagConstraints.WEST;
+			grid8_x0_y2.fill = GridBagConstraints.HORIZONTAL;
+			grid8_x0_y2.insets = INSETS_0_5_0_5;
+			GridBagConstraints grid8_x1_y2 = new GridBagConstraints();
+			grid8_x1_y2.gridx = 1;
+			grid8_x1_y2.gridy = 2;
+			grid8_x1_y2.gridwidth = 4;
+			grid8_x1_y2.weightx = 1.0;
+			grid8_x1_y2.anchor = GridBagConstraints.WEST;
+			grid8_x1_y2.fill = GridBagConstraints.HORIZONTAL;
+			grid8_x1_y2.insets = INSETS_0_0_0_5;
 			VhookSettingPanel.add(getNotUseVhookCheckBox(), grid8_x0_y0_58);
-			ViewCommentLabel = new JLabel();
-			ViewCommentLabel.setText("表示コメント数");
+			ViewCommentLabel = new JLabel("表示コメント数");
 			VhookSettingPanel.add(ViewCommentLabel, grid8_x0_y1_66);
 			VhookSettingPanel.add(getViewCommentField(), grid8_x1_y1_65);
+			commentEraseTypeLabel = new JLabel("上記制限超過");
+			commentEraseTypeLabel.setForeground(Color.blue);
+			VhookSettingPanel.add(commentEraseTypeLabel, grid8_x0_y2);
+			VhookSettingPanel.add(getCommentEraseTypeComboBox(),grid8_x1_y2);
 			VhookSettingPanel.add(FontPathLabel, grid8_x0_y3_59);
 			VhookSettingPanel.add(FontPathField, grid8_x1_y3_60);
 			VhookSettingPanel.add(SettingFontPathButton, grid8_x4_y3_64);
@@ -2151,14 +2170,14 @@ public class MainFrame extends JFrame {
 			grid20_x0_y7.fill = GridBagConstraints.HORIZONTAL;
 			grid20_x0_y7.insets = INSETS_0_5_0_5;
 			experimentPanel.add(disableOriginalResizeCheckBox, grid20_x0_y7);
-			enableCA_CheckBox.setText("ＣＡフォント対応：多種類のフォントを使う");
+			enableCA_CheckBox.setText("ＣＡフォント対応");
 			enableCA_CheckBox.setForeground(Color.blue);
-			enableCA_CheckBox.setToolTipText("フォント変化を強制的に使用するようになります");
+			enableCA_CheckBox.setToolTipText("多種類のフォントを使ってフォント変化を強制的に使用するようになります");
 			GridBagConstraints drid20_x0_y8 = new GridBagConstraints();
 			drid20_x0_y8.gridx = 0;
 			drid20_x0_y8.gridy = 8;
-			drid20_x0_y8.gridwidth = 4;
-			drid20_x0_y8.weightx = 1.0;
+			drid20_x0_y8.gridwidth = 1;
+			drid20_x0_y8.weightx = 0.0;
 			drid20_x0_y8.anchor = GridBagConstraints.NORTHWEST;
 			drid20_x0_y8.fill = GridBagConstraints.HORIZONTAL;
 			drid20_x0_y8.insets = INSETS_0_5_0_5;
@@ -2177,23 +2196,23 @@ public class MainFrame extends JFrame {
 			useExtraFontCheckBox.setText("追加フォント");
 			useExtraFontCheckBox.setForeground(Color.blue);
 			useExtraFontCheckBox.setToolTipText("追加フォントパス フォント番号 開始unicode16進4桁-終了16進4桁　と指定して下さい");
-			GridBagConstraints grid20_x0_y10 = new GridBagConstraints();
-			grid20_x0_y10.gridx = 0;
-			grid20_x0_y10.gridy = 10;
-			grid20_x0_y10.anchor = GridBagConstraints.NORTHWEST;
-			grid20_x0_y10.fill = GridBagConstraints.HORIZONTAL;
-			grid20_x0_y10.insets = INSETS_0_5_0_5;
-			experimentPanel.add(useExtraFontCheckBox,grid20_x0_y10);
+			GridBagConstraints grid20_x2_y8 = new GridBagConstraints();
+			grid20_x2_y8.gridx = 1;
+			grid20_x2_y8.gridy = 8;
+			grid20_x2_y8.anchor = GridBagConstraints.NORTHWEST;
+			grid20_x2_y8.fill = GridBagConstraints.HORIZONTAL;
+			grid20_x2_y8.insets = INSETS_0_5_0_5;
+			experimentPanel.add(useExtraFontCheckBox,grid20_x2_y8);
 			extraFontTextField.setForeground(Color.blue);
-			GridBagConstraints grid20_x1_y10 = new GridBagConstraints();
-			grid20_x1_y10.gridx = 1;
-			grid20_x1_y10.gridy = 10;
-			grid20_x1_y10.gridwidth = 3;
-			grid20_x1_y10.weightx = 1.0;
-			grid20_x1_y10.anchor = GridBagConstraints.NORTHWEST;
-			grid20_x1_y10.fill = GridBagConstraints.HORIZONTAL;
-			grid20_x1_y10.insets = INSETS_0_5_0_5;
-			experimentPanel.add(extraFontTextField, grid20_x1_y10);
+			GridBagConstraints grid20_x4_y8 = new GridBagConstraints();
+			grid20_x4_y8.gridx = 2;
+			grid20_x4_y8.gridy = 8;
+			grid20_x4_y8.gridwidth = 2;
+			grid20_x4_y8.weightx = 1.0;
+			grid20_x4_y8.anchor = GridBagConstraints.NORTHWEST;
+			grid20_x4_y8.fill = GridBagConstraints.HORIZONTAL;
+			grid20_x4_y8.insets = INSETS_0_5_0_5;
+			experimentPanel.add(extraFontTextField, grid20_x4_y8);
 			extraModeLabel.setText("追加モード");
 			extraModeLabel.setForeground(Color.blue);
 			extraModeLabel.setToolTipText("黄枠モード他の追加の動作を指定します");
@@ -2741,7 +2760,7 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					autoPlay.playAuto();
+					autoPlay.playVideoNow();
 				}
 			});
 			autoPlay = new AutoPlay(autoPlayCheckBox,playVideoLabel,null,statusBar);
@@ -3186,7 +3205,8 @@ public class MainFrame extends JFrame {
 			enableSeqResumeCheckBox.isSelected(),
 			inhibitSmallCheckBox.isSelected(),
 			autoFlvToMp4CheckBox.isSelected(),
-			JPanelHideable.getHideMap()
+			JPanelHideable.getHideMap(),
+			commentEraseTypeComboBox.getSelectedIndex()
 		);
 	}
 
@@ -3369,6 +3389,7 @@ public class MainFrame extends JFrame {
 		autoFlvToMp4CheckBox.setEnabled(false);
 		initialPanelHideMapping = setting.getPanelHideMapping();
 		JPanelHideable.setHideMap(initialPanelHideMapping);
+		commentEraseTypeComboBox.setSelectedIndex(setting.getCommentEraseType());
 	}
 
 	/**
@@ -5155,8 +5176,9 @@ s	 * @return javax.swing.JPanel
 	private JTextField ViewCommentField = null;
 	private JLabel ViewCommentLabel = null;
 	private JLabel ShadowKindLabel = null;
-	@SuppressWarnings("rawtypes")
-	private JComboBox ShadowComboBox = null;
+	private JComboBox<String> ShadowComboBox = null;
+	private JLabel commentEraseTypeLabel;
+	private JComboBox<String> commentEraseTypeComboBox;
 
 	/**
 	 * Initialize FFmpegOptionComboBox
@@ -5523,12 +5545,22 @@ s	 * @return javax.swing.JPanel
 	 * @return javax.swing.JComboBox
 	 */
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private JComboBox getShadowComboBox() {
+	private JComboBox<String> getShadowComboBox() {
 		if (ShadowComboBox == null) {
-			ShadowComboBox = new JComboBox(ConvertingSetting.ShadowKindArray);
+			ShadowComboBox = new JComboBox<String>(ConvertingSetting.ShadowKindArray);
 		}
 		return ShadowComboBox;
+	}
+
+	String[] CommentEraseTypeArray= {
+		"0:従来通り(表示数を越えると古いコメントを消去)",
+		"1:表示数を越えた新規コメントを無視",
+	};;
+	private JComboBox<String> getCommentEraseTypeComboBox(){
+		if(commentEraseTypeComboBox == null){
+			commentEraseTypeComboBox = new JComboBox<String>(CommentEraseTypeArray);
+		}
+		return commentEraseTypeComboBox;
 	}
 
 	private File getFile(String path){

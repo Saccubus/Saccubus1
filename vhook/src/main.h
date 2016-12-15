@@ -94,6 +94,7 @@ struct DATA{
 	int q_player;
 	int is_live;
 	int comment_vpos_shift;
+	int comment_erase_type;
 	//char wstr[128];
 #ifdef VHOOKDEBUG
 //	float dts_rate;	// フレームレート
@@ -141,6 +142,7 @@ typedef struct SETTING{
 	int q_player;		//コメントが動画の高さ以下になるか？
 	int is_live;	//生放送か?(仮) コメントコマンドの仕様が変わる
 	const char* comment_shift;
+	const char* comment_erase;	//コメントの同時表示数超過時の消し方 0: 1:
 	// CA用フォント
 	const char* CAfont_path[CA_FONT_PATH_MAX];
 	int CAfont_index[CA_FONT_PATH_MAX];

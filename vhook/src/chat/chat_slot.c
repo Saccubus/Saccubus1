@@ -136,7 +136,16 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	CHAT_SLOT_ITEM* slot_item = &slot->item[cnt];	//このスロットに追加
 	/*空きが無ければ強制的に作る。*/
 	if(slot_item->used){
-		deleteChatSlot(slot_item,data);
+		// 空きが無い場合
+		if(data->comment_erase_type==0){	//従来通り先のコメントchatを消す
+			deleteChatSlot(slot_item,data);
+		}else if(data->comment_erase_type==1){	//新しいコメントchatを無視する
+			if(data->debug){
+				fprintf(data->log,"[chat_slot/add]comment %d %s ignored. no free slot.\n",
+					item->no,item->chat->com_type);
+			}
+			return 0;
+		}
 	}
 	//この時点で追加
 	slot_item->chat_item = item;
@@ -329,7 +338,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			item->no,bang_x1,bang_x2,bang_slot->y,
 			item->vstart,item->vend,item->vpos);
 	}
-	return y;
+	return 1;
 }
 /*
  * イテレータをリセットする。

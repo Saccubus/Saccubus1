@@ -125,12 +125,17 @@ public class AutoPlay {
 	}
 
 	void playAuto() {
+		File video = getNow();
+		setPlayList(video);
 		if(isAutoPlay()){
-			File video = getNow();
-			setPlayList(video);
 			playVideo(video);
 			next();
 		}
+	}
+	void playVideoNow() {
+		File video = getNow();
+		setPlayList(video);
+		playVideo(video);
 	}
 
 	private void playVideo(File video) {

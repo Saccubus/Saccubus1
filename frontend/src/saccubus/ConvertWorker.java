@@ -1070,7 +1070,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							lowVideoFile = VideoFile;
 						if(Path.contains(VideoFile, "dmc_"))
 							dmcVideoFile = VideoFile;
+						setVideoTitleIfNull(VideoFile.getName());
 					} else {
+						VideoFile = Setting.getVideoFile();
+						setVideoTitleIfNull(VideoFile.getName());
 						VideoFile = replaceFilenamePattern(VideoFile,false);
 						lowVideoFile = replaceFilenamePattern(VideoFile,true);
 						if (!existVideoFile(VideoFile, ".flv", ".mp4")
@@ -1080,7 +1083,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								return false;
 						}
 					}
-					setVideoTitleIfNull(VideoFile.getName());
 				}
 			}
 			sendtext("ìÆâÊÇÃï€ë∂ÇèIóπ");
@@ -3559,6 +3561,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ffmpeg.addCmd("|--comment-shift:"
 					+ URLEncoder.encode(Setting.getCommentVposShiftString(), encoding));
 			}
+			ffmpeg.addCmd("|--comment-erase:" + Setting.getCommentEraseType());
 			String extra = Setting.getExtraMode();
 			if(extra.contains("-April=")){
 				int index = extra.indexOf("-April=");
