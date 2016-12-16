@@ -270,6 +270,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・表示コメント数超過時「新しいコメントを無視する」(issue #35)
+　・一般アカウントのdmcアクセス修正(issue #34)
 　・変換動画low_追加とファイル名マクロバグ修正
 　・FFmpeg3.2.2 に更新
 　・リクエスト履歴にマイリスト履歴を追加
@@ -449,6 +451,12 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 □拡張機能（変更点）説明
+●コメントが表示数を超えた時にどう消すかの選択を追加(issue #35)
+　　0:従来通り　表示の途中であっても、表示時+スロット順が先の方から消されていきます。
+　　1:表示数を越えた新しいコメントは無視されます。(非表示のまま)
+
+●一般アカウントのdmcアクセス修正(issue #34)
+
 ●変換動画low_追加とファイル名マクロバグ修正
 　保存するファイル名を指定するを選択すると置換マクロが使えます。
 　　%LOW% →economy時 low_ 
@@ -1215,12 +1223,12 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
 ・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
-・saccubus.ini　　　　　　　80914d向け初期設定
+・saccubus.ini　　　　　　　ffmpeg3.2.2向け初期設定
 ・最初に必ず読んで.txt
 ・bin フォルダ配下
 　　ffmpeg3.2.2.exe ライセンスGPLV3
 　　　library3.2.2.txt　　外部ライブラリーバージョン
-　　nicovideoE.dll(2016.06.29版)拡張Vhookライブラリ
+　　nicovideoE.dll(2016.12.15版)拡張Vhookライブラリ
 　　SDL.dll(2012.01.16ビルド)、COPYNG、README-SDL.txt
 　　　ライセンスはLGPL
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYING.sdl_ttf
@@ -1287,8 +1295,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　1.65.3以降はgithubの　https://github.com/Saccubus/Saccubus1.x/releases/ で
 　1.65.2　　https://github.com/Saccubus/Saccubus1.x/releases/tag/1.65.2
 　1.65.1　　http://www1.axfc.net/u/3613928.zip
-　1.65.0　　http://www1.axfc.net/u/3611115.zip
-　1.64.2　　http://www1.axfc.net/u/3582177.zip
+　1.65.0　　http://www1.axfc.net/u/3611115.zip (MultiThreads 最初版)
+　1.64.2　　http://www1.axfc.net/u/3582177.zip (SingleThread 最終版)
 　1.63　　　http://www1.axfc.net/u/3526594.zip
 　1.62　　　http://www1.axfc.net/u/3509654.zip
 　1.61　　　http://www1.axfc.net/u/3502367.zip
