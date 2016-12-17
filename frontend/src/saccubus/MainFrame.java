@@ -870,10 +870,16 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JTextField propFileField = new JTextField("");
-				showSaveDialog("設定ファイルのパス", propFileField, false, false);
+				if(showSaveDialog("設定ファイルのパス", propFileField, false, false)
+						!= DIALOG_OK){
+					sendtext("キャンセル");
+					return;
+				}
 				String filename = propFileField.getText();
-				if(filename!=null && !filename.isEmpty())
+				if(filename!=null && !filename.isEmpty() && Path.isFile(filename))
 					setSetting(ConvertingSetting.loadSetting(null, null, filename));
+				else
+					sendtext("設定ファイル読み込みエラー");
 			}
 		});
 		jMenuAdd.setText("追加 (Add)...");
@@ -882,10 +888,16 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JTextField propFileField = new JTextField("");
-				showSaveDialog("追加用設定ファイルのパス", propFileField, false, false);
+				if(showSaveDialog("追加用設定ファイルのパス", propFileField, false, false)
+						!= DIALOG_OK){
+					sendtext("キャンセル");
+					return;
+				}
 				String filename = propFileField.getText();
-				if(filename!=null && !filename.isEmpty())
+				if(filename!=null && !filename.isEmpty() && Path.isFile(filename))
 					setSetting(ConvertingSetting.addSetting(getSetting(), filename));
+				else
+					sendtext("設定ファイル追加エラー");
 			}
 		});
 		jMenuSave.setText("上書き保存 (Save saccubus.xml)");
@@ -902,10 +914,16 @@ public class MainFrame extends JFrame {
 			JTextField propFileField = new JTextField(ConvertingSetting.PROP_FILE);
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showSaveDialog("設定ファイルのパス", propFileField,	true, false);
+				if(showSaveDialog("設定ファイルのパス", propFileField,	true, false)
+						!= DIALOG_OK){
+					sendtext("キャンセル");
+					return;
+				}
 				String filename = propFileField.getText();
 				if(filename!=null && !filename.isEmpty())
 					ConvertingSetting.saveSetting(getSetting(), filename);
+				else
+					sendtext("設定ファイル保存エラー");
 			}
 		});
 		jMenuInit.setText("初期化 (Init)");
@@ -1062,7 +1080,9 @@ public class MainFrame extends JFrame {
 		BrowserCookieDialogButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					showSaveDialog("他のブラウザのCookieへのパス", BrowserCookieField);
+					if(showSaveDialog("他のブラウザのCookieへのパス", BrowserCookieField)
+							!= DIALOG_OK)
+						sendtext("キャンセル");
 				}
 			});
 		GridBagConstraints grid13_x1_y7_104 = new GridBagConstraints();
@@ -2962,12 +2982,15 @@ public class MainFrame extends JFrame {
 	JCheckBox ShowConvVideoCheckBox = new JCheckBox();
 	JTextField CommandLineOutOptionField = new JTextField();
 
-	private void showSaveDialog(String title, JTextField field, boolean isSave,
+	final int DIALOG_OK = JFileChooser.APPROVE_OPTION;
+	private int showSaveDialog(String title, JTextField field, boolean isSave,
 			boolean isDir) {
 		String name = field.getText();
-		if(name==null || name.isEmpty())
-			return;
-		File file = new File(name);
+		File file;
+		if(name!=null && !name.isEmpty())
+			file = new File(name);
+		else
+			file = null;
 		if (file == null || !file.exists()){
 			file = CurrentDir;
 		} else if (file.isFile() || isDir){	// field is file OR want for Dir
@@ -2988,12 +3011,13 @@ public class MainFrame extends JFrame {
 			CurrentDir = chooser.getCurrentDirectory();
 			field.setText(getRelativePath(chooser.getSelectedFile()));
 		}
+		return code;
 	}
 	private String getRelativePath(File file){
 		return file.getAbsolutePath().replace(
 				new File("").getAbsolutePath(), ".");
 	}
-	private void showSaveDialog(String title, JTextField field) {
+	private int showSaveDialog(String title, JTextField field) {
 		File file = new File(field.getText());
 		if (!file.exists()){
 			file = new File("");
@@ -3003,10 +3027,11 @@ public class MainFrame extends JFrame {
 		int code = 0;
 		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		code = chooser.showOpenDialog(this);
-		if (code == JFileChooser.APPROVE_OPTION) {
+		if (code == DIALOG_OK) {
 		//	CurrentDir = chooser.getCurrentDirectory();
 			field.setText(getRelativePath(chooser.getSelectedFile()));
 		}
+		return code;
 	}
 
 	public ConvertingSetting getSetting() {
