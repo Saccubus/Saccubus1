@@ -1374,9 +1374,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				result = "A0";
 				return false;
 			}
-			thumbInfoFile = new File(folder, getVideoBaseName() + ext);
+			thumbInfoFile = new File(folder, getVideoBaseName() + THUMB_INFO + ext);
 		} else {
 			thumbInfoFile = getThumbInfoFileFrom(Setting.getVideoFile(), ext);
+			thumbInfoFile = replaceFilenamePattern(thumbInfoFile, false, false);
 		}
 		if(thumbInfoFile==null){
 			sendtext("“®‰æî•ñƒtƒ@ƒCƒ‹‚ªnull‚Å‚·");
