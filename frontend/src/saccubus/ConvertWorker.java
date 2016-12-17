@@ -1537,6 +1537,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			thumbnailJpg = new File(folder, getVideoBaseName() + ".jpg");
 		} else {
 			File file = Setting.getVideoFile();
+			if(file!=null)
+				file = replaceFilenamePattern(file, false, false);
 			if (file == null || !file.isFile() || file.getPath() == null) {
 				thumbnailJpg = mkTemp(Tag + "_thumnail.jpg");
 			}else{
