@@ -1,13 +1,14 @@
 読んで下さい.txt
 変更内容
 
-1.66.1.2(2016/11/06)
-　・ffmpeg commit 3bf142c77337814458ed8e036796934032d9837f
-    "cmdutils: remove the current working directory from the DLL search path on win32"
-    http://git.videolan.org/gitweb.cgi/ffmpeg.git/?a=commit;h=3bf142c77337814458ed8e036796934032d9837f
-    に対応
-　・ffmpeg n3.2に更新　NVENC API 7.x対応(Pascal GTX 1060,1070,1080以降)
-　　オプションは変更なし
+1.66.2.16(2016/12/16)
+・表示コメント数超過時「新しいコメントを無視する」(issue #35)
+　選択方法
+　　0:従来通り　表示の途中であっても、表示時+スロット順が先の方から消されていきます。
+　　1:表示数を越えた新しいコメントは無視されます。(非表示のまま)
+・一般アカウントのdmcアクセス修正(issue #34)
+・色々バグ修正
+
 
 使い方はsaccubusフォルダの中の
 最初に必ず読んで.txt
@@ -18,4 +19,3 @@ docフォルダの中には更に他の文書が有ります。
 
 また起動画面の [ヘルプ]メニューからもお読み頂けます。
 
-VirunTotal

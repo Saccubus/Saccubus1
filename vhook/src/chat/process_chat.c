@@ -41,11 +41,22 @@ int process_chat(DATA* data,CDATA* cdata,SDL_Surface* surf,const int now_vpos){
 		}
 		// プールをvstart,noでソートし取り出す
 		while((chat_item = getChatPooled(data,chat->pool,now_vpos)) != NULL){
-			addChatSlot(data,slot,chat_item,data->vout_width,data->vout_height);
-			fprintf(log,"[process-chat/process]comment %d %s vpos:%d color:%s %s %s  %d - %d(vpos:%d) added.\n",
-				chat_item->no,chat->com_type,now_vpos,getColorName(buf,chat_item->color),
-				COM_LOC_NAME[chat_item->location],COM_FONTSIZE_NAME[chat_item->size],
-				chat_item->vstart,chat_item->vend,chat_item->vpos);
+			if (addChatSlot(data,slot,chat_item,data->vout_width,data->vout_height) == 0)
+			{//表示しなかった
+				char* item_kind = "IGNORE";
+				if(chat_item->patissier)
+					item_kind = "patissier";
+				else if(chat_item->invisible)
+					item_kind = "invisible";
+				fprintf(log,"[process-chat/process]comment %d %s vpos:%d chat(%s):%d - %d(vpos:%d) ignored.\n",
+					chat_item->no,chat->com_type,now_vpos,item_kind,
+					chat_item->vstart,chat_item->vend,chat_item->vpos);
+			}else{
+				fprintf(log,"[process-chat/process]comment %d %s vpos:%d color:%s %s %s  %d - %d(vpos:%d) added.\n",
+					chat_item->no,chat->com_type,now_vpos,getColorName(buf,chat_item->color),
+					COM_LOC_NAME[chat_item->location],COM_FONTSIZE_NAME[chat_item->size],
+					chat_item->vstart,chat_item->vend,chat_item->vpos);
+			}
 		}
 /* debug
 		fprintf(log,"[process-chat/process]drawComment(data,surf(%d,%d),slot,vpos%d,x%d,y%d) aspect%d scale%.1f w%d h%d\n",

@@ -131,6 +131,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String aprilFool;
 	private final StringBuffer sbRet;
 	private final saccubus.MainFrame parent;
+	private List<String> nicoTagList = new ArrayList<String>();
+	private String nicoCategory;
 	/*
 	 * sbRet is return String value to EXTERNAL PROGRAM such as BAT file, SH script, so on.
 	 * string should be ASCII or URLEncoded in System Encoding.
@@ -159,6 +161,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private ErrorControl errorControl;
 	private String lowVideoID;
 	private String dmcVideoID;
+	private String videoContentType;
 	private int tid;
 	private Logger log;
 	private String thumbInfoData;
@@ -174,18 +177,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		int index = 0;
 		index = url.indexOf('?');
 		if(index >= 0){
-			int index2 = url.lastIndexOf('/',index);
-			Tag = url.substring(index2+1,index);
 			WatchInfo = url.substring(index);
+			url = url.substring(0, index);
 		}else{
-			int index2 = url.lastIndexOf('/');
-			Tag = url.substring(index2+1);
 			WatchInfo = "";
 		}
+		int index2 = url.lastIndexOf('/');
+		Tag = url.substring(index2+1);
 		VideoID = "[" + Tag + "]";
 		lowVideoID = VideoID + "low_";
 		dmcVideoID = VideoID + "dmc_";
-		DefaultVideoIDFilter = new VideoIDFilter(VideoID);
+		DefaultVideoIDFilter = new VideoIDFilter(Tag);
 		if (time.equals("000000") || time.equals("0")){		// for auto.bat
 			Time = "";
 		} else {
@@ -259,8 +261,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File CombinedOptionalFile;
 	private File appendCommentFile;
 	private File appendOptionalFile;
-	private File lowVideoFile;
-	private File dmcVideoFile;
+	//private File lowVideoFile;
+	//private File dmcVideoFile;
 	private File resumeDmcFile;
 	private boolean isConverting = false;
 	private boolean isDebugNet = false;
@@ -293,6 +295,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private String mySendedText;
 	private Path metaDataFile = null;
+	private String nicoTag0 = "";
+	private String nicoTag1 = "";
 	private void sendtext(final String text){
 		mySendedText = text;
 		publish(text);
@@ -707,11 +711,27 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean saveVideo(NicoClient client) {
+		File dmcVideoFile;
+		File lowVideoFile;
 		File folder = Setting.getVideoFixFileNameFolder();
 		sendtext("動画の保存");
 		/*動画の保存*/
 		try {
 			if (isSaveVideo()) {
+				if (client == null){
+					sendtext("ログインしてないのに動画の保存になりました");
+					result = "41";
+					return false;
+				}
+				lowVideoFile = null;
+				boolean renameMp4 = Setting.isChangeMp4Ext();
+				if(client.isEco()){
+					if(Setting.isDisableEco()){
+						sendtext("エコノミーモードなので中止します");
+						result = "42";
+						return false;
+					}
+				}
 				if (isVideoFixFileName()) {
 					if (folder.mkdir()) {
 						log.println("Folder created: " + folder.getPath());
@@ -721,53 +741,76 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						result = "40";
 						return false;
 					}
-					if (client == null){
-						sendtext("ログインしてないのに動画の保存になりました");
-						result = "41";
-						return false;
-					}
+					String name = getVideoBaseName() + ".flv";
+					VideoFile = new File(folder, name);
 					if(client.isEco()){
-						if(Setting.isDisableEco()){
-							sendtext("エコノミーモードなので中止します");
-							result = "42";
-							return false;
-						}
-						lowVideoFile = new File(folder, lowVideoID+VideoTitle+".flv");
-					} else {
-						lowVideoFile = null;
+						lowVideoFile = new File(folder, name.replace(VideoID, lowVideoID));
+						log.println("client.isEco:: low_VideoFile:"+lowVideoFile.getPath());
 					}
-					VideoFile = new File(folder, getVideoBaseName() + ".flv");
-					dmcVideoFile = new File(folder, dmcVideoID+VideoTitle+".flv");
-					resumeDmcFile = new File(folder, dmcVideoID+VideoTitle+".flv_dmc");	// suspended video
+					dmcVideoFile = new File(folder, name.replace(VideoID, dmcVideoID));
+					resumeDmcFile = Path.getReplacedExtFile(dmcVideoFile, ".flv_dmc");	// suspended video
 				} else {
-					VideoFile = Setting.getVideoFile();
-					String name = VideoFile.getPath();
-					if(name.contains(dmcVideoID)){
-						dmcVideoFile = VideoFile;
+					File file = Setting.getVideoFile();	//置換前
+					//%LOW%以外の置換
+					VideoFile = replaceFilenamePattern(file, false, false);	//置換後
+					String name = VideoFile.getName();	//置換後
+					File dir = VideoFile.getParentFile();
+					if(client.isEco()){
+						lowVideoFile = replaceFilenamePattern(file, true, false);
+						// %LOW%は置換済み
+						if(!Path.contains(lowVideoFile, "low_")){
+							log.println("MACRO doesn't contain %LOW%. "+lowVideoFile.getPath());
+							// ID->IDlow_ , [ID]->[ID]low_
+							if(name.contains(lowVideoID)){
+								//通常はない
+								lowVideoFile = VideoFile;
+							}else if(name.contains(VideoID)){
+								lowVideoFile = new File(dir,name.replace(VideoID, lowVideoID));
+							}else if(name.contains(Tag)){
+								lowVideoFile = new File(dir,name.replace(Tag, Tag+"low_"));
+							}else
+								lowVideoFile = new File(dir,"low_"+name);
+						}
+						log.println("client.isEco:: low_VideoFile:"+lowVideoFile.getPath());
+						dmcVideoFile = lowVideoFile;
 					}else{
-						dmcVideoFile = new File(name.replace(VideoID, dmcVideoID));
+						dmcVideoFile = replaceFilenamePattern(file, false, true);
 					}
-					int index = name.lastIndexOf(".");
-					if(index > 0){
-						resumeDmcFile = new File(name.substring(0,index)+".flv_dmc");
-					}
+					resumeDmcFile = Path.getReplacedExtFile(dmcVideoFile, ".flv_dmc");
 				}
-				if(client.isEco() && lowVideoFile.isFile() && lowVideoFile.canRead()){
-					sendtext("エコノミーモードでエコ動画は既に存在します");
-					log.println("エコノミーモードで動画は既に存在します。ダウンロードをスキップします");
-					VideoFile = lowVideoFile;
-					return true;
+				if(lowVideoFile!=null){
+					if(client.isEco() && existVideoFile(VideoFile, ".flv", ".mp4")){
+						sendtext("エコノミーモードで通常動画は既に存在します");
+						log.println("エコノミーモードで通常動画は既に存在します。ダウンロードをスキップします");
+						VideoFile = existVideo;
+						return true;
+					}
+					if(client.isEco() && existVideoFile(dmcVideoFile, ".flv", ".mp4")){
+						sendtext("エコノミーモードでdmc動画は既に存在します");
+						log.println("エコノミーモードでdmc動画は既に存在します。ダウンロードをスキップします");
+						dmcVideoFile = existVideo;
+						VideoFile = dmcVideoFile;
+						return true;
+					}
+					if(client.isEco() && existVideoFile(lowVideoFile,".flv",".mp4")){
+						sendtext("エコノミーモードでエコ動画は既に存在します");
+						log.println("エコノミーモードで動画は既に存在します。ダウンロードをスキップします");
+						lowVideoFile = existVideo;
+						VideoFile = lowVideoFile;
+						return true;
+					}
 				}
 				sendtext("動画のダウンロード開始中");
-				boolean renameMp4 = isVideoFixFileName() && Setting.isChangeMp4Ext();
 				log.println("serverIsDmc: "+client.serverIsDmc()
 					+", preferSmile: "+Setting.isSmilePreferable()
-					+", forceDMC:" + Setting.doesDmcforceDl());
+					+", forceDMC:" + Setting.doesDmcforceDl()
+					+", client.isEco:"+client.isEco());
 				if(!client.serverIsDmc() || Setting.isSmilePreferable() && !Setting.doesDmcforceDl()){
 					// 通常サーバ
-					if(VideoFile.isFile() && VideoFile.canRead()){
+					if(existVideoFile(VideoFile,".flv",".mp4")){
 						sendtext("動画は既に存在します");
 						log.println("動画は既に存在します。ダウンロードをスキップします");
+						VideoFile = existVideo;
 						return true;
 					}
 					if(lowVideoFile==null)
@@ -787,6 +830,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						optionalThreadID = client.getOptionalThreadID();
 					}
 					videoLength = client.getVideoLength();
+					videoContentType = client.getVideoContentType();
+					log.println("video ContentType: "+videoContentType);
 					setVideoTitleIfNull(VideoFile.getName());
 				}else{
 					// dmc
@@ -794,18 +839,33 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					long dmc_size = 0;
 					long resume_size = 0;
 					long video_size = 0;
-					long size_high = client.getSizeHigh();
-					log.println("smile size: "+size_high);
-					if(VideoFile.isFile() && VideoFile.canRead()){
+					long size_high = 0;
+					String size_high_str = client.getSizeHigh().trim();
+					if(size_high_str!=null){
+						try {
+							size_high = Long.decode(size_high_str);
+						}catch(NumberFormatException e){
+							log.printStackTrace(e);
+							size_high = 0;
+						}
+					}
+					if(size_high>0)
+						log.println("smile size: "+(size_high>>20)+"MiB");
+					else
+						log.println("bug? can't get smile size");
+					if(existVideoFile(VideoFile, ".flv", ".mp4")){
 						log.println("動画は既に存在します。");
 						sendtext("動画は既に存在します");
+						VideoFile = existVideo;
 						video_size = VideoFile.length();
-						log.println("video size: "+video_size);
+						log.println("video size: "+(video_size>>20)+"MiB");
 					}
-					if(dmcVideoFile.isFile() && dmcVideoFile.canRead()){
+					if(existVideoFile(dmcVideoFile, ".flv", ".mp4")){
 						log.println("dmc動画は既に存在します。");
 						sendtext("dmc動画は既に存在します");
+						dmcVideoFile = existVideo;
 						dmc_size = dmcVideoFile.length();
+						log.println("dmc size: "+(dmc_size>>20)+"MiB");
 					} else {
 						long min_size = Math.max(video_size, size_high);
 						long[] limits = {min_size, 0, 0};	// limits[1] is return value
@@ -819,12 +879,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									log.println("中断したdmc動画をresumeします。");
 									sendtext("中断したdmc動画resumeします");
 									resume_size = dmcVideoFile.length();
+									log.println("resumed size: "+(resume_size>>20)+"MiB");
 								}
 							}
 							do {
 								limits[2] = resume_size;
+								File dmclowFile = lowVideoFile;
+								if(dmclowFile==null)
+									dmclowFile = dmcVideoFile;
 								File video = client.getVideoDmc(
-									dmcVideoFile, Status, StopFlag, renameMp4, limits,
+									dmclowFile, Status, StopFlag, renameMp4, limits,
 									Setting.canRangeRequest(), true, resume_size);
 								if (stopFlagReturn()) {
 									result = "43";
@@ -835,29 +899,35 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									return false;
 								}
 								dmc_size = limits[1];
+								log.println("dmc size: "+(dmc_size>>20)+"MiB");
 								if(video==null){
 									//dmc_size = 0;
 									String ecode = client.getExtraError();
 									if(ecode.contains("97")){
+										// skip or done
 										log.println(ecode);
 										sendtext(ecode);
 										break;
 									} else {
 										log.println("dmc動画サーバからの(S)ダウンロードに失敗しました。");
 										sendtext("dmc動画の(S)ダウンロードに失敗。" + ecode);
-										if(ecode.contains("98"))
-											result = "98";
 										if(dmcVideoFile.canRead()){
 											if(dmcVideoFile.renameTo(resumeDmcFile))
 												log.println("dmcVideo renamed to "+resumeDmcFile);
 										}
-										return false;
+										if(ecode.contains("98")){
+											result = "98";	// suspended, retry next
+											return false;
+										}
 									}
 								}else{
 									// intended suspend
 									videoLength = client.getDmcVideoLength();
+									videoContentType = client.getVideoContentType();
+									log.println("video ContentType: "+videoContentType);
 									dmcVideoFile = video;
 									resume_size = dmcVideoFile.length();
+									log.println("resumed size: "+(resume_size>>20)+"MiB");
 								}
 								if(resume_size == dmc_size)
 									break;
@@ -898,15 +968,35 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									return false;
 								}
 							} while(resume_size < dmc_size);
-							if(resume_size != dmc_size){
-								log.println("dmc(S) resume失敗!");
+							if(dmc_size == 0){
+								log.println("dmc(S) download失敗!(dmc_size == 0)");
+								sendtext("dmc(S) download失敗!");
+							}else if(min_size == dmc_size){
+								log.println("dmc(S) ダウンロード済(min_size == dmc_size)");
+								sendtext("dmc(S) ダウンロード済");
+								dmcVideoFile = VideoFile;
+							}else if(min_size > dmc_size){
+								log.println("dmc(S) ダウンロード中止(min_size > dmc_size)");
+								sendtext("dmc(S) ダウンロード中止");
+								dmcVideoFile = null;
+							}else if(resume_size != dmc_size){
+								log.println("dmc(S) resume失敗!(resume_size != dmc_size)");
 								sendtext("dmc(S) resume失敗!");
+								log.println("dmc size: "+(dmc_size>>20)+"MiB, resumed size: "+(resume_size>>20)+"MiB");
 								dmc_size = 0;
+							}else{
+							//	コンテナ変換不要
+							//	if(Setting.isAutoFlvToMp4())
+							//		dmcVideoFile = dmcFlvToMp4Convert(dmcVideoFile);
 							}
 						} else {
+							// not dmc(S)
+							File dmclowFile = lowVideoFile;
+							if(dmclowFile==null)
+								dmclowFile = dmcVideoFile;
 							dmcVideoFile = client.getVideoDmc(
-									dmcVideoFile, Status, StopFlag, renameMp4, limits,
-									Setting.canRangeRequest(), false, 0);
+								dmclowFile, Status, StopFlag, renameMp4, limits,
+								Setting.canRangeRequest(), false, 0);
 							if (stopFlagReturn()) {
 								result = "43";
 								return false;
@@ -916,22 +1006,34 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								String ecode = client.getExtraError();
 								if(ecode.contains("97")){
 									dmc_size = limits[1];
+									if(dmc_size !=0 && dmc_size==video_size){
+										dmcVideoFile = VideoFile;
+									}
 									log.println(ecode);
 									sendtext(ecode);
+									log.println("dmc size: "+(dmc_size>>20)+"MiB");
 								}else{
 									log.println("dmc動画サーバからのダウンロードに失敗しました。");
 									sendtext("dmc動画のダウンロードに失敗" + ecode);
 								}
-							}else{
+							}
+							if(dmcVideoFile!=null && existVideoFile(dmcVideoFile, ".flv", ".mp4")){
 								log.println("dmc download "+dmcVideoFile.length()+"bytes");
 								videoLength = client.getDmcVideoLength();
+								videoContentType = client.getVideoContentType();
+								log.println("video ContentType: "+videoContentType);
 								dmc_size = dmcVideoFile.length();
+								log.println("dmc size: "+(dmc_size>>20)+"MiB");
+							//	コンテナ変換不要
+							//	if(Setting.isAutoFlvToMp4())
+							//		dmcVideoFile = dmcFlvToMp4Convert(dmcVideoFile);
 							}
 						}
 					}
 					if ( (size_high > video_size && size_high > dmc_size && !Setting.isInhibitSmaller())
-						||(size_high != video_size && Setting.isSmilePreferable())){
+						||(size_high != video_size && size_high != dmc_size && Setting.isSmilePreferable())){
 						// smile動画をダウンロード
+						log.println("Smile download start.");
 						if(lowVideoFile==null)
 							lowVideoFile = VideoFile;
 						VideoFile = client.getVideo(lowVideoFile, Status, StopFlag, renameMp4);
@@ -945,6 +1047,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							video_size = 0;
 						}else{
 							videoLength = client.getVideoLength();
+							videoContentType = client.getVideoContentType();
+							log.println("video ContentType: "+videoContentType);
 							video_size = VideoFile.length();
 						}
 					}
@@ -955,9 +1059,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 					setVideoTitleIfNull(VideoFile.getName());
 					if(dmc_size!=0)
-						log.println("dmc size: "+dmc_size+" bytes.");
+						log.println("dmc size: "+(dmc_size>>20)+"MiB");
 					if(video_size!=0)
-						log.println("smile size: "+video_size+" bytes.");
+						log.println("video size: "+(video_size>>20)+"MiB");
 					if(dmc_size > video_size){
 						log.println("変換にはdmc動画を使います");
 						sendtext("変換にはdmc動画を使います");
@@ -967,6 +1071,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						optionalThreadID = client.getOptionalThreadID();
 					}
 					resultBuffer.append("video: "+VideoFile.getName()+"\n");
+					if(!Setting.isOnlyMp4AutoPlay()||Path.hasExt(VideoFile, ".mp4")){	//mp4拡張子の動画のみ条件あり
+						autoPlay.offer(VideoFile,true);
+						if(autoPlay.isPlayDownload())
+							autoPlay.playAuto();
+					}
 				}
 			} else {
 				if (isSaveConverted()) {
@@ -977,26 +1086,29 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								sendtext("動画ファイルがフォルダに存在しません。");
 								result = "45";
 							} else {
-								sendtext("動画ファイルが.flvでありません：" + OtherVideo);
+								sendtext("動画ファイルが.flvや.mp4でありません：" + OtherVideo);
 								result = "46";
 							}
 							return false;
 						}
 						VideoFile = new File(folder, videoFilename);
-						if (!VideoFile.canRead()) {
-							sendtext("動画ファイルが読み込めません。");
-							result = "47";
-							return false;
-						}
+						lowVideoFile = new File(folder, videoFilename.replace(VideoID, lowVideoID));
+						dmcVideoFile = new File(folder, videoFilename.replace(VideoID, dmcVideoID));
 					} else {
 						VideoFile = Setting.getVideoFile();
-						if (!VideoFile.exists()) {
-							sendtext("動画ファイルが存在しません。");
-							result = "48";
-							return false;
-						}
+						VideoFile = replaceFilenamePattern(VideoFile,false,false);
+						lowVideoFile = replaceFilenamePattern(VideoFile,true,false);
+						dmcVideoFile = replaceFilenamePattern(VideoFile,false,true);
 					}
 					setVideoTitleIfNull(VideoFile.getName());
+					if (!existVideoFile(VideoFile, ".flv", ".mp4")
+					 && !existVideoFile(lowVideoFile, ".flv", ".mp4")
+					 && !existVideoFile(dmcVideoFile, ".flv", ".mp4")) {
+						sendtext("動画ファイルが存在しません。");
+						result = "47";
+						return false;
+					}
+					VideoFile = existVideo;
 				}
 			}
 			sendtext("動画の保存を終了");
@@ -1006,6 +1118,19 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return true;
 	}
 
+	private File existVideo;
+	private boolean existVideoFile(File file, String ext1, String ext2) {
+		existVideo = file;
+		if(existVideo.isFile() && existVideo.canRead())
+			return true;
+		existVideo = Path.getReplacedExtFile(file, ext1);
+		if(existVideo.isFile() && existVideo.canRead())
+			return true;
+		existVideo = Path.getReplacedExtFile(file, ext2);
+		if(existVideo.isFile() && existVideo.canRead())
+			return true;
+		return false;
+	}
 	private boolean saveComment(NicoClient client) {
 		sendtext("コメントの保存");
 		File folder = Setting.getCommentFixFileNameFolder();
@@ -1150,7 +1275,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (file == null || file.getPath() == null) {
 			return mkTemp(OPTIONAL_EXT);
 		}
-		return getReplacedExtFile(file, OPTIONAL_EXT);
+		return Path.getReplacedExtFile(file, OPTIONAL_EXT);
 	}
 	private String getDateUserFirst(File comfile){
 		//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
@@ -1250,9 +1375,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				result = "A0";
 				return false;
 			}
-			thumbInfoFile = new File(folder, getVideoBaseName() + ext);
+			thumbInfoFile = new File(folder, getVideoBaseName() + THUMB_INFO + ext);
 		} else {
 			thumbInfoFile = getThumbInfoFileFrom(Setting.getVideoFile(), ext);
+			thumbInfoFile = replaceFilenamePattern(thumbInfoFile, false, false);
 		}
 		if(thumbInfoFile==null){
 			sendtext("動画情報ファイルがnullです");
@@ -1412,10 +1538,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			thumbnailJpg = new File(folder, getVideoBaseName() + ".jpg");
 		} else {
 			File file = Setting.getVideoFile();
-			if (file == null || !file.isFile() || file.getPath() == null) {
+			if(file!=null)
+				file = replaceFilenamePattern(file, false, false);
+			if (file == null || file.getPath() == null) {
 				thumbnailJpg = mkTemp(Tag + "_thumnail.jpg");
 			}else{
-				thumbnailJpg = getReplacedExtFile(file, ".jpg");
+				thumbnailJpg = Path.getReplacedExtFile(file, ".jpg");
 			}
 		}
 		return true;
@@ -1450,7 +1578,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (file == null || file.getPath() == null) {
 			return mkTemp(THUMB_INFO + ext);
 		}
-		return getReplacedExtFile(file, THUMB_INFO + ext);
+		return Path.getReplacedExtFile(file, THUMB_INFO + ext);
 	}
 
 	private boolean makeNGPattern() {
@@ -1474,22 +1602,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private Path mkTemp(String uniq){
 		return Path.mkTemp(Tag + uniq);
-	}
-
-	private String getRemovedExtName(String path) {
-		int index = path.lastIndexOf(".");
-		if (index > path.lastIndexOf(File.separator)) {
-			path = path.substring(0, index);		// 拡張子を削除
-		}
-		return path;
-	}
-
-	private String getReplacedExtName(String path, String ext) {
-		return getRemovedExtName(path) + ext;
-	}
-
-	private File getReplacedExtFile(File file, String ext){
-		return new File(getReplacedExtName(file.getPath(),ext));
 	}
 
 	private boolean convertComment(){
@@ -1803,6 +1915,49 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return true;
 	}
 
+// ダウンロードをmp4に変更したので以下は実行しない
+//	private File dmcFlvToMp4Convert(File input) {
+//		sendtext("dmc flv->mp4");
+//		log.println("dmc flv->mp4: "+VideoID);
+//		Path output = Path.mkTemp("_"+VideoID+".mp4");
+//		if(output.isFile())
+//			output.delete();
+//		if(videoContentType!=null && videoContentType.contains("mp4") && !Path.hasExt(input, ".mp4"))
+//		{
+//			input = Path.getReplacedExtFile(input, ".mp4");
+//		}
+//		//出力
+//		if(ffmpeg==null){
+//			String path = Setting.getFFmpegPath();
+//			if (!Path.isFile(path)) {
+//				log.println("dmc flv->mp4 failed! "+VideoID+", FFmpeg not found!");
+//				return input;
+//			}
+//			ffmpeg = new FFmpeg(path);
+//		}
+//		ffmpeg.setCmd("-y -analyzeduration 10M -i ");
+//		ffmpeg.addFile(input);
+//		ffmpeg.addCmd(" -c:a copy -c:v copy -f mp4 ");
+//		ffmpeg.addFile(output);
+//		int code = execOption();
+//		if(code!=0){
+//			log.println("dmc flv->mp4 failed! "+VideoID+", code="+code);
+//			return input;
+//		}
+//		if(Setting.isChangeMp4Ext() && !Path.hasExt(input,".mp4")){
+//			File inputmp4 = Path.getReplacedExtFile(input, ".mp4");
+//			input.renameTo(inputmp4);
+//			input = inputmp4;
+//		}
+//		if(Path.move(output, input))
+//			log.println("dmc flv->mp4 done: "+VideoID);
+//		else {
+//			log.println("dmc flv->mp4 failed!: copy faild! "+VideoID);
+//			log.println("mp4 container file is "+output.getPath());
+//		}
+//		return input;
+//	}
+
 	private boolean convertVideo() throws IOException {
 		sendtext("動画の変換を開始");
 		stopwatch.start();
@@ -1876,16 +2031,32 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				conv_name = conv_name.trim();
 			}
 			conv_name = safeAsciiFileName(conv_name);
+			if(Path.contains(VideoFile,"low_") && !conv_name.contains("low_")){
+				if(conv_name.contains(VideoID))
+					conv_name = conv_name.replace(VideoID, lowVideoID);
+				else
+					conv_name = "low_" + conv_name;
+			}
 			ConvertedVideoFile = new File(folder, conv_name + ExtOption);
 		} else {
-			String filename = Setting.getConvertedVideoFile().getPath();
-			if (!filename.endsWith(ExtOption)) {
-				filename = filename.substring(0, filename.lastIndexOf('.'))
-						+ ExtOption;
-				ConvertedVideoFile = new File(filename);
-			} else {
-				ConvertedVideoFile = Setting.getConvertedVideoFile();
+			File file = Setting.getConvertedVideoFile();
+			if (!Path.hasExt(file, ExtOption)) {
+				file = Path.getReplacedExtFile(file,ExtOption);
 			}
+			boolean videoIsLow = Path.contains(VideoFile,"low_");
+			//boolean videoIsDmc = Path.contains(VideoFile, "dmc_");
+			file = replaceFilenamePattern(file, videoIsLow, false);
+			String convfilename = file.getName();
+			folder = file.getParentFile();
+			if(videoIsLow && !convfilename.contains("low_")){
+				if(convfilename.contains(VideoID))
+					convfilename = convfilename.replace(VideoID, lowVideoID);
+				else if(convfilename.contains(Tag))
+					convfilename = convfilename.replace(Tag, Tag+"low_");
+				else
+					convfilename = "low_" + convfilename;
+			}
+			ConvertedVideoFile = new File(folder, convfilename);
 		}
 		if (ConvertedVideoFile.getAbsolutePath().equals(VideoFile.getAbsolutePath())){
 			sendtext("変換後のファイル名が変換前と同じです");
@@ -1939,21 +2110,62 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return false;
 	}
 
+	/**
+	 * replaceFilenamePattern(File source)
+	 * @param file
+	 * @return
+	 *  %ID% -> Tag, %id% -> [Tag](VideoIDと同じ) %TITLE% -> VideoTitle,
+	 *  %CAT% -> もしあればカテゴリータグ, %TAG1% ->２番めの動画タグ
+	 */
+	private File replaceFilenamePattern(File file, boolean economy, boolean dmc) {
+		String videoFilename = file.getPath();
+		if(VideoTitle==null){
+			log.println("bug! VideoTitle is Null.");
+			setVideoTitleIfNull(file.getName());
+		}
+		String canonical =
+			VideoTitle.replace("　", " ").replaceAll(" +", " ").trim()
+			.replace("．", ".");
+		nicoTag0 = ""+nicoCategory;
+		if(nicoTag1.isEmpty()){
+			if(nicoTagList.size()>0){
+				nicoTag1 = nicoTagList.get(0);
+				if(nicoTag1.equals(nicoTag0) && nicoTagList.size()>1)
+					nicoTag1 = nicoTagList.get(1);
+			}
+		}
+		if(isDebugNet){
+			log.println("(ConvertWorker)nicoCategory="+nicoTag0);
+			log.println("(ConvertWorker)nicoTagList="+nicoTag1);
+		}
+		String lowString = economy? "low_":(dmc?"dmc_":"");
+		String surfix = videoFilename.contains("%LOW%")? "":lowString;
+		videoFilename =
+			videoFilename.replace("%ID%", Tag+surfix) 	// %ID% -> 動画ID
+			.replace("%id%", VideoID+surfix)	// %id% -> [動画ID]
+			.replace("%LOW%", lowString)	// %LOW% -> economy時 low_
+			.replace("%TITLE%",VideoTitle)	// %TITLE% -> 動画タイトル
+			.replace("%title%", canonical)	// %title% -> 動画タイトル（空白大文字を空白小文字に）
+			.replace("%CAT%", nicoTag0)		// %CAT% -> もしあればカテゴリータグ
+			.replace("%TAG1%", nicoTag1)	//	%TAG1% ->２番めのタグ
+			;
+		File target = new File(videoFilename);
+		File parent = target.getParentFile();
+		if(!parent.isDirectory()){
+			if(parent.mkdirs()){
+				log.println("folder created: "+parent.getPath());
+			}
+			if(!parent.isDirectory()){
+				log.println("フォルダが作成できません:"+parent.getPath());
+				log.println("置換失敗 "+videoFilename);
+				target = file;
+			}
+		}
+		return target;
+	}
+
 	private static String safeAsciiFileName(String str) {
-		//Windowsファイルシステムで扱えるAscii文字列に
-		str = str.replace('/', '_')
-			.replace('\\', '_')
-			.replace('?', '_')
-			.replace('*', '_')
-			.replace(':', ';')		//	:(colon) to ;(semi colon)
-			.replace('|', '_')
-			.replace('\"', '\'')
-			.replace('<', '(')
-			.replace('>', ')')
-//			.replace('.', '．')		// .(dot) is let there
-			.replaceAll(" +", " ")
-			.trim();
-		return str;
+		return NicoClient.toSafeWindowsName(str, "MS932");
 	}
 
 	private boolean canRetry(NicoClient client, Gate gate){
@@ -1995,7 +2207,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		sendtext("[FF]Converter cancelled.");
 		log.println("LastStatus:[FF]Converter cancelled.");
 		sbRet.append("RESULT=FF\n");
-		errorControl.setError(result,Tag+WatchInfo,gettext());
+		if(!Tag.contains(WatchInfo))
+			Tag += WatchInfo;
+		errorControl.setError(result,Tag,gettext());
 	}
 
 	@Override
@@ -2062,8 +2276,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				gate.resetError();
 				VideoTitle = client.getVideoTitle();
 				thumbInfoData = client.getThumbInfoData();
+				log.println("size_high: "+client.getSizeHigh());
+				log.println("is_eco: "+client.isEco());
 				VideoBaseName = Setting.isChangeTitleId()?
 					VideoTitle + VideoID : VideoID + VideoTitle;
+				nicoCategory = client.getNicocategory();
+				nicoTagList = client.getNicotags();
 				sendtext(Tag + "の情報の取得に成功");
 				if(alternativeTag.isEmpty()){
 					alternativeTag = client.getAlternativeTag();
@@ -2154,7 +2372,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(thumbInfoData==null){
 				String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
 				if(thumbInfoFile==null)
-					thumbInfoFile = getReplacedExtFile(VideoFile, ext);
+					thumbInfoFile = Path.getReplacedExtFile(VideoFile, ext);
 				if(thumbInfoFile!=null  && thumbInfoFile.equals(CommentFile) && thumbInfoFile.canRead())
 					thumbInfoData = Path.readAllText(thumbInfoFile, "UTF-8");
 				if(thumbInfoData!=null
@@ -2169,7 +2387,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (convertVideo()) {
 				// 変換成功
 				result = "0";
-				autoPlay.offer(ConvertedVideoFile);
+				autoPlay.offer(ConvertedVideoFile, false);
+				if(!autoPlay.isPlayDownload())
+					autoPlay.playAuto();
 				if (isDeleteCommentAfterConverting())
 					deleteCommentFile();
 				if (isDeleteVideoAfterConverting())
@@ -2190,22 +2410,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(!dateUserFirst.isEmpty()){
 				sbRet.append("DATEUF=" + dateUserFirst + "\n");
 			}
+			String url = Tag.contains(WatchInfo)? Tag : Tag+WatchInfo;
 			if(result.equals("97"))
-				errorControl.setError(result,Tag+WatchInfo,"中止しました");
+				errorControl.setError(result,url,"中止しました");
 			else if(result.equals("98")){
 				StringBuffer sb = new StringBuffer(Tag+"\tリトライ\t"+WatchInfo);
 				if(parent!=null){
 					parent.myListGetterDone(sb, log);
 				}else{
-					errorControl.setError(result,Tag+WatchInfo,"サスペンド\t"+resumeDmcFile);
+					errorControl.setError(result,url,"サスペンド\t"+resumeDmcFile);
 				}
 			}
 			else
 			if(!result.equals("0"))
-				errorControl.setError(result,Tag+WatchInfo,gettext());
-			else {
-				autoPlay.playAuto();
-			}
+				errorControl.setError(result,url,gettext());
 			synchronized(StopFlag){
 				StopFlag.finish();
 				StopFlag.setButtonEnabled(false);
@@ -3385,6 +3603,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ffmpeg.addCmd("|--comment-shift:"
 					+ URLEncoder.encode(Setting.getCommentVposShiftString(), encoding));
 			}
+			ffmpeg.addCmd("|--comment-erase:" + Setting.getCommentEraseType());
 			String extra = Setting.getExtraMode();
 			if(extra.contains("-April=")){
 				int index = extra.indexOf("-April=");
@@ -3818,7 +4037,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 		@Override
 		public boolean accept(File dir, String name) {
-			if (name.indexOf(VideoTag) >= 0){
+			if (name.indexOf("["+VideoTag+"]") >= 0){
+				return true;
+			}
+			if(name.startsWith(VideoTag + "_")
+				|| name.startsWith(VideoTag + "low_") || name.startsWith(VideoTag + "dmc_")){
 				return true;
 			}
 			return false;
@@ -3828,7 +4051,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private void setVideoTitleIfNull(String path) {
 		String videoTitle = VideoTitle;
 		if (videoTitle == null){
-			videoTitle = getTitleFromPath(path, VideoID);
+			videoTitle = getTitleFromPath(path, VideoID, Tag);
 			// 過去ログ時刻を削除
 			String regex = "\\[" + WayBackDate.STR_FMT_REGEX + "\\]";
 			videoTitle = videoTitle.replaceAll(regex, "");
@@ -3847,15 +4070,19 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		String list[] = dir.list(DefaultVideoIDFilter);
 		if(list == null){ return null; }
 		for (int i = 0; i < list.length; i++) {
-			if (list[i].startsWith(VideoID)) {
-				String path = list[i];
-				if(path.endsWith(".flv") ||
-				   path.endsWith(".mp4") && Setting.isChangeMp4Ext()){
+			String path = list[i];
+			if (path.contains(VideoID)) {
+				if(path.endsWith(".flv") ||  path.endsWith(".mp4")){
 					setVideoTitleIfNull(path);
 					return path;
 				}
 				OtherVideo = path;
-				continue;
+			}
+			if(path.startsWith(Tag+"_")||path.startsWith(Tag+"low_")||path.startsWith(Tag+"dmc_")){
+				if(path.endsWith(".flv") ||  path.endsWith(".mp4")){
+					setVideoTitleIfNull(path);
+					return path;
+				}
 			}
 		}
 		return null;
@@ -3871,7 +4098,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				int index = path.lastIndexOf(".");
 				if (index < 0) continue;
 				String ext = path.substring(index).toLowerCase();
-				if(ext.equals(".flv") || ext.equals(".mp4")  || ext.equals(".avi")  || ext.equals(".mpg") ){
+				if(".flv.f4v.mp4.avi.mpg.mpeg.wmv.webm".contains(ext)){
 					return path;
 				}
 			}
@@ -3984,9 +4211,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	 * videoIDの位置は無関係に削除
 	 * 拡張子があればその前まで
 	 */
-	private String getTitleFromPath(String path, String videoID){
-		if (path.indexOf(videoID) >= 0){
+	private String getTitleFromPath(String path, String videoID, String Tag){
+		if (path.contains(videoID)){
 			path = path.replace(videoID, "");	// videoIDの位置は無関係に削除
+		} else if(path.contains(Tag)){
+			path = path.replace(Tag, "");
+			if(path.startsWith("_")){
+				path = path.substring(1);
+			}
 		}
 		// 拡張子があればその前まで
 		if (path.lastIndexOf(".") > path.lastIndexOf(File.separator)){

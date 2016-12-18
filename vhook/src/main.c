@@ -113,6 +113,10 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		double vpos_shift = (double)strtod(setting->comment_shift,NULL);
 		data->comment_vpos_shift = (int)(vpos_shift * VPOS_FACTOR);
 	}
+	if(setting->comment_erase !=NULL){
+		int erase_type = (int)strtol(setting->comment_erase,NULL,10);
+		data->comment_erase_type = erase_type;
+	}
 
 	data->pad_w = 0;
 	data->pad_h = 0;

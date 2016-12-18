@@ -273,6 +273,10 @@ public class Path extends File{
 	public boolean contains(String str){
 		return indexOf(str) >= 0;
 	}
+	public static boolean contains(File file, String str){
+		String name = file.getPath();
+		return name.indexOf(str)>=0;
+	}
 	/**
 	 * search file name conteins key string among childs
 	 * @param key : target key : String
@@ -502,8 +506,35 @@ public class Path extends File{
 	public static void writeAllText(File file, String text, String encoding) {
 		writeAllText(file.getPath(), text, encoding);
 	}
-	public String getExtension() {
-		String name = this.getName();
+	public static String getExtention(File file){
+		String name = file.getName();
+		if(!name.contains("."))
+			return "";
 		return name.substring(name.lastIndexOf('.'));
+	}
+	public String getExtension() {
+		return getExtention(this);
+	}
+	public static boolean hasExt(File file, String ext){
+		return getExtention(file).equals(ext);
+	}
+	public boolean hasExt(String ext){
+		return hasExt(this, ext);
+	}
+	static String getRemovedExtName(String path) {
+		int index = path.lastIndexOf(".");
+		if (index > path.lastIndexOf(File.separator)) {
+			path = path.substring(0, index);		// Šg’£q‚ğíœ
+		}
+		return path;
+	}
+	static String getReplacedExtName(String path, String ext) {
+		return getRemovedExtName(path) + ext;
+	}
+	public static File getReplacedExtFile(File file, String ext){
+		return new File(getReplacedExtName(file.getPath(),ext));
+	}
+	public File replaceExt(String ext){
+		return getReplacedExtFile(this, ext);
 	}
 }

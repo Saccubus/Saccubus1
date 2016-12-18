@@ -23,6 +23,13 @@ readmeNew.txt
 　起動までの準備について
 　起動
 　拡張機能（変更点）説明
+　　FFmpeg3.2.2 に更新
+　　リクエスト履歴にマイリスト履歴を追加
+　　dmcからのflv(avc+aac)をダウンロード後にmp4コンテナに自動変換(issue #31)
+　　拡張ダウンロード設定(dmc)をページ情報設定タブに移動
+　　項目表示をパネル単位で非表示切り替え可能。アクションメニューに追加
+　　economy時、変換後動画にもlow_追加　(issue#32)
+　　保存変換出力ファイル名置換マクロ追加
 　　dmcサーバ動画ダウンロード少し高速化
 　　dmcサーバ動画対応
 　　ログインチェックボタン追加
@@ -169,7 +176,7 @@ readmeNew.txt
 
 □改造部分について
 【ライセンス】
-１．ffmpeg3.2_4.exe、Saccubus.jar（ソース同梱）は
+１．ffmpeg3.2.2.exe、Saccubus.jar（ソース同梱）は
 GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
 （ソースはGithubレポジトリ　https://github.com/Saccubus　）
 ２．nicovideoE.dll、Bin.jar、Saccubus.exe（全てソース同梱）は
@@ -240,9 +247,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 ●注意●
 　・本Revの人柱用レベルは前Rev.と同じくらいです。
-　・配布形態　　ffmpeg3.2_4同梱版
+　・配布形態　　ffmpeg3.2.2同梱版
 　・本Rev.は確定版SDLライブラリ（2012/11/02版）を同梱しています。（binフォルダ内）
-　・本Rev.はffmpeg 21400用optionファイルを削除しました。
 　・optionFFAAC（80914d用 2016/07/07版）optionFDev（実験用 2015/03/08版）を同梱。
 
 □インストール方法と拡張機能設定
@@ -250,20 +256,30 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　「初めてさきゅばすを使う方」を実行して下さい。
 
 　◆1.22r3以降をご使用中の方
-　【注意】今回の変更は　ffmpeg3.2_4(n3.2相当)用となるため
+　【注意】今回の変更は　ffmpeg3.2.2用となるため
 　他のffmpegでは使用出来ない可能性があります。ご了承ください。
 　・自分で修正したオプションファイル(optionVOファルダ/optionF)をお持ちの方は
-　　ffmpeg3.2_4に合わせて変更が必要な場合があります。
+　　同梱ffmpegに合わせて変更が必要な場合があります。
     (optionFFAACフォルダ参照)(optionFフォルダそのまま使用は可能)
 　・「saccubus」内のファイルを以前のさきゅばすフォルダに
 　　■全て上書き■して下さい。
 　・移動したオプションファイルをコピーして戻して下さい。
 　・初期化用にsaccubus.iniが入っています。
 　　saccubus.xmlがない時とメニューから初期化を実行した時に
-　　saccubus.iniを読み込んでffmpeg3.2_4用にoptionフォルダと
+　　saccubus.iniを読み込んでffmpeg3.2.2用にoptionフォルダと
 　　ffmpegを設定します。
 
 　◆拡張機能（概要）追加分
+　・表示コメント数超過時「新しいコメントを無視する」(issue #35)
+　・一般アカウントのdmcアクセス修正(issue #34)
+　・変換動画low_追加とファイル名マクロバグ修正
+　・FFmpeg3.2.2 に更新
+　・リクエスト履歴にマイリスト履歴を追加
+　・dmcからのflv(avc+aac)をダウンロード後にmp4コンテナに自動変換(issue #31)
+　・拡張ダウンロード設定(dmc)をページ情報設定タブに移動
+　・項目表示をパネル単位で非表示切り替え可能。アクションメニューに追加
+　・economy時、変換後動画にもlow_追加　(issue#32)
+　・保存変換出力ファイル名置換マクロ追加
 　・ffmpeg n3.2に更新　NVENC API 7.x対応(Pascal GTX 1060,1070,1080以降)
 　・auto.bat時のログ出力, http://・・・smid?ref= 形式時のバグ修正
 　・キーワード・タグ検索でタイトルの抽出修正
@@ -435,6 +451,48 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 □拡張機能（変更点）説明
+●コメントが表示数を超えた時にどう消すかの選択を追加(issue #35)
+　　0:従来通り　表示の途中であっても、表示時+スロット順が先の方から消されていきます。
+　　1:表示数を越えた新しいコメントは無視されます。(非表示のまま)
+
+●一般アカウントのdmcアクセス修正(issue #34)
+
+●変換動画low_追加とファイル名マクロバグ修正
+　保存するファイル名を指定するを選択すると置換マクロが使えます。
+　　%LOW% →economy時 low_ 
+　　　(あとでファイル名に付ける場所を変えた場合
+　　　保存済みlow動画を認識できないかもしれません
+　　　DL直後の変換では認識できます。)
+　　%ID% →動画ID　%LOW%がなくeconomy時 動画IDlow_
+　　%id% →[動画ID]　%LOW%がなくeconomy時 [動画ID]low_
+　　%TITLE% →動画タイトル
+　　%title% →全角空白を半角空白に変えた動画タイトル
+　　%CAT% →(もしあれば)カテゴリータグ (属性 category="1" のタグ)
+　　%TAG1% →2番め(カテゴリータグの次)のタグ
+
+●FFmpeg3.2.2 に更新
+
+●リクエスト履歴にマイリスト履歴を追加。切替可能
+
+●dmcからのflv(avc+aac)をダウンロード後にmp4コンテナに
+　自動変換設定追加(issue #31)
+　（拡張子はflvのまま。別の設定項目によりmp4に変更）
+
+●拡張ダウンロード設定(dmc)をページ情報設定タブに移動
+
+●項目表示をパネル単位で非表示切り替え可能に、状態は設定xml保存
+　アクションメニューに項目全表示最小表示などを追加
+
+●economy時、変換後動画にもlow_追加　(issue#32)
+
+●保存変換出力ファイル名置換マクロ
+　保存するファイル名を指定するを選択すると置換マクロが使えます。
+　　%ID% →動画ID
+　　%TITLE% →動画タイトル
+　　%title% →全角空白を半角空白に変えた動画タイトル
+　　%CAT% →(もしあれば)カテゴリータグ (属性 category="1" のタグ)
+　　%TAG1% →2番め(カテゴリータグの次)のタグ
+
 ●dmc(S)ダウンロードのエラーを出なくしました。
 　このため接続切断やエラーリトライや(R)ダウンロードは
 　(機能は残していますが)実行の必要がなくなりました。
@@ -1147,9 +1205,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 ■収録物
-　　ffmpeg80914d同梱版
+　　ffmpeg3.2.2同梱版
 □フォルダ構成
-　saccubus1.65.7.8.zip
+　saccubus1.66.2.7.zip
 　├読んで下さいtxt
 　└saccubus　　  本体exe jar xml bat
 　　├bin          実行ファイルフォルダ exe dll
@@ -1165,12 +1223,12 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・auto.bat 　　　　　　　　 自動実行用バッチファイル(1.22rの修正版)
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
 ・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
-・saccubus.ini　　　　　　　80914d向け初期設定
+・saccubus.ini　　　　　　　ffmpeg3.2.2向け初期設定
 ・最初に必ず読んで.txt
 ・bin フォルダ配下
-　　ffmpeg80914d.exe ライセンスGPLV3
-　　　library80914d.txt　　外部ライブラリーバージョン
-　　nicovideoE.dll(2016.04.29版)統合版拡張Vhookライブラリ
+　　ffmpeg3.2.2.exe ライセンスGPLV3
+　　　library3.2.2.txt　　外部ライブラリーバージョン
+　　nicovideoE.dll(2016.12.15版)拡張Vhookライブラリ
 　　SDL.dll(2012.01.16ビルド)、COPYNG、README-SDL.txt
 　　　ライセンスはLGPL
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYING.sdl_ttf
@@ -1194,8 +1252,11 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　option説明.txt
 　　readmeNew.txt(最新)
 　　readme+.txt(1.22r3)
+　　readme150.txt(1.50)
 　　readme.txt(1.22r)
 　　ToDo.txt
+　　エラーコード表
+　　旧鯖仕様.txt
 　　オプションファイル見本.xml　（1.22rの物）
 　　ローカル変換追加説明.txt
 　　最初に必ず読んで.txt　　　　　(コピー)
@@ -1234,8 +1295,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　1.65.3以降はgithubの　https://github.com/Saccubus/Saccubus1.x/releases/ で
 　1.65.2　　https://github.com/Saccubus/Saccubus1.x/releases/tag/1.65.2
 　1.65.1　　http://www1.axfc.net/u/3613928.zip
-　1.65.0　　http://www1.axfc.net/u/3611115.zip
-　1.64.2　　http://www1.axfc.net/u/3582177.zip
+　1.65.0　　http://www1.axfc.net/u/3611115.zip (MultiThreads 最初版)
+　1.64.2　　http://www1.axfc.net/u/3582177.zip (SingleThread 最終版)
 　1.63　　　http://www1.axfc.net/u/3526594.zip
 　1.62　　　http://www1.axfc.net/u/3509654.zip
 　1.61　　　http://www1.axfc.net/u/3502367.zip
@@ -1305,7 +1366,10 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 変更履歴・修正・改変点
-1.66.1.1a
+1.66.1.2(2016/11/06)
+　ffmpeg n3.2に更新　NVENC API 7.x対応(Pascal GTX 1060,1070,1080以降)
+
+1.66.1.1a(2016/10/11)
 　saccubus.jar だけ差し替え(ファイルコピーミスのため)
 
 1.66.1.1(2016/10/11)

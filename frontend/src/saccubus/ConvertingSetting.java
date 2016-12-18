@@ -50,13 +50,15 @@ public class ConvertingSetting {
 	static final String DEFAULT_OPTION_FOLDER = "./optionF";
 	static final String DEFAULT_VHOOK_PATH = "./bin/nicovideoE.dll";
 	static final String DEFAULT_FFMPEG_PATH = "./bin/ffmpeg.exe";
+	static final boolean ONLY_MP4_AUTO_PLAY = false;
 
 	public static final String[] ShadowKindArray = {
 		"00:なし",
 		"01:ニコニコ動画風",
 		"02:右下",
 		"03:囲い込み",
-		"04:Saccubus2風"
+		"04:Saccubus2風",
+		"05:新Saccubus2風FreeType2"
 		};
 
 	private String MailAddress;
@@ -176,6 +178,7 @@ public class ConvertingSetting {
 	private static String defOptsJpegMp4 = DEF_OPTS_JPEG_MP4;
 	private static String defOptsMix = DEF_OPTS_MIX;
 	private static boolean defOptsSaveThumbinfoMetadata = DEF_OPTS_SAVE_THUMBINFO_METADATA;
+	private static boolean onlyMp4AutoPlay = ONLY_MP4_AUTO_PLAY;
 	private Map<String, String> replaceOptions;
 	private boolean liveOparetionConversion;
 	private boolean premiumColorCheck;
@@ -198,6 +201,9 @@ public class ConvertingSetting {
 	private boolean enableRange;
 	private boolean enableSeqResume;
 	private boolean inhibitSmaller;
+	private boolean autoFlvToMp4;
+	private String panelHideMapping;
+	private int commentEraseType;
 	private boolean isHtml5;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
@@ -432,6 +438,9 @@ public class ConvertingSetting {
 			boolean enable_range,
 			boolean enable_sequential,
 			boolean inhibit_smaller,
+			boolean auto_flv_mp4,
+			String panel_hiding,
+			int comment_erase_type,
 			boolean watch_html5
 		)
 	{
@@ -580,6 +589,9 @@ public class ConvertingSetting {
 		enableRange = enable_range;
 		enableSeqResume = enable_sequential;
 		inhibitSmaller = inhibit_smaller;
+		autoFlvToMp4 = auto_flv_mp4;
+		panelHideMapping = panel_hiding;
+		commentEraseType = comment_erase_type;
 		isHtml5 = watch_html5;
 	}
 
@@ -726,6 +738,9 @@ public class ConvertingSetting {
 	}
 	public String getRequestHistory() {
 		return lastHistory;
+	}
+	public void setLastHistory(String h){
+		lastHistory = h;
 	}
 	public String getVhookWidePath(){
 		return VhookWidePath;
@@ -992,6 +1007,9 @@ public class ConvertingSetting {
 	public boolean isInhibitSmaller(){
 		return inhibitSmaller;
 	}
+	public boolean isAutoFlvToMp4(){
+		return autoFlvToMp4;
+	}
 	public boolean isHtml5() {
 		return isHtml5;
 	}
@@ -1010,6 +1028,15 @@ public class ConvertingSetting {
 	}
 	public boolean getDefOptsSaveThumbinfoMetadata(){
 		return defOptsSaveThumbinfoMetadata;
+	}
+	public String getPanelHideMapping(){
+		return panelHideMapping;
+	}
+	public boolean isOnlyMp4AutoPlay() {
+		return onlyMp4AutoPlay;
+	}
+	public int getCommentEraseType(){
+		return commentEraseType;
 	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
@@ -1158,6 +1185,9 @@ public class ConvertingSetting {
 	static final String PROP_ENABLE_RANGE = "EnableRangeRequest";
 	static final String PROP_ENABLE_SEQ_RESUME = "EnableSeqResume";
 	static final String PROP_INHIBIT_SMALLER_VIDEO = "InhibitSmallerVideo";
+	static final String PROP_AUTO_FLV_MP4 = "autoConvertDmcFlvToMp4";
+	static final String PROP_PANEL_HIDE_MAPPING = "panelHideMapping";
+	static final String PROP_COMMENT_ERASE_TYPE = "CommentEraseType";
 	static final String PROP_WATCH_HTML5 = "WatchHtml5";
 	// 保存するがGUIでは変更しない
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
@@ -1165,6 +1195,7 @@ public class ConvertingSetting {
 	public static final String PROP_OPTS_JPEG_MP4 = "OutOptionJpegMp4";
 	public static final String PROP_OPTS_MIX = "OutOptionMix";
 	public static final String PROP_OPTS_SAVE_THUMBINFO_METADATA = "SaveThumbinfoMetadata";
+	public static final String PROP_ONLY_MP4_AUTO_PLAY = "AutoPlayOnlyMp4";
 	/*
 	 * ここまで拡張設定 1.22r3 に対する
 	 */
@@ -1379,6 +1410,9 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ENABLE_RANGE, Boolean.toString(setting.canRangeRequest()));
 		prop.setProperty(PROP_ENABLE_SEQ_RESUME, Boolean.toString(setting.canSeqResume()));
 		prop.setProperty(PROP_INHIBIT_SMALLER_VIDEO, Boolean.toString(setting.isInhibitSmaller()));
+		prop.setProperty(PROP_AUTO_FLV_MP4, Boolean.toString(setting.isAutoFlvToMp4()));
+		prop.setProperty(PROP_PANEL_HIDE_MAPPING, setting.getPanelHideMapping());
+		prop.setProperty(PROP_COMMENT_ERASE_TYPE, Integer.toString(setting.getCommentEraseType()));
 		prop.setProperty(PROP_WATCH_HTML5, Boolean.toString(setting.isHtml5));
 		//GUIなし ini初期値あり
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
@@ -1386,6 +1420,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_OPTS_MIX, defOptsMix);
 		prop.setProperty(PROP_OPTS_SWF_JPEG, defOptsSwfJpeg);
 		prop.setProperty(PROP_OPTS_SAVE_THUMBINFO_METADATA, Boolean.toString(defOptsSaveThumbinfoMetadata));
+		prop.setProperty(PROP_ONLY_MP4_AUTO_PLAY, Boolean.toString(onlyMp4AutoPlay));
 		/*
 		 * ここまで拡張設定保存 1.22r3 に対する
 		 */
@@ -1504,6 +1539,8 @@ public class ConvertingSetting {
 		defOptsMix = prop.getProperty(PROP_OPTS_MIX, DEF_OPTS_MIX);
 		defOptsSaveThumbinfoMetadata = Boolean.valueOf(prop.getProperty(
 			PROP_OPTS_SAVE_THUMBINFO_METADATA,Boolean.toString(DEF_OPTS_SAVE_THUMBINFO_METADATA)));
+		onlyMp4AutoPlay = Boolean.valueOf(
+			prop.getProperty(PROP_ONLY_MP4_AUTO_PLAY, Boolean.toString(ONLY_MP4_AUTO_PLAY)));
 
 		File option_file = null;
 		if (option_file_name != null) {
@@ -1653,6 +1690,9 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_RANGE,"false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_SEQ_RESUME, "true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_INHIBIT_SMALLER_VIDEO, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_FLV_MP4, "true")),
+			prop.getProperty(PROP_PANEL_HIDE_MAPPING, ""),
+			Integer.decode(prop.getProperty(PROP_COMMENT_ERASE_TYPE, "0")),
 			Boolean.parseBoolean(prop.getProperty(PROP_WATCH_HTML5, "false"))
 		);
 	}

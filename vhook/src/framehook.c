@@ -35,7 +35,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ƒƒO
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.65.6.3";	//
+	char *ver="1.66.2.15";	//
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -368,6 +368,11 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 		else if (strncmp(FRAMEHOOK_OPT_COMMENT_SHIFT,arg,FRAMEHOOK_OPT_COMMENT_SHIFT_LEN) == 0){
 			setting->comment_shift = arg+FRAMEHOOK_OPT_COMMENT_SHIFT_LEN;
 			fprintf(log,"[framehook/init]comment_shift: %s\n",setting->comment_shift);
+			fflush(log);
+		}
+		else if (strncmp(FRAMEHOOK_OPT_COMMENT_ERASE,arg,FRAMEHOOK_OPT_COMMENT_ERASE_LEN) == 0){
+			setting->comment_erase = arg+FRAMEHOOK_OPT_COMMENT_ERASE_LEN;
+			fprintf(log,"[framehook/init]comment_erase: %s\n",setting->comment_erase);
 			fflush(log);
 		}
 #ifdef VHOOKDEBUG

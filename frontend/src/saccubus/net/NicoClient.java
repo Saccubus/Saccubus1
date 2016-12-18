@@ -176,6 +176,7 @@ public class NicoClient {
 						Cookie.addNormalCookie("watch_html5=1");
 					if(loginCheck()){
 						Logged_in = true;	// ログイン済みのハズ
+						setExtraError("");
 						return;
 					}
 					Cookie = new NicoCookie();
@@ -225,6 +226,9 @@ public class NicoClient {
 
 		try {
 			debug("\n■URL<" + url + ">\n");
+			String host = url.substring("http://".length())+"/";
+			host = host.substring(0,host.indexOf("/"));
+			debug("■HOST<" + host + ">\n");
 			HttpURLConnection con = (HttpURLConnection) (new URL(url))
 				.openConnection(ConProxy);
 			/* リクエストの設定 */
@@ -245,6 +249,7 @@ public class NicoClient {
 	//Connection: keep-alive
 	//Range: bytes=0-1048576	// byte=1MB
 	// the following commented source code lines can be made valid in the future, and it would be ok (already tested).
+
 			con.setRequestMethod(method);
 			if(isHtml5){
 				if(cookieProp == null){
@@ -255,6 +260,7 @@ public class NicoClient {
 			if (cookieProp != null)
 				con.addRequestProperty("Cookie", cookieProp.get(url));
  		//	con.setRequestProperty("Host", "nmsg.nicovideo.jp");
+			con.addRequestProperty("HOST", host);
 			con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
 		//	con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 			con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
@@ -428,7 +434,12 @@ public class NicoClient {
 		sb.append(str,old_index,str.length());
 		str = sb.toString();
 		//MS-DOSシステム(ffmpeg.exe)で扱える形に(UTF-8のまま)
-		str = toSafeString(str, "MS932");
+		str = toSafeWindowsName(str, "MS932");
+		return str;
+	}
+
+	public static String toSafeWindowsName(String str, String encoding){
+		str = toSafeString(str, encoding);
 		//ファイルシステムで扱える形に
 		str = str.replace('/', '／');
 		str = str.replace('\\', '￥');
@@ -519,6 +530,9 @@ public class NicoClient {
 		VideoTitle = null;
 		boolean found = false;
 		String url = HTTP_WWW_NICOVIDEO_WATCH + tag + watchInfo;
+		String tag1 = tag;
+		if(!tag1.contains(watchInfo))
+			tag1 += watchInfo;
 		log.print("Getting video history...");
 		boolean zero_title = false;
 		try {
@@ -728,13 +742,19 @@ public class NicoClient {
 				}
 				return false;
 			}
-			economy  = VideoUrl.toLowerCase().contains("low");
+			//economy  = VideoUrl.toLowerCase().contains("low");
 			log.println("ok.");
 			if(serverIsDmc()){
 				log.println("Video:<" + apiSessionUrl + ">;");
 			}
 			log.println("Video:<" + VideoUrl + ">; Comment:<" + MsgUrl
 					+ (NeedsKey ? ">; needs_key=1" : ">"));
+			economy = VideoUrl.toLowerCase().contains("low");
+			if(economy)
+				size_high =  getXmlElement(thumbInfoData, "size_low");
+			else
+				size_high = getXmlElement(thumbInfoData, "size_high");
+			log.println("size_high: "+size_high);
 			log.println("Video time length: " + VideoLength + "sec");
 			log.println("ThreadID:<" + ThreadID + "> Maybe uploaded on "
 					+ WayBackDate.format(ThreadID));
@@ -766,7 +786,8 @@ public class NicoClient {
 //	private String r_created_time;
 	private String responseXmlData;
 	private String postXmlData;
-	private int sizeHigh;
+	private String size_high;
+	//private int sizeHigh;
 	private int sizeDmc;
 	private int sizeVideo;
 	private int downloadLimit;
@@ -775,14 +796,17 @@ public class NicoClient {
 	public int getDmcVideoLength(){
 		return dmcVideoLength;
 	}
-	public int getSizeHigh(){
-		return sizeHigh;
+	public String getSizeHigh(){
+		return size_high;
 	}
 	public int getSizeDmc(){
 		return sizeDmc;
 	}
 	public int getSizeVideo(){
 		return sizeVideo;
+	}
+	public String getVideoContentType() {
+		return ContentType;
 	}
 	public File getVideo(File file, final JLabel status, final ConvertStopFlag flag,
 			boolean renameMp4) {
@@ -835,12 +859,9 @@ public class NicoClient {
 				+", type=" + ContentType + ", " + ContentDisp);
 			log.print("Downloading smile video...");
 			if(renameMp4 && ContentType.contains("mp4")){
-				String filepath = file.getPath();
-				int index = filepath.lastIndexOf(".");
-				if(filepath.lastIndexOf(File.separator) < index){
-					filepath = filepath.substring(0, index) + ".mp4";
-				}
-				file = new File(filepath);
+				file = Path.getReplacedExtFile(file,".mp4");
+			}else if(!renameMp4 && !ContentType.contains("mp4")){
+				file = Path.getReplacedExtFile(file,".flv");
 			}
 			OutputStream os = new FileOutputStream(file);
 			int size = 0;
@@ -903,7 +924,7 @@ public class NicoClient {
 				return null;
 			}
 			sessionXml = Path.mkTemp(videoTag+"_session.xml");
-			sessionData = makeSessionXml(sessionXml, sessionApi);
+			sessionData = makeSessionXml(sessionXml, sessionApi, "mp4");
 			log.println("sessionXML save to "+sessionXml.getPath());
 			String url = apiSessionUrl;
 			int index1 = url.indexOf("/","http://".length());
@@ -971,7 +992,8 @@ public class NicoClient {
 			con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
 		//	con.setRequestProperty("Accept-Encoding", "deflate");
 		//	con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			con.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
+		//	con.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
+			con.setRequestProperty("Content-Type", "application/xml");
 			con.addRequestProperty("DNT", "1");
 			con.addRequestProperty("Connection", "keep-alive");
 			debug("■Connect: POST,DoOutput,Connection keep-alive\n");
@@ -1103,7 +1125,7 @@ public class NicoClient {
 				if(contentRange.contains("/")){
 					String allsize = contentRange.substring(contentRange.lastIndexOf("/")+1);
 					try {
-						debug("\test(dmc) Content-Range: " + contentRange);
+						debug("\ntest(dmc) Content-Range: " + contentRange);
 						sizeAll = Integer.decode(allsize);
 					} catch(Exception ex){
 						sizeAll = 0;
@@ -1114,12 +1136,15 @@ public class NicoClient {
 					canRangeReq = false;
 					tryResume = false;
 				}
+				debug("\n");
 			}
 			max_size = con.getContentLength();	// -1 when invalid
 		//	ダミーリード
 			int dummy = 0;
 			is = con.getInputStream();
 			File dummyfile = Path.mkTemp("dummy["+videoTag+"].flv");
+			downloadLimit = 4096*1024;
+			int byterate = downloadLimit / 60;
 			os = new FileOutputStream(dummyfile);
 			while((dummy = is.read(buf, 0, SPLIT_TEST_SIZE)) > 0){
 				os.write(buf, 0, dummy);
@@ -1128,54 +1153,56 @@ public class NicoClient {
 			os.flush();
 			os.close();
 			con.disconnect();	//テスト終了
-			if(sizeAll > max_size)
-				max_size = sizeAll;
-			if(sizeRanged > max_size)
-				max_size = sizeRanged;
-			if(max_size > 0 && sizeDmc <= 0){
-				limits[1] = max_size;
-				if(max_size < min_size){
-					setExtraError("97 最小限度サイズより小さいのでダウンロード中止");
+			try {
+				if(sizeAll > max_size)
+					max_size = sizeAll;
+				if(sizeRanged > max_size)
+					max_size = sizeRanged;
+				if(max_size > 0 && sizeDmc <= 0){
+					limits[1] = max_size;
+					if(max_size < min_size){
+						setExtraError("97 最小限度サイズより小さいのでダウンロード中止");
+						return null;
+					}
+					if(max_size == min_size){
+						setExtraError("97 最小限度サイズと同じ。ダウンロード済みのようです");
+						return null;
+					}
+					// 続行
+					sizeDmc = max_size;
+					if(max_size == resume_size){
+						setExtraError("97 ダウンロード完了済み");
+						return video;
+					}
+				}
+				log.println("max_size="+(max_size/1000)+"Kbytes.");
+				// ダウンロードリミット設定
+				int videolen = getDmcVideoLength();
+				if(videolen > 0){
+					byterate = (int)((double)max_size / videolen);
+					downloadLimit = byterate * 60;
+				}
+				if(tryResume || resume_size>0)
+					log.println("setting download limit = "+downloadLimit);
+				if(dummyfile==null){
+					log.println("Error:test download(dmc) failed.");
 					return null;
 				}
-				// 続行
-				sizeDmc = max_size;
-				if(max_size == resume_size){
-					setExtraError("97 ダウンロード完了済み");
-					return video;
+				if(dummyfile.length() != SPLIT_TEST_SIZE){
+					log.println("Error:test download(dmc) size("+dummyfile.length()+")mismatch.");
+					return null;
 				}
+			} catch(Exception e){
+				log.printStackTrace(e);
+			} finally {
+				if(dummyfile!=null && dummyfile.delete())
+					debug("\ndeleted test(dmc) file.");
+				else
+					log.println("\ncan't delete dummyfile:"+dummyfile.getPath());
 			}
-			log.println("max_size="+(max_size/1000)+"Kbytes.");
-			// ダウンロードリミット設定
-			int videolen = getDmcVideoLength();
-			int byterate = 0;
-			if(videolen > 0){
-				byterate = (int)((double)max_size / videolen);
-				downloadLimit = byterate * 60;
-			} else {
-				downloadLimit = 4096*1024;
-				byterate = downloadLimit / 60;
-			}
-			if(tryResume || resume_size>0)
-				log.println("setting download limit = "+downloadLimit);
-			if(dummyfile==null){
-				log.println("Error:test download(dmc) failed.");
-				return null;
-			}
-			if(dummyfile.length() != SPLIT_TEST_SIZE){
-				log.println("Error:test download(dmc) size("+dummyfile.length()+")mismatch.");
-				return null;
-			}
-			if(dummyfile.delete())
-				debug("\ndeleted test(dmc) file.");
 		// 拡張子変更チェック
-			if(renameMp4 && ContentType.contains("mp4")){
-				String filepath = video.getPath();
-				int index = filepath.lastIndexOf(".");
-				if(filepath.lastIndexOf(File.separator) < index){
-					filepath = filepath.substring(0, index) + ".mp4";
-				}
-				video = new File(filepath);
+			if(renameMp4){	// not check contenttype
+				video = Path.getReplacedExtFile(video,".mp4");
 				log.println("video will save to "+video.getPath());
 			}
 			// heartbeat thread を起動してバックグランド実行
@@ -1986,6 +2013,7 @@ public class NicoClient {
 		Cookie.update(new_cookie);
 		debug("\n■Now Cookie is<" + Cookie.toString() + ">\n");
 		log.println("ok.");
+		setExtraError("");
 		return true;
 	}
 
@@ -2052,14 +2080,18 @@ public class NicoClient {
 	}
 	private synchronized void sendStatus(JLabel status, String msg,
 			int max_size, int size, long start_mili){
-		String per = "";
+		String str = "";
 		if (max_size > 0) {
-			per = String.format("%.2f%%, ",((double)size * 100)/ max_size);
+			str = String.format("%.2f%%, ",((double)size * 100)/ max_size);
+		}
+		str += String.format("%.1fMiB", (size >> 10)/ 1024.0);	//ダウンロードサイズ
+		if (max_size > 0){
+			str += String.format("/%.1fMiB", (max_size >> 10)/ 1024.0);	//動画サイズ
 		}
 		long milisec = Stopwatch.getElapsedTime(start_mili);
-		if(milisec==0) milisec=1;
-		String spd = String.format("%dKbps", (size - resume_start)/milisec*8);
-		sendtext(status, msg+"ダウンロード："+per+(size >> 10)+"KiB, "+spd);
+		if(milisec<=0) milisec=1;
+		str += String.format(", %dKbps", (size - resume_start)/milisec*8);
+		sendtext(status, msg+"ダウンロード：" + str);
 	}
 
 	public void setExtraError(String extraError) {
@@ -2107,6 +2139,9 @@ public class NicoClient {
 	private String t_created_time;
 	private String service_user_id;
 	private String dataApiJson;
+	private String priority;
+	private ArrayList<String> nicoTaglist = new ArrayList<>();
+	private String nicoCat;
 	public boolean serverIsDmc(){
 		return "1".equals(isDmc);
 	}
@@ -2200,6 +2235,30 @@ public class NicoClient {
 					altTag = tag;
 				sb.append("<watch_url>"+HTTP_WWW_NICOVIDEO_WATCH +altTag+"</watch_url>\n");
 				sb.append("<thumb_type>video</thumb_type>\n");
+				String tag_list = getJsonValue(text,"tagList");
+				if(tag_list!=null && tag_list.length()>2){
+					if(tag_list.startsWith("[{")&&tag_list.endsWith("}]")){
+						sb.append("<tags domain=\"jp\">\n");
+						String[] tags = tag_list.substring(2,tag_list.length()-2).split("\\},\\{");
+						debug("\ntags.length="+tags.length);
+						for(String tagitem: tags){
+							String hash = "{"+tagitem+"}";
+							debug("\ntagitem="+hash);
+							// hash = {"id":"120343647","tag":"ニコニコ技術部","cat":true,"dic":true,"lck":"1"}
+							String t = getJsonValue(hash,"tag");
+							String cat = getJsonValue(hash,"cat");
+							String lck = getJsonValue(hash,"lck");
+							if(t!=null){
+								debug("\ntag="+t);
+								sb.append("<tag");
+								if("true".equals(cat)) sb.append(" category=\"1\"");
+								if("1".equals(lck)) sb.append(" lock=\"1\"");
+								sb.append(">"+t+"</tag>\n");
+							}
+						}
+						sb.append("</tags>\n");
+					}
+				}
 				String user_id = getJsonValue(text,"user_id");
 				if(user_id==null || user_id.isEmpty())
 					user_id = getJsonValue(text,"videoUserId");
@@ -2224,18 +2283,25 @@ public class NicoClient {
 				log.println("ok.");
 				thumbInfoData = s;
 			}
-			if(thumbInfoData!=null){
-				try {
-					String size_high = null;
-					if(isEco())
-						size_high =  getXmlElement(thumbInfoData, "size_low");
-					else
-						size_high = getXmlElement(thumbInfoData, "size_high");
-					sizeHigh = (int)Integer.valueOf(size_high);
-				} catch(NumberFormatException e){
-					sizeHigh = 0;
-				} catch(RuntimeException e){
-					sizeHigh = 0;
+			if(nicoTaglist.isEmpty() && thumbInfoData!=null && !thumbInfoData.isEmpty()){
+				String nico_tags = getXmlElement1(thumbInfoData, "tags");
+				if(nico_tags!=null){
+					nico_tags = nico_tags.trim();
+					debug("\n(NicoClient)nico_tags: "+nico_tags);
+					if(!nico_tags.isEmpty()){
+						nicoCat = getXmlElement2(nico_tags,"tag category=\"1\" lock=\"1\"");
+						debug("\n(NicoClient)nicoCat: "+nicoCat);
+						String[] tagarray = nico_tags.split("\n");
+						if(tagarray!=null && tagarray.length>0){
+							for(int i = 0; i < tagarray.length; i++){
+								String tl = tagarray[i];
+								String t = getXmlElement1(tl,"tag");
+								nicoTaglist.add(t);
+								debug("\n(NicoClient)tag["+i+"]: "+t);
+							}
+						}
+						debug("\n(NicoClient)nicoTaglist: "+nicoTaglist.toString());
+					}
 				}
 			}
 			return thumbXml;
@@ -2583,6 +2649,8 @@ public class NicoClient {
 					debug("\n■player_id:\n "+player_id);
 					service_user_id = getJsonValue(sessionApi, "service_user_id");
 					debug("\n■service_user_id:\n "+service_user_id);
+					priority = getJsonValue(sessionApi, "priority");
+					debug("\n■priority:\n "+priority);
 					debug("\n");
 				}
 			}
@@ -2599,7 +2667,7 @@ public class NicoClient {
 		return str;
 	}
 
-	private String makeSessionXml(Path xml, String json) {
+	private String makeSessionXml(Path xml, String json, String file_extension) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<session>\n");
 		sb.append("  "+makeNewElement("recipe_id", recipe_id));
@@ -2612,13 +2680,13 @@ public class NicoClient {
 		sb.append("        <method>GET</method>\n");
 		sb.append("        <parameters>\n");
 		sb.append("          <http_output_download_parameters>\n");
-		sb.append("            <file_extension>flv</file_extension>\n");
+		sb.append("            "+makeNewElement("file_extension",file_extension));
 		sb.append("          </http_output_download_parameters>\n");
 		sb.append("        </parameters>\n");
 		sb.append("      </http_parameters>\n");
 		sb.append("    </parameters>\n");
 		sb.append("  </protocol>\n");
-		sb.append("  <priority>0.8</priority>\n");
+		sb.append("  "+makeNewJsonValue(json, "priority"));
 		sb.append("  <content_src_id_sets>\n");
 		sb.append("    <content_src_id_set>\n");
 		sb.append("      <content_src_ids>\n");
@@ -2811,8 +2879,9 @@ public class NicoClient {
 			r = getJsonValue0(input, key);
 			return unquote(r);
 		} catch(Exception e){
-			debug("\ngetJsonValue0: error\n");
+			debug("\ngetJsonValue0(\""+key+"\"): error\n");
 			r = getJsonValue1(input, key);
+			debug("getJsonValue1(\""+key+"\"): "+unquote(r)+"\n");
 			return unquote(r);
 		}
 	}
@@ -3054,6 +3123,13 @@ public class NicoClient {
 		return thumbInfoData;
 	}
 
+	public List<String> getNicotags(){
+		return nicoTaglist;
+	}
+
+	public String getNicocategory(){
+		return nicoCat;
+	}
 	class HeartBeatDmc extends TimerTask implements Runnable {
 		private String dmcHBUrl1 = "";
 		private String dmcHBUrl2 = "";
