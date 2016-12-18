@@ -161,6 +161,7 @@ public class NicoClient {
 					Cookie.setSession(this_session);
 					if(loginCheck()){
 						Logged_in = true;	// ログイン済みのハズ
+						setExtraError("");
 						return;
 					}
 					Cookie = new NicoCookie();
@@ -830,6 +831,8 @@ public class NicoClient {
 			log.print("Downloading smile video...");
 			if(renameMp4 && ContentType.contains("mp4")){
 				file = Path.getReplacedExtFile(file,".mp4");
+			}else if(!renameMp4 && !ContentType.contains("mp4")){
+				file = Path.getReplacedExtFile(file,".flv");
 			}
 			OutputStream os = new FileOutputStream(file);
 			int size = 0;
@@ -1984,6 +1987,7 @@ public class NicoClient {
 
 		debug("\n■Now Cookie is<" + Cookie.toString() + ">\n");
 		log.println("ok.");
+		setExtraError("");
 		return true;
 	}
 

@@ -2151,8 +2151,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		File target = new File(videoFilename);
 		File parent = target.getParentFile();
 		if(!parent.isDirectory()){
-			if(parent.mkdir()){
+			if(parent.mkdirs()){
 				log.println("folder created: "+parent.getPath());
+			}
+			if(!parent.isDirectory()){
+				log.println("フォルダが作成できません:"+parent.getPath());
+				log.println("置換失敗 "+videoFilename);
+				target = file;
 			}
 		}
 		return target;
