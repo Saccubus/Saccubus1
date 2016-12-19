@@ -22,7 +22,7 @@
 <entry key="EnableCA">true</entry>
 <entry key="SetCommentSpeed">false</entry>
 <entry key="WideCMD_IN"/>
-<entry key="WideCMD_OUT">-threads 0 -s 640x360 -acodec libvo_aacenc -ab 128k -ar 44100  -ac 2 -vcodec libx264 -crf 23 -b 1400k -async 1</entry>
+<entry key="WideCMD_OUT">-threads 0 -s 640x360 -acodec aac -ab 128k -ar 44100  -ac 2 -vcodec libx264 -crf 23 -b 1400k -async 1</entry>
 <entry key="AddComment">true</entry>
 <entry key="ExtraMode">-frame -loc</entry>
 </properties>
