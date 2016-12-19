@@ -2428,9 +2428,9 @@ public class NicoClient {
 	}
 	private String extractDataApiDataJson(String ss, String encoding, String url) {
 		// HTML5 watchpage
-		String url1 = url.replaceAll("[./:]+", "_")+".html";
-		File dataJsonFile = Path.mkTemp(url1);
-		Path.writeAllText(dataJsonFile, ss, encoding);
+//		String url1 = url.replaceAll("[\\?./:]+", "_")+".html";
+//		File dataJsonFile = Path.mkTemp(url1);
+//		Path.writeAllText(dataJsonFile, ss, encoding);
 		Path file = getDataApiData(ss, encoding, url);
 		if(file==null) return null;
 		return extractDataJson(file, encoding);
@@ -2451,7 +2451,7 @@ public class NicoClient {
 				return null;
 			}
 			if(dataApiJson==null || dataApiJson.isEmpty()){
-				log.println("dataAPIData_JSON error ");
+				log.println("\ndataAPIData_JSON error ");
 				return null;
 			}
 		}
@@ -2477,14 +2477,13 @@ public class NicoClient {
 				Mson m_source = m_video.getMson("source");
 				debug("\n■source: ",m_source);
 				VideoUrl = unquote(getJsonValue1(dataApiJson, "source"));
-				debug("\nVideoUrl: "+VideoUrl);
+				log.println("\nVideoUrl: "+VideoUrl);
 				Mson m_movieType = m_video.getMson("movieType");
 				ContentType = m_movieType.toUnquoteString();
 			Mson m_title = m_video.getMson("title");
 			debug("\n■title: ",m_title);
 				VideoTitle = m_title.toUnquoteString();
-				log.println("\nVideoTitle: "+VideoTitle);
-				//###############
+				log.println("VideoTitle: "+VideoTitle);
 				Mson m_duration = m_video.getMson("duration");
 				String l = m_duration.toUnquoteString();
 				try {
@@ -2499,31 +2498,30 @@ public class NicoClient {
 				String isOfficial = m_isOfficial.toUnquoteString();
 				if(isOfficial!=null && isOfficial.equals("true")){
 					NeedsKey = true;
-					debug("\nNeedsKey: "+NeedsKey);
+					log.println("NeedsKey: "+NeedsKey);
 				}
 				Mson m_dmcInfo = m_video.getMson("dmcInfo");
-				debug("\n■dmcInfo: ",m_dmcInfo);
+				debug("\n■m_dmcInfo: ",m_dmcInfo);
 				dmcInfo = m_dmcInfo.toUnquoteString();
-				debug("\ndmcInfo: "+dmcInfo);
+				debug("\n■dmcInfo: "+dmcInfo);
 				if(dmcInfo==null){
-					log.println("\ndmcInfo==null");
+					debug("\n■dmcInfo==null");
 				} else if(dmcInfo.equals("null")){
-					log.println("\ndmcInfo.equals(\"null\")");
+					debug("\n■dmcInfo.equals(\"null\")");
 				}
 				isDmc = (dmcInfo==null || dmcInfo.equals("null"))? "0":"1";
+				debug("\n■isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc()+"\n");
 				if(serverIsDmc()){
-					isDmc = m_dmcInfo.isNull() ? "0":"1";
-					debug("\n■isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc()+"\n");
 					dmcVideoLength = VideoLength;
-					debug("\ndmcVideoLength: "+dmcVideoLength);
+					log.println("dmcVideoLength: "+dmcVideoLength);
 					Mson m_session_api = m_dmcInfo.getMson("session_api");
 					debug("\n■session_api: ",m_session_api);
 					sessionApi = m_session_api.toUnquoteString();
-					debug("\nsessionApi: "+sessionApi);
+					log.println("sessionApi: "+sessionApi);
 					Mson m_token = m_session_api.getMson("token");
 					debug("\n■token: ",m_token);
 					dmcToken = m_token.toUnquoteString();
-					debug("\ndmcToken: "+dmcToken);
+					log.println("dmcToken: "+dmcToken);
 					String	s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
 					dmcTokenUnEscape = s;
 					debug("\n■dmcTokenUnEscape:\n "+dmcTokenUnEscape);
@@ -2559,13 +2557,15 @@ public class NicoClient {
 				debug("\n■thread_id: ",m_thread_id);
 				if(!m_thread_id.isNull()){
 					ThreadID = m_thread_id.toUnquoteString();
-					log.println("\nThreadID: "+ThreadID);
+					log.println("ThreadID: "+ThreadID);
 					Mson m_server_url = m_thread.getMson("server_url");
 					debug("\n■server_url: ",m_server_url);
 					MsgUrl = m_server_url.toUnquoteString();
-					log.println("\nMsgUrl: "+MsgUrl);
+					log.println("MsgUrl: "+MsgUrl);
 					Mson m_thread_key_required = m_thread.getMson("thread_key_required");
 					debug("\n■thread_key_required: ",m_thread_key_required);
+					String key_required = m_thread_key_required.toUnquoteString();
+					NeedsKey = key_required.equals("true") ? true : false;
 				}else{
 					Mson m_ids = m_thread.getMson("ids");
 					Mson m_default = m_ids.getMson("default");
@@ -2610,6 +2610,30 @@ public class NicoClient {
 			debug("\n■context: ",m_context);
 				Mson m_isMyMemory = m_context.getMson("isMyMemory");
 				debug("\n■isMyMemory: ",m_isMyMemory);
+				/*
+					html5	"ownerNGFilters":[{"source":"b2","destination":"CM中か！今がチャンスだ！"},{
+					flash	ng_up:	b2=CM中か！今がチャンスだ！&
+							ownerFilter = nicomap.get("ng_up");
+					ownerNGFileters -> ownerFilter
+					source=destination& という形式に変換
+					<chat filter="1">　</chat>で囲み投コメxmlに追加
+				*/
+				Mson m_ownerNGFilters = m_context.getMson("ownerNGFilters");
+				debug("\n■ownerNGFilters: ",m_ownerNGFilters);
+				String ownerNGFilters = m_ownerNGFilters.toUnquoteString();
+				debug("\n■ownerNGFilters: "+ownerNGFilters);
+				String[] keys = new String[]{"source","destination"};
+				ArrayList<String[]> list = Mson.getListString(m_ownerNGFilters.getJson(), keys);
+				StringBuffer sb = new StringBuffer();
+				for(String[] s: list){
+					debug("\n■hash: "+s[0]+","+s[1]);
+					String entry = unquote(s[0])+"="+unquote(s[1])+"&";
+					sb.append(entry);
+					debug("\n■sb.append: "+entry);
+				}
+				ownerFilter = sb.substring(0);
+				if(ownerFilter.endsWith("&"))
+					ownerFilter = ownerFilter.substring(0,ownerFilter.length()-1);
 			Mson m_liveTopics = dataApiMson.getMson("liveTopics");
 			debug("\n■liveTopics: "+m_liveTopics.toString().length());
 			debug("\n■}\n");
@@ -2621,468 +2645,7 @@ public class NicoClient {
 			e.printStackTrace();
 		}
 		return null;
-	/*
-	if (nicomap.containsKey("needs_key")) {
-		NeedsKey = true;
-	}
-	ownerFilter = nicomap.get("ng_up");
-	 */
 /*
-  "video": {
-    "id": "sm9",
-    "source": "http://smile-com42.nicovideo.jp/smile?m\u003d9.0468low",
-    "title": "新・豪血寺一族 -煩悩解放 - レッツゴー！陰陽師",
-    "originalTitle": "新・豪血寺一族 -煩悩解放 - レッツゴー！陰陽師",
-    "description": "レッツゴー！陰陽師（フルコーラスバージョン）",
-    "originalDescription": "レッツゴー！陰陽師（フルコーラスバージョン）",
-    "thumbnailURL": "http://tn-skr2.smilevideo.jp/smile?i\u003d9",
-    "postedDateTime": "2007/03/06 00:33:00",
-    "width": 320,
-    "height": 240,
-    "duration": 319,
-    "viewCount": 16137580,
-    "mylistCount": 166856,
-    "translation": false,
-    "movieType": "flv",
-    "isCommentExpired": false,
-    "isDeleted": false,
-    "isTranslated": false,
-    "isR18": false,
-    "isAdult": false,
-    "isPublic": true,
-    "isCommunityMemberOnly": "",
-    "isCommonsTreeExists": true,
-    "isNoIchiba": false,
-    "isOfficial": false,
-    "isMonetized": false
-  },
-  "player": {
-    "playerInfoXMLUpdateTIme": 1477631016,
-    "isContinuous": false
-  },
-  "thread": {
-    "commentCount": 4447427,
-    "serverUrl": "http://nmsg.nicovideo.jp/api/",
-    "subServerUrl": "http://nmsg.nicovideo.jp/api/",
-    "ids": {
-      "default": "1173108780"
-    }
-  },
-  "tags": [
-    {
-      "id": "1348286",
-      "name": "陰陽師",
-      "isCategory": false,
-      "isDictionaryExists": true,
-      "isLocked": true
-    },
-    {
-      "id": "1348992",
-      "name": "レッツゴー！陰陽師",
-      "isCategory": false,
-      "isDictionaryExists": true,
-      "isLocked": true
-    },
-    {
-      "id": "1348995",
-      "name": "公式",
-      "isCategory": false,
-      "isDictionaryExists": true,
-      "isLocked": true
-    },
-    {
-      "id": "73234594",
-      "name": "音楽",
-      "isCategory": false,
-      "isDictionaryExists": true,
-      "isLocked": true
-    },
-    {
-      "id": "73241329",
-      "name": "ゲーム",
-      "isCategory": false,
-      "isDictionaryExists": true,
-      "isLocked": true
-    },
-    {
-      "id": "243770175",
-      "name": "ニコニコ10周年記念祭り",
-      "isCategory": false,
-      "isDictionaryExists": true,
-      "isLocked": false
-    },
-    {
-      "id": "243930687",
-      "name": "全ての元凶",
-      "isCategory": false,
-      "isDictionaryExists": true,
-      "isLocked": false
-    },
-    {
-      "id": "243930799",
-      "name": "ニコニコ四天王",
-      "isCategory": false,
-      "isDictionaryExists": true,
-      "isLocked": false
-    },
-    {
-      "id": "243973266",
-      "name": "sm9",
-      "isCategory": false,
-      "isDictionaryExists": true,
-      "isLocked": false
-    },
-    {
-      "id": "243999232",
-      "name": "な阪関！",
-      "isCategory": false,
-      "isDictionaryExists": false,
-      "isLocked": false
-    }
-  ],
-  "playlist": {
-    "items": [
-      {
-        "id": "sm9",
-        "title": "新・豪血寺一族 -煩悩解放 - レッツゴー！陰陽師",
-        "thumbnailURL": "http://tn-skr2.smilevideo.jp/smile?i\u003d9",
-        "viewCounter": "16137580",
-        "numRes": "4447427",
-        "mylistCounter": "166856",
-        "firstRetrieve": "2007-03-06 00:33:00",
-        "lengthSeconds": "319",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm83",
-        "title": "【ｺﾞﾑ】　ロックマン2　おっくせんまん！（Version ｺﾞﾑ）",
-        "thumbnailURL": "http://tn-skr4.smilevideo.jp/smile?i\u003d83",
-        "viewCounter": "7511723",
-        "numRes": 1215968,
-        "mylistCounter": "107482",
-        "firstRetrieve": "2007-03-06 04:54:36",
-        "lengthSeconds": "171",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm117",
-        "title": "ドロー！！モンスターカード！！！",
-        "thumbnailURL": "http://tn-skr2.smilevideo.jp/smile?i\u003d117",
-        "viewCounter": "1777144",
-        "numRes": 37152,
-        "mylistCounter": "22146",
-        "firstRetrieve": "2007-03-06 04:59:46",
-        "lengthSeconds": "150",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm6981",
-        "title": "マイケルクエスト",
-        "thumbnailURL": "http://tn-skr2.smilevideo.jp/smile?i\u003d6981",
-        "viewCounter": "1151415",
-        "numRes": 18857,
-        "mylistCounter": "18264",
-        "firstRetrieve": "2007-03-06 22:07:56",
-        "lengthSeconds": "202",
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm3980",
-        "title": "オーケストラ　ゼルダの伝説",
-        "thumbnailURL": "http://tn-skr1.smilevideo.jp/smile?i\u003d3980",
-        "viewCounter": "986733",
-        "numRes": 52093,
-        "mylistCounter": "24255",
-        "firstRetrieve": "2007-03-06 14:09:06",
-        "lengthSeconds": "335",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm30191709",
-        "title": "MTT先生",
-        "thumbnailURL": "http://tn-skr2.smilevideo.jp/smile?i\u003d30191709",
-        "viewCounter": "10499",
-        "mylistCounter": "439",
-        "firstRetrieve": "2016-12-09 03:46:13",
-        "lengthSeconds": "136",
-        "width": 1280,
-        "height": 720,
-        "isTranslated": false,
-        "tkasType": 2,
-        "hasData": true
-      },
-      {
-        "id": "sm2248",
-        "title": "デスクリムゾン",
-        "thumbnailURL": "http://tn-skr1.smilevideo.jp/smile?i\u003d2248",
-        "viewCounter": "1319382",
-        "numRes": 49092,
-        "mylistCounter": "15996",
-        "firstRetrieve": "2007-03-06 10:26:20",
-        "lengthSeconds": "262",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm42",
-        "title": "shuffle 19話",
-        "thumbnailURL": "http://tn-skr3.smilevideo.jp/smile?i\u003d42",
-        "viewCounter": "192218",
-        "numRes": 5448,
-        "mylistCounter": "999",
-        "firstRetrieve": "2007-03-06 04:40:39",
-        "lengthSeconds": "96",
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm167",
-        "title": "[キーボードクラッシャー]Unreal Gamer[本家]",
-        "thumbnailURL": "http://tn-skr4.smilevideo.jp/smile?i\u003d167",
-        "viewCounter": "575276",
-        "numRes": 31751,
-        "mylistCounter": "7504",
-        "firstRetrieve": "2007-03-06 05:07:31",
-        "lengthSeconds": "262",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm157",
-        "title": "Nursery Rhyme ナーサリィ☆ライム （きしめん） 歌詞つき",
-        "thumbnailURL": "http://tn-skr2.smilevideo.jp/smile?i\u003d157",
-        "viewCounter": "121469",
-        "numRes": 4687,
-        "mylistCounter": "10863",
-        "firstRetrieve": "2007-03-06 05:07:28",
-        "lengthSeconds": "114",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm5927",
-        "title": "患部で止まってすぐ溶ける ～ 狂気の優曇華院FULL",
-        "thumbnailURL": "http://tn-skr4.smilevideo.jp/smile?i\u003d5927",
-        "viewCounter": "634548",
-        "numRes": 8915,
-        "mylistCounter": "6134",
-        "firstRetrieve": "2007-03-06 19:13:57",
-        "lengthSeconds": "179",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm3551",
-        "title": "魔理沙は大変なものを盗んでいきました。Full.ver",
-        "thumbnailURL": "http://tn-skr4.smilevideo.jp/smile?i\u003d3551",
-        "viewCounter": "241255",
-        "numRes": 9677,
-        "mylistCounter": "4868",
-        "firstRetrieve": "2007-03-06 13:20:25",
-        "lengthSeconds": "244",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm241",
-        "title": "THE IDOLM@STER アイドルマスター とかちラーメン大盛り ～望みの限りに～",
-        "thumbnailURL": "http://tn-skr2.smilevideo.jp/smile?i\u003d241",
-        "viewCounter": "526568",
-        "numRes": 80072,
-        "mylistCounter": "6732",
-        "firstRetrieve": "2007-03-06 05:20:24",
-        "lengthSeconds": "599",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm50",
-        "title": "手品　ひっくりかえるカード",
-        "thumbnailURL": "http://tn-skr3.smilevideo.jp/smile?i\u003d50",
-        "viewCounter": "123007",
-        "numRes": 771,
-        "mylistCounter": "309",
-        "firstRetrieve": "2007-03-06 04:45:47",
-        "lengthSeconds": "23",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm56",
-        "title": "中川翔子を描いてみた",
-        "thumbnailURL": "http://tn-skr1.smilevideo.jp/smile?i\u003d56",
-        "viewCounter": "153802",
-        "numRes": 3075,
-        "mylistCounter": "629",
-        "firstRetrieve": "2007-03-06 04:46:12",
-        "lengthSeconds": "126",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm1687",
-        "title": "おでんぱ☆ラブガール",
-        "thumbnailURL": "http://tn-skr4.smilevideo.jp/smile?i\u003d1687",
-        "viewCounter": "748078",
-        "numRes": 25252,
-        "mylistCounter": "8666",
-        "firstRetrieve": "2007-03-06 09:08:29",
-        "lengthSeconds": "162",
-        "width": 256,
-        "height": 192,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm7594",
-        "title": "ドナルドのうわさ　ランランルーってなんなんだー？",
-        "thumbnailURL": "http://tn-skr3.smilevideo.jp/smile?i\u003d7594",
-        "viewCounter": "279887",
-        "numRes": 7262,
-        "mylistCounter": "1910",
-        "firstRetrieve": "2007-03-06 23:31:55",
-        "lengthSeconds": "28",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      },
-      {
-        "id": "sm76",
-        "title": "MONSTER HUNTER2(dos) プレイ動画　－百花繚乱ー１",
-        "thumbnailURL": "http://tn-skr1.smilevideo.jp/smile?i\u003d76",
-        "viewCounter": "83314",
-        "numRes": 1571,
-        "mylistCounter": "111",
-        "firstRetrieve": "2007-03-06 04:53:09",
-        "lengthSeconds": "327",
-        "width": 320,
-        "height": 240,
-        "isTranslated": false,
-        "hasData": true
-      }
-    ],
-    "type": "recommend",
-    "ref": "other",
-    "option": []
-  },
-  "owner": {
-    "id": "4",
-    "nickname": "運営長の中の人 さん",
-    "stampExp": "129",
-    "iconURL": "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/0/4.jpg?1271141672",
-    "isUserVideoPublic": false,
-    "isUserMyVideoPublic": false,
-    "isUserOpenListPublic": false
-  },
-  "viewer": {
-    "id": 60625665,
-    "nickname": "eiji さん",
-    "prefecture": 1,
-    "sex": 0,
-    "age": 109,
-    "isPremium": false,
-    "isPrivileged": false,
-    "isPostLocked": false,
-    "isHtrzm": false,
-    "isTwitterConnection": false
-  },
-  "ad": {},
-  "lead": {
-    "tagRelatedMarquee": {
-      "id": "1159",
-      "url": "http://rd.nicovideo.jp/cc/video_tag_marquee/1481619394",
-      "title": "お待たせしました！闘会議2017の追加出演者・ゲームタイトル・企画を公開しました！"
-    },
-    "tagRelatedBanner": {
-      "id": "1341",
-      "url": "http://rd.nicovideo.jp/cc/video_tag_banner/1481619394",
-      "title": "闘会議2017の追加出演者・ゲームタイトル・企画を公開しました！",
-      "thumbnailURL": "http://res.nimg.jp/img/system/watch_banner_related_tag/1481962388_tkg2017webopen161217tag2.png"
-    }
-  },
-  "context": {
-    "watchId": "sm9",
-    "isEconomyExists": 1,
-    "isNeedPayment": false,
-    "isAdultRatingNG": true,
-    "isTranslatable": false,
-    "isTagUneditable": false,
-    "isVideoOwner": false,
-    "isThreadOwner": false,
-    "useChecklistCache": "1",
-    "isDictionaryDisplayable": true,
-    "isDefaultCommentInvisible": false,
-    "csrfToken": "60625665-1482181872-80063e30c7312fc8d09fcab5e0701bd69447e123",
-    "translationVersionJsonUpdateTime": 1481782197,
-    "userkey": "1482097272.~1~-7rYs4xOFo9i5SvzsT_YyoQfnRw1hvgvpwbCZswQ4Zo",
-    "watchAuthKey": "1:1482095472:1173108780:51f2dd5f17ef67b5dd7c54fee5072c4281d7e81ef077b684f6665f3b9a48b673",
-    "watchTrackId": "S4ifzkTs7K_1482095472927",
-    "watchPageServerTime": 1482095472993,
-    "isAuthenticationRequired": false,
-    "ngRevision": 1,
-    "isMyMemory": false,
-    "ownerNGFilters": [
-      {
-        "source": "",
-        "destination": ""
-      }
-    ]
-  },
-  "liveTopics": {
-    "items": [
-      {
-        "id": "lv285232097",
-        "title": "ドリーム佐野BC放送局　腹減ったからガスト行くぞ",
-        "thumbnailURL": "http://icon.nimg.jp/community/s/211/co2116132.jpg?1479781433",
-        "point": 13,
-        "isHigh": false,
-        "elapsedTimeM": 219,
-        "communityId": "co2116132",
-        "communityName": "ドリーム佐野BC放送局"
-      },
-      {
-        "id": "lv285234268",
-        "title": "【スマ対】syamu_movieナイト上映",
-        "thumbnailURL": "http://icon.nimg.jp/community/s/250/co2500567.jpg?1450936624",
-        "point": 11,
-        "isHigh": false,
-        "elapsedTimeM": 202,
-        "communityId": "co2500567",
-        "communityName": "【本人公認】Syamu_Gameファンクラブ"
-      }
-    ]
-  }
-}
 // dmc server
 {
 	"video":	{
