@@ -840,7 +840,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					long resume_size = 0;
 					long video_size = 0;
 					long size_high = 0;
-					String size_high_str = client.getSizeHigh().trim();
+					String size_high_str = client.getSizeSmile();
 					if(size_high_str!=null){
 						try {
 							size_high = Long.decode(size_high_str);
@@ -2276,8 +2276,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				gate.resetError();
 				VideoTitle = client.getVideoTitle();
 				thumbInfoData = client.getThumbInfoData();
-				log.println("size_high: "+client.getSizeHigh());
-				log.println("is_eco: "+client.isEco());
+			//	log.println("size_high: "+client.getSizeSmile());
+			//	log.println("is_eco: "+client.isEco());
 				VideoBaseName = Setting.isChangeTitleId()?
 					VideoTitle + VideoID : VideoID + VideoTitle;
 				nicoCategory = client.getNicocategory();

@@ -13,6 +13,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
+import saccubus.util.Logger;
+
 public class Mson {
 
 //	private final static boolean DEBUG = false;
@@ -25,6 +27,18 @@ public class Mson {
 			return "[]";
 		else
 			return getJson().toString();
+	}
+	public String toUnquoteString(){
+		return unquote(this.toString());
+	}
+	final String S_QUOTE2 = "\"";
+	private String unquote(String str) {
+		if(str==null) return null;
+		str = str.trim();
+		if(str.startsWith(S_QUOTE2) && str.endsWith(S_QUOTE2)){
+			str = str.substring(1, str.length()-1);
+		}
+		return str;
 	}
 /*
 	private Mson add(JsonElement elem) throws Exception {
@@ -70,7 +84,7 @@ public class Mson {
 		return this;
 	}
 */
-	public static Mson parse(String text) throws Exception {
+	public static Mson parse(String text){
 		JsonReader reader = new JsonReader(new StringReader(text));
 		reader.setLenient(true);
 		return new Mson(new JsonParser().parse(reader));
@@ -80,6 +94,11 @@ public class Mson {
 		String js = gson.toJson(getJson());
 		ps.println(js);
 	}
+	public void prettyPrint(Logger log){
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String js = gson.toJson(getJson());
+		log.print(js);
+	}
 	public static void prettyPrint(String input, PrintStream ps) {
 		try {
 			Mson m = parse(input);
@@ -88,7 +107,7 @@ public class Mson {
 			e.printStackTrace();
 		}
 	}
-	public static JsonElement get(JsonElement je, String key) throws Exception{
+	public static JsonElement get(JsonElement je, String key){
 		if(je.isJsonObject()){
 			JsonObject jo = je.getAsJsonObject();
 			for(Entry<String, JsonElement> ent:jo.entrySet()){
@@ -111,20 +130,20 @@ public class Mson {
 		}
 		return null;
 	}
-	public JsonElement get(String key) throws Exception{
+	public JsonElement get(String key){
 		return Mson.get(getJson(), key);
 	}
-	public static String getValue(JsonElement json, String key) throws Exception{
+	public static String getValue(JsonElement json, String key){
 		JsonElement je = get(json, key);
 		if(je==null)
 			return "[]";
 		else
 			return je.toString();
 	}
-	public String getValue(String key) throws Exception {
+	public String getValue(String key){
 		return Mson.getValue(getJson(), key);
 	}
-	public static ArrayList<String[]> getListString(JsonElement json,String[] keys) throws Exception{
+	public static ArrayList<String[]> getListString(JsonElement json,String[] keys){
 		ArrayList<String[]> ret = new ArrayList<String[]>();
 		String[] rets = new String[keys.length];
 		if(json.isJsonObject()){
@@ -160,7 +179,7 @@ public class Mson {
 		}
 		return ret;
 	}
-	public ArrayList<String[]> getListString(String[] keys) throws Exception {
+	public ArrayList<String[]> getListString(String[] keys){
 		return Mson.getListString(getJson(), keys);
 	}
 	/*
@@ -193,5 +212,11 @@ public class Mson {
 	}
 	public void setJson(JsonElement json) {
 		this.json = json;
+	}
+	public Mson getMson(String key){
+		return new Mson(get(key));
+	}
+	public boolean isNull() {
+		return json.isJsonNull();
 	}
 }
