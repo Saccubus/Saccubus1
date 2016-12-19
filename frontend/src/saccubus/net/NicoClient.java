@@ -19,7 +19,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
@@ -2340,7 +2339,6 @@ public class NicoClient {
 		String url1 = url.replaceAll("[./:]+", "_")+".html";
 		File dataJsonFile = Path.mkTemp(url1);
 		Path.writeAllText(dataJsonFile, ss, encoding);
-
 		Path file = getDataApiData(ss, encoding, url);
 		if(file==null) return null;
 		return extractDataJson(file, encoding);
@@ -2348,26 +2346,33 @@ public class NicoClient {
 
 	private String extractDataJson(Path xml, String encoding) {
 		//JsonâêÕ
-	//	if(watchApiJson==null){
+		debug("\nÅ°{");
+		if(dataApiJson==null){
 			Properties prop = new Properties();
 			try {
 				prop.loadFromXML(new FileInputStream(xml));
+				dataApiJson = prop.getProperty("json", "0");
+				debug("\nÅ°dataAPIData_JSON:\n "+dataApiJson);
 			} catch (IOException e) {
-				log.printStackTrace(e);
+				//log.printStackTrace(e);
+				log.println("\nloadFromXML error: "+xml.getPath());
+				return null;
 			}
-			dataApiJson = prop.getProperty("json", "0");
-			debug("\nÅ°dataAPIData_JSON:\n "+dataApiJson);
 			if(dataApiJson==null || dataApiJson.isEmpty()){
 				log.println("dataAPIData_JSON error ");
 				return null;
 			}
-			Mson dataApiMson = null;
+		}
 			try {
-				dataApiMson = Mson.parse(dataApiJson);
+				Mson dataApiMson = null;
+				try{
+					dataApiMson = Mson.parse(dataApiJson);
 				//debug("\nÅ°dataApiMson", dataApiMson);
+				}catch(Exception e){
+					log.println("\ngson: parse error(dataApiJson)");
+					return extractDataJson1(dataApiJson);
+				}
 				isDmc = "0";
-				HashMap<String,Mson> dataApiMap = new HashMap<>();
-				dataApiMap.put("", dataApiMson);
 				Mson m_video = dataApiMson.getMson("video");
 				debug("\nÅ°video: ",m_video);
 					Mson m_id = m_video.getMson("id");
@@ -2387,27 +2392,102 @@ public class NicoClient {
 				debug("\nÅ°title: ",m_title);
 					VideoTitle = m_title.toUnquoteString();
 					log.println("\nVideoTitle: "+VideoTitle);
+					//###############
+					Mson m_duration = m_video.getMson("duration");
+					String l = m_duration.toUnquoteString();
+					try {
+						VideoLength = (int)Integer.valueOf(l);
+					} catch(NumberFormatException e){
+						VideoLength = 0;
+					};
+					debug("\nÅ°VideoLength: "+VideoLength);
+					debug("\nÅ°duration: ",m_duration);
+					Mson m_dmcInfo = m_video.getMson("dmcInfo");
+					debug("\nÅ°dmcInfo: ",m_dmcInfo);
+					dmcInfo = m_dmcInfo.toUnquoteString();
+					debug("\ndmcInfo: "+dmcInfo);
+					if(dmcInfo==null){
+						log.println("\ndmcInfo==null");
+					} else if(dmcInfo.equals("null")){
+						log.println("\ndmcInfo.equals(\"null\")");
+					}
+					isDmc = (dmcInfo==null || dmcInfo.equals("null"))? "0":"1";
+					if(serverIsDmc()){
+						isDmc = m_dmcInfo.isNull() ? "0":"1";
+						debug("\nÅ°isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc()+"\n");
+						dmcVideoLength = VideoLength;
+						debug("\ndmcVideoLength: "+dmcVideoLength);
+						Mson m_session_api = m_dmcInfo.getMson("session_api");
+						debug("\nÅ°session_api: ",m_session_api);
+						sessionApi = m_session_api.toUnquoteString();
+						debug("\nsessionApi: "+sessionApi);
+						Mson m_token = m_session_api.getMson("token");
+						debug("\nÅ°token: ",m_token);
+						dmcToken = m_token.toUnquoteString();
+						debug("\ndmcToken: "+dmcToken);
+						String	s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
+						dmcTokenUnEscape = s;
+						debug("\nÅ°dmcTokenUnEscape:\n "+dmcTokenUnEscape);
+						t_created_time = getJsonValue(dmcTokenUnEscape, "created_time");
+						debug("\nÅ°token created_time: "+t_created_time);
+						//
+						recipe_id = getJsonValue(sessionApi, "recipe_id");
+						debug("\nÅ°recipe_id: "+recipe_id);
+						videos = getJsonValue(sessionApi, "videos");
+						debug("\nÅ°videos: "+videos);
+						audios = getJsonValue(sessionApi, "audios");
+						debug("\nÅ°audios: "+audios);
+						apiUrls = getJsonValue(sessionApi, "api_urls").trim();
+						if(apiUrls.startsWith("[") && apiUrls.endsWith("]")){
+							apiUrls = apiUrls.substring(1, apiUrls.length()-1);
+						}
+						if(!apiUrls.contains(",")){
+							apiSessionUrl = unquote(apiUrls);
+						}
+						debug("\nÅ°apiUrls: "+apiUrls);
+						debug("\nÅ°apiSessionUrl: "+apiSessionUrl);
+						player_id = getJsonValue(sessionApi, "player_id");
+						debug("\nÅ°player_id:\n "+player_id);
+						service_user_id = getJsonValue(sessionApi, "service_user_id");
+						debug("\nÅ°service_user_id:\n "+service_user_id);
+						debug("\n");
+					}
+					//###############
+
 				Mson m_player = dataApiMson.getMson("player");
 				debug("\nÅ°player: ",m_player);
 				Mson m_thread = dataApiMson.getMson("thread");
 				debug("\nÅ°thread: ",m_thread);
-					Mson m_ids = m_thread.getMson("ids");
-					Mson m_default = m_ids.getMson("default");
-					debug("\nÅ°default: ",m_default);
-					ThreadID = m_default.toUnquoteString();
-					log.println("\nThreadID: "+ThreadID);
-					Mson m_community = m_ids.getMson("community");
-					debug("\nÅ°community: ",m_community);
-					if(!m_community.isNull()){
-						OptionalThraedID = m_community.toUnquoteString();
-						log.println("\nOptionalThreadID: "+OptionalThraedID);
+					Mson m_thread_id = m_thread.getMson("thread_id");
+					debug("\nÅ°thread_id: ",m_thread_id);
+					if(!m_thread_id.isNull()){
+						ThreadID = m_thread_id.toUnquoteString();
+						log.println("\nThreadID: "+ThreadID);
+						Mson m_server_url = m_thread.getMson("server_url");
+						debug("\nÅ°server_url: ",m_server_url);
+						MsgUrl = m_server_url.toUnquoteString();
+						log.println("\nMsgUrl: "+MsgUrl);
+						Mson m_thread_key_required = m_thread.getMson("thread_key_required");
+						debug("\nÅ°thread_key_required: ",m_thread_key_required);
+					}else{
+						Mson m_ids = m_thread.getMson("ids");
+						Mson m_default = m_ids.getMson("default");
+						debug("\nÅ°default: ",m_default);
+						ThreadID = m_default.toUnquoteString();
+						log.println("\nThreadID: "+ThreadID);
+						Mson m_community = m_ids.getMson("community");
+						debug("\nÅ°community: ",m_community);
+						if(!m_community.isNull()){
+							OptionalThraedID = m_community.toUnquoteString();
+							log.println("\nOptionalThreadID: "+OptionalThraedID);
+						}
+						Mson m_nicos = m_ids.getMson("nicos");
+						debug("\nÅ°nicos: ",m_nicos);
+						Mson m_serverUrl = m_thread.getMson("serverUrl");
+						debug("\nÅ°serverUrl: ",m_serverUrl);
+						MsgUrl = m_serverUrl.toUnquoteString();
+						log.println("\nMsgUrl: "+MsgUrl);
 					}
-					Mson m_nicos = m_ids.getMson("nicos");
-					debug("\nÅ°nicos: ",m_nicos);
-					Mson m_serverUrl = m_thread.getMson("serverUrl");
-					debug("\nÅ°serverUrl: ",m_serverUrl);
-					MsgUrl = m_serverUrl.toUnquoteString();
-					log.println("\nMsgUrl: "+MsgUrl);
 				Mson m_tags = dataApiMson.getMson("tags");
 				debug("\nÅ°tags: "+m_tags.toString().length());
 				Mson m_playlist = dataApiMson.getMson("playlist");
@@ -2417,7 +2497,7 @@ public class NicoClient {
 				Mson m_viewer = dataApiMson.getMson("viewer");
 				debug("\nÅ°viewer: ",m_viewer);
 					Mson m_userID = m_viewer.getMson("id");
-					debug("\nÅ°id: ",m_id);
+					debug("\nÅ°viewr.id: ",m_userID);
 					UserID = m_userID.toUnquoteString();
 					log.println("\nUserID: "+UserID);
 					Mson m_isPremium = m_viewer.getMson("isPremium");
@@ -2435,7 +2515,7 @@ public class NicoClient {
 					debug("\nÅ°isMyMemory: ",m_isMyMemory);
 				Mson m_liveTopics = dataApiMson.getMson("liveTopics");
 				debug("\nÅ°liveTopics: "+m_liveTopics.toString().length());
-				debug("\nÅ°Å°\n");
+				debug("\nÅ°}\n");
 				economy = VideoUrl.toLowerCase().contains("low");
 				if(size_video_thumbinfo==null && size_high!=null && size_low!=null)
 					size_video_thumbinfo = economy? size_low : size_high;
@@ -2445,16 +2525,8 @@ public class NicoClient {
 			}
 			return null;
 			/*
-			if (OptionalThraedID.isEmpty() && nicomap.containsKey("optional_thread_id")){
-				OptionalThraedID = nicomap.get("optional_thread_id");
-			}
 			if (nicomap.containsKey("needs_key")) {
 				NeedsKey = true;
-			}
-			try {
-				VideoLength = Integer.parseInt(nicomap.get("l"));
-			} catch (NumberFormatException e) {
-				VideoLength = -1;
 			}
 			ownerFilter = nicomap.get("ng_up");
 			 */
@@ -2914,153 +2986,233 @@ public class NicoClient {
     ]
   }
 }
-html5 ok.
- */
-			//			// flvInfo
-			//video : HASH
-			//player: HASH
-			//thread: HASH
-			//tags:   ARRAY
-			//playlist: HASH
-			//owner:  HASH
-			//viewer: HASH
-			//community: HASH
-			//channel: HASH
-			//ad:      HASH
-			//lead:    HASH
-			//maintenance: HASH
-			//context: {
-			//			"playFrom":null,
-//						"playLength":null,
-//						"returnId":null,
-//						"returnTo":null,
-//						"returnMsg":null,
-//						"watchId":"sm9",
-//						"isNoMovie":null,
-//						"isNoRelatedVideo":null,
-//						"isSlowLine":null,
-//						"isEconomy":null,
-//						"isEconomyExists":1,
-//						"isDownloadCompleteWait":null,
-//						"isNoNicotic":null,
-//						"isNeedPayment":false,
-//						"isAdultRatingNG":true,
-//						"isPlayable":null,
-//						"isTranslatable":false,
-//						"isTagUneditable":false,
-//						"isVideoOwner":false,
-//						"isThreadOwner":false,
-//						"isOwnerThreadEditable":null,
-//						"useChecklistCache":"1",
-//						"isDisabledMarquee":null,
-//						"isDictionaryDisplayable":true,
-//						"accessFrom":null,
-//						"csrfToken":"22909330-1479908423-f890d5a279a57f82c8049a7ec504a44d2523622f",
-//						"translationVersionJsonUpdateTime":1477887523,
-//						"userkey":"1479823823.~1~jsJHyIBhqwVM_mU5rZ9dpykF6nr-cz7KaS5bv-jlxXk",
-//						"watchAuthKey":"1:1479822023:1173108780:a55411d2aad2067bc64021fa3db976f3a33d29bf97640a5974dd52703eb588b4",
-//						"watchTrackId":"monLmOvIrb_1479822023165",
-//						"watchPageServerTime":1479822023270,
-//						"isAuthenticationRequired":false,
-//						"isPeakTime":true,
-//						"ngRevision":112,
-//						"categoryName":null,
-//						"categoryKey":null,
-//						"categoryGroupName":null,
-//						"categoryGroupKey":null,
-//						"yesterdayRank":null,
-//						"highestRank":null,
-//						"isMyMemory":false,
-//						"ownerNGFilters":[
+// dmc server
+{
+	"video":	{
+		ó™
+		"dmcInfo":	{
+			"time":1482109220,
+			"time_ms":1482109220682,
+			"video":	{
+				"video_id":"sm39999999",
+				"length_seconds":203,
+				"deleted":0
+			},
+			"thread":	{
+				"server_url":"http://nmsg.nicovideo.jp/api/",
+				"sub_server_url":"http://nmsg.nicovideo.jp/api/",
+				"thread_id":1481768772,
+				"nicos_thread_id":null,
+				"optional_thread_id":null,
+				"thread_key_required":false,
+				"channel_ng_words":[],
+				"owner_ng_words":[],
+				"maintenances_ng":false,
+				"postkey_available":true,
+				"ng_revision":1
+			},
+			"user":	{
+				"user_id":99999999,
+				"is_premium":false,
+				"nickname":"eiji"
+			},
+			"hiroba":	{
+				"fms_token":null,
+				"server_url":"hiroba.nicovideo.jp",
+				"server_port":2527,
+				"thread_id":30,
+				"thread_key":"1482109280.PV4hnVkTBBnZ05aaZx9y879qAxM"
+			},
+			"error":null,
+			"session_api":	{
+				"api_urls":	[
+					"http://api.dmc.nico:2805/api/sessions"
+				],
+				"recipe_id":"nicovideo-sm30229297",
+				"player_id":"nicovideo-6-1FubPR2ujh_1482109220622",
+				"videos":[
+					"archive_h264_2000kbps_720p",
+					"archive_h264_1000kbps_540p",
+					"archive_h264_600kbps_360p",
+					"archive_h264_300kbps_360p"
+				],
+				"audios":[
+					"archive_aac_192kbps",
+					"archive_aac_64kbps"
+				],
+				"movies":[],
+				"protocols":["http"],
+				"auth_types":{"http":"ht2"},
+				"service_user_id":"60625665",
+				"token":"{"service_id":"nicovideo","player_id":"nicovideo-6-1FubPR2ujh_1482109220622","recipe_id":"nicovideo-sm30229297","service_user_id":"60625665","protocols":[{"name":"http","auth_type":"ht2"}],"videos":["archive_h264_1000kbps_540p","archive_h264_2000kbps_720p","archive_h264_300kbps_360p","archive_h264_600kbps_360p"],"audios":["archive_aac_192kbps","archive_aac_64kbps"],"movies":[],"created_time":1482109220000,"expire_time":1482195620000,"content_ids":["out1"],"heartbeat_lifetime":60000,"content_key_timeout":600000,"priority":0.4,"transfer_presets":[]}",
+				"signature":"b054b256517142c00904b4a9b63d560e537062f30aa1e10584314c0880d84610",
+				"content_id":"out1",
+				"heartbeat_lifetime":60000,
+				"content_key_timeout":600000,
+				"priority":0.4
+			}
+		},
+		å„ó™
+	},
+	"player":{ó™},
+	"thread":{ó™},
+	"tags":[ó™],
+	"playlist":{ó™},
+	"owner":{ó™},
+	"viewer":{ó™},
+	 à»â∫ó™
+}
 
-//			flvInfo = getJsonValue(watchApiJson, "flvInfo");
-//			String s = flvInfo;
-//			s = unquote(s);
-//			StringBuffer sb = new StringBuffer();
-//			try {
-//				String dec = URLDecoder.decode(s, encoding);
-//				String[] sa = dec.split("&");
-//				for(String v: sa){
-//					sb.append(URLDecoder.decode(v, encoding));
-//					sb.append("\n ");
-//				}
-//			} catch (UnsupportedEncodingException e) {
-//				log.printStackTrace(e);
-//			}
-//			flvInfoArrays = sb.substring(0).trim();
-//			debug("\nÅ°flvInfo:\n "+flvInfo);
-//			debug("\nÅ°flvInfos:\n [\n "+flvInfoArrays);
-//			debug("\n ]\n");
-//			// dmcInfo
-//			isDmc = getJsonValue(watchApiJson, "isDmc");
-//			debug("\nÅ°isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc()+"\n");
-//			if(serverIsDmc()){
-//				dmcInfo = getJsonValue(watchApiJson, "dmcInfo");
-//				s = unquote(dmcInfo);
-//				sb = new StringBuffer();
-//				try {
-//					s = URLDecoder.decode(s, encoding);
-//				} catch (UnsupportedEncodingException e) {
-//					log.printStackTrace(e);
-//				}
-//				dmcInfoDec = s;
-//				if(s.contains("&")){
-//					String[] sa = s.split("&");
-//					for(String v: sa){
-//						try {
-//							sb.append(URLDecoder.decode(v, encoding));
-//							sb.append("\n ");
-//						} catch (UnsupportedEncodingException e) {
-//							log.printStackTrace(e);
-//						}
-//					}
-//					dmcInfoArrays = "[ "+sb.substring(0).trim()+ " ]";
-//				}
-//				else if (s.startsWith("{")){
-//					dmcInfoArrays = prettyBufferPrint(s);
-//				}
-//				debug("\nÅ°dmcInfo:\n "+dmcInfo);
-//				debug("\nÅ°dmcInfos:\n "+dmcInfoArrays);
-//				if(dmcInfoDec!=null){
-//					String l = getJsonValue(dmcInfoDec, "length_seconds");
-//					try {
-//						dmcVideoLength = (int)Integer.valueOf(l);
-//					} catch(NumberFormatException e){
-//						dmcVideoLength = 0;
-//					};
-//					debug("\nÅ°dmcVideoLength: "+dmcVideoLength);
-//					dmcToken = getJsonValue(dmcInfoDec, "token");
-//					debug("\nÅ°dmcToken:\n "+dmcToken);
-//					s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
-//					dmcTokenUnEscape = s;
-//					debug("\nÅ°dmcTokenUnEscape:\n "+dmcTokenUnEscape);
-//					sessionApi = getJsonValue(dmcInfoDec, "session_api");
-//					debug("\nÅ°session_api:\n "+sessionApi);
-//					recipe_id = getJsonValue(sessionApi, "recipe_id");
-//					debug("\nÅ°recipe_id: "+recipe_id);
-//					videos = getJsonValue(sessionApi, "videos");
-//					debug("\nÅ°videos: "+videos);
-//					audios = getJsonValue(sessionApi, "audios");
-//					debug("\nÅ°audios: "+audios);
-//					apiUrls = getJsonValue(sessionApi, "api_urls").trim();
-//					if(apiUrls.startsWith("[") && apiUrls.endsWith("]")){
-//						apiUrls = apiUrls.substring(1, apiUrls.length()-1);
-//					}
-//					t_created_time = getJsonValue(dmcTokenUnEscape, "created_time");
-//					debug("\nÅ°token created_time: "+t_created_time);
-//					if(!apiUrls.contains(",")){
-//						apiSessionUrl = unquote(apiUrls);
-//					}
-//					debug("\nÅ°apiUrls: "+apiUrls);
-//					debug("\nÅ°apiSessionUrl: "+apiSessionUrl);
-//					player_id = getJsonValue(sessionApi, "player_id");
-//					debug("\nÅ°player_id:\n "+player_id);
-//					service_user_id = getJsonValue(sessionApi, "service_user_id");
-//					debug("\nÅ°service_user_id:\n "+service_user_id);
-//					debug("\n");
-//				}
-//			}
-//	//	}
+ */
+	}
+
+	private String extractDataJson1(String json) {
+		try{
+			String j_video = getJsonValue1(json, "video");
+			debug("\nÅ°video: "+j_video);
+			String j_id = getJsonValue1(j_video,"id");
+			debug("\nÅ°id: "+j_id);
+			if(altTag.isEmpty()){
+				altTag = unquote(j_id);
+				if(altTag.equals(videoTag))
+					altTag = "";
+			}
+			String j_source = getJsonValue(j_video,"source");
+			debug("\nÅ°source: "+j_source);
+			VideoUrl = unquote(getJsonValue1(dataApiJson, "source"));
+			debug("\nVideoUrl: "+VideoUrl);
+			if(ContentType==null){
+				ContentType = unquote(getJsonValue1(j_video,"movieType"));
+				log.println("\nContentType: "+ContentType);
+			}
+			if(VideoTitle==null){
+				String j_title = getJsonValue1(j_video,"title");
+				debug("\nÅ°title: "+j_title);
+				VideoTitle = unquote(j_title);
+				log.println("\nVideoTitle: "+VideoTitle);
+			}
+			if(VideoLength<=0){
+				String j_duration = getJsonValue1(j_video,"duration");
+				debug("\nÅ°duration: "+j_duration);
+				String l = unquote(j_duration);
+				try {
+					VideoLength = (int)Integer.valueOf(l);
+				} catch(NumberFormatException e){
+					VideoLength = 0;
+				};
+				debug("\nÅ°VideoLength: "+VideoLength);
+			}
+			String j_dmcInfo = getJsonValue1(j_video,"dmcInfo");
+			debug("\nÅ°dmcInfo: "+j_dmcInfo);
+			dmcInfo = unquote(j_dmcInfo);
+			debug("\ndmcInfo: "+dmcInfo);
+			if(dmcInfo==null){
+				log.println("\ndmcInfo==null");
+			} else if(dmcInfo.equals("null")){
+				log.println("\ndmcInfo.equals(\"null\")");
+			}
+			isDmc = (dmcInfo==null || dmcInfo.equals("null"))? "0":"1";
+			debug("\nÅ°isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc()+"\n");
+			if(serverIsDmc()){
+				dmcVideoLength = VideoLength;
+				debug("\ndmcVideoLength: "+dmcVideoLength);
+				String j_session_api = getJsonValue1(j_dmcInfo,"session_api");
+				debug("\nÅ°session_api: "+j_session_api);
+				sessionApi = unquote(j_session_api);
+				debug("\nsessionApi: "+sessionApi);
+				String j_token = getJsonValue1(j_session_api,"token");
+				debug("\nÅ°token: "+j_token);
+				dmcToken = unquote(j_token);
+				debug("\ndmcToken: "+dmcToken);
+				String	s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
+				dmcTokenUnEscape = s;
+				debug("\nÅ°dmcTokenUnEscape:\n "+dmcTokenUnEscape);
+				t_created_time = getJsonValue(dmcTokenUnEscape, "created_time");
+				debug("\nÅ°token created_time: "+t_created_time);
+				//
+				recipe_id = getJsonValue(sessionApi, "recipe_id");
+				debug("\nÅ°recipe_id: "+recipe_id);
+				videos = getJsonValue(sessionApi, "videos");
+				debug("\nÅ°videos: "+videos);
+				audios = getJsonValue(sessionApi, "audios");
+				debug("\nÅ°audios: "+audios);
+				apiUrls = getJsonValue(sessionApi, "api_urls").trim();
+				if(apiUrls.startsWith("[") && apiUrls.endsWith("]")){
+					apiUrls = apiUrls.substring(1, apiUrls.length()-1);
+				}
+				if(!apiUrls.contains(",")){
+					apiSessionUrl = unquote(apiUrls);
+				}
+				debug("\nÅ°apiUrls: "+apiUrls);
+				debug("\nÅ°apiSessionUrl: "+apiSessionUrl);
+				player_id = getJsonValue(sessionApi, "player_id");
+				debug("\nÅ°player_id:\n "+player_id);
+				service_user_id = getJsonValue(sessionApi, "service_user_id");
+				debug("\nÅ°service_user_id:\n "+service_user_id);
+				debug("\n");
+			}
+
+			debug("\nÅ°player: "+getJsonValue(dataApiJson,"player"));
+			String j_thread = getJsonValue(dataApiJson,"thread");
+			debug("\nÅ°thread: "+j_thread);
+			String j_ids = getJsonValue1(j_thread,"ids");
+			String j_default = getJsonValue1(j_ids,"default");
+			debug("\nÅ°default: "+j_default);
+			ThreadID = unquote(j_default);
+			log.println("\nThreadID: "+ThreadID);
+			String j_community = getJsonValue1(j_ids,"community");
+			debug("\nÅ°community: "+j_community);
+			if(j_community != null && !j_community.equals("null")){
+				OptionalThraedID = unquote(j_community);
+				log.println("\nOptionalThreadID: "+OptionalThraedID);
+			}
+			String j_nicos = getJsonValue1(j_ids,"nicos");
+			debug("\nÅ°nicos: "+j_nicos);
+			String j_serverUrl = getJsonValue1(j_thread,"serverUrl");
+			debug("\nÅ°serverUrl: "+j_serverUrl);
+			MsgUrl = unquote(j_serverUrl);
+			log.println("\nMsgUrl: "+MsgUrl);
+			String j_tags = getJsonValue1(dataApiJson,"tags");
+			debug("\nÅ°tags: "+j_tags);
+			String j_playlist = getJsonValue1(dataApiJson,"playlist");
+			debug("\nÅ°playlist: "+j_playlist);
+			String j_owner = getJsonValue1(dataApiJson,"owner");
+			debug("\nÅ°owner: "+j_owner);
+			String j_viewer = getJsonValue1(dataApiJson,"viewer");
+			debug("\nÅ°viewer: "+j_viewer);
+			String j_userID = getJsonValue1(j_viewer,"id");
+			debug("\nÅ°viewer.id: "+j_id);
+			UserID = unquote(j_userID);
+			log.println("\nUserID: "+UserID);
+			if(Premium==null){
+				String j_isPremium = getJsonValue1(j_viewer,"isPremium");
+				debug("\nÅ°isPremium: "+j_isPremium);
+				Premium = unquote(j_isPremium);
+				log.println("\nPremium: "+Premium);
+				nicomap.put("is_premium", Premium);
+			}
+			String j_context = getJsonValue1(dataApiJson,"context");
+			debug("\nÅ°context: "+j_context);
+			String j_isMyMemory = getJsonValue1(j_context,"isMyMemory");
+			debug("\nÅ°isMyMemory: "+j_isMyMemory);
+			String j_liveTopics = getJsonValue1(dataApiJson,"liveTopics");
+			debug("\nÅ°liveTopics: "+j_liveTopics);
+			debug("\n");
+			economy = VideoUrl.toLowerCase().contains("low");
+			if(size_video_thumbinfo==null && size_high!=null && size_low!=null)
+				size_video_thumbinfo = economy? size_low : size_high;
+			return dataApiJson;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	void debug(String s, String input) {
+		if(Debug){
+			log.print(s);
+			Mson.prettyPrint(input,log);
+		}
 	}
 
 	private Path getDataApiData(String html, String encoding, String comment){
@@ -3093,11 +3245,26 @@ html5 ok.
 			return null;
 		}
 		// URLDecodeÇµÇ»Ç¢
+		Path file0 = Path.mkTemp(videoTag+"_dataApiJson.txt");
 		Path file = Path.mkTemp(videoTag+"_dataApiJ.xml");
-		Path.unescapeStoreXml(file, text, comment);		//xml is property key:json val:JSON
+		Path.writeAllText(file0, text, encoding);
+		Mson dataApiMson;
+		try {
+			dataApiMson = Mson.parse(text);
+			dataApiMson.prettyPrint(log);
+			dataApiJson = dataApiMson.toUnquoteString();
+			text = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
+				+"<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n"
+				+"<properties><comment>" + comment + "</comment>\n"
+				+"<entry key=\"json\">" + text + "</entry>\n";
+			Path.writeAllText(file, text, encoding);
+		}catch(Exception e){
+			log.println("dataApiMson parse error");
+			log.println("Saved dataApiData to "+file0.getPath());
+			Path.unescapeStoreXml(file, text, comment);		//xml is property key:json val:JSON
+		}
 		log.println("Saved dataApiData to "+file.getPath());
 		return file;
-	//	return null;
 	}
 
 	private String extractWatchApiJson(String html, String encoding, String url){

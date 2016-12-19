@@ -22,6 +22,9 @@ public class Mson {
 	public Mson(JsonElement je) {
 		setJson(je);
 	}
+	public Mson(String input) {
+		// TODO 自動生成されたコンストラクター・スタブ
+	}
 	public String toString(){
 		if(getJson()==null)
 			return "[]";
@@ -103,6 +106,14 @@ public class Mson {
 		try {
 			Mson m = parse(input);
 			m.prettyPrint(ps);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void prettyPrint(String input, Logger log) {
+		try {
+			Mson m = parse(input);
+			m.prettyPrint(log);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -217,6 +228,6 @@ public class Mson {
 		return new Mson(get(key));
 	}
 	public boolean isNull() {
-		return json.isJsonNull();
+		return json==null || json.isJsonNull();
 	}
 }
