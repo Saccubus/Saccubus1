@@ -690,7 +690,7 @@ public class NicoClient {
 	private String Premium = "";
 	private String OptionalThraedID = "";	// normal Comment ID when Community DOUGA
 	private boolean economy = false;
-	private String ownerFilter = "";			// video owner filter（replace）
+	private String ownerFilter;			// video owner filter（replace）
 	public boolean getVideoInfo(String tag, String watchInfo, String time, boolean saveWatchPage) {
 		if(videoTag==null)
 			videoTag = tag;
@@ -2627,13 +2627,21 @@ public class NicoClient {
 				StringBuffer sb = new StringBuffer();
 				for(String[] s: list){
 					debug("\n■hash: "+s[0]+","+s[1]);
+					if(s[0]==null || s[0].isEmpty())
+						continue;
 					String entry = unquote(s[0])+"="+unquote(s[1])+"&";
 					sb.append(entry);
 					debug("\n■sb.append: "+entry);
 				}
-				ownerFilter = sb.substring(0);
-				if(ownerFilter.endsWith("&"))
-					ownerFilter = ownerFilter.substring(0,ownerFilter.length()-1);
+				ownerNGFilters = sb.substring(0).trim();
+				if(!ownerNGFilters.isEmpty()){
+					if(ownerNGFilters.endsWith("&"))
+						ownerFilter = ownerNGFilters.substring(0,ownerNGFilters.length()-1);
+					else
+						ownerFilter = ownerNGFilters;
+					if(ownerFilter.isEmpty())
+						ownerFilter = null;
+				}
 			Mson m_liveTopics = dataApiMson.getMson("liveTopics");
 			debug("\n■liveTopics: "+m_liveTopics.toString().length());
 			debug("\n■}\n");
