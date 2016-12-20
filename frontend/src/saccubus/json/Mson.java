@@ -36,6 +36,9 @@ public class Mson {
 	public String getAsString(){
 		return unquote(toString());
 	}
+	public String getAsString(String key){
+		return get(key).getAsString();
+	}
 	final String S_QUOTE2 = "\"";
 	private String unquote(String str) {
 		if(str==null) return null;
@@ -43,6 +46,8 @@ public class Mson {
 		if(str.startsWith(S_QUOTE2) && str.endsWith(S_QUOTE2)){
 			str = str.substring(1, str.length()-1);
 		}
+		if(str.equals("null"))
+			return null;
 		return str;
 	}
 	private boolean isPrimitive(){
@@ -71,9 +76,6 @@ public class Mson {
 	}
 	private JsonArray getAsJsonArray(){
 		return json.getAsJsonArray();
-	}
-	String getString(String key){
-		return get(key).toString();
 	}
 	public static Mson parse(String text){
 		JsonReader reader = new JsonReader(new StringReader(text));
@@ -168,5 +170,22 @@ public class Mson {
 		return json==null || json.isJsonNull()
 			|| equals(MSON_NULL)
 			|| (isString() && json.getAsString().equals("[]"));
+	}
+	public Mson get(int i) {
+		if(isArray()){
+			JsonArray ja = getAsJsonArray();
+			return new Mson(ja.get(i));
+		}
+		return MSON_NULL;
+	}
+	public int getSize(){
+		if(isArray()){
+			JsonArray ja = getAsJsonArray();
+			return ja.size();
+		}
+		return 0;
+	}
+	public String getAsString(int i) {
+		return get(i).getAsString();
 	}
 }

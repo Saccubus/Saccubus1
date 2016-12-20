@@ -20,7 +20,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
@@ -797,7 +796,7 @@ public class NicoClient {
 	private String contentUri;
 //	private String expire_time;
 //	private String responseToken;
-//	private String signature;
+	private String signature;
 //	private String r_created_time;
 	private String responseXmlData;
 	private String postXmlData;
@@ -2159,17 +2158,19 @@ public class NicoClient {
 	private String dmcTokenUnEscape;
 	private String sessionApi;
 	private Path sessionXml;
-	private String video_src;
-	private String audio_src;
+	//private String video_src;
+	//private String audio_src;
 	private String videos;
+	private ArrayList<String> videolist;
 	private String audios;
+	private ArrayList<String> audiolist;
 	private String apiUrls;
 	private String sessionData;
 	private String player_id;
 	private String apiSessionUrl;
 	private String videoTag;
 	private String recipe_id;
-	private String t_created_time;
+//	private String t_created_time;
 	private String service_user_id;
 	private String dataApiJson;
 	private String priority;
@@ -2241,12 +2242,13 @@ public class NicoClient {
 				}else{
 					log.println("JSON_START not found, try HTML5_JSON");
 					if(html.contains(JSON_START2)){
-						if(extractDataApiDataJson(html, encoding, url)==null){
+						if(extractDataApiDataJson(html, encoding, url)!=null){
+							log.println("html5 ok.");
+							isHtml5Ok = true;
+						}else{
 							log.println("html5 NG.");
 							isHtml5Ok = false;
 						}
-						log.println("html5 ok.");
-						isHtml5Ok = true;
 					}
 				}
 			}
@@ -2261,122 +2263,119 @@ public class NicoClient {
 				sb.append("<title>"+title+"</title>\n");
 				if(isHtml5Ok){
 					String text = getDataApiJson();
-					String video = getJsonValue(text,"video");
-					String description = getJsonValue(video,"description");
+					Mson m_dataApi = Mson.parse(text);
+					Mson m_video = m_dataApi.get("video");
+					String description = m_video.getAsString("description");
 					if(description==null)
 						description = "";
 					description = description.replace("&quot;", "”")
 						.replace("&lt;", "(").replace("&gt;", ")")
 						.replaceAll("\\(br ?/?\\)","\n");
 					sb.append(makeNewElement("description", description));
-					String thumbnailURL = getJsonValue(video,"thumbnailURL");
+					String thumbnailURL = m_video.getAsString("thumbnailURL");
 					if(thumbnailURL==null)
 						thumbnailURL="";
 					sb.append(makeNewElement("thumbnail_url",thumbnailURL));
 					if(ContentType==null)
-						ContentType = getJsonValue(video,"movieType");
+						ContentType = m_video.getAsString("movieType");
 					sb.append(makeNewElement("movie_type",ContentType));
 					if(altTag.isEmpty())
-						altTag = getJsonValue(video, "id");
+						altTag = m_video.getAsString("id");
 					if(altTag.isEmpty())
 						altTag = tag;
 					sb.append(makeNewElement("watch_url",HTTP_WWW_NICOVIDEO_WATCH +altTag));
 					sb.append(makeNewElement("thumb_type","video"));
-					String tag_list = getJsonValue(text,"tags");
-					if(tag_list!=null && tag_list.length()>2){
-						if(tag_list.startsWith("[{")&&tag_list.endsWith("}]")){
-							sb.append("<tags domain=\"jp\">\n");
-							String[] tags = tag_list.substring(2,tag_list.length()-2).split("\\},\\{");
-							debug("\ntags.length="+tags.length);
-							for(String tagitem: tags){
-								String hash = "{"+tagitem+"}";
-								debug("\ntagitem="+hash);
-								// hash = {"name":"ニコニコ技術部","isCategory":true,"isDictionaryExists":true,"isLocked":true}
-								String t = getJsonValue(hash,"name");
-								String cat = getJsonValue(hash,"isCategory");
-								String lck = getJsonValue(hash,"isLocked");
-								if(t!=null){
-									debug("\ntag="+t);
-									sb.append("<tag");
-									if("true".equals(cat)) sb.append(" category=\"1\"");
-									if("true".equals(lck)) sb.append(" lock=\"1\"");
-									sb.append(">"+t+"</tag>\n");
-								}
+					Mson m_tags = m_dataApi.get("tags");
+					if(m_tags.getSize()>0){
+						sb.append("<tags domain=\"jp\">\n");
+						debug("\ntags.length="+m_tags.getSize());
+						for(int i=0; i< m_tags.getSize(); i++){
+							Mson m_hash = m_tags.get(i);
+							debug("\nhash="+m_hash);
+					// hash = {"name":"ニコニコ技術部","isCategory":true,"isDictionaryExists":true,"isLocked":true}
+							String t = m_hash.getAsString("name");
+							String cat = m_hash.getAsString("isCategory");
+							String lck = m_hash.getAsString("isLocked");
+							if(t!=null){
+								debug("\ntag="+t);
+								sb.append("<tag");
+								if("true".equals(cat)) sb.append(" category=\"1\"");
+								if("true".equals(lck)) sb.append(" lock=\"1\"");
+								sb.append(">"+t+"</tag>\n");
 							}
-							sb.append("</tags>\n");
 						}
+						sb.append("</tags>\n");
 					}
-					String owner = getJsonValue(text,"owner");
-					String user_id = getJsonValue(owner,"id");
-					//if(user_id==null || user_id.isEmpty())
-					//	user_id = getJsonValue(text,"user_id");
+					Mson m_owner = m_dataApi.get("owner");
+					String user_id = m_owner.getAsString("id");
 					if(user_id==null)
 						user_id = "";
 					sb.append(makeNewElement("user_id",user_id));
-					String nickname = getJsonValue(owner,"nickname");
+					String nickname = m_owner.getAsString("nickname");
 					if(nickname!=null)
-						sb.append(makeNewJsonValue(text,"user_nickname"));
-					sb.append(makeNewElement("user_icon_url",getJsonValue(owner, "iconURL")));
+						sb.append(makeNewElement("user_nickname",nickname));
+					sb.append(makeNewElement("user_icon_url",m_owner.getAsString("iconURL")));
 					sb.append("</thumb>\n");
 					sb.append("</nicovideo_thumb_response>\n");
 					s = sb.substring(0);
 				}else{
 					String text = getWatchApiJson();
-					String description = getJsonValue(text,"description");
+					Mson m_watchApi = Mson.parse(text);
+					String description = m_watchApi.getAsString("description");
 					if(description==null)
 						description = "";
-					description = description.replace("&quot;", "”")
-						.replace("&lt;", "(").replace("&gt;", ")")
-						.replaceAll("\\(br ?/?\\)","\n");
-					sb.append("<description>"+description+"</description>\n");
-					String thumbUrl = getJsonValue(text,"thumbnail");
+					else
+						description = description.replace("&quot;", "”")
+							.replace("&lt;", "(").replace("&gt;", ")")
+							.replaceAll("\\(br ?/?\\)","\n");
+					sb.append(makeNewElement("description",description));
+					String thumbUrl = m_watchApi.getAsString("thumbnail");
 					if(thumbUrl==null)
-						thumbUrl = getJsonValue(text,"thumbImage");
+						thumbUrl = m_watchApi.getAsString("thumbImage");
 					if(thumbUrl==null) thumbUrl="";
-					sb.append("<thumbnail_url>"+thumbUrl+"</thumbnail_url>\n");
+					sb.append(makeNewElement("thumbnail_url",thumbUrl));
 					if(ContentType==null)
-						ContentType = getJsonValue(text,"movie_type");
-					sb.append("<movie_type>"+ContentType+"</movie_type>\n");
+						ContentType = m_watchApi.getAsString("movie_type");
+					sb.append(makeNewElement("movie_type",ContentType));
 					if(altTag.isEmpty())
-						altTag = getJsonValue(text, "watch_url");
+						altTag = m_watchApi.getAsString("watch_url");
 					if(altTag.isEmpty())
 						altTag = tag;
-					sb.append("<watch_url>"+HTTP_WWW_NICOVIDEO_WATCH +altTag+"</watch_url>\n");
-					sb.append("<thumb_type>video</thumb_type>\n");
-					String tag_list = getJsonValue(text,"tagList");
-					if(tag_list!=null && tag_list.length()>2){
-						if(tag_list.startsWith("[{")&&tag_list.endsWith("}]")){
-							sb.append("<tags domain=\"jp\">\n");
-							String[] tags = tag_list.substring(2,tag_list.length()-2).split("\\},\\{");
-							debug("\ntags.length="+tags.length);
-							for(String tagitem: tags){
-								String hash = "{"+tagitem+"}";
-								debug("\ntagitem="+hash);
-								// hash = {"id":"120343647","tag":"ニコニコ技術部","cat":true,"dic":true,"lck":"1"}
-								String t = getJsonValue(hash,"tag");
-								String cat = getJsonValue(hash,"cat");
-								String lck = getJsonValue(hash,"lck");
-								if(t!=null){
-									debug("\ntag="+t);
-									sb.append("<tag");
-									if("true".equals(cat)) sb.append(" category=\"1\"");
-									if("1".equals(lck)) sb.append(" lock=\"1\"");
-									sb.append(">"+t+"</tag>\n");
-								}
+					sb.append(makeNewElement("watch_url",HTTP_WWW_NICOVIDEO_WATCH +altTag));
+					sb.append(makeNewElement("thumb_type","video"));
+					String tag_list = m_watchApi.getAsString("tagList");
+					debug("\ntag_list="+tag_list);
+					Mson m_tagList = m_watchApi.get("tagList");
+					if(m_tagList.getSize()>0){
+						sb.append("<tags domain=\"jp\">\n");
+						debug("\ntags.length="+m_tagList.getSize());
+						for(int i = 0; i < m_tagList.getSize(); i++){
+							Mson m_hash = m_tagList.get(i);
+							debug("\ntagitem="+m_hash);
+							// hash = {"id":"120343647","tag":"ニコニコ技術部","cat":true,"dic":true,"lck":"1"}
+							String t = m_hash.getAsString("tag");
+							String cat = m_hash.getAsString("cat");
+							String lck = m_hash.getAsString("lck");
+							if(t!=null && !t.isEmpty()){
+								debug("\ntag="+t);
+								sb.append("<tag");
+								if("true".equals(cat)) sb.append(" category=\"1\"");
+								if("1".equals(lck)) sb.append(" lock=\"1\"");
+								sb.append(">"+t+"</tag>\n");
 							}
 							sb.append("</tags>\n");
 						}
 					}
-					String user_id = getJsonValue(text,"user_id");
+					String user_id = m_watchApi.getAsString("user_id");
 					if(user_id==null || user_id.isEmpty())
-						user_id = getJsonValue(text,"videoUserId");
+						user_id = m_watchApi.getAsString("videoUserId");
 					if(user_id==null)
 						user_id = "";
-					sb.append("<user_id>"+user_id+"</user_id>\n");
-					String nickname = getJsonValue(text,"user_nickname");
+					sb.append(makeNewElement("user_id",user_id));
+					String nickname = m_watchApi.getAsString("user_nickname");
 					if(nickname!=null)
-						sb.append(makeNewJsonValue(text,"user_nickname"));
-					sb.append(makeNewJsonValue(text,"user_icon_url"));
+						sb.append(makeNewElement("user_nickname",nickname));
+					sb.append(makeNewElement("user_icon_url",m_watchApi.getAsString("user_icon_url")));
 					sb.append("</thumb>\n");
 					sb.append("</nicovideo_thumb_response>\n");
 					s = sb.substring(0);
@@ -2428,9 +2427,6 @@ public class NicoClient {
 	}
 	private String extractDataApiDataJson(String ss, String encoding, String url) {
 		// HTML5 watchpage
-//		String url1 = url.replaceAll("[\\?./:]+", "_")+".html";
-//		File dataJsonFile = Path.mkTemp(url1);
-//		Path.writeAllText(dataJsonFile, ss, encoding);
 		Path file = getDataApiData(ss, encoding, url);
 		if(file==null) return null;
 		return extractDataJson(file, encoding);
@@ -2440,20 +2436,21 @@ public class NicoClient {
 		//Json解析
 		debug("\n■{");
 		if(dataApiJson==null){
-			Properties prop = new Properties();
-			try {
-				prop.loadFromXML(new FileInputStream(xml));
-				dataApiJson = prop.getProperty("json", "0");
-				debug("\n■dataAPIData_JSON:\n "+dataApiJson);
-			} catch (IOException e) {
-				//log.printStackTrace(e);
-				log.println("\nloadFromXML error: "+xml.getPath());
-				return null;
-			}
-			if(dataApiJson==null || dataApiJson.isEmpty()){
-				log.println("\ndataAPIData_JSON error ");
-				return null;
-			}
+//			Properties prop = new Properties();
+//			try {
+//				prop.loadFromXML(new FileInputStream(xml));
+//				dataApiJson = prop.getProperty("json", "0");
+//				debug("\n■dataAPIData_JSON:\n "+dataApiJson);
+//			} catch (IOException e) {
+//				//log.printStackTrace(e);
+//				log.println("\nloadFromXML error: "+xml.getPath());
+//				return null;
+//			}
+//			if(dataApiJson==null || dataApiJson.isEmpty()){
+//				log.println("\ndataAPIData_JSON error ");
+//				return null;
+//			}
+			return null;
 		}
 		try {
 			Mson dataApiMson = null;
@@ -2462,27 +2459,28 @@ public class NicoClient {
 			//	debug("\n■dataApiMson", dataApiMson);
 			}catch(Exception e){
 				log.println("\nMson: parse error(dataApiJson)");
-				return extractDataJson1(dataApiJson);
+			//	return extractDataJson1(dataApiJson);
+				return null;
 			}
 			isDmc = "0";
 			Mson m_video = dataApiMson.get("video");
 			debug("\n■video: ",m_video);
 				Mson m_id = m_video.get("id");
-				debug("\n■id: ",m_id);
+				debug("\n■id: "+m_id+"\n");
 				if(altTag.isEmpty()){
 					altTag = m_id.getAsString();
 					if(altTag.equals(videoTag))
 						altTag = "";
 				}
 				Mson m_source = m_video.get("source");
-				debug("\n■source: ",m_source);
-				VideoUrl = unquote(getJsonValue1(dataApiJson, "source"));
-				log.println("\nVideoUrl: "+VideoUrl);
+				debug("■source: "+m_source+"\n");
+				VideoUrl = m_source.getAsString();
+				log.println("VideoUrl: "+VideoUrl);
 				Mson m_movieType = m_video.get("movieType");
 				ContentType = m_movieType.getAsString();
 				log.println("ContentType: "+ContentType);
 				Mson m_title = m_video.get("title");
-				debug("\n■title: ",m_title);
+				debug("■title: "+m_title+"\n");
 				if(VideoTitle==null || VideoTitle.isEmpty()){
 					VideoTitle = m_title.getAsString();
 					log.println("VideoTitle: "+VideoTitle);
@@ -2490,7 +2488,7 @@ public class NicoClient {
 				}
 				log.println("VideoTitle(safe): "+VideoTitle);
 				Mson m_duration = m_video.get("duration");
-				debug("\n■duration: ",m_duration);
+				debug("■duration: "+m_duration+"\n");
 				String l = m_duration.getAsString();
 				try {
 					VideoLength = (int)Integer.valueOf(l);
@@ -2499,123 +2497,128 @@ public class NicoClient {
 				};
 				log.println("VideoLength: "+VideoLength);
 				Mson m_isOfficial = m_video.get("isOfficial");
-				debug("\n■isOfficial: ",m_isOfficial);
+				debug("■m_isOfficial: "+m_isOfficial+"\n");
 				String isOfficial = m_isOfficial.getAsString();
+				debug("■isOfficial: "+isOfficial+"\n");
 				if(isOfficial!=null && isOfficial.equals("true")){
 					NeedsKey = true;
 					log.println("NeedsKey: "+NeedsKey);
 				}
 				Mson m_dmcInfo = m_video.get("dmcInfo");
-				debug("\n■m_dmcInfo: ",m_dmcInfo);
-				dmcInfo = m_dmcInfo.getAsString();
-				debug("\n■dmcInfo: "+dmcInfo);
-				if(dmcInfo==null){
-					debug("\n■dmcInfo==null");
-				} else if(dmcInfo.equals("null")){
-					debug("\n■dmcInfo.equals(\"null\")");
+				debug("■m_dmcInfo: ",m_dmcInfo+"\n");
+				if(!m_dmcInfo.isNull()){
+					dmcInfo = m_dmcInfo.getAsString();
+					debug("■dmcInfo: "+dmcInfo+"\n");
+					isDmc = "1";
 				}
-				isDmc = (dmcInfo==null || dmcInfo.equals("null"))? "0":"1";
+			//	isDmc = (dmcInfo==null || dmcInfo.equals("null"))? "0":"1";
 				log.println("isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc());
 				if(serverIsDmc()){
 					dmcVideoLength = VideoLength;
 					log.println("dmcVideoLength: "+dmcVideoLength);
-					Mson m_session_api = m_dmcInfo.get("session_api");
-					debug("\n■session_api: ",m_session_api);
-					sessionApi = m_session_api.getAsString();
+					Mson m_sessionApi = m_dmcInfo.get("session_api");
+					debug("■session_api: "+m_sessionApi+"\n");
+					sessionApi = m_sessionApi.getAsString();
 					log.println("sessionApi: "+sessionApi);
-					Mson m_token = m_session_api.get("token");
-					debug("\n■token: ",m_token);
+					Mson m_token = m_sessionApi.get("token");
+					debug("■token: "+m_token+"\n");
 					dmcToken = m_token.getAsString();
 					log.println("dmcToken: "+dmcToken);
 					String	s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
 					dmcTokenUnEscape = s;
-					debug("\n■dmcTokenUnEscape:\n "+dmcTokenUnEscape);
-					t_created_time = getJsonValue(dmcTokenUnEscape, "created_time");
-					debug("\n■token created_time: "+t_created_time);
+					debug("■dmcTokenUnEscape:\n "+dmcTokenUnEscape+"\n");
+				//	t_created_time = getJsonValue(dmcTokenUnEscape, "created_time");
+				//	debug("■token created_time: "+t_created_time+"\n");
 					//
-					recipe_id = getJsonValue(sessionApi, "recipe_id");
-					debug("\n■recipe_id: "+recipe_id);
-					videos = getJsonValue(sessionApi, "videos");
-					debug("\n■videos: "+videos);
-					audios = getJsonValue(sessionApi, "audios");
-					debug("\n■audios: "+audios);
-					apiUrls = getJsonValue(sessionApi, "api_urls").trim();
-					if(apiUrls.startsWith("[") && apiUrls.endsWith("]")){
-						apiUrls = apiUrls.substring(1, apiUrls.length()-1);
+					recipe_id = m_sessionApi.getAsString("recipe_id");
+					debug("■recipe_id: "+recipe_id+"\n");
+					Mson m_videos = m_sessionApi.get("videos");
+					debug("■videos: "+m_videos.getAsString()+"\n");
+					videolist = new ArrayList<String>();
+					for(int i = 0; i < m_videos.getSize(); i++){
+						videolist.add((m_videos.get(i).getAsString()));
 					}
-					if(!apiUrls.contains(",")){
-						apiSessionUrl = unquote(apiUrls);
+					debug("\n■videolist: "+videolist);
+					Mson m_audios = m_sessionApi.get("audios");
+					debug("■audios: "+m_audios.getAsString()+"\n");
+					audiolist = new ArrayList<String>();
+					for(int i = 0; i < m_audios.getSize(); i++){
+						videolist.add((m_audios.get(i).getAsString()));
 					}
-					debug("\n■apiUrls: "+apiUrls);
-					debug("\n■apiSessionUrl: "+apiSessionUrl);
-					player_id = getJsonValue(sessionApi, "player_id");
-					debug("\n■player_id:\n "+player_id);
-					service_user_id = getJsonValue(sessionApi, "service_user_id");
-					debug("\n■service_user_id:\n "+service_user_id);
+					debug("\n■audiolist: "+audiolist);
+					Mson m_api_urls = m_sessionApi.get("api_urls");
+					apiUrls = m_api_urls.getAsString();
+					apiSessionUrl = m_api_urls.getAsString(0);
+					debug("■apiUrls: "+apiUrls+"\n");
+					debug("■apiSessionUrl: "+apiSessionUrl+"\n");
+					player_id = m_sessionApi.getAsString("player_id");
+					debug("■player_id:\n "+player_id+"\n");
+					service_user_id = m_sessionApi.getAsString("service_user_id");
+					debug("■service_user_id:\n "+service_user_id+"\n");
 					debug("\n");
 				}
 			Mson m_player = dataApiMson.get("player");
-			debug("\n■player: ",m_player);
+			debug("■player: "+m_player+"\n");
 			Mson m_thread = dataApiMson.get("thread");
-			debug("\n■thread: ",m_thread);
+			debug("■thread: ",m_thread);
 				Mson m_thread_id = m_thread.get("thread_id");
-				debug("\n■thread_id: ",m_thread_id);
+				debug("\n■thread_id: "+m_thread_id+"\n");
 				if(!m_thread_id.isNull()){
 					ThreadID = m_thread_id.getAsString();
 					log.println("ThreadID: "+ThreadID);
 					Mson m_server_url = m_thread.get("server_url");
-					debug("\n■server_url: ",m_server_url);
+					debug("■server_url: "+m_server_url+"\n");
 					MsgUrl = m_server_url.getAsString();
 					log.println("MsgUrl: "+MsgUrl);
 					Mson m_thread_key_required = m_thread.get("thread_key_required");
-					debug("\n■thread_key_required: ",m_thread_key_required);
+					debug("■thread_key_required: "+m_thread_key_required+"\n");
 					String key_required = m_thread_key_required.getAsString();
 					NeedsKey = key_required.equals("true") ? true : false;
 					log.println("NeedsKey: "+NeedsKey);
 				}else{
 					Mson m_ids = m_thread.get("ids");
 					Mson m_default = m_ids.get("default");
-					debug("\n■default: ",m_default);
+					debug("■default: "+m_default+"\n");
 					ThreadID = m_default.getAsString();
 					log.println("ThreadID: "+ThreadID);
 					Mson m_community = m_ids.get("community");
-					debug("\n■community: ",m_community);
+					debug("■community: "+m_community+"\n");
 					if(!m_community.isNull()){
 						OptionalThraedID = m_community.getAsString();
 						log.println("OptionalThreadID: "+OptionalThraedID);
 					}
 					Mson m_nicos = m_ids.get("nicos");
-					debug("\n■nicos: ",m_nicos);
+					debug("■nicos: "+m_nicos+"\n");
 					Mson m_serverUrl = m_thread.get("serverUrl");
-					debug("\n■serverUrl: ",m_serverUrl);
+					debug("■serverUrl: "+m_serverUrl+"\n");
 					MsgUrl = m_serverUrl.getAsString();
 					log.println("MsgUrl: "+MsgUrl);
 				}
 			Mson m_tags = dataApiMson.get("tags");
-			debug("\n■tags: "+m_tags.toString().length());
+			debug("■tags: "+m_tags.toString().length()+"\n");
 			Mson m_playlist = dataApiMson.get("playlist");
-			debug("\n■playlist: "+m_playlist.toString().length());
+			debug("■playlist: "+m_playlist.toString().length()+"\n");
 			Mson m_owner = dataApiMson.get("owner");
-			debug("\n■owner: ",m_owner);
+			debug("■owner: "+m_owner+"\n");
 			Mson m_viewer = dataApiMson.get("viewer");
-			debug("\n■viewer: ",m_viewer);
+			debug("■viewer: "+m_viewer+"\n");
 				Mson m_userID = m_viewer.get("id");
-				debug("\n■viewr.id: ",m_userID);
+				debug("■viewr.id: "+m_userID+"\n");
 				UserID = m_userID.getAsString();
-				log.println("UserID: "+UserID);
+				debug("■UserID: "+UserID);
 				Mson m_isPremium = m_viewer.get("isPremium");
-				debug("\n■isPremium: ",m_isPremium);
+				debug("■isPremium: "+m_isPremium+"\n");
 				Premium = m_isPremium.getAsString();
 				log.println("Premium: "+Premium);
 				nicomap.put("is_premium", Premium);
 			Mson m_ad = dataApiMson.get("ad");
-			debug("\n■ad: ",m_ad);
+			debug("■ad: "+m_ad+"\n");
 			Mson m_lead = dataApiMson.get("lead");
-			debug("\n■lead: "+m_lead.toString().length());
+			debug("■lead: "+m_lead.toString().length()+"\n");
 			Mson m_context = dataApiMson.get("context");
-			debug("\n■context: ",m_context);
-				Mson m_isMyMemory = m_context.get("isMyMemory");
-				log.println("isMyMemory: "+m_isMyMemory.getAsString());
+			debug("■context: ",m_context);
+			debug("\n");
+				log.println("isMyMemory: "+m_context.getAsString("isMyMemory"));
 				/*
 					html5	"ownerNGFilters":[{"source":"b2","destination":"CM中か！今がチャンスだ！"},{
 					flash	ng_up:	b2=CM中か！今がチャンスだ！&
@@ -2625,19 +2628,19 @@ public class NicoClient {
 					<chat filter="1">　</chat>で囲み投コメxmlに追加
 				*/
 				Mson m_ownerNGFilters = m_context.get("ownerNGFilters");
-				debug("\n■ownerNGFilters: ",m_ownerNGFilters);
+				debug("■ownerNGFilters: "+m_ownerNGFilters+"\n");
 				String ownerNGFilters = m_ownerNGFilters.getAsString();
-				debug("\n■ownerNGFilters: "+ownerNGFilters);
+				debug("■ownerNGFilters: "+ownerNGFilters+"\n");
 				String[] keys = new String[]{"source","destination"};
 				ArrayList<String[]> list = Mson.getListString(m_ownerNGFilters, keys);
 				StringBuffer sb = new StringBuffer();
 				for(String[] s: list){
-					debug("\n■hash: "+s[0]+","+s[1]);
+					debug("■hash: "+s[0]+","+s[1]+"\n");
 					if(s[0]==null || s[0].isEmpty())
 						continue;
 					String entry = unquote(s[0])+"="+unquote(s[1])+"&";
 					sb.append(entry);
-					debug("\n■sb.append: "+entry);
+					debug("■sb.append: "+entry+"\n");
 				}
 				ownerNGFilters = sb.substring(0).trim();
 				if(!ownerNGFilters.isEmpty()){
@@ -2649,8 +2652,8 @@ public class NicoClient {
 						ownerFilter = null;
 				}
 			Mson m_liveTopics = dataApiMson.get("liveTopics");
-			debug("\n■liveTopics: "+m_liveTopics.toString().length());
-			debug("\n■}\n");
+			debug("■liveTopics: "+m_liveTopics.toString().length()+"\n");
+			debug("■}\n");
 			economy = VideoUrl.toLowerCase().contains("low");
 			log.println("economy: "+economy +",isEco(): "+ isEco());
 			if(size_video_thumbinfo==null && size_high!=null && size_low!=null){
@@ -2743,147 +2746,147 @@ public class NicoClient {
  */
 	}
 
-	private String extractDataJson1(String json) {
-		try{
-			String j_video = getJsonValue1(json, "video");
-			debug("\n■video: "+j_video);
-			String j_id = getJsonValue1(j_video,"id");
-			debug("\n■id: "+j_id);
-			if(altTag.isEmpty()){
-				altTag = unquote(j_id);
-				if(altTag.equals(videoTag))
-					altTag = "";
-			}
-			String j_source = getJsonValue(j_video,"source");
-			debug("\n■source: "+j_source);
-			VideoUrl = unquote(getJsonValue1(dataApiJson, "source"));
-			debug("\nVideoUrl: "+VideoUrl);
-			if(ContentType==null){
-				ContentType = unquote(getJsonValue1(j_video,"movieType"));
-				log.println("\nContentType: "+ContentType);
-			}
-			if(VideoTitle==null){
-				String j_title = getJsonValue1(j_video,"title");
-				debug("\n■title: "+j_title);
-				VideoTitle = unquote(j_title);
-				log.println("\nVideoTitle: "+VideoTitle);
-			}
-			if(VideoLength<=0){
-				String j_duration = getJsonValue1(j_video,"duration");
-				debug("\n■duration: "+j_duration);
-				String l = unquote(j_duration);
-				try {
-					VideoLength = (int)Integer.valueOf(l);
-				} catch(NumberFormatException e){
-					VideoLength = 0;
-				};
-				debug("\n■VideoLength: "+VideoLength);
-			}
-			String j_dmcInfo = getJsonValue1(j_video,"dmcInfo");
-			debug("\n■dmcInfo: "+j_dmcInfo);
-			dmcInfo = unquote(j_dmcInfo);
-			debug("\ndmcInfo: "+dmcInfo);
-			if(dmcInfo==null){
-				log.println("\ndmcInfo==null");
-			} else if(dmcInfo.equals("null")){
-				log.println("\ndmcInfo.equals(\"null\")");
-			}
-			isDmc = (dmcInfo==null || dmcInfo.equals("null"))? "0":"1";
-			debug("\n■isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc()+"\n");
-			if(serverIsDmc()){
-				dmcVideoLength = VideoLength;
-				debug("\ndmcVideoLength: "+dmcVideoLength);
-				String j_session_api = getJsonValue1(j_dmcInfo,"session_api");
-				debug("\n■session_api: "+j_session_api);
-				sessionApi = unquote(j_session_api);
-				debug("\nsessionApi: "+sessionApi);
-				String j_token = getJsonValue1(j_session_api,"token");
-				debug("\n■token: "+j_token);
-				dmcToken = unquote(j_token);
-				debug("\ndmcToken: "+dmcToken);
-				String	s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
-				dmcTokenUnEscape = s;
-				debug("\n■dmcTokenUnEscape:\n "+dmcTokenUnEscape);
-				t_created_time = getJsonValue(dmcTokenUnEscape, "created_time");
-				debug("\n■token created_time: "+t_created_time);
-				//
-				recipe_id = getJsonValue(sessionApi, "recipe_id");
-				debug("\n■recipe_id: "+recipe_id);
-				videos = getJsonValue(sessionApi, "videos");
-				debug("\n■videos: "+videos);
-				audios = getJsonValue(sessionApi, "audios");
-				debug("\n■audios: "+audios);
-				apiUrls = getJsonValue(sessionApi, "api_urls").trim();
-				if(apiUrls.startsWith("[") && apiUrls.endsWith("]")){
-					apiUrls = apiUrls.substring(1, apiUrls.length()-1);
-				}
-				if(!apiUrls.contains(",")){
-					apiSessionUrl = unquote(apiUrls);
-				}
-				debug("\n■apiUrls: "+apiUrls);
-				debug("\n■apiSessionUrl: "+apiSessionUrl);
-				player_id = getJsonValue(sessionApi, "player_id");
-				debug("\n■player_id:\n "+player_id);
-				service_user_id = getJsonValue(sessionApi, "service_user_id");
-				debug("\n■service_user_id:\n "+service_user_id);
-				debug("\n");
-			}
-
-			debug("\n■player: "+getJsonValue(dataApiJson,"player"));
-			String j_thread = getJsonValue(dataApiJson,"thread");
-			debug("\n■thread: "+j_thread);
-			String j_ids = getJsonValue1(j_thread,"ids");
-			String j_default = getJsonValue1(j_ids,"default");
-			debug("\n■default: "+j_default);
-			ThreadID = unquote(j_default);
-			log.println("\nThreadID: "+ThreadID);
-			String j_community = getJsonValue1(j_ids,"community");
-			debug("\n■community: "+j_community);
-			if(j_community != null && !j_community.equals("null")){
-				OptionalThraedID = unquote(j_community);
-				log.println("\nOptionalThreadID: "+OptionalThraedID);
-			}
-			String j_nicos = getJsonValue1(j_ids,"nicos");
-			debug("\n■nicos: "+j_nicos);
-			String j_serverUrl = getJsonValue1(j_thread,"serverUrl");
-			debug("\n■serverUrl: "+j_serverUrl);
-			MsgUrl = unquote(j_serverUrl);
-			log.println("\nMsgUrl: "+MsgUrl);
-			String j_tags = getJsonValue1(dataApiJson,"tags");
-			debug("\n■tags: "+j_tags);
-			String j_playlist = getJsonValue1(dataApiJson,"playlist");
-			debug("\n■playlist: "+j_playlist);
-			String j_owner = getJsonValue1(dataApiJson,"owner");
-			debug("\n■owner: "+j_owner);
-			String j_viewer = getJsonValue1(dataApiJson,"viewer");
-			debug("\n■viewer: "+j_viewer);
-			String j_userID = getJsonValue1(j_viewer,"id");
-			debug("\n■viewer.id: "+j_id);
-			UserID = unquote(j_userID);
-			log.println("\nUserID: "+UserID);
-			if(Premium==null){
-				String j_isPremium = getJsonValue1(j_viewer,"isPremium");
-				debug("\n■isPremium: "+j_isPremium);
-				Premium = unquote(j_isPremium);
-				log.println("\nPremium: "+Premium);
-				nicomap.put("is_premium", Premium);
-			}
-			String j_context = getJsonValue1(dataApiJson,"context");
-			debug("\n■context: "+j_context);
-			String j_isMyMemory = getJsonValue1(j_context,"isMyMemory");
-			debug("\n■isMyMemory: "+j_isMyMemory);
-			String j_liveTopics = getJsonValue1(dataApiJson,"liveTopics");
-			debug("\n■liveTopics: "+j_liveTopics);
-			debug("\n");
-			economy = VideoUrl.toLowerCase().contains("low");
-			if(size_video_thumbinfo==null && size_high!=null && size_low!=null)
-				size_video_thumbinfo = economy? size_low : size_high;
-			return dataApiJson;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+//	private String extractDataJson1(String json) {
+//		try{
+//			String j_video = getJsonValue1(json, "video");
+//			debug("\n■video: "+j_video);
+//			String j_id = getJsonValue1(j_video,"id");
+//			debug("\n■id: "+j_id);
+//			if(altTag.isEmpty()){
+//				altTag = unquote(j_id);
+//				if(altTag.equals(videoTag))
+//					altTag = "";
+//			}
+//			String j_source = getJsonValue(j_video,"source");
+//			debug("\n■source: "+j_source);
+//			VideoUrl = unquote(getJsonValue1(dataApiJson, "source"));
+//			debug("\nVideoUrl: "+VideoUrl);
+//			if(ContentType==null){
+//				ContentType = unquote(getJsonValue1(j_video,"movieType"));
+//				log.println("\nContentType: "+ContentType);
+//			}
+//			if(VideoTitle==null){
+//				String j_title = getJsonValue1(j_video,"title");
+//				debug("\n■title: "+j_title);
+//				VideoTitle = unquote(j_title);
+//				log.println("\nVideoTitle: "+VideoTitle);
+//			}
+//			if(VideoLength<=0){
+//				String j_duration = getJsonValue1(j_video,"duration");
+//				debug("\n■duration: "+j_duration);
+//				String l = unquote(j_duration);
+//				try {
+//					VideoLength = (int)Integer.valueOf(l);
+//				} catch(NumberFormatException e){
+//					VideoLength = 0;
+//				};
+//				debug("\n■VideoLength: "+VideoLength);
+//			}
+//			String j_dmcInfo = getJsonValue1(j_video,"dmcInfo");
+//			debug("\n■dmcInfo: "+j_dmcInfo);
+//			dmcInfo = unquote(j_dmcInfo);
+//			debug("\ndmcInfo: "+dmcInfo);
+//			if(dmcInfo==null){
+//				log.println("\ndmcInfo==null");
+//			} else if(dmcInfo.equals("null")){
+//				log.println("\ndmcInfo.equals(\"null\")");
+//			}
+//			isDmc = (dmcInfo==null || dmcInfo.equals("null"))? "0":"1";
+//			debug("\n■isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc()+"\n");
+//			if(serverIsDmc()){
+//				dmcVideoLength = VideoLength;
+//				debug("\ndmcVideoLength: "+dmcVideoLength);
+//				String j_session_api = getJsonValue1(j_dmcInfo,"session_api");
+//				debug("\n■session_api: "+j_session_api);
+//				sessionApi = unquote(j_session_api);
+//				debug("\nsessionApi: "+sessionApi);
+//				String j_token = getJsonValue1(j_session_api,"token");
+//				debug("\n■token: "+j_token);
+//				dmcToken = unquote(j_token);
+//				debug("\ndmcToken: "+dmcToken);
+//				String	s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
+//				dmcTokenUnEscape = s;
+//				debug("\n■dmcTokenUnEscape:\n "+dmcTokenUnEscape);
+//				t_created_time = getJsonValue(dmcTokenUnEscape, "created_time");
+//				debug("\n■token created_time: "+t_created_time);
+//				//
+//				recipe_id = getJsonValue(sessionApi, "recipe_id");
+//				debug("\n■recipe_id: "+recipe_id);
+//				videos = getJsonValue(sessionApi, "videos");
+//				debug("\n■videos: "+videos);
+//				audios = getJsonValue(sessionApi, "audios");
+//				debug("\n■audios: "+audios);
+//				apiUrls = getJsonValue(sessionApi, "api_urls").trim();
+//				if(apiUrls.startsWith("[") && apiUrls.endsWith("]")){
+//					apiUrls = apiUrls.substring(1, apiUrls.length()-1);
+//				}
+//				if(!apiUrls.contains(",")){
+//					apiSessionUrl = unquote(apiUrls);
+//				}
+//				debug("\n■apiUrls: "+apiUrls);
+//				debug("\n■apiSessionUrl: "+apiSessionUrl);
+//				player_id = getJsonValue(sessionApi, "player_id");
+//				debug("\n■player_id:\n "+player_id);
+//				service_user_id = getJsonValue(sessionApi, "service_user_id");
+//				debug("\n■service_user_id:\n "+service_user_id);
+//				debug("\n");
+//			}
+//
+//			debug("\n■player: "+getJsonValue(dataApiJson,"player"));
+//			String j_thread = getJsonValue(dataApiJson,"thread");
+//			debug("\n■thread: "+j_thread);
+//			String j_ids = getJsonValue1(j_thread,"ids");
+//			String j_default = getJsonValue1(j_ids,"default");
+//			debug("\n■default: "+j_default);
+//			ThreadID = unquote(j_default);
+//			log.println("\nThreadID: "+ThreadID);
+//			String j_community = getJsonValue1(j_ids,"community");
+//			debug("\n■community: "+j_community);
+//			if(j_community != null && !j_community.equals("null")){
+//				OptionalThraedID = unquote(j_community);
+//				log.println("\nOptionalThreadID: "+OptionalThraedID);
+//			}
+//			String j_nicos = getJsonValue1(j_ids,"nicos");
+//			debug("\n■nicos: "+j_nicos);
+//			String j_serverUrl = getJsonValue1(j_thread,"serverUrl");
+//			debug("\n■serverUrl: "+j_serverUrl);
+//			MsgUrl = unquote(j_serverUrl);
+//			log.println("\nMsgUrl: "+MsgUrl);
+//			String j_tags = getJsonValue1(dataApiJson,"tags");
+//			debug("\n■tags: "+j_tags);
+//			String j_playlist = getJsonValue1(dataApiJson,"playlist");
+//			debug("\n■playlist: "+j_playlist);
+//			String j_owner = getJsonValue1(dataApiJson,"owner");
+//			debug("\n■owner: "+j_owner);
+//			String j_viewer = getJsonValue1(dataApiJson,"viewer");
+//			debug("\n■viewer: "+j_viewer);
+//			String j_userID = getJsonValue1(j_viewer,"id");
+//			debug("\n■viewer.id: "+j_id);
+//			UserID = unquote(j_userID);
+//			log.println("\nUserID: "+UserID);
+//			if(Premium==null){
+//				String j_isPremium = getJsonValue1(j_viewer,"isPremium");
+//				debug("\n■isPremium: "+j_isPremium);
+//				Premium = unquote(j_isPremium);
+//				log.println("\nPremium: "+Premium);
+//				nicomap.put("is_premium", Premium);
+//			}
+//			String j_context = getJsonValue1(dataApiJson,"context");
+//			debug("\n■context: "+j_context);
+//			String j_isMyMemory = getJsonValue1(j_context,"isMyMemory");
+//			debug("\n■isMyMemory: "+j_isMyMemory);
+//			String j_liveTopics = getJsonValue1(dataApiJson,"liveTopics");
+//			debug("\n■liveTopics: "+j_liveTopics);
+//			debug("\n");
+//			economy = VideoUrl.toLowerCase().contains("low");
+//			if(size_video_thumbinfo==null && size_high!=null && size_low!=null)
+//				size_video_thumbinfo = economy? size_low : size_high;
+//			return dataApiJson;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
 
 	void debug(String s, String input) {
 		if(Debug){
@@ -2897,8 +2900,7 @@ public class NicoClient {
 			if(titleHtml==null)
 				return null;
 			String html = Path.readAllText(titleHtml, encoding);
-			String r = extractDataApiDataJson(html, encoding, "getDataApiJson");
-			if(r==null)
+			if(extractDataApiDataJson(html, encoding, "getDataApiJson")==null)
 				return null;
 		}
 		return dataApiJson;
@@ -2944,12 +2946,13 @@ public class NicoClient {
 			text = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
 				+"<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n"
 				+"<properties><comment>" + comment + "</comment>\n"
-				+"<entry key=\"json\">" + text + "</entry>";
+				+"<entry key=\"json\">" + dataApiJson + "</entry>";
 			Path.writeAllText(file, text, encoding);
 		}catch(Exception e){
 			log.println("dataApiMson parse error");
 			log.println("Saved dataApiData to "+file0.getPath());
-			Path.unescapeStoreXml(file, text, comment);		//xml is property key:json val:JSON
+		//	Path.unescapeStoreXml(file, text, comment);		//xml is property key:json val:JSON
+			return null;
 		}
 		log.println("Saved dataApiData to "+file.getPath());
 		return file;
@@ -2975,21 +2978,27 @@ public class NicoClient {
 	private String extractJson(Path xml, String encoding) {
 		//Json解析
 		if(watchApiJson==null){
-			Properties prop = new Properties();
-			try {
-				prop.loadFromXML(new FileInputStream(xml));
-			} catch (IOException e) {
-				log.printStackTrace(e);
-			}
-			watchApiJson = prop.getProperty("json", "0");
-			debug("\n■watchAPIData_JSON:\n "+watchApiJson);
-			if(watchApiJson==null || watchApiJson.isEmpty()){
-				log.println("watchAPIData_JSON error ");
-				return null;
-			}
+//			Properties prop = new Properties();
+//			try {
+//				prop.loadFromXML(new FileInputStream(xml));
+//			} catch (IOException e) {
+//				log.printStackTrace(e);
+//			}
+//			watchApiJson = prop.getProperty("json", "0");
+//			debug("\n■watchAPIData_JSON:\n "+watchApiJson);
+//			if(watchApiJson==null || watchApiJson.isEmpty()){
+//				log.println("watchAPIData_JSON error ");
+//				return null;
+//			}
+			return null;
 		}
+		try {
+			Mson watchApiMson = Mson.parse(watchApiJson);
+			watchApiMson.prettyPrint(log);
+			debug("watchApi:\n ",watchApiMson);
+			debug("\n");
 			// flvInfo
-			flvInfo = getJsonValue(watchApiJson, "flvInfo");
+			flvInfo = watchApiMson.getAsString("flvInfo");
 			String s = flvInfo;
 			s = unquote(s);
 			StringBuffer sb = new StringBuffer();
@@ -3008,77 +3017,79 @@ public class NicoClient {
 			debug("\n■flvInfos:\n [\n "+flvInfoArrays);
 			debug("\n ]\n");
 			// dmcInfo
-			isDmc = getJsonValue(watchApiJson, "isDmc");
+			isDmc = watchApiMson.getAsString("isDmc");
 			debug("\n■isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc()+"\n");
 			if(serverIsDmc()){
-				dmcInfo = getJsonValue(watchApiJson, "dmcInfo");
+				dmcInfo = watchApiMson.getAsString("dmcInfo");
 				s = unquote(dmcInfo);
-				sb = new StringBuffer();
 				try {
 					s = URLDecoder.decode(s, encoding);
 				} catch (UnsupportedEncodingException e) {
 					log.printStackTrace(e);
 				}
 				dmcInfoDec = s;
-				if(s.contains("&")){
-					String[] sa = s.split("&");
-					for(String v: sa){
-						try {
-							sb.append(URLDecoder.decode(v, encoding));
-							sb.append("\n ");
-						} catch (UnsupportedEncodingException e) {
-							log.printStackTrace(e);
-						}
-					}
-					dmcInfoArrays = "[ "+sb.substring(0).trim()+ " ]";
-				}
-				else if (s.startsWith("{")){
-					dmcInfoArrays = prettyBufferPrint(s);
-				}
-				debug("\n■dmcInfo:\n "+dmcInfo);
+				Mson m_dmcInfo = Mson.parse(dmcInfoDec);
+				dmcInfoArrays = m_dmcInfo.getAsString();
 				debug("\n■dmcInfos:\n "+dmcInfoArrays);
+				debug("\n■m_dmcInfo:\n ",m_dmcInfo);
 				if(dmcInfoDec!=null){
-					String l = getJsonValue(dmcInfoDec, "length_seconds");
+					String l = m_dmcInfo.getAsString("length_seconds");
 					try {
 						dmcVideoLength = (int)Integer.valueOf(l);
 					} catch(NumberFormatException e){
 						dmcVideoLength = 0;
 					};
 					debug("\n■dmcVideoLength: "+dmcVideoLength);
-					dmcToken = getJsonValue(dmcInfoDec, "token");
+					dmcToken = m_dmcInfo.getAsString("token");
 					debug("\n■dmcToken:\n "+dmcToken);
 					s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
 					dmcTokenUnEscape = s;
 					debug("\n■dmcTokenUnEscape:\n "+dmcTokenUnEscape);
-					sessionApi = getJsonValue(dmcInfoDec, "session_api");
+					Mson m_sessionApi = m_dmcInfo.get("session_api");
+					sessionApi = m_sessionApi.getAsString();
 					debug("\n■session_api:\n "+sessionApi);
-					recipe_id = getJsonValue(sessionApi, "recipe_id");
+					recipe_id = m_sessionApi.getAsString("recipe_id");
 					debug("\n■recipe_id: "+recipe_id);
-					videos = getJsonValue(sessionApi, "videos");
+					videos = m_sessionApi.getAsString("videos");
 					debug("\n■videos: "+videos);
-					audios = getJsonValue(sessionApi, "audios");
-					debug("\n■audios: "+audios);
-					apiUrls = getJsonValue(sessionApi, "api_urls").trim();
-					if(apiUrls.startsWith("[") && apiUrls.endsWith("]")){
-						apiUrls = apiUrls.substring(1, apiUrls.length()-1);
+					Mson m_video = m_sessionApi.get("videos");
+					videolist = new ArrayList<String>();
+					for(int i = 0; i < m_video.getSize(); i++){
+						videolist.add((m_video.get(i).getAsString()));
 					}
-					t_created_time = getJsonValue(dmcTokenUnEscape, "created_time");
-					debug("\n■token created_time: "+t_created_time);
+					debug("\n■videolist: "+videolist);
+					audios = m_sessionApi.getAsString("audios");
+					debug("\n■audios: "+audios);
+					Mson m_audio = m_sessionApi.get("audios");
+					audiolist = new ArrayList<String>();
+					for(int i = 0; i < m_audio.getSize(); i++){
+						audiolist.add(m_audio.get(i).getAsString());
+					}
+					debug("\n■audiolist: "+audiolist);
+					apiUrls = m_sessionApi.getAsString("api_urls").trim();
+					Mson m_api_urls = m_sessionApi.get("api_urls");
+					apiUrls = m_api_urls.get(0).getAsString();
+				//	t_created_time = Mson.parse(dmcTokenUnEscape).getAsString("created_time");
+				//	debug("\n■token created_time: "+t_created_time);
 					if(!apiUrls.contains(",")){
 						apiSessionUrl = unquote(apiUrls);
 					}
 					debug("\n■apiUrls: "+apiUrls);
 					debug("\n■apiSessionUrl: "+apiSessionUrl);
-					player_id = getJsonValue(sessionApi, "player_id");
+					player_id = m_sessionApi.getAsString("player_id");
 					debug("\n■player_id:\n "+player_id);
-					service_user_id = getJsonValue(sessionApi, "service_user_id");
+					service_user_id = m_sessionApi.getAsString("service_user_id");
 					debug("\n■service_user_id:\n "+service_user_id);
-					priority = getJsonValue(sessionApi, "priority");
+					priority = m_sessionApi.getAsString("priority");
 					debug("\n■priority:\n "+priority);
+					signature = m_sessionApi.getAsString("signature");
+					debug("\n■signature:\n "+signature);
 					debug("\n");
 				}
 			}
-	//	}
+		}finally{
+
+		}
 		return watchApiJson;
 	}
 
@@ -3110,20 +3121,20 @@ public class NicoClient {
 		sb.append("      </http_parameters>\n");
 		sb.append("    </parameters>\n");
 		sb.append("  </protocol>\n");
-		sb.append("  "+makeNewJsonValue(json, "priority"));
+		sb.append("  "+makeNewElement("priority",priority));
 		sb.append("  <content_src_id_sets>\n");
 		sb.append("    <content_src_id_set>\n");
 		sb.append("      <content_src_ids>\n");
 		sb.append("        <src_id_to_mux>\n");
 		sb.append("          <video_src_ids>\n");
-		video_src = videos.replace("[\"","            <string>").replace("\"]","</string>\n")
-				.replace("\",\"", "</string>\n            <string>");
-		sb.append(video_src);
+		for(String v:videolist){
+			sb.append("            <string>"+v+"</string>\n");
+		}
 		sb.append("          </video_src_ids>\n");
 		sb.append("          <audio_src_ids>\n");
-		audio_src = audios.replace("[\"","            <string>").replace("\"]","</string>\n")
-				.replace("\",\"", "</string>\n            <string>");
-		sb.append(audio_src);
+		for(String a:audiolist){
+			sb.append("            <string>"+a+"</string>\n");
+		}
 		sb.append("          </audio_src_ids>\n");
 		sb.append("        </src_id_to_mux>\n");
 		sb.append("      </content_src_ids>\n");
@@ -3138,18 +3149,18 @@ public class NicoClient {
 		sb.append("  <session_operation_auth>\n");
 		sb.append("    <session_operation_auth_by_signature>\n");
 		sb.append("      "+makeNewElement("token", dmcTokenUnEscape));
-		sb.append("      "+makeNewJsonValue(json, "signature"));
+		sb.append("      "+makeNewElement("signature", signature));
 		sb.append("    </session_operation_auth_by_signature>\n");
 		sb.append("  </session_operation_auth>\n");
 		sb.append("  <content_auth>\n");
 		sb.append("    <auth_type>ht2</auth_type>\n");
 		sb.append("    <service_id>nicovideo</service_id>\n");
-		sb.append("    "+makeNewJsonValue(json,"service_user_id"));
+		sb.append("    "+makeNewElement("service_user_id",service_user_id));
 		sb.append("    <max_content_count>10</max_content_count>\n");
 		sb.append("    <content_key_timeout>600000</content_key_timeout>\n");
 		sb.append("  </content_auth>\n");
 		sb.append("  <client_info>\n");
-		sb.append("    "+makeNewJsonValue(json, "player_id"));
+		sb.append("    "+makeNewElement("player_id",player_id));
 		sb.append("  </client_info>\n");
 		sb.append("</session>");
 		String s = sb.substring(0);
@@ -3164,107 +3175,107 @@ public class NicoClient {
 		return s;
 	}
 
-	String prettyBufferPrint(String s){
-		StringBuffer sb = new StringBuffer();
-		s = prettyBufferPrint(s, sb, 1);
-		if(s==null) s = "";
-		if(!s.isEmpty())
-			s = "\nREST:"+s;
-		return sb.substring(0)+ s;
-	}
+//	private String prettyBufferPrint(String s){
+//		StringBuffer sb = new StringBuffer();
+//		s = prettyBufferPrint(s, sb, 1);
+//		if(s==null) s = "";
+//		if(!s.isEmpty())
+//			s = "\nREST:"+s;
+//		return sb.substring(0)+ s;
+//	}
 
-	String prettyBufferPrint(String s, StringBuffer sb, int indent){
-		String head = s.substring(0, 1);
-		String ids = String.format("%"+indent+"s", " ");
-		if(head.equals(S_QUOTE2)){
-			int i = 1;
-			while(i < s.length()){
-				String s1 = s.substring(i,i+1);
-				if(s1.equals(S_QUOTE2))
-					break;
-				if(s1.equals(S_ESCAPE))
-					i+=2;
-				else
-					i++;
-			}
-			sb.append(s.substring(0, i+1));
-			return s.substring(i+1);
-		}
-		String HASH1 = "{";
-		String HASH2 = "}";
-		String PAIR = ":";
-		String COMMA = ",";
-		if(head.equals(HASH1)){
-			sb.append(HASH1+"\n"+ids);
-			do {
-				s = prettyBufferPrint(s.substring(1),sb,indent+1);
-				if(s==null) return null;
-				head = s.substring(0, 1);
-				if(!head.equals(PAIR)){
-					log.println("ERROR prettyBufferPrint >"+s);
-					return null;
-				}
-				sb.append(PAIR);
-				s = prettyBufferPrint(s.substring(1),sb,indent+1);
-				if(s==null) return null;
-				head = s.substring(0, 1);
-				if(head.equals(COMMA)){
-					sb.append(COMMA+"\n"+ids);
-					continue;
-				}
-				if(head.equals(HASH2)){
-					sb.append("\n"+ids+HASH2);
-					return s.substring(1);
-				}
-				log.println("ERROR prettyBufferPrint >"+s);
-				return null;
-			}while(s!=null);
-			return null;
-		}
-		String ARRAY1 = "[";
-		String ARRAY2 = "]";
-		if(head.equals(ARRAY1)){
-			sb.append(ARRAY1+"\n"+ids);
-			do {
-				s = prettyBufferPrint(s.substring(1),sb,indent+1);
-				if(s==null) return null;
-				head = s.substring(0, 1);
-				if(head.equals(COMMA)){
-					sb.append(COMMA+"\n"+ids);
-					continue;
-				}
-				if(head.equals(ARRAY2)){
-					sb.append("\n"+ids+ARRAY2);
-					return s.substring(1);
-				}
-			}while(s!=null);
-			return null;
-		}
-		if("0123456789.".contains(head)){
-			int i = 0;
-			while(Character.isDigit(s.charAt(i)) || s.charAt(i)=='.'){
-				sb.append(s.charAt(i++));
-			}
-			s = s.substring(i);
-			return s;
-		}
-		if(s.startsWith("null")){
-			sb.append("null");
-			s = s.substring(4);
-			return s;
-		}
-		if(s.startsWith("true")){
-			sb.append("true");
-			s = s.substring(4);
-			return s;
-		}
-		if(s.startsWith("false")){
-			sb.append("false");
-			s = s.substring(5);
-			return s;
-		}
-		return s;
-	}
+//	private String prettyBufferPrint(String s, StringBuffer sb, int indent){
+//		String head = s.substring(0, 1);
+//		String ids = String.format("%"+indent+"s", " ");
+//		if(head.equals(S_QUOTE2)){
+//			int i = 1;
+//			while(i < s.length()){
+//				String s1 = s.substring(i,i+1);
+//				if(s1.equals(S_QUOTE2))
+//					break;
+//				if(s1.equals(S_ESCAPE))
+//					i+=2;
+//				else
+//					i++;
+//			}
+//			sb.append(s.substring(0, i+1));
+//			return s.substring(i+1);
+//		}
+//		String HASH1 = "{";
+//		String HASH2 = "}";
+//		String PAIR = ":";
+//		String COMMA = ",";
+//		if(head.equals(HASH1)){
+//			sb.append(HASH1+"\n"+ids);
+//			do {
+//				s = prettyBufferPrint(s.substring(1),sb,indent+1);
+//				if(s==null) return null;
+//				head = s.substring(0, 1);
+//				if(!head.equals(PAIR)){
+//					log.println("ERROR prettyBufferPrint >"+s);
+//					return null;
+//				}
+//				sb.append(PAIR);
+//				s = prettyBufferPrint(s.substring(1),sb,indent+1);
+//				if(s==null) return null;
+//				head = s.substring(0, 1);
+//				if(head.equals(COMMA)){
+//					sb.append(COMMA+"\n"+ids);
+//					continue;
+//				}
+//				if(head.equals(HASH2)){
+//					sb.append("\n"+ids+HASH2);
+//					return s.substring(1);
+//				}
+//				log.println("ERROR prettyBufferPrint >"+s);
+//				return null;
+//			}while(s!=null);
+//			return null;
+//		}
+//		String ARRAY1 = "[";
+//		String ARRAY2 = "]";
+//		if(head.equals(ARRAY1)){
+//			sb.append(ARRAY1+"\n"+ids);
+//			do {
+//				s = prettyBufferPrint(s.substring(1),sb,indent+1);
+//				if(s==null) return null;
+//				head = s.substring(0, 1);
+//				if(head.equals(COMMA)){
+//					sb.append(COMMA+"\n"+ids);
+//					continue;
+//				}
+//				if(head.equals(ARRAY2)){
+//					sb.append("\n"+ids+ARRAY2);
+//					return s.substring(1);
+//				}
+//			}while(s!=null);
+//			return null;
+//		}
+//		if("0123456789.".contains(head)){
+//			int i = 0;
+//			while(Character.isDigit(s.charAt(i)) || s.charAt(i)=='.'){
+//				sb.append(s.charAt(i++));
+//			}
+//			s = s.substring(i);
+//			return s;
+//		}
+//		if(s.startsWith("null")){
+//			sb.append("null");
+//			s = s.substring(4);
+//			return s;
+//		}
+//		if(s.startsWith("true")){
+//			sb.append("true");
+//			s = s.substring(4);
+//			return s;
+//		}
+//		if(s.startsWith("false")){
+//			sb.append("false");
+//			s = s.substring(5);
+//			return s;
+//		}
+//		return s;
+//	}
 
 	private Path getWatchApiData(String html, String encoding, String comment) {
 		String text = html;
@@ -3286,22 +3297,22 @@ public class NicoClient {
 		// URLDecodeしない
 		Path file0 = Path.mkTemp(videoTag+"_watchJ.txt");
 		Path file = Path.mkTemp(videoTag+"_watchJ.xml");
-		Mson dataApiMson;
+		Mson watchApiMson;
 		String xml;
 		try {
-			dataApiMson = Mson.parse(text);
-		//	debug("dataApiMson:\n ", dataApiMson);
-			watchApiJson = dataApiMson.getAsString();
+			watchApiMson = Mson.parse(text);
+			watchApiJson = watchApiMson.getAsString();
 			xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
 				+"<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n"
 				+"<properties><comment>" + comment + "</comment>\n"
-				+"<entry key=\"json\">" + text + "</entry>";
+				+"<entry key=\"json\">" + watchApiJson + "</entry>";
 			Path.writeAllText(file, xml, encoding);
 		}catch(Exception e){
 			log.println("watchApiMson parse error");
 			Path.writeAllText(file0, text, encoding);
 			log.println("Saved watchApiData to "+file0.getPath());
-			Path.unescapeStoreXml(file, text, comment);		//xml is property key:json val:JSON
+		//	Path.unescapeStoreXml(file, text, comment);		//xml is property key:json val:JSON
+			return null;
 		}
 		log.println("Saved watchApiData to "+file.getPath());
 		return file;
@@ -3312,92 +3323,92 @@ public class NicoClient {
 			val = "";
 		return "<"+key+">"+val+"</"+key+">\n";
 	}
-	public String getJsonValue(String input, String key) {
-		String r = null;
-		if(input==null)
-			return null;
-		try {
-			r = getJsonValue0(input, key);
-			return unquote(r);
-		} catch(Exception e){
-			debug("\ngetJsonValue0(\""+key+"\"): error\n");
-			r = getJsonValue1(input, key);
-			debug("getJsonValue1(\""+key+"\"): "+unquote(r)+"\n");
-			return unquote(r);
-		}
-	}
-	public String getJsonValue0(String input, String key) throws Exception {
-		Mson m = Mson.parse(input);
-		return m.get(key).toString();
-	}
-	public String getJsonValue1(String input, String key){
-		String key1 = S_QUOTE2+key+S_QUOTE2+":";
-		int index1 = input.indexOf(key1);
-		if(index1 < 0) return null;
-		int index2 = index1 + key1.length();
-		char c2 = input.charAt(index2);
-		String tail = input.substring(index2);
-		if(c2=='{'){
-			int count = 1;
-			int i = index2+1;
-			while(count > 0 && i < input.length()){
-				char ce = input.charAt(i++);
-				if(ce=='{') count++;
-				else if(ce=='}') count--;
-				else if(ce==C_ESCAPE) i++;
-			}
-			String r = (input+'}').substring(index2, i);
-			return r;	// ハッシュ {x:v, y:u}
-		}
-		if(c2=='['){
-			int count = 1;
-			int i = index2+1;
-			while(count > 0 && i < input.length()){
-				char ce = input.charAt(i++);
-				if(ce=='[') count++;
-				else if(ce==']') count--;
-				else if(ce==C_ESCAPE) i++;
-			}
-			String r = (input+']').substring(index2, i);
-			return r;	// 配列 [X,Y,Z]
-		}
-		if(c2==C_QUOTE2){
-			int i = index2+1;
-			while(i < input.length()){
-				char ce = input.charAt(i++);
-				if(ce==C_QUOTE2) break;
-				if(ce==C_ESCAPE) i++;
-			}
-			String r = (input + S_QUOTE2).substring(index2, i);
-			return r;	// 文字列 "ABC"
-		}
-		// キーワード
-		if(tail.startsWith("null")){
-			return "null";
-		}
-		if(tail.startsWith("true")){
-			return "true";
-		}
-		if(tail.startsWith("false")){
-			return "false";
-		}
-		// else 他の文字 {
-		if('0' <= c2 && c2 <= '9') {
-			int i = index2 + 1;
-			while(i < input.length()){
-				char ce = input.charAt(i);
-				if(ce!='.' && (ce < '0' || ce > '9')) break;
-				i++;
-			}
-			String r = input.substring(index2, i);
-			return r;	// 数字
-		}
-		return null;
-	}
+//	private String getJsonValue(String input, String key) {
+//		String r = null;
+//		if(input==null)
+//			return null;
+//		try {
+//			r = getJsonValue0(input, key);
+//			return unquote(r);
+//		} catch(Exception e){
+//			debug("\ngetJsonValue0(\""+key+"\"): error\n");
+////			r = getJsonValue1(input, key);
+////			debug("getJsonValue1(\""+key+"\"): "+unquote(r)+"\n");
+////			return unquote(r);
+//			return null;
+//		}
+//	}
+//	private String getJsonValue0(String input, String key) throws Exception {
+//		return Mson.parse(input).getAsString(key);
+//	}
+//	private String getJsonValue1(String input, String key){
+//		String key1 = S_QUOTE2+key+S_QUOTE2+":";
+//		int index1 = input.indexOf(key1);
+//		if(index1 < 0) return null;
+//		int index2 = index1 + key1.length();
+//		char c2 = input.charAt(index2);
+//		String tail = input.substring(index2);
+//		if(c2=='{'){
+//			int count = 1;
+//			int i = index2+1;
+//			while(count > 0 && i < input.length()){
+//				char ce = input.charAt(i++);
+//				if(ce=='{') count++;
+//				else if(ce=='}') count--;
+//				else if(ce==C_ESCAPE) i++;
+//			}
+//			String r = (input+'}').substring(index2, i);
+//			return r;	// ハッシュ {x:v, y:u}
+//		}
+//		if(c2=='['){
+//			int count = 1;
+//			int i = index2+1;
+//			while(count > 0 && i < input.length()){
+//				char ce = input.charAt(i++);
+//				if(ce=='[') count++;
+//				else if(ce==']') count--;
+//				else if(ce==C_ESCAPE) i++;
+//			}
+//			String r = (input+']').substring(index2, i);
+//			return r;	// 配列 [X,Y,Z]
+//		}
+//		if(c2==C_QUOTE2){
+//			int i = index2+1;
+//			while(i < input.length()){
+//				char ce = input.charAt(i++);
+//				if(ce==C_QUOTE2) break;
+//				if(ce==C_ESCAPE) i++;
+//			}
+//			String r = (input + S_QUOTE2).substring(index2, i);
+//			return r;	// 文字列 "ABC"
+//		}
+//		// キーワード
+//		if(tail.startsWith("null")){
+//			return "null";
+//		}
+//		if(tail.startsWith("true")){
+//			return "true";
+//		}
+//		if(tail.startsWith("false")){
+//			return "false";
+//		}
+//		// else 他の文字 {
+//		if('0' <= c2 && c2 <= '9') {
+//			int i = index2 + 1;
+//			while(i < input.length()){
+//				char ce = input.charAt(i);
+//				if(ce!='.' && (ce < '0' || ce > '9')) break;
+//				i++;
+//			}
+//			String r = input.substring(index2, i);
+//			return r;	// 数字
+//		}
+//		return null;
+//	}
 
-	private String makeNewJsonValue(String html, String key) {
-		return makeNewElement(key, getJsonValue(html, key));
-	}
+//	private String makeNewJsonValue(String html, String key) {
+//		return makeNewElement(key, getJsonValue(html, key));
+//	}
 
 	private String makeNewXmlElement(String html, String key) {
 		return makeNewElement(key, getXmlElement(html, key));
@@ -3430,7 +3441,7 @@ public class NicoClient {
 		return null;
 	}
 
-	public String getXmlAttribute(String input, String atribname){
+	private String getXmlAttribute(String input, String atribname){
 		Pattern p = Pattern.compile("<[^>]*"+atribname+"=\"([^\"]+)\"[^>]*>",Pattern.DOTALL);
 		Matcher m = p.matcher(input);
 		if(m.find())

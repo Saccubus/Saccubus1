@@ -3686,11 +3686,13 @@ public class MainFrame extends JFrame {
 			listInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
 			VideoID_TextField.setText("");
 			JButton stopButton = listInfo.getjButton();
-//			stopButton.addActionListener(new ActionListener() {
-//				public void actionPerformed(ActionEvent e) {
-//					stopButton_actionPerformed(e);
-//				}
-//			});
+			stopButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					stopButton_actionPerformed(e);
+				}
+			});
 			int indexNow = convNo++;
 			//log.println(">"+indexNow+"ŒÂ–Ú‚Ì—v‹: "+vid);
 			sendtext(">"+indexNow+"ŒÂ–Ú‚Ì—v‹: "+vid);
