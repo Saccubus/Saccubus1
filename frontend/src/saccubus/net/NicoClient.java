@@ -2480,19 +2480,24 @@ public class NicoClient {
 				log.println("\nVideoUrl: "+VideoUrl);
 				Mson m_movieType = m_video.getMson("movieType");
 				ContentType = m_movieType.toUnquoteString();
-			Mson m_title = m_video.getMson("title");
-			debug("\n■title: ",m_title);
-				VideoTitle = m_title.toUnquoteString();
-				log.println("VideoTitle: "+VideoTitle);
+				log.println("ContentType: "+ContentType);
+				Mson m_title = m_video.getMson("title");
+				debug("\n■title: ",m_title);
+				if(VideoTitle==null || VideoTitle.isEmpty()){
+					VideoTitle = m_title.toUnquoteString();
+					log.println("VideoTitle: "+VideoTitle);
+					VideoTitle = safeFileName(VideoTitle);
+				}
+				log.println("VideoTitle(safe): "+VideoTitle);
 				Mson m_duration = m_video.getMson("duration");
+				debug("\n■duration: ",m_duration);
 				String l = m_duration.toUnquoteString();
 				try {
 					VideoLength = (int)Integer.valueOf(l);
 				} catch(NumberFormatException e){
 					VideoLength = 0;
 				};
-				debug("\n■VideoLength: "+VideoLength);
-				debug("\n■duration: ",m_duration);
+				log.println("VideoLength: "+VideoLength);
 				Mson m_isOfficial = m_video.getMson("isOfficial");
 				debug("\n■isOfficial: ",m_isOfficial);
 				String isOfficial = m_isOfficial.toUnquoteString();
@@ -2510,7 +2515,7 @@ public class NicoClient {
 					debug("\n■dmcInfo.equals(\"null\")");
 				}
 				isDmc = (dmcInfo==null || dmcInfo.equals("null"))? "0":"1";
-				debug("\n■isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc()+"\n");
+				log.println("isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc());
 				if(serverIsDmc()){
 					dmcVideoLength = VideoLength;
 					log.println("dmcVideoLength: "+dmcVideoLength);
@@ -2566,24 +2571,25 @@ public class NicoClient {
 					debug("\n■thread_key_required: ",m_thread_key_required);
 					String key_required = m_thread_key_required.toUnquoteString();
 					NeedsKey = key_required.equals("true") ? true : false;
+					log.println("NeedsKey: "+NeedsKey);
 				}else{
 					Mson m_ids = m_thread.getMson("ids");
 					Mson m_default = m_ids.getMson("default");
 					debug("\n■default: ",m_default);
 					ThreadID = m_default.toUnquoteString();
-					log.println("\nThreadID: "+ThreadID);
+					log.println("ThreadID: "+ThreadID);
 					Mson m_community = m_ids.getMson("community");
 					debug("\n■community: ",m_community);
 					if(!m_community.isNull()){
 						OptionalThraedID = m_community.toUnquoteString();
-						log.println("\nOptionalThreadID: "+OptionalThraedID);
+						log.println("OptionalThreadID: "+OptionalThraedID);
 					}
 					Mson m_nicos = m_ids.getMson("nicos");
 					debug("\n■nicos: ",m_nicos);
 					Mson m_serverUrl = m_thread.getMson("serverUrl");
 					debug("\n■serverUrl: ",m_serverUrl);
 					MsgUrl = m_serverUrl.toUnquoteString();
-					log.println("\nMsgUrl: "+MsgUrl);
+					log.println("MsgUrl: "+MsgUrl);
 				}
 			Mson m_tags = dataApiMson.getMson("tags");
 			debug("\n■tags: "+m_tags.toString().length());
@@ -2596,11 +2602,11 @@ public class NicoClient {
 				Mson m_userID = m_viewer.getMson("id");
 				debug("\n■viewr.id: ",m_userID);
 				UserID = m_userID.toUnquoteString();
-				log.println("\nUserID: "+UserID);
+				log.println("UserID: "+UserID);
 				Mson m_isPremium = m_viewer.getMson("isPremium");
 				debug("\n■isPremium: ",m_isPremium);
 				Premium = m_isPremium.toUnquoteString();
-				log.println("\nPremium: "+Premium);
+				log.println("Premium: "+Premium);
 				nicomap.put("is_premium", Premium);
 			Mson m_ad = dataApiMson.getMson("ad");
 			debug("\n■ad: ",m_ad);
@@ -2609,7 +2615,7 @@ public class NicoClient {
 			Mson m_context = dataApiMson.getMson("context");
 			debug("\n■context: ",m_context);
 				Mson m_isMyMemory = m_context.getMson("isMyMemory");
-				debug("\n■isMyMemory: ",m_isMyMemory);
+				log.println("isMyMemory: "+m_isMyMemory.toUnquoteString());
 				/*
 					html5	"ownerNGFilters":[{"source":"b2","destination":"CM中か！今がチャンスだ！"},{
 					flash	ng_up:	b2=CM中か！今がチャンスだ！&
@@ -2646,8 +2652,11 @@ public class NicoClient {
 			debug("\n■liveTopics: "+m_liveTopics.toString().length());
 			debug("\n■}\n");
 			economy = VideoUrl.toLowerCase().contains("low");
-			if(size_video_thumbinfo==null && size_high!=null && size_low!=null)
+			log.println("economy: "+economy +",isEco(): "+ isEco());
+			if(size_video_thumbinfo==null && size_high!=null && size_low!=null){
 				size_video_thumbinfo = economy? size_low : size_high;
+				log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
+			}
 			return dataApiJson;
 		} catch (Exception e) {
 			e.printStackTrace();
