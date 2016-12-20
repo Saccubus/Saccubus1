@@ -2465,49 +2465,49 @@ public class NicoClient {
 				return extractDataJson1(dataApiJson);
 			}
 			isDmc = "0";
-			Mson m_video = dataApiMson.getMson("video");
+			Mson m_video = dataApiMson.get("video");
 			debug("\n■video: ",m_video);
-				Mson m_id = m_video.getMson("id");
+				Mson m_id = m_video.get("id");
 				debug("\n■id: ",m_id);
 				if(altTag.isEmpty()){
-					altTag = m_id.toUnquoteString();
+					altTag = m_id.getAsString();
 					if(altTag.equals(videoTag))
 						altTag = "";
 				}
-				Mson m_source = m_video.getMson("source");
+				Mson m_source = m_video.get("source");
 				debug("\n■source: ",m_source);
 				VideoUrl = unquote(getJsonValue1(dataApiJson, "source"));
 				log.println("\nVideoUrl: "+VideoUrl);
-				Mson m_movieType = m_video.getMson("movieType");
-				ContentType = m_movieType.toUnquoteString();
+				Mson m_movieType = m_video.get("movieType");
+				ContentType = m_movieType.getAsString();
 				log.println("ContentType: "+ContentType);
-				Mson m_title = m_video.getMson("title");
+				Mson m_title = m_video.get("title");
 				debug("\n■title: ",m_title);
 				if(VideoTitle==null || VideoTitle.isEmpty()){
-					VideoTitle = m_title.toUnquoteString();
+					VideoTitle = m_title.getAsString();
 					log.println("VideoTitle: "+VideoTitle);
 					VideoTitle = safeFileName(VideoTitle);
 				}
 				log.println("VideoTitle(safe): "+VideoTitle);
-				Mson m_duration = m_video.getMson("duration");
+				Mson m_duration = m_video.get("duration");
 				debug("\n■duration: ",m_duration);
-				String l = m_duration.toUnquoteString();
+				String l = m_duration.getAsString();
 				try {
 					VideoLength = (int)Integer.valueOf(l);
 				} catch(NumberFormatException e){
 					VideoLength = 0;
 				};
 				log.println("VideoLength: "+VideoLength);
-				Mson m_isOfficial = m_video.getMson("isOfficial");
+				Mson m_isOfficial = m_video.get("isOfficial");
 				debug("\n■isOfficial: ",m_isOfficial);
-				String isOfficial = m_isOfficial.toUnquoteString();
+				String isOfficial = m_isOfficial.getAsString();
 				if(isOfficial!=null && isOfficial.equals("true")){
 					NeedsKey = true;
 					log.println("NeedsKey: "+NeedsKey);
 				}
-				Mson m_dmcInfo = m_video.getMson("dmcInfo");
+				Mson m_dmcInfo = m_video.get("dmcInfo");
 				debug("\n■m_dmcInfo: ",m_dmcInfo);
-				dmcInfo = m_dmcInfo.toUnquoteString();
+				dmcInfo = m_dmcInfo.getAsString();
 				debug("\n■dmcInfo: "+dmcInfo);
 				if(dmcInfo==null){
 					debug("\n■dmcInfo==null");
@@ -2519,13 +2519,13 @@ public class NicoClient {
 				if(serverIsDmc()){
 					dmcVideoLength = VideoLength;
 					log.println("dmcVideoLength: "+dmcVideoLength);
-					Mson m_session_api = m_dmcInfo.getMson("session_api");
+					Mson m_session_api = m_dmcInfo.get("session_api");
 					debug("\n■session_api: ",m_session_api);
-					sessionApi = m_session_api.toUnquoteString();
+					sessionApi = m_session_api.getAsString();
 					log.println("sessionApi: "+sessionApi);
-					Mson m_token = m_session_api.getMson("token");
+					Mson m_token = m_session_api.get("token");
 					debug("\n■token: ",m_token);
-					dmcToken = m_token.toUnquoteString();
+					dmcToken = m_token.getAsString();
 					log.println("dmcToken: "+dmcToken);
 					String	s = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
 					dmcTokenUnEscape = s;
@@ -2554,68 +2554,68 @@ public class NicoClient {
 					debug("\n■service_user_id:\n "+service_user_id);
 					debug("\n");
 				}
-			Mson m_player = dataApiMson.getMson("player");
+			Mson m_player = dataApiMson.get("player");
 			debug("\n■player: ",m_player);
-			Mson m_thread = dataApiMson.getMson("thread");
+			Mson m_thread = dataApiMson.get("thread");
 			debug("\n■thread: ",m_thread);
-				Mson m_thread_id = m_thread.getMson("thread_id");
+				Mson m_thread_id = m_thread.get("thread_id");
 				debug("\n■thread_id: ",m_thread_id);
 				if(!m_thread_id.isNull()){
-					ThreadID = m_thread_id.toUnquoteString();
+					ThreadID = m_thread_id.getAsString();
 					log.println("ThreadID: "+ThreadID);
-					Mson m_server_url = m_thread.getMson("server_url");
+					Mson m_server_url = m_thread.get("server_url");
 					debug("\n■server_url: ",m_server_url);
-					MsgUrl = m_server_url.toUnquoteString();
+					MsgUrl = m_server_url.getAsString();
 					log.println("MsgUrl: "+MsgUrl);
-					Mson m_thread_key_required = m_thread.getMson("thread_key_required");
+					Mson m_thread_key_required = m_thread.get("thread_key_required");
 					debug("\n■thread_key_required: ",m_thread_key_required);
-					String key_required = m_thread_key_required.toUnquoteString();
+					String key_required = m_thread_key_required.getAsString();
 					NeedsKey = key_required.equals("true") ? true : false;
 					log.println("NeedsKey: "+NeedsKey);
 				}else{
-					Mson m_ids = m_thread.getMson("ids");
-					Mson m_default = m_ids.getMson("default");
+					Mson m_ids = m_thread.get("ids");
+					Mson m_default = m_ids.get("default");
 					debug("\n■default: ",m_default);
-					ThreadID = m_default.toUnquoteString();
+					ThreadID = m_default.getAsString();
 					log.println("ThreadID: "+ThreadID);
-					Mson m_community = m_ids.getMson("community");
+					Mson m_community = m_ids.get("community");
 					debug("\n■community: ",m_community);
 					if(!m_community.isNull()){
-						OptionalThraedID = m_community.toUnquoteString();
+						OptionalThraedID = m_community.getAsString();
 						log.println("OptionalThreadID: "+OptionalThraedID);
 					}
-					Mson m_nicos = m_ids.getMson("nicos");
+					Mson m_nicos = m_ids.get("nicos");
 					debug("\n■nicos: ",m_nicos);
-					Mson m_serverUrl = m_thread.getMson("serverUrl");
+					Mson m_serverUrl = m_thread.get("serverUrl");
 					debug("\n■serverUrl: ",m_serverUrl);
-					MsgUrl = m_serverUrl.toUnquoteString();
+					MsgUrl = m_serverUrl.getAsString();
 					log.println("MsgUrl: "+MsgUrl);
 				}
-			Mson m_tags = dataApiMson.getMson("tags");
+			Mson m_tags = dataApiMson.get("tags");
 			debug("\n■tags: "+m_tags.toString().length());
-			Mson m_playlist = dataApiMson.getMson("playlist");
+			Mson m_playlist = dataApiMson.get("playlist");
 			debug("\n■playlist: "+m_playlist.toString().length());
-			Mson m_owner = dataApiMson.getMson("owner");
+			Mson m_owner = dataApiMson.get("owner");
 			debug("\n■owner: ",m_owner);
-			Mson m_viewer = dataApiMson.getMson("viewer");
+			Mson m_viewer = dataApiMson.get("viewer");
 			debug("\n■viewer: ",m_viewer);
-				Mson m_userID = m_viewer.getMson("id");
+				Mson m_userID = m_viewer.get("id");
 				debug("\n■viewr.id: ",m_userID);
-				UserID = m_userID.toUnquoteString();
+				UserID = m_userID.getAsString();
 				log.println("UserID: "+UserID);
-				Mson m_isPremium = m_viewer.getMson("isPremium");
+				Mson m_isPremium = m_viewer.get("isPremium");
 				debug("\n■isPremium: ",m_isPremium);
-				Premium = m_isPremium.toUnquoteString();
+				Premium = m_isPremium.getAsString();
 				log.println("Premium: "+Premium);
 				nicomap.put("is_premium", Premium);
-			Mson m_ad = dataApiMson.getMson("ad");
+			Mson m_ad = dataApiMson.get("ad");
 			debug("\n■ad: ",m_ad);
-			Mson m_lead = dataApiMson.getMson("lead");
+			Mson m_lead = dataApiMson.get("lead");
 			debug("\n■lead: "+m_lead.toString().length());
-			Mson m_context = dataApiMson.getMson("context");
+			Mson m_context = dataApiMson.get("context");
 			debug("\n■context: ",m_context);
-				Mson m_isMyMemory = m_context.getMson("isMyMemory");
-				log.println("isMyMemory: "+m_isMyMemory.toUnquoteString());
+				Mson m_isMyMemory = m_context.get("isMyMemory");
+				log.println("isMyMemory: "+m_isMyMemory.getAsString());
 				/*
 					html5	"ownerNGFilters":[{"source":"b2","destination":"CM中か！今がチャンスだ！"},{
 					flash	ng_up:	b2=CM中か！今がチャンスだ！&
@@ -2624,12 +2624,12 @@ public class NicoClient {
 					source=destination& という形式に変換
 					<chat filter="1">　</chat>で囲み投コメxmlに追加
 				*/
-				Mson m_ownerNGFilters = m_context.getMson("ownerNGFilters");
+				Mson m_ownerNGFilters = m_context.get("ownerNGFilters");
 				debug("\n■ownerNGFilters: ",m_ownerNGFilters);
-				String ownerNGFilters = m_ownerNGFilters.toUnquoteString();
+				String ownerNGFilters = m_ownerNGFilters.getAsString();
 				debug("\n■ownerNGFilters: "+ownerNGFilters);
 				String[] keys = new String[]{"source","destination"};
-				ArrayList<String[]> list = Mson.getListString(m_ownerNGFilters.getJson(), keys);
+				ArrayList<String[]> list = Mson.getListString(m_ownerNGFilters, keys);
 				StringBuffer sb = new StringBuffer();
 				for(String[] s: list){
 					debug("\n■hash: "+s[0]+","+s[1]);
@@ -2648,7 +2648,7 @@ public class NicoClient {
 					if(ownerFilter.isEmpty())
 						ownerFilter = null;
 				}
-			Mson m_liveTopics = dataApiMson.getMson("liveTopics");
+			Mson m_liveTopics = dataApiMson.get("liveTopics");
 			debug("\n■liveTopics: "+m_liveTopics.toString().length());
 			debug("\n■}\n");
 			economy = VideoUrl.toLowerCase().contains("low");
@@ -2940,7 +2940,7 @@ public class NicoClient {
 		try {
 			dataApiMson = Mson.parse(text);
 			debug("\ndataApiMson:\n", dataApiMson);
-			dataApiJson = dataApiMson.toUnquoteString();
+			dataApiJson = dataApiMson.getAsString();
 			text = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
 				+"<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n"
 				+"<properties><comment>" + comment + "</comment>\n"
@@ -3291,7 +3291,7 @@ public class NicoClient {
 		try {
 			dataApiMson = Mson.parse(text);
 		//	debug("dataApiMson:\n ", dataApiMson);
-			watchApiJson = dataApiMson.toUnquoteString();
+			watchApiJson = dataApiMson.getAsString();
 			xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
 				+"<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n"
 				+"<properties><comment>" + comment + "</comment>\n"
@@ -3328,7 +3328,7 @@ public class NicoClient {
 	}
 	public String getJsonValue0(String input, String key) throws Exception {
 		Mson m = Mson.parse(input);
-		return m.getValue(key);
+		return m.get(key).toString();
 	}
 	public String getJsonValue1(String input, String key){
 		String key1 = S_QUOTE2+key+S_QUOTE2+":";

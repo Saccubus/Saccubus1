@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,20 +20,21 @@ public class Mson {
 
 //	private final static boolean DEBUG = false;
 	private JsonElement json;
+	private static final Mson MSON_NULL = new Mson("null");
 	public Mson(JsonElement je) {
 		setJson(je);
 	}
-	public Mson(String input) {
-		// TODO 自動生成されたコンストラクター・スタブ
+	public Mson(String input){
+		new Mson(parse(input).json);
 	}
 	public String toString(){
-		if(getJson()==null)
-			return "[]";
+		if(isNull())
+			return "null";
 		else
-			return getJson().toString();
+			return json.toString();
 	}
-	public String toUnquoteString(){
-		return unquote(this.toString());
+	public String getAsString(){
+		return unquote(toString());
 	}
 	final String S_QUOTE2 = "\"";
 	private String unquote(String str) {
@@ -43,50 +45,36 @@ public class Mson {
 		}
 		return str;
 	}
-/*
-	private Mson add(JsonElement elem) throws Exception {
-		if(elem==null){
-			elem = JsonNull.INSTANCE;	//特殊な処理
-		}
-		if(json.isJsonNull()){
-			json = new JsonArray();
-		}
-		if(json.isJsonArray()){
-			json.getAsJsonArray().add(elem);
-			return this;
-		}
-		else
-		if(json.isJsonPrimitive()){
-			throw new Exception();
-		}
-		else
-		return null;
+	private boolean isPrimitive(){
+		return json.isJsonPrimitive();
 	}
-	public Mson add(Mson mson) throws Exception {
-		if(mson==null){
-			return add(JsonNull.INSTANCE);
-		}
-		return add(mson.json);
+	private boolean isString(){
+		return isPrimitive() && json.getAsJsonPrimitive().isString();
 	}
-	public Mson put(String key, Mson val) throws Exception {
-		if(json.isJsonNull()){
-			json = new JsonObject();
-		}
-		if(json.isJsonObject()){
-			json.getAsJsonObject().add(key, val.json);
-			return this;
-		}
-		return null;
+	private boolean isObject(){
+		return json.isJsonObject();
 	}
-	public Mson append(Mson mList) throws Exception {
-		if(mList==null||mList.json.isJsonNull())
-			return this;
-		if(!mList.json.isJsonArray())
-			return null;
-		json.getAsJsonArray().addAll(mList.json.getAsJsonArray());
-		return this;
+	private boolean isArray(){
+		return json.isJsonArray();
 	}
-*/
+	public boolean isEmpty(){
+		return isString() && json.getAsString().isEmpty();
+	}
+	void setJson(JsonElement js) {
+		json = js;
+	}
+	private Set<Entry<String, JsonElement>> entrySet(){
+		return getAsJsonObject().entrySet();
+	}
+	private JsonObject getAsJsonObject(){
+		return json.getAsJsonObject();
+	}
+	private JsonArray getAsJsonArray(){
+		return json.getAsJsonArray();
+	}
+	String getString(String key){
+		return get(key).toString();
+	}
 	public static Mson parse(String text){
 		JsonReader reader = new JsonReader(new StringReader(text));
 		reader.setLenient(true);
@@ -94,79 +82,63 @@ public class Mson {
 	}
 	public void prettyPrint(PrintStream ps){
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String js = gson.toJson(getJson());
-		ps.println(js);
+		ps.println(gson.toJson(json));
 	}
 	public void prettyPrint(Logger log){
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String js = gson.toJson(getJson());
-		log.print(js);
+		log.println(gson.toJson(json));
 	}
 	public static void prettyPrint(String input, PrintStream ps) {
 		try {
-			Mson m = parse(input);
-			m.prettyPrint(ps);
+			parse(input).prettyPrint(ps);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	public static void prettyPrint(String input, Logger log) {
 		try {
-			Mson m = parse(input);
-			m.prettyPrint(log);
+			parse(input).prettyPrint(log);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
 		}
 	}
-	public static JsonElement get(JsonElement je, String key){
-		if(je.isJsonObject()){
-			JsonObject jo = je.getAsJsonObject();
-			for(Entry<String, JsonElement> ent:jo.entrySet()){
-				if(key.equals(ent.getKey()))
-					return ent.getValue();
-				JsonElement joe = get(ent.getValue(), key);
-				if(joe!=null)
-					return joe;
+	public Mson get(String key) {
+		if(isObject()){
+			for(Entry<String, JsonElement> ent:entrySet()){
+				String k = ent.getKey();
+				Mson sj = new Mson(ent.getValue());
+				if(key.equals(k))
+					return sj;
+				Mson sjo = sj.get(key);
+				if(!sjo.isNull())
+					return sjo;
 			}
-			return null;
+			return MSON_NULL;
 		}
-		if(je.isJsonArray()){
-			JsonArray ja = je.getAsJsonArray();
+		if(isArray()){
+			JsonArray ja = json.getAsJsonArray();
 			for(JsonElement jae : ja){
-				JsonElement jee = get(jae, key);
-				if(jee!=null)
-					return jee;
+				Mson sj = new Mson(jae);	//配列の1要素
+				Mson sje = sj.get(key);	//要素のget結果
+				if(!sje.isNull())
+					return sje;
 			}
-			return null;
+			return MSON_NULL;
 		}
-		return null;
+		return MSON_NULL;
 	}
-	public JsonElement get(String key){
-		return Mson.get(getJson(), key);
-	}
-	public static String getValue(JsonElement json, String key){
-		JsonElement je = get(json, key);
-		if(je==null)
-			return "[]";
-		else
-			return je.toString();
-	}
-	public String getValue(String key){
-		return Mson.getValue(getJson(), key);
-	}
-	public static ArrayList<String[]> getListString(JsonElement json,String[] keys){
+	public static ArrayList<String[]> getListString(Mson mson,String[] keys){
 		ArrayList<String[]> ret = new ArrayList<String[]>();
 		String[] rets = new String[keys.length];
-		if(json.isJsonObject()){
-			JsonObject jo = json.getAsJsonObject();
+		if(mson.isObject()){
 			rets = new String[keys.length];
-			for(Entry<String,JsonElement> ent:jo.entrySet()){
-				JsonElement val = ent.getValue();
+			for(Entry<String,JsonElement> ent:mson.entrySet()){
+				Mson val = new Mson(ent.getValue());
 				boolean flag = false;
 				for(int i=0;i < keys.length;i++){
 					if(keys[i].equals(ent.getKey())){
 						String s = val.toString();
-						if(val.isJsonPrimitive() && val.getAsJsonPrimitive().isString()){
+						if(val.isString()){
 							s = val.getAsString();
 						}
 						rets[i] = s;
@@ -181,53 +153,20 @@ public class Mson {
 				ret.add(rets);
 			return ret;
 		}
-		if(json.isJsonArray()){
-			JsonArray ja = json.getAsJsonArray();
-			for(JsonElement je : ja){
-				ret.addAll(getListString(je,keys));
+		if(mson.isArray()){
+			for(JsonElement je : mson.getAsJsonArray()){
+				ret.addAll(getListString(new Mson(je),keys));
 			}
 			return ret;
 		}
 		return ret;
 	}
 	public ArrayList<String[]> getListString(String[] keys){
-		return Mson.getListString(getJson(), keys);
-	}
-	/*
-	 *
-	public static void main(String[] arg) throws Exception{
-		Mson mson0 = new Mson();
-		System.out.println(""+ mson0);
-		Mson mson1 = new Mson("string");
-		System.out.println(""+mson1);
-		Mson mson2 = new Mson();
-		mson2 = mson2.add(mson1);
-		System.out.println("2_1>"+mson2);
-		mson2 = mson2.add(mson1);
-		System.out.println("2_2>"+mson2);
-		Mson mson3 = new Mson();
-		mson3.put("key", mson1);
-		System.out.println("3_1>"+mson3);
-		mson3.put("key2", mson2);
-		System.out.println("3_2>"+mson3);
-		Mson mson4 = new Mson();
-		mson4 = Mson.parse("{\"key2\":[\"string\",\"string\"],\"key\":\"string\"}");
-		System.out.println("4_1>"+mson4);
-		Mson mson5 = Mson.parse("{\"fullscreen\":false,\"スクリーン幅\":1200,\"screen_height\":900,\"antialias\":false,\"port\":39390,\"max_script_execution_time\":5000,\"max_local_storage_size\":512000,\"upnp\":false,\"udp_port\":39391,\"language\":\"jp\",\"lobby_servers\":[\"m2op.net\"]}}");
-		System.out.println("4_2>"+mson5);
-		System.out.println("End");
-	}
-	 */
-	public JsonElement getJson() {
-		return json;
-	}
-	public void setJson(JsonElement json) {
-		this.json = json;
-	}
-	public Mson getMson(String key){
-		return new Mson(get(key));
+		return getListString(this, keys);
 	}
 	public boolean isNull() {
-		return json==null || json.isJsonNull();
+		return json==null || json.isJsonNull()
+			|| equals(MSON_NULL)
+			|| (isString() && json.getAsString().equals("[]"));
 	}
 }

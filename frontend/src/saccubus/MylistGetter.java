@@ -52,7 +52,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 
 	private final ConvertingSetting Setting;
 	private String resultText;
-	private String mylistID;
+	private String mylistID = "";
 	private String watchInfo;
 //	private String Tag;
 	private Gate gate;
