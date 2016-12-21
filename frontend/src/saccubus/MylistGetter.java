@@ -13,14 +13,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import saccubus.json.Mson;
@@ -39,8 +36,8 @@ import saccubus.util.Logger;
  */
 public class MylistGetter extends SwingWorker<String, String> {
 
-	private static final boolean MYLIST_DEBUG = false;
-	private static final boolean MYLIST_DEBUG2 = false;
+//	private static final boolean MYLIST_DEBUG = false;
+//	private static final boolean MYLIST_DEBUG2 = false;
 	static final String WATCH_HARMFUL = "watch_harmful=1";
 	private String url;
 	private final MainFrame parent;
@@ -51,7 +48,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 	private final StringBuffer ret;
 
 	private final ConvertingSetting Setting;
-	private String resultText;
+//	private String resultText;
 	private String mylistID = "";
 	private String watchInfo;
 //	private String Tag;
@@ -112,7 +109,6 @@ public class MylistGetter extends SwingWorker<String, String> {
 		Status.setText(text);
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	protected String doInBackground() throws Exception {
 		if(!url.startsWith("http")){
@@ -135,20 +131,21 @@ public class MylistGetter extends SwingWorker<String, String> {
 		gate.exit("0");
 		String text = Path.readAllText(file.getPath(), "UTF-8");
 		sendtext("保存しました。" + file.getRelativePath());
+		log.println(gettext());
 		if(StopFlag.needStop()) {
 			return "FF";
 		}
-		if(MYLIST_DEBUG && parent!=null){
-			resultText = HtmlView.markupHtml(text);
-			final HtmlView hv = new HtmlView(parent, "マイリスト", url);
-			SwingUtilities.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-					hv.setText(resultText);
-				}
-			});
-		}
+//		if(MYLIST_DEBUG && parent!=null){
+//			resultText = HtmlView.markupHtml(text);
+//			final HtmlView hv = new HtmlView(parent, "マイリスト", url);
+//			SwingUtilities.invokeLater(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					hv.setText(resultText);
+//				}
+//			});
+//		}
 		if(StopFlag.needStop()) {
 			return "FF";
 		}
@@ -352,24 +349,24 @@ public class MylistGetter extends SwingWorker<String, String> {
 				autolist = "autolist0";
 			}else{
 				autolist = "autolist";
-				//Json解析
-				file = new Path(file.getRelativePath().replace(".html", ".xml"));
-				Path.unescapeStoreXml(file, text, url);		//xml is property key:json val:JSON
-				Properties prop = new Properties();
-					prop.loadFromXML(new FileInputStream(file));		//read JSON xml
-				text = prop.getProperty("json", "0");
-				file = new Path(file.getRelativePath().replace(".html", ".xml"));
+				//Json解析 text
+//				file = new Path(file.getRelativePath().replace(".html", ".xml"));
+//				Path.unescapeStoreXml(file, text, url);		//xml is property key:json val:JSON
+//				Properties prop = new Properties();
+//					prop.loadFromXML(new FileInputStream(file));		//read JSON xml
+//				text = prop.getProperty("json", "0");
+//				file = new Path(file.getRelativePath().replace(".html", ".xml"));
 				//
-				if(MYLIST_DEBUG && parent!=null){
-					resultText = HtmlView.markupHtml(text);
-					final HtmlView hv2 = new HtmlView(parent, "マイリスト mson", "mson");
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							hv2.setText(resultText);
-						}
-					});
-				}
+//				if(MYLIST_DEBUG && parent!=null){
+//					resultText = HtmlView.markupHtml(text);
+//					final HtmlView hv2 = new HtmlView(parent, "マイリスト mson", "mson");
+//					SwingUtilities.invokeLater(new Runnable() {
+//						@Override
+//						public void run() {
+//							hv2.setText(resultText);
+//						}
+//					});
+//				}
 				//
 				log.println("get mylist/"+mylistID);
 				log.println("mson: "+text.length());
@@ -435,21 +432,20 @@ public class MylistGetter extends SwingWorker<String, String> {
 				if(StopFlag.needStop()) {
 					return "FF";
 				}
-				if(MYLIST_DEBUG2 && parent!=null){
-					SwingUtilities.invokeLater(new Runnable() {
-
-						@Override
-						public void run() {
-							TextView dlg = new TextView(parent, "mylist/"+mylistID);
-							JTextArea textout = dlg.getTextArea();
-							for(String[] idts:plist){
-								textout.append("["+idts[0]+"]"+idts[1]+"\n");
-							}
-							textout.setCaretPosition(0);
-						}
-					});
-				}
-
+//				if(MYLIST_DEBUG2 && parent!=null){
+//					SwingUtilities.invokeLater(new Runnable() {
+//
+//						@Override
+//						public void run() {
+//							TextView dlg = new TextView(parent, "mylist/"+mylistID);
+//							JTextArea textout = dlg.getTextArea();
+//							for(String[] idts:plist){
+//								textout.append("["+idts[0]+"]"+idts[1]+"\n");
+//							}
+//							textout.setCaretPosition(0);
+//						}
+//					});
+//				}
 			}
 			if(StopFlag.needStop()) {
 				return "FF";

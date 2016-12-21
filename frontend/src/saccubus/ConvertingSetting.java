@@ -39,18 +39,19 @@ import saccubus.util.Encryption;
 public class ConvertingSetting {
 	//default setting for 1.60-
 
-	static final String DEF_OPTS_FPSUP = " -acodec copy -vsync 1 -vcodec libx264 -qscale 1 -f mp4 ";
+	static final String DEF_OPTS_FPSUP = " -acodec copy -vsync 1 -vcodec libx264 -qp 0 -f mp4 ";
 	static final String DEF_OPTS_SWF_JPEG = " -an -vcodec copy -r 1 -f image2 ";
-	static final String DEF_OPTS_JPEG_MP4 = " -an -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ";
-	static final String DEF_OPTS_MIX = " -acodec copy -vcodec libx264 -qscale 1 -pix_fmt yuv420p -f mp4 ";
+	static final String DEF_OPTS_JPEG_MP4 = " -an -vcodec libx264 -qp 0 -pix_fmt yuv420p -f mp4 ";
+	static final String DEF_OPTS_MIX = " -acodec copy -vcodec libx264 -qp 0 -pix_fmt yuv420p -f mp4 ";
 	static final boolean DEF_OPTS_SAVE_THUMBINFO_METADATA = false;
-	static final String DEFAULT_CMDLINE_OUT="-threads 0 -s 512x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -aspect 16:9 -pix_fmt yuv420p";
-	static final String DEFAULT_WIDE_CMDLINE_OUT = "-threads 0 -s 640x360 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -aspect 16:9 -pix_fmt yuv420p";
-	static final String DEFAULT_ZQ_CMDLINE_OUT = "-threads 0 -s 640x384 -acodec libvo_aacenc -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -samx -pix_fmt yuv420p";
-	static final String DEFAULT_OPTION_FOLDER = "./optionF";
+	static final String DEFAULT_CMDLINE_OUT="-threads 0 -s 512x384 -acodec aac -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -aspect 16:9 -pix_fmt yuv420p";
+	static final String DEFAULT_WIDE_CMDLINE_OUT = "-threads 0 -s 640x360 -acodec aac -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -aspect 16:9 -pix_fmt yuv420p";
+	static final String DEFAULT_ZQ_CMDLINE_OUT = "-threads 0 -s 640x384 -acodec aac -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -samx -pix_fmt yuv420p";
+	static final String DEFAULT_OPTION_FOLDER = "./optionFFAAC";
 	static final String DEFAULT_VHOOK_PATH = "./bin/nicovideoE.dll";
 	static final String DEFAULT_FFMPEG_PATH = "./bin/ffmpeg.exe";
 	static final boolean ONLY_MP4_AUTO_PLAY = false;
+	static final String DEFAULT_METADATA = "title=%TITLE% genre=%CAT% comment=%ID%";
 
 	public static final String[] ShadowKindArray = {
 		"00:Ç»Çµ",
@@ -162,6 +163,8 @@ public class ConvertingSetting {
 	private String zqCmdLineOptionOut;
 	private String zqCmdLineOptionMain;
 	private String zqAddOption;
+	private boolean zqEnableMetadata;
+	private String zqMetadataOption;
 	private StringBuffer retBuffer;
 	private String opaqueRate;
 	private boolean swfTo3path;
@@ -179,6 +182,7 @@ public class ConvertingSetting {
 	private static String defOptsMix = DEF_OPTS_MIX;
 	private static boolean defOptsSaveThumbinfoMetadata = DEF_OPTS_SAVE_THUMBINFO_METADATA;
 	private static boolean onlyMp4AutoPlay = ONLY_MP4_AUTO_PLAY;
+	private static String defOptsMetadata = DEFAULT_METADATA;
 	private Map<String, String> replaceOptions;
 	private boolean liveOparetionConversion;
 	private boolean premiumColorCheck;
@@ -441,7 +445,9 @@ public class ConvertingSetting {
 			boolean auto_flv_mp4,
 			String panel_hiding,
 			int comment_erase_type,
-			boolean watch_html5
+			boolean watch_html5,
+			boolean zq_enable_metadata,
+			String zq_metadata
 		)
 	{
 		this(	mailaddress,
@@ -593,6 +599,8 @@ public class ConvertingSetting {
 		panelHideMapping = panel_hiding;
 		commentEraseType = comment_erase_type;
 		isHtml5 = watch_html5;
+		zqEnableMetadata = zq_enable_metadata;
+		zqMetadataOption = zq_metadata;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1013,6 +1021,12 @@ public class ConvertingSetting {
 	public boolean isHtml5() {
 		return isHtml5;
 	}
+	public boolean enableMetadata(){
+		return zqEnableMetadata;
+	}
+	public String getZqMetadataOption() {
+		return zqMetadataOption;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1189,6 +1203,8 @@ public class ConvertingSetting {
 	static final String PROP_PANEL_HIDE_MAPPING = "panelHideMapping";
 	static final String PROP_COMMENT_ERASE_TYPE = "CommentEraseType";
 	static final String PROP_WATCH_HTML5 = "WatchHtml5";
+	static final String PROP_ZQ_ENABLE_METADATA = "EnableMetadata";
+	static final String PROP_ZQ_METADATA_OPTION = "OptMetadata";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1414,6 +1430,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_PANEL_HIDE_MAPPING, setting.getPanelHideMapping());
 		prop.setProperty(PROP_COMMENT_ERASE_TYPE, Integer.toString(setting.getCommentEraseType()));
 		prop.setProperty(PROP_WATCH_HTML5, Boolean.toString(setting.isHtml5));
+		prop.setProperty(PROP_ZQ_ENABLE_METADATA, Boolean.toString(setting.enableMetadata()));
+		prop.setProperty(PROP_ZQ_METADATA_OPTION, setting.getZqMetadataOption());
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1532,7 +1550,6 @@ public class ConvertingSetting {
 				}
 			}
 		}
-		String option_file_name = prop.getProperty(PROP_OPTION_FILE, null);
 		defOptsFpsUp = prop.getProperty(PROP_OPTS_FPSUP, DEF_OPTS_FPSUP);
 		defOptsSwfJpeg = prop.getProperty(PROP_OPTS_SWF_JPEG, DEF_OPTS_SWF_JPEG);
 		defOptsJpegMp4 = prop.getProperty(PROP_OPTS_JPEG_MP4, DEF_OPTS_JPEG_MP4);
@@ -1541,8 +1558,10 @@ public class ConvertingSetting {
 			PROP_OPTS_SAVE_THUMBINFO_METADATA,Boolean.toString(DEF_OPTS_SAVE_THUMBINFO_METADATA)));
 		onlyMp4AutoPlay = Boolean.valueOf(
 			prop.getProperty(PROP_ONLY_MP4_AUTO_PLAY, Boolean.toString(ONLY_MP4_AUTO_PLAY)));
+		defOptsMetadata = prop.getProperty(PROP_ZQ_METADATA_OPTION,DEFAULT_METADATA);
 
 		File option_file = null;
+		String option_file_name = prop.getProperty(PROP_OPTION_FILE, null);
 		if (option_file_name != null) {
 			option_file = new File(option_file_name);
 		}
@@ -1573,7 +1592,7 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_CONVERTED, "true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_CONV_WITH_COMMENT,"true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_CONV_WITH_OWNERCOMMENT,"false")),	// false<-true 1.22r3e8
-			prop.getProperty(PROP_CONVERTED_FILE, "./video.avi"),
+			prop.getProperty(PROP_CONVERTED_FILE, "./[conv]%CAT%/[%ID]%TITLE%.mp4"),
 			prop.getProperty(PROP_SHOW_COMMENT, "40"),
 			prop.getProperty(PROP_FFMPEG_PATH,DEFAULT_FFMPEG_PATH),
 			prop.getProperty(PROP_VHOOK_PATH,DEFAULT_VHOOK_PATH),
@@ -1693,7 +1712,9 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_FLV_MP4, "true")),
 			prop.getProperty(PROP_PANEL_HIDE_MAPPING, ""),
 			Integer.decode(prop.getProperty(PROP_COMMENT_ERASE_TYPE, "0")),
-			Boolean.parseBoolean(prop.getProperty(PROP_WATCH_HTML5, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_WATCH_HTML5, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_ZQ_ENABLE_METADATA, "false")),
+			defOptsMetadata
 		);
 	}
 

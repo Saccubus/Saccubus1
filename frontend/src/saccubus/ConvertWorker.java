@@ -1915,49 +1915,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return true;
 	}
 
-// ダウンロードをmp4に変更したので以下は実行しない
-//	private File dmcFlvToMp4Convert(File input) {
-//		sendtext("dmc flv->mp4");
-//		log.println("dmc flv->mp4: "+VideoID);
-//		Path output = Path.mkTemp("_"+VideoID+".mp4");
-//		if(output.isFile())
-//			output.delete();
-//		if(videoContentType!=null && videoContentType.contains("mp4") && !Path.hasExt(input, ".mp4"))
-//		{
-//			input = Path.getReplacedExtFile(input, ".mp4");
-//		}
-//		//出力
-//		if(ffmpeg==null){
-//			String path = Setting.getFFmpegPath();
-//			if (!Path.isFile(path)) {
-//				log.println("dmc flv->mp4 failed! "+VideoID+", FFmpeg not found!");
-//				return input;
-//			}
-//			ffmpeg = new FFmpeg(path);
-//		}
-//		ffmpeg.setCmd("-y -analyzeduration 10M -i ");
-//		ffmpeg.addFile(input);
-//		ffmpeg.addCmd(" -c:a copy -c:v copy -f mp4 ");
-//		ffmpeg.addFile(output);
-//		int code = execOption();
-//		if(code!=0){
-//			log.println("dmc flv->mp4 failed! "+VideoID+", code="+code);
-//			return input;
-//		}
-//		if(Setting.isChangeMp4Ext() && !Path.hasExt(input,".mp4")){
-//			File inputmp4 = Path.getReplacedExtFile(input, ".mp4");
-//			input.renameTo(inputmp4);
-//			input = inputmp4;
-//		}
-//		if(Path.move(output, input))
-//			log.println("dmc flv->mp4 done: "+VideoID);
-//		else {
-//			log.println("dmc flv->mp4 failed!: copy faild! "+VideoID);
-//			log.println("mp4 container file is "+output.getPath());
-//		}
-//		return input;
-//	}
-
 	private boolean convertVideo() throws IOException {
 		sendtext("動画の変換を開始");
 		stopwatch.start();
@@ -2877,32 +2834,47 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private void setOption2(){
 		ffmpeg.addCmd(" ");
 		ffmpeg.addMap(outputOptionMap);
-		ffmpeg.addCmd(" -metadata");
-		ffmpeg.addCmd(" \"title="+VideoTitle+"\"");
-		ffmpeg.addCmd(" -metadata");
-		ffmpeg.addCmd(" \"comment=["+alternativeTag+"]\"");
-		if(Setting.getDefOptsSaveThumbinfoMetadata()){
-			if(thumbInfoData==null){
-				if(metaDataFile!=null && metaDataFile.canRead()){
-					thumbInfoData = Path.readAllText(metaDataFile, "UTF-8");
-					thumbInfoData = escapeMetadata(thumbInfoData);
-				}
-			}
-			if(thumbInfoData!=null){
-				ffmpeg.addCmd(" -metadata");
-				ffmpeg.addCmd(" \"description="+escapeQuote(thumbInfoData)+"\"");
-			}
-		}
+		if(Setting.enableMetadata())
+			ffmpeg.addCmd(getMetadata());
 		ffmpeg.addCmd(" ");
 	}
 
+	private String getMetadata(){
+		String opt;
+		File file;
+		ArrayList<String> optlist = new ArrayList<>();
+		opt = Setting.getZqMetadataOption();
+		for(String os:opt.split(" +")){
+			file = new File("temp",safeAsciiFileName(os));
+			optlist.add(replaceFilenamePattern(file, false, false).getName());
+		}
+		if(Setting.getDefOptsSaveThumbinfoMetadata()){
+			String desc = thumbInfoData;
+			if(desc==null){
+				if(metaDataFile!=null && metaDataFile.canRead()){
+					desc = Path.readAllText(metaDataFile, "UTF-8");
+					desc = escapeMetadata(desc);
+				}
+			}
+			if(desc!=null){
+				optlist.add("description="+escapeQuote(desc));
+			}
+		}
+		StringBuffer sb = new StringBuffer();
+		for(String os:optlist){
+			sb.append(" -metadata \""+os+"\"");
+		}
+		return sb.substring(0);
+	}
+
 	private String escapeMetadata(String info){
-//		info = info.replace("\\", "\\\\")
-//				.replace(";", "\\;")
-//				.replace("=", "\\=")
-//				.replace("\n", "\\\n")
-//				.replace("#", "\\#");
-		return info;
+		return info
+//			.replace("\\", "\\\\")
+			.replace(";", "\\;")
+//			.replace("=", "\\=")
+//			.replace("\n", "\\\n")
+//			.replace("#", "\\#")
+			;
 	}
 
 	private String escapeQuote(String info){
