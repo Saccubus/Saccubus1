@@ -2248,23 +2248,15 @@ public class NicoClient {
 				watchThread = getThread(getXmlElement(s, "watch_url"));
 			thumbXml  = Path.mkTemp(tag + "_" + title + ".xml");
 			if(titleHtml!=null){
-				String html = Path.readAllText(titleHtml, encoding);
-				if(html==null) return null;
-				if(html.contains(JSON_START)){
-					if(extractWatchApiJson(html, encoding, url)==null)
-						return null;
+				log.println("checking saved titlepage JSON... ");
+				if(watchApiJson!=null){
 					log.println("flash ok.");
+				} else if(dataApiJson!=null){
+					log.println("html5 ok.");
+					isHtml5Ok = true;
 				}else{
-					log.println("JSON_START not found, try HTML5_JSON");
-					if(html.contains(JSON_START2)){
-						if(extractDataApiDataJson(html, encoding, url)!=null){
-							log.println("html5 ok.");
-							isHtml5Ok = true;
-						}else{
-							log.println("html5 NG.");
-							isHtml5Ok = false;
-						}
-					}
+					log.println("NG.");
+					isHtml5Ok = false;
 				}
 			}
 			if(s.indexOf("status=\"ok\"") < 0 && titleHtml!=null){
@@ -2279,8 +2271,7 @@ public class NicoClient {
 				if(isHtml5Ok){
 					Mson m_dataApi = dataApiMson;
 					if(m_dataApi==null){
-						String text = getDataApiJson();
-						m_dataApi = Mson.parse(text);
+						m_dataApi = Mson.parse(getDataApiJson());
 					}
 					Mson m_video = m_dataApi.get("video");
 					String description = m_video.getAsString("description");
@@ -2337,10 +2328,10 @@ public class NicoClient {
 					sb.append("</nicovideo_thumb_response>\n");
 					s = sb.substring(0);
 				}else{
+					// flash page
 					Mson m_watchApi = watchApiMson;
 					if(m_watchApi==null){
-						String text = getWatchApiJson();
-						m_watchApi = Mson.parse(text);
+						m_watchApi = Mson.parse(getWatchApiJson());
 					}
 					String description = m_watchApi.getAsString("description");
 					if(description==null)
@@ -2447,26 +2438,28 @@ public class NicoClient {
 			return null;
 		}
 	}
-	private String extractDataApiDataJson(String ss, String encoding, String url) {
+	private String extractDataApiDataJson(String text, String encoding, String url) {
 		// HTML5 watchpage
-		Path file = getDataApiData(ss, encoding, url);
-		if(file==null) return null;
-		return extractDataJson(file, encoding);
+		url = safeFileName(url);
+		dataApiJson = getDataApiData(text, encoding, url);
+		saveApiJson(dataApiJson, encoding, url);
+		if(dataApiJson==null) return null;
+		extractDataJson(dataApiJson, encoding);
+		return dataApiJson;
 	}
 
-	private String extractDataJson(Path xml, String encoding) {
+	private void extractDataJson(String json, String encoding) {
 		//Json解析	html5
 		debug("\n■{");
-		if(dataApiJson==null){
-			return null;
-		}
+		if(json==null)
+			return;
 		try {
 			dataApiMson = null;	//not assigned yet
 			try{
-				dataApiMson = Mson.parse(dataApiJson);
+				dataApiMson = Mson.parse(json);
 			}catch(Exception e){
 				log.println("\nMson: parse error(dataApiJson)");
-				return null;
+				return;
 			}
 			isDmc = "0";
 			Mson m_video = dataApiMson.get("video");
@@ -2598,31 +2591,27 @@ public class NicoClient {
 				size_video_thumbinfo = economy? size_low : size_high;
 				log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
 			}
-			return dataApiJson;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
 	}
 
 	private String getDataApiJson(){
-		if(dataApiJson==null){
-			String encoding = "UTF-8";
-			if(titleHtml==null)
-				return null;
-			String html = Path.readAllText(titleHtml, encoding);
-			if(extractDataApiDataJson(html, encoding, "getDataApiJson")==null)
-				return null;
-		}
+		if(dataApiJson!=null)
+			return dataApiJson;
+		if(titleHtml==null)
+			return null;
+		String encoding = "UTF-8";
+		String html = Path.readAllText(titleHtml, encoding);
+		extractDataApiDataJson(html, encoding, "getDataApiJson");
 		return dataApiJson;
 	}
-	private Path getDataApiData(String html, String encoding, String comment){
-		String text = html;
+	private String getDataApiData(String text, String encoding, String comment){
 		// 動画ページのJSONを取り出す
 		text = getXmlElement1(text, "body");	//body
 		if(text==null)
 			return null;
-		text = getXmlAttribute(html, "data-api-data");
+		text = getXmlAttribute(text, "data-api-data");
 			//div id="js-initial-watch-data" data-api-data="{
 		if(text==null){
 			log.println("error: not found data-api-data");
@@ -2643,59 +2632,38 @@ public class NicoClient {
 		text = text.replace("&quot;", S_QUOTE2);
 		if(text==null || text.isEmpty()){
 			log.println("error: replace to NULL");
-			return null;
 		}
-		// URLDecodeしない
-		Path file0 = Path.mkTemp(videoTag+"_dataApiJson.txt");
-		Path file = Path.mkTemp(videoTag+"_dataApiJ.xml");
-		Path.writeAllText(file0, text, encoding);
-		try {
-			dataApiMson = Mson.parse(text);
-		//	debugPrettyPrint("\ndataApiMson:\n", dataApiMson);
-			dataApiJson = dataApiMson.getAsString();
-			text = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-				+"<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n"
-				+"<properties><comment>" + comment + "</comment>\n"
-				+"<entry key=\"json\">" + dataApiJson + "</entry>";
-			Path.writeAllText(file, text, encoding);
-			log.println("Saved dataApiData to "+file.getPath());
-			return file;
-		}catch(Exception e){
-			log.println("dataApiMson parse error");
-			log.println("Saved dataApiData to "+file0.getPath());
-		//	Path.unescapeStoreXml(file, text, comment);		//xml is property key:json val:JSON
-			return null;
-		}
+		return text;
 	}
 
 	private String extractWatchApiJson(String html, String encoding, String url){
-		Path file = getWatchApiData(html, encoding, url);
-		if(file==null) return null;
-		return extractJson(file, encoding);
-	}
-	private String getWatchApiJson(){
-		if(watchApiJson==null){
-			String encoding = "UTF-8";
-			if(titleHtml==null)
-				return null;
-			String html = Path.readAllText(titleHtml, encoding);
-			String r = extractWatchApiJson(html, encoding, "getWatchApiJson");
-			if(r==null)
-				return null;
-		}
+		// flash
+		url = safeFileName(url);
+		watchApiJson = getWatchApiData(html, encoding, url);
+		saveApiJson(watchApiJson, encoding, url);
+		if(watchApiJson==null) return null;
+		extractJson(watchApiJson, encoding);
 		return watchApiJson;
 	}
-	private String extractJson(Path xml, String encoding) {
-		//Json解析	flash
-		if(watchApiJson==null){
+	private String getWatchApiJson(){
+		if(watchApiJson!=null)
+			return watchApiJson;
+		String encoding = "UTF-8";
+		if(titleHtml==null)
 			return null;
-		}
+		String html = Path.readAllText(titleHtml, encoding);
+		extractWatchApiJson(html, encoding, "getWatchApiJson");
+		return watchApiJson;
+	}
+	private void extractJson(String text, String encoding) {
+		//Json解析	flash
+		if(text==null)
+			return;
 		try {
-			watchApiMson = Mson.parse(watchApiJson);
+			watchApiMson = Mson.parse(text);
 		//	debugPrettyPrint("watchApi:\n ",watchApiMson);
-			debug("\n");
 			// flvInfo
-			if(!nicomap.containsKey("flvinfo")){
+			if(!nicomap.containsKey("flvInfo")){
 				flvInfo = watchApiMson.getAsString("flvInfo");
 				debug("\n■flvInfo:\n "+flvInfo);
 				nicomap.put("flvInfo", flvInfo);
@@ -2734,10 +2702,11 @@ public class NicoClient {
 		}finally{
 
 		}
-		return watchApiJson;
+		return;
 	}
 
 	private void setFromSessionApi(Mson m_sessionApi){
+		// flash html5 common
 		recipe_id = m_sessionApi.getAsString("recipe_id");
 		debug("\n■recipe_id: "+recipe_id);
 		Mson m_videos = m_sessionApi.get("videos");
@@ -2849,8 +2818,7 @@ public class NicoClient {
 		return s;
 	}
 
-	private Path getWatchApiData(String html, String encoding, String comment) {
-		String text = html;
+	private String getWatchApiData(String text, String encoding, String comment) {
 		// 動画ページのJSONを取り出す flash
 		text = getXmlElement1(text, "body");	//body
 		if(text==null)
@@ -2866,27 +2834,20 @@ public class NicoClient {
 		int end = (text+json_end).indexOf(json_end, start);	// end of JSON
 		text = (text+json_end).substring(start, end);
 		text = text.replace("&quot;", S_QUOTE2);
-		// URLDecodeしない
-		Path file0 = Path.mkTemp(videoTag+"_watchJ.txt");
-		Path file = Path.mkTemp(videoTag+"_watchJ.xml");
-		String xml;
-		try {
-			watchApiMson = Mson.parse(text);
-			watchApiJson = watchApiMson.getAsString();
-			xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-				+"<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n"
-				+"<properties><comment>" + comment + "</comment>\n"
-				+"<entry key=\"json\">" + watchApiJson + "</entry>";
-			Path.writeAllText(file, xml, encoding);
-			log.println("Saved watchApiData to "+file.getPath());
-			return file;
-		}catch(Exception e){
-			log.println("watchApiMson parse error");
-			Path.writeAllText(file0, text, encoding);
-			log.println("Saved watchApiData to "+file0.getPath());
-		//	Path.unescapeStoreXml(file, text, comment);		//xml is property key:json val:JSON
-			return null;
-		}
+		text = unquote(text);
+		return text;
+	}
+	void saveApiJson(String json, String encoding, String comment){
+		Path file = Path.mkTemp(videoTag+"_watchJson.txt");
+		Path.writeAllText(file, json, encoding);
+		log.println("Saved watchApiData to "+file.getPath());
+		file = Path.mkTemp(videoTag+"_watchJson.xml");
+		json = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
+			+"<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n"
+			+"<properties><comment>" + comment + "</comment>\n"
+			+"<entry key=\"json\">" + json + "</entry>";
+		Path.writeAllText(file, json, encoding);
+		log.println("Saved ApiData to "+file.getPath());
 	}
 
 	private String makeNewElement(String key, String val){
