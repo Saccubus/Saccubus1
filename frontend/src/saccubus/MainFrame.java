@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -165,6 +166,7 @@ public class MainFrame extends JFrame {
 	JPanel loginCheckPanel = new JPanel();
 	JButton loginCheckButton = new JButton();
 	JLabel loginStatusLabel = new JLabel();
+	JLabel nicoLabel = new JLabel();
 	final JCheckBox html5CheckBox = new JCheckBox();
 	JPanel UserInfoPanel = new JPanel();
 	GridBagLayout gridBagLayout3 = new GridBagLayout();
@@ -400,6 +402,15 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid1_x1_y0_71 = new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 6);
 		grid1_x1_y0_71.fill = GridBagConstraints.BOTH;
 		grid1_x1_y0_71.ipady = 0;
+		GridBagConstraints grid10_x2_y1_70b = new GridBagConstraints();
+		grid10_x2_y1_70b.fill = GridBagConstraints.HORIZONTAL;
+		grid10_x2_y1_70b.gridy = 1;
+		grid10_x2_y1_70b.ipadx = 0;
+		grid10_x2_y1_70b.ipady = 0;
+		grid10_x2_y1_70b.weightx = 0.0;
+		grid10_x2_y1_70b.insets = INSETS_0_0_0_0;
+		grid10_x2_y1_70b.gridx = 3;
+		grid10_x2_y1_70b.gridwidth = 1;
 		GridBagConstraints grid10_x1_y1_70 = new GridBagConstraints();
 		grid10_x1_y1_70.fill = GridBagConstraints.HORIZONTAL;
 		grid10_x1_y1_70.gridy = 1;
@@ -408,7 +419,7 @@ public class MainFrame extends JFrame {
 		grid10_x1_y1_70.weightx = 1.0;
 		grid10_x1_y1_70.insets = INSETS_0_0_0_0;
 		grid10_x1_y1_70.gridx = 1;
-		grid10_x1_y1_70.gridwidth = 4;
+		grid10_x1_y1_70.gridwidth = 1;
 		GridBagConstraints grid10_x0_y1_69 = new GridBagConstraints();
 		grid10_x0_y1_69.gridx = 0;
 		grid10_x0_y1_69.ipadx = 0;
@@ -978,11 +989,43 @@ public class MainFrame extends JFrame {
 		loginStatusLabel.setText("");
 		loginCheckPanel.add(loginStatusLabel,
 			new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0));
+		nicoLabel.setText("^_^");
+		nicoLabel.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String url = VideoID_TextField.getText();
+				if(url==null || url.isEmpty()){
+					url = requestHistory.getLast();
+				}else{
+					url = treatUrlHttp(url);
+				}
+				try {
+					URI uri = URI.create(url);
+					Desktop.getDesktop().browse(uri);
+					nicoLabel.setText("^o^");
+					nicoLabel.setForeground(Color.blue);
+				} catch (IOException e1) {
+					nicoLabel.setText(">_<");
+					nicoLabel.setForeground(Color.red);
+				} catch (RuntimeException e2){
+					nicoLabel.setText(">_<");
+					nicoLabel.setForeground(Color.red);
+				}
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
+		});
 		html5CheckBox.setSelected(false);
 		html5CheckBox.setText("html5");
 		html5CheckBox.setToolTipText("html5プレイヤー使用を要求");
 		loginCheckPanel.add(html5CheckBox,
-			new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, INSETS_0_5_0_5, 0, 0));
+			new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, INSETS_0_5_0_0, 0, 0));
 		UserInfoPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
 				.createEtchedBorder(), "ユーザ設定"));
 		UserInfoPanel.setLayout(gridBagLayout3);
@@ -1567,6 +1610,7 @@ public class MainFrame extends JFrame {
 		});
 		OpPanel.add(WayBackLabel, grid10_x0_y1_69);
 		OpPanel.add(WayBackField, grid10_x1_y1_70);
+		OpPanel.add(nicoLabel, grid10_x2_y1_70b);
 		MainTabbedPane.add(BasicInfoTabPanel, "基本設定");
 		MainTabbedPane.add(SavingInfoTabPanel, "保存設定");
 		MainTabbedPane.add(FFMpegInfoTabPanel, "動画設定");
@@ -3637,7 +3681,6 @@ public class MainFrame extends JFrame {
 			convertManager.buttonPushed(flag);
 		}
 	}
-
 	static int convNo = 1;
 	public void DoButton_actionPerformed(ActionEvent e) {
 		try{
