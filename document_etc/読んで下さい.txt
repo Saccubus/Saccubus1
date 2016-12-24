@@ -1,9 +1,8 @@
 読んで下さい.txt
 変更内容
 
-1.66.3.03(2016/12/20)
-・html5β版の視聴ページ対応(smile,dmc,threadkey,投稿者フィルター)
-・optionFDev libvo_aacencをaacに変更
+1.66.3.10(2016/12/24)
+・メタデータ設定追加
 
 使い方はsaccubusフォルダの中の
 最初に必ず読んで.txt
