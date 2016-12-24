@@ -16,7 +16,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="Saccubus" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.mingw.exe.debug.1576728923" name="Debug" parent="cdt.managedbuild.config.gnu.mingw.exe.debug">
+				<configuration artifactName="Saccubus" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.mingw.exe.debug.1576728923" name="Debug" parent="cdt.managedbuild.config.gnu.mingw.exe.debug">
 					<folderInfo id="cdt.managedbuild.config.gnu.mingw.exe.debug.1576728923." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.exe.debug.1235341960" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.exe.debug">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.mingw.exe.debug.1414694704" name="デバッグ・プラットフォーム" superClass="cdt.managedbuild.target.gnu.platform.mingw.exe.debug"/>
@@ -63,7 +63,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${PACKAGE}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.mingw.exe.release.1621124421" name="Release" parent="cdt.managedbuild.config.gnu.mingw.exe.release" postbuildStep="cp -p ${ProjDirPath}/Release/${PACKAGE}.exe ${WorkspaceDirPath}/frontend" prebuildStep="windres -i ${ProjDirPath}/${PACKAGE}.rc -o ${ProjDirPath}/${PACKAGE}_res.o">
+				<configuration artifactName="${PACKAGE}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.mingw.exe.release.1621124421" name="Release" parent="cdt.managedbuild.config.gnu.mingw.exe.release" postbuildStep="cp -p ${ProjDirPath}/Release/${PACKAGE}.exe ${WorkspaceDirPath}/frontend" prebuildStep="windres -i ${ProjDirPath}/${PACKAGE}.rc -o ${ProjDirPath}/${PACKAGE}_res.o">
 					<folderInfo id="cdt.managedbuild.config.gnu.mingw.exe.release.1621124421." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.1943631508" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.base.952253997" name="デバッグ・プラットフォーム" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
@@ -127,10 +127,10 @@
 		<cconfiguration id="cdt.managedbuild.config.gnu.mingw.exe.debug.1576728923.986534556">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.mingw.exe.debug.1576728923.986534556" moduleId="org.eclipse.cdt.core.settings" name="VC">
 				<macros>
-					<stringMacro name="PACKAGE" type="VALUE_TEXT" value="Saccubus"/>
 					<stringMacro name="res" type="VALUE_TEXT" value="Saccubus_res.obj"/>
-					<stringMacro name="OUTPUTS" type="VALUE_TEXT" value="Saccubus.exe"/>
 					<stringMacro name="INPUTS" type="VALUE_TEXT" value="Saccubus_res.obj Launcher.obj"/>
+					<stringMacro name="PACKAGE" type="VALUE_TEXT" value="Saccubus"/>
+					<stringMacro name="OUTPUTS" type="VALUE_TEXT" value="Saccubus.exe"/>
 				</macros>
 				<externalSettings/>
 				<extensions>
@@ -142,7 +142,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${PACKAGE}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.VCErrorParser" id="cdt.managedbuild.config.gnu.mingw.exe.debug.1576728923.986534556" name="VC" parent="cdt.managedbuild.config.gnu.mingw.exe.debug" prebuildStep="cp &quot;${ICON}&quot; &quot;${res}&quot;">
+				<configuration artifactName="${PACKAGE}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.VCErrorParser" id="cdt.managedbuild.config.gnu.mingw.exe.debug.1576728923.986534556" name="VC" parent="cdt.managedbuild.config.gnu.mingw.exe.debug" prebuildStep="cp &quot;${ICON}&quot; &quot;${res}&quot;">
 					<folderInfo id="cdt.managedbuild.config.gnu.mingw.exe.debug.1576728923.986534556." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.1199447209" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.base.698912064" name="デバッグ・プラットフォーム" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
@@ -187,13 +187,13 @@
 		<project id="launcher.cdt.managedbuild.target.gnu.mingw.exe.13435208" name="実行可能" projectType="cdt.managedbuild.target.gnu.mingw.exe"/>
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="Release">
-			<resource resourceType="PROJECT" workspacePath="/launcher"/>
-		</configuration>
 		<configuration configurationName="VC">
 			<resource resourceType="PROJECT" workspacePath="/launcher"/>
 		</configuration>
 		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/launcher"/>
+		</configuration>
+		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/launcher"/>
 		</configuration>
 	</storageModule>
