@@ -124,10 +124,10 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			cnt = i;
 			break;
 		}
-		if(slot->item[i].chat_item->vend < item->vstart){	//˜AŒ‹ (used=false‚Ì”¤‚¾‚ª)
-			cnt = i;
-			break;
-		}
+//		if(slot->item[i].chat_item->vend < item->vstart){	//˜AŒ‹ (used=false‚Ì”¤‚¾‚ª)
+//			cnt = i;
+//			break;
+//		}
 		if(slot->item[i].chat_item->vstart < min_vstart) {
 			cnt = i;
 			min_vstart = slot->item[i].chat_item->vstart;
