@@ -35,7 +35,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.66.3.11";	//
+	char *ver="1.67.1.01";	//
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -157,6 +157,7 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	setting->font_h_fix_r = 1.0f;	//デフォルトは従来通り（最終調整で合わせること）
 	setting->original_resize = TRUE;	//デフォルトは有効（実験的に無効にする選択を行う）
 	setting->comment_speed = 0;
+	setting->comment_duration = 0.0f;
 	setting->enableCA = FALSE;
 	setting->debug = FALSE;
 	setting->use_lineskip_as_fontsize = FALSE;	//デフォルトは無効 FonrsizeにLineskipを合わせる（実験的）
@@ -302,11 +303,22 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 			fprintf(log,"[framehook/init]disable original resize (experimental)\n");
 			fflush(log);
 		} else if (strncmp(FRAMEHOOK_OPT_COMMENT_SPEED,arg,FRAMEHOOK_OPT_COMMENT_SPEED_LEN) == 0){
-			int com_speed = atoi(arg+FRAMEHOOK_OPT_COMMENT_SPEED_LEN);
-			if (com_speed != 0){
-				setting->comment_speed = com_speed;
-				fprintf(log,"[framehook/init]comment speed fix: %d pixel/sec.\n",com_speed);
-				fflush(log);
+			char* com_speed_str = arg+FRAMEHOOK_OPT_COMMENT_SPEED_LEN;
+			if(com_speed_str[0]=='@'){
+				//秒数指定
+				float com_duration = (float)atof(com_speed_str+1);
+				if (com_duration != 0.0){
+					setting->comment_duration = com_duration;
+					fprintf(log,"[framehook/init]comment duration fix: %.2f sec.\n",com_duration);
+					fflush(log);
+				}
+			}else{
+				int com_speed = atoi(com_speed_str);
+				if (com_speed != 0){
+					setting->comment_speed = com_speed;
+					fprintf(log,"[framehook/init]comment speed fix: %d pixel/sec.\n",com_speed);
+					fflush(log);
+				}
 			}
 		} else if(!setting->enableCA && strcmp("--enable-CA",arg) == 0){
 			setting->enableCA = TRUE;

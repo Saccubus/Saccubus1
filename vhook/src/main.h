@@ -64,6 +64,7 @@ struct DATA{
 	float font_h_fix_r;	// フォントの高さをnicoplayer.swfに合わせる倍率(0< <2)（実験的）
 	int original_resize;	// さきゅばす独自リサイズが有効（デフォルト有効）
 	int comment_speed;	// コメント速度を指定する場合≠0
+	float comment_duration;	// UIでコメント秒数指定する場合≠0
 	int enableCA;
 	const char* fontdir;
 	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
@@ -160,6 +161,7 @@ typedef struct SETTING{
 	float font_h_fix_r;	// フォントの高さをnicoplayer.swfに合わせる倍率（実験的）
 	int original_resize;	// さきゅばす独自リサイズが有効（デフォルト有効）
 	int comment_speed;	// コメント速度を指定する場合≠0
+	float comment_duration;	// UIでコメント秒数指定する場合≠0
 	int enableCA;
 	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
 	int debug;

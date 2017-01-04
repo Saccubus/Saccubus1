@@ -2186,7 +2186,7 @@ public class MainFrame extends JFrame {
 			opaqueRateTextField.setToolTipText("不透明度（既定 オフ 0.0-0.3/オン 1.0）");
 			VhookSettingPanel.add(opaqueRateTextField, grid8_x2_y9_101);
 			VhookSettingPanel.add(new JLabel("設定 0～1"), grid8_x3_y9_103);
-			commentSpeedCheckBox.setText("コメント速度（Pixel/Sec）");
+			commentSpeedCheckBox.setText("コメント速度（Pixel/Sec又は@秒数)");
 			commentSpeedCheckBox.setForeground(Color.blue);
 			VhookSettingPanel.add(commentSpeedCheckBox, grid8_x0_y10_0);
 			commentSpeedTextField.setForeground(Color.blue);

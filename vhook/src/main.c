@@ -67,6 +67,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	data->font_h_fix_r = setting->font_h_fix_r;
 	data->original_resize = setting->original_resize;
 	data->comment_speed = setting->comment_speed;
+	data->comment_duration = setting->comment_duration;
 	data->enableCA = setting->enableCA;
 	data->use_lineskip_as_fontsize = setting->use_lineskip_as_fontsize;
 	data->debug = setting->debug;

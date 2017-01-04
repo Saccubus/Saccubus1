@@ -169,6 +169,7 @@ int getVposItem(DATA* data,CHAT_SLOT_ITEM* item,int n_xpos,double s_tpos){
  */
 void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_width,double scale){
 	int comment_speed = data->comment_speed;
+	int comment_duration = (int)(data->comment_duration * VPOS_FACTOR);
 	CHAT_ITEM* item = slot_item->chat_item;
 	int vpos = item->vpos;
 	int location = item->location;
@@ -187,6 +188,8 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 		slot_item->speed = 0.0f;
 		item->vappear = vpos;
 	}else{
+		if(comment_duration > 0)
+			duration = comment_duration;
 		item->vstart = vpos - TEXT_AHEAD_SEC;
 		//if(item->script==SCRIPT_GYAKU||item->script==SCRIPT_DEFAULT){
 		//	item->vstart = vpos;
