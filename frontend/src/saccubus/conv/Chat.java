@@ -355,14 +355,14 @@ public class Chat {
 		Comment += com_str;
 	}
 
-	public void debug(Logger log) throws IOException {
-		log.print("Chat.debug: No="+No);
-		log.print(",Vpos="+Vpos);
-		log.print(",Loc="+Location+",extend="+extend+",sec="+sec);
-		log.print(",Size="+Size);
-		log.print(",Color="+Color);
-		log.print(",Length="+Comment.length());
-		log.println(",\n"+Comment);
+	public void debug(Logger log) {
+//		log.print("Chat.debug: No="+No);
+//		log.print(",Vpos="+Vpos);
+//		log.print(",Loc="+Location+",extend="+extend+",sec="+sec);
+//		log.print(",Size="+Size);
+//		log.print(",Color="+Color);
+//		log.print(",Length="+Comment.length());
+//		log.println(",\n"+Comment);
 	}
 	public void write(OutputStream os) throws IOException {
 		byte[] a = {0,0,};

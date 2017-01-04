@@ -1987,7 +1987,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			duration = Setting.getLiveOperationDuration();
 		// ニコスコメントは premium "2" or "3"みたいなのでニコスコメントの時は運営コメント変換しないようにする
 		boolean live_op = Setting.isLiveOperationConversion() && !is_nicos;
-		if(live_op)
+		if(is_nicos)
 			isOptionalTranslucent = false;
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile, CommentReplaceList,
@@ -2009,7 +2009,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			log.printStackTrace(e);
 			return false;
 		}
-		log.println("comment replace list size = "+CommentReplaceList.size());
+		//log.println("comment replace list size = "+CommentReplaceList.size());
 		return true;
 	}
 

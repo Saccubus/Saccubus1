@@ -2571,8 +2571,18 @@ public class NicoClient {
 				log.println("MsgUrl: "+MsgUrl);
 				String key_required = m_thread.getAsString("thread_key_required");
 				debug("Å°thread_key_required: "+key_required+"\n");
+				Mson m_optional_thread_id = m_thread.get("optional_thread_id");
+				if(!m_optional_thread_id.isNull()){
+					OptionalThraedID = m_optional_thread_id.getAsString();
+					log.println("OptionalThreadID: "+OptionalThraedID);
+				}
 				NeedsKey = key_required.equals("true") ? true : false;
 				log.println("NeedsKey: "+NeedsKey);
+				Mson m_nicos_thread_id = m_thread.get("nicos_thread_id");
+				if(!m_nicos_thread_id.isNull()){
+					nicosID = m_nicos_thread_id.getAsString();
+					log.println("nicosID: "+nicosID);
+				}
 			}else{
 				Mson m_ids = m_thread.get("ids");
 				ThreadID = m_ids.getAsString("default");
