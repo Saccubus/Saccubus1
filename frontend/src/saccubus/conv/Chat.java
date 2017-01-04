@@ -37,31 +37,30 @@ public class Chat {
 
 	private static final int CMD_LOC_NAKA = 3;
 
-	private static final int CMD_LOC_FULL = 4;
+	private static final int CMD_EX_FULL = 4;
 
-	private static final int CMD_LOC_WAKU = 8;
+	private static final int CMD_EX_WAKU = 8;
 
-	static final int CMD_LOC_SCRIPT = 16;
+	static final int CMD_EX_SCRIPT = 16;
 
-	private static final int CMD_LOC_PATISSIER = 32;
+	private static final int CMD_EX_PATISSIER = 32;
 
-	private static final int CMD_LOC_INVISIBLE = 64;
+	private static final int CMD_EX_INVISIBLE = 64;
 
-	static final int CMD_LOC_IS_BUTTON = 128;
+	static final int CMD_EX_IS_BUTTON = 128;
 
-	static final int CMD_LOC_SCRIPT_FOR_OWNER = 256;
+	private static final int CMD_EX_SCRIPT_FOR_OWNER = 256;
 
-	static final int CMD_LOC_SCRIPT_FOR_USER = 512;
+	private static final int CMD_EX_SCRIPT_FOR_USER = 512;
 
-	private static final int CMD_LOC_ENDER = 1024;
+	private static final int CMD_EX_ENDER = 1024;
 
 	/**
 	 * Location bit 31-16 追加
 	 * 0: 従来(既定値)、1～65535: ＠秒数 (数値=秒数+1)
 	 */
 	private static final int CMD_MAX_SECONDS = 0x0000ffff;
-	private static final int CMD_LOC_SECONDS_BITS = 16;
-	private static final int CMD_LOC_SECONDS_MASK = CMD_MAX_SECONDS << CMD_LOC_SECONDS_BITS;
+	private static final int CMD_DUR_SECONDS_BITS = 16;
 
 	private static final int CMD_SIZE_DEF = 0;
 
@@ -195,6 +194,7 @@ public class Chat {
 	private int Location = 0;
 	private boolean isLocationAssigned = false;
 
+	private int extend = 0;
 	// "No"
 	private int No = 0;
 /*
@@ -228,6 +228,8 @@ public class Chat {
 		Color = CMD_COLOR_DEF;
 		Size = CMD_SIZE_DEF;
 		Location = CMD_LOC_DEF;
+		extend = 0;
+		sec = 0;
 		if (mail_str == null) {
 			return;
 		}
@@ -236,13 +238,13 @@ public class Chat {
 			String str = element[i].toLowerCase();
 			/* ロケーション */
 			if (str.equals("ue") && !isLocationAssigned) {
-				Location |= CMD_LOC_TOP;
+				Location = CMD_LOC_TOP;
 				isLocationAssigned = true;
 			} else if (str.equals("shita") && !isLocationAssigned) {
-				Location |= CMD_LOC_BOTTOM;
+				Location = CMD_LOC_BOTTOM;
 				isLocationAssigned = true;
 			} else if (str.equals("naka") && !isLocationAssigned) {
-				Location |= CMD_LOC_NAKA;
+				Location = CMD_LOC_NAKA;
 				isLocationAssigned = true;
 			}
 			// ＠秒数
@@ -251,7 +253,6 @@ public class Chat {
 				if (!strsec.isEmpty()){
 					try {
 						sec = Integer.parseInt(strsec) + 1;	// @0 -> 1
-						Location |= ((sec & CMD_MAX_SECONDS) << CMD_LOC_SECONDS_BITS) & CMD_LOC_SECONDS_MASK;
 					} catch(NumberFormatException e){
 						// log.printStackTrace(e);
 						log.println("\nChat: 変換エラー @"+strsec+" at No:"+No);
@@ -260,27 +261,27 @@ public class Chat {
 			}
 			// フルコマンド
 			else if (str.equals("full")){
-				Location |= CMD_LOC_FULL;
+				extend |= CMD_EX_FULL;
 			}
 			// 枠コマンド
 			else if (str.equals("waku")){
-				Location |= CMD_LOC_WAKU;
+				extend |= CMD_EX_WAKU;
 			}
 			// 菓子職人コマンド
 			else if (str.equals("patissier")){
-				Location |= CMD_LOC_PATISSIER;
+				extend |= CMD_EX_PATISSIER;
 			}
 			// invisibleコマンド
 			else if (str.equals("invisible")){
-				Location |= CMD_LOC_INVISIBLE;
+				extend |= CMD_EX_INVISIBLE;
 			}
 			// is_buttonコマンド
 			else if (str.equals("is_button")){
-				Location |= CMD_LOC_IS_BUTTON;		//setButton(true)
+				extend |= CMD_EX_IS_BUTTON;		//setButton(true)
 			}
 			// enderコマンド
 			else if (str.equals("ender")){
-				Location |= CMD_LOC_ENDER;
+				extend |= CMD_EX_ENDER;
 			}
 			// サイズ
 			else if (str.equals("big") && !isSizeAssigned) {
@@ -354,6 +355,15 @@ public class Chat {
 		Comment += com_str;
 	}
 
+	public void debug(Logger log) throws IOException {
+		log.print("Chat.debug: No="+No);
+		log.print(",Vpos="+Vpos);
+		log.print(",Loc="+Location+",extend="+extend+",sec="+sec);
+		log.print(",Size="+Size);
+		log.print(",Color="+Color);
+		log.print(",Length="+Comment.length());
+		log.println(",\n"+Comment);
+	}
 	public void write(OutputStream os) throws IOException {
 		byte[] a = {0,0,};
 		try {
@@ -364,7 +374,7 @@ public class Chat {
 		}
 		Util.writeInt(os, No);
 		Util.writeInt(os, Vpos);
-		Util.writeInt(os, Location);
+		Util.writeInt(os, Location | extend | ((sec & CMD_MAX_SECONDS) << CMD_DUR_SECONDS_BITS));
 		Util.writeInt(os, Size);
 		Util.writeInt(os, Color);
 		Util.writeInt(os, a.length);
@@ -376,10 +386,19 @@ public class Chat {
 		}
 	}
 
-	public void addCmd(int cmd) {
-		Location |= cmd;
+	void setButton() {
+		extend |= CMD_EX_IS_BUTTON;
 	}
 
+	void setScript(){
+		extend |= CMD_EX_SCRIPT;
+	}
+	void setScriptForUser(){
+		extend |= CMD_EX_SCRIPT_FOR_USER;
+	}
+	void setScriptForOwner(){
+		extend |= CMD_EX_SCRIPT_FOR_OWNER;
+	}
 	public static String makeWakuiro(String wakuiro) {
 		//文字色[=:]枠色[,_;]〇〇繰り返し　で指定する。
 		//英字色名を色番号に色コードはそのまま指定する。
@@ -483,22 +502,22 @@ public class Chat {
 		return Vpos;
 	}
 
-	void process(CommentReplace cr){
-		String old = Comment;
-		Comment = cr.replace(Comment);
-		if(!Comment.equals(old)){	//文字列が置換されたならカラー・サイズ・ロケーションも置換
-			Chat item = cr.getChat();
-			if(item.Color != CMD_COLOR_DEF)
-				Color = item.Color;
-			if(item.Size != CMD_SIZE_DEF)
-				Size = item.Size;
-			if((item.Location & 3) != CMD_LOC_DEF)
-				Location = (Location & ~3) | (item.Location & 3);
+	void process(int rcolor, int rsize, int rlocation, String rcom){
+		if(!rcom.equals(Comment)){
+			Comment = rcom;
+			//文字列が置換されたならカラー・サイズ・ロケーションも置換
+			if(rcolor != CMD_COLOR_DEF)
+				Color = rcolor;
+			if(rsize != CMD_SIZE_DEF)
+				Size = rsize;
+			if((rlocation) != CMD_LOC_DEF)
+				Location = rlocation;
+			//log.println("Chat: comment replaced #"+getNo()+":"+getVpos());
 		}
 	}
 
 	boolean isScript(){
-		return (Location & CMD_LOC_SCRIPT)!=0;
+		return (extend & CMD_EX_SCRIPT)!=0;
 	}
 	void setOwner(boolean is_owner) {
 		IsOwner = is_owner;
@@ -508,7 +527,7 @@ public class Chat {
 		return IsOwner;
 	}
 
-	public boolean isPremumColor() {
+	boolean isPremumColor() {
 		return (Color < 0 ) ||
 			(Color == CMD_COLOR_NICOWHITE ) ||
 			(Color == CMD_COLOR_MARINEBLUE ) ||
@@ -522,12 +541,42 @@ public class Chat {
 			(Color == CMD_COLOR_BLACK2);
 	}
 
-	public void setDefColor() {
+	void setDefColor() {
 		Color = CMD_COLOR_DEF;
 		isColorAssigned = true;
 	}
 
 	int getDurationSec() {
 		return sec;
+	}
+	int getSize() {
+		return Size;
+	}
+	int getLocation() {
+		return Location;
+	}
+	String getSizeName() {
+		if(Size==CMD_SIZE_BIG)
+			return "big";
+		if(Size==CMD_SIZE_SMALL)
+			return "small";
+		if(Size==CMD_SIZE_MEDIUM)
+			return "medium";
+		return "def";
+	}
+	public String getLocName() {
+		switch(Location){
+		case CMD_LOC_BOTTOM:
+			return "shita";
+		case CMD_LOC_TOP:
+			return "ue";
+		case CMD_LOC_NAKA:
+			return "naka";
+		}
+		return "def";
+	}
+
+	String getComment() {
+		return Comment;
 	}
 }

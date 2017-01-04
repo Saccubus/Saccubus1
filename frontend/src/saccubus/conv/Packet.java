@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import saccubus.util.Logger;
 import saccubus.util.Util;
 
 /**
@@ -31,9 +32,13 @@ import saccubus.util.Util;
 public class Packet {
 	private final LinkedList<Chat> ChatList = new LinkedList<Chat>();
 	private final ArrayList<CommentReplace> ReplaceList;
+	private final Logger log;
+	private final boolean isDebug;
 
-	public Packet(ArrayList<CommentReplace> list) {
+	public Packet(ArrayList<CommentReplace> list, Logger logger, boolean is_debug) {
 		ReplaceList = list;
+		log = logger;
+		isDebug = is_debug;
 	}
 
 	public void addChat(Chat chat) {
@@ -49,6 +54,8 @@ public class Packet {
 				cr.replace(chat);
 			}
 			chat.write(os);
+			if(isDebug)
+				chat.debug(log);
 		}
 	}
 

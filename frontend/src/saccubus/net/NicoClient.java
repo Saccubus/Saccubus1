@@ -694,6 +694,7 @@ public class NicoClient {
 	private boolean NeedsKey = false;
 	private String Premium = "";
 	private String OptionalThraedID = "";	// normal Comment ID when Community DOUGA
+	private String nicosID = "";
 	private boolean economy = false;
 	private String ownerFilter;			// video owner filter（replace）
 	public boolean getVideoInfo(String tag, String watchInfo, String time, boolean saveWatchPage) {
@@ -750,8 +751,12 @@ public class NicoClient {
 			VideoUrl = nicomap.get("url");
 			MsgUrl = nicomap.get("ms");
 			UserID = nicomap.get("user_id");
+			userKey = nicomap.get("userkey");
 			if (OptionalThraedID.isEmpty() && nicomap.containsKey("optional_thread_id")){
 				OptionalThraedID = nicomap.get("optional_thread_id");
+			}
+			if (nicosID.isEmpty() && nicomap.containsKey("nicos_id")){
+				nicosID = nicomap.get("nicos_id");
 			}
 			if (nicomap.containsKey("needs_key")) {
 				NeedsKey = true;
@@ -788,6 +793,9 @@ public class NicoClient {
 					+ WayBackDate.format(ThreadID));
 			if (OptionalThraedID!=null && !OptionalThraedID.isEmpty()){
 				log.println("OptionalThreadID:<" + OptionalThraedID + ">");
+			}
+			if (nicosID!=null && !nicosID.isEmpty()){
+				log.println("nicosID:<" + nicosID + ">");
 			}
 		} catch (IOException ex) {
 			log.printStackTrace(ex);
@@ -1649,6 +1657,7 @@ public class NicoClient {
 	}
 
 	private String UserID = null;
+	private String userKey = null;
 	private String ThreadID = null;
 	private String MsgUrl = null;
 	public  final static String STR_OWNER_COMMENT = "1000";
@@ -1668,6 +1677,10 @@ public class NicoClient {
 		OPTIONAL{
 			@Override
 			public String dlmsg(){ return "オプショナルスレッド"; }
+		},
+		NICOS{
+			@Override
+			public String dlmsg(){ return "ニコスコメント"; }
 		};
 		public abstract String dlmsg();
 	}
@@ -1689,6 +1702,25 @@ public class NicoClient {
 
 	public File getOwnerComment(final File file, final JLabel status, final ConvertStopFlag flag) {
 		return downloadComment(file, status, STR_OWNER_COMMENT, CommentType.OWNER, flag, false, false);
+	}
+
+	public File getNicosComment(final File file, final JLabel status, final String nicos_id,
+			final String back_comment, final String time, final ConvertStopFlag flag,
+			final int comment_mode, final boolean isAppend) {
+		ThreadID = nicos_id;
+		NeedsKey = false;
+		Official = "";
+		if (time != null && !time.isEmpty()){
+		 	WayBackKey = "0";
+			if (!getWayBackKey(time)) { // WayBackKey
+				log.println("It may be wrong Date.");
+			}
+		}
+		boolean useNewComment = true;
+		if(comment_mode == 2 || comment_mode == 0 && !hasNewCommentBegun){
+			useNewComment = false;
+		}
+		return downloadComment(file, status, back_comment, CommentType.NICOS, flag, useNewComment, isAppend);
 	}
 
 	public File getOptionalThread(final File file, final JLabel status, final String optionalThreadID,
@@ -1744,11 +1776,17 @@ public class NicoClient {
 			// for Debug, input comment_no "12345-" etc.
 			resfrom = "\" res_from=\"" + back_comment;
 		}
+		String user_key = "";
+		if(userKey!=null && !userKey.isEmpty())
+			user_key = "\" userkey=\""+userKey;
 		String req_thread_id = retry_threadkey? OptionalThraedID : ThreadID;
+		if(commentType==CommentType.NICOS)
+			req_thread_id = nicosID;
 		StringBuffer sb = new StringBuffer();
 		sb.append("<packet>");
 		sb.append("<thread thread=\"" + req_thread_id);
 		sb.append("\" version=\"20090904");
+		sb.append(user_key);
 		sb.append(resfrom);
 		sb.append("\" user_id=\"" + UserID);
 		if(NeedsKey){
@@ -1764,6 +1802,7 @@ public class NicoClient {
 		//thread end, thread_leaves start
 		sb.append("<thread_leaves thread=\"" + req_thread_id);
 		sb.append("\" version=\"20090904");
+		sb.append(user_key);
 		sb.append(resfrom);
 		sb.append("\" user_id=\"" + UserID);
 		if(NeedsKey){
@@ -2150,6 +2189,10 @@ public class NicoClient {
 
 	public String getOptionalThreadID() {
 		return OptionalThraedID;
+	}
+
+	public String getNicosID() {
+		return nicosID;
 	}
 
 	public int getVideoLength() {
@@ -2540,7 +2583,10 @@ public class NicoClient {
 					log.println("OptionalThreadID: "+OptionalThraedID);
 				}
 				Mson m_nicos = m_ids.get("nicos");
-				debug("■nicos: "+m_nicos+"\n");
+				if(!m_nicos.isNull()){
+					nicosID = m_nicos.getAsString();
+					log.println("nicosID: "+nicosID);
+				}
 				MsgUrl = m_thread.getAsString("serverUrl");
 				log.println("MsgUrl: "+MsgUrl);
 			}

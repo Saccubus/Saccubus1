@@ -100,8 +100,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 //	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
 	public static final String OWNER_EXT = "[Owner].xml";	// 投稿者コメントサフィックス
 	public static final String OPTIONAL_EXT = "{Optional}.xml";	// オプショナルスレッドサフィックス
+	public static final String NICOS_EXT = "{Nicos}.xml";	//ニコスコメントサフィックス
 	public static final String TMP_APPEND_EXT = "_all_comment.xml";
 	public static final String TMP_APPEND_OPTIONAL_EXT = "_all_optional.xml";
+	public static final String TMP_APPEND_NICOS_EXT = "_all_nicos.xml";
 	private static final String TMP_COMBINED_XML = "_tmp_comment.xml";
 	private static final String TMP_COMBINED_XML2 = "_tmp_optional.xml";
 	private static final String TMP_COMBINED_XML3 = "_tmp_comment2.xml";
@@ -212,6 +214,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File CommentFile = null;
 	private File OwnerCommentFile = null;
 	private File OptionalThreadFile = null;
+	private File nicosCommentFile = null;
 	private File ConvertedVideoFile = null;
 	private File CommentMiddleFile = null;
 	private File OwnerMiddleFile = null;
@@ -223,7 +226,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private int wayOfVhook = 0;
 	private ArrayList<File> listOfCommentFile = new ArrayList<File>();
 	private String optionalThreadID = "";	// set in
+	private String nicos_id = "";
 	private String errorLog = "";
+	private boolean disable_liveOp = false;
+	private boolean isOptionalTranslucent = true;
 	private int videoLength = 0;
 	private int ownerCommentNum = 0;
 	private File fontDir;
@@ -1214,15 +1220,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
 			dateUserFirst = getDateUserFirst(CommentFile);
+			disable_liveOp = true;
 			sendtext("コメントのダウンロード終了");
 			optionalThreadID = client.getOptionalThreadID();
 			sendtext("オプショナルスレッドの保存");
-			if (optionalThreadID != null && !optionalThreadID.isEmpty() ){
-				if (isCommentFixFileName()) {
-					OptionalThreadFile = new File(folder, getVideoBaseName() + prefix + OPTIONAL_EXT);
-				} else {
-					OptionalThreadFile = getOptionalThreadFile(Setting.getCommentFile());
-				}
+			if (optionalThreadID != null && !optionalThreadID.isEmpty() && CommentFile!=null ){
+				OptionalThreadFile = Path.getReplacedExtFile(CommentFile, OPTIONAL_EXT);
 				backup = false;
 				if(isAppendComment() || !isDebugNet){
 					appendOptionalFile = mkTemp(TMP_APPEND_OPTIONAL_EXT);
@@ -1265,18 +1268,61 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				sendtext("オプショナルスレッドの保存終了");
 			}
+			//ニコスコメント
+			nicos_id = client.getNicosID();
+			sendtext("ニコスコメントの保存");
+			if(nicos_id!=null && !nicos_id.isEmpty() && CommentFile!=null){
+				disable_liveOp = true;
+				nicosCommentFile = Path.getReplacedExtFile(CommentFile, NICOS_EXT);
+				backup = false;
+				File appendNicosFile = mkTemp(TMP_APPEND_NICOS_EXT);
+				if(isAppendComment() || !isDebugNet){
+					if(nicosCommentFile.exists()){
+						backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
+					}
+				}
+				sendtext("ニコスコメントの保存開始中");
+				target = client.getNicosComment(
+					nicosCommentFile, Status, nicos_id, back_comment, Time,
+						StopFlag, Setting.getCommentIndex(), isAppendComment());
+				if (stopFlagReturn()) {
+					result = "54";
+					return false;
+				}
+				if (target == null) {
+					sendtext("ニコスコメントのダウンロードに失敗 " + client.getExtraError());
+					if(backup)
+						Path.move(appendNicosFile, nicosCommentFile);
+					result = "55";
+					return false;
+				}
+				if(isAppendComment() || !isDebugNet){
+					backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
+					filelist.clear();
+					filelist.add(nicosCommentFile);
+					sendtext("ニコスコメント整理中");
+					if (!CombineXML.combineXML(filelist, nicosCommentFile)){
+						sendtext("ニコスコメントが整理出来ませんでした");
+						if(backup)
+							Path.move(appendNicosFile, nicosCommentFile);
+						result = "5B";
+						return false;
+					}
+				}
+				sendtext("ニコスコメントの保存終了");
+			}
 			resultBuffer.append("comment: "+CommentFile.getName()+"\n");
 		}
 		sendtext("コメントの保存終了");
 		return true;
 	}
 
-	private File getOptionalThreadFile(File file) {
-		if (file == null || file.getPath() == null) {
-			return mkTemp(OPTIONAL_EXT);
-		}
-		return Path.getReplacedExtFile(file, OPTIONAL_EXT);
-	}
+//	private File getOptionalThreadFile(File file) {
+//		if (file == null || file.getPath() == null) {
+//			return mkTemp(OPTIONAL_EXT);
+//		}
+//		return Path.getReplacedExtFile(file, OPTIONAL_EXT);
+//	}
 	private String getDateUserFirst(File comfile){
 		//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
 		String text = Path.readAllText(comfile, "UTF-8");
@@ -1353,9 +1399,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				//result = "63";
 				return true;
 			}
+			disable_liveOp = true;
 			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
 				optionalThreadID = client.getOptionalThreadID();
 			}
+			if (nicos_id == null || nicos_id.isEmpty())
+				nicos_id = client.getNicosID();
 		}
 		sendtext("投稿者コメントの保存終了");
 		return true;
@@ -1428,6 +1477,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private boolean saveThumbInfo(NicoClient client, String vtag) {
 		if(!Setting.isSaveThumbInfo())
 			return true;
+		disable_liveOp = true;
 		if(saveThumbInfo0(client, vtag))
 			return true;
 		// コミュニティ動画はthumbinfoが取れないのでsmIDを使う
@@ -1624,6 +1674,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 					CommentFile = mkTemp(TMP_COMBINED_XML);
 					sendtext("コメントファイル結合中");
+					log.println("コメントファイル結合中");
 					if (!CombineXML.combineXML(filelist, CommentFile)){
 						sendtext("コメントファイルが結合出来ませんでした（バグ？）");
 						result = "72";
@@ -1685,13 +1736,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			filelist.add(CommentFile);
 			CombinedCommentFile = mkTemp(TMP_COMBINED_XML3);
 			sendtext("コメントファイルマージ中");
+			log.println("コメントファイルマージ中");
 			if (!CombineXML.combineXML(filelist, CombinedCommentFile)){
 				sendtext("コメントファイルがマージ出来ませんでした");
 				result = "72";
 				return false;
 			}
 			CommentMiddleFile = mkTemp(TMP_COMMENT);
-			if(!convertToCommentMiddle(CombinedCommentFile, CommentMiddleFile)){
+			if(!convertToCommentMiddle(CombinedCommentFile, CommentMiddleFile, disable_liveOp)){
 				sendtext("コメント変換に失敗");
 				CommentMiddleFile = null;
 				result = "76";
@@ -1723,18 +1775,30 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private boolean convertOprionalThread(){
 		sendtext("オプショナルスレッドの中間ファイルへの変換中");
+		log.println(gettext());
 		File folder = Setting.getCommentFixFileNameFolder();
 		ArrayList<File> filelist = new ArrayList<File>();
+		String optext;
 		if (isConvertWithComment()) {
 			if (isCommentFixFileName()) {
 				if (Setting.isAddTimeStamp() && !isAppendComment()) {
 					// フォルダ指定時、複数のオプショナルスレッド（過去ログ）があるかも
-					ArrayList<String> pathlist = detectFilelistFromOptionalThread(folder);
+					optext = OPTIONAL_EXT;
+					ArrayList<String> pathlist = detectFilelistFromOptionalThread(folder, optext);
 					if (pathlist == null || pathlist.isEmpty()){
-						sendtext(Tag + ": オプショナルスレッド・過去ログが存在しません。");
-						log.println("No optional thread.");
-						OptionalThreadFile = null;
-						return true;
+						sendtext(Tag + ": オプショナルスレッド・過去ログが存在しません。ニコスコメントでリトライ");
+						log.println(gettext());
+						// ニコスコメントでリトライ
+						optext = NICOS_EXT;
+						isOptionalTranslucent = false;
+						pathlist = detectFilelistFromOptionalThread(folder, optext);
+						if(pathlist == null || pathlist.isEmpty()){
+							sendtext(Tag + ": オプショナルスレッド・過去ログが存在しません。");
+							log.println(gettext());
+							log.println("No optional thread.");
+							OptionalThreadFile = null;
+							return true;
+						}
 					}
 					// VideoTitle は見つかった。
 					for (String path: pathlist){
@@ -1742,10 +1806,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 					OptionalThreadFile = mkTemp(TMP_COMBINED_XML2);
 					sendtext("オプショナルスレッド結合中");
+					log.println(gettext());
 					if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
 						sendtext("オプショナルスレッドが結合出来ませんでした（バグ？）");
 						result = "77";
-						return false;
+						//return false;
+						OptionalThreadFile = null;
+						return true;
 					}
 					if (dateUserFirst.isEmpty()) {
 						//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
@@ -1754,12 +1821,22 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					listOfCommentFile.addAll(filelist);
 				} else {
 					// フォルダ指定時、オプショナルスレッドは１つ
-					String filename = detectTitleFromOptionalThread(folder);
+					optext = OPTIONAL_EXT;
+					String filename = detectTitleFromOptionalThread(folder, optext);
 					if (filename == null || filename.isEmpty()){
-						sendtext(Tag + ": オプショナルスレッドがフォルダに存在しません。");
-						log.println("No optional thread.");
-						OptionalThreadFile = null;
-						return true;
+						sendtext(Tag + ": オプショナルスレッドがフォルダに存在しません。ニコスコメントでリトライ");
+						log.println(gettext());
+						// ニコスコメントでリトライ
+						optext = NICOS_EXT;
+						isOptionalTranslucent = false;
+						filename = detectTitleFromOptionalThread(folder, optext);
+						if(filename == null || filename.isEmpty()){
+							sendtext(Tag + ": ニコスコメントがフォルダに存在しません。");
+							log.println(gettext());
+							log.println("No optional thread.");
+							OptionalThreadFile = null;
+							return true;
+						}
 					}
 					OptionalThreadFile = new File(folder, filename);
 					if (dateUserFirst.isEmpty()) {
@@ -1769,12 +1846,22 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 			} else {
 				// ファイル指定の時
-				OptionalThreadFile = getOptionalThreadFile(Setting.getCommentFile());
+				optext = OPTIONAL_EXT;
+				OptionalThreadFile = Path.getReplacedExtFile(CommentFile, optext);
 				if (!OptionalThreadFile.exists()){
-					sendtext("オプショナルスレッドが存在しません。");
-					log.println("No optional thread.");
-					OptionalThreadFile = null;
-					return true;
+					sendtext("オプショナルスレッドが存在しません。ニコスコメントでリトライ");
+					log.println(gettext());
+					// ニコスコメントでリトライ
+					optext = NICOS_EXT;
+					isOptionalTranslucent = false;
+					OptionalThreadFile = Path.getReplacedExtFile(CommentFile, optext);
+					if(!OptionalThreadFile.exists()){
+						sendtext("オプショナルスレッドが存在しません。");
+						log.println(gettext());
+						log.println("No optional thread.");
+						OptionalThreadFile = null;
+						return true;
+					}
 				}
 				if (dateUserFirst.isEmpty()) {
 					//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
@@ -1786,17 +1873,23 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			filelist.add(OptionalThreadFile);
 			CombinedOptionalFile = mkTemp(TMP_COMBINED_XML4);
 			sendtext("オプショナルスレッドマージ中");
+			log.println(gettext());
 			if (!CombineXML.combineXML(filelist, CombinedOptionalFile)){
 				sendtext("オプショナルスレッドがマージ出来ませんでした");
 				result = "77";
-				return false;
+			//	return false;
+				OptionalMiddleFile = null;
+				return true;
 			}
 			OptionalMiddleFile = mkTemp(TMP_OPTIONALTHREAD);
-			if(!convertToCommentMiddle(CombinedOptionalFile, OptionalMiddleFile)){
+			if(!convertToCommentMiddle(CombinedOptionalFile, OptionalMiddleFile, disable_liveOp)){
 				sendtext("オプショナルスレッド変換に失敗");
+				log.println(gettext());
 				OptionalMiddleFile = null;
 				result = "78";
-				return false;
+				//	return false;
+				OptionalMiddleFile = null;
+				return true;
 			}
 			//コメント数を検査
 			if(!OptionalMiddleFile.canRead()){
@@ -1847,7 +1940,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			OwnerMiddleFile = mkTemp(TMP_OWNERCOMMENT);
 			//ここで commentReplaceが作られる
-			if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile)){
+			log.println("投稿者コメント変換");
+			if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile, true)){
 				sendtext("投稿者コメント変換に失敗");
 				OwnerMiddleFile = null;
 				result = "83";
@@ -1887,15 +1981,18 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 	}
 
-	private boolean convertToCommentMiddle(File commentfile, File middlefile) {
+	private boolean convertToCommentMiddle(File commentfile, File middlefile, boolean is_nicos) {
 		String duration = "";
 		if(Setting.changedLiveOperationDuration())
 			duration = Setting.getLiveOperationDuration();
+		// ニコスコメントは premium "2" or "3"みたいなのでニコスコメントの時は運営コメント変換しないようにする
+		boolean live_op = Setting.isLiveOperationConversion() && !is_nicos;
+		if(live_op)
+			isOptionalTranslucent = false;
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile, CommentReplaceList,
 				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit(),
-				Setting.isLiveOperationConversion(), Setting.isPremiumColorCheck(),
-				duration, log)){
+				live_op, Setting.isPremiumColorCheck(), duration, log, isDebugNet)){
 			return false;
 		}
 		//コメント数が0の時削除する
@@ -1912,6 +2009,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			log.printStackTrace(e);
 			return false;
 		}
+		log.println("comment replace list size = "+CommentReplaceList.size());
 		return true;
 	}
 
@@ -2198,6 +2296,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (!checkOK()) {
 				return result;
 			}
+			isOptionalTranslucent = Setting.isOptionalTranslucent();
 			boolean success = false;
 			NicoClient client = null;
 			if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
@@ -2256,7 +2355,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			stopwatch.show();
 			success = false;
 			do{
-				success = saveComment(client);
+				success = saveOwnerComment(client);
 			}while (!stopFlagReturn() && !success && canRetry(client, gate));
 			if(!success) return result;
 			gate.resetError();
@@ -2264,7 +2363,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			stopwatch.show();
 			success = false;
 			do{
-				success = saveOwnerComment(client);
+				success = saveComment(client);
 			}while (!stopFlagReturn() && !success && canRetry(client, gate));
 			if(!success) return result;
 			gate.resetError();
@@ -2325,6 +2424,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (!convertOprionalThread() || stopFlagReturn()) {
 				return result;
 			}
+
 			//ローカル時のthumbInfoDataセット
 			if(thumbInfoData==null){
 				String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
@@ -3516,7 +3616,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					Path.toUnixPath(OptionalMiddleFile), encoding));
 				ffmpeg.addCmd("|--show-optional:");
 				ffmpeg.addCmd(Setting.getVideoShowNum());
-				if (Setting.isOptionalTranslucent()) {
+				if (isOptionalTranslucent) {
 					ffmpeg.addCmd("|--optional-translucent");
 				}
 			}
@@ -4083,8 +4183,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(list == null){ return null; }
 		for (int i = 0; i < list.length; i++) {
 			String path = list[i];
-			if (!path.endsWith(".xml") || path.endsWith(OWNER_EXT)
-					|| path.endsWith(OPTIONAL_EXT)){
+			if (!path.endsWith(".xml")
+					|| path.endsWith(OWNER_EXT)
+					|| path.endsWith(OPTIONAL_EXT)
+					|| path.endsWith(NICOS_EXT)){
 				continue;
 			}
 			setVideoTitleIfNull(path);
@@ -4113,15 +4215,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return null;
 	}
 
-	private String detectTitleFromOptionalThread(File dir){
+	private String detectTitleFromOptionalThread(File dir, String ext){
 		String list[] = dir.list(DefaultVideoIDFilter);
 		if(list == null){ return null; }
 		for (int i = 0; i < list.length; i++) {
 			String path = list[i];
-			if (!path.endsWith(OPTIONAL_EXT)){
+			if (!path.endsWith(ext)){
 				continue;
 			}
-			setVideoTitleIfNull(path.replace(OPTIONAL_EXT, ""));
+			setVideoTitleIfNull(path.replace(ext, ""));
 			return path;
 		}
 		return null;
@@ -4132,8 +4234,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (list == null) { return null; }
 		ArrayList<String> filelist = new ArrayList<String>();
 		for (String path : list){
-			if (!path.endsWith(".xml") || path.endsWith(OWNER_EXT)
-					|| path.endsWith(OPTIONAL_EXT)){
+			if (!path.endsWith(".xml")
+					|| path.endsWith(OWNER_EXT)
+					|| path.endsWith(OPTIONAL_EXT)
+					|| path.endsWith(NICOS_EXT)){
 				continue;
 			}
 			setVideoTitleIfNull(path);
@@ -4142,15 +4246,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return filelist;
 	}
 
-	private ArrayList<String> detectFilelistFromOptionalThread(File dir){
+	private ArrayList<String> detectFilelistFromOptionalThread(File dir , String ext){
 		String list[] = dir.list(DefaultVideoIDFilter);
 		if (list == null) { return null; }
 		ArrayList<String> filelist = new ArrayList<String>();
 		for (String path : list){
-			if (!path.endsWith(OPTIONAL_EXT)){
+			if (!path.endsWith(ext)){
 				continue;
 			}
-			setVideoTitleIfNull(path.replace(OPTIONAL_EXT, ""));
+			setVideoTitleIfNull(path.replace(ext, ""));
 			filelist.add(path);
 		}
 		return filelist;

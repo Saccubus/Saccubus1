@@ -81,6 +81,7 @@ public class NicoXMLReader extends DefaultHandler {
 		owner_filter = null;
 		premium = "";
 		liveConversion = liveOp;
+		// ニコスコメントは premium "2" or "3"みたいなのでニコスコメントの時は運営コメント変換しないようにする
 		premiumColorCheck = prem_color_check;
 		liveOpDuration = duration;
 		log = logger;
@@ -387,7 +388,7 @@ public class NicoXMLReader extends DefaultHandler {
 				if(com.startsWith("replace(",1) && com.endsWith(")")){
 					// /replace実装 コメントは /replace()だけの場合
 					log.println("Converting: " + com);
-					item.addCmd(Chat.CMD_LOC_SCRIPT);
+					item.setScript();
 					script = true;
 					com = com.replaceFirst("^/replace\\(", "").replaceFirst("\\)[ 　]*$", "");
 					String[] terms = com.split(",");
@@ -419,9 +420,9 @@ public class NicoXMLReader extends DefaultHandler {
 						else if((ret = niwango(term, "target:"))!=null){
 							target = ret;
 							if(target.contains("owner"))
-								item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_OWNER);
+								item.setScriptForOwner();
 							if(target.contains("user"))
-								item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_USER);
+								item.setScriptForUser();
 						}
 						else if((ret = niwango(term, "fill:"))!=null){
 							fill = CommentReplace.encodeBoolean(ret);
@@ -504,7 +505,7 @@ public class NicoXMLReader extends DefaultHandler {
 							}
 							com = "/vote start "+sb.substring(0).trim();
 							item.setMail(VOTECMD);
-							item.addCmd(Chat.CMD_LOC_SCRIPT);
+							item.setScript();
 							item_fork = true;
 							script = true;
 						}
@@ -557,14 +558,14 @@ public class NicoXMLReader extends DefaultHandler {
 							}
 							com = "/vote show "+sb.substring(0).trim();
 							item.setMail(VOTECMD);
-							item.addCmd(Chat.CMD_LOC_SCRIPT);
+							item.setScript();
 							item_fork = true;
 							script = true;
 						}
 						else if(list.length>1 && list[1].equals("stop")){
 							com = "/vote stop";
 							item.setMail(VOTECMD);
-							item.addCmd(Chat.CMD_LOC_SCRIPT);
+							item.setScript();
 							item_fork = true;
 							script = true;
 						}
@@ -576,7 +577,7 @@ public class NicoXMLReader extends DefaultHandler {
 							}
 							com = "/vote [" + sb.substring(0) + "]";
 							item.setMail(VOTECMD);
-							item.addCmd(Chat.CMD_LOC_SCRIPT);
+							item.setScript();
 							item_fork = true;
 							script = true;
 						}
@@ -594,7 +595,7 @@ public class NicoXMLReader extends DefaultHandler {
 							com = "@ボタン 「["+com+"]」";
 					}
 				}
-				else if(!premium.equals("1")){
+				else if(!premium.isEmpty() && !premium.equals("1")){
 					//運営コメント(生主 or BSP?) コマンドなし
 					// premium="3" or "6" ? not check
 					if(duration.isEmpty())
@@ -620,7 +621,7 @@ public class NicoXMLReader extends DefaultHandler {
 					if(com.startsWith("置換",1)){
 						//置換
 						//item.setMail("");	//リセットサイズ、ロケーション、色
-						item.addCmd(Chat.CMD_LOC_SCRIPT);
+						item.setScript();
 						script = true;
 						log.println("Converting＠置換: " + com);
 						com = com.replaceFirst("^[@＠]置換[ 　]", "");
@@ -628,7 +629,7 @@ public class NicoXMLReader extends DefaultHandler {
 						String dest = "";
 						String fill = "F";
 						String target = "user";
-						item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_USER);
+						item.setScriptForUser();
 						String partial = "T";
 						String[] list = spsplit(com,6);
 						src = list[0];
@@ -643,7 +644,7 @@ public class NicoXMLReader extends DefaultHandler {
 							p++;
 						}
 						if(list[p].startsWith("含む")){
-							item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_OWNER);
+							item.setScriptForOwner();
 							target = "user owner";
 							p++;
 						}
@@ -660,7 +661,7 @@ public class NicoXMLReader extends DefaultHandler {
 						}
 						int vpos = item.getVpos();
 						//item.setMail("");	//リセットサイズ、ロケーション、色
-						item.addCmd(Chat.CMD_LOC_SCRIPT);
+						item.setScript();
 						log.println("Converted:" +vpos +":＠置換 「"+src +"」「 "+dest
 							+"」 "+target +" fill:"+fill +" partial:"+partial+").");
 						com = "/r," + src + "," + dest + "," + fill;
@@ -669,18 +670,18 @@ public class NicoXMLReader extends DefaultHandler {
 					}
 					if(com.startsWith("逆",1)){
 						//逆走
-						item.addCmd(Chat.CMD_LOC_SCRIPT);
+						item.setScript();
 						script = true;
 					}else if(com.startsWith("デフォルト",1)){
 						//デフォルト値設定
-						item.addCmd(Chat.CMD_LOC_SCRIPT);
+						item.setScript();
 						script = true;
 					}else if(com.startsWith("ボタン",1)){
 						//ボタン（投稿者用）
-						item.addCmd(Chat.CMD_LOC_SCRIPT);
+						item.setScript();
 						is_button = true;
 						//itemに追加
-						item.addCmd(Chat.CMD_LOC_IS_BUTTON);
+						item.setButton();
 						com = com.replaceFirst("^.ボタン[ 　]+", "");
 						char c0 = com.charAt(0);
 						int index1 = -2;
@@ -704,16 +705,16 @@ public class NicoXMLReader extends DefaultHandler {
 			}
 			//ボタン　視聴者、投稿者共
 			if(is_button){
-				item.addCmd(Chat.CMD_LOC_SCRIPT);
+				item.setScript();
 				script = true;
 			}
 			//投稿者フィルター
 			if (owner_filter!=null){
 				item.setVpos("0");
 				item.setMail("");	//リセットサイズ、ロケーション、色
-				item.addCmd(Chat.CMD_LOC_SCRIPT);
-				item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_USER);
-				item.addCmd(Chat.CMD_LOC_SCRIPT_FOR_OWNER);
+				item.setScript();
+				item.setScriptForUser();
+				item.setScriptForOwner();
 				script = true;
 				String[] list = com.split("&");
 				for(String pair:list){

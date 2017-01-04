@@ -37,9 +37,9 @@ import saccubus.util.Logger;
 public class ConvertToVideoHook {
 	public static boolean convert(File file, File out, ArrayList<CommentReplace> list, Pattern ng_id,
 			Pattern ng_word, CommandReplace ng_cmd, int score_limit, boolean live_op,
-			boolean premium_color_check, String duration, Logger log) {
+			boolean premium_color_check, String duration, Logger log, boolean is_debug) {
 		try {
-			Packet packet = new Packet(list);
+			Packet packet = new Packet(list, log, is_debug);
 			// SAXパーサーファクトリを生成
 			SAXParserFactory spfactory = SAXParserFactory.newInstance();
 			// SAXパーサーを生成

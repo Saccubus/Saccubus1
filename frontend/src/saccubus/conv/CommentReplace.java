@@ -1,7 +1,8 @@
 package saccubus.conv;
 
+import saccubus.util.Logger;
+
 public class CommentReplace {
-	private final Chat chat;
 	private final String src;
 	private final String dest;
 	private final boolean enabled;
@@ -9,24 +10,37 @@ public class CommentReplace {
 	private final boolean replace_user;
 	private final boolean replace_owner;
 	private final boolean fill;
+	private Logger log;
+	final int rcolor;
+	final int rsize;
+	final int rlocation;
+	final int vpos;
+	final int sec;
 
 	public CommentReplace(Chat item, String ssrc, String sdest, String senabled,
-			String spartial, String starget, String sfill, saccubus.util.Logger log){
-		chat = item;
+			String spartial, String starget, String sfill, saccubus.util.Logger logger){
 		src = ssrc;
 		dest = sdest;
 		enabled = toBoolean(senabled);
 		partial = toBoolean(spartial);
 		replace_user = contains(starget,"user");
 		replace_owner = contains(starget,"owner");
+		rcolor = item.getColorNumber();
+		rsize = item.getSize();
+		rlocation = item.getLocation();
+		vpos = item.getVpos();
+		int s = item.getDurationSec();
+		if(s==0)
+			sec = 30;
+		else
+			sec = s - 1;
 		fill = toBoolean(sfill);
-		log.println("Final-converted:" +chat.getVpos() +":/replace(src:"+src +",dest:"+dest
+		log = logger;
+		log.println("Final-converted:" +vpos
+				+":"+item.getColorName()+" "+item.getSizeName()+" "+item.getLocName()
+				+":/replace(src:"+src +",dest:"+dest
 				+",enabled:"+enabled +",targetOU:"+replace_owner+"+"+replace_user
 				+",fill:"+fill +",partial:"+partial+").");
-	}
-
-	Chat getChat(){
-		return chat;
 	}
 
 	private boolean toBoolean(String str){
@@ -44,20 +58,6 @@ public class CommentReplace {
 		else
 			return "T";
 	}
-	static String decodeBoolean(String str){
-		if(str==null)
-			return "false";
-		else if(str.equals("T"))
-			return "true";
-		else
-			return "false";
-	}
-	boolean isEquals(String str,String key){
-		if(str==null)
-			return false;
-		else
-			return str.equals(key);
-	}
 	private boolean contains(String str,String key){
 		if(str==null)
 			return false;
@@ -65,23 +65,7 @@ public class CommentReplace {
 			return str.contains(key);
 	}
 
-	public boolean isUsers(){
-		return replace_user;
-	}
-
-	public boolean isOwner(){
-		return replace_owner;
-	}
-
-	public boolean isEnabled(){
-		return enabled;
-	}
-
-	public boolean isPartial(){
-		return partial;
-	}
-
-	public String replace(String com){
+	private String replace(String com){
 		if(partial){
 			//部分一致
 			if(!fill)
@@ -102,24 +86,16 @@ public class CommentReplace {
 	}
 
 	void replace(Chat chat) {
-		int vpos = this.chat.getVpos();
-		int vend = vpos + this.chat.getDurationSec();
-		if(isEnabled() && (vpos <= chat.getVpos() && chat.getVpos() <= vend)){
-			if(!chat.isOwner()){
+		int vend = vpos + sec*100;
+		String comment = chat.getComment();
+		if(enabled && (vpos < chat.getVpos() && chat.getVpos() <= vend)){
+			if(!chat.isOwner() && replace_user){
 				//ユーザーコメント
-				if(isUsers())
-					chat.process(this);
-			}else{
-				//オーナーコメント
-				if(getChat().equals(chat)){
-					//自分自身のコメント 何もしない
-					chat.addCmd(Chat.CMD_LOC_SCRIPT);
-				}
-				else if(!chat.isScript()){
-					//スクリプト以外
-					if(isOwner())
-						chat.process(this);
-				}
+				chat.process(rcolor, rsize, rlocation, replace(comment));
+			}else
+			if(!chat.isScript() && replace_owner){
+				//スクリプト以外オーナーコメント
+				chat.process(rcolor, rsize, rlocation, replace(comment));
 			}
 		}
 	}
