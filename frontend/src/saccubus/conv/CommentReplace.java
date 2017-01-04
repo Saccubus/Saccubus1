@@ -10,7 +10,8 @@ public class CommentReplace {
 	private final boolean replace_owner;
 	private final boolean fill;
 
-	public CommentReplace(Chat item, String ssrc, String sdest, String senabled, String spartial, String starget, String sfill){
+	public CommentReplace(Chat item, String ssrc, String sdest, String senabled,
+			String spartial, String starget, String sfill, saccubus.util.Logger log){
 		chat = item;
 		src = ssrc;
 		dest = sdest;
@@ -19,7 +20,7 @@ public class CommentReplace {
 		replace_user = contains(starget,"user");
 		replace_owner = contains(starget,"owner");
 		fill = toBoolean(sfill);
-		System.out.println("Final-converted:" +chat.getVpos() +":/replace(src:"+src +",dest:"+dest
+		log.println("Final-converted:" +chat.getVpos() +":/replace(src:"+src +",dest:"+dest
 				+",enabled:"+enabled +",targetOU:"+replace_owner+"+"+replace_user
 				+",fill:"+fill +",partial:"+partial+").");
 	}
@@ -101,7 +102,9 @@ public class CommentReplace {
 	}
 
 	void replace(Chat chat) {
-		if(isEnabled() && this.chat.getVpos() <= chat.getVpos()){
+		int vpos = this.chat.getVpos();
+		int vend = vpos + this.chat.getDurationSec();
+		if(isEnabled() && (vpos <= chat.getVpos() && chat.getVpos() <= vend)){
 			if(!chat.isOwner()){
 				//ユーザーコメント
 				if(isUsers())

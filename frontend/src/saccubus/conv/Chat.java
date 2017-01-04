@@ -3,6 +3,7 @@ package saccubus.conv;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 import saccubus.util.Logger;
 import saccubus.util.Util;
@@ -78,21 +79,21 @@ public class Chat {
 
 	private static final int CMD_COLOR_DEF = 0;
 
-	private static final int CMD_COLOR_RED = 1;
+	//private static final int CMD_COLOR_RED = 1;
 
-	private static final int CMD_COLOR_ORANGE = 2;
+	//private static final int CMD_COLOR_ORANGE = 2;
 
 	private static final int CMD_COLOR_YELLOW = 3;
 
-	private static final int CMD_COLOR_PINK = 4;
+	//private static final int CMD_COLOR_PINK = 4;
 
-	private static final int CMD_COLOR_BLUE = 5;
+	//private static final int CMD_COLOR_BLUE = 5;
 
-	private static final int CMD_COLOR_PURPLE = 6;
+	//private static final int CMD_COLOR_PURPLE = 6;
 
-	private static final int CMD_COLOR_CYAN = 7;
+	//private static final int CMD_COLOR_CYAN = 7;
 
-	private static final int CMD_COLOR_GREEN = 8;
+	//private static final int CMD_COLOR_GREEN = 8;
 
 	private static final int CMD_COLOR_NICOWHITE = 9;
 
@@ -108,9 +109,9 @@ public class Chat {
 
 	private static final int CMD_COLOR_TRUERED = 15;
 
-	private static final int CMD_COLOR_BLACK = 16;
+	//private static final int CMD_COLOR_BLACK = 16;
 
-	private static final int CMD_COLOR_WHITE = 17;
+	//private static final int CMD_COLOR_WHITE = 17;
 
 	private static final int CMD_COLOR_PINK2 = 18;
 
@@ -122,11 +123,68 @@ public class Chat {
 
 	private static final int CMD_COLOR_ERROR = 100;
 
-/*
-	// "date"
-	@SuppressWarnings("unused")
-	private int Date = 0;
-*/
+	private static final String[] COLOR_NAME = {
+		//CMD_COLOR_DEF 0
+		"def",
+		//CMD_COLOR_RED 1
+		"red",
+		//CMD_COLOR_ORANGE 2
+		"orange",
+		//CMD_COLOR_YELLOW 3
+		"yellow",
+		//CMD_COLOR_PINK 4
+		"pink",
+		//CMD_COLOR_BLUE 5
+		"blue",
+		//CMD_COLOR_PURPLE 6
+		"purple",
+		//CMD_COLOR_CYAN 7
+		"cyan",
+		//CMD_COLOR_GREEN 8
+		"green",
+		//CMD_COLOR_NICOWHITE 9
+		"white2",
+		//CMD_COLOR_MARINEBLUE 10
+		"blue2",
+		//CMD_COLOR_MADYELLOW 11
+		"yellow2",
+		//CMD_COLOR_PASSIONORANGE 12
+		"orange2",
+		//CMD_COLOR_NOBLEVIOLET 13
+		"purple2",
+		//CMD_COLOR_ELEMENTALGREEN 14
+		"green2",
+		//CMD_COLOR_TRUERED 15
+		"red2",
+		//CMD_COLOR_BLACK 16
+		"black",
+		//CMD_COLOR_WHITE 17
+		"white",
+		//CMD_COLOR_PINK2 18
+		"pink2",
+		//CMD_COLOR_CYAN2 19
+		"cyan2",
+		//CMD_COLOR_BLACK2 20
+		"black2",
+	};
+
+	private static HashMap<String, Integer> ColorNumberMap;
+
+	static {
+		ColorNumberMap = new HashMap<>();
+		for(int i = 0; i < COLOR_NAME.length; i++){
+			ColorNumberMap.put(COLOR_NAME[i], Integer.valueOf(i));
+		}
+		ColorNumberMap.put("niconicowhite", CMD_COLOR_NICOWHITE);
+		ColorNumberMap.put("marineblue", CMD_COLOR_MARINEBLUE);
+		ColorNumberMap.put("madyellow", CMD_COLOR_MADYELLOW);
+		ColorNumberMap.put("passionorange", CMD_COLOR_PASSIONORANGE);
+		ColorNumberMap.put("nobleviolet", CMD_COLOR_NOBLEVIOLET);
+		ColorNumberMap.put("elementalgreen", CMD_COLOR_ELEMENTALGREEN);
+		ColorNumberMap.put("truered", CMD_COLOR_TRUERED);
+		ColorNumberMap.put("none", CMD_COLOR_NONE);
+		ColorNumberMap.put("error", CMD_COLOR_ERROR);
+	}
 	// "mail"
 	private int Color = 0;
 	private boolean isColorAssigned = false;
@@ -374,51 +432,31 @@ public class Chat {
 		return sb.toString();
 	}
 
+	static String getColorName(int col){
+		//カラーコード整数値を色名に変換して返す
+		//マイナスの数は#rrggbbにして返す
+		// 色
+		if(col < 0)
+			return String.format("#%06d", -col);
+		if(col<=CMD_COLOR_BLACK2)
+			return COLOR_NAME[col];
+		return "error";
+	}
+	String getColorName() {
+		return getColorName(Color);
+	}
+
+	int getColorNumber(){
+		return Color;
+	}
 	static int getColorNumber(String str) {
 		//色名をカラーコード整数値に変換して返す
 		//#rrggbbはマイナスの数にして返す
 		// 色
+		Integer colorNum = ColorNumberMap.get(str);
+		if(colorNum!=null)
+			return colorNum.intValue();
 		int color;
-		if (str.equals("def"))
-			return CMD_COLOR_DEF;
-		if (str.equals("red"))
-			return CMD_COLOR_RED;
-		if (str.equals("orange"))
-			return CMD_COLOR_ORANGE;
-		if (str.equals("yellow"))
-			return CMD_COLOR_YELLOW;
-		if (str.equals("pink"))
-			return CMD_COLOR_PINK;
-		if (str.equals("blue"))
-			return CMD_COLOR_BLUE;
-		if (str.equals("purple"))
-			return CMD_COLOR_PURPLE;
-		if (str.equals("cyan"))
-			return CMD_COLOR_CYAN;
-		if (str.equals("green"))
-			return CMD_COLOR_GREEN;
-		if (str.equals("niconicowhite") || str.equals("white2"))
-			return CMD_COLOR_NICOWHITE;
-		if (str.equals("marineblue") || str.equals("blue2"))
-			return CMD_COLOR_MARINEBLUE;
-		if (str.equals("madyellow") || str.equals("yellow2"))
-			return CMD_COLOR_MADYELLOW;
-		if (str.equals("passionorange") || str.equals("orange2"))
-			return CMD_COLOR_PASSIONORANGE;
-		if (str.equals("nobleviolet") || str.equals("purple2"))
-			return CMD_COLOR_NOBLEVIOLET;
-		if (str.equals("elementalgreen") || str.equals("green2"))
-			return CMD_COLOR_ELEMENTALGREEN;
-		if (str.equals("truered") || str.equals("red2"))
-			return CMD_COLOR_TRUERED;
-		if (str.equals("black"))
-			return CMD_COLOR_BLACK;
-		if (str.equals("white"))
-			return CMD_COLOR_WHITE;
-		if (str.equals("pink2"))
-			return CMD_COLOR_PINK2;
-		if (str.equals("cyan2"))
-			return CMD_COLOR_CYAN2;
 		if (!str.startsWith("#"))
 			return CMD_COLOR_NONE;	// not color
 		// color 24bit
@@ -446,14 +484,17 @@ public class Chat {
 	}
 
 	void process(CommentReplace cr){
+		String old = Comment;
 		Comment = cr.replace(Comment);
-		Chat item = cr.getChat();
-		if(item.Color != CMD_COLOR_DEF)
-			Color = item.Color;
-		if(item.Size != CMD_SIZE_DEF)
-			Size = item.Size;
-		if((item.Location & 3) != CMD_LOC_DEF)
-			Location = (Location & ~3) | (item.Location & 3);
+		if(!Comment.equals(old)){	//文字列が置換されたならカラー・サイズ・ロケーションも置換
+			Chat item = cr.getChat();
+			if(item.Color != CMD_COLOR_DEF)
+				Color = item.Color;
+			if(item.Size != CMD_SIZE_DEF)
+				Size = item.Size;
+			if((item.Location & 3) != CMD_LOC_DEF)
+				Location = (Location & ~3) | (item.Location & 3);
+		}
 	}
 
 	boolean isScript(){
@@ -484,5 +525,9 @@ public class Chat {
 	public void setDefColor() {
 		Color = CMD_COLOR_DEF;
 		isColorAssigned = true;
+	}
+
+	int getDurationSec() {
+		return sec;
 	}
 }
