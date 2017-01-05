@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -2464,7 +2465,7 @@ public class NicoClient {
 							for(int i = 0; i < tagarray.length; i++){
 								String tl = tagarray[i];
 								String t = getXmlElement1(tl,"tag");
-								nicoTaglist.add(t);
+								nicoTaglist.add(i, t);
 								debug("\n(NicoClient)tag["+i+"]: "+t);
 							}
 						}
@@ -2895,15 +2896,24 @@ public class NicoClient {
 	}
 	void saveApiJson(String json, String encoding, String comment){
 		Path file = Path.mkTemp(videoTag+"_watchJson.txt");
-		Path.writeAllText(file, json, encoding);
-		log.println("Saved watchApiData to "+file.getPath());
-		file = Path.mkTemp(videoTag+"_watchJson.xml");
-		json = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-			+"<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n"
-			+"<properties><comment>" + comment + "</comment>\n"
-			+"<entry key=\"json\">" + json + "</entry>";
-		Path.writeAllText(file, json, encoding);
-		log.println("Saved ApiData to "+file.getPath());
+		log.println("file: "+file.getPath()+" is <"+comment+"> Json");
+		if(json==null){
+			log.println("error json is null!");
+		}else{
+			PrintStream ps ;
+			try {
+				ps = new PrintStream(file);
+				Mson.parse(json).prettyPrint(ps);
+				ps.flush();
+				ps.close();
+				log.println("Saved prettyPrinted ApiData to "+file.getPath());
+			} catch (FileNotFoundException e) {
+				log.printStackTrace(e);
+				log.println("json parse error!");
+				Path.writeAllText(file, json, encoding);
+				log.println("Saved ApiData to "+file.getPath());
+			}
+		}
 	}
 
 	private String makeNewElement(String key, String val){

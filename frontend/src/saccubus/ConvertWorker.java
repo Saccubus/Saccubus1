@@ -133,8 +133,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String aprilFool;
 	private final StringBuffer sbRet;
 	private final saccubus.MainFrame parent;
-	private List<String> nicoTagList = new ArrayList<String>();
+	private List<String> nicoTagList = null;
 	private String nicoCategory;
+	private int numTag;
 	/*
 	 * sbRet is return String value to EXTERNAL PROGRAM such as BAT file, SH script, so on.
 	 * string should be ASCII or URLEncoded in System Encoding.
@@ -301,8 +302,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private String mySendedText;
 	private Path metaDataFile = null;
-	private String nicoTag0 = "";
-	private String nicoTag1 = "";
 	private void sendtext(final String text){
 		mySendedText = text;
 		publish(text);
@@ -1821,46 +1820,68 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					listOfCommentFile.addAll(filelist);
 				} else {
 					// フォルダ指定時、オプショナルスレッドは１つ
-					optext = OPTIONAL_EXT;
-					String filename = detectTitleFromOptionalThread(folder, optext);
-					if (filename == null || filename.isEmpty()){
-						sendtext(Tag + ": オプショナルスレッドがフォルダに存在しません。ニコスコメントでリトライ");
-						log.println(gettext());
-						// ニコスコメントでリトライ
-						optext = NICOS_EXT;
-						isOptionalTranslucent = false;
-						filename = detectTitleFromOptionalThread(folder, optext);
-						if(filename == null || filename.isEmpty()){
-							sendtext(Tag + ": ニコスコメントがフォルダに存在しません。");
-							log.println(gettext());
-							log.println("No optional thread.");
-							OptionalThreadFile = null;
-							return true;
+					if(isSaveComment()){
+						if(OptionalThreadFile==null){
+							OptionalThreadFile = nicosCommentFile;
+							if(OptionalThreadFile==null){
+								return true;
+							}
+							isOptionalTranslucent = false;
 						}
+					}else{
+						// フォルダ指定時、オプショナルスレッドを検索
+						optext = OPTIONAL_EXT;
+						String filename = detectTitleFromOptionalThread(folder, optext);
+						if (filename == null || filename.isEmpty()){
+							sendtext(Tag + ": オプショナルスレッドがフォルダに存在しません。ニコスコメントでリトライ");
+							log.println(gettext());
+							// ニコスコメントでリトライ
+							optext = NICOS_EXT;
+							isOptionalTranslucent = false;
+							filename = detectTitleFromOptionalThread(folder, optext);
+							if(filename == null || filename.isEmpty()){
+								sendtext(Tag + ": ニコスコメントがフォルダに存在しません。");
+								log.println(gettext());
+								log.println("No optional thread.");
+								OptionalThreadFile = null;
+								return true;
+							}
+						}
+						OptionalThreadFile = new File(folder, filename);
 					}
-					OptionalThreadFile = new File(folder, filename);
 					if (dateUserFirst.isEmpty()) {
 						//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
 						dateUserFirst = getDateUserFirst(OptionalThreadFile);
 					}
 				}
 			} else {
-				// ファイル指定の時
-				optext = OPTIONAL_EXT;
-				OptionalThreadFile = Path.getReplacedExtFile(CommentFile, optext);
-				if (!OptionalThreadFile.exists()){
-					sendtext("オプショナルスレッドが存在しません。ニコスコメントでリトライ");
-					log.println(gettext());
-					// ニコスコメントでリトライ
-					optext = NICOS_EXT;
-					isOptionalTranslucent = false;
+				if(isSaveComment()){
+					// ファイル指定の時、オプショナルスレッドは１つ
+					if(OptionalThreadFile==null){
+						OptionalThreadFile = nicosCommentFile;
+						if(OptionalThreadFile==null){
+							return true;
+						}
+						isOptionalTranslucent = false;
+					}
+				}else{
+					// ファイル指定の時検索
+					optext = OPTIONAL_EXT;
 					OptionalThreadFile = Path.getReplacedExtFile(CommentFile, optext);
-					if(!OptionalThreadFile.exists()){
-						sendtext("オプショナルスレッドが存在しません。");
+					if (!OptionalThreadFile.exists()){
+						sendtext("オプショナルスレッドが存在しません。ニコスコメントでリトライ");
 						log.println(gettext());
-						log.println("No optional thread.");
-						OptionalThreadFile = null;
-						return true;
+						// ニコスコメントでリトライ
+						optext = NICOS_EXT;
+						isOptionalTranslucent = false;
+						OptionalThreadFile = Path.getReplacedExtFile(CommentFile, optext);
+						if(!OptionalThreadFile.exists()){
+							sendtext("オプショナルスレッドが存在しません。");
+							log.println(gettext());
+							log.println("No optional thread.");
+							OptionalThreadFile = null;
+							return true;
+						}
 					}
 				}
 				if (dateUserFirst.isEmpty()) {
@@ -2171,6 +2192,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	 * @return
 	 *  %ID% -> Tag, %id% -> [Tag](VideoIDと同じ) %TITLE% -> VideoTitle,
 	 *  %CAT% -> もしあればカテゴリータグ, %TAG1% ->２番めの動画タグ
+	 *  %TAGn% (n=2,3,...10) n+1番目のタグ
 	 */
 	private File replaceFilenamePattern(File file, boolean economy, boolean dmc) {
 		String videoFilename = file.getPath();
@@ -2181,18 +2203,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		String canonical =
 			VideoTitle.replace("　", " ").replaceAll(" +", " ").trim()
 			.replace("．", ".");
-		nicoTag0 = ""+nicoCategory;
-		if(nicoTag1.isEmpty()){
-			if(nicoTagList.size()>0){
-				nicoTag1 = nicoTagList.get(0);
-				if(nicoTag1.equals(nicoTag0) && nicoTagList.size()>1)
-					nicoTag1 = nicoTagList.get(1);
-			}
-		}
-		if(isDebugNet){
-			log.println("(ConvertWorker)nicoCategory="+nicoTag0);
-			log.println("(ConvertWorker)nicoTagList="+nicoTag1);
-		}
 		String lowString = economy? "low_":(dmc?"dmc_":"");
 		String surfix = videoFilename.contains("%LOW%")? "":lowString;
 		videoFilename =
@@ -2201,9 +2211,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			.replace("%LOW%", lowString)	// %LOW% -> economy時 low_
 			.replace("%TITLE%",VideoTitle)	// %TITLE% -> 動画タイトル
 			.replace("%title%", canonical)	// %title% -> 動画タイトル（空白大文字を空白小文字に）
-			.replace("%CAT%", nicoTag0)		// %CAT% -> もしあればカテゴリータグ
-			.replace("%TAG1%", nicoTag1)	//	%TAG1% ->２番めのタグ
+			.replace("%CAT%", nicoCategory)		// %CAT% -> もしあればカテゴリータグ
 			;
+		for(int i = 1; i < numTag; i++){
+			videoFilename = videoFilename.replace("%TAG"+i+"%", nicoTagList.get(i));
+		}
 		File target = new File(videoFilename);
 		File parent = target.getParentFile();
 		if(!parent.isDirectory()){
@@ -2336,8 +2348,21 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			//	log.println("is_eco: "+client.isEco());
 				VideoBaseName = Setting.isChangeTitleId()?
 					VideoTitle + VideoID : VideoID + VideoTitle;
-				nicoCategory = client.getNicocategory();
-				nicoTagList = client.getNicotags();
+				nicoCategory = ""+client.getNicocategory();	// null-> "null"
+				List<String> ct = client.getNicotags();
+				numTag = 11;
+				nicoTagList = new ArrayList<String>();
+				int i = 0;
+				if(ct!=null){
+					nicoTagList.addAll(0, ct);
+					i = ct.size();
+				}
+				while(i<numTag){
+					nicoTagList.add(i++,"");
+				}
+				nicoTagList.remove(nicoCategory);
+				nicoTagList.add(0, "");
+				numTag = nicoTagList.size();
 				sendtext(Tag + "の情報の取得に成功");
 				if(alternativeTag.isEmpty()){
 					alternativeTag = client.getAlternativeTag();

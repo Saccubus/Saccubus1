@@ -335,7 +335,7 @@ public class MainFrame extends JFrame {
 		+"%TITLE%　→動画タイトル\n"
 		+"%title%　→全角空白を半角空白に変えた動画タイトル\n"
 		+"%CAT%　→もしあればカテゴリータグ\n"
-		+"%TAG1%　→２番めのタグ\n"
+		+"%TAGn%　n=1,2,...10　→(n+1)番めのタグ\n"
 		;
 
 	private String input_url;
