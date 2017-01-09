@@ -142,6 +142,7 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuPanelShowAll = new JMenuItem();
 	JMenuItem jMenuPanelInit = new JMenuItem();
 	JMenuItem jMenuPanelUpdate = new JMenuItem();
+	JMenuItem jMenuDebug = new JMenuItem();
 	public JLabel statusBar = new JLabel();
 	public JLabel elapsedTimeBar = new JLabel();
 	JLabel vhookInfoBar = new JLabel();
@@ -303,7 +304,12 @@ public class MainFrame extends JFrame {
 	private AutoPlay autoPlay;
 	private JPanelHideable extraDownloadInfoPanel;
 	private String initialPanelHideMapping;
-
+	private boolean debug_mode_toggle = false;
+	private final String DEBUG_STRING = "デバッグモードOnにする";
+	private final String NODEBUG_STRING = "デバッグモードOffにする";
+	final String DEBUG_NET_FLAG = "debug/";
+	final String DEBUG_COMMENT_FLAG = "-debug";
+	private String debug_port = "80";
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -873,6 +879,15 @@ public class MainFrame extends JFrame {
 				initialPanelHideMapping = JPanelHideable.getHideMap();
 			}
 		});
+		jMenuDebug.setText(DEBUG_STRING);
+		jMenuDebug.setForeground(Color.blue);
+		jMenuDebug.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					debugModeSet(debug_mode_toggle);
+					debug_mode_toggle = !debug_mode_toggle;
+			}
+		});
 		jMenuDetail.setText("詳細設定");
 		jMenuNGConfig.setText("ニコニコ動画のNG設定保存");
 		jMenuNGConfig.addActionListener(new MainFrame_LoadNGConfig(this));
@@ -1364,6 +1379,7 @@ public class MainFrame extends JFrame {
 		jMenuAction.add(jMenuPanelHideAll);
 		jMenuAction.add(jMenuPanelInit);
 		jMenuAction.add(jMenuPanelUpdate);
+		jMenuAction.add(jMenuDebug);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
 		jMenuHelp.add(jMenuHelpReadmeNew);
@@ -2012,6 +2028,44 @@ public class MainFrame extends JFrame {
 		FFMpegTab2Panel.add(CheckFFmpegFunctionPanel, grid6_x0_y2_82);
 
 		convertManager = new ConvertManager(new JLabel[] {statusBar, elapsedTimeBar, infoBar});
+	}
+
+	private void debugModeSet(boolean b){
+		String proxy_url = ProxyTextField.getText();
+		if(proxy_url==null) proxy_url = "";
+		String proxy_port = ProxyPortTextField.getText();
+		if(proxy_port==null) proxy_port = "";
+		String extra_mode = extraModeField.getText();
+		if(extra_mode==null) extra_mode = "";
+		if(b){
+			if(!proxy_url.startsWith(DEBUG_NET_FLAG)){
+				proxy_url = DEBUG_NET_FLAG + proxy_url;
+				ProxyTextField.setText(proxy_url);
+			}
+			if(proxy_port.isEmpty()){
+				ProxyPortTextField.setText(debug_port);
+			}
+			UseProxyCheckBox.setSelected(true);
+			if(!extra_mode.contains(DEBUG_COMMENT_FLAG)){
+				extra_mode = (DEBUG_COMMENT_FLAG + " " + extra_mode).trim();
+				extraModeField.setText(extra_mode);
+			}
+			jMenuDebug.setText(NODEBUG_STRING);
+		}else{
+			if(proxy_url.startsWith(DEBUG_NET_FLAG)){
+				proxy_url = proxy_url.replaceFirst(DEBUG_NET_FLAG, "");
+				ProxyTextField.setText(proxy_url);
+			}
+			if(proxy_port.equals(debug_port)){
+				ProxyPortTextField.setText("");
+				UseProxyCheckBox.setSelected(false);
+			}
+			if(extra_mode.contains(DEBUG_COMMENT_FLAG)){
+				extra_mode = extra_mode.replace(DEBUG_COMMENT_FLAG, "").trim();
+				extraModeField.setText(extra_mode);
+			}
+			jMenuDebug.setText(DEBUG_STRING);
+		}
 	}
 
 	private JPanel getVhookSettingPanel()
