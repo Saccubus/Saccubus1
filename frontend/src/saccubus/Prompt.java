@@ -217,7 +217,7 @@ public class Prompt {
 		JLabel status = new JLabel();
 		JLabel info = new JLabel();
 		JLabel watch = new JLabel();
-		status3 = new JLabel[]{status, info, watch};
+		status3 = new JLabel[]{status, info, watch, new JLabel()};
 		stopButton = new JButton();
 		cuiStop = new ConvertStopFlag(stopButton, "í‚é~", "ë“ã@", "èIóπ", "ïœä∑", false);
 		stopButton.addActionListener(new ActionListener() {

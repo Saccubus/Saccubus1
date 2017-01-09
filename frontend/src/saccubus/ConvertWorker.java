@@ -93,6 +93,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String Time;
 	private JLabel Status;
 	private final JLabel MovieInfo;
+	private JLabel vidLabel;
 	private final ConvertStopFlag StopFlag;
 	private static final String TMP_COMMENT = "_vhook.tmp";
 	private static final String TMP_OWNERCOMMENT = "_vhookowner.tmp";
@@ -202,6 +203,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		MovieInfo = jLabels[1];
 		MovieInfo.setText(" ");
 		stopwatch = new Stopwatch(jLabels[2]);
+		vidLabel = jLabels[3];
 		manager = conv;
 		autoPlay = autoplay;
 		parent = frame;
@@ -310,8 +312,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return mySendedText;
 	}
 	protected void process(List<String> chunk){
-		while(!chunk.isEmpty())
-			Status.setText(chunk.remove(0));
+		while(!chunk.isEmpty()){
+			String text = chunk.remove(0);
+			if(text.startsWith("@vid ")){
+				text = text.substring(5);
+				vidLabel.setText(text);
+			}else{
+				Status.setText(text);
+			}
+		}
 	}
 	private boolean isSaveConverted(){
 		return Setting.isSaveConverted();
@@ -1114,6 +1123,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						return false;
 					}
 					VideoFile = existVideo;
+					sendtext("@vid"+" ("+tid+")"+Tag+"_"+VideoTitle);
 				}
 			}
 			sendtext("ìÆâÊÇÃï€ë∂ÇèIóπ");
@@ -2363,6 +2373,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				nicoTagList.remove(nicoCategory);
 				nicoTagList.add(0, "");
 				numTag = nicoTagList.size();
+				sendtext("@vid"+" ("+tid+")"+Tag+"_"+VideoTitle);
 				sendtext(Tag + "ÇÃèÓïÒÇÃéÊìæÇ…ê¨å˜");
 				if(alternativeTag.isEmpty()){
 					alternativeTag = client.getAlternativeTag();

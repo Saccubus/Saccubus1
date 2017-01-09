@@ -29,8 +29,9 @@ public class ListInfo extends JComponent {
 	 *
 	 */
 	public ListInfo(String vid, JLabel[] status, JButton button, boolean isOneLine) {
-		vidArea = new JLabel(vid);
+		vidArea = status[3];
 		url = vid;
+		vidArea.setText(vid);
 		status3 = status;
 		jButton = button;
 		oneLine = isOneLine;
@@ -72,7 +73,7 @@ public class ListInfo extends JComponent {
 //		Dimension sz = vidArea.getSize();
 //		vidArea.setSize(Short.MAX_VALUE, sz.height);
 		add(vidArea, gc);
-			
+
 		gc = new GridBagConstraints();
 		if(oneLine) {
 			gc.gridx = 2;
@@ -149,7 +150,7 @@ public class ListInfo extends JComponent {
 		setVisible(true);
 	}
 	public ListInfo(String vid, boolean isOneLine){
-		this(vid, new JLabel[]{new JLabel(),new JLabel(), new JLabel()}, new JButton(), isOneLine);
+		this(vid, new JLabel[]{new JLabel(),new JLabel(), new JLabel(), new JLabel()}, new JButton(), isOneLine);
 	}
 	public JLabel getVidArea() {
 		return vidArea;

@@ -3737,6 +3737,7 @@ public class MainFrame extends JFrame {
 			int indexNow = convNo++;
 			//log.println(">"+indexNow+"個目の要求: "+vid);
 			sendtext(">"+indexNow+"個目の要求: "+vid);
+			status3[3].setText("("+indexNow+")"+vid+"_"+title);
 			ConvertStopFlag stopFlag =
 				new ConvertStopFlag(stopButton,"停","待","終", "変", pending);
 			buttonTable.put(stopButton, stopFlag);
@@ -3837,6 +3838,7 @@ public class MainFrame extends JFrame {
 			int indexNow = convNo++;
 			//log.println(">"+indexNow+"個目の要求: "+vid);
 			sendtext(">"+indexNow+"個目の要求: "+vid);
+			status3[3].setText("("+indexNow+")"+vid);
 			ConvertStopFlag stopFlag =
 				new ConvertStopFlag(stopButton,"停","待","終", "変", PendingMode);
 			buttonTable.put(stopButton, stopFlag);
@@ -5825,6 +5827,9 @@ s	 * @return javax.swing.JPanel
 				}
 			});
 		}
+	}
+
+	public void setVidTitle(String tag, String videoTitle) {
 	}
 }
 
