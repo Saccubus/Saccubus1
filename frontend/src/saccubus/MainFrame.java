@@ -721,39 +721,39 @@ public class MainFrame extends JFrame {
 		jMenuHelpAbout
 				.addActionListener(new MainFrame_jMenuHelpAbout_ActionAdapter(
 						this));
-		jMenuHelpReadme.setText("　reame(オリジナル)表示");
+		jMenuHelpReadme.setText("　readme(オリジナル)表示");
 		jMenuHelpReadme.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("readme.txt");
+				showReadme_actionPerformed("readme.txt", "MS932");
 			}
 		});
-		jMenuHelpReadmeNew.setText("reameNew(最新)表示");
+		jMenuHelpReadmeNew.setText("readmeNew(最新)表示");
 		jMenuHelpReadmeNew.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("readmeNew.txt");
+				showReadme_actionPerformed("readmeNew.txt", "UTF-8");
 			}
 		});
-		jMenuHelpReadmePlus.setText("　reame+表示");
+		jMenuHelpReadmePlus.setText("　readme+表示");
 		jMenuHelpReadmePlus.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("readme+.txt");
+				showReadme_actionPerformed("readme+.txt","MS932");
 			}
 		});
 		jMenuHelpReadmeFirst.setText("　最初に必ず読んで　表示");
 		jMenuHelpReadmeFirst.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("最初に必ず読んで.txt");
+				showReadme_actionPerformed("最初に必ず読んで.txt","UTF-8");
 			}
 		});
 		jMenuHelpErrorTable.setText("エラーコード表　表示");
 		jMenuHelpErrorTable.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("エラーコード.txt");
+				showReadme_actionPerformed("エラーコード.txt","MS932");
 			}
 		});
 		jMenuHelpFF.setText("FFmpegヘルプ表示");
@@ -879,15 +879,6 @@ public class MainFrame extends JFrame {
 				initialPanelHideMapping = JPanelHideable.getHideMap();
 			}
 		});
-		jMenuDebug.setText(DEBUG_STRING);
-		jMenuDebug.setForeground(Color.blue);
-		jMenuDebug.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-					debugModeSet(debug_mode_toggle);
-					debug_mode_toggle = !debug_mode_toggle;
-			}
-		});
 		jMenuDetail.setText("詳細設定");
 		jMenuNGConfig.setText("ニコニコ動画のNG設定保存");
 		jMenuNGConfig.addActionListener(new MainFrame_LoadNGConfig(this));
@@ -953,6 +944,15 @@ public class MainFrame extends JFrame {
 					ConvertingSetting.saveSetting(getSetting(), filename);
 				else
 					sendtext("設定ファイル保存エラー");
+			}
+		});
+		jMenuDebug.setText(DEBUG_STRING);
+		jMenuDebug.setForeground(Color.blue);
+		jMenuDebug.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					debug_mode_toggle = !debug_mode_toggle;
+					debugModeSet(debug_mode_toggle);
 			}
 		});
 		jMenuInit.setText("初期化 (Init)");
@@ -1368,6 +1368,7 @@ public class MainFrame extends JFrame {
 		jMenuFile.add(jMenuSave);
 		jMenuFile.add(jMenuSaveAs);
 		jMenuFile.add(jMenuInit);
+		jMenuFile.add(jMenuDebug);
 		jMenuFile.add(jMenuFileExit);
 		jMenuBar1.add(jMenuDetail);
 		jMenuDetail.add(jMenuNGConfig);
@@ -1379,7 +1380,6 @@ public class MainFrame extends JFrame {
 		jMenuAction.add(jMenuPanelHideAll);
 		jMenuAction.add(jMenuPanelInit);
 		jMenuAction.add(jMenuPanelUpdate);
-		jMenuAction.add(jMenuDebug);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
 		jMenuHelp.add(jMenuHelpReadmeNew);
@@ -2030,13 +2030,26 @@ public class MainFrame extends JFrame {
 		convertManager = new ConvertManager(new JLabel[] {statusBar, elapsedTimeBar, infoBar});
 	}
 
+	private String getTextField(JTextField input){
+		String val = "";
+		if(input!=null)
+			val = input.getText();
+		if(val==null)
+			val = "";
+		return val;
+	}
+	private boolean debugModeGet(){
+		boolean debug_now = getTextField(ProxyPortTextField).startsWith(DEBUG_NET_FLAG);
+		if(debug_now)
+			jMenuDebug.setText(NODEBUG_STRING);
+		else
+			jMenuDebug.setText(DEBUG_STRING);
+		return debug_now;
+	}
 	private void debugModeSet(boolean b){
-		String proxy_url = ProxyTextField.getText();
-		if(proxy_url==null) proxy_url = "";
-		String proxy_port = ProxyPortTextField.getText();
-		if(proxy_port==null) proxy_port = "";
-		String extra_mode = extraModeField.getText();
-		if(extra_mode==null) extra_mode = "";
+		String proxy_url = getTextField(ProxyTextField);
+		String proxy_port = getTextField(ProxyPortTextField);
+		String extra_mode = getTextField(extraModeField);
 		if(b){
 			if(!proxy_url.startsWith(DEBUG_NET_FLAG)){
 				proxy_url = DEBUG_NET_FLAG + proxy_url;
@@ -3445,6 +3458,7 @@ public class MainFrame extends JFrame {
 		} else {
 			ProxyPortTextField.setText("");
 		}
+		debug_mode_toggle = debugModeGet();
 		FixFontSizeCheckBox.setSelected(setting.isFixFontSize());
 		FixCommentNumCheckBox.setSelected(setting.isFixCommentNum());
 		OpaqueCommentCheckBox.setSelected(setting.isOpaqueComment());
@@ -4127,12 +4141,12 @@ public class MainFrame extends JFrame {
 //	}
 
 	/* readme表示 */
-	public void showReadme_actionPerformed(String readmePath){
+	public void showReadme_actionPerformed(String readmePath, String encoding){
 		HtmlView hv;
 		String text = "ファイルが見つかりません.";
 		try{
 			String docfile = new File("doc"+File.separator+readmePath).getPath();
-			text = Path.readAllText(docfile, "MS932");
+			text = Path.readAllText(docfile, encoding);
 			hv = new HtmlView(this, "readme表示", "");
 			hv.setText(HtmlView.markupHtml(text));
 		}catch(Exception e){

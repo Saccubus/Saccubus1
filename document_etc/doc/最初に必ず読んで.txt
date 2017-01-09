@@ -1,1049 +1,1140 @@
-�ŏ��ɕK���ǂ��.txt
+最初に必ず読んで.txt
 
-�y�j�R�j�R�z�R�����g�t����쐬�c�[�� ������΂��X��(�O�O�X��)
+【ニコニコ】コメント付動画作成ツール さきゅばすスレ(前前スレ)
 <http://anago.2ch.net/test/read.cgi/software/1235626069/>
-�̂R�S�P���� 1.22r3 �����ɁANicoBrowser�g��1.4.4�����
-���񂫂�΂�1.7.2�i��ҁF��H���j�̈ꕔ�@�\���ؗp���ĉ������܂����B
-�܂��A�j�R�j�R�����L���O���[�J�[nicorank����@�\���ؗp���܂����B
-�{�\�t�g�̓i���o�����O�����͐������̂ɂȂ�������ǎ��Ԃ͉����łł��B
+の３４１氏の 1.22r3 を元に、NicoBrowser拡張1.4.4および
+いんきゅばす1.7.2（作者：雪羽氏）の一部機能を借用して改造しました。
+また、ニコニコランキングメーカーnicorankから機能を借用しました。
+本ソフトはナンバリングだけは正式名称になったけれど実態は改造版です。
 
-�{�e�L�X�g�̖ڎ�
-�@���삪�ςȂƂ���
-�@auto.bat�œ��삪�ςȎ���
-�@�ݒ������������ɂ�
-�@���������ɂ���
-�@�T�|�[�g����Ȃ�
-�@�����
-�@�����Ӂ�
-�@Java�̃p�X�̐ݒ�(�Q�l)
-�@�C���X�g�[�����@�Ɗg���@�\�ݒ�
-�@�@1.22r3�ȍ~�����g�p���̕�
-�@�@�g���@�\�i�T�v�j�ǉ���
-�@�@���߂Ă�����΂����g����
-�@�N���܂ł̏����ɂ���
-�@�N��
-�@�e�I�v�V�����̐���
-�@�E��{�ݒ�
-�@�@�E���[�U�[���
-�@�@�E�v���L�V
-�@�@�E�u���E�U��񋤗L�ݒ�
-�@�E�ۑ��ݒ�\����E�R�����g
-�@�@�E����E�R�����g�ۑ��ݒ�
-�@�@�@�E�`���_�E�����[�h����
-�@�@�@�E�G�R�m�~�[���͒��~
-�@�@�@�E�R�����g�t�@�C�����ɓ�����t������
-�@�@�@�E�ϊ���Ɂ`���폜����B
-�@�@�@�E�e�ۑ���
-�@�@�@�@�E�ۑ�����t�H���_���w�肵�A�����Ńt�@�C���������肷��
-�@�@�@�@�E�ۑ�����t�@�C�������w�肷��B
-�@�@�@�E�擾�R�����g���͎����Œ�������
-�@�@�@�E�擾�R�����g��
-�@�@�E���e�҃R�����g�ۑ������E�R�����g�\�����[�h�ݒ�
-�@�E�ۑ��ݒ�\�R�����g�t������
-�@�@�E�R�����g�t������ۑ��ݒ�
-�@�@�@�E�����ϊ�����
-�@�@�@�E�R�����g��t������
-�@�@�@�E���e�҃R�����g��t������
-�@�@�@�E�t�@�C�����ɓ���ID��t�����Ȃ�
-�@�@�E�I�v�V���i���X���b�h�ݒ�
-�@�E�ۑ��ݒ�\�y�[�W���
-�@�@�E�������txt�t�@�C���ɕۑ�����(Video�Ɠ����t�H���_)
-�@�@�E���e�Җ���ۑ�����i���txt�t�@�C���j
-�@�@�Ewatch�y�[�W��html�t�@�C���ɕۑ�����B(.\temp��)
-�@�E����ݒ�\�ϊ��I�v�V�����ݒ�
-�@�@�E�g��vhook���C�u�����̐ݒ�
-�@�@�@�g��vhook�]���@�u�g�p����i�f�t�H���g�y��4:3�p�j�v
-�@�@�@�g��vhook���C�h�u�g�p����i�f�t�H���g16:9�p�j�v
-�@�@�EFFmpeg�̐ݒ�P�i�g��vhook�]����I���������j
-�@�@�EFFmpeg�̐ݒ�Q�i�g��vhook���C�h��I���������j
-�@�@�EFFmpeg�ǉ��ݒ�
-�@�E����ݒ�\FFmpeg�̈ʒu�Ƌ@�\
-�@�@�E�I�v�V�����t�H���_�̈ʒu�̐ݒ�
-�@�@�EFFmpeg�̈ʒu�̐ݒ�
-�@�@�EDL����{�^��
-�@�E�ϊ��ݒ�
-�@�@�E�g��vhook���C�u�����̐ݒ�
-�@�@�@�E�g��vhook���C�u�����𖳌��ɂ���
-�@�@�@�E�\���R�����g��
-�@�@�@�E�t�H���g�p�X
-�@�@�@�E�t�H���g�ԍ�
-�@�@�@�E�e�̎��
-�@�@�@�E�ϊ����̉摜��\������
-�@�@�@�E�t�H���g�T�C�Y����ʂɂ��킹�Ď�����������
-�@�@�@�E�S�ẴR�����g��s�����ɂ���
-�@�@�@�E�R�����g���x�iPixel/sec�j
-�@�@�ENG���[�h�EID�ݒ�
-�@�@�@�ENG���[�h
-�@�@�@�ENGID
-�@�@�@�ENG�R�}���h
-�@�@�@�ENG���L���x��
-�@�@�E�����I�ݒ�i���j
-�@���j���[�̋@�\
-�@�@�t�@�C��
-�@�@�E�J���@�ǂݍ��݂܂��B
-�@�@�E�ǉ��@�t�@�C���ɋL�����ꂽ���ڂ̂ݐݒ肵�����܂��B
-�@�@�E�㏑���ۑ��@���݂̐ݒ��saccubus.xml�ɕۑ����܂��B
-�@�@�E���O��t���ĕۑ��@���݂̐ݒ���w��t�@�C���ɕۑ����܂��B
-�@�@�E�������@saccubus.ini������Γǂݍ��݁A������΃v���O���������l�Őݒ肵�܂��B
-�@�@�E�I���@�I�����Ƀp�X���[�h���ȈՈÍ�����saccubud.xml�ɐݒ��ۑ����܂��B
-�@�@�ڍאݒ�
-�@�@�E�j�R�j�R�����NG�ݒ�ۑ�
-�@�@�EAprilFool�Č�
-�@�@�w���v
-�@readme�t�@�C���̎��
-�@readme.txt �ڎ�
-�@readmeNew.txt �ڎ�
+本テキストの目次
+　動作が変なときは
+　詳細デバッグ
+　auto.batで動作が変な時は
+　設定を初期化するには
+　改造部分について
+　サポート解説など
+　動作環境
+　●注意●
+　Javaのパスの設定(参考)
+　インストール方法と拡張機能設定
+　　初めてさきゅばすを使う方、及び1.22r2以前のさきゅばすを使用中の方
+　　1.22r3以降のver1.xxをご使用中の方
+　　拡張機能（概要）追加分
+　起動までの準備について
+　起動
+　各オプションの説明
+　・[ログインチェック]ボタン
+　・html5チェックボックス
+　・基本設定
+　　・ユーザー情報
+　　・プロキシ
+　　・ブラウザ情報共有設定
+　　・新機能情報
+　・保存設定―動画・コメント
+　　・動画・コメント保存設定
+　　　・～をダウンロードする
+　　　・エコノミー時は中止
+　　　・追加モードで保存
+　　　・コメントファイル名に日時を付加する
+　　　・変換後に～を削除する。
+　　　・各保存先
+　　　　・保存するフォルダを指定し、自動でファイル名を決定する
+　　　　・保存するファイル名を指定する。
+　　　・取得コメント数は自動で調整する
+　　　・取得コメント数
+　　・投稿者コメント保存説明・コメント表示モード設定
+　・保存設定―コメント付き動画
+　　・コメント付き動画保存設定
+　　　・動画を変換する
+　　　・コメントを付加する
+　　　・投稿者コメントを付加する
+　　　・ファイル名に動画IDを付加しない
+　　・オプショナルスレッド設定
+　　・生放送変換設定
+　・保存設定―ページ情報
+　　・動画情報をtxtファイルに保存する(Videoと同じフォルダ)
+　　・投稿者名を保存する（上のtxtファイル）
+　　・watchページをhtmlファイルに保存する。(.\temp下)
+　　・保存ファイル名設定（特殊）
+　　・拡張ダウンロード設定(dmc)
+　・動画設定―変換オプションの設定（共通）
+　　・オプションフォルダの位置の設定
+　　・FFmpegの位置の設定
+　　・拡張vhookライブラリの設定
+　　・共通FFmpegの設定
+　　・FFmpeg機能チェック
+　・動画設定―変換オプションの設定（従来）
+　　・拡張vhookライブラリの設定
+　　　拡張vhook従来　「使用する（デフォルト及び4:3用）」
+　　　拡張vhookワイド「使用する（デフォルト16:9用）」
+　　・FFmpegの設定１（拡張vhook従来を選択した時）
+　　・FFmpegの設定２（拡張vhookワイドを選択した時）
+　　・FFmpeg追加設定
+　・変換設定
+　　・拡張vhookライブラリの設定
+　　　・拡張vhookライブラリを無効にする
+　　　・表示コメント数
+　　　・表示コメント数超過
+　　　・フォントパス
+　　　・フォント番号
+　　　・影の種類
+　　　・変換中の画像を表示する
+　　　・フォントサイズを画面にあわせて自動調整する
+　　　・全てのコメントを不透明にする
+　　　・コメント速度（Pixel/secまたは@秒数）
+　　・NGワード・ID設定
+　　　・NGワード
+　　　・NGID
+　　　・NGコマンド
+　　　・NG共有レベル
+　　・実験的設定（仮）
+　・管理
+　　・小三角形 ◀▶ ▲
+　　・管理情報
+　　・状況表示
+　　・エラーID
+　　・自動再生
+　メニューの機能
+　　ファイル
+　　・開く
+　　・追加
+　　・上書き保存
+　　・名前を付けて保存
+　　・初期化
+　　・デバッグモードOn(Off)トグル
+　　・終了
+　　詳細設定
+　　・ニコニコ動画のNG設定保存
+　　・AprilFool再現
+　　アクション
+　　・ログViewON
+　　・最新バージョンチェック
+　　・項目全表示
+　　・項目最小表示
+　　・項目起動時に戻す
+　　・項目現在の状態で更新
+　　ヘルプ
+　readmeファイルの種類
+　readme.txt 目次
+　readmeNew.txt 目次
 
-�ڂ���readme��saccubus�t�H���_����readmeNew.txt�ɂ���܂��B
-�����삪�ςȂƂ���
-�@�E�ʏ�� Saccubus.exe �̋N���ł́A
-�@�@[log]frontend.txt�@�Ƀ��O���o�͂���Ă��܂��̂ŎQ�Ƃ��ĉ������B
-�@�Edebug.bat���_�u���N���b�N���ċN������Ǝ��s���Ƀ��O����ʕ\�����܂��B
-�@�@Java�Ƀp�X���ʂ��Ă��Ȃ��ƃG���[�ɂȂ�܂��B�iBin.jar�����������G���[�ɂȂ�܂��B�j
-�@�@�i��Java�̃p�X�̐ݒ�(�Q�l)���Q�Ƃ��Ă��������j
-�@�@�{�̂��N������̂Ō�͓����ł��B
-�@�@�I���ネ�O���t�H���_������ log.txt �ɏo�͂����̂ŎQ�l�ɂ��ĉ������B
-�@�E��ƃt�@�C���͒�����temp�t�H���_�̉��ɍ쐬���܂������s���I������ƍ폜���܂��B
-�@�@�i���X�폜���Y���̂ŁA�蓮�ō폜����K�v���L��܂��j
-�@�EnicovideoE.dll��[log]vhext.txt�� temp�t�H���_�̉��� ����ID[log]vhext.txt�Ƃ��ĕۑ����܂��B
-�@�@�G���[�I�������ꍇ��temp\����ID[log]vhext.txt�𒲂ׂĉ������B
-�@�E�F�X�ݒ��ύX�������́A�ݒ�����������Ă݂ĉ������B
+詳しいreadmeはsaccubusフォルダ内のreadmeNew.txtにあります。
+■動作が変なときは
+　・通常の Saccubus.exe の起動では、
+　　[log]frontend.txt　にログが出力されていますので参照して下さい。
+　・debug.batをダブルクリックして起動すると実行中にログを画面表示します。
+　　Javaにパスが通っていないとエラーになります。（Bin.jarが無い時もエラーになります。）
+　　（◆Javaのパスの設定(参考)を参照してください）
+　　本体が起動するので後は同じです。
+　　終了後ログがフォルダ直下の log.txt に出力されるので参考にして下さい。
+　・作業ファイルは直下のtempフォルダの下に作成しますが実行が終了すると削除します。
+　　（時々削除し忘れるので、手動で削除する必要が有ります）
+　・nicovideoE.dllは[log]vhext.txtを tempフォルダの下に 動画ID[log]vhext.txtとして保存します。
+　　エラー終了した場合はtemp\動画ID[log]vhext.txtを調べて下さい。
+　・色々設定を変更した時は、設定を初期化してみて下さい。
 
-���ڍ׃f�o�b�O
-�@�E�v���L�V���g�����I���ɂ��āA�v���L�V�Ɂ@debug/ 
-�@�@�v���L�V�|�[�g�ԍ� 80 ��ݒ肷���
-�@�@�_�E�����[�h�֘A�̃f�o�b�O�ڍ׏����o�͂��܂��B([log]frontend.txt)
-�@�E�ϊ��ݒ�@�ǉ����[�h�@�Ɂ@-debug�@���w�肷��ƁA
-�@�@�R�����g�ϊ��̏ڍ׏����o�͂��܂��B�i[log]vhext.txt)
+■詳細デバッグ
+　・プロキシを使うをオンにして、プロキシに　debug/
+　　プロキシポート番号 80 を設定すると
+　　ダウンロード関連のデバッグ詳細情報を出力します。([log]frontend.txt)
+　・変換設定　追加モード　に　-debug　を指定すると、
+　　コメント変換の詳細情報を出力します。（[log]vhext.txt)
 
-��auto.bat�œ��삪�ςȎ���
-�@Java�Ƀp�X���ʂ��Ă��Ȃ��ƃG���[�ɂȂ�܂��B
-�@�i��Java�̃p�X�̐ݒ�(�Q�l)���Q�Ƃ��Ă��������j
-�@�Eauto.bat�̋L�q���m���߂܂��B
-�@�@auto.bat�����s���ďI������܂ő҂��܂��B
-�@�@�r���ŃG���[���N���Ă��A�Ō�̓���܂Ŏ��s���Ă���I�����܂��B
-�@�@log.txt�Ƀ��O���L�^����܂��B�i�PMB�܂Łj
-�@�Eautodebug.bat�͕K�v����܂���B
+■auto.batで動作が変な時は
+　Javaにパスが通っていないとエラーになります。
+　（◆Javaのパスの設定(参考)を参照してください）
+　・auto.batの記述を確かめます。
+　　auto.batが実行して終了するまで待ちます。
+　　途中でエラーが起きても、最後の動画まで実行してから終了します。
+　　log.txtにログが記録されます。（１MBまで）
+　・autodebug.batは必要ありません。
 
-���ݒ������������ɂ�
-�@�E�t�@�C�����j���[�̏��������N���b�N���܂��B(1.29�ȍ~)
-�@�@�i����������O�Ɍ��݂̐ݒ���t�@�C�����ʖ��ۑ����Ă�����
-�@�@���ɗ������j
+■設定を初期化するには
+1. 通常の本体アップデート(更新)の場合
+　　メニューのファイル→追加(Add)→saccubus.iniを選んで[開く]
+　　で設定を更新する。
 
+2. 1.でうまくいかない場合や通常の使用中に何らかの原因で動かなくなった時に初期化する場合
+　　メニューのファイル→初期化をクリックします。(1.29以降)
+　　（初期化する前に現在の設定をファイル→別名保存しておくと役に立つかも）
 
-�����������ɂ���
-�y���C�Z���X�z
-�P�Dffmpeg3.2.2.exe�ASaccubus.jar�i�\�[�X�����j��
-GPLv3�A�������͂���ȍ~�̃o�[�W����(http://www.gnu.org/licenses/gpl.html)�ł��B
-�i�\�[�X��Github���|�W�g���@https://github.com/Saccubus�@�j
-�Q�DnicovideoE.dll�ABin.jar�ASaccubus.exe�i�S�ă\�[�X�����j��
-GPLv3�A�������͂���ȍ~�̃o�[�W����(http://www.gnu.org/licenses/gpl.html)��
-�����BSD���C�Z���X(http://opensource.org/licenses/BSD-2-Clause)�̃f���A�����C�Z���X�ł��B
-�R�DSDL.dll(LGPL)�ASDL_ttf.dll(zlib���C�Z���X)�A
-SDL_gfx.dll(zlib���C�Z���X)�ɂ��Ă͉��ςȂ��Ĕz�z�ł��B
-�S�Dgson-2.2.4.jar(ApacheLicense2.0)�͉��ςȂ��Ĕz�z�ł��B
+□改造部分について
+【ライセンス】
+１．ffmpeg3.2.2.exe、Saccubus.jar（ソース同梱）は
+GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)です。
+（ソースはGithubレポジトリ　https://github.com/Saccubus　）
+２．nicovideoE.dll、Bin.jar、Saccubus.exe（全てソース同梱）は
+GPLv3、もしくはそれ以降のバージョン(http://www.gnu.org/licenses/gpl.html)と
+二条項BSDライセンス(http://opensource.org/licenses/BSD-2-Clause)のデュアルライセンスです。
+３．SDL.dll(LGPL)、SDL_ttf.dll(zlibライセンス)、
+SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
+４．gson-2.2.4.jar(ApacheLicense2.0)は改変なし再配布です。
  https://code.google.com/p/google-gson/
 
-�@(2013/5/1�ύX�F������΂��̔�ffmpeg�̃��C�Z���X�ύX�ɍ��킹��)
-
-
-���T�|�[�g����Ȃ�
-�@������΂��̎g�����ȂǂɊւ��ẮA
-�@���[���j���[][readmeNew]����Q�Ƃł��܂��B�܂�
-�@�����T�C�g�@http://saccubus.osdn.jp/
-�@���|�W�g���@https://github.com/Saccubus/Saccubus1.x�@
-�@Wiki�@https://github.com/Saccubus/Saccubus1.x/wiki
-�@������rewdmeNew.txt�A������΂�1.50��readme150.txt
-�@������΂�1.22r��readme.txt�A1.22r3��readme+.txt�������������B
-�@�s��񍐓���issues(https://github.com/Saccubus/Saccubus1.x/issues)
-�@�܂���2ch������΂��X���ł��肢���܂��B
-�@2ch�y�j�R�j�R�z�R�����g�t����쐬�c�[�� ������΂�5
-�@�@http://potato.2ch.net/test/read.cgi/software/1449586179/
-�@(http://anago.2ch.net/test/read.cgi/software/1346798166/�@�O�X��)
-
-�������
-�@Windows XP/7/8/8.1/10 desktop�@�i����Vista�������͂��j
-
-�����Ӂ�
-�@Java�����^�C�� Java8 JRE8 �܂��� JDK1.8���K�v�ł��B
-�@�ŋ߃A�b�v�f�[�g���Ă��Ȃ��ꍇ�͕K���X�V���ĉ������B
-�@Java7 - JRE7 �� JDK1.7��PublicUpdate�I���̂��ߔ񐄏��B
-�@JRE6 JDK1.6 JRE5 JDK1.5�̓e�X�g���Ă��܂���B
-�@�@http://java.com/ja/
-�@����C���X�g�[�����ĉ������B�ʏ��32bit�łł��B
-�@64bit�ł��_�E�����[�h����ɂ͐�����ǂ�ŏ]���ĉ������B
-
-��Java�̃p�X�̐ݒ�(�Q�l)
-�@auto.bat��debug.bat�����s����ɂ�java.exe��Path�ɐݒ肳��Ă��邱�Ƃ��K�v�ł��B
-�@win7�܂ł�system32��java.exe�������ŃC���X�g�[������܂���
-�@�ꍇ�ɂ���Ă͂���Ȃ����Ƃ�����܂��B�܂�win8�ȍ~�ł͂���܂���B
-�@�ŋ�Java8�ł͂܂�Java�C���X�g�[������Path���ʂ�悤�ɐ������悤�ł��B
-�@�ujava.exe �́A�����R�}���h�܂��͊O���R�}���h�A
-�@����\�ȃv���O�����܂��̓o�b�` �t�@�C���Ƃ��ĔF������Ă��܂���B�v
-�@�̃G���[���o��ꍇJava���p�X�ɐݒ肷��ɂ͈ȉ��̃y�[�W���Q�l�ɂ��Ă��������B
-�@�Q�l�FWindows 7 �Ƀp�X(Path)��ݒ肷��
-�@�@http://blog.cnu.jp/2009/11/06/windows-7-path/
-�@�@http://blog.cnu.jp/2010/11/10/shortcut-environment/
-�@�Q�l�FWindows8��java7�����Ă݂���iWindows 8�ȍ~�j
-�@�@http://javatechnology.net/tool/windows8-java7-install/
-�@�Q�l:Windows10�Ŋ��ϐ��i�V�X�e�����ϐ��A���[�U���ϐ��j��ǉ�
-�@�@http://www.wannko.net/windows10/etc/kankyo.html
-�@�Q�l:Windows 10�v���C���X�g�[���@�����ݒ�̗��ӓ_(Win10���ϐ��G�f�B�^)
-�@�@http://pc.watch.impress.co.jp/docs/column/win10uw/20151224_736655.html
-
-�����Ӂ�16:9���g�Ȃ��́iPSP�Ȃǂ́j����ɂ���
-�@�@������������̕ϊ��I�v�V�����ݒ�i�]���j�ł̓R�����g��
-�@�@���h�v���C���[�Ɠ�����������1/30�㉺�ɂ͂ݏo���Ă��܂������A
-�@�@�ϊ��I�v�V�����ݒ�i���ʁj�ł͂͂ݏo���Ȃ��Ȃ�܂����B
-�@�@�R�����g�S�̂���ʓ��Ɏ��܂�悤�k�����Ă��܂��B
-
-�����Ӂ�
-�@�@Windows8/8.1/10�̓f�X�N�g�b�vUI�ł�IE11/Firefox�Ŋm�F���܂����B
-�@�@Windows8�X�^�C��UI�ł�IE�Ƃ̃u���E�U���L�͏o���܂���ł����BChrome�͕s�ł��B
-�@�@Windows10��Edge(Spartan)�Ƃ̃u���E�U���L�͕s�AIE11�͉\�ł��B
-
-�����Ӂ�
-�@�E�{Rev�̐l���p���x���͑ORev.�Ɠ������炢�ł��B
-�@�E�z�z�`�ԁ@�@ffmpeg3.2.2������
-�@�E�{Rev.�͊m���SDL���C�u�����i2012/11/02�Łj�𓯍����Ă��܂��B�ibin�t�H���_���j
-�@�EoptionFFAAC�i80914d�p 2016/07/07�ŁjoptionFDev�i�����p 2015/03/08�Łj�𓯍��B
-
-���C���X�g�[�����@�Ɗg���@�\�ݒ�
-�@��1.22r2�ȑO�̂�����΂����g�p���̕�
-�@�@�u���߂Ă�����΂����g�����v�����s���ĉ������B
-
-�@��1.22r3�ȍ~�����g�p���̕�
-�@�y���Ӂz����̕ύX�́@ffmpeg3.2.2�p�ƂȂ邽��
-�@����ffmpeg�ł͎g�p�o���Ȃ��\��������܂��B���������������B
-�@�E�����ŏC�������I�v�V�����t�@�C��(optionVO�t�@���_/optionF)���������̕���
-�@�@����ffmpeg�ɍ��킹�ĕύX���K�v�ȏꍇ������܂��B
-    (optionFFAAC�t�H���_�Q��)(optionF�t�H���_���̂܂܎g�p�͉\)
-�@�E�usaccubus�v���̃t�@�C�����ȑO�̂�����΂��t�H���_��
-�@�@���S�ď㏑�������ĉ������B
-�@�E�ړ������I�v�V�����t�@�C�����R�s�[���Ė߂��ĉ������B
-�@�E�������p��saccubus.ini�������Ă��܂��B
-�@�@saccubus.xml���Ȃ����ƃ��j���[���珉���������s��������
-�@�@saccubus.ini��ǂݍ����ffmpeg3.2.2�p��option�t�H���_��
-�@�@ffmpeg��ݒ肵�܂��B
-
-�@���g���@�\�i�T�v�j�ǉ���
-�@�E���^�f�[�^�ݒ�ǉ�
-�@�Ehtml5���ł̎����y�[�W�Ή�(smile,dmc)
-�@�E�\���R�����g�����ߎ��u�V�����R�����g�𖳎�����v(issue #35)
-�@�E��ʃA�J�E���g��dmc�A�N�Z�X�C��(issue #34)
-�@�E�ϊ�����low_�ǉ��ƃt�@�C�����}�N���o�O�C��
-�@�EFFmpeg3.2.2 �ɍX�V
-�@�E���N�G�X�g�����Ƀ}�C���X�g������ǉ�
-�@�Edmc�����flv(avc+aac)���_�E�����[�h���mp4�R���e�i�Ɏ����ϊ�(issue #31)
-�@�E�g���_�E�����[�h�ݒ�(dmc)���y�[�W���ݒ�^�u�Ɉړ�
-�@�E���ڕ\�����p�l���P�ʂŔ�\���؂�ւ��\�B�A�N�V�������j���[�ɒǉ�
-�@�Eeconomy���A�ϊ��㓮��ɂ�low_�ǉ��@(issue#32)
-�@�E�ۑ��ϊ��o�̓t�@�C�����u���}�N���ǉ�
-�@�Effmpeg n3.2�ɍX�V�@NVENC API 7.x�Ή�(Pascal GTX 1060,1070,1080�ȍ~)
-�@�Eauto.bat���̃��O�o��, http://�E�E�Esmid?ref= �`�����̃o�O�C��
-�@�E�L�[���[�h�E�^�O�����Ń^�C�g���̒��o�C��
-�@�Edmc(S)�_�E�����[�h�C��,����ŗL��
-�@�Edmc�T�[�o����_�E�����[�h����������(��)
-�@�Edmc�T�[�o����Ή�
-�@�E���O�C���`�F�b�N�{�^���ǉ�
-�@�E���j���[���ڂ�LatestRelease�X�V�ǉ�
-�@�ESaveThumbinfoMetadata=true�̎�thumbInfo�f�[�^�����^�f�[�^<description>�Ƃ��Ė��ߍ���(�b��)
-�@�E�^�C�g����͎��s�C���@�^�C�g�������폜
-�@�Elocal�ł�swf�ϊ����s�C��
-�@�E���Oview�̃t���[�Y�C��
-�@�E���s���Ƀ��Oview�\���I��
-�@�Effmpeg80914d(nvenc�Aintel-qsv�Ή�)��h264_nvenc,h264_qsv�p�I�v�V����
-�@�EPC�I�v�V�����̓��͂� -analyzeduration 10M�ǉ�
-�@�EAnalize Error�� fps size�̃f�t�H���g�l��K�p
-�@�Effmpeg80611(����AAC�A����UtVideo�Ή��Aflv�f�R�[�hregression�C��)
-�@�E�������^�c�R�����g�̌���@�b���\����D�悷��
-�@�E�^�c�R���ȈՕύX�̕\�����Ԃ�ύX(issue #17)
-�@�E������ۑ��o�O�C��(issue #21)
-�@�E�^�c�R���ȈՕϊ��o�O�C��
-�@�Eredirect location ���� thread�ԍ��擾
-�@�E���O�o�͂𓮉�ʂɐ؂蕪��(issue #19)
-�@�E�Đ����X�g�A�G���[���X�g�Abat�֌W�C��
-�@�E�������R�����g��x������(issue #15) vpos�� +1
-�@�E�f�o�b�O���ȊO�f�t�H���g�ŃR�����g�_�u��폜
-�@�E�R�~����p����`�����l��������C��
-�@�E�R�~���j�e�B����ł��������xml���擾�ł���悤��(issue #14)
-�@�E�w���v��URL�����N���Github�ɕύX
-�@�E���[�J���ϊ��̕��@D�ǉ�
-�@�E�^�c�R�����g�ȈՕύX�ŃR�����g���v���܂ނƂ��ɓr���Ő؂��o�O�C��
-�@�Effmpeg79635(����AAC�AUtVideo15.5.0�Ή�)
-�@�E�������A���P�[�g�Ή�(��) (issue #5) 
-�@�Evhook blue2 �R�}���h�̐F�C��(����̂�) issue #12
-�@�E�L�[���[�h��URL�G���R�[�h����(issue #11)
-�@�E���������y�[�W��ϊ��\�A������autolist0�o��
-�@�EFFmpeg3.0�Ή�(����AAC)�I�v�V������optionFFAAC��
-�@�Eauto.bat�̓����ϊ���1�̎��̃o�O�C��
-�@�Esaccubus2�������e(�e�̎��04��)�ǉ�
-�@�Eauto.bat��URL���g���Ȃ����C��(1.64�ȑO�Ɠ���)
-�@�Ewav�t�@�C���ŏI���ʒm��
-�@�Eauto.bat�ŕ��s���s��
-�@�E�G���[�I��ID�̈ꊇ�ĕϊ��\��
-�@�EHTTP503 504 �G���[�̃��g���C
-�@�E�Ǘ��^�u�ɍĐ��{�^���ݒu
-�@�E�G�R�m�~�[���̓���t�@�C������low��t��
-�@�EPC__���͓��T�C�Y�A�X�䋤��_mp4 �I�v�V�����ǉ�
-�@�E�����ϊ����ݒ�ɂ����s���s
-�@�E�ϊ��{�^���ɂ��o�^(�ϊ��\��)�A��~�͌ʃ{�^����
-�@�E���O�C�������C��(���[���A�h���X�E�p�X���[�h���O�C��)
-�@�E�R�����g�ǉ����[�h
-�@�E������΂��pffmpeg�̏C��(toolbox�폜)�ɍ��킹�ďC���B
-�@�EnicovideoE.dll��ffmpeg�V(Jenkins�����r���h)��(70404f/65520w)�����ɑΉ��B
-�@�E�R�����g�T�[�o�[ nmsg.nicovideo.jp/api/ �ɑΉ��C���B
-�@�E�������^�C���V�t�g���O�̕����ʃR�����g�������\�ɁB
-�@�E���͏o�͂Ƃ��ɉ���codec��AAC-LC�̏ꍇ��copy����I�v�V����-alcp��ǉ��B
-�@�E���͏o�͂Ƃ��ɉ���codec��AAC(LC,HE,HEv2)�̏ꍇ��copy����I�v�V����-aacp��ǉ��B
-�@�EPC�p�I�v�V������-aacp�ǉ��B(out�I�v�V�����̍Ō�ɒǉ����邾��)
-�@�EWindows10TP �ł�CA�p��փt�H���g�Ή�
-�@�E�v���~�A���J���[�̈�ʉ���g�p�`�F�b�N�ǉ�(�o�O�C��)
-�@�Eblack2�R�}���h�ǉ�(�o�O�C��)
-�@�Effmpeg�X�V�@x265 libutvideo�ǉ�
-�@�Effmpeg�X�V�ɑΉ����ăI�v�V�����ƈ����n����ύX
-�@�Efps�ύX��ffmpeg����fps filter�I����(�Ή�ffmpeg�̂� nm�����Ή�)
-�@�E���C�Z���X�y�ы�readme�� doc�t�H���_�Ɉړ� ���j���[�\���̑Ή�
-�@�E�����ݒ�l��mp3��vo_aacenc�ɕύX(.ini�t�@�C���͈ȑO�ɕύX�ς�)
-�@�E�ϊ��㎩���Đ��@�\�ǉ�
-�@�E�G�N�X�v���[���[�Ńt�H���_�\���{�^���ǉ�
-�@�E�j�R���^�c�R�����g�ȈՕύX�@�\�ǉ�
-�@�EWindows8�ȍ~��IE11�N�b�L�[�擾�o�O�C��(��)
-�@�E�}���`���O�C�����̃N�b�L�[�����o�O�C��
-�@�E�F��pink2,cyan2�ǉ�
-�@�Ewaku�R�}���h��-frame�I�v�V�������̊����red �טg(1pixel)��(CA�����p)
-�@�EJson�̃��C�u�����[��gson���g���ύX�igson jar,License�ǉ�)
-�@�EVhook 1.50.5 MingLiu�t�H���g�ω��C��
-�@�ECA�̒e�������[�h�}���C��
-�@�Ebold�t�H���g��normal���\
-�@�Emylist�ϊ������Ƃł܂Ƃ߂�autolist.bat�łł���悤�ɏo��
-�@�Emylist���������ǉ�
-�@�E����ݒ�^�u�ɍĐ��{�^���ǉ�
-�@�E�f���X�g���[�����F���ł��Ȃ��ꍇ�ɉ����̂݃R�����g�t���\��
-�@�E��L�̏ꍇ�ɃT���l�C�����w��\�B�܂������ł͎擾�ς݃T���l�C��������Ύg�p���܂��B
-�@�ENM����ɏ��������Ή�
-�@�E�t���[�����[�g�ϊ�
-�@�E�R�����g�s�������ɃA���t�@�l�i�s�����x�j��0.0�`1.0�Ŏw��\
-�@�E���e�҃t�B���^�[�ǉ��i���e�҃R�����g�����ŃI�t�j
-�@�Eender�R�}���h����
-�@�E���{�^��(���e�҃R�����g)�X�N���v�g�@�Ή�
-�@�E���u���X�N���v�g�@�Ή�
-�@�E�}�C���X�g�����ǉ��i�����I�j
-�@�EFFmpeg�ݒ�ɃA�X�䋤�ʉ�ʒǉ�
-�@�E�ϊ��� -samx �I�v�V�����ɂ�蓮��A�X��ێ��\
-�@�E�I�v�V�����t�@�C���ǉ��@�T�@PCx3,PSPx2
-�@�E���{�^��(�����҃R�����g)�@�Ή�
-�@�E/replace(���e�҃j������)�@�Ή�
-�@�E�w���v���j���[����ffmpeg�w���v�����s�\
-�@�E1���Ԓ�����status�\�������ύX
-�@�ECA�Ή������I�ݒ�Ńt�H���g19���(+8)�������I���\�ɂȂ�܂����B
-�@�E���e�҃R�����g@�b���A@�f�t�H���g�A@�t�@�\�ǉ�
-�@�E�T���l�C���摜�ۑ��ǉ�
-�@�E���e�Җ��ۑ��̃o�O�C��
-�@�E�ۑ��t�@�C�����ݒ�i����j��ǉ�
-�@�ENG���[�h��all�̃o�O�C���Adefault���[�h�ǉ�
-�@�E�����I�v�V������CA�t�H���g�b��I�Ή��ƊJ���ł�L�����I��
-�@�E������A���e�҃y�[�W�Awatch�y�[�W�̕ۑ��@�\�ǉ�
-�@�E�I�v�V�����t�@�C�������l�ύX([PC])
-�@�E[iPod][iPod touch]�I�v�V�����C��(4096��4096k)
-�@�Ewatch�y�[�W������̕ۑ��ǉ�
-�@�EZeroWatch(5/1����)�Ń��O�C����X�g�[�����Ă����̂��C��
-�@�ECUI��@SET�̕s��C���A@DLC��@ADD��ǉ�
-�@�E�j�R�j�R����G�C�v�����t�[�����Č��o���܂��B
-�@�ECUI�őS�ݒ荀�ڂ��I�[�o�[���C�h�o���܂��B
-�@�EFFmpeg�I�v�V�����ǉ��ݒ肪�\�ł��B
-�@�E�R�����g�ɉ��g��t���o���܂��B�R�����g�A�[�g�����p�B
-�@�ENG�R�}���h�ŃR�����g�̃R�}���h�𖳌��ɏo���܂��B
-�@�ENG���L���x����ݒ�ł��܂��B
-�@�ENG���[�h�̎w��� all �L�[���[�h���g���܂��B
-�@�@����łȂ��R�}���h�̃R�����g��S�Ĕ�\���ɂ��܂��B
-�@�E�j�R�j�R�����NG�ݒ���_�E�����[�h�E�t�@�C���ɕۑ��ł��܂��B
-�@�@�i������΂��ւ̎����ݒ�͖������j
-�@�E�p�X���[�h���ȈՈÍ������܂��B
-�@�E�ݒ�t�@�C���̓ǂݍ��݁E�ǉ��E�ۑ��E�ʖ��ۑ��E���������o���܂��B
-�@�ECUI������ǉ����܂����B
-�@�E�G�R�m�~�[���[�h���ɒ��~����ݒ肪�\�ɂȂ�܂����B
-�@�E1.26.1�`2�Ńt�H���g�T�C�Y�����������̊g��@�\���폜���܂��������ɖ߂��܂����B
-�@�E�R�����g���x��Ǝ��Ɏw��\�ł��B
-�@�E�R�����g�\�����[�h���V�\��(�ŐV100������)�E���\���i�ő�1000���܂Łj��I���\�ł��B
-�@�E����A�X�y�N�g��ɂ��I�v�V�����������肪�ł��܂��B
-�@�@�u����ݒ�v�u�ϊ��I�v�V�����ݒ�v�uFFmpeg�̐ݒ�P�v�ƁuFFmpeg�̐ݒ�Q�v��
-�@�@��������̌��ʑI������I�v�V������ݒ肵�܂��B
-�@�E�g��Vhook���C�u�����w��́A�u����ݒ�v��ʂ�2����g��Vhook
-�@�@�w�藓�̗����� nicovideoE.dll ���w�肵�A2�̃`�F�b�N�{�b�N�X
-�@�@�����Ƀ`�F�b�N�����DL����̃A�X�y�N�g����������肵�܂��B
-�@�E�u���E�U��񋤗L�ݒ�Łu��L�ȊO�̃u���E�U�́c�v�Ƀ`�F�b�N����
-�@�@�ꍇ�́ACookies�t�@�C���̏ꏊ�A�������̏ꍇ�͂��̐e�t�H���_��
-�@�@�w�肵�ĉ������B
-�@�EnicovideoE.dll�ŕϊ��G���[���������铮��̕񍐂�����܂�����
-�@�@����1.25r�őΏ��ς݂ł��B
-
-
-�@�����߂Ă�����΂����g����
-�@�@�y��1.22r2�ȑO�̂�����΂����g�p���̕�
-�@�usaccubus�v���̃t�@�C�����t�H���_�ɓW�J���ĉ������B
-�@XP�̏ꍇ�̓h���C�u������\saccubus�𐄏��B
-
-���N���܂ł̏����ɂ���
-�@http://java.com/ja/
-�@Java�̃T�C�g����e���ŐV��JRE(Java���s��)��
-�@�_�E�����[�h���ăC���X�g�[�����Ă��������B�i32�r�b�g�Ő����j
-�@�܂���Java�̃p�X�̐ݒ�(�Q�l)���Q�Ƃ��Ă��������B
-
-���N��
-�@�@Saccubus.exe ���_�u���N���b�N���܂��B
-�@�@���A���`�E�B���X����������ꍇ���L��܂��̂�
-�@�@�����ȐӔC��saccubus.exe�̃`�F�b�N���O���ĉ������B
-�@�@�܂���saccubus.jar���_�u���N���b�N���܂��B
-�@�@�t�@�C�A�t�H�[����Java�ɑ΂��ċ����Ȃ���΂Ȃ�Ȃ�
-�@�@�ꍇ������܂��B
-
-�@�@[��{�ݒ�]�́u�u���E�U��񋤗L�ݒ�v�Ńu���E�U���L��I�����邩�A
-�@�@�܂��́u���[�U���v���[���A�h���X�A�p�X���[�h��ݒ肵�܂��B
-�@�@���URL/ID���ɓ���URL�i����id�j����͂��܂��B����?hogehoge�����Ă�OK�ł��B
-�@�@�s�K�؂ȓ��e���܂܂�Ă���i�����ʕ񂳂�Ă���j�ꍇ�́A�u���E�U�œ�����e���m�F��
-�@�@����URL�i����id�j�̌��?watch_harmful=1 ���L�����܂��B
-�@�@�ߋ����O���_�E�����[�h����ɂ͓��t��
-�@�@2009/7/7 7:7:7 �� 2009/7/7 7:7 �� 2009/7/7 �̂悤�ɓ��͂��܂��B
-
-�@�@�E���[�ϊ�]�{�^�����N���b�N�����[�Ǘ�]�^�u���J���_�E�����[�h�ƕϊ����J�n���܂��B
-
-
-���e�I�v�V�����̐���
-�@�E��{�ݒ�
-�@�@�E���[�U�[���
-�@�@�@�j�R�j�R����̃��[���A�h���X�ƃp�X���[�h����͂��Ă��������B
-�@�@�@�����Őݒ肵�Ă��u���E�U�ւ͔��f����܂���B
-
-�@�@�E�v���L�V(��\����)
-�@�@�@�g���ꍇ�́u�v���L�V���g���v�Ƀ`�F�b�N�����āA����̏������Ă��������B
-�@�@�@�F�؂̕K�v�ȃv���L�V�ɂ͑Ή����Ă��܂���B
-
-�@�@�E�u���E�U��񋤗L�ݒ�
-�@�@�@���[�U�[�������L�������u���E�U��I��ŉ������B�u���[�U�[���v�̐ݒ�͕s�v�B
-�@�@�@�u��L�ȊO�̃u���E�U�́c�v�Ƀ`�F�b�N����ꍇ�́A
-�@�@�@Cookies�t�@�C���̏ꏊ�A�������̏ꍇ�͂��̐e�t�H���_��
-�@�@�@�u�|�ꏊ�͎����ő{���ĉ������|�v���Ɏw�肵�ĉ������B
-
-�@�@�E�V�@�\���(��\����)
-
-�@�@�@�ENM����ɏ����Ή�
-�@�@�@�@SWF�`����NM����Ŏ�Ɉꖇ�G�{�����̓���ɑΉ��B
-�@�@�@�@�������̊G���ϊ��ł��邪�؂�ւ��͌Œ莞�ԂȂ̂Ŏ��ۂ̓���Ƃ̓Y����������
-�@�@�@�@�Ȃ��t�H���g�A�r�f�I�N���b�v�A�e�L�X�g�Ȃǂ̖��ߍ��݁A�A�N�V�����X�N���v�g(AS)�ɂ͖��Ή�
-�@�@�@�@��̋Z�p(AS�Ȃ�)����łȂ��Z�p(�~�߂�Ɠ���)���Ή����Ă��܂���(�ϊ��G���[�ɂȂ�)
-
-�@�@�@�Efps�ύX
-�@�@�@�@[�ŏ�fps�l]�ȉ��̃t���[�����[�g�̏ꍇ��[�w��fps�l]�ɕϊ�����B
-�@�@�@�@�ŏ�fps�w��͕ϊ�fps�w����傫���Ă��������Ă��ǂ��B
-�@�@�@�@����l�� �ŏ�23.0fps �ϊ�25.0fps �ʏ�A�j����fps�ϊ�����Ȃ��w��
-
-�@�@�@�E�f����������
-�@�@�@�@�f���̃f�R�[�h�Ɏ��s�����ꍇ�ł���փT���l�摜��w�i�ɂ��ăR�����g�������ŕϊ�����B
-�@�@�@�@���������ł��ϊ����������Ɏw�肷��B (�I�t�͉f���f�R�[�h���s�ŃG���[)
-
-�@�@�@�E�^�c�R���ȈՕύX
-�@�@�@�@���������ƐV�����ݒ�ꏊ[�ۑ��ݒ�][�R�����g�t������]�^�u���J��
-
-�@�@�@�E�v���~�A���J���[�`�F�b�N
-�@�@�@�@��ʉ�����v���~�A���J���[���g�����ꍇ�ɂ̓f�t�H���g�F(��)�ɂ���B
-
-
-�@�E�ۑ��ݒ�\����E�R�����g
-�@�@�E����E�R�����g�ۑ��ݒ�
-
-�@�@�@�E�`���_�E�����[�h����
-�@�@�@�@�����ʂ�_�E�����[�h���邩�ۂ��ł��B
-�@�@�@�@���̃`�F�b�N���͂������ꍇ�ɃR�����g�t������ɕϊ�����ۂɂ�
-�@�@�@�@���[�J���ɕۑ����Ă���t�@�C������g�p���܂��B
-
-�@�@�@�Eeco�����~
-�@�@�@�@�T�[�o�[����G�R�m�~�[����̃_�E�����[�h��񎦂��ꂽ�ꍇ��
-�@�@�@�@�G���[�I�����܂��B
-
-�@�@�@�E�ǉ����[�h�ŕۑ�
-�@�@�@�@�w��t�@�C���ɃR�����g��ǉ��ۑ����܂��B
-�@�@�@�@�����t������Œǉ����[�h�ɂ���ƕϊ����Ƀt�H���_�������܂���B
-�@�@�@�@�u�ϊ���ɃR�����g�t�@�C�����폜����v�Ƀ`�F�b�N�������
-�@�@�@�@�ϊ����s�̐�����A�w�肵���t�@�C���̒ǉ����ꂽ�R�����g���܂�
-�@�@�@�@�S�ẴR�����g�t�@�C�����폜����܂��B
-
-�@�@�@�E�R�����g�t�@�C�����ɓ�����t������
-�@�@�@�@�ۑ���Ƀt�H���_��I�񂾏ꍇ�ɂ����L���B
-�@�@�@�@�ۑ����Ƀt�@�C�����ɓ������t������A
-�@�@�@�@�ϊ����ɓ��ꓮ��ID�ʓ��t�̃R�����g�t�@�C���̓}�[�W����܂��B
-
-�@�@�@�E�ϊ���Ɂ`���폜����B
-�@�@�@�@�@�ϊ����flv�t�@�C��/�R�����g�t�@�C�����폜���܂��B
-�@�@�@�@�@�i�ϊ��G���[���N�����ꍇ�͍폜���܂���B�j
-
-�@�@�@�E�e�ۑ���
-�@�@�@�@�E�ۑ�����t�H���_���w�肵�A�����Ńt�@�C���������肷��
-�@�@�@�@�@�@����Ƀ`�F�b�N������ƁA�����œ���^�C�g�����擾���āA
-�@�@�@�@�@�@�w�肵���t�H���_�Ƀt�@�C�����ɂ��ĕۑ����܂��B
-�@�@�@�@�E�ۑ�����t�@�C�������w�肷��B
-�@�@�@�@�@�@����^�C�g���͎g�킸�ɁA�w�肵���t�@�C���ɕۑ�����܂��B
-
-�@�@�@�E�擾�R�����g���͎����Œ�������
-�@�@�@�@�R�����g���I���W�i���̃v���C���[�ɂ��킹�A����̒����ɉ����Ď擾���܂��B
-�@�@�@�@�����̃R�����g���́u���e�҃R�����g�ۑ������E�R�����g�\�����[�h�ݒ�v���Q�Ƃ��ĉ������B
-
-�@�@�@�E�擾�R�����g��
-�@�@�@�@���O��1000���܂ł����̂ڂ��Ď擾�ł��܂��B
-
-�@�@�E���e�҃R�����g�ۑ������E�R�����g�\�����[�h�ݒ�(��\����)
-�@�@�@�_�E�����[�h���鎋���҃R�����g���i�R�����g�\���j�̃��[�h��I�����܂��B
-�@�@�@�@�������[�h���Q�O�P�O�N�P�Q���Q�Q���ȑO�̃j�R�v���C���[�̃��[�h
-�@�@�@�@�@����̒����ɂ��ȉ��̃R�����g������ݒ肵�܂��B
-�@�@�@�@�@0�` 1���F 100��
-�@�@�@�@�@1�` 5���F 250��
-�@�@�@�@�@5�`10���F 500��
-�@�@�@�@�@10���` �F1000��
-�@�@�@�@�@�i���݂̃j�R�v���C���[�́u�R�����g�������炷�v�Ƀ`�F�b�N�����ꍇ�Ɠ����j
-�@�@�@�@���V���[�h���Q�O�P�O�N�P�Q���Q�Q���ȍ~�̃j�R�v���C���[�̃��[�h
-�@�@�@�@�@����̂P���Ԃ���(leaf)�ɍŐV100���̃R�����g������ݒ肵�A
-�@�@�@�@�@�����Ƌ����[�h�̘a�W���ŕ\������R�����g��ݒ肵�܂��B
-�@�@�@������΂��̃R�����g�����̐ݒ�
-�@�@�@�@�@�@�O�F�R�����g�\�������I���A�P�F�V�R�����g�\���A�Q�F���R�����g�\��
-�@�@�@�@�@����I�����܂��B�����I���͉ߋ����O�̓��t�ɂ��V����I�����܂��B
-�@�@�@���e�҃R�����g
-�@�@�@�@���e�҃R�����g�͖������ɍő�1000�����_�E�����[�h�ݒ肵
-�@�@�@�@�o���Ȃ��Ă��G���[�ɂ͂Ȃ�܂���B
-
-�@�E�ۑ��ݒ�\�R�����g�t������
-�@�@�E�R�����g�t������ۑ��ݒ�
-
-�@�@�@�E�����ϊ�����
-�@�@�@�@�`�F�b�N���O�����ꍇ�́u����E�R�����g�ۑ��ݒ�v�ɏ]��
-�@�@�@�@�_�E�����[�h�̂ݍs���܂��B
-
-�@�@�@�E�R�����g��t������
-�@�@�@�@�����҃R�����g�𓮉�ɕt�����܂��B
-
-�@�@�@�E���e�҃R�����g��t������
-�@�@�@�@���e�҃R�����g�Ɠ��e�҃t�B���^�[�𓮉�ɕt�����܂��B�j�����S�i/�j�͖�������܂��B
-�@�@�@�@(���݂� /replace�����@�\���܂�)
-�@�@�@�@�j�R�X�N���v�g�i���j�͋@�\���Ȃ��ŕ����񂪂��̂܂ܕ\������܂��B
-�@�@�@�@(���݂́��t�@���f�t�H���g�@���{�^���@���u���@�͋@�\���܂��B
-�@�@�@�@�@���̃X�N���v�g�́���NG���[�h�Ɏw�肷��Ɣ�\���ɂȂ�܂�)
-
-�@�@�@�E�t�@�C�����ɓ���ID��t�����Ȃ�
-�@�@�@�@�R�����g�t������̃t�@�C�����̃f�t�H���g��
-�@�@�@�@[����ID]����^�C�g��.avi�@�i�܂��� .mp4�j
-�@�@�@�@�ł����A���̓���ID�̕�����t�����Ȃ��悤�ɂ��܂��B
-
-�@�@�E�I�v�V���i���X���b�h�ݒ�(��\����)
-�@�@�@�R�~���j�e�B����̏ꍇ�ɒʏ�R�����g�������œǂݍ��݂܂���
-�@�@�@�R�����g�t���ɂ��鎞�ɔ������ɂ��܂���B
-
-�@�@�E�������ϊ��ݒ�(��\����)
-�@�@�@�E�^�c�R�����g�ȈՕύX
-�@�@�@�@�j�R���̉^�c�R�����g(premium="2"�ȏ�̑���������)�ɑ΂���
-�@�@�@�@ue�̘g�t���ŕ\�����܂��B�j�R���Ɠ����ł͂���܂���B
-�@�@�@�@�E�^�c�R�����g�̕b���������Őݒ肷��
-�@�@�@�@�@�b�����w��ł��܂��B
-�@�@�@�E���R������
-�@�@�@�@naka�R�����g��1�b�x�点��Bblue2�̐F�𐶕����R�����g�d�l�ɂ��܂��B
-�@�@�@�@�ʏ�̓��[�J���ϊ��œ���ID��sm0����sm8�܂ł̏ꍇ�Ɏ����I�ɐ��R���d�l�Ƃ��܂��B
-�@�@�@�E�R�����g��x�点��(�b)
-�@�@�@�@�R�����g��VPOS�l�Ɏw��b��(���������_��)�����Z���܂�(�}�C�i�X�l�͌��Z)
-�@�@�@�@�f�t�H���g��0.0
-
-�@�E�ۑ��ݒ�\�y�[�W���(��\����)
-�@�@�E�������txt�t�@�C���ɕۑ�����(Video�Ɠ����t�H���_)
-�@�@�@����A�R�����g�̕ۑ��Ƃ͓Ɨ��ɐݒ�o���܂��B���O�C�����ď������܂��B
-�@�@�@�����񂪎��Ȃ����̓G���[�ɂȂ�܂��B
-
-�@�@�E���e�Җ���ۑ�����i���txt�t�@�C���j
-�@�@�@�w��̃��[�U�[�t�H���_�Ƀ��[�U�[���y�[�W��ۑ������e�Җ���
-�@�@�@������ɒǉ����܂��B�R�~���j�e�B����A�`�����l������̓G���[�ɂȂ�܂��B
-�@�@�@�ۑ��������[�U�[���y�[�W�͍X�V���܂���̂ŁA�����ōX�V�������ꍇ��
-�@�@�@�Y���t�@�C���i���[�U�[ID.htm�j���폜���ĉ������B
-
-�@�@�E�T���l�C���摜��ۑ�����(Video�Ɠ����t�H���_)
-�@�@�@������ۑ����ɃT���l�C���摜��ۑ����܂��B
-
-�@�@�Ewatch�y�[�W��html�t�@�C���ɕۑ�����B(.\temp��)
-�@�@�@�����ʂ�ł��B��Ƀf�o�b�O�p�ł��B
-�@�@�E�ۑ��t�@�C�����ݒ�i����j*��1
-�@�@�@mp4����͊g���q��mp4�ŕۑ����܂��B
-�@�@�@�ۑ������ID���^�C�g���̌��ɂ��܂��B
-�@�@�@*��1�@�����̐ݒ肪�I���̏ꍇ�R�����g�t���ϊ����ł��Ȃ��ꍇ������܂��B
-�@�@�E�}�C���X�g�����ϊ��p��autolist.bat�t�@�C����ۑ�����
-�@�@�@mylist��URL/ID���Ɏw�肵���Ƃ��A�ʏ�̓}�C���X�g�̒��̓���������ϊ����܂���
-�@�@�@�������I���ɂ����autolist.bat���o�͂��܂��B
-�@�@�@���̎��̓}�C���X�g�̓��e��ǂނ����ŕϊ��͂��܂���B
-�@�@�@���e��ҏW(�K�v�̖����s���Q�s���ɍ폜����(��������)���s���鎖���ł��܂��B
-�@�@�@�ϊ����̐ݒ��auto.bat�Ɠ����ł��B
-�@�@�@��������http://www.nicovideo.jp/my/history���w�肵���������l�ł��B
-�@�@�@����@��������ϊ��f�� http://is.gd/Cjctqz 
-�@�@�@(�f���͓����ϊ�4�ɂ��Ă��܂����e���̊��ɂ��킹�ĉ������Bnvenc�͕ʓr��������)
-
-�@�@�E�ۑ��t�@�C�����ݒ�i����j(��\����)
-�@�@�@mp4����͊g���q��mp4�ŕۑ����܂��B
-�@�@�@�ۑ������ID���^�C�g���̌��ɂ��܂��B
-�@�@�@*��1�@�����̐ݒ肪�I���̏ꍇ�R�����g�t���ϊ����ł��Ȃ��ꍇ������܂��B
-
-�@�@�E�g���_�E�����[�h�ݒ�(dmc)(��\����)
-�@�@�@�Esmile�T�[�o�����_�E�����[�h
-�@�@�@�@smile�T�[�o������_�E�����[�h���܂��B
-�@�@�@�Edmc�T�[�o�����_�E�����[�h
-�@�@�@�@dmc�T�[�o������_�E�����[�h���܂��B
-�@�@�@�����I�t�̏ꍇ�̓t�@�C���T�C�Y�̑傫���������_�E�����[�h���܂��B
-�@�@�@�����I���̏ꍇ�͗������_�E�����[�h���t�@�C���T�C�Y�̑傫������
-�@�@�@�ϊ��Ɏg���܂��B
-�@�@�@�Edmc(R)�_�E�����[�h(�񐄏�)
-�@�@�@�@�@HTTP/1.1��Range�w�b�_���g���O���ƌ㔼�𓯎���
-�@�@�@�@�@�_�E�����[�h����B�����ڑ����Q�B
-�@�@�@�@�@�����ϊ��ݒ�2�ȏ�K�{�B1�ł͌��ʂ���܂���B
-�@�@�@�Edmc(S)�_�E�����[�h�@����ŃI��
-�@�@�@�@�@����bitrate����v�Z����1���ԕ��̓���ʂ�
-�@�@�@�@�@HTTP/1.1��Range�w�b�_�[�Ŏw�肵keep-alive�œǂݍ���
-�@�@�@�@�@�����ڑ����P�Br�I���I�t�͖��������B
-�@�@�@�@�@����ɂ��܂����B
-�@�@�@�@�@dmc�T�[�o�����K�p�ł��B
-�@�@�@�ELarge�Œ�
-�@�@�@�@�@�@�T�C�Y�傫�����̃_�E�����[�h�Ɏ��s���Ă������������
-�@�@�@�@�@�@�A�N�Z�X�����G���[�I�����܂��B
-�@�@�@�Edmc����mp4�R���e�i��
-�@�@�@�@�@flv(avc+aac)���_�E�����[�h���mp4�R���e�i�Ɏ����ϊ��A�g���q��flv�̂܂܁B
-
-�@�E����ݒ�\�ϊ��I�v�V�����ݒ�i���ʁj
-
-�@�@�E�I�v�V�����t�H���_�̈ʒu�̐ݒ�
-�@�@�@1.22r3�ȑO�̃t�H���_�ɕύX�ł��܂��B
-�@�@�@�ύX�����ꍇ�́u����ݒ�\�ϊ��I�v�V�����ݒ�v
-�@�@�@�uFFmpeg�̐ݒ�v�́u�X�V�v�{�^���������ĉ������B
-�@�@�EFFmpeg�̈ʒu�̐ݒ�
-�@�@�@1.22r3�ȑO��FFmpeg�܂��͕ʃt�H���_��FFmpeg�ɕύX�ł��܂��B
-�@�@�@�ύX�����ꍇ�͕ϊ��I�v�V�����͎����Ŋm�F���ĉ������B
-
-�@�@�E�g��vhook���C�u�����̐ݒ�
-�@�@�@�E���ʉ�ʂ��g��
-�@�@�@�@�`�F�b�N���O���ƕϊ��I�v�V�����̐ݒ�i�]���j���L���ɂȂ�܂��B
-�@�@�@�@���ʐݒ�̏ꍇ�̓R�����g�͏�ɓ���i�܂��͓���{���сj��
-�@�@�@�@�͈͂Ɏ��܂�悤�ɏk�����܂��B
-�@�@�@�E�g��vhook�̈ʒu���w�肷��
-�@�@�@�@�A�X�y�N�g�䋤�ʂ�vhook���w�肵�܂��B(�����./bin/nicovideoE.dll)
-�@�@�@�@�ݒ藓�ɂ͕ʂ�vhook�i�ʃt�H���_���j���w��\�ł��B
-
-�@�@�E����FFmpeg�̐ݒ�
-�@�@�@����̕ϊ��Ɏg�p���Ă���FFmpeg�̃I�v�V�����ł��B
-�@�@�@�f�t�H���g�ł͉f���R�[�f�b�Nx264�A�����R�[�f�b�Naac��
-�@�@�@���掿���e�ʂ�mpeg4�iH264/AVC+AAC�j�ɂȂ�悤�ɂ��Ă܂��B(�A�X�䋤��)
-�@�@�@���������̂�����΂��̃I�v�V����([PC][4:3]/[16:9]�f�t�H���g�ݒ�)�ɔ�ׂ�
-�@�@�@���x���x���ł��B
-�@�@�@�ŏI�I�ȃR�}���h��
-������������������������������������������������������������������
-��<ffmpeg> -y <���C���I�v�V����> <���̓I�v�V����> \
-�� -i �u���̓t�@�C�����v <�o�̓I�v�V����> <�ǉ��I�v�V����> \
-�� -vfilters "vhext=<�g��vhook���C�u����DLL>;[�I�v�V����]" \
-�� �u�o�̓t�@�C�����v.<�g���q>
-������������������������������������������������������������������
-�@�@�@�ł��B
-�@�@�@�v���_�E�����j���[��������̐ݒ��I�ׂ܂��B�i�A�X�䋤�ʂ̐ݒ�j
-�@�@���ǉ��I�v�V����
-�@�@�@�@�v���_�E�����j���[����I�񂾏ꍇ�ł��ݒ��ǉ��A�㏑���ł��܂��B
-�@�@�@�@�I�v�V�����t�@�C���ɏ������݂͍s���܂���B
-�@�@�@�@�Ⴆ�΁A�R�����g�t������̃T�C�Y�����ύX�������ꍇ��
-�@�@�@�@-s 1024x768�ƒǉ�����
-�@�@�@�@�R�����g�t������̒������ŏ��̂R�O�b�����ɂ���ɂ�
-�@�@�@�@-t 30�Ɛݒ肷��ȂǐF�X�����Ă݂ĉ������B
-�@�@�@��p�I�v�V����
-�@�@�@�@-samx
-�@�@�@�@�@�o�͓���̃T�C�Y���A�X�y�N�g�����͂̃A�X��Ɠ����ɂ����܂�
-�@�@�@�@�@-s�w����ōő�ɂ���FFmpeg�ɓn��-s�I�v�V���������������܂��B
-�@�@�@�@-aacp
-�@�@�@�@�@�ϊ���̎w�艹����AAC�ŁA��������̉����R�[�f�b�N��AAC(LC,HE,HEv2)
-�@�@�@�@�@�̏ꍇ�ɂ͉������ăG���R�[�h���܂���B(-acodec copy�w��)
-�@�@�@�@-alcp
-�@�@�@�@�@�ϊ���̎w�艹����AAC�ŁA��������̉����R�[�f�b�N��AAC-LC
-�@�@�@�@�@�̏ꍇ�ɂ͉������ăG���R�[�h���܂���B�iHE-AAC��Ή��f�o�C�X�p�j
-
-�@�@�EFFmpeg�@�\�`�F�b�N(��\����)
-�@�@�@�{�^����FFmpeg�@�\�����s���܂��B�ϊ��Ƃ͓Ɨ��Ɏ��s�o���܂��B
-�@�@�@�EFFmpeg�̃o�[�W������\������
-�@�@�@�@ffmpeg -version�@�����s���\�����܂��B
-�@�@�@�E�_�E�����[�h����������`�F�b�N����
-�@�@�@�@URL/ID���Ɠ���ۑ��ݒ�Ŏw�肳�ꂽ�����FFmpeg���g����
-�@�@�@�@���ׂ܂��B����ŃG���[�ɂȂ铮��͕ϊ��i�f�R�[�h�j�ł��܂���B
-�@�@�@�E�_�E�����[�h���X�g��\������
-�@�@�@�@�N����ɕۑ����������R�����g������Ε\�����܂��B
-�@�@�@�@�I������ƃ��X�g�͏����܂��B
-
-�@�E����ݒ�\�ϊ��I�v�V�����ݒ�i�]���j
-�@�@�E�g��vhook���C�u�����̐ݒ�(��\����)
-�@�@�@�ۑ�����̃A�X�y�N�g��ɂ��vhook��I�����܂��B
-�@�@�@�@�ݒ藓�ɂ͕ʂ�vhook�i�ʃt�H���_���j���w��\�ł��B
-�@�@�@�E�g��vhook�]���@�u�g�p����i�f�t�H���g�y��4:3�p�j�v
-�@�@�@�@�����4:3�Ƃ������̓���i���敝�����ƃt�H���g�̑傫���j
-�@�@�@�E�g��vhook���C�h�u�g�p����i�f�t�H���g16:9�p�j�v
-�@�@�@�@�����16:9�Ƃ������̓���i���敝�����ƃt�H���g�̑傫���j
-�@�@�@�ۑ�����̃A�X�y�N�g��ɂ��vhook�������肪�ł��܂��B
-�@�@�@�w�藓�̗����� nicovideoE.dll ���w�肵�A2�̃`�F�b�N�{�b�N�X�����Ƀ`�F�b�N�����
-�@�@�@�ۑ�����̃A�X�y�N�g����������肵�Avhook��I�����܂��B
-
-�@�@�EFFmpeg�̐ݒ�P�i�g��vhook�]����I���������j
-�@�@�EFFmpeg�̐ݒ�Q�i�g��vhook���C�h��I���������j
-�@�@�@����̕ϊ��Ɏg�p����FFmpeg�̃I�v�V�����ł��B
-�@�@�@�v���_�E�����j���[��������̐ݒ��I�Ԃ��Ƃ��ł��܂��B
-
-�@�@�EFFmpeg�ǉ��ݒ�
-�@�@�@�ݒ�P�ɒǉ�
-�@�@�@�ݒ�Q�ɒǉ�
-�@�@�@�@�v���_�E�����j���[����I�񂾏ꍇ�ł��ݒ��ǉ��A�㏑���ł��܂��B
-�@�@�@�@�I�v�V�����t�@�C���ɏ������݂͍s���܂���B
-
-�@�E�ϊ��ݒ�
-�@�@�g��vhook���C�u�����̐ݒ�(��\����)
-
-�@�@�E�g��vhook���C�u�����𖳌��ɂ���
-�@�@�@�G���[���o�ĕϊ��ł��Ȃ��ۂɂ���Ƀ`�F�b�N�����Ă݂ĉ������B
-�@�@�@���₷��ۂ͂���Ő������邩�ۂ��̏������������B
-
-�@�@�E�\���R�����g��
-�@�@�@�P��ʓ��ɕ\���ł���R�����g���ł��B�f�t�H���g��40���ł��B�i���R�����R���ʁj
-�@�@�@����𒴂���R�����g��\�����邱�Ƃ͂���܂���B
-
-�@�@�E�\���R�����g������
-�@�@�@�R�����g���\�����𒴂������ɂǂ��������̑I���ł��B
-�@�@�@0:�]���ʂ�@�\���̓r���ł����Ă��A�\����+�X���b�g������̕����������Ă����܂��B
-�@�@�@1:�\�������z�����V�����R�����g�͖�������܂��B(��\���̂܂�)
-
-�@�@�E�t�H���g�p�X
-�@�@�E�t�H���g�ԍ�
-�@�@�@�t�H���g�t�@�C��(.ttc)�ɂ́A�����̃t�H���g�������ɓ����Ă��鎖������܂��B
-�@�@�@������w�肷�邽�߂̃I�v�V�����ł��B
-�@�@�@�ʏ�0�͌Œ蕝�A�P�̓v���|�[�V���i���炵���ł��B
-
-�@�@�E�e�̎��
-�@�@�@�e�Ȃ��A���A�S��ގw��ł��܂��B
-
-�@�@�E�ϊ����̉摜��\������
-�@�@�@�ϊ����̉摜��\�����܂��BPC�֕��ׂ�������܂��B
-�@�@�@�G���R�[�h�̑O�̉摜�Ȃ̂ŃG���R�[�h��ƈႤ�ꍇ������܂��B
-�@�@�@�i��t���[�����[�g�̏ꍇ�̃J�N�J�N��A�����k�̏ꍇ�̉掿�Ƃ��j
-
-�@�@�@�E�t�H���g�T�C�Y����ʂɂ��킹�Ď�����������
-�@�@�@�@FFmpeg�Ɏw�肵���o�͉�ʃT�C�Y�ɍ��킹�āA�t�H���g�̃T�C�Y�𒲐����܂��B
-�@�@�@�@PSP��DS�AiPod�Ȃ񂩂Ō���Ƃ��ɗL�����Ǝv���܂��B
-
-�@�@�@�E�S�ẴR�����g��s�����ɂ���
-�@�@�@�@�������ɂ���ƌ��Â炢�Ȃ��Ƃ����Ƃ���p�ł��B
-�@�@�@�@�R�����g���ɔ�ׂăR�����g�ԍ����������R�����g�͓����x�������Ȃ�]���B
-�@�@�@�@�i�f�t�H���g�ł͂P�`�R�O�O�R�����g�̂P�Ԃ͓����x0.6+0.4*1/300�ɂȂ�܂��j
-
-�@�@�@�E�R�����g���x�iPixel/sec�j
-�@�@�@�@�������Č����Ȃ������R�����g���������ꍇ�ɂ�
-�@�@�@�@�����ɐ����l�ŃR�����g���x�̃s�N�Z�����b���w�肵�܂��B
-�@�@�@�@�i�j�R�v���C���[�̍ł��x���ʏ�̂P�����͖�130�s�N�Z�����b�ł��B�j
-
-�@�@�ENG���[�h�EID�ݒ�
-�@�@�@�ۑ��R�����g�t�@�C���Ɋ܂܂��R�����g�𓮉�ɕt�����Ȃ��悤�ɂ��܂��B
-
-�@�@�@�ENG���[�h
-�@�@�@�@���[�h "���p�󔒂��܂ރ��[�h" /���K�\��/
-�@�@�@�@�ȂǂƔ��p�󔒂ŋ�؂��Ďw��ł��܂��B
-�@�@�@�@�w��̓R�����g�ƃR�}���h(ue shita big small �F)�̗����Ɍ��ʂ�����܂��B
-�@�@�@�@default���w�肷��ƃR�}���h�w���*�Ȃ�*�R�����g(�f�t�H���g�̃R�����g)��
-�@�@�@�@all���w�肷��ƃR�}���h�w���*����*�R�����g��NG�ɐݒ肵�܂��B
-
-�@�@�@�ENGID
-�@�@�@�@��ID�A�Í������ID�̗�����NG�w��ł��܂��B
-
-�@�@�@�ENG�R�}���h
-�@�@�@�@�R�}���h(ue shita big small �F)�𗬂��ʏ�T�C�Y�̔��ɕύX���܂��B
-�@�@�@�@�R�����g�͏����܂���Ball�̎w����\�ł��B
-
-�@�@�@�ENG���L���x��
-�@�@�@�@�j�R�v���C���[��NG���x���Ɠ����ł��B�m��Ȃ�����
-�@�@�@�@��S�ȁuNG���L�@�\�v�@http://dic.nicovideo.jp/id/4734440�@�Q��
-
-�@�@�E�����I�ݒ�(��\����)
-�@�@�@�ڍׂ�readmeNew.txt�Q�ƁB
-
-�@�@�@�E�t�H���g���̒���/�t�H���g�����̒���
-�@�@�@�@CA(�R�����g�A�[�g)�Ή��J�������̃f�o�b�O�p�B���݂͎g���K�v�͂���܂���
-
-�@�@�@�E�J���ł�L���@�@�f�t�H���g:�I��
-�@�@�@�@�_�u�����T�C�Y�Efull�R�}���h�E�J���[�R�[�h�Ή�����
-�@�@�@�@�I���W�i��������΂��ɂȂ��R�����g�`���L���ɂ��܂��B
-�@�@�@�@�I�t��Ԃ̋@�\�͍X�V���Ă��܂���
-
-�@�@�@�ECA�t�H���g�Ή��@�@�f�t�H���g:�I��
-�@�@�@�@CA�Ή��̕`���L���ɂ��܂�
-�@�@�@�@(Windows7-���hplayer�����A�����Ŏg�p���͕`�悪�j�R���Ƃ͈قȂ�)
-�@�@�@�@�K�v�ȃt�H���g����(������)������ɘj�邽�ߑΉ�����t�H���g�����[�h���Ďg�p���܂��B
-�@�@�@�@���̃^�u�̏㕔�Ŏw�肵���t�H���g�̂ݎg�p������(CA��Ή�)�ꍇ�̓I�t�ɂ��ĉ������B
-
-�@�@�@�E�ǉ��t�H���g�@�@���Ή�CA�t�H���g�������Ƀt�H���g��ǉ�����f�o�b�O�p
-
-�@�@�@�E�ǉ����[�h
-�@�@�@�@-debug ���w�肷��ƁA�R�����g�ϊ��̏ڍ׏����o�͂��܂��B�i[log]vhext.txt)
-�@�@�@�@-normal ���w�肷���bold�ɂ��܂���i���ׂ��t�H���g�ɂȂ�܂��j�B
-�@�@�@�@�@�f�t�H���g�ł͕����t�H���g�̓j�R���Ɠ����悤��bold(����)�w��ł��B
-�@�@�@�@CA�p�ɕ`���ǉ���������
-�@�@�@�@-frame�@���w�肷��ƁA�R�����g�ɉ��g���\������܂��B
-�@�@�@�@-loc -frame�@���w�肷��ƈʒu�R�}���h�ɂ���ĕ\���g�F���ς��܂��B
-�@�@�@�@�@ue �Ԙg naka ���g shita �g
-�@�@�@�@-font�@���w�肷��ƃt�H���g�̎�ނɂ���ĕ����̔w�i�F��ύX���܂��B
-�@�@�@�@�@�S�V�b�N(msgothic)�@�ԁ@����(simsun)�@�΁@�ە���(gulim)�@�@arial�@���@���̑��@�D�@������(MingLiu) �V�A��
-�@�@�@�@�@�A�������F�Ɠ����ꍇ�͐ԁ����A�΁����F�A�����ƕύX���܂��B
-�@�@�@�@-font -fg�@���w�肷��ƃt�H���g�̎�ނɂ���ĕ����F��ύX���܂��B
-�@�@�@�@�@�S�V�b�N(msgothic)�@�ԁ@����(simsun)�@�΁@�ە���(gulim)�@�@arial�@���@���̑��@�D�@������(MingLiu) �V�A��
-�@�@�@�@�@�w�i�͓����ł��B�e�����̕����F�ɂȂ�܂��B
-�@�@�@�@�@�g�ƃt�H���g�w��͓����w��\�ł��B
-
-�@�E�Ǘ�
-�@�@�EURL/ID�̉E�[�̏��O�p�`�͓o�^ID���X�g�̗�����\�����܂��B
-�@�@�E�Ǘ����
-�@�@�@�E�����ϊ����@�ϊ��X���b�h�̍ő吔���w�肵�܂��B�����_�E�����[�h�ő吔�͂���Ƃ͖��֌W�� 2 �Œ�ł��B
-�@�@�@�E�J�n���ۗ��@�ϊ��{�^������������ŏ󋵕\�����̌ʃX�C�b�`�ŕϊ����J�n����Ƃ��Ɏg���܂��B
-�@�@�@�E�P�s�\���@�@�󋵕\�����𓮉斈��1�s�ŕ\�����܂��B(�E�B���h�E�����ɍL���邩�X�N���[������ƑS��񂪌����܂�)
-�@�@�@�E�S����@�@�@�󋵕\���̂��ׂĂ̕ϊ��𐧌䂵�܂�
-�@�@�@�@�E�ϊ��@�@�@�ۗ����Ă���ϊ����J�n���܂�
-�@�@�@�@�E��~�@�@�@���s���@�ۗ����̂��ׂĂ̕ϊ����~���܂��B
-�@�@�@�@�E�����@�@�@�S��~���ď󋵕\���������܂��B
-�@�@�@�@�E�ۑ��@�@�@�o�^����ID���X�g��ۑ����܂�(���ʂ̐���/�G���[�͋�ʂ��܂���)
-�@�@�@�@�@�@�@�@�@�@�t�@�C�����́u����IDYYYY�^MM�^DD_HH�Fmm�FSS.txt�v�ł��B
-
-�@�@�E�󋵕\���@�@�@�ϊ���Ԃ�\�����܂��B���[�̌ʃ{�^����(�ϊ�)�A��~���܂��B�ĊJ,�ēo�^�͏o���܂���B
-
-�@�@�E�G���[ID�@�@�@�ϊ��G���[��������ID��\�����܂��B�r���Œ�~����ID���܂݂܂��B
-�@�@�@�E�ēo�^�@�@�@�\�����Ă��铮��ID�S�Ă��ēo�^,�ϊ����܂��B�G���[�\���͏����܂��B
-�@�@�@�E�����@�@�@�@�G���[�����N���A���܂��B��������܂ŃG���[���͎c��܂��B
-�@�@�@�E�ۑ��@�@�@�@�G���[ID���X�g��ۑ����܂��B�t�@�C�����́u�G���[YYYY�^MM�^DD_HH�Fmm�FSS.txt�v�ł��B
-
-�@�@�E�����Đ��@�@�@�ϊ���̓�����g���q�̊���\�t�g�ōĐ����܂��B�Đ��I���͌��o�ł��܂���
-�@�@�@�E�{�^���ށ@�@�ϊ��㓮��Đ����X�g�𑀍삵�܂��B�����Đ����Ȃ��ꍇ�Ɏg���܂��B
-
-�����j���[�̋@�\
-�@���t�@�C��
-�@�@�ݒ�t�@�C���̓ǂݍ��݁E�ǉ��E�㏑���ۑ��E���O��t���ĕۑ����o���܂��B
-�@�@�����͎��������E�ۑ����ꂽ���̂Ɠ����Ɍ���܂��B
-�@�@�E�J���@�ǂݍ��݂܂��B
-�@�@�E�ǉ��@�t�@�C���ɋL�����ꂽ���ڂ̂ݐݒ肵�����܂��B
-�@�@�E�㏑���ۑ��@���݂̐ݒ��saccubus.xml�ɕۑ����܂��B
-�@�@�E���O��t���ĕۑ��@���݂̐ݒ���w��t�@�C���ɕۑ����܂��B
-�@�@�E�������@saccubus.ini������Γǂݍ��݁A������΃v���O���������l�Őݒ肵�܂��B
-�@�@�E�I���@�I�����Ƀp�X���[�h���ȈՈÍ�����saccubud.xml�ɐݒ��ۑ����܂��B
-
-�@���ڍאݒ�
-�@�@�E�j�R�j�R�����NG�ݒ�ۑ�
-�@�@�@�T�[�o����NG�ݒ�����[�J���t�@�C��configNG.xml�ɕۑ����܂��B
-�@�@�@������΂��ݒ�ɂ͔��f���܂���B
-�@�@�@NG���L���x���̓T�[�o�ɂ͗L��܂���B
-�@�@�EAprilFool�Č�
-�@�@�@�ȉ���3��̃G�C�v�����t�[�����Č����܂��B���ۂ�4��1���̉ߋ����O������Ɩʔ������B
-�@�@�@2008�N �t���@�R�����g��������E��
-�@�@�@2009�N�@�Ԏ�3�{���@�S���̃R�����g���Ԏ���3�{�̑��x�ɂȂ�܂��B
-�@�@�@2010�N�@�j�R�j�R����@�������@�����ɂȂ�܂��B�߂��{�^���͗L��܂���B
-
-�@���A�N�V����
-�@�@�E���OViewON
-�@�@�@���s���Ƀ��Oview����\�����܂��B
-�@�@�E�ŐV�o�[�W�����`�F�b�N
-�@�@�@Github�ɃA�N�Z�X���A�ŐV�o�[�W�������L��΃��b�Z�[�W�\�����܂��B
-�@�@�E���ڑS�\��
-�@�@�E���ڍŏ��\��
-�@�@�E���ڋN�����ɖ߂�
-�@�@�E���ڌ��݂̏�ԂōX�V
-�@�@�@�p�l���P�ʂ̍��ڕ\����\���̑���ł��B
-
-�@���w���v(URL�̓N���b�N�\�ł�)
-�@�@�E�o�[�W�������@�o�[�W�����Ɗ֘AURL��\�����܂��B
-�@�@�EreadmeNew(�ŐV)�\���@�ŐV��readmeNew.txt
-�@�@�Ereadme(�I���W�i��)�\���@1.22r��readme.txt
-�@�@�Ereadme+�\���@1.22r3��readme+.txt
-�@�@�E�ŏ��ɕK�����ŕ\���@�{�e�L�X�g��\�����܂��B
-�@�@�E�G���[�R�[�h�\
-�@�@�EFFmpeg�w���v�\���@�g�p����ffmpeg -h�����s���\�����܂�
-�@�@�EFFmpeg�t�H�[�}�b�g�\���@ffmpeg -formats
-�@�@�EFFmpeg�R�[�f�b�N�\���@ffmpeg -codecs
-�@�@�EFFmpeg�v���g�R���\���@ffmpeg -protocols
-�@�@�EFFmpeg�t�B���^�[�\���@ffmpeg -filters
-
-��readme�t�@�C���̎��
-�@readme.txt�@�@������΂������ŐV1.22r�z�z�B��{����T�v�����B
-�@readmeNew.txt �{�����Ő����B
-
-��readme.txt �ڎ�
-�@��T�v
-�@��N���܂ł̏����ɂ���
-�@��g����
-�@�@����ԊȒP�Ȏg������
-�@�@���e�I�v�V�����̐�����
-�@�@�E��{�ݒ�
-�@�@�@�E���[���A�h���X�ƃp�X���[�h
-�@�@�@�E�v���L�V
-�@�@�E�ۑ��ݒ�
-�@�@�E����E�R�����g�ۑ��ݒ�
-�@�@�@�E�`���_�E�����[�h����
-�@�@�@�E�ϊ���Ɂ`���폜����B
-�@�@�@�E�i�ۑ���
-�@�@�@�E�ۑ�����t�H���_���w�肵�A�����Ńt�@�C���������肷��
-�@�@�@�E�ۑ�����t�@�C�������w�肷��B
-�@�@�@�E�擾�R�����g���͎����Œ�������
-�@�@�@�E�擾�R�����g��
-�@�@�E�R�����g�t������ۑ��ݒ�
-�@�@�@�E�R�����g�t������ɕϊ�����
-�@�@�@�E�t�@�C�����ɓ���ID��t�����Ȃ�
-�@�@�E����ݒ�
-�@�@�EFFmpeg�̐ݒ�
-�@�@�E�g��vhook���C�u�����̐ݒ�
-�@�@�@�E�g��vhook���C�u�����𖳌��ɂ���
-�@�@�@�E�\���R�����g��
-�@�@�@�E�t�H���g�C���f�b�N�X
-�@�@�@�E�ϊ����̉摜��\������
-�@�@�@�E�t�H���g�T�C�Y����ʂɂ��킹�Ď�����������
-�@�@�@�E���ׂẴR�����g��s�����ɂ���
-�@��u�ߋ����O�v����擾����ɂ�
-�@��R�}���h���C��������s����ɂ�
-�@��f�o�b�O���s
-�@�@���_�E�����[�h���ɃG���[����������ꍇ��
-�@�@���ϊ����ɃG���[����������ꍇ��
-�@��c�[�p�X�ɂ���
-�@��A�C�R���ɂ���
-�@���Ɛ�
-
-
-��readmeNew.txt �ڎ�
-�@���삪�ςȂƂ���
-�@auto.bat�œ��삪�ςȎ���
-�@�ݒ������������ɂ�
-�@���������ɂ���
-�@�T�|�[�g����Ȃ�
-�@�����
-�@�����Ӂ�
-�@Java�̃p�X�̐ݒ�(�Q�l)
-�@�C���X�g�[�����@�Ɗg���@�\�ݒ�
-�@�@1.22r3�ȍ~�����g�p���̕�
-�@�@�g���@�\�i�T�v�j�ǉ���
-�@�@���߂Ă�����΂����g����
-�@�N���܂ł̏����ɂ���
-�@�N��
-�@�g���@�\�i�ύX�_�j����
-�@�@���^�f�[�^�ݒ�ǉ�
-�@�@html5���ł̎����y�[�W�Ή�(smile,dmc)
-�@�@�\���R�����g�����ߎ��u�V�����R�����g�𖳎�����v(issue #35)
-�@�@��ʃA�J�E���g��dmc�A�N�Z�X�C��(issue #34)
-�@�@�ϊ�����low_�ǉ��ƃt�@�C�����}�N���o�O�C��
-�@�@FFmpeg3.2.2 �ɍX�V
-�@�@���N�G�X�g�����Ƀ}�C���X�g������ǉ�
-�@�@dmc�����flv(avc+aac)���_�E�����[�h���mp4�R���e�i�Ɏ����ϊ�(issue #31)
-�@�@�g���_�E�����[�h�ݒ�(dmc)���y�[�W���ݒ�^�u�Ɉړ�
-�@�@���ڕ\�����p�l���P�ʂŔ�\���؂�ւ��\�B�A�N�V�������j���[�ɒǉ�
-�@�@economy���A�ϊ��㓮��ɂ�low_�ǉ��@(issue#32)
-�@�@�ۑ��ϊ��o�̓t�@�C�����u���}�N���ǉ�
-�@�@ffmpeg n3.2�ɍX�V�@NVENC API 7.x�Ή�(Pascal GTX 1060,1070,1080�ȍ~)
-�@�@auto.bat���̃��O�o��, http://�E�E�Esmid?ref= �`�����̃o�O�C��
-�@�@�L�[���[�h�E�^�O�����Ń^�C�g���̒��o�C��
-�@�@dmc�T�[�o����_�E�����[�h����������
-�@�@dmc�T�[�o����Ή�
-�@�@���O�C���`�F�b�N�{�^���ǉ�
-�@�@���j���[���ڂ�LatestRelease�X�V�ǉ�
-�@�@SaveThumbinfoMetadata=true�̎�thumbInfo�f�[�^�����^�f�[�^<description>�Ƃ��Ė��ߍ���(�b��)
-�@�@�^�C�g����͎��s�C���@�^�C�g�������폜
-�@�@local�ł�swf�ϊ����s�C��
-�@�@���Oview�̃t���[�Y�C��
-�@�@���s���Ƀ��Oview�\���I��
-�@�@ffmpeg80914d(nvenc�Aintel-qsv�Ή�)��h264_nvenc,h264_qsv�p�I�v�V����
-�@�@PC�I�v�V�����̓��͂� -analyzeduration 10M�ǉ�
-�@�@Analize Error�� fps size�̃f�t�H���g�l��K�p
-�@�@ffmpeg80611(����AAC�A����UtVideo�Ή��Aflv�f�R�[�hregression�C��)
-�@�@�������^�c�R�����g�̌���@�b���\����D�悷��
-�@�@�^�c�R���ȈՕύX�̕\�����Ԃ�ύX(issue #17)
-�@�@������ۑ��o�O�C��(issue #21)
-�@�@�^�c�R���ȈՕϊ��o�O�C��
-�@�@redirect location ���� thread�ԍ��擾
-�@�@���O�o�͂𓮉�ʂɐ؂蕪��(issue #19)
-�@�@�Đ����X�g�A�G���[���X�g�Abat�֌W�C��
-�@�@�������R�����g��x������(issue #15) vpos�� +1
-�@�@�f�o�b�O���ȊO�f�t�H���g�ŃR�����g�_�u��폜
-�@�@�R�~����p����`�����l��������C��
-�@�@�R�~���j�e�B����ł��������xml���擾�ł���悤��(issue #14)
-�@�@�w���v��URL�����N���Github�ɕύX
-�@�@���[�J���ϊ��̕��@D�ǉ�
-�@�@�^�c�R�����g�ȈՕύX�ŃR�����g���v���܂ނƂ��ɓr���Ő؂��o�O�C��
-�@�@ffmpeg79635(����AAC�AUtVideo15.5.0�Ή�)
-�@�@�������A���P�[�g�Ή�(��) (issue #5) 
-�@�@vhook blue2 �R�}���h�̐F�C��(����̂�) issue #12
-�@�@�L�[���[�h��URL�G���R�[�h����(issue #11)
-�@�@���������y�[�W��ϊ��\�A������autolist0�o��
-�@�@auto.bat�̓����ϊ���1�̎��̃o�O�C��
-�@�@FFmpeg3.0�Ή�(����AAC)�I�v�V������optionFFAAC��
-�@�@saccubus2�������e(�e�̎��04��)�ǉ�
-�@�@auto.bat��URL���g���Ȃ����C��(1.64�ȑO�Ɠ���)
-�@�@wav�t�@�C���ŏI���ʒm��
-�@�@auto.bat�ŕ��s���s��
-�@�@�G���[�I��ID�̈ꊇ�ĕϊ��\��
-�@�@HTTP503 504 �G���[�̃��g���C
-�@�@�Ǘ��^�u�ɍĐ��{�^���ݒu
-�@�@�G�R�m�~�[���̓���t�@�C������low��t��
-�@�@PC__���͓��T�C�Y�A�X�䋤��_mp4 �I�v�V�����ǉ�
-�@�@�����ϊ����ݒ�ɂ����s���s
-�@�@�ϊ��{�^���ɂ��o�^(�ϊ��\��)�A��~�͌ʃ{�^����
-�@�@���O�C�������C��(���[���A�h���X�E�p�X���[�h���O�C��)
-�@�@�R�����g�ǉ����[�h
-�@�@���͏o�͂Ƃ��ɉ���codec��AAC�̏ꍇ��copy����I�v�V����-aacp��ǉ��B
-�@�@Windows10TP �ł�CA�p��փt�H���g�Ή�
-�@�@�v���~�A���J���[�̈�ʉ���g�p�`�F�b�N�ǉ�(�o�O�C��)
-�@�@ffmpeg�X�V�ɑΉ����ăI�v�V�����ƈ����n����ύX
-�@�@�ϊ��㎩���Đ��@�\�ǉ�
-�@�@�j�R���^�c�R�����g�ȈՕύX�@�\�ǉ�
-�@�@�G�N�X�v���[���[�Ńt�H���_�\���{�^���ǉ�
-�@�@Json�̃��C�u�����[��gson���g���ύX�igson jar,License�ǉ�)
-�@�@������MingLiu�t�H���g�ω��C��
-�@�@CA�̒e�������[�h�}���C��
-�@�@bold�t�H���g��normal���\
-�@�@mylist�ϊ������Ƃł܂Ƃ߂�autolist.bat�łł���悤�ɏo��(�b��)
-�@�@mylist���������ǉ�
-�@�@����ݒ�^�u�ɍĐ��{�^���ǉ�
-�@�@�f���X�g���[�����F���ł��Ȃ��ꍇ�ɉ����̂݃R�����g�t���\��
-�@�@NM����ɏ��������Ή�
-�@�@�t���[�����[�g�ϊ�
-�@�@�R�����g�s�������̃A���t�@�l�i�s�����x�j�������_���Ŏw��ł��܂��B
-�@�@���e�҃t�B���^�[�ǉ����܂����B
-�@�@ender�R�}���h�i���T�C�Y���Ȃ��V�R�}���h�j���������܂����B
-�@�@mp3�G���R�[�h���s���I�v�V������ύX�y�э폜���܂����B
-�@�@���{�^��(���e�҃R�����g)�X�N���v�g�@�Ή����܂����B
-�@�@���u���X�N���v�g�@�Ή����܂����B
-�@�@�}�C���X�g�����ǉ��i�����I�j
-�@�@FFmpeg�ݒ�ɃA�X�䋤�ʉ�ʒǉ�
-�@�@�ϊ��� -samx �I�v�V�����ɂ�蓮��A�X��ێ��\
-�@�@�I�v�V�����t�@�C���T�ǉ��@�@PCx3,PSPx2
-�@�@���{�^��(�����҃R�����g)�ɑΉ����܂���
-�@�@/replace(���e�҃j������)�ɑΉ����܂���
-�@�@�w���v���j���[����ffmpeg�w���v/readme���Q�Ɖ\�ł��B
-�@�@CA�i�R�����g�A�[�g�j�t�H���g�b��I�Ή��@����7
-�@�@���e�҃R�����g�̃j�R�X�N���v�g�@�\�ǉ�
-�@�@�ۑ��ݒ�\�y�[�W���
-�@�@�j�R�j�R����G�C�v�����t�[�����Č�
-�@�@CUI�Őݒ荀�ڂ��I�[�o�[���C�h
-�@�@FFmpeg�I�v�V�����ǉ��ݒ�
-�@�@�ݒ�t�@�C���̓ǂݍ��݁E�ǉ�(new)�E�ۑ��E�ʖ��ۑ��E������
-�@�@CA�i�R�����g�A�[�g�j�t�H���g�b��I�Ή��@���̂U
-�@�@�R�����g�ɉ��g��t���B�R�����g�A�[�g�����p�B
-�@�@NG�R�}���h
-�@�@NG���L���x��
-�@�@NG���[�h
-�@�@�j�R�j�R�����NG�ݒ�_�E�����[�h�E�ۑ�
-�@�@�p�X���[�h�ȈՈÍ���
-�@�@�G�R�m�~�[���[�h���ɒ��~
-�@�@�t�H���g�T�C�Y�����������̊g��@�\�����ɖ߂��܂����B
-�@�@�R�����g���x��Ǝ��Ɏw��\�ɂȂ�܂����B
-�@�@�R�����g�X�R�A�ǂݍ���
-�@�@�V�R�����g�\���Ή��i���̂R�j
-�@�@�s�K�؂ȓ���̓ǂݍ��݂Ŏ��s�����b�Z�[�W�ɖ�������
-�@�@�R�~���j�e�B����̒ʏ�R�����g�\���@�\�ɂ���
-�@�@�Q�v���Z�X�������s�ɂ���
-�@�@�u���E�U�̃Z�b�V�������L�@�\�ɂ���
-�@�@�g��Vhook������ (nicovideoE.dll)�ɂ���
-�@�@�g��Vhook���C�h�inicovideo16x9.dll�j�ɂ���
-�@�@�ߋ����O�𕡐��t�@�C���ɕۑ�����
-�@�@�\�m�F
-�@���^��
-�@�֘A�����N
-�@�ύX�����E�C���E���ϓ_
+　(2013/5/1変更：さきゅばすの非ffmpegのライセンス変更に合わせて)
+
+
+□サポート解説など
+　さきゅばすの使い方などに関しては、
+　上の[メニュー][readmeNew]から参照できます。また
+　公式サイト　http://saccubus.osdn.jp/
+　レポジトリ　https://github.com/Saccubus/Saccubus1.x　
+　Wiki　https://github.com/Saccubus/Saccubus1.x/wiki
+　同梱のrewdmeNew.txt、さきゅばす1.50のreadme150.txt
+　さきゅばす1.22rのreadme.txt、1.22r3のreadme+.txtをご覧下さい。
+　不具合報告等はissues(https://github.com/Saccubus/Saccubus1.x/issues)
+　または2chさきゅばすスレでお願いします。
+　2ch【ニコニコ】コメント付動画作成ツール さきゅばす5
+　　http://potato.2ch.net/test/read.cgi/software/1449586179/
+　(http://anago.2ch.net/test/read.cgi/software/1346798166/　前スレ)
+
+□動作環境
+　Windows XP/7/8/8.1/10 desktop　（多分Vistaも動くはず）
+
+●注意●
+　Javaランタイム Java8 JRE8 または JDK1.8が必要です。
+　最近アップデートしていない場合は必ず更新して下さい。
+　Java7 - JRE7 と JDK1.7はPublicUpdate終了のため非推奨。
+　JRE6 JDK1.6 JRE5 JDK1.5はテストしていません。
+　　http://java.com/ja/
+　からインストールして下さい。通常は32bit版です。
+　64bit版をダウンロードするには説明を読んで従って下さい。
+
+◆Javaのパスの設定(参考)
+　auto.batやdebug.batを実行するにはjava.exeがPathに設定されていることが必要です。
+　win7まではsystem32にjava.exeが自動でインストールされますが
+　場合によってはされないこともあります。またwin8以降ではされません。
+　最近Java8ではまたJavaインストール時にPathが通るように成ったようです。
+　「java.exe は、内部コマンドまたは外部コマンド、
+　操作可能なプログラムまたはバッチ ファイルとして認識されていません。」
+　のエラーが出る場合Javaをパスに設定するには以下のページを参考にしてください。
+　参考：Windows 7 にパス(Path)を設定する
+　　http://blog.cnu.jp/2009/11/06/windows-7-path/
+　　http://blog.cnu.jp/2010/11/10/shortcut-environment/
+　参考：Windows8にjava7を入れてみたよ（Windows 8以降）
+　　http://javatechnology.net/tool/windows8-java7-install/
+　参考:Windows10で環境変数（システム環境変数、ユーザ環境変数）を追加
+　　http://www.wannko.net/windows10/etc/kankyo.html
+　参考:Windows 10プリインストール機初期設定の留意点(Win10環境変数エディタ)
+　　http://pc.watch.impress.co.jp/docs/column/win10uw/20151224_736655.html
+
+◆注意◆16:9黒枠なしの（PSPなどの）動画について
+　　初期化した後の変換オプション設定（従来）ではコメントは
+　　原宿プレイヤーと同じく動画より1/30上下にはみ出していましたが、
+　　変換オプション設定（共通）でははみ出さなくなりました。
+　　コメント全体を画面内に収まるよう縮小しています。
+
+●注意●
+　　Windows8/8.1/10はデスクトップUIでのIE11/Firefoxで確認しました。
+　　Windows8スタイルUIではIEとのブラウザ共有は出来ませんでした。Chromeは不可です。
+　　Windows10でEdge(Spartan)とのブラウザ共有は不可、IE11は可能です。
+
+●注意●
+　・本Revの人柱用レベルは前Rev.と同じくらいです。
+　・配布形態　　ffmpeg3.2.2同梱版
+　・本Rev.は確定版SDLライブラリ（2012/11/02版）を同梱しています。（binフォルダ内）
+　・optionFFAAC（80914d用 2016/07/07版）optionFDev（実験用 2015/03/08版）を同梱。
+
+□インストール方法と拡張機能設定
+◆初めてさきゅばすを使う方、及び1.22r2以前のさきゅばすを使用中の方
+　　「saccubus」内のファイルをフォルダに展開して下さい。XPの場合はドライブ直下の\saccubusを推奨。
+　　(展開ソフトによっては(Windows内蔵も)後の様々なエラー回避に
+　　ZIP展開前に右クリック→プロパティ→ブロックの解除が必要です。)
+
+◆1.22r3以降のver1.xxをご使用中の方
+　【注意】今回の変更は　ffmpeg3.2.2用となるため
+　他のffmpegでは使用出来ない可能性があります。ご了承ください。
+　・自分で修正したオプションファイル(optionVOフォルダ,optionFフォルダ)をお持ちの方は
+　　同梱ffmpegに合わせて変更が必要な場合があります。
+    (optionFFAACフォルダ参照)
+　・「saccubus」内のファイルを以前のさきゅばすフォルダに■全て上書き■して下さい。
+　・移動したオプションファイルをコピーして戻して下さい。
+　・初期化用にsaccubus.iniが入っています。
+　　saccubus.xmlがない時とメニューから初期化を実行した時に
+　　saccubus.iniを読み込んでffmpeg3.2.2用にoptionフォルダと
+　　ffmpegを設定します。
+　・さきゅばす本体更新後には元のsaccubus.xmlを別の場所に退避した後で
+　　(1)メニューのファイル→追加(Add)→saccubus.iniを選んで[開く]
+　　　で設定を更新して下さい
+　　うまくいかない、更新後に新機能が使えない。ffmpegがない。何か動かなくなったなどの場合は
+　　(2)メニュー→ファイル→初期化
+　　　 を行うといいでしょう。その後で個別に設定を戻す必要が有ります。
+　　どうしてもダメなら
+　　(3)別の場所に新規にzipを解凍し直すのが確実です。
+
+　◆拡張機能（概要）追加分
+　・デバッグモードOnOffをファイルメニューに追加
+　・%TAGn%マクロのn=2以降の追加(issue #41)
+　・html5のニコスコメント,オプショナルスレッド保存修正
+　・ニコスコメントの保存＋@ボタンで@置換の組み合わせ対応
+　・@置換 のカラー・サイズが反映されないバグ(ニコスコメントなし以外)の修正
+　・コメント速度指定に@秒数追加
+　・メタデータ設定追加
+　・html5β版の視聴ページ対応(smile,dmc)
+　・表示コメント数超過時「新しいコメントを無視する」(issue #35)
+　・一般アカウントのdmcアクセス修正(issue #34)
+　・変換動画low_追加とファイル名マクロバグ修正
+　・FFmpeg3.2.2 に更新
+　・リクエスト履歴にマイリスト履歴を追加
+　・dmcからのflv(avc+aac)をダウンロード後にmp4コンテナに自動変換(issue #31)
+　・拡張ダウンロード設定(dmc)をページ情報設定タブに移動
+　・項目表示をパネル単位で非表示切り替え可能。アクションメニューに追加
+　・economy時、変換後動画にもlow_追加　(issue#32)
+　・保存変換出力ファイル名置換マクロ追加
+　・ffmpeg n3.2に更新　NVENC API 7.x対応(Pascal GTX 1060,1070,1080以降)
+　・auto.bat時のログ出力, http://・・・smid?ref= 形式時のバグ修正
+　・キーワード・タグ検索でタイトルの抽出修正
+　・dmc(S)ダウンロード修正,既定で有効
+　・dmcサーバ動画ダウンロード少し高速化(再)
+　・dmcサーバ動画対応
+　・ログインチェックボタン追加
+　・メニュー項目にLatestRelease更新追加
+　・SaveThumbinfoMetadata=trueの時thumbInfoデータをメタデータ<description>として埋め込む(暫定)
+　・タイトル解析失敗修正　タイトル末尾削除
+　・localでのswf変換失敗修正
+　・ログviewのフリーズ修正
+　・実行中にログview表示オン
+　・ffmpeg80914d(nvenc、intel-qsv対応)とh264_nvenc,h264_qsv用オプション
+　・PCオプションの入力に -analyzeduration 10M追加
+　・Analize Error時 fps sizeのデフォルト値を適用
+　・ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)
+　・生放送運営コメントの元の@秒数表示を優先する
+　・運営コメ簡易変更の表示時間を変更(issue #17)
+　・動画情報保存バグ修正(issue #21)
+　・運営コメ簡易変換バグ修正
+　・redirect location から thread番号取得
+　・ログ出力を動画別に切り分け(issue #19)
+　・再生リスト、エラーリスト、bat関係修正
+　・生放送コメントを遅くする(issue #15) vposを +1
+　・デバッグ時以外デフォルトでコメントダブり削除
+　・コミュ専用動画チャンネル動画情報修正
+　・コミュニティ動画でも動画情報のxmlを取得できるように(issue #14)
+　・ヘルプのURLリンク先をGithubに変更
+　・ローカル変換の方法D追加
+　・運営コメント簡易変更でコメントが」を含むときに途中で切れるバグ修正
+　・ffmpeg79635(内蔵AAC、UtVideo15.5.0対応)
+　・生放送アンケート対応(仮) (issue #5)
+　・vhook blue2 コマンドの色修正(動画のみ) issue #12
+　・キーワードをURLエンコードする(issue #11)
+　・視聴履歴ページを変換可能、検索とautolist0出力
+　・FFmpeg3.0対応(内蔵AAC)オプションをoptionFFAACに
+　・auto.batの同時変換数1の時のバグ修正
+　・saccubus2風文字影(影の種類04番)追加
+　・auto.batでURLが使えない件修正(1.64以前と同じ)
+　・wavファイルで終了通知可
+　・auto.batで並行実行可
+　・エラー終了IDの一括再変換予約
+　・HTTP503 504 エラーのリトライ
+　・管理タブに再生ボタン設置
+　・エコノミー時の動画ファイル名にlowを付加
+　・PC__入力同サイズアス比共通_mp4 オプション追加
+　・同時変換数設定により並行実行
+　・変換ボタンにより登録(変換予約)、停止は個別ボタンで
+　・ログイン処理修正(メールアドレス・パスワードログイン)
+　・コメント追加モード
+　・さきゅばす用ffmpegの修正(toolbox削除)に合わせて修正。
+　・nicovideoE.dllをffmpeg新(Jenkins自動ビルド)旧(70404f/65520w)両方に対応。
+　・コメントサーバー nmsg.nicovideo.jp/api/ に対応修正。
+　・生放送タイムシフトログの部屋別コメント合成を可能に。
+　・入力出力ともに音声codecがAAC-LCの場合にcopyするオプション-alcpを追加。
+　・入力出力ともに音声codecがAAC(LC,HE,HEv2)の場合にcopyするオプション-aacpを追加。
+　・PC用オプションに-aacp追加。(outオプションの最後に追加するだけ)
+　・Windows10TP でのCA用代替フォント対応
+　・プレミアムカラーの一般会員使用チェック追加(バグ修正)
+　・black2コマンド追加(バグ修正)
+　・ffmpeg更新　x265 libutvideo追加
+　・ffmpeg更新に対応してオプションと引数渡しを変更
+　・fps変更時ffmpeg内蔵fps filter選択可(対応ffmpegのみ nm動画非対応)
+　・ライセンス及び旧readmeを docフォルダに移動 メニュー表示の対応
+　・初期設定値のmp3をvo_aacencに変更(.iniファイルは以前に変更済み)
+　・変換後自動再生機能追加
+　・エクスプローラーでフォルダ表示ボタン追加
+　・ニコ生運営コメント簡易変更機能追加
+　・Windows8以降のIE11クッキー取得バグ修正(仮)
+　・マルチログイン時のクッキー処理バグ修正
+　・色名pink2,cyan2追加
+　・wakuコマンドで-frameオプション時の既定をred 細枠(1pixel)に(CA研究用)
+　・Jsonのライブラリーにgsonを使う変更（gson jar,License追加)
+　・Vhook 1.50.5 MingLiuフォント変化修正
+　・CAの弾幕化モード抑え気味
+　・boldフォントをnormal化可能
+　・mylist変換をあとでまとめてautolist.batでできるように出力
+　・mylist処理少し追加
+　・動画設定タブに再生ボタン追加
+　・映像ストリームが認識できない場合に音声のみコメント付き可能に
+　・上記の場合にサムネイルを指定可能。また自動では取得済みサムネイルがあれば使用します。
+　・NM動画に少しだけ対応
+　・フレームレート変換
+　・コメント不透明時にアルファ値（不透明度）を0.0～1.0で指定可能
+　・投稿者フィルター追加（投稿者コメント無しでオフ）
+　・enderコマンド実装
+　・＠ボタン(投稿者コメント)スクリプト　対応
+　・＠置換スクリプト　対応
+　・マイリスト処理追加（実験的）
+　・FFmpeg設定にアス比共通画面追加
+　・変換時 -samx オプションにより動画アス比保持可能
+　・オプションファイル追加　５　PCx3,PSPx2
+　・＠ボタン(視聴者コメント)　対応
+　・/replace(投稿者ニワン語)　対応
+　・ヘルプメニューからffmpegヘルプを実行可能
+　・1時間超えのstatus表示内部変更
+　・CA対応実験的設定でフォント19種類(+8)を強制選択可能になりました。
+　・投稿者コメント@秒数、@デフォルト、@逆機能追加
+　・サムネイル画像保存追加
+　・投稿者名保存のバグ修正
+　・保存ファイル名設定（特殊）を追加
+　・NGワードのallのバグ修正、defaultワード追加
+　・初期オプションでCAフォント暫定的対応と開発版を有効をオン
+　・動画情報、投稿者ページ、watchページの保存機能追加
+　・オプションファイル初期値変更([PC])
+　・[iPod][iPod touch]オプション修正(4096→4096k)
+　・watchページ動画情報の保存追加
+　・ZeroWatch(5/1から)でログイン後ストールしていたのを修正
+　・CUIで@SETの不具合修正、@DLCと@ADDを追加
+　・ニコニコ動画エイプリルフールを再現出来ます。
+　・CUIで全設定項目をオーバーライド出来ます。
+　・FFmpegオプション追加設定が可能です。
+　・コメントに黄枠を付加出来ます。コメントアート研究用。
+　・NGコマンドでコメントのコマンドを無効に出来ます。
+　・NG共有レベルを設定できます。
+　・NGワードの指定に all キーワードを使えます。
+　　既定でないコマンドのコメントを全て非表示にします。
+　・ニコニコ動画のNG設定をダウンロード・ファイルに保存できます。
+　　（さきゅばすへの自動設定は未実装）
+　・パスワードを簡易暗号化します。
+　・設定ファイルの読み込み・追加・保存・別名保存・初期化が出来ます。
+　・CUI引数を追加しました。
+　・エコノミーモード時に中止する設定が可能になりました。
+　・1.26.1～2でフォントサイズ自動調整時の拡大機能を削除しましたが元に戻しました。
+　・コメント速度を独自に指定可能です。
+　・コメント表示モードが新表示(最新100件ｘ分)・旧表示（最大1000件まで）を選択可能です。
+　・動画アスペクト比によるオプション自動判定ができます。
+　　「動画設定」「変換オプション設定」「FFmpegの設定１」と「FFmpegの設定２」に
+　　自動判定の結果選択するオプションを設定します。
+　・拡張Vhookライブラリ指定は、「動画設定」画面の2つある拡張Vhook
+　　指定欄の両方に nicovideoE.dll を指定し、2個のチェックボックス
+　　両方にチェックするとDL動画のアスペクト比を自動判定します。
+　・ブラウザ情報共有設定で「上記以外のブラウザの…」にチェックする
+　　場合は、Cookiesファイルの場所、複数候補の場合はその親フォルダを
+　　指定して下さい。
+　・nicovideoE.dllで変換エラーが発生する動画の報告がありましたが
+　　問題は1.25rで対処済みです。
+
+
+□起動までの準備について
+　http://java.com/ja/
+　Javaのサイトから各自最新のJRE(Java実行環境)を
+　ダウンロードしてインストールしてください。（32ビット版推奨）
+　また◆Javaのパスの設定(参考)を参照してください。
+
+□起動
+1.Saccubus.exe をダブルクリックします。
+　　※アンチウィルスが反応する場合が有りますので自己責任でsaccubus.exeのチェックを外して下さい。
+　　またはSaccubus.jarをダブルクリックします。(アンチウィルスは反応しないはず)
+　　(※VisualCでビルドしたexeはパターンファイルで誤検出され易いです。
+　　　Saccubus.exeはSaccubus.jarファイルのパスと標準出力をjavaに渡して起動するだけで終了する
+　　　のですがExploreにさきゅばすのアイコン表示させるためにはexeが必要です。
+　　　本体はSaccubus.jarでダブルクリックで起動できます)
+　　ファイアフォールをJavaに対して許可しなければならない場合があります。
+
+2.[基本設定]の「ブラウザ情報共有設定」でブラウザ共有を選択するか、
+　　または「ユーザ情報」メールアドレス、パスワードを設定します。
+
+3.上のURL/ID欄に動画URL（動画id）を入力します。後ろに?hogehogeがついてもOKです。
+　　不適切な内容が含まれている（所謂通報されている）場合は、ブラウザで動画内容を確認後
+　　動画URL（動画id）の後ろ?watch_harmful=1 を記入します。
+
+4.過去ログをダウンロードするには日付を
+　　2009/7/7 7:7:7 や 2009/7/7 7:7 や 2009/7/7 のように入力します。
+
+5.各項目を個別に必要なだけ設定します。(最初の試しはそのままでもOK)
+　　設定できる項目が多いので初めての人は[アクション][項目最小表示]にして
+　　開いている項目だけ設定してみるといいかもしれません。
+
+6.右上の[変換]ボタンをクリックすると[管理]タブが開きダウンロードと変換が開始します。
+
+
+■各オプションの説明
+　・[ログインチェック]ボタン
+　　[基本設定]タブの設定に基づきログインを試します。
+　　ここでログイン出来ない場合ブラウザでログインしているか、メアド・パスワードが使用可能かを調べて下さい。
+
+　・html5チェックボックス
+　　動画視聴ページ HTML5版（β）(http://blog.nicovideo.jp/niconews/ni064261.html)にアクセスします　
+　　(ニコ百 http://dic.nicovideo.jp/id/5453529)。
+　　さきゅばすでは特に追加される機能はありませんがhtml5で再生できないflvは保存できなくなります。
+　　代わりにエコノミーmp4になります。(公式通り)
+
+　・基本設定
+　　・ユーザー情報
+　　　ニコニコ動画のメールアドレスとパスワードを入力してください。
+　　　ここで設定してもブラウザへは反映されません。
+
+　　・プロキシ(非表示可)
+　　　使う場合は「プロキシを使う」にチェックを入れて、所定の情報を入れてください。
+　　　認証の必要なプロキシには対応していません。
+
+　　・ブラウザ情報共有設定
+　　　ユーザー情報を共有したいブラウザを選んで下さい。「ユーザー情報」の設定は不要。
+　　　「上記以外のブラウザの…」にチェックする場合は、
+　　　Cookiesファイルの場所、複数候補の場合はその親フォルダを
+　　　「他のブラウザCookieのファイル/フォルダを指定」欄に指定して下さい。
+
+　　・新機能情報(非表示可)
+
+　　　・NM動画に少し対応
+　　　　SWF形式のNM動画で主に一枚絵＋音声の動画に対応。
+　　　　複数枚の絵も変換できるが切り替えは固定時間なので実際の動画とはズレが生じる
+　　　　なおフォント、ビデオクリップ、テキストなどの埋め込み、アクションスクリプト(AS)には未対応
+　　　　謎の技術(ASなど)も謎でない技術(止めると動く)も対応していません(変換エラーになる)
+
+　　　・fps変更
+　　　　[最小fps値]以下のフレームレートの場合に[指定fps値]に変換する。
+　　　　最小fps指定は変換fps指定より大きくても小さくても良い。
+　　　　既定値は 最小23.0fps 変換25.0fps 通常アニメがfps変換されない指定
+
+　　　・映像無し許可
+　　　　映像のデコードに失敗した場合でも代替サムネ画像を背景にしてコメント音声つきで変換する。
+　　　　音声だけでも変換したい時に指定する。 (オフは映像デコード失敗でエラー)
+
+　　　・運営コメ簡易変更
+　　　　▼を押すと新しい設定場所[保存設定][コメント付き動画]タブが開く
+
+　　　・プレミアムカラーチェック
+　　　　一般会員がプレミアムカラーを使った場合にはデフォルト色(白)にする。
+
+
+　・保存設定―動画・コメント
+　　・動画・コメント保存設定
+
+　　　・～をダウンロードする
+　　　　文字通りダウンロードするか否かです。
+　　　　このチェックをはずした場合にコメント付き動画に変換する際には
+　　　　ローカルに保存してあるファイルから使用します。
+
+　　　・eco時中止
+　　　　サーバーからエコノミー動画のダウンロードを提示された場合は
+　　　　エラー終了します。
+
+　　　・拡張保存設定(dmc)はページ情報タブに移動しました。
+　　　　▼ を押すと新しい設定場所が開きます。
+
+　　　・追加モードで保存
+　　　　指定ファイルにコメントを追加保存します。
+　　　　日時付加ありで追加モードにすると変換時にフォルダ合成しません。
+　　　　「変換後にコメントファイルを削除する」にチェックを入れると
+　　　　変換実行の成功後、指定したファイルの追加されたコメントを含む
+　　　　全てのコメントファイルが削除されます。
+
+　　　・コメントファイル名に日時を付加する
+　　　　保存先にフォルダを選んだ場合にだけ有効。
+　　　　保存時にファイル名に日時が付加され、
+　　　　変換時に同一動画ID別日付のコメントファイルはマージされます。
+
+　　　・変換後に～を削除する。
+　　　　　変換後にflvファイル/コメントファイルを削除します。
+　　　　　（変換エラーが起きた場合は削除しません。）
+
+　　　・各保存先
+　　　　・保存するフォルダを指定し、自動でファイル名を決定する
+　　　　　　保存するファイル名を指定する。
+　　　　　　動画タイトルは使わずに、指定したファイルに保存されます。
+　　　　　　保存するファイル名を指定するを選択するとパス(フォルダ名ファイル名)に置換マクロが使えます。
+　　　　　　　　%LOW% →economy時 low_
+　　　　　　　　%ID% →動画ID　%LOW%がなくeconomy時 動画IDlow_
+　　　　　　　　%id% →[動画ID]　%LOW%がなくeconomy時 [動画ID]low_
+　　　　　　　　%TITLE% →動画タイトル
+　　　　　　　　%title% →全角空白を半角空白に変えた動画タイトル
+　　　　　　　　%CAT% →(もしあれば)カテゴリータグ (属性 category="1" のタグ)
+　　　　　　　　%TAGn% →(n+1)番めのタグ
+　　　　　　　　あとでファイル名に付ける場所を変えた場合保存済み動画を認識できないかもしれません。
+　　　　　　　　DL直後の変換では認識できます。
+　　　　・保存するファイル名を指定する。
+　　　　　　動画タイトルは使わずに、指定したファイルに保存されます。
+
+　　　・取得コメント数は自動で調整する
+　　　　コメントをオリジナルのプレイヤーにあわせ、動画の長さに応じて取得します。
+　　　　自動のコメント数は「投稿者コメント保存説明・コメント表示モード設定」を参照して下さい。
+
+　　　・取得コメント数
+　　　　ログを1000件までさかのぼって取得できます。
+
+　　・投稿者コメント保存説明・コメント表示モード設定(非表示可)
+　　　ダウンロードする視聴者コメント数（コメント表示）のモードを選択します。
+　　　　＜旧モード＞２０１０年１２月２２日以前のニコプレイヤーのモード
+　　　　　動画の長さにより以下のコメント件数を設定します。
+　　　　　0～ 1分： 100件
+　　　　　1～ 5分： 250件
+　　　　　5～10分： 500件
+　　　　　10分～ ：1000件
+　　　　　（現在のニコプレイヤーの「コメント数を減らす」にチェックした場合と同じ）
+　　　　＜新モード＞２０１０年１２月２２日以降のニコプレイヤーのモード
+　　　　　動画の１分間ごと(leaf)に最新100件のコメント件数を設定し、
+　　　　　それらと旧モードの和集合で表示するコメントを設定します。
+　　　さきゅばすのコメント件数の設定
+　　　　　　０：コメント表示自動選択、１：新コメント表示、２：旧コメント表示
+　　　　　から選択します。自動選択は過去ログの日付により新旧を選択します。
+　　　投稿者コメント
+　　　　投稿者コメントは無条件に最大1000件をダウンロード設定し
+　　　　出来なくてもエラーにはなりません。
+
+　・保存設定―コメント付き動画
+　　・コメント付き動画保存設定
+
+　　　・動画を変換する
+　　　　チェックを外した場合は「動画・コメント保存設定」に従い
+　　　　ダウンロードのみ行います。
+
+　　　・コメントを付加する
+　　　　視聴者コメントを動画に付加します。
+
+　　　・投稿者コメントを付加する
+　　　　投稿者コメントとニコスコメントと投稿者フィルターを動画に付加します。ニワンゴ（/）は無視されます。
+　　　　(現在は /replaceだけ機能します)
+　　　　ニコスクリプト（＠）は機能しないで文字列がそのまま表示されます。
+　　　　(現在は＠逆　＠デフォルト　＠ボタン　＠置換　は機能します。
+　　　　　他のスクリプトは＠をNGワードに指定すると非表示になります)
+
+　　　・ファイル名に動画IDを付加しない
+　　　　コメント付き動画のファイル名のデフォルトは
+　　　　[動画ID]動画タイトル.avi　（または .mp4）
+　　　　ですが、この動画IDの部分を付加しないようにします。
+
+　　・オプショナルスレッド設定(非表示可)
+　　　コミュニティ動画の場合に通常コメントを自動で読み込みますが
+　　　コメント付きにする時に半透明にしません。
+
+　　・生放送変換設定(非表示可)
+　　　・運営コメント簡易変更
+　　　　ニコ生の運営コメント(premium="2"以上の属性を持つ)に対して
+　　　　ueの枠付きで表示します。ニコ生と同じではありません。
+　　　　・運営コメントの秒数を自分で設定する
+　　　　　秒数を指定できます。
+　　　・生コメ強制
+　　　　nakaコメントを1秒遅らせる。blue2の色を生放送コメント仕様にします。
+　　　　通常はローカル変換で動画IDがsm0からsm8までの場合に自動的に生コメ仕様とします。
+　　　・コメントを遅らせる(秒)
+　　　　コメントのVPOS値に指定秒数(浮動小数点数)を加算します(マイナス値は減算)
+　　　　デフォルトは0.0
+
+　・保存設定―ページ情報(非表示可)
+　　・動画情報をtxtファイルに保存する(Videoと同じフォルダ)
+　　　動画、コメントの保存とは独立に設定出来ます。ログインして情報を取ります。
+　　　動画情報が取れない時はエラーになります。
+
+　　・投稿者名を保存する（上のtxtファイル）
+　　　指定のユーザーフォルダにユーザー情報ページを保存し投稿者名を
+　　　動画情報に追加します。コミュニティ動画、チャンネル動画はエラーになります。
+　　　保存したユーザー情報ページは更新しませんので、自分で更新したい場合は
+　　　該当ファイル（ユーザーID.htm）を削除して下さい。
+
+　　・サムネイル画像を保存する(Videoと同じフォルダ)
+　　　動画情報保存時にサムネイル画像を保存します。
+
+　　・watchページをhtmlファイルに保存する。(.\temp下)
+　　　文字通りです。主にデバッグ用です。
+　　・保存ファイル名設定（特殊）*注1
+　　　mp4動画は拡張子をmp4で保存します。
+　　　保存動画のIDをタイトルの後ろにつけます。
+　　　*注1　これらの設定がオンの場合コメント付き変換ができない場合があります。
+　　・マイリスト自動変換用のautolist.batファイルを保存する
+　　　mylistをURL/ID欄に指定したとき、通常はマイリストの中の動画を自動変換しますが
+　　　ここをオンにするとautolist.batを出力します。
+　　　この時はマイリストの内容を読むだけで変換はしません。
+　　　内容を編集(必要の無い行を２行毎に削除して(メモ帳可)実行する事ができます。
+　　　変換時の設定はauto.batと同じです。
+　　　視聴履歴http://www.nicovideo.jp/my/historyを指定した時も同様です。
+　　　動画　視聴履歴変換デモ http://is.gd/Cjctqz
+　　　(デモは同時変換4にしていますが各自の環境にあわせて下さい。nvencは別途制限あり)
+
+　　・保存ファイル名設定（特殊）(非表示可)
+　　　mp4動画は拡張子をmp4で保存します。
+　　　保存動画のIDをタイトルの後ろにつけます。
+　　　*注1　これらの設定がオンの場合コメント付き変換ができない場合があります。
+
+　　・拡張ダウンロード設定(dmc)(非表示可)
+　　　・smileサーバ強制ダウンロード
+　　　　smileサーバ動画をダウンロードします。
+　　　・dmcサーバ強制ダウンロード
+　　　　dmcサーバ動画をダウンロードします。
+　　　両方オフの場合はファイルサイズの大きい方だけダウンロードします。
+　　　両方オンの場合は両方をダウンロードしファイルサイズの大きい方を
+　　　変換に使います。
+　　　・dmc(R)ダウンロード(非推奨)
+　　　　　HTTP/1.1のRangeヘッダを使い前半と後半を同時に
+　　　　　ダウンロードする。同時接続数２。
+　　　　　同時変換設定2以上必須。1では効果ありません。
+　　　・dmc(S)ダウンロード　既定でオン
+　　　　　平均bitrateから計算した1分間分の動画量を
+　　　　　HTTP/1.1でRangeヘッダーで指定しkeep-aliveで読み込み
+　　　　　同時接続数１。rオンオフは無視される。
+　　　　　既定にしました。
+　　　　　dmcサーバだけ適用です。
+　　　・Large固定
+　　　　　　サイズ大きい方のダウンロードに失敗しても小さい動画に
+　　　　　　アクセスせずエラー終了します。
+　　　・dmc動画mp4コンテナ化
+　　　　　flv(avc+aac)をダウンロード後にmp4コンテナに自動変換、拡張子はflvのまま。
+
+　・動画設定―変換オプション設定（共通）
+
+　　・オプションフォルダの位置の設定
+　　　1.22r3以前のフォルダに変更できます。
+　　　変更した場合は「動画設定―変換オプション設定」
+　　　「FFmpegの設定」の「更新」ボタンを押して下さい。
+　　・FFmpegの位置の設定
+　　　1.22r3以前のFFmpegまたは別フォルダのFFmpegに変更できます。
+　　　変更した場合は変換オプションは自分で確認して下さい。
+
+　　・拡張vhookライブラリの設定
+　　　・共通画面を使う
+　　　　チェックを外すと変換オプションの設定（従来）が有効になります。
+　　　　共通設定の場合はコメントは常に動画（または動画＋黒帯）の
+　　　　範囲に収まるように縮小します。
+　　　・拡張vhookの位置を指定する
+　　　　アスペクト比共通のvhookを指定します。(既定は./bin/nicovideoE.dll)
+　　　　設定欄には別のvhook（別フォルダ等）を指定可能です。
+
+　　・共通FFmpegの設定
+　　　動画の変換に使用しているFFmpegのオプションです。
+　　　デフォルトでは映像コーデックx264、音声コーデックaacで
+　　　高画質小容量のmpeg4（H264/AVC+AAC）になるようにしてます。(アス比共通)
+　　　ただし元のさきゅばすのオプション([PC][4:3]/[16:9]デフォルト設定)に比べて
+　　　速度が遅いです。
+　　　最終的なコマンドは
+┌────────────────────────────────
+│<ffmpeg> -y <メインオプション> <入力オプション> \
+│ -i 「入力ファイル名」 <出力オプション> <追加オプション> \
+│ -vfilters "vhext=<拡張vhookライブラリDLL>;[オプション]" \
+│ 「出力ファイル名」.<拡張子>
+└────────────────────────────────
+　　　です。
+　　　プルダウンメニューから既存の設定を選べます。（アス比共通の設定）
+　　※追加オプション
+　　　　プルダウンメニューから選んだ場合でも設定を追加、上書きできます。
+　　　　オプションファイルに書き込みは行いません。
+　　　　例えば、コメント付き動画のサイズだけ変更したい場合は
+　　　　-s 1024x768と追加する
+　　　　コメント付き動画の長さを最初の３０秒だけにするには
+　　　　-t 30と設定するなど色々試してみて下さい。
+　　　専用オプション
+　　　　-samx
+　　　　　出力動画のサイズをアスペクト比を入力のアス比と同じにしたまま
+　　　　　-s指定内で最大にしてFFmpegに渡す-sオプションを書き換えます。
+　　　　-aacp
+　　　　　変換後の指定音声がAACで、かつ元動画の音声コーデックがAAC(LC,HE,HEv2)
+　　　　　の場合には音声を再エンコードしません。(-acodec copy指定)
+　　　　-alcp
+　　　　　変換後の指定音声がAACで、かつ元動画の音声コーデックがAAC-LC
+　　　　　の場合には音声を再エンコードしません。（HE-AAC非対応デバイス用）
+
+　　　・メタデータ設定
+　　　変換後動画に付加するメタデータを設定します。
+　　　チェックボックスオフで付加しなくなります。
+　　　書式 keyword=設定値 （後続は半角空白で区切る）
+　　　　keywordに関してはデフォルト値の他も自由ですが
+　　　　再生ソフトにより表示できるものは制限されます。
+　　　　設定値はファイル名置換用のマクロが使えます。
+　　　　半角空白や引用符"を含む設定値は使えません。
+
+　　・FFmpeg機能チェック(非表示可)
+　　　ボタンでFFmpeg機能を実行します。変換とは独立に実行出来ます。
+　　　・FFmpegのバージョンを表示する
+　　　　ffmpeg -version　を実行し表示します。
+　　　・ダウンロードした動画をチェックする
+　　　　URL/ID欄と動画保存設定で指定された動画をFFmpegを使って
+　　　　調べます。これでエラーになる動画は変換（デコード）できません。
+　　　・ダウンロードリストを表示する
+　　　　起動後に保存した動画やコメントがあれば表示します。
+　　　　終了するとリストは消えます。
+
+　・動画設定―変換オプション設定（従来）
+　　・拡張vhookライブラリの設定(非表示可)
+　　　保存動画のアスペクト比によるvhookを選択します。
+　　　　設定欄には別のvhook（別フォルダ等）を指定可能です。
+　　　・拡張vhook従来　「使用する（デフォルト及び4:3用）」
+　　　　動画を4:3とした時の動作（動画幅高さとフォントの大きさ）
+　　　・拡張vhookワイド「使用する（デフォルト16:9用）」
+　　　　動画を16:9とした時の動作（動画幅高さとフォントの大きさ）
+　　　保存動画のアスペクト比によるvhook自動判定ができます。
+　　　指定欄の両方に nicovideoE.dll を指定し、2個のチェックボックス両方にチェックすると
+　　　保存動画のアスペクト比を自動判定し、vhookを選択します。
+
+　　・FFmpegの設定１（拡張vhook従来を選択した時）
+　　・FFmpegの設定２（拡張vhookワイドを選択した時）
+　　　動画の変換に使用するFFmpegのオプションです。
+　　　プルダウンメニューから既存の設定を選ぶこともできます。
+
+　　・FFmpeg追加設定
+　　　設定１に追加
+　　　設定２に追加
+　　　　プルダウンメニューから選んだ場合でも設定を追加、上書きできます。
+　　　　オプションファイルに書き込みは行いません。
+
+　・変換設定
+　　拡張vhookライブラリの設定(非表示可)
+
+　　・拡張vhookライブラリを無効にする
+　　　エラーが出て変換できない際にこれにチェックを入れてみて下さい。
+　　　質問する際はそれで成功するか否かの情報もください。
+
+　　・表示コメント数
+　　　１画面内に表示できるコメント数です。デフォルトは40件です。（視コメ投コメ別）
+　　　これを超えるコメントを表示することはありません。
+
+　　・表示コメント数超過
+　　　コメントが表示数を超えた時にどう消すかの選択です。
+　　　0:従来通り　表示の途中であっても、表示時+スロット順が先の方から消されていきます。
+　　　1:表示数を越えた新しいコメントは無視されます。(非表示のまま)
+
+　　・フォントパス
+　　・フォント番号
+　　　フォントファイル(.ttc)には、複数のフォントが同時に入っている事があります。
+　　　それを指定するためのオプションです。
+　　　通常0は固定幅、１はプロポーショナルらしいです。
+
+　　・影の種類
+　　　影なし、他、４種類指定できます。
+
+　　・変換中の画像を表示する
+　　　変換中の画像を表示します。PCへ負荷がかかります。
+　　　エンコードの前の画像なのでエンコード後と違う場合もあります。
+　　　（低フレームレートの場合のカクカク具合、高圧縮の場合の画質とか）
+
+　　　・フォントサイズを画面にあわせて自動調整する
+　　　　FFmpegに指定した出力画面サイズに合わせて、フォントのサイズを調整します。
+　　　　PSPやDS、iPodなんかで見るときに有効だと思います。
+
+　　　・全てのコメントを不透明にする
+　　　　半透明にすると見づらいなあというとき専用です。
+　　　　コメント数に比べてコメント番号が小さいコメントは透明度が高くなり余す。
+　　　　（デフォルトでは１～３００コメントの１番は透明度0.6+0.4*1/300になります）
+
+　　　・コメント速度（Pixel/secまたは@秒数）
+　　　　速すぎて見えない流れるコメントを見たい場合には
+　　　　ここに整数値を指定するとコメント速度のピクセル毎秒を指定します。
+　　　　（ニコプレイヤーの最も遅い通常の１文字は約130ピクセル毎秒です。）
+　　　　＠秒数を指定するとコメントの表示秒数を指定できます。
+　　　　（ニコプレイヤーの最も通常の表示秒数は約４秒です。）
+
+　　・NGワード・ID設定
+　　　保存コメントファイルに含まれるコメントを動画に付加しないようにします。
+
+　　　・NGワード
+　　　　ワード "半角空白を含むワード" /正規表現/
+　　　　などと半角空白で区切って指定できます。
+　　　　指定はコメントとコマンド(ue shita big small 色)の両方に効果があります。
+　　　　defaultを指定するとコマンド指定の*ない*コメント(デフォルトのコメント)を
+　　　　allを指定するとコマンド指定の*ある*コメントをNGに設定します。
+
+　　　・NGID
+　　　　生ID、暗号化後のIDの両方をNG指定できます。
+
+　　　・NGコマンド
+　　　　コマンド(ue shita big small 色)を流れる通常サイズの白に変更します。
+　　　　コメントは消えません。allの指定も可能です。
+
+　　　・NG共有レベル
+　　　　ニコプレイヤーのNGレベルと同じです。知らない方は
+　　　　大百科「NG共有機能」　http://dic.nicovideo.jp/id/4734440　参照
+
+　　・実験的設定(非表示可)
+　　　詳細はreadmeNew.txt参照。
+
+　　　・フォント幅の調整/フォント高さの調整
+　　　　CA(コメントアート)対応開発当時のデバッグ用。現在は使う必要はありません
+
+　　　・開発版を有効　　デフォルト:オン
+　　　　ダブルリサイズ・fullコマンド・カラーコード対応等の
+　　　　オリジナルさきゅばすにないコメント描画を有効にします。
+　　　　オフ状態の機能は更新していません
+
+　　　・CAフォント対応　　デフォルト:オン
+　　　　CA対応の描画を有効にします
+　　　　(Windows7-原宿player準拠、他環境で使用時は描画がニコ動とは異なる)
+　　　　必要なフォント書体(文字幅)が多岐に亘るため対応するフォントをロードして使用します。
+　　　　このタブの上部で指定したフォントのみ使用したい(CA非対応)場合はオフにして下さい。
+
+　　　・追加フォント　　未対応CAフォント発見時にフォントを追加するデバッグ用
+
+　　　・追加モード
+　　　　-debug を指定すると、コメント変換の詳細情報を出力します。（[log]vhext.txt)
+　　　　-normal を指定するとboldにしません（より細いフォントになります）。
+　　　　　デフォルトでは文字フォントはニコ動と同じようにbold(太字)指定です。
+　　　　CA用に描画を追加したもの
+　　　　-frame　を指定すると、コメントに黄枠が表示されます。
+　　　　-loc -frame　を指定すると位置コマンドによって表示枠色が変わります。
+　　　　　ue 赤枠 naka 黄枠 shita 青枠
+　　　　-font　を指定するとフォントの種類によって文字の背景色を変更します。
+　　　　　ゴシック(msgothic)　赤　明朝(simsun)　緑　丸文字(gulim)　青　arial　黄　その他　灰　明朝体(MingLiu) シアン
+　　　　　但し文字色と同じ場合は赤→黒、緑→黄色、青→紫と変更します。
+　　　　-font -fg　を指定するとフォントの種類によって文字色を変更します。
+　　　　　ゴシック(msgothic)　赤　明朝(simsun)　緑　丸文字(gulim)　青　arial　黄　その他　灰　明朝体(MingLiu) シアン
+　　　　　背景は透明です。影が元の文字色になります。
+　　　　　枠とフォント指定は同時指定可能です。
+
+　・管理
+　　・URL/IDの右端の小三角形 ◀▶ はリクエスト(変換登録)したIDリストの履歴を表示します。
+　　　　小三角▲はリクエスト全履歴,マイリスト要求履歴とテンプレートの切り替えです。
+　　　　(マイリスト要求履歴：　マイリスト要求,タグ検索要求,キーワード検索要求,投稿動画リスト要求等)
+　　　　(テンプレート：　マイリスト要求の形式を提示)
+　　・管理情報
+　　　・同時変換数　変換スレッドの最大数を指定します。同時ダウンロード最大数はこれとは無関係に 2 固定です。
+　　　・開始時保留　変換ボタンを押した後で状況表示欄の個別スイッチで変換を開始するときに使います。
+　　　・１行表示　　状況表示欄を動画毎に1行で表示します。(ウィンドウを横に広げるかスクロールすると全情報が見えます)
+　　　・全制御　　　状況表示のすべての変換を制御します
+　　　　・変換　　　保留している変換を開始します
+　　　　・停止　　　実行中　保留中のすべての変換を停止します。
+　　　　・消去　　　全停止して状況表示を消します。
+　　　　・保存　　　登録動画IDリストを保存します(結果の正常/エラーは区別しません)
+　　　　　　　　　　ファイル名は「動画IDYYYY／MM／DD_HH：mm：SS.txt」です。
+
+　　・状況表示　　　変換状態を表示します。左端の個別ボタンで(変換)、停止します。再開,再登録は出来ません。
+
+　　・エラーID　　　変換エラーした動画IDを表示します。途中で停止したIDも含みます。
+　　　・再登録　　　表示している動画ID全てを再登録,変換します。エラー表示は消えます。
+　　　・消去　　　　エラー情報をクリアします。消去するまでエラー情報は残ります。
+　　　・保存　　　　エラーIDリストを保存します。ファイル名は「エラーYYYY／MM／DD_HH：mm：SS.txt」です。
+
+　　・自動再生　　　変換後の動画を拡張子の既定ソフトで再生します。再生終了は検出できません
+　　　　　　　　　　　注意：再生中に同じ動画を変換するとファイル名変更失敗や変換失敗、再生の停止などが起こる（再生ソフトにもよる）
+　　　・ボタン類　　変換後動画再生リストを操作します。自動再生しない場合に使います。
+
+■メニューの機能
+　◇ファイル
+　　設定ファイルの読み込み・追加・上書き保存・名前を付けて保存が出来ます。
+　　書式は自動生成・保存されたものと同じに限ります。
+　　・開く　読み込みます。
+　　・追加　ファイルに記入された項目のみ設定し直します。
+　　・上書き保存　現在の設定をsaccubus.xmlに保存します。
+　　・名前を付けて保存　現在の設定を指定ファイルに保存します。
+　　・初期化　saccubus.iniがあれば読み込み、読めなければプログラム初期値で設定します。
+　　　　設定項目ごとに設定値は3種類
+　　　　　1 設定ファイル　saccubus.xml　ユーザー設定値(起動時初期値)
+　　　　　2 初期化ファイル　saccubus.ini　リリース時設定(最新バージョン適合値)
+　　　　　3 プログラム初期値　saccubus.jar　プログラム時設定(古くなっている可能性がある)
+　　　　起動時には 1->3 、初期化時には 2->3 の優先順に使用します。
+　　・デバッグモードOn(Off)トグル
+　　　詳細デバッグモードのオンオフを設定(プロクシ設定と変換設定追加モード)
+　　・終了　終了時にパスワードを簡易暗号化しsaccubud.xmlに設定を保存します。
+
+　◇詳細設定
+　　・ニコニコ動画のNG設定保存
+　　　サーバ内のNG設定をローカルファイルconfigNG.xmlに保存します。
+　　　さきゅばす設定には反映しません。
+　　　NG共有レベルはサーバには有りません。
+　　・AprilFool再現
+　　　以下の3回のエイプリルフールを再現します。実際の4月1日の過去ログを見ると面白い筈。
+　　　2008年 逆走　コメントが左から右へ
+　　　2009年　赤字3倍速　全部のコメントが赤字で3倍の速度になります。
+　　　2010年　ニコニコ動画　黒字化　黒字になります。戻すボタンは有りません。
+
+　◇アクション
+　　・ログViewON
+　　　実行中にログview窓を表示します。
+　　・最新バージョンチェック
+　　　Githubにアクセスし、最新バージョンが有ればメッセージ表示します。
+　　・項目全表示
+　　・項目最小表示
+　　・項目起動時に戻す
+　　・項目現在の状態で更新
+　　　パネル単位の項目表示非表示の操作です。
+
+　◇ヘルプ(URLはクリック可能です)
+　　・バージョン情報　バージョンと関連URLを表示します。
+　　・readmeNew(最新)表示　最新のreadmeNew.txt
+　　・readme(オリジナル)表示　1.22rのreadme.txt
+　　・readme+表示　1.22r3のreadme+.txt
+　　・最初に必ずよんで表示　本テキストを表示します。
+　　・エラーコード表
+　　・FFmpegヘルプ表示　使用中のffmpeg -hを実行し表示します
+　　・FFmpegフォーマット表示　ffmpeg -formats
+　　・FFmpegコーデック表示　ffmpeg -codecs
+　　・FFmpegプロトコル表示　ffmpeg -protocols
+　　・FFmpegフィルター表示　ffmpeg -filters
+
+□readmeファイルの種類
+　readme.txt　　さきゅばす公式最新1.22r配布。基本動作概要説明。
+　readmeNew.txt 本改造版説明。
+
+■readme.txt 目次
+　♪概要
+　♪起動までの準備について
+　♪使い方
+　　＜一番簡単な使い方＞
+　　＜各オプションの説明＞
+　　・基本設定
+　　　・メールアドレスとパスワード
+　　　・プロキシ
+　　・保存設定
+　　・動画・コメント保存設定
+　　　・～をダウンロードする
+　　　・変換後に～を削除する。
+　　　・格保存先
+　　　・保存するフォルダを指定し、自動でファイル名を決定する
+　　　・保存するファイル名を指定する。
+　　　・取得コメント数は自動で調整する
+　　　・取得コメント数
+　　・コメント付き動画保存設定
+　　　・コメント付き動画に変換する
+　　　・ファイル名に動画IDを付加しない
+　　・動画設定
+　　・FFmpegの設定
+　　・拡張vhookライブラリの設定
+　　　・拡張vhookライブラリを無効にする
+　　　・表示コメント数
+　　　・フォントインデックス
+　　　・変換中の画像を表示する
+　　　・フォントサイズを画面にあわせて自動調整する
+　　　・すべてのコメントを不透明にする
+　♪「過去ログ」から取得するには
+　♪コマンドラインから実行するには
+　♪デバッグ実行
+　　＜ダウンロード中にエラーが発生する場合＞
+　　＜変換中にエラーが発生する場合＞
+　♪ツーパスについて
+　♪アイコンについて
+　♪免責
+
+
+■readmeNew.txt 目次
+　動作が変なときは
+　auto.batで動作が変な時は
+　設定を初期化するには
+　改造部分について
+　サポート解説など
+　動作環境
+　●注意●
+　Javaのパスの設定(参考)
+　インストール方法と拡張機能設定
+　　1.22r3以降をご使用中の方
+　　拡張機能（概要）追加分
+　　初めてさきゅばすを使う方
+　起動までの準備について
+　起動
+　拡張機能（変更点）説明
+　　メタデータ設定追加
+　　html5β版の視聴ページ対応(smile,dmc)
+　　表示コメント数超過時「新しいコメントを無視する」(issue #35)
+　　一般アカウントのdmcアクセス修正(issue #34)
+　　変換動画low_追加とファイル名マクロバグ修正
+　　FFmpeg3.2.2 に更新
+　　リクエスト履歴にマイリスト履歴を追加
+　　dmcからのflv(avc+aac)をダウンロード後にmp4コンテナに自動変換(issue #31)
+　　拡張ダウンロード設定(dmc)をページ情報設定タブに移動
+　　項目表示をパネル単位で非表示切り替え可能。アクションメニューに追加
+　　economy時、変換後動画にもlow_追加　(issue#32)
+　　保存変換出力ファイル名置換マクロ追加
+　　ffmpeg n3.2に更新　NVENC API 7.x対応(Pascal GTX 1060,1070,1080以降)
+　　auto.bat時のログ出力, http://・・・smid?ref= 形式時のバグ修正
+　　キーワード・タグ検索でタイトルの抽出修正
+　　dmcサーバ動画ダウンロード少し高速化
+　　dmcサーバ動画対応
+　　ログインチェックボタン追加
+　　メニュー項目にLatestRelease更新追加
+　　SaveThumbinfoMetadata=trueの時thumbInfoデータをメタデータ<description>として埋め込む(暫定)
+　　タイトル解析失敗修正　タイトル末尾削除
+　　localでのswf変換失敗修正
+　　ログviewのフリーズ修正
+　　実行中にログview表示オン
+　　ffmpeg80914d(nvenc、intel-qsv対応)とh264_nvenc,h264_qsv用オプション
+　　PCオプションの入力に -analyzeduration 10M追加
+　　Analize Error時 fps sizeのデフォルト値を適用
+　　ffmpeg80611(内蔵AAC、内蔵UtVideo対応、flvデコードregression修正)
+　　生放送運営コメントの元の@秒数表示を優先する
+　　運営コメ簡易変更の表示時間を変更(issue #17)
+　　動画情報保存バグ修正(issue #21)
+　　運営コメ簡易変換バグ修正
+　　redirect location から thread番号取得
+　　ログ出力を動画別に切り分け(issue #19)
+　　再生リスト、エラーリスト、bat関係修正
+　　生放送コメントを遅くする(issue #15) vposを +1
+　　デバッグ時以外デフォルトでコメントダブり削除
+　　コミュ専用動画チャンネル動画情報修正
+　　コミュニティ動画でも動画情報のxmlを取得できるように(issue #14)
+　　ヘルプのURLリンク先をGithubに変更
+　　ローカル変換の方法D追加
+　　運営コメント簡易変更でコメントが」を含むときに途中で切れるバグ修正
+　　ffmpeg79635(内蔵AAC、UtVideo15.5.0対応)
+　　生放送アンケート対応(仮) (issue #5)
+　　vhook blue2 コマンドの色修正(動画のみ) issue #12
+　　キーワードをURLエンコードする(issue #11)
+　　視聴履歴ページを変換可能、検索とautolist0出力
+　　auto.batの同時変換数1の時のバグ修正
+　　FFmpeg3.0対応(内蔵AAC)オプションをoptionFFAACに
+　　saccubus2風文字影(影の種類04番)追加
+　　auto.batでURLが使えない件修正(1.64以前と同じ)
+　　wavファイルで終了通知可
+　　auto.batで並行実行可
+　　エラー終了IDの一括再変換予約
+　　HTTP503 504 エラーのリトライ
+　　管理タブに再生ボタン設置
+　　エコノミー時の動画ファイル名にlowを付加
+　　PC__入力同サイズアス比共通_mp4 オプション追加
+　　同時変換数設定により並行実行
+　　変換ボタンにより登録(変換予約)、停止は個別ボタンで
+　　ログイン処理修正(メールアドレス・パスワードログイン)
+　　コメント追加モード
+　　入力出力ともに音声codecがAACの場合にcopyするオプション-aacpを追加。
+　　Windows10TP でのCA用代替フォント対応
+　　プレミアムカラーの一般会員使用チェック追加(バグ修正)
+　　ffmpeg更新に対応してオプションと引数渡しを変更
+　　変換後自動再生機能追加
+　　ニコ生運営コメント簡易変更機能追加
+　　エクスプローラーでフォルダ表示ボタン追加
+　　Jsonのライブラリーにgsonを使う変更（gson jar,License追加)
+　　明朝体MingLiuフォント変化修正
+　　CAの弾幕化モード抑え気味
+　　boldフォントをnormal化可能
+　　mylist変換をあとでまとめてautolist.batでできるように出力(暫定)
+　　mylist処理少し追加
+　　動画設定タブに再生ボタン追加
+　　映像ストリームが認識できない場合に音声のみコメント付き可能に
+　　NM動画に少しだけ対応
+　　フレームレート変換
+　　コメント不透明時のアルファ値（不透明度）を小数点数で指定できます。
+　　投稿者フィルター追加しました。
+　　enderコマンド（リサイズしない新コマンド）を実装しました。
+　　mp3エンコードを行うオプションを変更及び削除しました。
+　　＠ボタン(投稿者コメント)スクリプト　対応しました。
+　　＠置換スクリプト　対応しました。
+　　マイリスト処理追加（実験的）
+　　FFmpeg設定にアス比共通画面追加
+　　変換時 -samx オプションにより動画アス比保持可能
+　　オプションファイル５つ追加　　PCx3,PSPx2
+　　＠ボタン(視聴者コメント)に対応しました
+　　/replace(投稿者ニワン語)に対応しました
+　　ヘルプメニューからffmpegヘルプ/readmeを参照可能です。
+　　CA（コメントアート）フォント暫定的対応　その7
+　　投稿者コメントのニコスクリプト機能追加
+　　保存設定―ページ情報
+　　ニコニコ動画エイプリルフールを再現
+　　CUIで設定項目をオーバーライド
+　　FFmpegオプション追加設定
+　　設定ファイルの読み込み・追加(new)・保存・別名保存・初期化
+　　CA（コメントアート）フォント暫定的対応　その６
+　　コメントに黄枠を付加。コメントアート研究用。
+　　NGコマンド
+　　NG共有レベル
+　　NGワード
+　　ニコニコ動画のNG設定ダウンロード・保存
+　　パスワード簡易暗号化
+　　エコノミーモード時に中止
+　　フォントサイズ自動調整時の拡大機能を元に戻しました。
+　　コメント速度を独自に指定可能になりました。
+　　コメントスコア読み込み
+　　新コメント表示対応（その３）
+　　不適切な動画の読み込みで失敗をメッセージに明示する
+　　コミュニティ動画の通常コメント表示機能について
+　　２プロセス自動実行について
+　　ブラウザのセッション共有機能について
+　　拡張Vhook統合版 (nicovideoE.dll)について
+　　拡張Vhookワイド（nicovideo16x9.dll）について
+　　過去ログを複数ファイルに保存する
+　機能確認
+　収録物
+　関連リンク
+　変更履歴・修正・改変点
 
 
