@@ -231,7 +231,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String optionalThreadID = "";	// set in
 	private String nicos_id = "";
 	private String errorLog = "";
-	private boolean disable_liveOp = false;
+	private boolean isNicos = false;
 	private boolean isOptionalTranslucent = true;
 	private int videoLength = 0;
 	private int ownerCommentNum = 0;
@@ -1229,7 +1229,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
 			dateUserFirst = getDateUserFirst(CommentFile);
-			disable_liveOp = true;
 			sendtext("コメントのダウンロード終了");
 			optionalThreadID = client.getOptionalThreadID();
 			sendtext("オプショナルスレッドの保存");
@@ -1281,7 +1280,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			nicos_id = client.getNicosID();
 			sendtext("ニコスコメントの保存");
 			if(nicos_id!=null && !nicos_id.isEmpty() && CommentFile!=null){
-				disable_liveOp = true;
+				isNicos = true;
 				nicosCommentFile = Path.getReplacedExtFile(CommentFile, NICOS_EXT);
 				backup = false;
 				File appendNicosFile = mkTemp(TMP_APPEND_NICOS_EXT);
@@ -1408,7 +1407,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				//result = "63";
 				return true;
 			}
-			disable_liveOp = true;
 			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
 				optionalThreadID = client.getOptionalThreadID();
 			}
@@ -1486,7 +1484,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private boolean saveThumbInfo(NicoClient client, String vtag) {
 		if(!Setting.isSaveThumbInfo())
 			return true;
-		disable_liveOp = true;
 		if(saveThumbInfo0(client, vtag))
 			return true;
 		// コミュニティ動画はthumbinfoが取れないのでsmIDを使う
@@ -1752,7 +1749,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return false;
 			}
 			CommentMiddleFile = mkTemp(TMP_COMMENT);
-			if(!convertToCommentMiddle(CombinedCommentFile, CommentMiddleFile, disable_liveOp)){
+			if(!convertToCommentMiddle(CombinedCommentFile, CommentMiddleFile, isNicos)){
 				sendtext("コメント変換に失敗");
 				CommentMiddleFile = null;
 				result = "76";
@@ -1847,7 +1844,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							log.println(gettext());
 							// ニコスコメントでリトライ
 							optext = NICOS_EXT;
-							isOptionalTranslucent = false;
 							filename = detectTitleFromOptionalThread(folder, optext);
 							if(filename == null || filename.isEmpty()){
 								sendtext(Tag + ": ニコスコメントがフォルダに存在しません。");
@@ -1856,6 +1852,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								OptionalThreadFile = null;
 								return true;
 							}
+							isNicos=true;
+							isOptionalTranslucent = false;
 						}
 						OptionalThreadFile = new File(folder, filename);
 					}
@@ -1883,7 +1881,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						log.println(gettext());
 						// ニコスコメントでリトライ
 						optext = NICOS_EXT;
-						isOptionalTranslucent = false;
 						OptionalThreadFile = Path.getReplacedExtFile(CommentFile, optext);
 						if(!OptionalThreadFile.exists()){
 							sendtext("オプショナルスレッドが存在しません。");
@@ -1892,6 +1889,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							OptionalThreadFile = null;
 							return true;
 						}
+						isNicos=true;
+						isOptionalTranslucent = false;
 					}
 				}
 				if (dateUserFirst.isEmpty()) {
@@ -1913,7 +1912,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return true;
 			}
 			OptionalMiddleFile = mkTemp(TMP_OPTIONALTHREAD);
-			if(!convertToCommentMiddle(CombinedOptionalFile, OptionalMiddleFile, disable_liveOp)){
+			if(!convertToCommentMiddle(CombinedOptionalFile, OptionalMiddleFile, isNicos)){
 				sendtext("オプショナルスレッド変換に失敗");
 				log.println(gettext());
 				OptionalMiddleFile = null;
@@ -1972,7 +1971,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			OwnerMiddleFile = mkTemp(TMP_OWNERCOMMENT);
 			//ここで commentReplaceが作られる
 			log.println("投稿者コメント変換");
-			if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile, true)){
+			if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile, isNicos)){
 				sendtext("投稿者コメント変換に失敗");
 				OwnerMiddleFile = null;
 				result = "83";

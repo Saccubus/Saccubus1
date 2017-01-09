@@ -257,9 +257,7 @@ public class NicoXMLReader extends DefaultHandler {
 			if (forkval != null && forkval.equals("1")) {
 				item_fork = true;
 			}
-			if(liveConversion && premium.isEmpty()){	//here premium!=null
-				premium = attributes.getValue("premium");
-			}
+			premium = attributes.getValue("premium");
 			if(premium==null)	//here premium may be null
 				premium = "";
 			item.setOwner(item_fork);
