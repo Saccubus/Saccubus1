@@ -1799,7 +1799,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						isOptionalTranslucent = false;
 						pathlist = detectFilelistFromOptionalThread(folder, optext);
 						if(pathlist == null || pathlist.isEmpty()){
-							sendtext(Tag + ": オプショナルスレッド・過去ログが存在しません。");
+							sendtext(Tag + ": ニコスコメント・過去ログが存在しません。");
 							log.println(gettext());
 							log.println("No optional thread.");
 							OptionalThreadFile = null;
@@ -1883,7 +1883,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						optext = NICOS_EXT;
 						OptionalThreadFile = Path.getReplacedExtFile(CommentFile, optext);
 						if(!OptionalThreadFile.exists()){
-							sendtext("オプショナルスレッドが存在しません。");
+							sendtext("ニコスコメントが存在しません。");
 							log.println(gettext());
 							log.println("No optional thread.");
 							OptionalThreadFile = null;
@@ -2206,9 +2206,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File replaceFilenamePattern(File file, boolean economy, boolean dmc) {
 		String videoFilename = file.getPath();
 		if(VideoTitle==null){
-			log.println("bug! VideoTitle is Null.");
+		//	log.println("bug! VideoTitle is Null.");
 			setVideoTitleIfNull(file.getName());
 		}
+		if(nicoCategory==null)
+			nicoCategory = "";
 		String canonical =
 			VideoTitle.replace("　", " ").replaceAll(" +", " ").trim()
 			.replace("．", ".");

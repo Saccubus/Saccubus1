@@ -117,8 +117,10 @@ public class AutoPlay {
 			if(video!=null){
 				label.setText(video.getName());
 				label.setForeground(Color.blue);
+				label.setToolTipText(video.getName());
 			}else{
 				label.setText("");
+				label.setToolTipText(null);
 			}
 			label.setVisible(true);
 		}
