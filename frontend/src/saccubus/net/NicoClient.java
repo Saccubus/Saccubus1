@@ -1258,6 +1258,7 @@ public class NicoClient {
 				long starttime = Stopwatch.getStartTime();
 				int resumed = (int)resume_size;
 				url = contentUri;
+				log.println("Downloading dmc(S) video..."+(max_size>>20)+"MiB. each "+(downloadLimit>>10)+"KiB");
 				do {
 					int resumelimit = resumed + downloadLimit;
 					if (resumelimit > max_size)
@@ -1286,11 +1287,11 @@ public class NicoClient {
 					ContentType = con.getHeaderField("Content-Type");
 					if(ContentType == null) ContentType = "";
 					ContentDisp = con.getHeaderField("Content-Disposition");
-					log.println("ContentType:" + ContentType + ", " + ContentDisp);
+					debug("\nContentType:" + ContentType + ", " + ContentDisp);
 					contentRange = dmcmap.get("Content-Range");
-					log.println("Content-Range: "+contentRange);
-					log.println("Download limit = "+(downloadLimit>>10)+"KiB, bitrate = "+(byterate/125)+"kbps");
-					log.println("resume Downloading dmc(S) video...");
+					debug("\nContent-Range: "+contentRange);
+					debug("\nDownload limit = "+(downloadLimit>>10)+"KiB, bitrate = "+(byterate/125)+"kbps");
+					debug("\nresume Downloading dmc(S) video...");
 					os = new FileOutputStream(video, true);
 					int read = 0;
 					while ((read = is.read(buf, 0, buf.length)) > 0) {
@@ -1324,13 +1325,13 @@ public class NicoClient {
 						}
 					}
 					debugsOut("\nÅ°read+write statistics(bytes) \n");
-					log.println("resumed size = "+resumed+", max_size="+max_size);
+					debug("\nresumed size = "+resumed+", max_size="+max_size);
 					is.close();
 					os.flush();
 					os.close();
 					//con.disconnect();
 					if(resumed < max_size)
-						log.println("Download not finished, continue.\n");
+						debug("\nDownload not finished, continue.\n");
 					Stopwatch.show();
 				} while (resumed < max_size);
 				log.println("Download finished.");
