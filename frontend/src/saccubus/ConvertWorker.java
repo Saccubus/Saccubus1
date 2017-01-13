@@ -1123,7 +1123,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						return false;
 					}
 					VideoFile = existVideo;
-					sendtext("@vid"+" ("+tid+")"+Tag+"_"+VideoTitle);
+					setVidTitile(tid, Tag, VideoTitle);
 				}
 			}
 			sendtext("ìÆâÊÇÃï€ë∂ÇèIóπ");
@@ -2130,6 +2130,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			boolean videoIsLow = Path.contains(VideoFile,"low_");
 			//boolean videoIsDmc = Path.contains(VideoFile, "dmc_");
+			if(VideoTitle==null){
+				setVideoTitleIfNull(file.getName());
+			}
 			file = replaceFilenamePattern(file, videoIsLow, false);
 			String convfilename = file.getName();
 			folder = file.getParentFile();
@@ -2195,6 +2198,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return false;
 	}
 
+	private void setVidTitile(int tid, String tag, String title) {
+		sendtext("@vid"+" ("+tid+")"+tag+"_"+title);
+	}
+
 	/**
 	 * replaceFilenamePattern(File source)
 	 * @param file
@@ -2206,8 +2213,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File replaceFilenamePattern(File file, boolean economy, boolean dmc) {
 		String videoFilename = file.getPath();
 		if(VideoTitle==null){
-		//	log.println("bug! VideoTitle is Null.");
-			setVideoTitleIfNull(file.getName());
+			String filename = file.getName();
+			// filename = filename.replace("%title%","").replace("%TITLE%", "");
+			// Maybe bug, if contains
+			setVideoTitleIfNull(filename);
 		}
 		if(nicoCategory==null)
 			nicoCategory = "";
@@ -2374,7 +2383,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				nicoTagList.remove(nicoCategory);
 				nicoTagList.add(0, "");
 				numTag = nicoTagList.size();
-				sendtext("@vid"+" ("+tid+")"+Tag+"_"+VideoTitle);
+				setVidTitile(tid, Tag, VideoTitle);
 				sendtext(Tag + "ÇÃèÓïÒÇÃéÊìæÇ…ê¨å˜");
 				if(alternativeTag.isEmpty()){
 					alternativeTag = client.getAlternativeTag();
@@ -3713,6 +3722,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					+ URLEncoder.encode(Setting.getCommentVposShiftString(), encoding));
 			}
 			ffmpeg.addCmd("|--comment-erase:" + Setting.getCommentEraseType());
+			if(Setting.isCommentOff()){
+				ffmpeg.addCmd("|--comment-off:"
+					+URLEncoder.encode(Setting.getCommentOff(), encoding));
+			}
 			String extra = Setting.getExtraMode();
 			if(extra.contains("-April=")){
 				int index = extra.indexOf("-April=");
@@ -4171,6 +4184,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		//	}
 			log.println("Title<" + videoTitle + ">");
 			VideoTitle = videoTitle;
+			setVidTitile(tid,Tag,VideoTitle);
 		}
 	}
 

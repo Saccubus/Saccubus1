@@ -2270,53 +2270,53 @@ public class MainFrame extends JFrame {
 	private JPanel getExperimentPanel(){
 		if(experimentPanel==null){
 			experimentPanel = new JPanelHideable("experimental","実験的設定（仮）", Color.blue);
-			fontWidthFixCheckBox.setText("フォント幅の調整（％）");
+			fontWidthFixCheckBox.setText("フォント調整　幅％");
 			fontWidthFixCheckBox.setForeground(Color.blue);
 			GridBagConstraints grid20_x0_y0 = new GridBagConstraints();
 			grid20_x0_y0.gridx = 0;
 			grid20_x0_y0.gridy = 0;
-			grid20_x0_y0.gridwidth = 2;
+			grid20_x0_y0.gridwidth = 1;
 			//grid20_x0_y0.gridheight = 1;
 			grid20_x0_y0.weightx = 0.0;
 			//grid20_x0_y0.weighty = 0.0;
 			grid20_x0_y0.anchor = GridBagConstraints.NORTHWEST;
 			grid20_x0_y0.fill = GridBagConstraints.NONE;
-			grid20_x0_y0.insets = INSETS_0_5_0_5;
+			grid20_x0_y0.insets = INSETS_0_5_0_0;
 			experimentPanel.add(fontWidthFixCheckBox, grid20_x0_y0);
 			fontWidthRatioTextField.setText("100");
 			fontWidthRatioTextField.setForeground(Color.blue);
 			GridBagConstraints grid20_x1_y0 = new GridBagConstraints();
-			grid20_x1_y0.gridx = 2;
+			grid20_x1_y0.gridx = 1;
 			grid20_x1_y0.gridy = 0;
-			grid20_x1_y0.weightx = 1.0;
-			grid20_x1_y0.gridwidth = 2;
+			grid20_x1_y0.weightx = 0.5;
+			grid20_x1_y0.gridwidth = 1;
 			grid20_x1_y0.anchor = GridBagConstraints.NORTHWEST;
 			grid20_x1_y0.fill = GridBagConstraints.HORIZONTAL;
-			grid20_x1_y0.insets = INSETS_0_5_0_5;
+			grid20_x1_y0.insets = INSETS_0_0_0_0;
 			experimentPanel.add(fontWidthRatioTextField, grid20_x1_y0);
 			//fontHeightRatioLabel.setText("倍率（％）");
 			//fontHeightRatioLabel.setForeground(Color.blue);
-			fontHeightFixCheckBox.setText("フォント高の調整（％）");
+			fontHeightFixCheckBox.setText("高％");
 			fontHeightFixCheckBox.setForeground(Color.blue);
 			GridBagConstraints grid20_x0_y1 = new GridBagConstraints();
-			grid20_x0_y1.gridx = 0;
-			grid20_x0_y1.gridy = 1;
+			grid20_x0_y1.gridx = 2;
+			grid20_x0_y1.gridy = 0;
 			grid20_x0_y1.weightx = 0.0;
-			grid20_x0_y1.gridwidth = 2;
+			grid20_x0_y1.gridwidth = 1;
 			grid20_x0_y1.anchor = GridBagConstraints.NORTHWEST;
 			grid20_x0_y1.fill = GridBagConstraints.NONE;
-			grid20_x0_y1.insets = INSETS_0_5_0_5;
+			grid20_x0_y1.insets = INSETS_0_0_0_0;
 			experimentPanel.add(fontHeightFixCheckBox, grid20_x0_y1);
 			fontHeightRatioTextField.setText("100");
 			fontHeightRatioTextField.setForeground(Color.blue);
 			GridBagConstraints grid20_x1_y1 = new GridBagConstraints();
-			grid20_x1_y1.gridx = 2;
-			grid20_x1_y1.gridy = 1;
+			grid20_x1_y1.gridx = 3;
+			grid20_x1_y1.gridy = 0;
 			grid20_x1_y1.anchor = GridBagConstraints.NORTHWEST;
 			grid20_x1_y1.fill = GridBagConstraints.HORIZONTAL;
-			grid20_x1_y1.weightx = 1.0;
+			grid20_x1_y1.weightx = 0.5;
 			grid20_x1_y1.gridwidth = 2;
-			grid20_x1_y1.insets = INSETS_0_5_0_5;
+			grid20_x1_y1.insets = INSETS_0_0_0_0;
 			experimentPanel.add(fontHeightRatioTextField,grid20_x1_y1);
 			disableOriginalResizeCheckBox.setText("開発版を有効（従来のさきゅばすのリサイズを無効にする）");
 			disableOriginalResizeCheckBox.setForeground(Color.blue);
@@ -2325,7 +2325,7 @@ public class MainFrame extends JFrame {
 			GridBagConstraints grid20_x0_y7 = new GridBagConstraints();
 			grid20_x0_y7.gridx = 0;
 			grid20_x0_y7.gridy = 7;
-			grid20_x0_y7.gridwidth = 4;
+			grid20_x0_y7.gridwidth = 5;
 			//grid20_x0_y7.gridheight = 1;
 			grid20_x0_y7.weightx = 1.0;
 			//grid20_x0_y7.weighty = 0.0;
@@ -2364,13 +2364,13 @@ public class MainFrame extends JFrame {
 			grid20_x2_y8.gridy = 8;
 			grid20_x2_y8.anchor = GridBagConstraints.NORTHWEST;
 			grid20_x2_y8.fill = GridBagConstraints.HORIZONTAL;
-			grid20_x2_y8.insets = INSETS_0_5_0_5;
+			grid20_x2_y8.insets = INSETS_0_0_0_0;
 			experimentPanel.add(useExtraFontCheckBox,grid20_x2_y8);
 			extraFontTextField.setForeground(Color.blue);
 			GridBagConstraints grid20_x4_y8 = new GridBagConstraints();
 			grid20_x4_y8.gridx = 2;
 			grid20_x4_y8.gridy = 8;
-			grid20_x4_y8.gridwidth = 2;
+			grid20_x4_y8.gridwidth = 3;
 			grid20_x4_y8.weightx = 1.0;
 			grid20_x4_y8.anchor = GridBagConstraints.NORTHWEST;
 			grid20_x4_y8.fill = GridBagConstraints.HORIZONTAL;
@@ -2390,7 +2390,7 @@ public class MainFrame extends JFrame {
 			GridBagConstraints grid20_x1_y12 = new GridBagConstraints();
 			grid20_x1_y12.gridx = 1;
 			grid20_x1_y12.gridy = 12;
-			grid20_x1_y12.gridwidth = 3;
+			grid20_x1_y12.gridwidth = 4;
 			grid20_x1_y12.anchor = GridBagConstraints.WEST;
 			grid20_x1_y12.fill = GridBagConstraints.HORIZONTAL;
 			grid20_x1_y12.insets = INSETS_0_5_0_5;
@@ -3380,7 +3380,9 @@ public class MainFrame extends JFrame {
 			commentEraseTypeComboBox.getSelectedIndex(),
 			html5CheckBox.isSelected(),
 			zqMetadataCheckBox.isSelected(),
-			zqMetadataField.getText()
+			zqMetadataField.getText(),
+			commentOffCheckbox.isSelected(),
+			commentOffField.getText()
 		);
 	}
 
@@ -3568,6 +3570,8 @@ public class MainFrame extends JFrame {
 		html5CheckBox.setSelected(setting.isHtml5());
 		zqMetadataCheckBox.setSelected(setting.enableMetadata());
 		zqMetadataField.setText(setting.getZqMetadataOption());
+		commentOffCheckbox.setSelected(setting.isCommentOff());
+		commentOffField.setText(setting.getCommentOff());
 	}
 
 	/**
@@ -3694,6 +3698,8 @@ public class MainFrame extends JFrame {
 	private String Tag;
 	private String watchInfo;
 	private boolean PendingMode;
+	private JCheckBox commentOffCheckbox;
+	private JTextField commentOffField;
 
 	public void myListGetterDone(StringBuffer vList, Logger log) {
 		PendingMode = getSetting().isPendingMode();
@@ -4362,6 +4368,25 @@ s	 * @return javax.swing.JPanel
 	 */
 	private JPanel getNGWordSettingPanel() {
 		if (NGWordSettingPanel == null) {
+			commentOffCheckbox = new JCheckBox("コメントオフエリア");
+			commentOffCheckbox.setForeground(Color.blue);
+			commentOffCheckbox.setToolTipText("サイズ 上から+,下から-。pixel数か動画サイズの%値かコメント行数(b,m,s+数字)。n付きはnakaコメントのみ");
+			GridBagConstraints grid_x0_y6_18 = new GridBagConstraints();
+			grid_x0_y6_18.gridx = 0;
+			grid_x0_y6_18.gridy = 6;
+			grid_x0_y6_18.anchor = GridBagConstraints.WEST;
+			grid_x0_y6_18.fill = GridBagConstraints.HORIZONTAL;
+			grid_x0_y6_18.insets = INSETS_0_0_0_0;
+			commentOffField = new JTextField();
+			commentOffField.setText("");
+			commentOffField.setToolTipText("例:-b3n (下からbigサイズ3行分はコメントオフ,nakaコメントのみ)");
+			GridBagConstraints grid_x1_y6_19 = new GridBagConstraints();
+			grid_x1_y6_19.gridx = 1;
+			grid_x1_y6_19.gridy = 6;
+			grid_x1_y6_19.weightx = 1.0;
+			grid_x1_y6_19.anchor = GridBagConstraints.WEST;
+			grid_x1_y6_19.fill = GridBagConstraints.HORIZONTAL;
+			grid_x1_y6_19.insets = INSETS_0_0_0_5;
 			sharedNgPanel = new JPanel();
 			sharedNgPanel.setLayout(new GridBagLayout());
 			GridBagConstraints grid_x0_y5_17 = new GridBagConstraints();
@@ -4492,6 +4517,8 @@ s	 * @return javax.swing.JPanel
 		//	NGWordSettingPanel.add(replaceCommandLabel, grid_x0_y4_10);
 		//	NGWordSettingPanel.add(replaceCommandField, grid_x1_y4_11);
 			NGWordSettingPanel.add(sharedNgPanel, grid_x0_y5_17);
+			NGWordSettingPanel.add(commentOffCheckbox, grid_x0_y6_18);
+			NGWordSettingPanel.add(commentOffField, grid_x1_y6_19);
 			sharedNgScore.add(sharedNgHighRadioButton,SharedNgScore.HIGH);
 			sharedNgScore.add(sharedNgMediumRadioButton,SharedNgScore.MEDIUM);
 			sharedNgScore.add(sharedNgLowRadioButton,SharedNgScore.LOW);

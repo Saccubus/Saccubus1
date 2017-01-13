@@ -118,7 +118,47 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		int erase_type = (int)strtol(setting->comment_erase,NULL,10);
 		data->comment_erase_type = erase_type;
 	}
-
+	data->comment_off = NULL;
+	if(setting->comment_off !=NULL){
+		// [方向][文字サイズ指定]数値[パーセント指定][nakaコメントフラグ]
+		// 方向:上から+又はスペース,下から-
+		// 文字サイズ指定:b=big m=medium s=small
+		// パーセント指定:%動画高さに対する相対値(100分率)
+		// nakaコメントフラグ:n
+		data->comment_off = setting->comment_off;
+		const char* ptr = setting->comment_off;
+		char* endptr = NULL;
+		int val = 0;
+		int sign = 1;
+		int kind = 0; // 0:pixel指定, 1:big, 2:small, 3:medium, 4:パーセント指定
+		int naka = FALSE;
+		char c = *ptr++;
+		if(c=='+'||c==' ') sign = 1;
+		else if(c=='-') sign = -1;
+		else ptr--;
+		c = *ptr++;
+		if(c=='b'||c=='B') kind = 1;
+		else if(c=='s'||c=='S') kind = 2;
+		else if(c=='m'||c=='M') kind = 3;
+		else ptr--;
+		val = (int)strtol(ptr, &endptr, 10);
+		ptr = endptr;
+		if(ptr==NULL){
+			// val ok
+		}else{
+			c = *ptr++;
+			if(c=='%') kind = 4;
+			else ptr--;
+			c = *ptr++;
+			if(c=='n'||c=='N'){
+				naka = TRUE;
+			}
+		}
+		data->comment_off_y = val;
+		data->comment_off_sign = sign;
+		data->comment_off_kind = kind;
+		data->comment_off_naka = naka;
+	}
 	data->pad_w = 0;
 	data->pad_h = 0;
 	int outw = setting->nico_width_now;

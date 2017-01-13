@@ -209,6 +209,8 @@ public class ConvertingSetting {
 	private String panelHideMapping;
 	private int commentEraseType;
 	private boolean isHtml5;
+	private boolean commentOffEnable;
+	private String commentOffSetting;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -447,7 +449,9 @@ public class ConvertingSetting {
 			int comment_erase_type,
 			boolean watch_html5,
 			boolean zq_enable_metadata,
-			String zq_metadata
+			String zq_metadata,
+			boolean comment_off_enable,
+			String comment_off_setting
 		)
 	{
 		this(	mailaddress,
@@ -601,6 +605,8 @@ public class ConvertingSetting {
 		isHtml5 = watch_html5;
 		zqEnableMetadata = zq_enable_metadata;
 		zqMetadataOption = zq_metadata;
+		commentOffEnable = comment_off_enable;
+		commentOffSetting = comment_off_setting;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1052,6 +1058,12 @@ public class ConvertingSetting {
 	public int getCommentEraseType(){
 		return commentEraseType;
 	}
+	public boolean isCommentOff(){
+		return commentOffEnable;
+	}
+	public String getCommentOff(){
+		return commentOffSetting;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -1205,6 +1217,8 @@ public class ConvertingSetting {
 	static final String PROP_WATCH_HTML5 = "WatchHtml5";
 	static final String PROP_ZQ_ENABLE_METADATA = "EnableMetadata";
 	static final String PROP_ZQ_METADATA_OPTION = "OptMetadata";
+	static final String PROP_COMMENT_OFF_ENABLE = "CommentOffEnable";
+	static final String PROP_COMMENT_OFF_SETTING = "CommentOffSetting";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1432,6 +1446,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_WATCH_HTML5, Boolean.toString(setting.isHtml5));
 		prop.setProperty(PROP_ZQ_ENABLE_METADATA, Boolean.toString(setting.enableMetadata()));
 		prop.setProperty(PROP_ZQ_METADATA_OPTION, setting.getZqMetadataOption());
+		prop.setProperty(PROP_COMMENT_OFF_ENABLE, Boolean.toString(setting.isCommentOff()));
+		prop.setProperty(PROP_COMMENT_OFF_SETTING, setting.getCommentOff());
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1714,7 +1730,9 @@ public class ConvertingSetting {
 			Integer.decode(prop.getProperty(PROP_COMMENT_ERASE_TYPE, "0")),
 			Boolean.parseBoolean(prop.getProperty(PROP_WATCH_HTML5, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ZQ_ENABLE_METADATA, "false")),
-			defOptsMetadata
+			defOptsMetadata,
+			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_OFF_ENABLE, "false")),
+			prop.getProperty(PROP_COMMENT_OFF_SETTING, "-b3")
 		);
 	}
 

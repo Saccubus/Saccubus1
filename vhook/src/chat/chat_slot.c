@@ -139,7 +139,10 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 		// 空きが無い場合
 		if(data->comment_erase_type==0){	//従来通り先のコメントchatを消す
 			deleteChatSlot(slot_item,data);
+			//slot_item->used == FALSE;
 		}else if(data->comment_erase_type==1){	//新しいコメントchatを無視する
+			//コメントsurfを解放
+			if(surf!=null) SDL_FreeSurface(surf);
 			if(data->debug){
 				fprintf(data->log,"[chat_slot/add]comment %d %s ignored. no free slot.\n",
 					item->no,item->chat->com_type);
@@ -186,6 +189,48 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	int bang_end = 0;
 	int y_bottom = y + surf_h;
 	double bang_xpos[2] = {0.0, 0.0};
+	// コメントオフ
+	int off_h = 0;		//オフの高さ
+	int off_min = y_min;
+	int off_max = y_max;
+	int off_kind = 0;
+	int off_naka = FALSE;
+	int off_sign = 0;
+	int comment_off = FALSE;
+	if(data->comment_off!=NULL && item->chat->cid!=CID_OWNER){
+		off_naka = data->comment_off_naka;
+		if(!off_naka || (off_naka && location==CMD_LOC_NAKA)){
+			comment_off = TRUE;
+			off_kind = data->comment_off_kind;
+			off_sign = data->comment_off_sign;
+			off_h = data->comment_off_y;
+			// pixel値に変換
+			if(off_kind==4){
+				// %指定
+				off_h = (int)(0.01 * off_h * video_height);
+			} else if(off_kind != 0){
+				// 文字サイズ指定
+				off_h = (int)(scale * off_h * FONT_PIXEL_SIZE[off_kind]);
+			}
+			// 方向
+			if(off_sign == 0){
+				// 中央からは未実装
+				comment_off = FALSE;
+			}else if(off_sign > 0){
+				//上からマスク
+				off_min += off_h;
+				if(location==CMD_LOC_NAKA)
+					y = y_min = off_min;
+				// !off_nakaの時はueコメントは弾幕化→消去になる
+			}else{
+				//下からマスク
+				off_max -= off_h;
+				if(location==CMD_LOC_NAKA)
+					y_max = off_max;
+				// !off_nakaの時はshitaコメントは弾幕化→消去になる
+			}
+		}
+	}
 	do{
 		y_bottom = y + surf_h;
 		running = FALSE;
@@ -298,6 +343,20 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 		}
 	}while(running);
 	/*そもそも画面内に無ければ無意味。*/
+	if(comment_off){
+		if(y < off_min || y + surf_h > off_max){
+			// コメントオフ
+			//コメントsurfを解放
+			if(surf!=null) SDL_FreeSurface(surf);
+			// 既に追加しているので消去
+			slot_item->chat_item = NULL;
+			slot_item->surf = NULL;
+			slot_item->used = FALSE;
+			fprintf(data->log,"[chat_slot/erase]comment %d %s comment_off.\n",
+					item->no,item->chat->com_type);
+			return 0;
+		}
+	}
 	if(first_comment){
 		//第1コメントは画面外でも弾幕化しない
 		fprintf(data->log,"[chat_slot/add first]comment %d %s %s y=%d\n",

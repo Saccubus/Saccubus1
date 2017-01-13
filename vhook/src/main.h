@@ -96,6 +96,11 @@ struct DATA{
 	int is_live;
 	int comment_vpos_shift;
 	int comment_erase_type;
+	const char* comment_off;
+	int comment_off_y;	//数値
+	int comment_off_sign;	// 1:上から, -1:下から
+	int comment_off_kind;	// 0:pixel, 1:big, 2:small, 3:medium, 4:パーセント
+	int comment_off_naka;	// 1の場合nakaコメントだけマスク
 	//char wstr[128];
 #ifdef VHOOKDEBUG
 //	float dts_rate;	// フレームレート
@@ -144,6 +149,12 @@ typedef struct SETTING{
 	int is_live;	//生放送か?(仮) コメントコマンドの仕様が変わる
 	const char* comment_shift;
 	const char* comment_erase;	//コメントの同時表示数超過時の消し方 0: 1:
+	const char* comment_off;	//コメントオフ指定
+	// [方向][文字サイズ指定]数値[パーセント指定][nakaコメントフラグ]
+	// 方向:上から+,下から-
+	// 文字サイズ指定:b=big m=medium s=small
+	// パーセント指定:%動画高さに対する相対値(100分率)
+	// nakaコメントフラグ:n
 	// CA用フォント
 	const char* CAfont_path[CA_FONT_PATH_MAX];
 	int CAfont_index[CA_FONT_PATH_MAX];
