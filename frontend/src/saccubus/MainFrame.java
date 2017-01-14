@@ -229,6 +229,8 @@ public class MainFrame extends JFrame {
 	JComboBox commentModeComboBox = new JComboBox(commentModeArray);
 	JCheckBox commentSpeedCheckBox = new JCheckBox();
 	JTextField commentSpeedTextField = new JTextField();
+	JCheckBox commentLineFeedCheckBox = new JCheckBox();
+	JTextField commentLineFeedTextField = new JTextField();
 	JCheckBox enableCA_CheckBox = new JCheckBox();
 	JCheckBox disableEcoCheckBox = new JCheckBox();
 	JCheckBox preferSmileCheckBox;
@@ -2085,6 +2087,21 @@ public class MainFrame extends JFrame {
 	{
 		if (VhookSettingPanel==null) {
 			VhookSettingPanel = new JPanelHideable("VhookSetting","拡張vhookライブラリの設定",Color.black);
+			GridBagConstraints grid8_y11_x0_w3 = new GridBagConstraints();
+			grid8_y11_x0_w3.gridy = 11;
+			grid8_y11_x0_w3.gridx = 0;
+			grid8_y11_x0_w3.gridwidth = 3;
+			grid8_y11_x0_w3.anchor = GridBagConstraints.WEST;
+			grid8_y11_x0_w3.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y11_x0_w3.insets = INSETS_0_0_0_5;
+			GridBagConstraints grid8_y11_x3_w3 = new GridBagConstraints();
+			grid8_y11_x3_w3.gridy = 11;
+			grid8_y11_x3_w3.gridx = 3;
+			grid8_y11_x3_w3.gridwidth = 3;
+			grid8_y11_x3_w3.weightx = 1.0;
+			grid8_y11_x3_w3.anchor = GridBagConstraints.CENTER;
+			grid8_y11_x3_w3.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y11_x3_w3.insets = INSETS_0_0_0_5;
 			GridBagConstraints grid8_y10_x0_w3 = new GridBagConstraints();
 			grid8_y10_x0_w3.gridy = 10;
 			grid8_y10_x0_w3.gridx = 0;
@@ -2246,8 +2263,13 @@ public class MainFrame extends JFrame {
 			commentSpeedCheckBox.setForeground(Color.blue);
 			VhookSettingPanel.add(commentSpeedCheckBox, grid8_y10_x0_w3);
 			commentSpeedTextField.setForeground(Color.blue);
-			commentSpeedTextField.setToolTipText("公式の最小値は約138Pixel/Sec");
+			commentSpeedTextField.setToolTipText("公式の最小値は約138Pixel/Sec,約4秒");
 			VhookSettingPanel.add(commentSpeedTextField, grid8_y10_x3_w3);
+			commentLineFeedCheckBox.setText("コメント行送り(フォントサイズに対する%値)");
+			commentLineFeedCheckBox.setForeground(Color.blue);
+			VhookSettingPanel.add(commentLineFeedCheckBox, grid8_y11_x0_w3);
+			commentLineFeedTextField.setForeground(Color.blue);
+			VhookSettingPanel.add(commentLineFeedTextField, grid8_y11_x3_w3);
 			GridBagConstraints c = new GridBagConstraints();
 			c.gridy = 10;
 			c.anchor = GridBagConstraints.SOUTHEAST;
@@ -3371,7 +3393,9 @@ public class MainFrame extends JFrame {
 			zqMetadataCheckBox.isSelected(),
 			zqMetadataField.getText(),
 			commentOffCheckbox.isSelected(),
-			commentOffField.getText()
+			commentOffField.getText(),
+			commentLineFeedCheckBox.isSelected(),
+			commentLineFeedTextField.getText()
 		);
 	}
 
@@ -3561,6 +3585,8 @@ public class MainFrame extends JFrame {
 		zqMetadataField.setText(setting.getZqMetadataOption());
 		commentOffCheckbox.setSelected(setting.isCommentOff());
 		commentOffField.setText(setting.getCommentOff());
+		commentLineFeedCheckBox.setSelected(setting.enableCommentLF());
+		commentLineFeedTextField.setText(setting.getCommentLF());
 	}
 
 	/**

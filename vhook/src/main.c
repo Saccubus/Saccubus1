@@ -118,14 +118,14 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		int erase_type = (int)strtol(setting->comment_erase,NULL,10);
 		data->comment_erase_type = erase_type;
 	}
-	data->comment_off = NULL;
+	data->comment_off = FALSE;
 	if(setting->comment_off !=NULL){
 		// [方向][文字サイズ指定]数値[パーセント指定][nakaコメントフラグ]
 		// 方向:上から+又はスペース,下から-
 		// 文字サイズ指定:b=big m=medium s=small
 		// パーセント指定:%動画高さに対する相対値(100分率)
 		// nakaコメントフラグ:n
-		data->comment_off = setting->comment_off;
+		data->comment_off = TRUE;
 		const char* ptr = setting->comment_off;
 		char* endptr = NULL;
 		int val = 0;
@@ -158,6 +158,17 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		data->comment_off_sign = sign;
 		data->comment_off_kind = kind;
 		data->comment_off_naka = naka;
+	}
+	data->comment_linefeed_ratio = 0.0f;
+	data->comment_lf_control = FALSE;
+	if(setting->comment_linefeed !=NULL){
+		char *endptr = NULL;
+		float val = 0.0f;
+		val  = (float)strtod(setting->comment_linefeed,&endptr);
+		if((endptr==NULL && *endptr=='\0') || val!=0.0f){
+			data-> comment_linefeed_ratio  = (val / 100.0) + 1.0;
+			data->comment_lf_control = TRUE;
+		}
 	}
 	data->pad_w = 0;
 	data->pad_h = 0;

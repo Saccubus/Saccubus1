@@ -40,6 +40,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	int is_button = 0;
 	int is_vote = FALSE;
 	int is_owner = item->chat->cid == CID_OWNER;
+	int lf_control = data->comment_lf_control;
 	//動画ならcolor=10 ("blue2","marinebule")はblue2N(=21)(新しいblue2)に変更
 	if(color==10 && !data->is_live){
 		color = 21;	//blue2N(#3366ff)
@@ -404,7 +405,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		nicolimit_width *= autoscale;
 		//	コメント高さ補正
 		int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
-		if(h!=ret->h){
+		if(h!=ret->h && !lf_control){
 			ret = adjustComment(ret,data,h);
 			if(debug)
 			fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
@@ -544,7 +545,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 
 	//	コメント高さ補正
 	int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
-	if(h!=ret->h){
+	if(h!=ret->h && !lf_control){
 		ret = adjustComment(ret,data,h);
 		if(debug)
 		fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
@@ -1012,6 +1013,14 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,
 	int h = data->font_pixel_size[size];
 	int fontsel = GET_TYPE(fonttype);	//get fonttype
 
+	//UIからの行送り制御
+	if(data->comment_lf_control){
+		h = (int)(data->comment_linefeed_ratio * h);
+		if(h < 1)
+			h = 1;
+	}
+	if(debug)
+		fprintf(log,"[comsurface/drawText3]line feed size=%d\n",h);
 	if(isSpaceFont(fonttype)){	//fonttype is one of space-char's
 		Uint16 code = GET_CODE(fonttype);	//get unicode0
 		int w = data->fontsize_fix;
@@ -1124,31 +1133,45 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 	if(debug)
 		fprintf(log,"[comsurface/drawText4]TTF_RenderUNICODE surf(%d, %d) %s %d chars\n",
 			surf->w,surf->h,COM_FONTSIZE_NAME[size],uint16len(str));
+	//UIからの行送り制御
+	int fontpixsize = data->font_pixel_size[size];	//pixel
+	if(data->comment_lf_control){
+		fontpixsize = (int)(data->comment_linefeed_ratio * fontpixsize);
+		if(fontpixsize < 1)
+			fontpixsize = 1;
+	}
+	if(debug)
+		fprintf(log,"[comsurface/drawText4]line feed size=%d\n",fontpixsize);
 	//高さ補正
 	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
-	int difh = data->font_pixel_size[size] - surf->h;
+	int difh = fontpixsize - surf->h;
 	if(difh==0){
 		return surf;
 	}
-	SDL_Surface* ret = drawNullSurface(surf->w,data->font_pixel_size[size]);
+	SDL_Surface* ret = drawNullSurface(surf->w,fontpixsize);
 	if(ret==NULL){
 		fprintf(log,"***ERROR*** [comsurface/drawText4]drawNullSurface : %s\n",SDL_GetError());
 		fflush(log);
 		return NULL;
 	}
+	int biash = 0;
 	if(difh > 0){
 		difh = (difh+1)>>1;
 	}else{
+		biash = -difh;
+		biash = (biash+1)>>1;
 		difh = 0;
 		if(debug)
 			fprintf(log,"[comsurface/drawText4]hight %d > font_pixel_size %d\n",
-				surf->h,data->font_pixel_size[size]);
+				surf->h,fontpixsize);
 	}
-	SDL_Rect srcrect = {0,0,ret->w,ret->h};
+	SDL_Rect srcrect = {0,biash,ret->w,ret->h};
 	SDL_Rect destrect = {0,difh,ret->w,ret->h};
-	//rect.y = 0;	// = (ret->h - surf->h)>>1
+	//rect.y = 0;	// = (ret->h - surf_h)>>1
 	SDL_BlitSurface(surf,&srcrect,ret,&destrect);
 	SDL_FreeSurface(surf);
+	if(debug)
+		fprintf(log,"[comsurface/drawText4]font_surf (%d, %d)\n",ret->w, ret->h);
 	return ret;
 }
 

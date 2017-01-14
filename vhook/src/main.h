@@ -96,11 +96,13 @@ struct DATA{
 	int is_live;
 	int comment_vpos_shift;
 	int comment_erase_type;
-	const char* comment_off;
+	int comment_off;
 	int comment_off_y;	//数値
 	int comment_off_sign;	// 1:上から, -1:下から
 	int comment_off_kind;	// 0:pixel, 1:big, 2:small, 3:medium, 4:パーセント
-	int comment_off_naka;	// 1の場合nakaコメントだけマスク
+	int comment_off_naka;	// TRUEの場合nakaコメントだけマスク
+	int comment_lf_control;	//行送り制御
+	float comment_linefeed_ratio;	// コメント行送り割合 -1.0 の場合は無効(0.0～1.0f)
 	//char wstr[128];
 #ifdef VHOOKDEBUG
 //	float dts_rate;	// フレームレート
@@ -150,6 +152,7 @@ typedef struct SETTING{
 	const char* comment_shift;
 	const char* comment_erase;	//コメントの同時表示数超過時の消し方 0: 1:
 	const char* comment_off;	//コメントオフ指定
+	const char* comment_linefeed;	//コメント行送り指定
 	// [方向][文字サイズ指定]数値[パーセント指定][nakaコメントフラグ]
 	// 方向:上から+,下から-
 	// 文字サイズ指定:b=big m=medium s=small

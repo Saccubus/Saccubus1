@@ -147,6 +147,8 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		item->is_button = GET_CMD_IS_BUTTON(location)!=0;
 		// ender コマンド
 		item->ender = GET_CMD_ENDER(location)!=0;
+		// itemfork
+		item->itemfork = GET_CMD_ITEMFORK(location)!=0;
 		// color24bit
 		color24 = getSDL_color(color);
 		// bit 31-16 を＠秒数+1とみなす　saccubus1.37以降

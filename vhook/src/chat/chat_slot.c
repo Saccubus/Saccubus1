@@ -197,10 +197,12 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	int off_naka = FALSE;
 	int off_sign = 0;
 	int comment_off = FALSE;
-	if(data->comment_off!=NULL && item->chat->cid!=CID_OWNER){
+	if(data->comment_off && item->chat->cid!=CID_OWNER && !item->itemfork){
 		off_naka = data->comment_off_naka;
 		if(!off_naka || (off_naka && location==CMD_LOC_NAKA)){
 			comment_off = TRUE;
+			if(data->debug)
+				fprintf(data->log,"[chat_slot/add]comment_off enable\n");
 			off_kind = data->comment_off_kind;
 			off_sign = data->comment_off_sign;
 			off_h = data->comment_off_y;
@@ -229,6 +231,9 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 					y_max = off_max;
 				// !off_naka‚ÌŽž‚ÍshitaƒRƒƒ“ƒg‚Í’e–‹‰»¨Á‹Ž‚É‚È‚é
 			}
+			if(data->debug)
+				fprintf(data->log,"[chat_slot/add]comment_off %s, min=%d, max=%d\n"
+					,(comment_off?"enable":"disable"),off_min,off_max);
 		}
 	}
 	do{

@@ -55,6 +55,8 @@ public class Chat {
 
 	private static final int CMD_EX_ENDER = 1024;
 
+	private static final int CMD_EX_ITEMFORK = 2048;
+
 	/**
 	 * Location bit 31-16 ’Ç‰Á
 	 * 0: ]—ˆ(Šù’è’l)A1`65535: —•b” (”’l=•b”+1)
@@ -311,6 +313,12 @@ public class Chat {
 					isColorAssigned = true;
 				}
 			}
+		}
+	}
+
+	public void setItemfork(boolean b){
+		if(b){
+			extend |= CMD_EX_ITEMFORK;
 		}
 	}
 

@@ -753,6 +753,7 @@ public class NicoXMLReader extends DefaultHandler {
 			}
 			item.setComment(com);
 			// log.println("\tpreimum="+premium+"| item="+item.toString()+" |");
+			item.setItemfork(item_fork);
 			if (!item_kicked) {
 				packet.addChat(item);
 			}

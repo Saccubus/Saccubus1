@@ -157,4 +157,8 @@ void exitExtProcess();
 
 #define FRAMEHOOK_OPT_COMMENT_OFF	"--comment-off:"
 #define FRAMEHOOK_OPT_COMMENT_OFF_LEN	strlen(FRAMEHOOK_OPT_COMMENT_OFF)
+
+#define FRAMEHOOK_OPT_COMMENT_LF	"--comment-lf:"
+#define FRAMEHOOK_OPT_COMMENT_LF_LEN	strlen(FRAMEHOOK_OPT_COMMENT_LF)
+
 #endif /*FRAMEHOOK_H_*/

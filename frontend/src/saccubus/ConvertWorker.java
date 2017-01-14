@@ -3726,6 +3726,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ffmpeg.addCmd("|--comment-off:"
 					+URLEncoder.encode(Setting.getCommentOff(), encoding));
 			}
+			if(Setting.enableCommentLF()){
+				ffmpeg.addCmd("|--comment-lf:"
+					+URLEncoder.encode(Setting.getCommentLF(), encoding));
+			}
 			String extra = Setting.getExtraMode();
 			if(extra.contains("-April=")){
 				int index = extra.indexOf("-April=");

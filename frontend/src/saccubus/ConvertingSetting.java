@@ -211,6 +211,8 @@ public class ConvertingSetting {
 	private boolean isHtml5;
 	private boolean commentOffEnable;
 	private String commentOffSetting;
+	private boolean commentLFControl;
+	private String commentLFSetting;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -451,7 +453,9 @@ public class ConvertingSetting {
 			boolean zq_enable_metadata,
 			String zq_metadata,
 			boolean comment_off_enable,
-			String comment_off_setting
+			String comment_off_setting,
+			boolean comment_lf_control,
+			String comment_lf_setting
 		)
 	{
 		this(	mailaddress,
@@ -607,6 +611,8 @@ public class ConvertingSetting {
 		zqMetadataOption = zq_metadata;
 		commentOffEnable = comment_off_enable;
 		commentOffSetting = comment_off_setting;
+		commentLFControl = comment_lf_control;
+		commentLFSetting = comment_lf_setting;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1064,6 +1070,12 @@ public class ConvertingSetting {
 	public String getCommentOff(){
 		return commentOffSetting;
 	}
+	public boolean enableCommentLF(){
+		return commentLFControl;
+	}
+	public String getCommentLF(){
+		return commentLFSetting;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -1219,6 +1231,8 @@ public class ConvertingSetting {
 	static final String PROP_ZQ_METADATA_OPTION = "OptMetadata";
 	static final String PROP_COMMENT_OFF_ENABLE = "CommentOffEnable";
 	static final String PROP_COMMENT_OFF_SETTING = "CommentOffSetting";
+	static final String PROP_COMMENT_LF_CONTROL = "LineFeedControl";
+	static final String PROP_COMMENT_LF_SETTING = "LineFeedSetting";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1448,6 +1462,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ZQ_METADATA_OPTION, setting.getZqMetadataOption());
 		prop.setProperty(PROP_COMMENT_OFF_ENABLE, Boolean.toString(setting.isCommentOff()));
 		prop.setProperty(PROP_COMMENT_OFF_SETTING, setting.getCommentOff());
+		prop.setProperty(PROP_COMMENT_LF_CONTROL, Boolean.toString(setting.enableCommentLF()));
+		prop.setProperty(PROP_COMMENT_LF_SETTING, setting.getCommentLF());
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1732,7 +1748,9 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_ZQ_ENABLE_METADATA, "false")),
 			defOptsMetadata,
 			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_OFF_ENABLE, "false")),
-			prop.getProperty(PROP_COMMENT_OFF_SETTING, "-b3")
+			prop.getProperty(PROP_COMMENT_OFF_SETTING, "-b3n"),
+			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_LF_CONTROL, "false")),
+			prop.getProperty(PROP_COMMENT_LF_SETTING, "")
 		);
 	}
 
