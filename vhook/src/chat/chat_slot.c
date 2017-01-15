@@ -347,6 +347,31 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			}
 		}
 	}while(running);
+	if(data->comment_lf_control > 1){
+		// lf行間補正 ver2
+		// lf_control = 0:なし 　1: rev1.67.1.2 の時はしない
+		// lf制御 コメント高さの補正はrender時に済
+		int h = (int)((data->comment_linefeed_ratio - 1.0) * surf_h);
+		int gap[4] = {3, 5, 2, 3};
+		int gaph = (int)(scale * gap[size] + 0.5);
+		if(data->debug)
+			fprintf(data->log,"[chat_slot/add]lf_ratio=%5.2f, h=%d, gap=%d\n"
+				,data->comment_linefeed_ratio, h, gaph);
+		if(h < 0 && data->shadow_kind!=0
+			&& y > y_min && y > off_min && y_bottom < y_max && y_bottom < off_max){
+			// 行間を小さくする時は既定の行間を補正する
+			if(location==CMD_LOC_BOTTOM){
+				y += gaph;
+				if(y_bottom > y_max) y = y_max;
+				if(comment_off && y_bottom > off_max) y = off_max;
+			}else{
+				y -= gaph;
+				if(y < y_min) y = y_min;
+				if(comment_off && y < off_min) y = off_min;
+			}
+			fprintf(data->log,"[chat_slot/add]lf-control-fixed y=%d, line_feed %d\n", y, -gaph);
+		}
+	}
 	/*そもそも画面内に無ければ無意味。*/
 	if(comment_off){
 		if(y < off_min || y + surf_h > off_max){

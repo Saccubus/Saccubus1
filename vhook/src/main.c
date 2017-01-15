@@ -160,14 +160,23 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		data->comment_off_naka = naka;
 	}
 	data->comment_linefeed_ratio = 0.0f;
-	data->comment_lf_control = FALSE;
+	data->comment_lf_control = 0;
 	if(setting->comment_linefeed !=NULL){
 		char *endptr = NULL;
 		float val = 0.0f;
 		val  = (float)strtod(setting->comment_linefeed,&endptr);
-		if((endptr==NULL && *endptr=='\0') || val!=0.0f){
-			data-> comment_linefeed_ratio  = (val / 100.0) + 1.0;
-			data->comment_lf_control = TRUE;
+		if(val!=0.0f || endptr==NULL || setting->comment_linefeed[0]=='0'){
+			data->comment_linefeed_ratio  = (val / 100.0) + 1.0;
+			int lfc = 2;	// new ver=2
+			if(endptr!=NULL){
+				if(*endptr=='%') endptr++;
+				if(*endptr==',' || *endptr==';' || *endptr==' ') endptr++;
+				lfc = (int)strtol(endptr,NULL,10);
+				if(lfc <= 0) lfc = 2;
+			}
+			data->comment_lf_control = lfc;
+			fprintf(log,"[main/init]linefeed control: mode=%d, ratio=%-6.3f\n"
+				,data->comment_lf_control, data->comment_linefeed_ratio);
 		}
 	}
 	data->pad_w = 0;

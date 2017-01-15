@@ -2267,8 +2267,10 @@ public class MainFrame extends JFrame {
 			VhookSettingPanel.add(commentSpeedTextField, grid8_y10_x3_w3);
 			commentLineFeedCheckBox.setText("コメント行送り(フォントサイズに対する%値)");
 			commentLineFeedCheckBox.setForeground(Color.blue);
+			commentLineFeedCheckBox.setToolTipText("ver.2: マイナス値の時影付でも行間縮み易くした");
 			VhookSettingPanel.add(commentLineFeedCheckBox, grid8_y11_x0_w3);
 			commentLineFeedTextField.setForeground(Color.blue);
+			commentLineFeedTextField.setToolTipText("整数値[,ver](ver=1は1.67.1.12)");
 			VhookSettingPanel.add(commentLineFeedTextField, grid8_y11_x3_w3);
 			GridBagConstraints c = new GridBagConstraints();
 			c.gridy = 10;

@@ -101,7 +101,7 @@ struct DATA{
 	int comment_off_sign;	// 1:上から, -1:下から
 	int comment_off_kind;	// 0:pixel, 1:big, 2:small, 3:medium, 4:パーセント
 	int comment_off_naka;	// TRUEの場合nakaコメントだけマスク
-	int comment_lf_control;	//行送り制御
+	int comment_lf_control;	//行送り制御 0:無し 1:rev.1.67.1.12 2:new(フォント削れにくく)
 	float comment_linefeed_ratio;	// コメント行送り割合 -1.0 の場合は無効(0.0～1.0f)
 	//char wstr[128];
 #ifdef VHOOKDEBUG

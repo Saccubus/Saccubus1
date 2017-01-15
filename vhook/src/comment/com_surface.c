@@ -405,7 +405,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		nicolimit_width *= autoscale;
 		//	コメント高さ補正
 		int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
-		if(h!=ret->h && !lf_control){
+		if(h!=ret->h && lf_control==0){
 			ret = adjustComment(ret,data,h);
 			if(debug)
 			fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
@@ -545,7 +545,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 
 	//	コメント高さ補正
 	int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
-	if(h!=ret->h && !lf_control){
+	if(h!=ret->h && lf_control==0){
 		ret = adjustComment(ret,data,h);
 		if(debug)
 		fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
@@ -1014,7 +1014,7 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,
 	int fontsel = GET_TYPE(fonttype);	//get fonttype
 
 	//UIからの行送り制御
-	if(data->comment_lf_control){
+	if(data->comment_lf_control!=0){
 		h = (int)(data->comment_linefeed_ratio * h);
 		if(h < 1)
 			h = 1;
@@ -1135,7 +1135,7 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 			surf->w,surf->h,COM_FONTSIZE_NAME[size],uint16len(str));
 	//UIからの行送り制御
 	int fontpixsize = data->font_pixel_size[size];	//pixel
-	if(data->comment_lf_control){
+	if(data->comment_lf_control!=0){
 		fontpixsize = (int)(data->comment_linefeed_ratio * fontpixsize);
 		if(fontpixsize < 1)
 			fontpixsize = 1;
