@@ -347,6 +347,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			}
 		}
 	}while(running);
+	y_bottom = y+surf_h;
 	if(data->comment_lf_control > 1){
 		// lf行間補正 ver2
 		// lf_control = 0:なし 　1: rev1.67.1.2 の時はしない
@@ -362,8 +363,8 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			// 行間を小さくする時は既定の行間を補正する
 			if(location==CMD_LOC_BOTTOM){
 				y += gaph;
-				if(y_bottom > y_max) y = y_max;
-				if(comment_off && y_bottom > off_max) y = off_max;
+				if(y+surf_h > y_max) y = y_max;
+				if(comment_off && y+surf_h > off_max) y = off_max;
 			}else{
 				y -= gaph;
 				if(y < y_min) y = y_min;
