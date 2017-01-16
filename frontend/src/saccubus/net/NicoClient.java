@@ -1199,12 +1199,8 @@ public class NicoClient {
 					max_size = sizeRanged;
 				if(max_size > 0 && sizeDmc <= 0){
 					limits[1] = max_size;
-					if(max_size < min_size){
-						setExtraError("97 最小限度サイズより小さいのでダウンロード中止");
-						return null;
-					}
-					if(max_size == min_size){
-						setExtraError("97 最小限度サイズと同じ。ダウンロード済みのようです");
+					if(max_size <= min_size){
+						setExtraError("97 最小限度サイズと同じか小さいのでダウンロード中止");
 						return null;
 					}
 					// 続行

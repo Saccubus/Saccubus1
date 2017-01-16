@@ -988,18 +988,19 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							if(dmc_high == 0){
 								log.println("dmc(S) getsizeé∏îs!(dmc_high == 0)");
 								sendtext("dmc(S) getsizeé∏îs!");
-							}else
-							if(dmc_size == 0){
-								log.println("dmc(S) downloadé∏îs!(dmc_size == 0)");
-								sendtext("dmc(S) downloadé∏îs!");
 							}else if(video_size == dmc_high){
 								log.println("dmc(S) É_ÉEÉìÉçÅ[Éhçœ(video_size == dmc_high)");
 								sendtext("dmc(S) É_ÉEÉìÉçÅ[Éhçœ");
 								dmcVideoFile = VideoFile;
+								dmc_size = video_size;
 							}else if(min_size >= dmc_size){
 								log.println("dmc(S) É_ÉEÉìÉçÅ[ÉhíÜé~(min_size >= dmc_size)");
 								sendtext("dmc(S) É_ÉEÉìÉçÅ[ÉhíÜé~");
 								dmcVideoFile = null;
+								dmc_size = 0;
+							}else if(dmc_size == 0){
+								log.println("dmc(S) downloadé∏îs!(dmc_size == 0)");
+								sendtext("dmc(S) downloadé∏îs!");
 							}else if(resume_size != dmc_size){
 								log.println("dmc(S) resumeé∏îs!(resume_size != dmc_size)");
 								sendtext("dmc(S) resumeé∏îs!");
