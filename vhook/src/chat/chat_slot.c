@@ -363,8 +363,8 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			// sŠÔ‚ð¬‚³‚­‚·‚éŽž‚ÍŠù’è‚ÌsŠÔ‚ð•â³‚·‚é
 			if(location==CMD_LOC_BOTTOM){
 				y += gaph;
-				if(y+surf_h > y_max) y = y_max;
-				if(comment_off && y+surf_h > off_max) y = off_max;
+				if(y > y_max - surf_h) y = y_max - surf_h;
+				if(comment_off && y > off_max - surf_h) y = off_max - surf_h;
 			}else{
 				y -= gaph;
 				if(y < y_min) y = y_min;
