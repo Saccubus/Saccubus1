@@ -851,6 +851,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					// dmc
 					log.println("Dmc download start.");
 					long dmc_size = 0;
+					long dmc_high = 0;
 					long resume_size = 0;
 					long video_size = 0;
 					long size_high = 0;
@@ -912,8 +913,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									}
 									return false;
 								}
-								dmc_size = limits[1];
-								log.println("dmc size: "+(dmc_size>>20)+"MiB");
+								dmc_high = limits[1];
+								if(dmcVideoFile.canRead())
+									dmc_size = dmcVideoFile.length();
+								log.println("dmc size: "+(dmc_high>>20)+"MiB");
 								if(video==null){
 									//dmc_size = 0;
 									String ecode = client.getExtraError();
@@ -982,15 +985,19 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									return false;
 								}
 							} while(resume_size < dmc_size);
+							if(dmc_high == 0){
+								log.println("dmc(S) getsize失敗!(dmc_high == 0)");
+								sendtext("dmc(S) getsize失敗!");
+							}else
 							if(dmc_size == 0){
 								log.println("dmc(S) download失敗!(dmc_size == 0)");
 								sendtext("dmc(S) download失敗!");
-							}else if(min_size == dmc_size){
-								log.println("dmc(S) ダウンロード済(min_size == dmc_size)");
+							}else if(video_size == dmc_high){
+								log.println("dmc(S) ダウンロード済(video_size == dmc_high)");
 								sendtext("dmc(S) ダウンロード済");
 								dmcVideoFile = VideoFile;
-							}else if(min_size > dmc_size){
-								log.println("dmc(S) ダウンロード中止(min_size > dmc_size)");
+							}else if(min_size >= dmc_size){
+								log.println("dmc(S) ダウンロード中止(min_size >= dmc_size)");
 								sendtext("dmc(S) ダウンロード中止");
 								dmcVideoFile = null;
 							}else if(resume_size != dmc_size){
@@ -1044,6 +1051,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							}
 						}
 					}
+					// video_size , dmc_size should be real size of a file which exists now or has been loaded
 					if ( (size_high > video_size && size_high > dmc_size && !Setting.isInhibitSmaller())
 						||(size_high != video_size && size_high != dmc_size && Setting.isSmilePreferable())){
 						// smile動画をダウンロード
