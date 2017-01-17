@@ -661,6 +661,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return false;
 			}
 		}
+		proxy = Setting.getProxy();
+		proxy_port = Setting.getProxyPort();
 		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
 			|| Setting.isSaveThumbInfo()) {
 			// ブラウザセッション共有の場合はここでセッションを読み込む
@@ -681,20 +683,19 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return false;
 			}
 			if (useProxy()){
-				proxy = Setting.getProxy();
-				proxy_port = Setting.getProxyPort();
 				if (   proxy == null || proxy.isEmpty()
 					|| proxy_port < 0 || proxy_port > 65535   ){
 					sendtext("プロキシの設定が不正です。");
 					result = "35";
 					return false;
 				}
-				isDebugNet = proxy.startsWith(NicoClient.DEBUG_PROXY);
 			} else {
 				proxy = null;
 				proxy_port = -1;
 			}
 		}
+		if(proxy!=null)
+			isDebugNet = proxy.startsWith(NicoClient.DEBUG_PROXY);
 		resultBuffer = Setting.getReturnBuffer();
 		sendtext("チェック終了");
 		return true;

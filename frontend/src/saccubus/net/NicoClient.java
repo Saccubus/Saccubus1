@@ -1831,7 +1831,7 @@ public class NicoClient {
 		if(NeedsKey && Official.isEmpty()){
 			if(force184 == null || threadKey == null){
 				if(!getOfficialOption(ThreadID) && !retry_threadkey){
-					return null;
+						return null;
 				}
 				if(!getOfficialOption(OptionalThraedID)){
 					return null;

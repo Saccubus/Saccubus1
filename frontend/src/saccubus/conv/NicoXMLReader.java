@@ -709,7 +709,7 @@ public class NicoXMLReader extends DefaultHandler {
 			//投稿者フィルター
 			if (owner_filter!=null){
 				item.setVpos("0");
-				item.setMail("");	//リセットサイズ、ロケーション、色
+				item.setMail("@"+(2900*3600));	//リセットサイズ、ロケーション、色、有効秒数2900時間
 				item.setScript();
 				item.setScriptForUser();
 				item.setScriptForOwner();
