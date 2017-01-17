@@ -2273,7 +2273,7 @@ public class MainFrame extends JFrame {
 			commentLineFeedTextField.setToolTipText("êÆêîíl[,ver](ver=1ÇÕ1.67.1.12)");
 			VhookSettingPanel.add(commentLineFeedTextField, grid8_y11_x3_w3);
 			GridBagConstraints c = new GridBagConstraints();
-			c.gridy = 10;
+			c.gridy = 11;
 			c.anchor = GridBagConstraints.SOUTHEAST;
 			VhookSettingPanel.add(VhookSettingPanel.getHideLabel(), c);
 		}

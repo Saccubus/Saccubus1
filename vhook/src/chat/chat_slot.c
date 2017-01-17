@@ -362,20 +362,22 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			&& y > y_min && y > off_min && y_bottom < y_max && y_bottom < off_max){
 			// 行間を小さくする時は既定の行間を補正する
 			if(location==CMD_LOC_BOTTOM){
-				y += gaph;
-				if(y > y_max - surf_h) y = y_max - surf_h;
-				if(comment_off && y > off_max - surf_h) y = off_max - surf_h;
+				y_bottom += gaph;
+				if(y_bottom > y_max) y_bottom = y_max;
+				if(comment_off && y_bottom > off_max) y_bottom = off_max;
+				y = y_bottom - surf_h;
 			}else{
 				y -= gaph;
 				if(y < y_min) y = y_min;
 				if(comment_off && y < off_min) y = off_min;
+				y_bottom = y + surf_h;
 			}
 			fprintf(data->log,"[chat_slot/add]lf-control-fixed y=%d, line_feed %d\n", y, -gaph);
 		}
 	}
 	/*そもそも画面内に無ければ無意味。*/
 	if(comment_off){
-		if(y < off_min || y + surf_h > off_max){
+		if(y < off_min || y_bottom > off_max){
 			// コメントオフ
 			//コメントsurfを解放
 			if(surf!=null) SDL_FreeSurface(surf);
@@ -393,7 +395,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 		fprintf(data->log,"[chat_slot/add first]comment %d %s %s y=%d\n",
 			item->no,COM_LOC_NAME[location],COM_FONTSIZE_NAME[size],y);
 	}else
-	if(y < y_min || y + surf_h > y_max){	// 範囲を超えてるので、ランダムに配置。
+	if(y < y_min || y_bottom > y_max){	// 範囲を超えてるので、ランダムに配置。
 		fprintf(data->log,"[chat_slot/add random]comment %d %s %s y=%d -> random\n",
 			item->no,COM_LOC_NAME[location],COM_FONTSIZE_NAME[size],y);
 		//big16は固定
