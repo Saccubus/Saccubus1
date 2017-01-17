@@ -753,7 +753,7 @@ public class NicoClient {
 			MsgUrl = nicomap.get("ms");
 			if(MsgUrl!=null && MsgUrl.contains("_nmsg_")){
 				MsgUrl = nicomap.get("ms_sub");
-				log.println("resetted MsgUrl: "+MsgUrl);
+				log.println("reset MsgUrl: "+MsgUrl);
 			}
 			UserID = nicomap.get("user_id");
 			userKey = nicomap.get("userkey");
@@ -766,7 +766,7 @@ public class NicoClient {
 					// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
 					optionalThreadID = ThreadID;
 					ThreadID = videoTag;
-					log.println("resetted ThreadID: "+ThreadID);
+					log.println("reset ThreadID: "+ThreadID);
 				}
 				log.println("OptionalThreadID: "+optionalThreadID);
 			}
@@ -2594,7 +2594,7 @@ public class NicoClient {
 						// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
 						optionalThreadID = ThreadID;
 						ThreadID = videoTag;
-						log.println("resetted ThreadID: "+ThreadID);
+						log.println("reset ThreadID: "+ThreadID);
 					}
 					log.println("OptionalThreadID: "+optionalThreadID);
 				}
@@ -2619,7 +2619,7 @@ public class NicoClient {
 						// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
 						optionalThreadID = ThreadID;
 						ThreadID = videoTag;
-						log.println("resetted ThreadID: "+ThreadID);
+						log.println("reset ThreadID: "+ThreadID);
 					}
 					log.println("OptionalThreadID: "+optionalThreadID);
 				}
