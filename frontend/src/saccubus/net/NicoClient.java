@@ -694,7 +694,7 @@ public class NicoClient {
 
 	private boolean NeedsKey = false;
 	private String Premium = "";
-	private String OptionalThraedID = "";	// normal Comment ID when Community DOUGA
+	private String optionalThreadID = "";	// normal Comment ID when Community DOUGA
 	private String nicosID = "";
 	private boolean economy = false;
 	private String ownerFilter;			// video owner filter（replace）
@@ -751,10 +751,24 @@ public class NicoClient {
 			ThreadID = nicomap.get("thread_id");
 			VideoUrl = nicomap.get("url");
 			MsgUrl = nicomap.get("ms");
+			if(MsgUrl!=null && MsgUrl.contains("_nmsg_")){
+				MsgUrl = nicomap.get("ms_sub");
+				log.println("resetted MsgUrl: "+MsgUrl);
+			}
 			UserID = nicomap.get("user_id");
 			userKey = nicomap.get("userkey");
-			if (OptionalThraedID.isEmpty() && nicomap.containsKey("optional_thread_id")){
-				OptionalThraedID = nicomap.get("optional_thread_id");
+			if (optionalThreadID.isEmpty() && nicomap.containsKey("optional_thread_id")){
+				optionalThreadID = nicomap.get("optional_thread_id");
+				if(videoTag.equals(optionalThreadID)){
+					// html5の場合逆になっているようだ
+					// ThreadKey が引けるのは メインthreadの方だけ
+					// chanelの場合 メイン=チャンネル=threadKey optionalは何もない
+					// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
+					optionalThreadID = ThreadID;
+					ThreadID = videoTag;
+					log.println("resetted ThreadID: "+ThreadID);
+				}
+				log.println("OptionalThreadID: "+optionalThreadID);
 			}
 			if (nicosID.isEmpty() && nicomap.containsKey("nicos_id")){
 				nicosID = nicomap.get("nicos_id");
@@ -792,8 +806,8 @@ public class NicoClient {
 			log.println("Video time length: " + VideoLength + "sec");
 			log.println("ThreadID:<" + ThreadID + "> Maybe uploaded on "
 					+ WayBackDate.format(ThreadID));
-			if (OptionalThraedID!=null && !OptionalThraedID.isEmpty()){
-				log.println("OptionalThreadID:<" + OptionalThraedID + ">");
+			if (optionalThreadID!=null && !optionalThreadID.isEmpty()){
+				log.println("OptionalThreadID:<" + optionalThreadID + ">");
 			}
 			if (nicosID!=null && !nicosID.isEmpty()){
 				log.println("nicosID:<" + nicosID + ">");
@@ -1695,18 +1709,16 @@ public class NicoClient {
 		if(comment_mode == 2 || comment_mode == 0 && !hasNewCommentBegun){
 			useNewComment = false;
 		}
-		return downloadComment(file, status, back_comment, CommentType.USER, flag, useNewComment, isAppend);
+		return downloadComment(file, status, ThreadID, NeedsKey, back_comment, CommentType.USER, flag, useNewComment, isAppend);
 	}
 
 	public File getOwnerComment(final File file, final JLabel status, final ConvertStopFlag flag) {
-		return downloadComment(file, status, STR_OWNER_COMMENT, CommentType.OWNER, flag, false, false);
+		return downloadComment(file, status, ThreadID, false, STR_OWNER_COMMENT, CommentType.OWNER, flag, false, false);
 	}
 
 	public File getNicosComment(final File file, final JLabel status, final String nicos_id,
 			final String back_comment, final String time, final ConvertStopFlag flag,
 			final int comment_mode, final boolean isAppend) {
-		ThreadID = nicos_id;
-		NeedsKey = false;
 		Official = "";
 		if (time != null && !time.isEmpty()){
 		 	WayBackKey = "0";
@@ -1718,14 +1730,12 @@ public class NicoClient {
 		if(comment_mode == 2 || comment_mode == 0 && !hasNewCommentBegun){
 			useNewComment = false;
 		}
-		return downloadComment(file, status, back_comment, CommentType.NICOS, flag, useNewComment, isAppend);
+		return downloadComment(file, status, nicos_id, false, back_comment, CommentType.NICOS, flag, useNewComment, isAppend);
 	}
 
 	public File getOptionalThread(final File file, final JLabel status, final String optionalThreadID,
 			final String back_comment, final String time, final ConvertStopFlag flag,
 			final int comment_mode, final boolean isAppend) {
-		ThreadID = optionalThreadID;
-	 	NeedsKey = retry_threadkey;
 	 	Official = "";
 		// この後でOwnerCommentを取得するとユーザー動画の投稿者コメントが取得される。
 		if (time != null && !time.isEmpty()){
@@ -1739,7 +1749,7 @@ public class NicoClient {
 		if(comment_mode == 2 || comment_mode == 0 && !hasNewCommentBegun){
 			useNewComment = false;
 		}
-		return downloadComment(file, status, back_comment, CommentType.OPTIONAL, flag, useNewComment, isAppend);
+		return downloadComment(file, status, optionalThreadID, false, back_comment, CommentType.OPTIONAL, flag, useNewComment, isAppend);
 	}
 
 	private String Official = "";
@@ -1757,38 +1767,36 @@ public class NicoClient {
 		+ (comType == CommentType.OWNER ? "\" fork=\"1\"/>" :  "\"/>");
 	}
 
-	private String commentCommand2009(CommentType commentType, String back_comment, String res_from){
+	private String commentCommand2009(CommentType commentType, String thread, boolean needskey, String back_comment, String res_from){
 		String req;
 		String wayback =  "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey;
-		String resfrom;
-		if(!back_comment.endsWith("-")){
-			// normal
-			if (res_from.isEmpty()){
-				// overwrite file
-				resfrom = "\" res_from=\"-" + back_comment;
-			}else{
-				// append file mode using res_from param (this is test)
-				resfrom = "\" res_from=\"" + res_from;
-			}
-		}else {
-			// for Debug, input comment_no "12345-" etc.
-			resfrom = "\" res_from=\"" + back_comment;
-		}
+//		String resfrom;
+//		if(!back_comment.endsWith("-")){
+//			// normal
+//			if (res_from.isEmpty()){
+//				// overwrite file
+//				resfrom = "\" res_from=\"-" + back_comment;
+//			}else{
+//				// append file mode using res_from param (this is test)
+//				resfrom = "\" res_from=\"" + res_from;
+//			}
+//		}else {
+//			// for Debug, input comment_no "12345-" etc.
+//			resfrom = "\" res_from=\"" + back_comment;
+//		}
 		String user_key = "";
 		if(userKey!=null && !userKey.isEmpty())
 			user_key = "\" userkey=\""+userKey;
-		String req_thread_id = retry_threadkey? OptionalThraedID : ThreadID;
-		if(commentType==CommentType.NICOS)
-			req_thread_id = nicosID;
 		StringBuffer sb = new StringBuffer();
 		sb.append("<packet>");
-		sb.append("<thread thread=\"" + req_thread_id);
+		sb.append("<thread thread=\"" + thread);
 		sb.append("\" version=\"20090904");
-		sb.append(user_key);
-		sb.append(resfrom);
+		//sb.append(resfrom);
 		sb.append("\" user_id=\"" + UserID);
-		if(NeedsKey){
+		if(needskey){
 			sb.append(Official);
+		}else{
+			sb.append(user_key);
 		}
 		if(!"0".equals(WayBackKey)){
 			sb.append(wayback);
@@ -1798,20 +1806,21 @@ public class NicoClient {
 		sb.append("\" with_global=\"1");
 		sb.append("\"/>");
 		//thread end, thread_leaves start
-		sb.append("<thread_leaves thread=\"" + req_thread_id);
+		sb.append("<thread_leaves thread=\"" + thread);
 		sb.append("\" version=\"20090904");
-		sb.append(user_key);
-		sb.append(resfrom);
+		//sb.append(resfrom);
 		sb.append("\" user_id=\"" + UserID);
-		if(NeedsKey){
+		if(needskey){
 			sb.append(Official);
+		}else{
+			sb.append(user_key);
 		}
 		if(!"0".equals(WayBackKey)){
 			sb.append(wayback);
 		}
 		sb.append("\" scores=\"1");	//NGscore
 		sb.append("\" nicoru=\"1");
-		sb.append("\" with_global=\"1");
+		//sb.append("\" with_global=\"1");
 		sb.append("\">0-");	//>0-10:100,1000<
 		sb.append((VideoLength + 59) / 60);
 		sb.append(":100,");
@@ -1822,24 +1831,30 @@ public class NicoClient {
 		return req;
 	}
 
-	private File downloadComment(final File file, final JLabel status,
-			String back_comment, CommentType commentType, final ConvertStopFlag flag,
+	private String getOfficial(String thread, boolean needs_key){
+		String officialkey = "";
+		if(needs_key){
+			if(force184 == null || threadKey == null){
+				if(!getOfficialOption(thread)){
+					return null;
+				}
+			}
+			officialkey =
+				  "\" threadkey=\"" + threadKey
+				+ "\" force_184=\"" + force184;
+		}
+		return officialkey;
+	}
+
+	private File downloadComment(final File file, final JLabel status, String thread,
+			boolean needs_key, String back_comment, CommentType commentType, final ConvertStopFlag flag,
 			boolean useNewComment, boolean isAppend) {
 		log.print("Downloading " + commentType.toString().toLowerCase()
 				+" comment, size:" + back_comment + "...");
 		//String official = "";	/* 公式動画用のkey追加 */
-		if(NeedsKey && Official.isEmpty()){
-			if(force184 == null || threadKey == null){
-				if(!getOfficialOption(ThreadID) && !retry_threadkey){
-						return null;
-				}
-				if(!getOfficialOption(OptionalThraedID)){
-					return null;
-				}
-			}
-			Official ="\" force_184=\"" + force184
-					+ "\" threadkey=\"" + threadKey;
-		}
+		Official = getOfficial(thread, needs_key);
+		if(Official==null)
+			return null;
 		FileOutputStream fos = null;
 		InputStream is = null;
 		OutputStream os = null;
@@ -1869,7 +1884,7 @@ public class NicoClient {
 			 */
 			String req;
 			if (useNewComment) {
-				req = commentCommand2009(commentType, back_comment, lastNo);
+				req = commentCommand2009(commentType, thread, needs_key, back_comment, lastNo);
 				if (lastNo.isEmpty())
 					log.print("New comment mode...");
 				else
@@ -2186,7 +2201,7 @@ public class NicoClient {
 	}
 
 	public String getOptionalThreadID() {
-		return OptionalThraedID;
+		return optionalThreadID;
 	}
 
 	public String getNicosID() {
@@ -2571,8 +2586,17 @@ public class NicoClient {
 				debug("■thread_key_required: "+key_required+"\n");
 				Mson m_optional_thread_id = m_thread.get("optional_thread_id");
 				if(!m_optional_thread_id.isNull()){
-					OptionalThraedID = m_optional_thread_id.getAsString();
-					log.println("OptionalThreadID: "+OptionalThraedID);
+					optionalThreadID = m_optional_thread_id.getAsString();
+					if(videoTag.equals(optionalThreadID)){
+						// html5の場合逆になっているようだ
+						// ThreadKey が引けるのは メインthreadの方だけ
+						// chanelの場合 メイン=チャンネル=threadKey optionalは何もない
+						// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
+						optionalThreadID = ThreadID;
+						ThreadID = videoTag;
+						log.println("resetted ThreadID: "+ThreadID);
+					}
+					log.println("OptionalThreadID: "+optionalThreadID);
 				}
 				NeedsKey = key_required.equals("true") ? true : false;
 				log.println("NeedsKey: "+NeedsKey);
@@ -2587,8 +2611,17 @@ public class NicoClient {
 				log.println("ThreadID: "+ThreadID);
 				Mson m_community = m_ids.get("community");
 				if(!m_community.isNull()){
-					OptionalThraedID = m_community.getAsString();
-					log.println("OptionalThreadID: "+OptionalThraedID);
+					optionalThreadID = m_community.getAsString();
+					if(videoTag.equals(optionalThreadID)){
+						// html5の場合逆になっているようだ
+						// ThreadKey が引けるのは メインthreadの方だけ
+						// chanelの場合 メイン=チャンネル=threadKey optionalは何もない
+						// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
+						optionalThreadID = ThreadID;
+						ThreadID = videoTag;
+						log.println("resetted ThreadID: "+ThreadID);
+					}
+					log.println("OptionalThreadID: "+optionalThreadID);
 				}
 				Mson m_nicos = m_ids.get("nicos");
 				if(!m_nicos.isNull()){
