@@ -1709,9 +1709,32 @@ public class NicoClient {
 		if(comment_mode == 2 || comment_mode == 0 && !hasNewCommentBegun){
 			useNewComment = false;
 		}
-		return downloadComment(file, status, ThreadID, NeedsKey, back_comment, CommentType.USER, flag, useNewComment, isAppend);
+		File dl = downloadComment(file, status, ThreadID, NeedsKey, back_comment, CommentType.USER, flag, useNewComment, isAppend);
+		if(dl==null && retry_threadkey){
+			if(optionalThreadID!=null && !optionalThreadID.equals(videoTag)){
+				// may be optionalThread is main and needs_key
+				String thread = ThreadID;
+				ThreadID = optionalThreadID;
+				optionalThreadID = thread;
+				dl = downloadComment(file, status, ThreadID, NeedsKey, back_comment, CommentType.USER, flag, useNewComment, isAppend);
+			}
+		}
+		return dl;
 	}
 
+	public File getCommentJson(final File file, final JLabel status, final String back_comment,
+			final String time, final ConvertStopFlag flag){
+		if(Debug){
+			String comjson = downloadCommentJson(status, flag, back_comment);
+			if(comjson==null || comjson.isEmpty()){
+				log.println("\n["+videoTag+"]can't download comment json.");
+				return null;
+			}
+			Path.writeAllText(file, comjson, "UTF-8");
+			log.println("\nwrite comment json to "+file);
+		}
+		return file;
+	}
 	public File getOwnerComment(final File file, final JLabel status, final ConvertStopFlag flag) {
 		return downloadComment(file, status, ThreadID, false, STR_OWNER_COMMENT, CommentType.OWNER, flag, false, false);
 	}
@@ -1853,8 +1876,9 @@ public class NicoClient {
 				+" comment, size:" + back_comment + "...");
 		//String official = "";	/* 公式動画用のkey追加 */
 		Official = getOfficial(thread, needs_key);
-		if(Official==null)
+		if(Official==null){
 			return null;
+		}
 		FileOutputStream fos = null;
 		InputStream is = null;
 		OutputStream os = null;
@@ -2007,11 +2031,13 @@ public class NicoClient {
 			}
 			if(threadKey.isEmpty()){
 				log.println("ng.\nCan't get threadkey. retry with community thread");
+				Official = "";
 				if(!retry_threadkey){
 					retry_threadkey  = true;
-					Official = "";
 				 	threadKey = null;
 				 	force184 = null;
+				} else {
+					retry_threadkey = false;
 				}
 				return false;
 			}
@@ -2027,6 +2053,7 @@ public class NicoClient {
 	private String WayBackTime = "0";
 	private String ExtraError = "";
 	private boolean hasNewCommentBegun = true;
+	private String backcomment;
 
 	/**
 	 * Parse String time to canonical String WayBackTime<br/>
@@ -2127,6 +2154,302 @@ public class NicoClient {
 		} else {
 			return "1000";
 		}
+	}
+
+
+	private String commentJsonPost2009(String thread, String optional, String threadkey) {
+		StringBuilder sb = new StringBuilder();
+		int p = 0;
+		sb.append("[{\"ping\":{\"content\":\"rs:0\"}}");
+		if(optional==null || optional.isEmpty()){
+			sb.append(postJsonData(p++, thread, userKey, false, false));
+			sb.append(postJsonData(p++, thread, userKey, true, false));
+		}else{
+			sb.append(postJsonData(p++, thread, threadkey, false, true));
+			sb.append(postJsonData(p++, thread, threadkey, true, true));
+			sb.append(postJsonData(p++, optional, userKey, false, false));
+			sb.append(postJsonData(p++, optional, userKey, true, false));
+		}
+		sb.append(",{\"ping\":{\"content\":\"rf:0\"}}]");
+		return sb.substring(0);
+	}
+	private String postJsonData(int n, String thread, String key, boolean isleaf, boolean needs_key){
+		StringBuilder sb = new StringBuilder();
+		sb.append(",{\"ping\":{\"content\":\"ps:"+n+"\"}}");
+		if(!isleaf)
+			sb.append(",{\"thread\":{");
+		else
+			sb.append(",{\"thread_leaves\":{");
+		sb.append("\"thread\":\""+thread+"\"");
+		if(!isleaf){
+			sb.append(",\"version\":\"20090904\"");
+		}
+		sb.append(",\"language\":0");
+		sb.append(",\"user_id\":\""+UserID+"\"");
+		if(needs_key)
+			sb.append(",\"force_184\":\"1\"");
+		if(!isleaf)
+			sb.append(",\"with_global\":1");
+		else
+			sb.append(",\"content\":\"0-"+((VideoLength+59)/60)+":100,"+backcomment+"\"");	//0-10:100,1000
+		sb.append(",\"scores\":1,\"nicoru\":0");
+		if(key!=null && !key.isEmpty()){
+			if(!needs_key)
+				sb.append(",\"userkey\":\""+key+"\"");
+			else
+				sb.append(",\"threadkey\":\""+key +"\"");
+		}
+		sb.append("}},{\"ping\":{\"content\":\"pf:"+n+"\"}}");
+		return sb.substring(0);
+	}
+	//	Req Post data =
+//		[	//以下では整形したが実際は改行も空白もインデントも無い
+//			{"ping":{"content":"rs:0"}},	//R start 0
+//			{"ping":{"content":"ps:0"}},	//  P start 0
+//			{"thread":{
+//				"thread":"9999999993",	//smスレッド?オプショナルスレッド?
+//				"version":"20090904",
+//				"language":0,
+//				"user_id":ユーザーID,
+//				"with_global":1,
+//				"scores":1,
+//				"nicoru":0,
+//				"userkey":ユーザーキー}
+//			},
+//			{"ping":{"content":"pf:0"}},	//  P finish 0
+//			{"ping":{"content":"ps:1"}},	//  P start 1
+//		  	{"thread_leaves":{
+//				"thread":"999999993",
+//				"language":0,
+//				"user_id":ユーザーID,
+//				"content":"0-3:100,250",	//3分の動画  250コメント
+//				"scores":1,
+//				"nicoru":0,
+//				"userkey":ユーザーキー}
+//			},
+//		  	{"ping":{"content":"pf:1"}},	//  P finish 1
+//		  	{"ping":{"content":"ps:2"}},	//  P start 2
+//		  	{"thread":{
+//				"thread":"9999999994",	//コミュニティthread
+//				"version":"20090904",
+//				"language":0,
+//				"user_id":ユーザーID,
+//				"force_184":"1",
+//				"with_global":1,
+//				"scores":1,
+//				"nicoru":0,
+//				"threadkey":スレッドキー}
+//			},
+//			{"ping":{"content":"pf:2"}},	//  P finish 2
+//			{"ping":{"content":"ps:3"}},	//  P start 3
+//			{"thread_leaves":{
+//				"thread":"9999999994",
+//				"language":0,
+//				"user_id":ユーザーID,
+//				"content":"0-3:100,250",	//3分の動画  250コメント
+//				"scores":1,
+//				"nicoru":0,
+//				"force_184":"1",
+//				"threadkey":スレッドキー}
+//			},
+//			{"ping":{"content":"pf:3"}},	//  P finish 3
+//			{"ping":{"content":"rf:0"}}		//R finish 0
+//		]
+//	Response Header =
+//		HTTP/1.1 200 OK
+//		Access-Control-Allow-Origin: *
+//		Access-Control-Allow-Methods: POST,GET,OPTIONS,HEAD
+//		Access-Control-Allow-Headers: Content-Type
+//		Vary: Accept-Encoding
+//		Cache-Control: max-age=0
+//		Content-Encoding: gzip
+//		Content-Type: text/json
+//		Connection: Keep-Alive
+//		Keep-Alive: timeout=15, max=100
+//		Content-Length: 15009
+//	Response Data =
+//		[
+//			{"ping": {"content": "rs:0"}},
+//			{"ping": {"content": "ps:0"}},
+//			{"thread": {
+//				"resultcode": 0,
+//				"thread": "9999999993",
+//				"server_time": 1484681074,
+//				"last_res": 7496,
+//				"ticket": "0x38b3de9b",
+//				"revision": 1,
+//				"click_revision": 48}
+//			},
+//			{"leaf": {"thread": "9999999993","count": 5140}},
+//			{"leaf": {"thread": "9999999993","leaf": 1,"count": 2140}},
+//			{"leaf": {"thread": "9999999993","leaf": 2,"count": 216}},
+//			{"global_num_res": {"thread": "9999999993","num_res": 7670}},
+//			{"ping": {"content": "pf:0"}},
+//			{"ping": {"content": "ps:1"}},
+//			{"thread": {
+//				"resultcode": 0,
+//				"thread": "9999999993",
+//				"server_time": 1484681074,
+//				"last_res": 7496,
+//				"ticket": "0x38b3de9b",
+//				"revision": 1,
+//				"click_revision": 48}
+//			},
+//			{"chat": {
+//				"thread": "9999999993",
+//				"no": 4877,
+//				"vpos": 13854,
+//				"leaf": 2,
+//				"date": 1401116767,
+//				"premium": 1,
+//				"anonymity": 1,
+//				"user_id": ユーザーID_4877,
+//				"mail": "184",
+//				"content": 通常コメント4877}
+//			},
+//			中略
+//			{"chat": {
+//				"thread": "9999999993",
+//				"no": 7496,
+//				"vpos": 2426,
+//				"date": 1484578038,
+//				"date_usec": 959793,
+//				"anonymity": 1,
+//				"user_id": "wyT4hdcnpRa5gKm7EiagcCsO20A",
+//				"mail": "184",
+//				"content": 通常コメント7496}
+//			},
+//			{"ping": {"content": "pf:1"}},
+//			{"ping": {"content": "ps:2"}},
+//			{"thread": {
+//				"resultcode": 0,
+//				"thread": "9999999994",
+//				"server_time": 1484681074,
+//				"last_res": 52,
+//				"ticket": "0x365b5d16",
+//				"revision": 1}
+//			},
+//			{"leaf": {"thread": "9999999994","count": 41}},
+//			{"leaf": {"thread": "9999999994","leaf": 1,"count": 10}},
+//			{"leaf": {"thread": "9999999994","leaf": 2,"count": 1}},
+//			{"global_num_res": {"thread": "9999999994","num_res": 52}},
+//			{"ping": {"content": "pf:2"}},
+//			{"ping": {"content": "ps:3"}},
+//			{"thread": {
+//				"resultcode": 0,
+//				"thread": "9999999994",
+//				"server_time": 1484681074,
+//				"last_res": 52,
+//				"ticket": "0x365b5d16",
+//				"revision": 1}
+//			},
+//			{"chat": {
+//				"thread": "9999999994",
+//				"no": 1,
+//				"vpos": 4014,
+//				"date": 1324739748,
+//				"premium": 1,
+//				"anonymity": 1,
+//				"user_id": ユーザーID_1,
+//				"content": コミュニティコメント1}
+//			},
+//			中略
+//			{"chat": {
+//				"thread": "9999999994",
+//				"no": 51,
+//				"vpos": 5791,
+//				"date": 1474285779,
+//				"date_usec": 890564,
+//				"premium": 1,
+//				"anonymity": 1,
+//				"user_id": ユーザーID_51,
+//				"content": コミュニティコメント51}
+//			},
+//			{"ping": {"content": "pf:3"}},
+//			{"ping": {"content": "rf:0"}}
+//		]
+//
+
+//	Url = http://nmsg.nicovideo.jp/api.json/
+//	Req Header =
+//		POST /api.json/ HTTP/1.1
+//		Host: nmsg.nicovideo.jp
+//		User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0
+//		Accept: */*
+//		Accept-Language: ja,en-US;q=0.7,en;q=0.3
+//		Accept-Encoding: gzip, deflate
+//		Content-Type: text/plain;charset=UTF-8
+//		Origin: http://www.nicovideo.jp
+//		Referer: http://www.nicovideo.jp/watch/9999999994	//コミュニティ動画(スレッド番号)
+//		Content-Length: 1051
+//		DNT: 1
+//		Connection: keep-alive
+	public String downloadCommentJson(JLabel status, ConvertStopFlag flag, String back_comment){
+		String url = "http://nmsg.nicovideo.jp/api.json/";
+		InputStream is = null;
+		OutputStream os = null;
+		HttpURLConnection con = null;
+		StringBuffer fosb = new StringBuffer();
+		String retComment = null;
+		backcomment = back_comment;
+		try {
+			long start0 = Stopwatch.getElapsedTime(0);
+			con = urlConnect(url, "POST", Cookie, true, true, "keep-alive", true);
+			os = con.getOutputStream();
+			String postdata;
+			postdata = commentJsonPost2009(ThreadID, optionalThreadID, threadKey);
+			debug("\n■write:" + postdata + "\n");
+			os.write(postdata.getBytes());
+			os.flush();
+			os.close();
+			int code = con.getResponseCode();
+			debug("■Response:" + code + " " + con.getResponseMessage() + "\n");
+			if (code != HttpURLConnection.HTTP_OK) {
+				log.println("ng.\nCan't download JSON comment:" + url);
+				return null;
+			}
+			is = con.getInputStream();
+			int max_size = 0;
+			try {
+				String content_length = con.getHeaderField("Content-length");
+				if(content_length!=null)
+					max_size = Integer.parseInt(content_length);
+			} catch(NumberFormatException e){
+				max_size = 0;
+			}
+			int size = 0;
+			int read = 0;
+			//debugsInit();
+			while ((read = is.read(buf, 0, buf.length)) > 0) {
+				//debugsAdd(read);
+				fosb.append(new String(buf, 0, read, "UTF-8"));
+				size += read;
+				sendStatus(status, "comment JSON ", max_size, size, start0);
+				Stopwatch.show();
+				if (flag.needStop()) {
+					log.println("Stopped.");
+					return null;
+				}
+			}
+			//debugsOut("■read+write statistics(bytes) ");
+			log.println("ok.");
+			is.close();
+			// add OwnerFilter to the end of owner comment file before </packet>
+			// fos.close();
+			con.disconnect();
+			retComment = fosb.substring(0);
+			return retComment;
+		} catch (IOException e) {
+			log.printStackTrace(e);
+		}finally{
+			if(is!=null)
+				try { is.close(); } catch(IOException e1){}
+			if(os!=null)
+				try { os.close(); } catch(IOException e2){}
+			if(con!=null)
+				con.disconnect();
+		}
+		return null;
 	}
 
 	private int dsCount = 0;
@@ -2597,8 +2920,11 @@ public class NicoClient {
 						log.println("reset ThreadID: "+ThreadID);
 					}
 					log.println("OptionalThreadID: "+optionalThreadID);
+					NeedsKey =  true;
 				}
-				NeedsKey = key_required.equals("true") ? true : false;
+				if(key_required.equals("true")){
+					NeedsKey =  true;
+				}
 				log.println("NeedsKey: "+NeedsKey);
 				Mson m_nicos_thread_id = m_thread.get("nicos_thread_id");
 				if(!m_nicos_thread_id.isNull()){
@@ -2622,6 +2948,7 @@ public class NicoClient {
 						log.println("reset ThreadID: "+ThreadID);
 					}
 					log.println("OptionalThreadID: "+optionalThreadID);
+					NeedsKey = true;
 				}
 				Mson m_nicos = m_ids.get("nicos");
 				if(!m_nicos.isNull()){
@@ -2631,6 +2958,7 @@ public class NicoClient {
 				MsgUrl = m_thread.getAsString("serverUrl");
 				log.println("MsgUrl: "+MsgUrl);
 			}
+			log.println("NeedsKey: "+NeedsKey);
 			Mson m_viewer = dataApiMson.get("viewer");
 			UserID = m_viewer.getAsString("id");
 			debug("■UserID: "+UserID+"\n");
@@ -2638,6 +2966,10 @@ public class NicoClient {
 			log.println("Premium: "+Premium);
 			nicomap.put("is_premium", Premium);
 			Mson m_context = dataApiMson.get("context");
+			if(userKey==null || userKey.isEmpty()){
+				userKey = m_context.getAsString("userkey");
+				log.println("userkey(html5): "+userKey);
+			}
 			debug("\n");
 			log.println("isMyMemory: "+m_context.getAsString("isMyMemory"));
 			/*

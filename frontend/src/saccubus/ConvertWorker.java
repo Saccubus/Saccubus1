@@ -1224,6 +1224,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				result = "53";
 				return false;
 			}
+			File commentJson = Path.getReplacedExtFile(CommentFile, "_commentJSON.txt");
+			commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag);
+			if(commentJson!=null){
+				sendtext("コメントJSONのダウンロードに成功 " + commentJson.getPath());
+			}
 			if(isAppendComment() || !isDebugNet){	// デバッグでなければコメントファイル整理
 				// ファイル内ダブリを整理
 				backup = Path.fileCopy(CommentFile,appendCommentFile);
