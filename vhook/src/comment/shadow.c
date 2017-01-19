@@ -268,9 +268,10 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c)
 	return shadow;
 }
 
+#define SHADOW_S2NEW 1
 #define SHADOW_SACCUBUS2 2
 //Saccubus2同様?
-SDL_Surface* likeSaccubus2(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
+SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c, int zmax_select){
 	/*スライド幅の確定*/
 	int slide = SHADOW_SACCUBUS2;
 	if(is_fix_size){
@@ -339,7 +340,7 @@ SDL_Surface* likeSaccubus2(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Co
 	SDL_LockSurface(shadow);
 	SDL_LockSurface(shadow2);
 	int zmax = slide;
-	if(is_fix_size){
+	if(is_fix_size && zmax_select==SHADOW_SACCUBUS2){
 		zmax <<= 1;
 	}
 	for(z=0;z<zmax;z++){
@@ -375,6 +376,13 @@ SDL_Surface* likeSaccubus2(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Co
 	return shadow;
 }
 
+SDL_Surface* likeSaccubus2(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
+	return likeSaccubus2a(surf,is_black,is_fix_size,c,SHADOW_SACCUBUS2);
+}
+
+SDL_Surface* likeSaccubus2new(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
+	return likeSaccubus2a(surf,is_black,is_fix_size,c,SHADOW_S2NEW);
+}
 
 //定義
 SDL_Surface* (*ShadowFunc[SHADOW_MAX])(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c) = {
@@ -382,5 +390,6 @@ SDL_Surface* (*ShadowFunc[SHADOW_MAX])(SDL_Surface* surf,int is_black,int is_fix
 	likeNicoNico,
 	likeNovel,
 	likeOld,
-	likeSaccubus2
+	likeSaccubus2,
+	likeSaccubus2new
 };

@@ -59,7 +59,7 @@ public class ConvertingSetting {
 		"02:‰E‰º",
 		"03:ˆÍ‚¢‚İ",
 		"04:Saccubus2•—",
-		"05:VSaccubus2•—FreeType2"
+		"05:Saccubus2•—v2"
 		};
 
 	private String MailAddress;
