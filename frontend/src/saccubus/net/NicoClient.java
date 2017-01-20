@@ -1890,7 +1890,8 @@ public class NicoClient {
 				if(isAppend && useNewComment){
 					if(commentType != CommentType.OWNER)
 						lastNo = ConvertWorker.getNoUserLastChat(file);
-				}else{
+				}
+				if(!isAppend){
 					if (file.delete()) {	//	ファイルがすでに存在するなら削除する。
 						log.print("previous " + commentType.toString().toLowerCase() + " comment deleted...");
 					}

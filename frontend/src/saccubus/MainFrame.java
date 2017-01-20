@@ -410,15 +410,22 @@ public class MainFrame extends JFrame {
 		GridBagConstraints grid1_x1_y0_71 = new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 6);
 		grid1_x1_y0_71.fill = GridBagConstraints.BOTH;
 		grid1_x1_y0_71.ipady = 0;
+		GridBagConstraints grid10_x3_y1_70c = new GridBagConstraints();
+		grid10_x3_y1_70c.fill = GridBagConstraints.NONE;
+		grid10_x3_y1_70c.gridy = 1;
+		grid10_x3_y1_70c.gridx = 3;
+		grid10_x3_y1_70c.ipadx = 0;
+		grid10_x3_y1_70c.ipady = 0;
+		grid10_x3_y1_70c.weightx = 0.0;
+		grid10_x3_y1_70c.insets = INSETS_0_0_0_0;
 		GridBagConstraints grid10_x2_y1_70b = new GridBagConstraints();
-		grid10_x2_y1_70b.fill = GridBagConstraints.HORIZONTAL;
+		grid10_x2_y1_70b.fill = GridBagConstraints.NONE;
 		grid10_x2_y1_70b.gridy = 1;
+		grid10_x2_y1_70b.gridx = 2;
 		grid10_x2_y1_70b.ipadx = 0;
 		grid10_x2_y1_70b.ipady = 0;
 		grid10_x2_y1_70b.weightx = 0.0;
 		grid10_x2_y1_70b.insets = INSETS_0_0_0_0;
-		grid10_x2_y1_70b.gridx = 3;
-		grid10_x2_y1_70b.gridwidth = 1;
 		GridBagConstraints grid10_x1_y1_70 = new GridBagConstraints();
 		grid10_x1_y1_70.fill = GridBagConstraints.HORIZONTAL;
 		grid10_x1_y1_70.gridy = 1;
@@ -437,6 +444,7 @@ public class MainFrame extends JFrame {
 		grid10_x0_y1_69.gridy = 1;
 		GridBagConstraints grid10_x1_y0_68 = new GridBagConstraints();
 		grid10_x1_y0_68.fill = GridBagConstraints.BOTH;
+		grid10_x1_y0_68.gridx = 1;
 		grid10_x1_y0_68.gridy = 0;
 		grid10_x1_y0_68.ipady = 0;
 		grid10_x1_y0_68.weightx = 1.0;
@@ -1200,10 +1208,10 @@ public class MainFrame extends JFrame {
 			//	,TitledBorder.LEADING, TitledBorder.TOP,
 			//	new Font("MS UI Gothic", Font.PLAIN, 12), Color.black));
 		CommentSaveInfoPanel.setLayout(gridBagLayout4);
-		SavingCommentCheckBox.setText("コメントをダウンロードする");
-		appendCommentCheckBox.setText("追加モードで保存");
+		SavingCommentCheckBox.setText("コメントをダウンロード");
+		appendCommentCheckBox.setText("追加モード");
 		appendCommentCheckBox.addActionListener(new MainFrame_noticePop(this));
-		AddTimeStampToCommentCheckBox.setText("コメントファイル名に日時を付加する（フォルダを指定した時のみ）");
+		AddTimeStampToCommentCheckBox.setText("コメントファイル名に日時付加（フォルダ指定時）");
 		AddTimeStampToCommentCheckBox.setForeground(Color.blue);
 		AddTimeStampToCommentCheckBox.setToolTipText("過去ログにも現在のコメントにも日時が付く");
 		ShowSavingCommentFileDialogButton.setText("参照");
@@ -1350,6 +1358,8 @@ public class MainFrame extends JFrame {
 		FontIndexLabel.setText("フォント番号");
 		VideoID_Label.setText("URL/ID");
 		WayBackLabel.setText("過去ログ");
+		dateUserFirstCheckBox.setText("");
+		dateUserFirstCheckBox.setToolTipText("過去ログ日時を自動設定する");
 		OpPanel.setLayout(gridBagLayout10);
 		Conv_SaveFolderRadioButton.setText("保存するフォルダを指定し、ファイル名は自動で決定する");
 		ShowSavingConvertedVideoFolderDialogButton.setText("参照");
@@ -1630,7 +1640,8 @@ public class MainFrame extends JFrame {
 		});
 		OpPanel.add(WayBackLabel, grid10_x0_y1_69);
 		OpPanel.add(WayBackField, grid10_x1_y1_70);
-		OpPanel.add(nicoLabel, grid10_x2_y1_70b);
+		OpPanel.add(dateUserFirstCheckBox, grid10_x2_y1_70b);
+		OpPanel.add(nicoLabel, grid10_x3_y1_70c);
 		MainTabbedPane.add(BasicInfoTabPanel, "基本設定");
 		MainTabbedPane.add(SavingInfoTabPanel, "保存設定");
 		MainTabbedPane.add(FFMpegInfoTabPanel, "動画設定");
@@ -1661,6 +1672,7 @@ public class MainFrame extends JFrame {
 
 		CommentSaveInfoPanel.add(SavingCommentCheckBox, grid4_x0_y6_16);
 		CommentSaveInfoPanel.add(appendCommentCheckBox, grid4_x1_y6_);
+	//	CommentSaveInfoPanel.add(dateUserFirstCheckBox, grid4_x2_y6_2);
 		CommentSaveInfoPanel.add(AddTimeStampToCommentCheckBox, grid4_x0_y7_86);
 		CommentSaveInfoPanel.add(getDelCommentCheckBox(), grid4_x0_y8_25);
 		CommentSaveInfoPanel.add(getFixCommentNumCheckBox(),grid4_x0_y9_26);
@@ -3397,7 +3409,8 @@ public class MainFrame extends JFrame {
 			commentOffCheckbox.isSelected(),
 			commentOffField.getText(),
 			commentLineFeedCheckBox.isSelected(),
-			commentLineFeedTextField.getText()
+			commentLineFeedTextField.getText(),
+			dateUserFirstCheckBox.isSelected()
 		);
 	}
 
@@ -3589,6 +3602,7 @@ public class MainFrame extends JFrame {
 		commentOffField.setText(setting.getCommentOff());
 		commentLineFeedCheckBox.setSelected(setting.enableCommentLF());
 		commentLineFeedTextField.setText(setting.getCommentLF());
+		dateUserFirstCheckBox.setSelected(setting.isSetDateUserFirst());
 	}
 
 	/**
@@ -3631,6 +3645,7 @@ public class MainFrame extends JFrame {
 	JLabel VideoID_Label = new JLabel();
 	JLabel WayBackLabel = new JLabel();
 	JTextField WayBackField = new JTextField();
+	JCheckBox dateUserFirstCheckBox = new JCheckBox();
 	GridBagLayout gridBagLayout10 = new GridBagLayout();
 	GridBagLayout gridBagLayout11 = new GridBagLayout();
 	GridBagLayout gridBagLayout1 = new GridBagLayout();
@@ -5841,7 +5856,8 @@ s	 * @return javax.swing.JPanel
 		}
 	}
 
-	public void setVidTitle(String tag, String videoTitle) {
+	public void setDateUserFirst(String dateUF) {
+		WayBackField.setText(dateUF);
 	}
 }
 

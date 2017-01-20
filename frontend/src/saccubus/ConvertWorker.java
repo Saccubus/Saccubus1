@@ -1203,13 +1203,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						.getBackCommentFromLength(back_comment);
 			}
 			sendtext("コメントのダウンロード開始中");
-			if(isAppendComment() || !isDebugNet){
-				// ファイル名設定
-				appendCommentFile = mkTemp(TMP_APPEND_EXT);
-				// 前処理
-				if(CommentFile.exists()){
-					backup = Path.fileCopy(CommentFile,appendCommentFile);
-				}
+			// ファイル名設定
+			appendCommentFile = mkTemp("_"+tid+TMP_APPEND_EXT);
+			// 前処理
+			if(CommentFile.exists()){
+				backup = Path.fileCopy(CommentFile,appendCommentFile);
 			}
 			File target = client.getComment(CommentFile, Status, back_comment, Time, StopFlag,
 					Setting.getCommentIndex(), isAppendComment());
@@ -1229,7 +1227,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(commentJson!=null){
 				sendtext("コメントJSONのダウンロードに成功 " + commentJson.getPath());
 			}
-			if(isAppendComment() || !isDebugNet){	// デバッグでなければコメントファイル整理
+			if(isAppendComment()){	// コメントファイル整理
 				// ファイル内ダブリを整理
 				backup = Path.fileCopy(CommentFile,appendCommentFile);
 				filelist.add(CommentFile);
@@ -2527,6 +2525,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			sbRet.append("RESULT=" + result + "\n");
 			if(!dateUserFirst.isEmpty()){
 				sbRet.append("DATEUF=" + dateUserFirst + "\n");
+				if(parent!=null && Setting.isSetDateUserFirst()){
+					String timewayback = "";
+					if(Time!=null && !Time.isEmpty()){
+						timewayback = WayBackDate.toSourceFormat(Time);
+					}
+					String wayback = WayBackDate.toSourceFormat(dateUserFirst);
+					if(!wayback.equals(timewayback)){
+						parent.setDateUserFirst(wayback);
+					}
+				}
 			}
 			String url = Tag.contains(WatchInfo)? Tag : Tag+WatchInfo;
 			if(result.equals("97"))
