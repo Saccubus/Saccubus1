@@ -122,6 +122,14 @@ public class WayBackDate {
 	public static String format(String time){
 		return new WayBackDate(time).format();
 	}
+	public static String toSourceFormat(String time){
+		Date wbd = new WayBackDate(time).date;
+		if (wbd != null){
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			return sdf.format(wbd);
+		}
+		return "";
+	}
 
 	/**
 	 * @return

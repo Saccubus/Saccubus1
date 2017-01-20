@@ -2,22 +2,23 @@ package saccubus.conv;
 
 import org.xml.sax.Attributes;
 
-public class ChatAttribute {
+public class ChatAttribute implements Comparable<ChatAttribute> {
 	final String Q_DATE = "date";
 	final String Q_USERID = "user_id";
 	final String Q_NO = "no";
 	final String Q_DATE_USEC = "date_usec";
 
-	private String key = "";	// date,user_id,no ‚Ü‚½‚Í date,user_id,date_usec
+	private String key = "";	// no,date,user_id,date_usec
 	private String attributeStr = "";
 
 	public String getValue() { return attributeStr; }
 
-	public ChatAttribute(String qName, Attributes attributes){
+	public ChatAttribute(String qName, Attributes attributes) {
 		if(qName.equals("chat")){
 			String date = "";
 			String userid = "";
 			String no = "";
+			String usec = "";
 			if (attributes!=null) {
 				try {
 					date = attributes.getValue(Q_DATE);
@@ -32,12 +33,17 @@ public class ChatAttribute {
 				try {
 					no = attributes.getValue(Q_NO);
 					if (no == null || no.isEmpty() || no.equals("-1")) {
-						no = attributes.getValue(Q_DATE_USEC);
+						no = "0";
+						usec = attributes.getValue(Q_DATE_USEC);
+					}
+					else {
+						usec = "";
 					}
 				} catch(Exception e) {
 					no = "0";
 				}
-				key = date + userid + no;
+				no = String.format("%10s", no);
+				key = no + date + userid + usec;
 				try {
 					attributeStr = toAttributeString(attributes);
 				} catch(Exception e){
@@ -50,7 +56,7 @@ public class ChatAttribute {
 			} catch(Exception e){
 				// attribureStr = "";
 			}
-			key = qName + " " + attributeStr;
+			key = "          " + qName + " " + attributeStr;
 		}
 	}
 
@@ -79,5 +85,10 @@ public class ChatAttribute {
 	@Override
 	public int hashCode() {
 		return key.hashCode();
+	}
+
+	@Override
+	public int compareTo(ChatAttribute o) {
+		return key.compareTo(o.key);
 	}
 }

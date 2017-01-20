@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 
 /**
  *
@@ -15,11 +15,11 @@ import java.util.LinkedHashMap;
  */
 public class ChatArray {
 	private String thread;
-	private LinkedHashMap<ChatAttribute,ChatSave> chatMap;
+	private TreeMap<ChatAttribute,ChatSave> chatMap;
 
 	public ChatArray() {
 		thread = Integer.toString(Integer.MAX_VALUE);
-		chatMap = new LinkedHashMap<>();
+		chatMap = new TreeMap<>();
 	}
 
 	public void addChat(ChatSave chat){
