@@ -1227,18 +1227,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(commentJson!=null){
 				sendtext("コメントJSONのダウンロードに成功 " + commentJson.getPath());
 			}
-			if(isAppendComment()){	// コメントファイル整理
-				// ファイル内ダブリを整理
-				backup = Path.fileCopy(CommentFile,appendCommentFile);
-				filelist.add(CommentFile);
-				sendtext("コメントファイル整理中");
-				if (!CombineXML.combineXML(filelist, CommentFile)){
-					sendtext("コメントファイルが整理出来ませんでした");
-					if(backup)
-						Path.move(appendCommentFile, CommentFile);	// 失敗したらバックアップを戻す
-					result = "5A";
-					return false;
-				}
+			// ファイル内ダブリを整理
+			backup = Path.fileCopy(CommentFile,appendCommentFile);
+			filelist.add(CommentFile);
+			sendtext("コメントファイル整理中");
+			if (!CombineXML.combineXML(filelist, CommentFile)){
+				sendtext("コメントファイルが整理出来ませんでした");
+				if(backup)
+					Path.move(appendCommentFile, CommentFile);	// 失敗したらバックアップを戻す
+				result = "5A";
+				return false;
 			}
 			//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
 			dateUserFirst = getDateUserFirst(CommentFile);
@@ -1248,12 +1246,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (optionalThreadID != null && !optionalThreadID.isEmpty() && CommentFile!=null ){
 				OptionalThreadFile = Path.getReplacedExtFile(CommentFile, OPTIONAL_EXT);
 				backup = false;
-				if(isAppendComment() || !isDebugNet){
-					appendOptionalFile = mkTemp(TMP_APPEND_OPTIONAL_EXT);
-					// 前処理
-					if(OptionalThreadFile.exists()){
-						backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
-					}
+				appendOptionalFile = mkTemp(TMP_APPEND_OPTIONAL_EXT);
+				// 前処理
+				if(OptionalThreadFile.exists()){
+					backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
 				}
 				sendtext("オプショナルスレッドのダウンロード開始中");
 				target = client.getOptionalThread(
@@ -1270,18 +1266,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					result = "55";
 					return false;
 				}
-				if(isAppendComment() || !isDebugNet){
-					backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
-					filelist.clear();
-					filelist.add(OptionalThreadFile);
-					sendtext("オプショナルスレッド整理中");
-					if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
-						sendtext("オプショナルスレッドが整理出来ませんでした");
-						if(backup)
-							Path.move(appendOptionalFile, OptionalThreadFile);
-						result = "5B";
-						return false;
-					}
+				backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
+				filelist.clear();
+				filelist.add(OptionalThreadFile);
+				sendtext("オプショナルスレッド整理中");
+				if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
+					sendtext("オプショナルスレッドが整理出来ませんでした");
+					if(backup)
+						Path.move(appendOptionalFile, OptionalThreadFile);
+					result = "5B";
+					return false;
 				}
 				if (dateUserFirst.isEmpty()) {
 					//ファイルの最初のdate="integer"を探して dateUserFirst にセット
@@ -1295,12 +1289,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(nicos_id!=null && !nicos_id.isEmpty() && CommentFile!=null){
 				isNicos = true;
 				nicosCommentFile = Path.getReplacedExtFile(CommentFile, NICOS_EXT);
+				// 前処理
 				backup = false;
 				File appendNicosFile = mkTemp(TMP_APPEND_NICOS_EXT);
-				if(isAppendComment() || !isDebugNet){
-					if(nicosCommentFile.exists()){
-						backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
-					}
+				if(nicosCommentFile.exists()){
+					backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
 				}
 				sendtext("ニコスコメントの保存開始中");
 				target = client.getNicosComment(
@@ -1317,18 +1310,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					result = "55";
 					return false;
 				}
-				if(isAppendComment() || !isDebugNet){
-					backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
-					filelist.clear();
-					filelist.add(nicosCommentFile);
-					sendtext("ニコスコメント整理中");
-					if (!CombineXML.combineXML(filelist, nicosCommentFile)){
-						sendtext("ニコスコメントが整理出来ませんでした");
-						if(backup)
-							Path.move(appendNicosFile, nicosCommentFile);
-						result = "5B";
-						return false;
-					}
+				// ダブリ整理
+				backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
+				filelist.clear();
+				filelist.add(nicosCommentFile);
+				sendtext("ニコスコメント整理中");
+				if (!CombineXML.combineXML(filelist, nicosCommentFile)){
+					sendtext("ニコスコメントが整理出来ませんでした");
+					if(backup)
+						Path.move(appendNicosFile, nicosCommentFile);
+					result = "5B";
+					return false;
 				}
 				sendtext("ニコスコメントの保存終了");
 			}

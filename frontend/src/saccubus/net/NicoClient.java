@@ -1792,7 +1792,6 @@ public class NicoClient {
 
 	private String commentCommand2009(CommentType commentType, String thread, boolean needskey, String back_comment, String res_from){
 		String req;
-		String wayback =  "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey;
 //		String resfrom;
 //		if(!back_comment.endsWith("-")){
 //			// normal
@@ -1810,6 +1809,11 @@ public class NicoClient {
 		String user_key = "";
 		if(userKey!=null && !userKey.isEmpty())
 			user_key = "\" userkey=\""+userKey;
+		String wayback = "";
+		if(!WayBackKey.isEmpty()){
+			wayback = "\" when=\"" + WayBackTime + "\" waybackkey=\"" + WayBackKey;
+			user_key = "";
+		}
 		StringBuffer sb = new StringBuffer();
 		sb.append("<packet>");
 		sb.append("<thread thread=\"" + thread);
