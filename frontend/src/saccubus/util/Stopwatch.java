@@ -2,6 +2,8 @@ package saccubus.util;
 
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
@@ -17,9 +19,25 @@ public class Stopwatch {
 	private Date stopedDate = new Date();
 	private final JLabel out;
 	private static Hashtable<JLabel, Stopwatch> stopWatchTab = new Hashtable<JLabel, Stopwatch>();
+	private TimerTask timertask;
+	private Timer timer;
+	private static final long TICK_INTERVAL = 100;	// 0.1sec=100milisec
+	private boolean started = false;
+	private String header;
+	private String trailer;
 
-	public Stopwatch(JLabel out){
-		this.out = out;
+	public Stopwatch(JLabel lbl){
+		out = lbl;
+		out.setVisible(false);
+		started = false;
+		header = "経過時間　";
+		trailer = "";
+		timertask = new TimerTask() {
+			@Override
+			public void run() {
+				show();
+			}
+		};
 	}
 
 	public static Stopwatch create(JLabel lbl){
@@ -31,29 +49,43 @@ public class Stopwatch {
 		return prev;
 	}
 
-	private void sendText(final String text){
-		if(!SwingUtilities.isEventDispatchThread()){
+	public void setHeader(String h){
+		header = h;
+	}
+	public void setTrailer(String t){
+		trailer = t;
+	}
+	private void startTimer(String t, long periodmilisec){
+		if(timer!=null){
+			timer.cancel();
+		}
+		timer = new Timer(t);
+		timer.schedule(timertask, 0, periodmilisec);
+	}
+	private void sendText(final String s){
+		if(SwingUtilities.isEventDispatchThread()) {
+			out.setText(s);
+		}
+		else
 			SwingUtilities.invokeLater(new Runnable() {
-
 				@Override
 				public void run() {
-					out.setText(text);
+					out.setText(s);
 				}
 			});
-		}else{
-			out.setText(text);
-		}
 	}
+
 	synchronized public void start() {
 		startedDate = new Date();
+		if(!started){
+			startTimer(startedDate.toString(), TICK_INTERVAL);
+			out.setVisible(true);
+			started = true;
+		}
 	}
 
 	synchronized public void stop() {
 		stopedDate = new Date();
-	}
-
-	public static void setup(JLabel display) {
-		//out = display;
 	}
 
 	private boolean isSetup() {
@@ -134,11 +166,15 @@ public class Stopwatch {
 
 	public void show() {
 		if (isSetup()){
-			sendText("経過時間　" + formatElapsedTime());
+			sendText(header + formatElapsedTime() + trailer);
 		}
 	}
 
 	public String formatLatency(){
 		return format(getStopTime() - getStartTime());
+	}
+
+	public void cancel() {
+		timertask.cancel();
 	}
 }

@@ -23,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import saccubus.FFmpeg.Aspect;
@@ -80,7 +81,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			tick += up;
 		}
 		private void sendTimer(final JLabel l, final String s){
-			l.setText(s);
+			if(SwingUtilities.isEventDispatchThread()) {
+				l.setText(s);
+			}
+			else
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						l.setText(s);
+					}
+				});
 		}
 	}
 
@@ -973,7 +983,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 										try{
 											Thread.sleep(1000);
 											sendtext("dmc(S)エラーリトライ待ち "+l+"秒");
-											stopwatch.show();
+											//stopwatch.show();
 											if(stopFlagReturn()){
 												result = "43";
 												break;
@@ -1144,6 +1154,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private File existVideo;
+	private File log_vhext = null;
+	private Path video_vhext = null;
 	private boolean existVideoFile(File file, String ext1, String ext2) {
 		existVideo = file;
 		if(existVideo.isFile() && existVideo.canRead())
@@ -2050,6 +2062,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private boolean convertVideo() throws IOException {
 		sendtext("動画の変換を開始");
+		video_vhext = Path.mkTemp(Tag+"[log]vhext.txt");
 		stopwatch.start();
 		if(!VideoFile.canRead()){
 			sendtext("動画が読み込めません");
@@ -2169,23 +2182,24 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 		}
 		int code = converting_video();
-		stopwatch.stop();
+		//stopwatch.stop();
 		//vhext(nicovideoログ)をコピーする
-		File log_vhext = new File(".","[log]vhext.txt");
-		File video_vhext = Path.mkTemp(Tag+"[log]vhext.txt");
-		if(video_vhext.exists()){
-			if(log_vhext.delete()){
-			}
-			Path.fileCopy(video_vhext, log_vhext);
-		}else{
-			video_vhext = Path.mkTemp("sm0[log]vhext.txt");
+		if(video_vhext != null){
+			log_vhext = new File(".","[log]vhext.txt");
 			if(video_vhext.exists()){
 				if(log_vhext.delete()){
 				}
 				Path.fileCopy(video_vhext, log_vhext);
+			}else{
+				video_vhext = Path.mkTemp("sm0[log]vhext.txt");
+				if(video_vhext.exists()){
+					if(log_vhext.delete()){
+					}
+					Path.fileCopy(video_vhext, log_vhext);
+				}
+				else
+					log.println(video_vhext.getPath()+" が有りません.");
 			}
-			else
-				log.println(Tag+"[log]vhext.txt が有りません.");
 		}
 		if (code == 0) {
 			sendtext("変換が正常に終了しました。");
@@ -2395,7 +2409,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 			}
 
-			stopwatch.show();
+			//stopwatch.show();
 			success = false;
 			do{
 				success = saveVideo(client);
@@ -2403,7 +2417,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(!success) return result;
 			gate.resetError();
 
-			stopwatch.show();
+			//stopwatch.show();
 			success = false;
 			do{
 				success = saveOwnerComment(client);
@@ -2411,7 +2425,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(!success) return result;
 			gate.resetError();
 
-			stopwatch.show();
+			//stopwatch.show();
 			success = false;
 			do{
 				success = saveComment(client);
@@ -2419,7 +2433,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(!success) return result;
 			gate.resetError();
 
-			stopwatch.show();
+			//stopwatch.show();
 			if(!saveThumbInfo(client, Tag)){
 				if(isSaveConverted())
 					log.println("追加情報の取得に失敗しましたが続行します。");
@@ -2441,8 +2455,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return result;
 			}
 
-			stopwatch.show();
-			log.println("変換前時間　" + stopwatch.formatElapsedTime());
+			//stopwatch.show();
+			String before = stopwatch.formatElapsedTime();
+			log.println("変換前時間　" + before);
+			stopwatch.setTrailer("、変換前 "+before);
 
 			gate.exit(result);
 			manager.sendTimeInfo();
@@ -2456,22 +2472,22 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				manager.incNumConvert();
 				isConverting = true;
 			}
-			stopwatch.show();
+			//stopwatch.show();
 			if(!makeNGPattern() || stopFlagReturn()){
 				return result;
 			}
 
-			stopwatch.show();
+			//stopwatch.show();
 			if (!convertOwnerComment() || stopFlagReturn()){
 				return result;
 			}
 
-			stopwatch.show();
+			//stopwatch.show();
 			if (!convertComment() || stopFlagReturn()) {
 				return result;
 			}
 
-			stopwatch.show();
+			//stopwatch.show();
 			if (!convertOprionalThread() || stopFlagReturn()) {
 				return result;
 			}
@@ -2491,7 +2507,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 			}
 
-			stopwatch.show();
+			//stopwatch.show();
 			if (convertVideo()) {
 				// 変換成功
 				result = "0";
@@ -2546,8 +2562,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				StopFlag.finish();
 				StopFlag.setButtonEnabled(false);
 			}
-			stopwatch.show();
+			//stopwatch.show();
 			stopwatch.stop();
+			stopwatch.cancel();
 			log.println("変換時間　" + stopwatch.formatLatency());
 			log.println("LastStatus:[" + result + "]" + gettext());
 			log.println("VideoInfo: " + MovieInfo.getText());
@@ -3264,7 +3281,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				int len = 0;
 				while ((len = fis.read(buf, 0, buf.length)) > 0) {
 					fos.write(buf, 0, len);
-					stopwatch.show();
+					//stopwatch.show();
 				}
 				copyok = true;
 			}catch(IOException e){
