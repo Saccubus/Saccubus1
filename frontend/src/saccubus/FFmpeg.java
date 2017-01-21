@@ -137,12 +137,12 @@ public class FFmpeg {
 		class FFmpegCallback implements CallbackInterface {
 			private JLabel status;
 			private ConvertStopFlag flag;
-			private Stopwatch stopwatch;
+			//private Stopwatch stopwatch;
 
 			public FFmpegCallback(JLabel status, ConvertStopFlag flag, Stopwatch watch){
 				this.status = status;
 				this.flag = flag;
-				stopwatch = watch;
+				//stopwatch = watch;
 			}
 			@Override
 			public boolean checkStop() {
@@ -156,7 +156,7 @@ public class FFmpeg {
 			}
 			@Override
 			public void doEveryLoop(String e, Logger log) {
-				stopwatch.show();
+				//stopwatch.show();
 				if (e.startsWith("frame=")) { //
 					LastFrame = e;
 					synchronized (status) {

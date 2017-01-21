@@ -37,7 +37,7 @@ public class VideofileInfo {
 	private double frameRate = -1.0;
 	private final JLabel status;
 	private final ConvertStopFlag flag;
-	private final Stopwatch watch;
+	//private final Stopwatch watch;
 	private Logger log;
 	private File metadataFile;
 
@@ -47,7 +47,7 @@ public class VideofileInfo {
 		this.ffmpeg = ffmpeg;
 		this.status = status;
 		this.flag = flag;
-		this.watch = watch;
+		//this.watch = watch;
 		this.output = new StringBuffer();
 		log = logger;
 		metadataFile = metadataf;
@@ -58,7 +58,7 @@ public class VideofileInfo {
 		class InfoMapCallback implements CallbackInterface {
 			@Override
 			public void doEveryLoop(String e, Logger log) {
-				watch.show();
+				//watch.show();
 				for(String key : infokeys){
 					if (e.contains(key)){
 						log.println(" " + e.trim());

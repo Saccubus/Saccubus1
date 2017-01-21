@@ -342,13 +342,13 @@ public class NicoClient {
 	}
 
 	private void connect(HttpURLConnection con) throws IOException {
-		Stopwatch.show();
+		//Stopwatch.show();
 		con.connect();
 	}
 
 	private String readConnection(HttpURLConnection con){
 		try {
-			Stopwatch.show();
+			//Stopwatch.show();
 			BufferedReader br = new BufferedReader(
 					new InputStreamReader(con.getInputStream()));
 			String ret = br.readLine();
@@ -398,7 +398,7 @@ public class NicoClient {
 			os.write(sbstr.getBytes());
 			os.flush();
 			os.close();
-			Stopwatch.show();
+			//Stopwatch.show();
 			int code = con.getResponseCode();
 			String mes = con.getResponseMessage();
 			debug("Å°Response:" + Integer.toString(code) + " " + mes + "\n");
@@ -580,7 +580,7 @@ public class NicoClient {
 			int index = -1;
 			StringBuilder sb = new StringBuilder();
 			while ((ret = br.readLine()) != null) {
-				Stopwatch.show();
+				//Stopwatch.show();
 				sb.append(ret + "\n");
 				if(found) continue;
 				if(ret.contains(TITLE_ZERO_DUMMY) || ret.contains(TITLE_GINZA_DIV) || ret.contains(TITLE_GINZA_DUMMY)){
@@ -925,7 +925,7 @@ public class NicoClient {
 				size += read;
 				os.write(buf, 0, read);
 				sendStatus(status, "ìÆâÊ", max_size, size, startTime);
-				Stopwatch.show();
+				//Stopwatch.show();
 				if (flag.needStop()) {
 					log.println("\nStopped.");
 					is.close();
@@ -1057,7 +1057,7 @@ public class NicoClient {
 			os.write(poststr.getBytes());
 			os.flush();
 			os.close();
-			Stopwatch.show();
+			//Stopwatch.show();
 			int code = con.getResponseCode();
 			String mes = con.getResponseMessage();
 			debug("Å°Response:" + Integer.toString(code) + " " + mes + "\n");
@@ -1309,7 +1309,7 @@ public class NicoClient {
 						resumed += read;
 						os.write(buf, 0, read);
 						sendStatus(status, "dmcìÆâÊ(S)", max_size, resumed, starttime);
-						Stopwatch.show();
+						//Stopwatch.show();
 						if (flag.needStop()) {
 							log.println("Stopped.");
 							timer.cancel();
@@ -1342,7 +1342,7 @@ public class NicoClient {
 					//con.disconnect();
 					if(resumed < max_size)
 						debug("\nDownload not finished, continue.\n");
-					Stopwatch.show();
+					//Stopwatch.show();
 				} while (resumed < max_size);
 				log.println("Download finished.");
 				timer.cancel();
@@ -1411,7 +1411,7 @@ public class NicoClient {
 					size += read;
 					os.write(buf, 0, read);
 					sendStatus(status, "dmcìÆâÊ", max_size, size, starttime);
-					Stopwatch.show();
+					//Stopwatch.show();
 					if (flag.needStop()) {
 						log.println("\nStopped.");
 						timer.cancel();
@@ -1430,7 +1430,7 @@ public class NicoClient {
 				log.println("heartbeat thread stopped.");
 				if(size < max_size){
 					log.println("\nDownload stopped less than max_size. "+size+"<"+max_size+"\n");
-					Stopwatch.show();
+					//Stopwatch.show();
 					is.close();
 					os.flush();
 					os.close();
@@ -1526,7 +1526,7 @@ public class NicoClient {
 						os.write(buf, offset, read);
 						debugsAdd(read);
 						sendStatus(status, "dmcìÆâÊ(R)", max_size, dsSum, started);
-						Stopwatch.show();
+						//Stopwatch.show();
 						if (flag.needStop()) {
 							dlog.println("Stopped.");
 							is.close();
@@ -1945,7 +1945,7 @@ public class NicoClient {
 				fos.write(buf, 0, read);
 				size += read;
 				sendStatus(status, commentType.dlmsg(), max_size, size, start0);
-				Stopwatch.show();
+				//Stopwatch.show();
 				if (flag.needStop()) {
 					log.println("Stopped.");
 					is.close();
@@ -2430,7 +2430,7 @@ public class NicoClient {
 				fosb.append(new String(buf, 0, read, "UTF-8"));
 				size += read;
 				sendStatus(status, "comment JSON ", max_size, size, start0);
-				Stopwatch.show();
+				//Stopwatch.show();
 				if (flag.needStop()) {
 					log.println("Stopped.");
 					return null;
@@ -2602,7 +2602,7 @@ public class NicoClient {
 			String ret;
 			StringBuilder sb = new StringBuilder();
 			while ((ret = br.readLine()) != null) {
-				Stopwatch.show();
+				//Stopwatch.show();
 				sb.append(ret + "\n");
 			}
 			br.close();
@@ -3350,7 +3350,7 @@ public class NicoClient {
 			String ret;
 			StringBuilder sb = new StringBuilder();
 			while ((ret = br.readLine()) != null) {
-				Stopwatch.show();
+				//Stopwatch.show();
 				sb.append(ret + "\n");
 			}
 			br.close();
@@ -3391,7 +3391,7 @@ public class NicoClient {
 			String ret;
 			StringBuilder sb = new StringBuilder();
 			while ((ret = br.readLine()) != null) {
-				Stopwatch.show();
+				//Stopwatch.show();
 				sb.append(ret + "\n");
 				if(ret.contains("</title>")){
 					break;
@@ -3436,7 +3436,7 @@ public class NicoClient {
 			int len = 0;
 			while ((len = is.read(buf, 0, buf.length)) > 0) {
 				fos.write(buf, 0, len);
-				Stopwatch.show();
+				//Stopwatch.show();
 			}
 			log.println("ok.");
 			is.close();
