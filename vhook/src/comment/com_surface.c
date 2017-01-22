@@ -16,7 +16,7 @@
 
 SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right);
 //SDL_Surface* drawText(DATA* data,int size,int color,Uint16* str);
-SDL_Surface* drawText2(DATA* data,int size,SDL_Color color,Uint16* str,int fill_bg);
+SDL_Surface* drawText2s(DATA* data,int size,SDL_Color color,Uint16* str,int fill_bg,int is_black,int shadow);
 SDL_Surface* drawText3(DATA* data,int size,SDL_Color color,FontType fonttype,Uint16* from,Uint16* to,int fill_bg);
 SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel,int fill_bg);
 //int cmpSDLColor(SDL_Color col1, SDL_Color col2);
@@ -32,9 +32,11 @@ int is_blank(Uint16* up, DATA* data){
 		if(u<=0x200f) continue;
 		if(u<=0x2027) return FALSE;
 		if(u<=0x202f) continue;
+		if(isZeroWidth(u)) continue;
 		if(u<=0xE757) return FALSE;
-		if(u>=0xF900) return FALSE;
 		switch(getDetailType(u)){
+			case ZERO_WIDTH_CHAR:
+				continue;
 			case STRONG_SIMSUN_CHAR:
 				if(0xE758<=u && u<=0xE864){	//Simsun
 					if(isGlyphExist(data,SIMSUN_FONT,u))
@@ -48,6 +50,7 @@ int is_blank(Uint16* up, DATA* data){
 				}
 				continue;
 		}
+		if(u>=0xF900) return FALSE;
 	}
 	return TRUE;
 }
@@ -191,7 +194,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	while(*index != '\0'){
 		if(*index=='[' && is_button==1){
 			*index = '\0';//‚±‚±‚Åˆê’UØ‚é
-			surf = drawText2(data,size,SdlColor,last,is_owner);
+			surf = drawText2s(data,size,SdlColor,last,is_owner,is_black,shadow);
 			if(surf!=NULL && debug)
 				fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d) %s\n",surf->w,surf->h,COM_FONTSIZE_NAME[size]);
 			if(is_vote){
@@ -242,7 +245,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		}
 		else if(*index==']' && is_button==2){
 			*index = '\0';//‚±‚±‚Åˆê’UØ‚é
-			surf = drawText2(data,size,SdlColor,last,is_owner);
+			surf = drawText2s(data,size,SdlColor,last,is_owner,is_black,shadow);
 			if(ret==NULL){
 				if(surf!=NULL && debug)
 					fprintf(log,"[comsurface/make.10]drawText2 surf(%d, %d)\n",surf->w,surf->h);
@@ -278,17 +281,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		else if(*index == '\n'){
 			*index = '\0';//‚±‚±‚Åˆê’UØ‚é
 			int fill_bg = is_owner && is_button==2;
-			surf = drawText2(data,size,SdlColor,last,fill_bg);
-			if(surf!=null){
-				// ‰e‚Ì•`‰æ(‚Ps•ª)
-				if(!is_blank(last, data)){
-					// ‹ó”’s‚Å‚È‚¯‚ê‚Î
-					surf = (*ShadowFunc[shadow])(surf,is_black,data->fontsize_fix,SdlColor);
-					if(debug && surf!=null)
-						fprintf(log,"[comsurface/make1]ShadowFunc:%d (%d, %d) %s %d line\n",
-							shadow,surf->w,surf->h,COM_FONTSIZE_NAME[size],nb_line);
-				}
-			}
+			surf = drawText2s(data,size,SdlColor,last,fill_bg,is_black,shadow);
 			if(ret == null){//Å‰‚Ì‰üs
 				ret = surf;
 				if(ret!=NULL && debug)
@@ -305,17 +298,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		index++;
 	}
 	int fill_bg = is_owner && is_button!=0;
-	surf = drawText2(data,size,SdlColor,last,fill_bg);
-	if(surf!=null){
-		// ‰e‚Ì•`‰æ(‚Ps•ª)
-		if(!is_blank(last, data)){
-			// ‹ó”’s‚Å‚È‚¯‚ê‚Î
-			surf = (*ShadowFunc[shadow])(surf,is_black,data->fontsize_fix,SdlColor);
-			if(debug && surf!=null)
-				fprintf(log,"[comsurface/make1]ShadowFunc:%d (%d, %d) %s %d line\n",
-					shadow,surf->w,surf->h,COM_FONTSIZE_NAME[size],nb_line);
-		}
-	}
+	surf = drawText2s(data,size,SdlColor,last,fill_bg,is_black,shadow);
 	if(ret == null){//Œ‹‹Ç‰üs‚Í–³‚¢
 		ret = surf;
 		if(debug && ret!=NULL)
@@ -373,6 +356,11 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		fprintf(log,"***ERROR*** [comsurface/makeE]comment %d has no char.\n",item->no);
 		fflush(log);
 		return ret;
+	}
+	if(ret->w == 0){
+		int hh = ret->h;
+		SDL_FreeSurface(ret);
+		ret = drawNullSurface(1,hh);
 	}
 	if(debug)
 	fprintf(log,"[comsurface/make0]comment %d build(%d, %d) %s %d line%s%s%s.\n",
@@ -1023,7 +1011,20 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fi
 	}
 	return ret;
 }
-
+SDL_Surface* drawText2s(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill_bg, int is_black, int shadow){
+	SDL_Surface* surf = drawText2(data,size,SdlColor,str,fill_bg);
+	if(surf!=null){
+		// ‰e‚Ì•`‰æ(‚Ps•ª)
+		if(!is_blank(str, data)){
+			// ‹ó”’s‚Å‚È‚¯‚ê‚Î
+			surf = (*ShadowFunc[shadow])(surf,is_black,data->fontsize_fix,SdlColor);
+		}
+		if(data->debug && surf!=null)
+			fprintf(data->log,"[comsurface/shadow]ShadowFunc:%d (%d, %d) %s\n",
+				shadow,surf->w,surf->h,COM_FONTSIZE_NAME[size]);
+	}
+	return surf;
+}
 SDL_Surface* drawNullSurface(int w,int h){
 	//not make nor use alpha
 	return SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_HWACCEL,
