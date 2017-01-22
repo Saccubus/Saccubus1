@@ -23,6 +23,34 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 int isDoubleResize(double width, double limit_width, int size, int line, FILE* log, int is_full);
 int deleteLastLF(Uint16* index);
 
+int is_blank(Uint16* up, DATA* data){
+	Uint16 u;
+	while((u=*up++) != '\0'){
+		if(u<=0x0020||u==0x00a0
+		 ||u==0x3000||u==0x3164) continue;
+		if(u<=0x1fff) return FALSE;
+		if(u<=0x200f) continue;
+		if(u<=0x2027) return FALSE;
+		if(u<=0x202f) continue;
+		if(u<=0xE757) return FALSE;
+		if(u>=0xF900) return FALSE;
+		switch(getDetailType(u)){
+			case STRONG_SIMSUN_CHAR:
+				if(0xE758<=u && u<=0xE864){	//Simsun
+					if(isGlyphExist(data,SIMSUN_FONT,u))
+						return FALSE;	//ÉOÉäÉtÇ™Ç†ÇÈ
+				}
+				continue;
+			case MINGLIU_CHAR:
+				if(0xE865<=u && u<=0xF8FF){	//MingLiu
+					if(isGlyphExist(data,MINGLIU_FONT,u))
+						return FALSE;	//ÉOÉäÉtÇ™Ç†ÇÈ
+				}
+				continue;
+		}
+	}
+	return TRUE;
+}
 SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int video_height){
 	Uint16* index = item->str;
 	Uint16* last = item->str;
@@ -140,6 +168,15 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	if(location == CMD_LOC_DEF){
 		location = data->deflocation;
 	}
+	// âeê›íË
+	int shadow = data->shadow_kind;
+	if(shadow >= SHADOW_MAX){
+		shadow = SHADOW_DEFAULT;
+	}
+	int is_black = cmpSDLColor(SdlColor, COMMENT_COLOR[CMD_COLOR_BLACK]);
+	if(strstr(data->extra_mode,"font")!=NULL && strstr(data->extra_mode,"fg")!=NULL){
+		is_black = 2;	//SHADOW COLOR is FONT
+	}
 	/*
 	 * âeÇÕíuÇ¢ÇƒÇ®Ç¢ÇƒÅAÇ∆ÇËÇ†Ç¶Ç∏ï∂éöÇÃï`âÊ
 	 */
@@ -242,6 +279,16 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			*index = '\0';//Ç±Ç±Ç≈àÍíUêÿÇÈ
 			int fill_bg = is_owner && is_button==2;
 			surf = drawText2(data,size,SdlColor,last,fill_bg);
+			if(surf!=null){
+				// âeÇÃï`âÊ(ÇPçsï™)
+				if(!is_blank(last, data)){
+					// ãÛîíçsÇ≈Ç»ÇØÇÍÇŒ
+					surf = (*ShadowFunc[shadow])(surf,is_black,data->fontsize_fix,SdlColor);
+					if(debug && surf!=null)
+						fprintf(log,"[comsurface/make1]ShadowFunc:%d (%d, %d) %s %d line\n",
+							shadow,surf->w,surf->h,COM_FONTSIZE_NAME[size],nb_line);
+				}
+			}
 			if(ret == null){//ç≈èâÇÃâ¸çs
 				ret = surf;
 				if(ret!=NULL && debug)
@@ -259,6 +306,16 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	}
 	int fill_bg = is_owner && is_button!=0;
 	surf = drawText2(data,size,SdlColor,last,fill_bg);
+	if(surf!=null){
+		// âeÇÃï`âÊ(ÇPçsï™)
+		if(!is_blank(last, data)){
+			// ãÛîíçsÇ≈Ç»ÇØÇÍÇŒ
+			surf = (*ShadowFunc[shadow])(surf,is_black,data->fontsize_fix,SdlColor);
+			if(debug && surf!=null)
+				fprintf(log,"[comsurface/make1]ShadowFunc:%d (%d, %d) %s %d line\n",
+					shadow,surf->w,surf->h,COM_FONTSIZE_NAME[size],nb_line);
+		}
+	}
 	if(ret == null){//åãã«â¸çsÇÕñ≥Ç¢
 		ret = surf;
 		if(debug && ret!=NULL)
@@ -322,20 +379,20 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		item->no,ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line,
 		(data->original_resize ? "": " dev"),(data->enableCA?" CA":""),(data->fontsize_fix?" fix":""));
 
-	/*
-	 * âeèàóù
-	 */
-	int shadow = data->shadow_kind;
-	if(shadow >= SHADOW_MAX){
-		shadow = SHADOW_DEFAULT;
-	}
-	int is_black = cmpSDLColor(SdlColor, COMMENT_COLOR[CMD_COLOR_BLACK]);
-	if(strstr(data->extra_mode,"font")!=NULL && strstr(data->extra_mode,"fg")!=NULL){
-		is_black = 2;	//SHADOW COLOR is FONT
-	}
-	ret = (*ShadowFunc[shadow])(ret,is_black,data->fontsize_fix,SdlColor);
-	if(debug)
-	fprintf(log,"[comsurface/make1]ShadowFunc:%d (%d, %d) %s %d line\n",shadow,ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
+//	/*
+//	 * âeèàóù
+//	 */
+//	int shadow = data->shadow_kind;
+//	if(shadow >= SHADOW_MAX){
+//		shadow = SHADOW_DEFAULT;
+//	}
+//	int is_black = cmpSDLColor(SdlColor, COMMENT_COLOR[CMD_COLOR_BLACK]);
+//	if(strstr(data->extra_mode,"font")!=NULL && strstr(data->extra_mode,"fg")!=NULL){
+//		is_black = 2;	//SHADOW COLOR is FONT
+//	}
+//	ret = (*ShadowFunc[shadow])(ret,is_black,data->fontsize_fix,SdlColor);
+//	if(debug)
+//	fprintf(log,"[comsurface/make1]ShadowFunc:%d (%d, %d) %s %d line\n",shadow,ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
 
 	/*
 	 * ÉAÉãÉtÉ@ílÇÃê›íË

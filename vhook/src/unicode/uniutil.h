@@ -36,4 +36,5 @@ int isZeroWidth(Uint16 u);
 int indexOf(Uint16* src, Uint16 key);
 void moveUint16(Uint16* from, Uint16* to);
 
+int isGlyphExist(DATA* data,int fonttype,Uint16 u);
 #endif /* UTIL_H_ */
