@@ -1311,11 +1311,17 @@ int deleteLastLF(Uint16* index){
 
 SDL_Surface* getErrFont(DATA* data){
 	Uint16 errMark[2] = {0x2620, '\0'};
+#define EXTRA_ERRMARK1 "-errmark=1"
+	const char* extra_errfont = strstr(data->extra_mode,EXTRA_ERRMARK1);
 	if(data->ErrFont == NULL){
-		TTF_Font* font =(data->enableCA)?
-			data->CAfont[GOTHIC_FONT][CMD_FONT_SMALL]
-			: data->font[CMD_FONT_SMALL];
-		data->ErrFont = drawText4(data,CMD_FONT_SMALL,COMMENT_COLOR[CMD_COLOR_PASSIONORANGE],font,errMark,GOTHIC_FONT,FALSE);
+		if(extra_errfont!=NULL){
+			TTF_Font* font =(data->enableCA)?
+				data->CAfont[GOTHIC_FONT][CMD_FONT_SMALL]
+				: data->font[CMD_FONT_SMALL];
+			data->ErrFont = drawText4(data,CMD_FONT_SMALL,COMMENT_COLOR[CMD_COLOR_PASSIONORANGE],font,errMark,GOTHIC_FONT,FALSE);
+		}else
+			// errmark 2
+			data->ErrFont = drawNullSurface(2,2) ;
 	}
 	SDL_Surface* ret = NULL;
 	if(data->ErrFont!=NULL){
