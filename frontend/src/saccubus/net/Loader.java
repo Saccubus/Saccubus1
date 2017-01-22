@@ -18,6 +18,7 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 import saccubus.ConvertingSetting;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
@@ -48,15 +49,21 @@ public class Loader {
 		log = logger;
 		this.setting = setting;
 		this.status = status3[0];
-		stopwatch = new Stopwatch(status3[1]);
+		stopwatch = new Stopwatch(status3[2]);
 		Debug = setting.isDebugNicovideo();
 		isHtml5 = is_html5;
 	}
 
-	void sendtext(String text){
-		synchronized (status) {
+	void sendtext(final String text){
+		if(SwingUtilities.isEventDispatchThread()){
 			status.setText(text);
-		}
+		}else
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				status.setText(text);
+			}
+		});
 	}
 
 	/**

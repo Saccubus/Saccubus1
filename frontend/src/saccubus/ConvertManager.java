@@ -1,6 +1,8 @@
 package saccubus;
 
 import java.util.Hashtable;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,6 +31,8 @@ public class ConvertManager extends Thread {
 	private AtomicInteger numConvert = new AtomicInteger(0);
 	private AtomicBoolean waitManager = new AtomicBoolean(false);
 	private static Logger log;
+	private TimerTask timertask;
+	private Timer timer;
 
 	public ConvertManager(JLabel[] st3){
 		log = Logger.MainLog;
@@ -84,7 +88,7 @@ public class ConvertManager extends Thread {
 			reqQueue.offer(converter);
 			queueCheckAndGo();
 		}
-		sendTimeInfo();
+		//sendTimeInfo();
 		return converter;	//é¿çsÇµÇΩÇ‡ÇÃÇ≈ÇÕÇ»Ç≠óvãÅÇéÛÇØïtÇØÇΩÇ‡ÇÃ
 	}
 
@@ -136,14 +140,14 @@ public class ConvertManager extends Thread {
 	void queueCheckAndGo(){
 		ConvertWorker conv = null;
 		log.println("manager#queueGo "+getTimeInfo());
-		sendTimeInfo();
+		//sendTimeInfo();
 		for(int count = 0;count < (numThread.get()+2);count++){
 			setWaitManager(true);
 			while(numRun.get() < numThread.get() && getNumReq() > 0){
 				conv = reqQueue.poll();
 				if(conv==null){
 					log.println("Error: manager#queueGo null  "+getTimeInfo());
-					sendTimeInfo();
+					//sendTimeInfo();
 					break;
 				}
 				numRun.incrementAndGet();
@@ -154,7 +158,7 @@ public class ConvertManager extends Thread {
 				}
 				conv.execute();
 				log.println("manager#queueGo ("+conv.getId()+")excute  "+getTimeInfo());
-				sendTimeInfo();
+				//sendTimeInfo();
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
@@ -179,7 +183,7 @@ public class ConvertManager extends Thread {
 				+") Run:"+numRun.get()+"(Conv:"+numConvert.get()+" Net:"+Gate.getNumRun()
 				+" Wait:"+Gate.getNumReq()+") Req:"+getNumReq()+" Pending:"+numPending.get();
 	}
-	void sendTimeInfo(){
+	private void sendTimeInfo(){
 		final String timeinfo = getTimeInfo();
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -193,7 +197,7 @@ public class ConvertManager extends Thread {
 	public void cancelAllRequest() {
 		reqQueue.clear();
 		for(int r=0;r<3;r++){
-			if(Gate.getNumRun()>0 || this.getNumRun()>0){
+			if(Gate.getNumRun()>0 || getNumRun()>0){
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
@@ -210,8 +214,21 @@ public class ConvertManager extends Thread {
 		numThread.set(1);
 		numError.set(0);
 		numConvert.set(0);
-		sendTimeInfo();
+		timerinit();
 		doActivity();
+	}
+	void timerinit(){
+		if(timertask==null){
+			timertask = new TimerTask() {
+				@Override
+				public void run() {
+					sendTimeInfo();
+				}
+			};
+			timer = new Timer("managerTimer");
+			timer.scheduleAtFixedRate(timertask, 0, 1000);
+		}
+
 	}
 
 	public static NicoClient getManagerClient(ConvertWorker conv){
@@ -239,7 +256,7 @@ public class ConvertManager extends Thread {
 					flagTable.remove(flag);
 				}
 				log.println("manager#cancel pending  "+getTimeInfo());
-				sendTimeInfo();
+				//sendTimeInfo();
 			}else
 			if(reqQueue.remove(conv)){
 				// not executed
@@ -250,7 +267,7 @@ public class ConvertManager extends Thread {
 					flagTable.remove(flag);
 				}
 				log.println("manager#cancel reqQueue  "+getTimeInfo());
-				sendTimeInfo();
+				//sendTimeInfo();
 			}else{
 				// executed
 				synchronized(flag){
@@ -290,11 +307,11 @@ public class ConvertManager extends Thread {
 	public void allDelete() {
 		numFinish.set(0);
 		numConvert.set(0);
-		sendTimeInfo();
+		//sendTimeInfo();
 		doActivity();
 	}
 
-	public int getNumRun() {
+	public static int getNumRun() {
 		return numRun.get();
 	}
 
@@ -311,11 +328,11 @@ public class ConvertManager extends Thread {
 		numConvert.decrementAndGet();
 	}
 
-	public int getNumThread(){
+	public static int getNumThread(){
 		return numThread.get();
 	}
 
-	public int getNumFinish() {
+	public static int getNumFinish() {
 		return numFinish.get();
 	}
 /*

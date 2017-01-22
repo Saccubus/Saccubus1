@@ -273,6 +273,7 @@ public class Prompt {
 		log.println();
 
 		manager = new ConvertManager(null);
+		manager.start();
 		autoPlay = new AutoPlay(setting.isAutoPlay());
 		autoPlay.setStatus(status);
 		String url = MainFrame.treatUrlHttp(tag);
@@ -484,9 +485,9 @@ public class Prompt {
 				manager.waitActivity(1);
 				if(manager.getNumReq() > 0)
 					continue;
-				if(manager.getNumRun() > 0)
+				if(ConvertManager.getNumRun() > 0)
 					continue;
-				if(manager.getNumFinish() < convNo)
+				if(ConvertManager.getNumFinish() < convNo)
 					continue;
 				try {
 					Thread.sleep(1000);

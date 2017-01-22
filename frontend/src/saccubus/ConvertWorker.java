@@ -2186,19 +2186,18 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		//vhext(nicovideoログ)をコピーする
 		if(video_vhext != null){
 			log_vhext = new File(".","[log]vhext.txt");
-			if(video_vhext.exists()){
-				if(log_vhext.delete()){
-				}
-				Path.fileCopy(video_vhext, log_vhext);
-			}else{
-				video_vhext = Path.mkTemp("sm0[log]vhext.txt");
-				if(video_vhext.exists()){
-					if(log_vhext.delete()){
+			try{
+				if(!log_vhext.exists()|| log_vhext.canWrite()){
+					if(!video_vhext.exists())
+						video_vhext = Path.mkTemp("sm0[log]vhext.txt");
+					if(video_vhext.exists()){
+						Path.fileCopy(video_vhext, log_vhext);
 					}
-					Path.fileCopy(video_vhext, log_vhext);
+					else
+						log.println(video_vhext.getPath()+" が有りません.");
 				}
-				else
-					log.println(video_vhext.getPath()+" が有りません.");
+			}catch(Exception e){
+				log.println(video_vhext.getPath()+" に書けません.");
 			}
 		}
 		if (code == 0) {
@@ -2339,7 +2338,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		gate = Gate.open(tid,log);
 		stopwatch.clear();
 		stopwatch.start();
-		manager.sendTimeInfo();
+		//manager.sendTimeInfo();
 		try {
 			if(parent!= null){
 				Setting = parent.getSetting();
@@ -2461,7 +2460,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			stopwatch.setTrailer("、変換前 "+before);
 
 			gate.exit(result);
-			manager.sendTimeInfo();
+			//manager.sendTimeInfo();
 			if (!isSaveConverted()) {
 				sendtext("動画・コメントを保存し、変換は行いませんでした。");
 				result = "0";
@@ -2573,7 +2572,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			gate.exit(result);
 			manager.reqDone(result, StopFlag, isConverting);
 			isConverting = false;
-			manager.sendTimeInfo();
+			//manager.sendTimeInfo();
 
 			//end alarm
 			File wav = new File("end.wav");

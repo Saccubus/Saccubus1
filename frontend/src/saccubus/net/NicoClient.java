@@ -1099,8 +1099,8 @@ public class NicoClient {
 			boolean isSplittable = canRangeReq;
 			int gaten = Gate.getNumGate();
 			int runn = Gate.getNumRun();
-			int threadn = (new ConvertManager(null)).getNumThread();
-			int convn = (new ConvertManager(null)).getNumRun();
+			int threadn = ConvertManager.getNumThread();
+			int convn = ConvertManager.getNumRun();
 			if(runn >= gaten || convn >= threadn){
 				// 同時ダウンロード数不足
 				isSplittable = false;

@@ -891,7 +891,20 @@ public class MainFrame extends JFrame {
 		});
 		jMenuDetail.setText("詳細設定");
 		jMenuNGConfig.setText("ニコニコ動画のNG設定保存");
-		jMenuNGConfig.addActionListener(new MainFrame_LoadNGConfig(this));
+		jMenuNGConfig.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sendtext("ニコニコ動画のNG設定保存");
+				Loader loader = new Loader(getSetting(),
+					new JLabel[]{statusBar, elapsedTimeBar, new JLabel()},
+					log,html5CheckBox.isSelected());
+				Path file = new Path("configNG.xml");
+				String url = "http://ext.nicovideo.jp/api/configurengclient?mode=get";
+				if (loader.load(url, file)){
+					sendtext("ニコニコ動画のNG設定を保存しました：" + file.getRelativePath());
+				}
+			}
+		});
 		jMenuAprilFool.setText("AprilFool再現");
 		jMenuAprilFool.addActionListener(new MainFrame_jMenuAfDialog(this));
 		jMenuOpen.setText("開く(Open)...");
@@ -2042,6 +2055,7 @@ public class MainFrame extends JFrame {
 		FFMpegTab2Panel.add(CheckFFmpegFunctionPanel, grid6_x0_y2_82);
 
 		convertManager = new ConvertManager(new JLabel[] {statusBar, elapsedTimeBar, infoBar});
+		convertManager.start();
 	}
 
 	private String getTextField(JTextField input){
@@ -2699,7 +2713,7 @@ public class MainFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					Gate.setNumGate(downloadDownCheckBox.isSelected()? 1:2, log);
-					convertManager.sendTimeInfo();
+					//convertManager.sendTimeInfo();
 				}
 			});
 			GridBagConstraints grid400B = new GridBagConstraints();
@@ -4219,7 +4233,7 @@ public class MainFrame extends JFrame {
 					new ConvertStopFlag(new JButton()),
 					this,
 					autoPlay,
-					new ConvertManager(null),
+					convertManager,
 					errorControl,
 					new StringBuffer(),
 					Logger.MainLog);
@@ -6036,28 +6050,6 @@ class MainFrame_jMenuHelpAbout_ActionAdapter implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent actionEvent) {
 		adaptee.jMenuHelpAbout_actionPerformed(actionEvent);
-	}
-}
-
-class MainFrame_LoadNGConfig implements ActionListener {
-	MainFrame mainFrame;
-
-	MainFrame_LoadNGConfig(MainFrame frame){
-		mainFrame = frame;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		JLabel watch = mainFrame.elapsedTimeBar;
-		mainFrame.sendtext("ニコニコ動画のNG設定保存");
-		Loader loader = new Loader(mainFrame.getSetting(),
-					new JLabel[]{mainFrame.statusBar, new JLabel(), watch, new JLabel()},
-			Logger.MainLog,mainFrame.html5CheckBox.isSelected());
-		Path file = new Path("configNG.xml");
-		String url = "http://ext.nicovideo.jp/api/configurengclient?mode=get";
-		if (loader.load(url, file)){
-			mainFrame.sendtext("ニコニコ動画のNG設定を保存しました：" + file.getRelativePath());
-		}
 	}
 }
 
