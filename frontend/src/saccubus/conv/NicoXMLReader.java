@@ -71,6 +71,8 @@ public class NicoXMLReader extends DefaultHandler {
 	private Logger log;
 	private String duration = "";
 
+	private boolean isLiveConversionDone;
+
 	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd,
 		int scoreLimit, boolean liveOp, boolean prem_color_check, String duration, Logger logger){
 		this.packet = packet;
@@ -87,7 +89,8 @@ public class NicoXMLReader extends DefaultHandler {
 		log = logger;
 	}
 
-	public static final Pattern makePattern(String word, Logger logger) throws PatternSyntaxException{
+	public static final Pattern makePattern(String word, Logger logger, boolean enableML)
+			throws PatternSyntaxException{
 		if (word == null || word.length() <= 0) {
 			return null;
 		}
@@ -129,20 +132,26 @@ public class NicoXMLReader extends DefaultHandler {
 		StringBuffer regb = new StringBuffer();
 		for (int i = 0; i < elt.length; i++) {
 			String e = elt[i];
+			String e1 = "";
 			logger.println(e);
-			if (i > 0) {
-				regb.append("|");
+			regb.append("|");
+			if(e.length() > 1){
+				e1 = e.substring(0,1);
+				if((e1.equals("/") || e1.equals("\"")) && e.endsWith(e1)){
+					e = e.substring(1, e.length()-1);
+				}
 			}
-			if (e.length() > 1 && e.startsWith("/") && e.endsWith("/")) {
-				regb.append("(" + e.substring(1, e.length() - 1) + ")");
-			} else if (e.length() > 1 && e.startsWith("\"") && e.endsWith("\"")) {
-				regb.append("(.*(" + Pattern.quote(e.substring(1, e.length() - 1))
-						+ ")+.*)");
+			if (e1.equals("/")) {
+				// e is RegularExpression
+				regb.append("(" + e + ")");
+			} else if (enableML) {
+				// (?s:X) means DOTALL=1 and (X)
+				regb.append("(?s:.*(" + Pattern.quote(e) + ")+.*)");
 			} else {
 				regb.append("(.*(" + Pattern.quote(e) + ")+.*)");
 			}
 		}
-		String reg = regb.substring(0);
+		String reg = regb.substring(1);
 		logger.println("reg:" + reg);
 		Pattern pat;
 		pat = Pattern.compile(reg);
@@ -189,8 +198,10 @@ public class NicoXMLReader extends DefaultHandler {
 			item_kicked = false;
 			item_fork = false;
 			is_button = false;
+			isLiveConversionDone = false;
 			premium = "";
 			sb = new StringBuffer();
+			item.setNo(attributes.getValue("no"));
 			//投稿者フィルター
 			owner_filter = attributes.getValue("filter");
 			if(owner_filter!=null){
@@ -252,7 +263,6 @@ public class NicoXMLReader extends DefaultHandler {
 			else if(liveConversion && !liveOpDuration.isEmpty())
 				duration = liveOpDuration;
 			item.setMail(mail);
-			item.setNo(attributes.getValue("no"));
 			String forkval = attributes.getValue("fork");
 			if (forkval != null && forkval.equals("1")) {
 				item_fork = true;
@@ -612,6 +622,7 @@ public class NicoXMLReader extends DefaultHandler {
 					.replaceAll("<a href=([^>]+)>","\n$1\n").replace("</a>","\n")
 					.replaceAll("<.>", "\n").replaceAll("</.>", "")
 					.replaceAll("\n+","\n");
+				isLiveConversionDone = true;
 			}
 			//ニコスクリプト処理
 			if(com.startsWith("@")||com.startsWith("＠")){
@@ -740,7 +751,8 @@ public class NicoXMLReader extends DefaultHandler {
 				}
 			}
 			//NGワード
-			if (!script && match(NG_Word, com)) {
+			if ( !script && match(NG_Word, com)
+				|| isLiveConversionDone && match(NG_Word, com)) {
 				item_kicked = true;
 				countNG_Word++;
 				return;

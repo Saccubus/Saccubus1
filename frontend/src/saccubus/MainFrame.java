@@ -307,6 +307,11 @@ public class MainFrame extends JFrame {
 	private JPanelHideable extraDownloadInfoPanel;
 	private String initialPanelHideMapping;
 	private boolean debug_mode_toggle = false;
+	private JCheckBox ngEnableMultilinesCheckBox = new JCheckBox();
+	private static final String[] ngEnableMLToolchipTexts = {
+			"オフ：複数行・運営コメ簡易変更後にはNG適用しない",
+			"オン：複数行・運営コメ簡易変更後にもNG適用する",
+	};
 	private final String DEBUG_STRING = "デバッグモードOnにする";
 	private final String NODEBUG_STRING = "デバッグモードOffにする";
 	final String DEBUG_NET_FLAG = "debug/";
@@ -3424,7 +3429,8 @@ public class MainFrame extends JFrame {
 			commentOffField.getText(),
 			commentLineFeedCheckBox.isSelected(),
 			commentLineFeedTextField.getText(),
-			dateUserFirstCheckBox.isSelected()
+			dateUserFirstCheckBox.isSelected(),
+			ngEnableMultilinesCheckBox.isSelected()
 		);
 	}
 
@@ -3617,6 +3623,7 @@ public class MainFrame extends JFrame {
 		commentLineFeedCheckBox.setSelected(setting.enableCommentLF());
 		commentLineFeedTextField.setText(setting.getCommentLF());
 		dateUserFirstCheckBox.setSelected(setting.isSetDateUserFirst());
+		ngEnableMultilinesCheckBox.setSelected(setting.isNGenableML());
 	}
 
 	/**
@@ -4428,6 +4435,7 @@ s	 * @return javax.swing.JPanel
 			commentOffField.setToolTipText("例:-b3n (下からbigサイズ3行分はコメントオフ,nakaコメントのみ)");
 			GridBagConstraints grid_x1_y6_19 = new GridBagConstraints();
 			grid_x1_y6_19.gridx = 1;
+			grid_x1_y6_19.gridwidth = 2;
 			grid_x1_y6_19.gridy = 6;
 			grid_x1_y6_19.weightx = 1.0;
 			grid_x1_y6_19.anchor = GridBagConstraints.WEST;
@@ -4480,6 +4488,7 @@ s	 * @return javax.swing.JPanel
 			sharedNgPanel.add(sharedNgNoneRadioButton, grid_x4_y4_16);
 			GridBagConstraints grid_x1_y3_9 = new GridBagConstraints();
 			grid_x1_y3_9.gridx = 1;
+			grid_x1_y3_9.gridwidth = 2;
 			grid_x1_y3_9.gridy = 3;
 			grid_x1_y3_9.weightx = 1.0;
 			grid_x1_y3_9.fill = GridBagConstraints.HORIZONTAL;
@@ -4499,6 +4508,7 @@ s	 * @return javax.swing.JPanel
 			grid_x1_y1_5.weightx = 1.0;
 			grid_x1_y1_5.insets = INSETS_0_5_0_5;
 			grid_x1_y1_5.gridx = 1;
+			grid_x1_y1_5.gridwidth = 2;
 			GridBagConstraints grid_x0_y1_4 = new GridBagConstraints();
 			grid_x0_y1_4.gridx = 0;
 			grid_x0_y1_4.anchor = GridBagConstraints.WEST;
@@ -4506,11 +4516,18 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y1_4.gridy = 1;
 			NGIDLabel = new JLabel();
 			NGIDLabel.setText("NG ID");
+			GridBagConstraints grid_x2_y0_4 = new GridBagConstraints();
+			grid_x2_y0_4.fill = GridBagConstraints.HORIZONTAL;
+			grid_x2_y0_4.gridy = 0;
+			grid_x2_y0_4.weightx = 0.0;
+			grid_x2_y0_4.insets = INSETS_0_0_0_0;
+			grid_x2_y0_4.gridx = 2;
 			GridBagConstraints grid_x1_y0_3 = new GridBagConstraints();
 			grid_x1_y0_3.fill = GridBagConstraints.HORIZONTAL;
 			grid_x1_y0_3.gridy = 0;
 			grid_x1_y0_3.weightx = 1.0;
-			grid_x1_y0_3.insets = INSETS_0_5_0_5;
+			grid_x1_y0_3.gridwidth = 1;
+			grid_x1_y0_3.insets = INSETS_0_5_0_0;
 			grid_x1_y0_3.gridx = 1;
 			GridBagConstraints grid_x0_y0_2 = new GridBagConstraints();
 			grid_x0_y0_2.gridx = 0;
@@ -4526,6 +4543,19 @@ s	 * @return javax.swing.JPanel
 					"NGワード・ID設定"));
 			NGWordSettingPanel.add(NGWordLabel, grid_x0_y0_2);
 			NGWordSettingPanel.add(getNGWordTextField(), grid_x1_y0_3);
+			ngEnableMultilinesCheckBox.setText("複");
+			ngEnableMultilinesCheckBox.setToolTipText(ngEnableMLToolchipTexts[0]);
+			ngEnableMultilinesCheckBox.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JCheckBox src = ngEnableMultilinesCheckBox;
+					if(e.getSource().equals((Object)src)){
+						int sel = src.isSelected()? 1 : 0;
+						src.setToolTipText(ngEnableMLToolchipTexts[sel]);
+					}
+				}
+			});
+			NGWordSettingPanel.add(ngEnableMultilinesCheckBox, grid_x2_y0_4);
 			NGWordSettingPanel.add(NGIDLabel, grid_x0_y1_4);
 			NGWordSettingPanel.add(getNGIDTextField(), grid_x1_y1_5);
 			NGWordSettingPanel.add(ngCommandLabel, grid_x0_y3_8);

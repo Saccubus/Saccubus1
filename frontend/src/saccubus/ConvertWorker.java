@@ -1654,15 +1654,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return Path.getReplacedExtFile(file, THUMB_INFO + ext);
 	}
 
-	private boolean makeNGPattern() {
+	private boolean makeNGPattern(boolean enableML) {
 		sendtext("NGパターン作成中");
 		try{
 			String all_regex = "/((docomo|iPhone|softbank|device:3DS) (white )?)?.* 18[46]|18[46]( (iPhone|device:3DS))? .*/";
 			String def_regex = "/((docomo|iPhone|softbank|device:3DS) (white )?)?18[46]|18[46]( (iPhone|device:3DS))?/";
 			String ngWord = Setting.getNG_Word().replaceFirst("^all", all_regex).replace(" all", all_regex);
 			ngWord = ngWord.replaceFirst("^default", def_regex).replace(" default", def_regex);
-			ngWordPat = NicoXMLReader.makePattern(ngWord, log);
-			ngIDPat = NicoXMLReader.makePattern(Setting.getNG_ID(), log);
+			ngWordPat = NicoXMLReader.makePattern(ngWord, log, enableML);
+			ngIDPat = NicoXMLReader.makePattern(Setting.getNG_ID(), log, enableML);
 			ngCmd = new CommandReplace(Setting.getNGCommand(), Setting.getReplaceCommand());
 		}catch (Exception e) {
 			sendtext("NGパターン作成に失敗。おそらく正規表現の間違い？");
@@ -2472,7 +2472,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				isConverting = true;
 			}
 			//stopwatch.show();
-			if(!makeNGPattern() || stopFlagReturn()){
+			if(!makeNGPattern(Setting.isNGenableML()) || stopFlagReturn()){
 				return result;
 			}
 

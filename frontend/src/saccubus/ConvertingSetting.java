@@ -214,6 +214,7 @@ public class ConvertingSetting {
 	private boolean commentLFControl;
 	private String commentLFSetting;
 	private boolean enableDateUserFirst;
+	private boolean enableNGinML;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -457,7 +458,8 @@ public class ConvertingSetting {
 			String comment_off_setting,
 			boolean comment_lf_control,
 			String comment_lf_setting,
-			boolean enable_date_UF
+			boolean enable_date_UF,
+			boolean enableNG_ML
 		)
 	{
 		this(	mailaddress,
@@ -616,6 +618,7 @@ public class ConvertingSetting {
 		commentLFControl = comment_lf_control;
 		commentLFSetting = comment_lf_setting;
 		enableDateUserFirst = enable_date_UF;
+		enableNGinML = enableNG_ML;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1042,6 +1045,9 @@ public class ConvertingSetting {
 	public String getZqMetadataOption() {
 		return zqMetadataOption;
 	}
+	public boolean isNGenableML() {
+		return enableNGinML;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1240,6 +1246,7 @@ public class ConvertingSetting {
 	static final String PROP_COMMENT_LF_CONTROL = "LineFeedControl";
 	static final String PROP_COMMENT_LF_SETTING = "LineFeedSetting";
 	static final String PROP_ENABLE_DATE_USER_FIRST = "EnableDateUserFirst";
+	static final String PROP_ENABLE_NG_MULTILINES = "EnableNGinMultilines";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1759,7 +1766,8 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_COMMENT_OFF_SETTING, "-b3n"),
 			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_LF_CONTROL, "false")),
 			prop.getProperty(PROP_COMMENT_LF_SETTING, ""),
-			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_DATE_USER_FIRST, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_DATE_USER_FIRST, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_NG_MULTILINES, "false"))
 		);
 	}
 
