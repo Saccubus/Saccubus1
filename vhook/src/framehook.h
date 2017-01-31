@@ -161,4 +161,7 @@ void exitExtProcess();
 #define FRAMEHOOK_OPT_COMMENT_LF	"--comment-lf:"
 #define FRAMEHOOK_OPT_COMMENT_LF_LEN	strlen(FRAMEHOOK_OPT_COMMENT_LF)
 
+#define FRAMEHOOK_OPT_VFSPEEDRATE	"--vfspeedrate:"
+#define FRAMEHOOK_OPT_VFSPEEDRATE_LEN	strlen(FRAMEHOOK_OPT_VFSPEEDRATE)
+
 #endif /*FRAMEHOOK_H_*/

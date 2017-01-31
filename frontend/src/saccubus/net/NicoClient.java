@@ -3160,7 +3160,7 @@ public class NicoClient {
 		signature = m_sessionApi.getAsString("signature");
 		debug("\nÅ°signature: "+signature);
 	}
-	private String unquote(String str) {
+	public static String unquote(String str) {
 		if(str==null) return null;
 		str = str.trim();
 		if(str.startsWith(S_QUOTE2) && str.endsWith(S_QUOTE2)){

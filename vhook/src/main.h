@@ -103,6 +103,8 @@ struct DATA{
 	int comment_off_naka;	// TRUEの場合nakaコメントだけマスク
 	int comment_lf_control;	//行送り制御 0:無し 1:rev.1.67.1.12 2:new(フォント削れにくく)
 	float comment_linefeed_ratio;	// コメント行送り割合 -1.0 の場合は無効(0.0～1.0f)
+	float vfspeedrate;		// コメントのPTSを倍率倍する。
+	int vfspeedflag;		// 0:無効, 1:コメントだけ, 2:video出力も変更
 	//char wstr[128];
 #ifdef VHOOKDEBUG
 //	float dts_rate;	// フレームレート
@@ -158,6 +160,7 @@ typedef struct SETTING{
 	// 文字サイズ指定:b=big m=medium s=small
 	// パーセント指定:%動画高さに対する相対値(100分率)
 	// nakaコメントフラグ:n
+	const char* vfspeedrate;	//video filter speedrate 指定
 	// CA用フォント
 	const char* CAfont_path[CA_FONT_PATH_MAX];
 	int CAfont_index[CA_FONT_PATH_MAX];
@@ -189,7 +192,7 @@ typedef struct SETTING{
 #include "struct_define.h"
 int init(FILE* log);
 int initData(DATA* data,FILE* log,SETTING* setting);
-int main_process(DATA* data,SDL_Surface* surf,const int now_vpos);
+int main_process(DATA* data,SDL_Surface* surf,int now_vpos);
 int closeData(DATA* data);
 int close();
 

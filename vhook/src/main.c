@@ -179,6 +179,24 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 				,data->comment_lf_control, data->comment_linefeed_ratio);
 		}
 	}
+	data->vfspeedflag = 0;
+	if(setting->vfspeedrate !=NULL){
+		char *endptr = NULL;
+		float val = 1.0;
+		val = (float)strtod(setting->vfspeedrate,&endptr);
+		if(val!=0.0f){
+			data->vfspeedrate = val;
+			data->vfspeedflag = 1;
+			if(endptr!=NULL){
+				if(*endptr=='v'||*endptr=='V'){
+					// v付きは出力速度も倍率で変更
+					data->vfspeedflag = 2;
+				}
+			}
+			fprintf(log,"[main/init]vfspeedrate: mode=%d, rate=%-6.3f\n"
+				,data->vfspeedflag, data->vfspeedrate);
+		}
+	}
 	data->pad_w = 0;
 	data->pad_h = 0;
 	int outw = setting->nico_width_now;
@@ -636,7 +654,7 @@ int isPathRelative(const char* path){
 /*
  * 映像の変換
  */
-int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
+int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 	FILE* log = data->log;
 /*
 	int now_dts = now_vpos;
@@ -664,9 +682,15 @@ int main_process(DATA* data,SDL_Surface* surf,const int now_vpos){
 			(float)surf->w / (float)surf->h,
 			data->aspect_rate,data->width_scale*100.0);
 //		fprintf(log,"[main/process]framerate:%.2f\n",data->dts_rate);
+		if(data->vfspeedflag!=0){
+			fprintf(log,"[main/process]vfspeedrate:%.2f\n",data->vfspeedrate);
+		}
 		fflush(log);
 	}
 	/*フィルタをかける*/
+	if(data->vfspeedflag > 0){
+		now_vpos = (double)now_vpos * data->vfspeedrate;
+	}
 	if(process(data,surf,now_vpos)){
 	}
 	fflush(log);

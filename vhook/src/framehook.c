@@ -35,7 +35,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ƒƒO
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.67.1.21";
+	char *ver="1.67.1.24";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -174,6 +174,7 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	setting->comment_shift = NULL;
 	setting->comment_off = NULL;
 	setting->comment_linefeed = NULL;
+	setting->vfspeedrate = NULL;
 #ifdef VHOOKDEBUG
 //	setting->framerate = NULL;
 #endif
@@ -397,6 +398,11 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 		else if (strncmp(FRAMEHOOK_OPT_COMMENT_LF,arg,FRAMEHOOK_OPT_COMMENT_LF_LEN) == 0){
 			setting->comment_linefeed = arg+FRAMEHOOK_OPT_COMMENT_LF_LEN;
 			fprintf(log,"[framehook/init]comment_linefeed: %s\n",setting->comment_linefeed);
+			fflush(log);
+		}
+		else if (strncmp(FRAMEHOOK_OPT_VFSPEEDRATE,arg,FRAMEHOOK_OPT_VFSPEEDRATE_LEN) == 0){
+			setting->vfspeedrate = arg+FRAMEHOOK_OPT_VFSPEEDRATE_LEN;
+			fprintf(log,"[framehook/init]vfspeedrate: %s\n",setting->vfspeedrate);
 			fflush(log);
 		}
 #ifdef VHOOKDEBUG

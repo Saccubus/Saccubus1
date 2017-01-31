@@ -60,6 +60,7 @@ import saccubus.util.Util;
  */
 public class ConvertWorker extends SwingWorker<String, String> {
 
+	private static final String END_OF_ARGUMENT = "|--end-of-argument";
 	class Tick extends TimerTask {
 		private JLabel label;
 		private String timerString = "";
@@ -1156,6 +1157,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File existVideo;
 	private File log_vhext = null;
 	private Path video_vhext = null;
+	private String vhspeedrate;
 	private boolean existVideoFile(File file, String ext1, String ext2) {
 		existVideo = file;
 		if(existVideo.isFile() && existVideo.canRead())
@@ -2731,9 +2733,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(getAudioCodecKV(optmap)==null){
 					optmap = mainOptionMap;
 				}
-				if(((ac = getAudioCodecKV(optmap))!=null) && (ac[1].contains("aac"))){
-					replaceOption(optmap,ac[0],"copy");
-					log.println("Changed: "+ac[0]+" "+ac[1]+" -> copy");
+				if(optmap.get("-af")==null){
+					if(((ac = getAudioCodecKV(optmap))!=null) && (ac[1].contains("aac"))){
+						replaceOption(optmap,ac[0],"copy");
+						log.println("Changed: "+ac[0]+" "+ac[1]+" -> copy");
+					}
 				}
 			}
 		}
@@ -2745,9 +2749,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(getAudioCodecKV(optmap)==null){
 					optmap = mainOptionMap;
 				}
-				if(((ac = getAudioCodecKV(optmap))!=null) && (ac[1].contains("aac")) && !ac[1].contains("he")){
-					replaceOption(optmap,ac[0],"copy");
-					log.println("Changed: "+ac[0]+" "+ac[1]+" -> copy");
+				if(optmap.get("-af")==null){
+					if(((ac = getAudioCodecKV(optmap))!=null) && (ac[1].contains("aac")) && !ac[1].contains("he")){
+						replaceOption(optmap,ac[0],"copy");
+						log.println("Changed: "+ac[0]+" "+ac[1]+" -> copy");
+					}
 				}
 			}
 		}
@@ -3611,17 +3617,63 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(s.equals(VFILTER_FLAG2)){
 				sb.append(" "+vfilter_flag+" ");
 				s = it.next();
-				int index = s.indexOf("vhext=");
-				if(index > 0){
-					index += "vhext=".length();
+				// sは　-vf のパラメータ, ここでは""で囲まれているはず(saccubusの仕様)
+				s = unquote(s);
+				sb.append("\"");
+				String s2 = "";	// vhext=の後ろに移動する文字列
+				// vhext=はsの最後についている(saccubusの仕様)
+				// @の位置にvhextの位置を変更
+				int index = s.indexOf("@=");
+				if(index >= 0){
+					// @=があった
 					sb.append(s.substring(0, index));
-					s = s.substring(index);
-					s = vf_quote(s);	// vhext= のオプションは video filter用に quoteする
+					s = s.substring(index+2); // @=読み飛ばし
+					index = s.indexOf(",");
+					if(index < 0)
+						return false;
+					if(index > 0)
+						vhspeedrate = s.substring(0, index);	// @=のパラメータ
+					s = s.substring(index+1);
+					index = s.indexOf("vhext=");
+					if(index < 0)
+						return false;
+					if(index > 0)
+						s2 = s.substring(0, index-1);
 				}else{
-					return false;
+					index = s.indexOf("@,");
+					if(index >= 0){
+						// @,があった
+						sb.append(s.substring(0, index));
+						s = s.substring(index+2);	// @,読み飛ばし
+						index = s.indexOf("vhext=");
+						if(index < 0)
+							return false;
+						if(index > 0)
+							s2 = s.substring(0, index-1);
+					}else{
+						index = s.indexOf("vhext=");
+						if(index < 0)
+							return false;
+						sb.append(s.substring(0, index));
+					}
 				}
+				// vhextより前のvfは追加済み
+				sb.append("vhext=");
+				index += "vhext=".length();
+				s = s.substring(index);
+				if(vhspeedrate!=null && !vhspeedrate.isEmpty())
+					s = s.replace(END_OF_ARGUMENT,
+						"|--vfspeedrate:"+vhspeedrate+END_OF_ARGUMENT);
+				s = vf_quote(s);	// vhext= のオプションは video filter用に quoteする
+				sb.append(s);
+				if(!s2.isEmpty()){
+					sb.append(",");
+					sb.append(s2);
+				}
+				sb.append("\"");
+			}else{
+				sb.append(s);
 			}
-			sb.append(s);
 			sb.append(' ');
 		}
 		s = sb.substring(0);
@@ -3629,6 +3681,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return true;
 	}
 
+	private String unquote(String s) {
+		return NicoClient.unquote(s);
+	}
 	/*
 	 *  Character escape convention
 	 *  1st File or path	'\'-> '/'			(Path.toUnixPath)
@@ -3651,13 +3706,49 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		try {
 			String encoding = "Shift_JIS";
 			ffmpeg.addCmd(" "+vfilter_flag+" \"");
-			if (!getFFmpegVfOption().isEmpty()){
-				ffmpeg.addCmd(getFFmpegVfOption());
-				ffmpeg.addCmd(",");
-			}else if(!outAspect.isInvalid()){
-				// -s オプションを -vf scale=w:h として先に追加
-				ffmpeg.addCmd("scale="+outAspect.getSize());
-				ffmpeg.addCmd(",");
+			String vfopt = getFFmpegVfOption();
+			if(!outAspect.isInvalid()){
+				if(vfopt.isEmpty()){
+					// vfoptなし
+					// -s オプションを -vf scale=w:h として先に追加
+					ffmpeg.addCmd("scale="+outAspect.getSize());
+					ffmpeg.addCmd(",");
+				}else{
+					if(vfopt.contains("scale=")){
+						// vfoptにscaleがある場合は変更しない。
+						ffmpeg.addCmd(vfopt);
+						ffmpeg.addCmd(",");
+					}else{
+						// vfoptにscaleなし
+						int index = vfopt.indexOf("@");
+						if(index >= 0){
+							// vfoptに@あり
+							if(index > 0){
+								// @より前は,を含んでいる
+								ffmpeg.addCmd(vfopt.substring(0, index));
+							}
+							// -s オプションを -vf scale=w:h として先に追加
+							ffmpeg.addCmd("scale="+outAspect.getSize());
+							ffmpeg.addCmd(",");
+							ffmpeg.addCmd(vfopt.substring(index));
+							// @より後ろの最後には,を含んでいない
+							ffmpeg.addCmd(",");
+						}else{
+							// vfoptに@なし
+							ffmpeg.addCmd(vfopt);
+							ffmpeg.addCmd(",");
+							// -s オプションを -vf scale=w:h として先に追加
+							ffmpeg.addCmd("scale="+outAspect.getSize());
+							ffmpeg.addCmd(",");
+						}
+					}
+				}
+			}else{
+				// outAspectが不正な場合
+				if(!vfopt.isEmpty()){
+					ffmpeg.addCmd(vfopt);
+					ffmpeg.addCmd(",");
+				}
 			}
 			ffmpeg.addCmd("vhext=");
 			ffmpeg.addFile(vhookExe);
@@ -3860,7 +3951,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ffmpeg.addCmd("|--font-width-fix-ratio:"
 					+ Setting.getFontWidthFixRaito());
 			}
-			ffmpeg.addCmd("|--end-of-argument\"");
+			ffmpeg.addCmd(END_OF_ARGUMENT);
+			ffmpeg.addCmd("\"");
 			return true;
 		} catch (UnsupportedEncodingException e) {
 			log.printStackTrace(e);
