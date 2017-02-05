@@ -3073,8 +3073,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		} else if(!getFFmpegVfOption().isEmpty()){
 			String vfopt = getFFmpegVfOption();
 			vfopt = Pattern.compile("(,@(=[^,]+)?|@(=[^,]+)?,?)").matcher(vfopt).replaceAll("");
-			ffmpeg.addCmd(" "+vfilter_flag+" ");
-			ffmpeg.addCmd(vfopt);
+			if(!vfopt.isEmpty()){
+				ffmpeg.addCmd(" "+vfilter_flag+" ");
+				ffmpeg.addCmd(vfopt);
+			}
 		}
 		ffmpeg.addCmd(" ");
 		ffmpeg.addFile(outfile);
