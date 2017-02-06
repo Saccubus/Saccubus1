@@ -53,6 +53,7 @@ void addChatPool(DATA* data,CHAT_POOL* pool,CHAT_ITEM* chat_item){
 CHAT_ITEM* getChatPooled(DATA* data,CHAT_POOL* pool,int now_vpos){
 	CHAT_ITEM** item = pool->itemp;
 	CHAT_ITEM* ret_item = NULL;
+	int fixmode = data->fixmode;
 	if(!pool) return NULL;
 	if(pool->num_item <= 0) return NULL;
 	if(pool->index >= pool->num_item) {
@@ -66,9 +67,13 @@ CHAT_ITEM* getChatPooled(DATA* data,CHAT_POOL* pool,int now_vpos){
 	// not sorted?
 	if(!pool->is_sorted){
 		//debug
+		if(fixmode){
+			fprintf(data->log,"[chat_pool/get]ahead_vpos > TEXT_AHEAD_SEC -> sort by vappear, and by no\n");
+		}
 		fprintf(data->log,"[chat_pool/get]sort(index=%d,num=%d) vpos=%d \n",pool->index,pool->num_item,now_vpos);
 		//start sorting
 		//first: by vstart, second: by no.
+		//but if ahead_vpos > TEXT_AHEAD_SEC then sort by vappear, and by no
 		int min_vstart;
 		int vstart;
 		int index;
@@ -77,9 +82,15 @@ CHAT_ITEM* getChatPooled(DATA* data,CHAT_POOL* pool,int now_vpos){
 		int new_num = 0;
 		for(done=pool->index; done<pool->num_item-1; done++){
 			target = done;
-			min_vstart = item[done]->vstart;
+			if(!fixmode)
+				min_vstart = item[done]->vstart;
+			else
+				min_vstart = item[done]->vappear;
 			for(index=done+1;index<pool->num_item;index++){
-				vstart = item[index]->vstart;
+				if(!fixmode)
+					vstart = item[index]->vstart;
+				else
+					vstart = item[index]->vappear;
 				if (vstart < min_vstart
 						||(vstart==min_vstart && item[index]->no < item[target]->no)){
 					target = index;
@@ -99,10 +110,11 @@ CHAT_ITEM* getChatPooled(DATA* data,CHAT_POOL* pool,int now_vpos){
 		//fprintf(data->log,"[chat_pool/get]sorted(index=%d,num=%d)\n",pool->index,pool->num_item);
 	}
 	// sorted
-	if(item[pool->index]->vappear <= now_vpos){
+	ret_item = item[pool->index];
+	if(ret_item->vappear <= now_vpos){
 		if(data->debug)
-			fprintf(data->log,"[chat_pool/get]return(%d)\n",pool->index);
-		ret_item = item[pool->index++];
+			fprintf(data->log,"[chat_pool/get]return(%d) comment %d\n",pool->index,ret_item->no);
+		pool->index += 1;
 		return ret_item;
 	}
 	//‚à‚µ vappear > now_vpos‚Ì‚à‚Ì‚ªæ“ª‚É‚ ‚ê‚Îæ“Ç‚İ‚³‚ê‚½‚¾‚¯‚¾‚©‚ç

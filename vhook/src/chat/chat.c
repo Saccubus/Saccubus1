@@ -14,7 +14,7 @@ SDL_Color convColor24(int color);
  * o—Í CHAT_SLOT chat->slot © slot ƒ|ƒCƒ“ƒ^Ý’è‚Ì‚Ý
  */
 int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,
-		int cid,const char* com_type,int toLeft,int is_live,int vpos_shift){
+		int cid,const char* com_type,int toLeft,int is_live,int vpos_shift,int ahead_vpos){
 	int i;
 	int max_no = INTEGER_MIN;
 	int min_no = INTEGER_MAX;
@@ -224,10 +224,17 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			if(is_live){	// vpos‚æ‚è‘‚­•\Ž¦‚Å‚«‚È‚¢‚Ì‚Åvpos‚ð1•b’x‚­‚·‚é
 				vpos = item->vpos += TEXT_AHEAD_SEC;
 			}
-			item->vstart = vpos - TEXT_AHEAD_SEC;	//‚P•b‘O‚©‚ç
-			// item->vend = vpos + TEXT_SHOW_SEC_S - 1;
-			item->vend = vpos + duration - 1 + TEXT_AHEAD_SEC;	//‚P•bŒã‚Ü‚Å•\Ž¦;
-			item->vappear = vpos - TEXT_AHEAD_SEC - TEXT_AHEAD_SEC;	//•\Ž¦‚Í‚Q•b‘O‚©‚ç
+			if(ahead_vpos > TEXT_AHEAD_SEC){
+				// ƒRƒƒ“ƒg‘¬“x‚ª’x‚¢Ý’è‚Ìê‡‚Ívstart,vappear‚ð‘‚­,vend‚ð’x‚­‚·‚éB
+				item->vstart = vpos - ahead_vpos;
+				item->vend = vpos + duration - 1 + ahead_vpos;
+				item->vappear = item->vstart - ahead_vpos;
+			}else{
+				item->vstart = vpos - TEXT_AHEAD_SEC;	//‚P•b‘O‚©‚ç
+				// item->vend = vpos + TEXT_SHOW_SEC_S - 1;
+				item->vend = vpos + duration - 1 + TEXT_AHEAD_SEC;	//‚P•bŒã‚Ü‚Å•\Ž¦;
+				item->vappear = vpos - TEXT_AHEAD_SEC - TEXT_AHEAD_SEC;	//•\Ž¦‚Í‚Q•b‘O‚©‚ç
+			}
 		}
 		item->duration = duration;
 		item->script = script;
@@ -318,14 +325,14 @@ void resetChatIterator(CHAT* chat){
 /*
  * ƒCƒeƒŒ[ƒ^‚ð“¾‚é
  */
-CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos){
+CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos,int ahead_vpos){
 	//int *i = &chat->iterator_index;
 	//int max_item = chat->max_item;
 	CHAT_ITEM* item;
 	for(;chat->iterator_index<chat->max_item;chat->iterator_index++){
 		item = &chat->item[chat->iterator_index];
 		//1•bæ“Ç‚Ý
-		if((now_vpos+TEXT_AHEAD_SEC)>= item->vstart && now_vpos <= item->vend && !item->pooled){
+		if((now_vpos+ahead_vpos)>= item->vstart && now_vpos <= item->vend && !item->pooled){
 			return item;
 		}
 	}

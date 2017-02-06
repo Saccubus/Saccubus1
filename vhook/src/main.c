@@ -68,6 +68,8 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	data->original_resize = setting->original_resize;
 	data->comment_speed = setting->comment_speed;
 	data->comment_duration = setting->comment_duration;
+	data->ahead_vpos = setting->comment_ahead_vpos;
+	data->fixmode = setting->fixmode;
 	data->enableCA = setting->enableCA;
 	data->use_lineskip_as_fontsize = setting->use_lineskip_as_fontsize;
 	data->debug = setting->debug;
@@ -571,7 +573,7 @@ int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int m
 		fprintf(log,"[main/init]%s comment is enabled.\n",com_type);
 		//コメントデータ
 		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length, data->nico_width_now,
-				cid, com_type, tl, data->is_live, data->comment_vpos_shift)){
+				cid, com_type, tl, data->is_live, data->comment_vpos_shift, data->ahead_vpos)){
 			fprintf(log,"[main/init]initialized %s comment.\n",com_type);
 		}else{
 			fprintf(log,"[main/init]failed to initialize %s comment.",com_type);

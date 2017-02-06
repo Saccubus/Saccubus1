@@ -35,7 +35,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.67.1.24";
+	char *ver="1.67.2.02d";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -158,6 +158,8 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	setting->original_resize = TRUE;	//デフォルトは有効（実験的に無効にする選択を行う）
 	setting->comment_speed = 0;
 	setting->comment_duration = 0.0f;
+	setting->comment_ahead_vpos = TEXT_AHEAD_SEC;
+	setting->fixmode = FALSE;
 	setting->enableCA = FALSE;
 	setting->debug = FALSE;
 	setting->use_lineskip_as_fontsize = FALSE;	//デフォルトは無効 FonrsizeにLineskipを合わせる（実験的）
@@ -307,12 +309,17 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 			fflush(log);
 		} else if (strncmp(FRAMEHOOK_OPT_COMMENT_SPEED,arg,FRAMEHOOK_OPT_COMMENT_SPEED_LEN) == 0){
 			char* com_speed_str = arg+FRAMEHOOK_OPT_COMMENT_SPEED_LEN;
+			setting->fixmode = TRUE;
+			int ahead_vpos = setting->comment_ahead_vpos;
 			if(com_speed_str[0]=='@'){
 				//秒数指定
 				float com_duration = (float)atof(com_speed_str+1);
 				if (com_duration != 0.0){
 					setting->comment_duration = com_duration;
 					fprintf(log,"[framehook/init]comment duration fix: %.2f sec.\n",com_duration);
+					if(com_duration != 4.0){
+						ahead_vpos = (int)lround(1.0 * VPOS_FACTOR * (com_duration / 4.0));
+					}
 					fflush(log);
 				}
 			}else{
@@ -320,8 +327,16 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 				if (com_speed != 0){
 					setting->comment_speed = com_speed;
 					fprintf(log,"[framehook/init]comment speed fix: %d pixel/sec.\n",com_speed);
+					if(com_speed < 130){
+						ahead_vpos = (int)lround(1.0 * VPOS_FACTOR * (130.0 / (double)com_speed));
+					}
 					fflush(log);
 				}
+			}
+			if(ahead_vpos != setting->comment_ahead_vpos){
+				setting->comment_ahead_vpos = ahead_vpos;
+				fprintf(log,"[framehook/init]ahead VPOS fix: %d VPOS.\n",setting->comment_ahead_vpos);
+				fflush(log);
 			}
 		} else if(!setting->enableCA && strcmp("--enable-CA",arg) == 0){
 			setting->enableCA = TRUE;

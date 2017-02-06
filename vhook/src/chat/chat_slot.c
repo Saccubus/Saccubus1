@@ -157,8 +157,8 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	double scale = data->width_scale;
 	setspeed(data,slot_item,video_width,data->nico_width_now,scale);
 	if(data->debug){
-		fprintf(data->log,"[chat_slot/add speed]vpos %d..%d(%d) duration(%d)\n",
-			item->vstart,item->vend,item->vpos,(item->vend+1-item->vstart));
+		fprintf(data->log,"[chat_slot/add speed]comment=%d vpos %d..%d(%d) duration(%d)\n",
+			item->no,item->vstart,item->vend,item->vpos,(item->vend+1-item->vstart));
 	}
 	//location 取得
 	int location = slot_item->slot_location;
@@ -189,6 +189,18 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	int bang_end = 0;
 	int y_bottom = y + surf_h;
 	double bang_xpos[2] = {0.0, 0.0};
+	double range[2] = {-16*scale, (NICO_WIDTH+16)*scale};
+	int fixmode = data->fixmode;
+	if(fixmode){
+		double range_w = range[1] - range[0];
+		if(range_w < video_width){
+			double dif_w = video_width - range_w / 2.0;
+			range[0] -= dif_w;
+			range[1] += dif_w;
+		}
+	}
+	if(data->debug)
+		fprintf(data->log,"range (%.0f,%.0f)\n",range[0],range[1]);
 	// コメントオフ
 	int off_h = 0;		//オフの高さ
 	int off_min = y_min;
@@ -254,14 +266,18 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 				continue;
 			}
 			//チェックの開始と終了
-			start = MAX(other_item->vstart,item->vstart);
+			if(!fixmode){
+				start = MAX(other_item->vstart,item->vstart);
+			}else{
+				start = MAX(other_item->vappear,item->vappear);
+			}
 			end = MIN(other_item->vend,item->vend);
 			if(location != CMD_LOC_NAKA){
 				//vendは最後の数vposは揺らぐ
 				end -= 12;	// 12vpos は重なってもいい?
 			}else{
 				//nakaコメントの場合は5sec→4secに直す
-				end -= TEXT_AHEAD_SEC;
+				end -= data->ahead_vpos;
 				//end -= 3;
 			}
 			if(start > end){
@@ -296,14 +312,13 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			double x_t2 = getX(end,slot_item,video_width,scale,0);
 			double o_x_t1 = getX(start,other_slot,video_width,scale,0);
 			double o_x_t2 = getX(end,other_slot,video_width,scale,0);
-			double dxstart[2] = {x_t1, x_t1 + surf->w};
-			double dxend[2] = {x_t2, x_t2 + surf->w};
-			double o_dxstart[2] = {o_x_t1, o_x_t1 + other_slot->surf->w};
-			double o_dxend[2] = {o_x_t2, o_x_t2 + other_slot->surf->w};
+			int surf_w = surf->w;
+			double dxstart[2] = {x_t1, x_t1 + surf_w};
+			double dxend[2] = {x_t2, x_t2 + surf_w};
+			int other_w = other_slot->surf->w;
+			double o_dxstart[2] = {o_x_t1, o_x_t1 + other_w};
+			double o_dxend[2] = {o_x_t2, o_x_t2 + other_w};
 			double dtmp[2];
-			double range[2] = {-16*scale, (NICO_WIDTH+16)*scale};
-			if(data->debug)
-				fprintf(data->log,"range (%.0f,%.0f)\n",range[0],range[1]);
 			//当たり判定　追い越し無し前提
 			if(data->debug)
 				fprintf(data->log,"at %d(end) check [%.1f,%.1f] [%.1f,%.1f]y[%d] item %d\n",
@@ -343,6 +358,38 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 				if(data->debug){
 					fprintf(data->log,"out of range [%.1f,%.1f]&[%.1f,%.1f]=[%.1f,%.1f]\n",
 						dtmp[0],dtmp[1],range[0],range[1],bang_xpos[0],bang_xpos[1]);
+				}
+			}
+			if(fixmode){
+				//当たり判定　追い越しチェック有り
+				double range_xpos;
+				int check_vpos;
+				int other_xpos;
+				if(surf_w >= other_w){
+					// itemが後でスピードが速い場合
+					// 動画の左端に到達する時刻
+					range_xpos = range[0];
+				}else{
+					// itemが後でスピードが遅い場合
+					// 動画の右端に表示される時刻
+					range_xpos = range[1];
+				}
+				check_vpos = getVposItem(data,slot_item,range_xpos,0);
+				other_xpos = (int)lround(getX(check_vpos,other_slot,video_width,scale,0));
+				if(data->debug){
+					fprintf(data->log,"--> going to check passing vpos=%d, other_x=[%d,%d]\n",
+						check_vpos, other_xpos, other_xpos + other_w);
+				}
+				if(other_xpos + other_w > range_xpos){
+					y = other_y_bottom;
+					running = TRUE;
+					if(data->debug){
+						fprintf(data->log,"--> passing, vpos=%d, y[%d]\n",check_vpos,other_y);
+						bang_vpos = check_vpos;
+						bang_end = check_vpos;
+						bang_slot = other_slot;
+					}
+					break;
 				}
 			}
 		}

@@ -19,6 +19,7 @@ int process_chat(DATA* data,CDATA* cdata,SDL_Surface* surf,const int now_vpos){
 	CHAT_SLOT* slot;
 	CHAT_ITEM* chat_item;
 	CHAT_SLOT_ITEM* slot_item;
+	int ahead_vpos = data->ahead_vpos;
 	FILE* log = data->log;
 	char buf[16];
 	if (cdata->enable_comment){
@@ -34,7 +35,7 @@ int process_chat(DATA* data,CDATA* cdata,SDL_Surface* surf,const int now_vpos){
 		//プールは以前からのが残っているのでリセットしてはいけない
 		//resetPoolIterator(chat->pool);
 		// now_vposを1秒先読みしてvstartからvendまでのコメントをプール
-		while((chat_item = getChatShowed(chat,now_vpos)) != NULL){
+		while((chat_item = getChatShowed(chat,now_vpos,ahead_vpos)) != NULL){
 			// debug
 			fprintf(log,"[process-chat/process]getChatShowed(chat,vpos=%d) comment %d.\n",now_vpos,chat_item->no);
 			addChatPool(data,chat->pool,chat_item);
@@ -91,8 +92,10 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 		item = &slot->item[i];
 		if(item->used){
 #ifdef VHOOKDEBUG
-			fprintf(data->log,"[drawcomment/debug2]slot:%8p->%8p->%px item(%d):%8p\n",
-					slot,slot->chat, slot->chat->item, i, item);
+			CHAT_ITEM* chatitem = item->chat_item;
+			int no = chatitem->no;
+			fprintf(data->log,"[drawcomment/debug2]item(%d):no=%d, y=%d\n",
+					i, no, item->y);
 #endif
 /*
 			if(now_vpos > item->chat_item->vend){
@@ -100,7 +103,7 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 				continue;
 			}
 */
-			int normal_x = lround(getX(now_vpos,item,data->vout_width,data->width_scale,data->aspect_mode));
+			int normal_x = lround(getX1(data->log,now_vpos,item,data->vout_width,data->width_scale,data->aspect_mode));
 			if(slot->chat->to_left < 0){
 #ifdef VHOOKDEBUG
 //				CHAT_ITEM* citem = item->chat_item;
@@ -116,8 +119,8 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 			rect.x = normal_x + x;
 			rect.y = item->y + y;
 #ifdef VHOOKDEBUG
-			fprintf(data->log,"[drawcomment/debug3]SDL_BlitSurface(item->surf:%p,NULL:%p,surf:%p,&rect:%p)\n",
-					item->surf,NULL,surf,&rect);
+			fprintf(data->log,"[drawcomment/debug3]comment=%d, SDL_BlitSurface(item->surf:%p,NULL:%p,surf:%p,rect:(x=%d,y=%d))\n",
+					no,item->surf,NULL,surf,rect.x,rect.y);
 #endif
 			SDL_BlitSurface(item->surf,NULL,surf,&rect);
 		}
@@ -127,7 +130,7 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 /*
  * 位置を求める
  */
-double getX(int vpos,CHAT_SLOT_ITEM* item,int video_width,double scale,int aspect_mode){
+double getX1(FILE* log,int vpos,CHAT_SLOT_ITEM* item,int video_width,double scale,int aspect_mode){
 	if(item->slot_location != CMD_LOC_NAKA){
 		return (double)((video_width >> 1) - (item->surf->w >> 1));
 	}
@@ -140,7 +143,7 @@ double getX(int vpos,CHAT_SLOT_ITEM* item,int video_width,double scale,int aspec
 	double progress = item->speed * (vpos-item->chat_item->vstart);
 	double xstart;
 	double xpos;
-		//-16-text if 512 -> 48-text if 640
+		//-16-text    if 512 -> 48-text if 640
 		//528      if 512 -> 592 if 640
 	if(aspect_mode){
 		xstart = scale * (NICO_WIDTH + 16 + 64);
@@ -149,6 +152,9 @@ double getX(int vpos,CHAT_SLOT_ITEM* item,int video_width,double scale,int aspec
 	}
 	xpos = -progress + xstart;
 	return xpos;
+}
+double getX(int vpos,CHAT_SLOT_ITEM* item,int video_width,double scale,int aspect_mode){
+	return getX1(NULL,vpos,item,video_width,scale,aspect_mode);
 }
 
 int getVposItem(DATA* data,CHAT_SLOT_ITEM* item,int n_xpos,double s_tpos){
@@ -173,6 +179,7 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 	CHAT_ITEM* item = slot_item->chat_item;
 	int vpos = item->vpos;
 	int location = item->location;
+	int ahead_vpos = data->ahead_vpos;
 	/*
 	 * default lcation 変更
 	 */
@@ -190,15 +197,15 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 	}else{
 		if(comment_duration > 0)
 			duration = comment_duration;
-		item->vstart = vpos - TEXT_AHEAD_SEC;
+		item->vstart = vpos - ahead_vpos;
 		//if(item->script==SCRIPT_GYAKU||item->script==SCRIPT_DEFAULT){
 		//	item->vstart = vpos;
 		//}
-		item->vend = vpos + duration - 1 + TEXT_AHEAD_SEC;
-		item->vappear = item->vstart -TEXT_AHEAD_SEC;
+		item->vend = vpos + duration - 1 + ahead_vpos;
+		item->vappear = item->vstart - ahead_vpos;
 		int text_width = slot_item->surf->w;
 		double width = scale * (NICO_WIDTH + 32) + text_width;
-		double speed = width / (double)(duration + TEXT_AHEAD_SEC);
+		double speed = width / (double)(duration + ahead_vpos);
 		//speed *= 1.006;	//特別補正→ edge of video will be reached at vend-3
 		if(comment_speed==0){
 			//speed = speed * 1.02 - 0.04;	//特別補正
@@ -209,7 +216,7 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 		}
 		else if(comment_speed==20090401){	//3 times speed
 			slot_item->speed = (float)(speed * 3.0);
-			item->vend = item->vstart + lround((duration + TEXT_AHEAD_SEC) / 3.0);
+			item->vend = item->vstart + lround((duration + ahead_vpos) / 3.0);
 		}
 		else {
 			speed  = (double)comment_speed/(double)VPOS_FACTOR;
@@ -218,9 +225,11 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 				speed = -speed;
 			}
 			item->vend = item->vstart + lround(width / speed);
+			item->vappear = item->vstart - ahead_vpos;
 		}
 		if(data->debug){
-			fprintf(data->log,"[process_chat/set_speed]comment speed %.2fpix/sec.\n",slot_item->speed*100.0);
+			fprintf(data->log,"[process_chat/set_speed]comment %d, vappear %d, speed %.2fpix/sec.\n",
+				item->no,item->vappear,slot_item->speed*100.0);
 		}
 	}
 }

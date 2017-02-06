@@ -147,7 +147,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				fprintf(log,"stop\n");
 				return drawNullSurface(0,0);
 			}
-}
+		}
 	}
 	/*
 	 * default colorïœçX

@@ -65,6 +65,8 @@ struct DATA{
 	int original_resize;	// さきゅばす独自リサイズが有効（デフォルト有効）
 	int comment_speed;	// コメント速度を指定する場合≠0
 	float comment_duration;	// UIでコメント秒数指定する場合≠0
+	int ahead_vpos;
+	int fixmode;	//コメント衝突判定を変更する
 	int enableCA;
 	const char* fontdir;
 	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
@@ -179,6 +181,8 @@ typedef struct SETTING{
 	int original_resize;	// さきゅばす独自リサイズが有効（デフォルト有効）
 	int comment_speed;	// コメント速度を指定する場合≠0
 	float comment_duration;	// UIでコメント秒数指定する場合≠0
+	int comment_ahead_vpos;
+	int fixmode;	//コメント衝突判定を変更する
 	int enableCA;
 	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
 	int debug;

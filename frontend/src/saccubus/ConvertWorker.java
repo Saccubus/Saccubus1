@@ -3835,10 +3835,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						+ Setting.getFontHeightFixRaito());
 			}
 			String comment_speed = Setting.getCommentSpeed();
-			if (Setting.isSetCommentSpeed() &&
-				comment_speed != null && !comment_speed.isEmpty()){
-				ffmpeg.addCmd("|--comment-speed:"
-					+ URLEncoder.encode(comment_speed, encoding));
+			if (Setting.isSetCommentSpeed()){
+				ffmpeg.addCmd("|--comment-speed:");
+				if(comment_speed != null && !comment_speed.isEmpty())
+					ffmpeg.addCmd(URLEncoder.encode(comment_speed, encoding));
 			}
 			if(convertIsLive()){
 				ffmpeg.addCmd("|--live");

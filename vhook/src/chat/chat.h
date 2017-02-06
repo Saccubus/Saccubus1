@@ -91,11 +91,11 @@ struct CHAT_SET{
 
 //初期化
 int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,
-	int cid,const char* com_type,int toLeft, int is_live,int vpos_shift);
+	int cid,const char* com_type,int toLeft, int is_live,int vpos_shift,int ahead_vpos);
 void closeChat();
 //イテレータ
 void resetChatIterator(CHAT* chat);
-CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos);
+CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos,int ahead_vpos);
 SDL_Color convColor24(int c);
 SDL_Color getSDL_color(int c);
 
