@@ -3430,7 +3430,8 @@ public class MainFrame extends JFrame {
 			commentLineFeedCheckBox.isSelected(),
 			commentLineFeedTextField.getText(),
 			dateUserFirstCheckBox.isSelected(),
-			ngEnableMultilinesCheckBox.isSelected()
+			ngEnableMultilinesCheckBox.isSelected(),
+			layerControlCheckBox.isSelected()
 		);
 	}
 
@@ -3624,6 +3625,7 @@ public class MainFrame extends JFrame {
 		commentLineFeedTextField.setText(setting.getCommentLF());
 		dateUserFirstCheckBox.setSelected(setting.isSetDateUserFirst());
 		ngEnableMultilinesCheckBox.setSelected(setting.isNGenableML());
+		layerControlCheckBox.setSelected(setting.isLayerControl());
 	}
 
 	/**
@@ -3753,6 +3755,7 @@ public class MainFrame extends JFrame {
 	private boolean PendingMode;
 	private JCheckBox commentOffCheckbox;
 	private JTextField commentOffField;
+	private JCheckBox layerControlCheckBox;
 
 	public void myListGetterDone(StringBuffer vList, Logger log) {
 		PendingMode = getSetting().isPendingMode();
@@ -4435,12 +4438,20 @@ s	 * @return javax.swing.JPanel
 			commentOffField.setToolTipText("例:-b3n (下からbigサイズ3行分はコメントオフ,nakaコメントのみ)");
 			GridBagConstraints grid_x1_y6_19 = new GridBagConstraints();
 			grid_x1_y6_19.gridx = 1;
-			grid_x1_y6_19.gridwidth = 2;
+			grid_x1_y6_19.gridwidth = 1;
 			grid_x1_y6_19.gridy = 6;
 			grid_x1_y6_19.weightx = 1.0;
 			grid_x1_y6_19.anchor = GridBagConstraints.WEST;
 			grid_x1_y6_19.fill = GridBagConstraints.HORIZONTAL;
-			grid_x1_y6_19.insets = INSETS_0_5_0_5;
+			grid_x1_y6_19.insets = INSETS_0_5_0_0;
+			layerControlCheckBox = new JCheckBox("レ");
+			layerControlCheckBox.setToolTipText("レイヤー順:ue shitaコマンドを手前側に表示する");
+			GridBagConstraints grid_x2_y6_20 = new GridBagConstraints();
+			grid_x2_y6_20.gridx = 2;
+			grid_x2_y6_20.gridy = 6;
+			grid_x2_y6_20.anchor = GridBagConstraints.WEST;
+			grid_x2_y6_20.fill = GridBagConstraints.HORIZONTAL;
+			grid_x2_y6_20.insets = INSETS_0_0_0_0;
 			sharedNgPanel = new JPanel();
 			sharedNgPanel.setLayout(new GridBagLayout());
 			GridBagConstraints grid_x0_y5_17 = new GridBagConstraints();
@@ -4563,6 +4574,7 @@ s	 * @return javax.swing.JPanel
 			NGWordSettingPanel.add(sharedNgPanel, grid_x0_y5_17);
 			NGWordSettingPanel.add(commentOffCheckbox, grid_x0_y6_18);
 			NGWordSettingPanel.add(commentOffField, grid_x1_y6_19);
+			NGWordSettingPanel.add(layerControlCheckBox, grid_x2_y6_20);
 			sharedNgScore.add(sharedNgHighRadioButton,SharedNgScore.HIGH);
 			sharedNgScore.add(sharedNgMediumRadioButton,SharedNgScore.MEDIUM);
 			sharedNgScore.add(sharedNgLowRadioButton,SharedNgScore.LOW);

@@ -107,6 +107,7 @@ struct DATA{
 	float comment_linefeed_ratio;	// コメント行送り割合 -1.0 の場合は無効(0.0～1.0f)
 	float vfspeedrate;		// コメントのPTSを倍率倍する。
 	int vfspeedflag;		// 0:無効, 1:コメントだけ, 2:video出力も変更
+	int layerctrl;		//ue shita nakaのレイヤー順制御 0:なし 1:nakaを後ろに
 	//char wstr[128];
 #ifdef VHOOKDEBUG
 //	float dts_rate;	// フレームレート
@@ -163,6 +164,7 @@ typedef struct SETTING{
 	// パーセント指定:%動画高さに対する相対値(100分率)
 	// nakaコメントフラグ:n
 	const char* vfspeedrate;	//video filter speedrate 指定
+	int layerctrl;		//ue shita nakaのレイヤー順制御 0:なし 1:nakaを後ろに
 	// CA用フォント
 	const char* CAfont_path[CA_FONT_PATH_MAX];
 	int CAfont_index[CA_FONT_PATH_MAX];

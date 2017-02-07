@@ -35,7 +35,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ƒƒO
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.67.2.02d";
+	char *ver="1.67.2.03e";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -177,6 +177,7 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	setting->comment_off = NULL;
 	setting->comment_linefeed = NULL;
 	setting->vfspeedrate = NULL;
+	setting->layerctrl = FALSE;
 #ifdef VHOOKDEBUG
 //	setting->framerate = NULL;
 #endif
@@ -418,6 +419,11 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 		else if (strncmp(FRAMEHOOK_OPT_VFSPEEDRATE,arg,FRAMEHOOK_OPT_VFSPEEDRATE_LEN) == 0){
 			setting->vfspeedrate = arg+FRAMEHOOK_OPT_VFSPEEDRATE_LEN;
 			fprintf(log,"[framehook/init]vfspeedrate: %s\n",setting->vfspeedrate);
+			fflush(log);
+		}
+		else if (strncmp(FRAMEHOOK_OPT_LAYER_CTRL,arg,FRAMEHOOK_OPT_LAYER_CTRL_LEN) == 0){
+			setting->layerctrl = TRUE;
+			fprintf(log,"[framehook/init]layer control: %d\n",setting->layerctrl);
 			fflush(log);
 		}
 #ifdef VHOOKDEBUG

@@ -161,6 +161,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		data->comment_off_kind = kind;
 		data->comment_off_naka = naka;
 	}
+	data->layerctrl = setting->layerctrl;
 	data->comment_linefeed_ratio = 0.0f;
 	data->comment_lf_control = 0;
 	if(setting->comment_linefeed !=NULL){

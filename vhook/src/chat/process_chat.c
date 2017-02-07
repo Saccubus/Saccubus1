@@ -79,7 +79,7 @@ int convSDLcolor(SDL_Color sc){
  * ÉåÉCÉÑèáÇ…ÇªÇ¡Çƒï`âÊÇ∑ÇÈ
  */
 
-void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int x, int y){
+void drawCommentA(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int x, int y, int loc){
 	int i;
 	SDL_Rect rect;
 	int max_item = slot->max_item;
@@ -90,7 +90,7 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 #endif
 	for(i=0;i<max_item;i++){
 		item = &slot->item[i];
-		if(item->used){
+		if(item->used && (loc==CMD_LOC_ALL || loc==item->slot_location)){
 #ifdef VHOOKDEBUG
 			CHAT_ITEM* chatitem = item->chat_item;
 			int no = chatitem->no;
@@ -124,6 +124,20 @@ void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int 
 #endif
 			SDL_BlitSurface(item->surf,NULL,surf,&rect);
 		}
+	}
+}
+
+void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int x, int y){
+	if(data->layerctrl==1){
+		// ue shita Çå„ÇÃóDêÊï`âÊ
+		// naka -> shita -> ueÇÃèáî‘Ç…ï`âÊÇ∑ÇÈ
+		// Ç±ÇÃéûì_Ç≈ÇÕloc_def ÇÕñ≥Ç¢
+		drawCommentA(data, surf, slot, now_vpos, x, y, CMD_LOC_NAKA);
+		drawCommentA(data, surf, slot, now_vpos, x, y, CMD_LOC_BOTTOM);
+		drawCommentA(data, surf, slot, now_vpos, x, y, CMD_LOC_TOP);
+	}else{
+		// slotèá è]óàí ÇË
+		drawCommentA(data, surf, slot, now_vpos, x, y, CMD_LOC_ALL);
 	}
 }
 

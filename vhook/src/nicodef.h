@@ -22,6 +22,7 @@
 #define CMD_LOC_BOTTOM	(2)
 #define CMD_LOC_NAKA	(3)
 #define CMD_LOC_MAX		4
+#define CMD_LOC_ALL		(-1)
 
 static char* const COM_LOC_NAME[CMD_LOC_MAX] = {
 	"def",	//CMD_LOC_DEF
