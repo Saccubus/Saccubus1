@@ -1088,8 +1088,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ■収録物
 　　ffmpeg3.2.2同梱版
 □フォルダ構成
-　saccubus1.66.3.10.zip
+　saccubus1.67.2.03.zip
 　├読んで下さいtxt
+　├最初に必ず読んで.txt
 　└saccubus　　  本体exe jar xml bat
 　　├bin          実行ファイルフォルダ exe dll
 　　├doc          ドキュメントフォルダ
@@ -1105,11 +1106,10 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・debug.bat　　　　　　　　 ログ記録用バッチファイル(1.22rの修正版)
 ・Saccubus.exe　　　　　　　ランチャー、ログ出力あり
 ・saccubus.ini　　　　　　　ffmpeg3.2.2向け初期設定
-・最初に必ず読んで.txt
 ・bin フォルダ配下
 　　ffmpeg3.2.2.exe ライセンスGPLV3
 　　　library3.2.2.txt　　外部ライブラリーバージョン
-　　nicovideoE.dll(2016.12.15版)拡張Vhookライブラリ
+　　nicovideoE.dll(2017.02.07版)拡張Vhookライブラリ
 　　SDL.dll(2012.01.16ビルド)、COPYNG、README-SDL.txt
 　　　ライセンスはLGPL
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYING.sdl_ttf
@@ -1136,12 +1136,13 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　readme150.txt(1.50)
 　　readme.txt(1.22r)
 　　変更履歴.txt
+　　TIPS.txt
 　　ToDo.txt
 　　エラーコード表
 　　旧鯖仕様.txt
 　　オプションファイル見本.xml　（1.22rの物）
 　　ローカル変換追加説明.txt
-　　最初に必ず読んで.txt　　　　　(コピー)
+　　最初に必ず読んで.txt
 　　変換リストが起動しない場合.txt
 　　(ソースファイルは全て https://github.com/Saccubus/Saccubus1.x で
 　　　公開しているため添付中止)
