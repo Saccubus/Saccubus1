@@ -3,10 +3,14 @@
 	<name>frontend</name>
 	<comment></comment>
 	<projects>
-		<project>launcher</project>
 		<project>vhook</project>
 	</projects>
 	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.mylyn.wikitext.ui.wikiTextValidationBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
@@ -21,5 +25,6 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>edu.umd.cs.findbugs.plugin.eclipse.findbugsNature</nature>
+		<nature>org.eclipse.mylyn.wikitext.ui.wikiTextNature</nature>
 	</natures>
 </projectDescription>
