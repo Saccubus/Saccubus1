@@ -52,6 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -316,8 +317,9 @@ public class MainFrame extends JFrame {
 	final String DEBUG_NET_FLAG = "debug/";
 	final String DEBUG_COMMENT_FLAG = "-debug";
 	private String debug_port = "80";
-	private JCheckBox resizeAdjustControlCheckBox = new JCheckBox();
-	private JTextField resizeAdjustControlField = new JTextField();
+	private JCheckBox resizeAdjustCheckBox = new JCheckBox();
+	private JTextField resizeAdjustField = new JTextField();
+	private JSlider resizeAdjustSlider;
 
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
@@ -2163,23 +2165,31 @@ public class MainFrame extends JFrame {
 			grid8_y7_x0_w2.gridy = 7;
 			grid8_y7_x0_w2.gridx = 0;
 			grid8_y7_x0_w2.gridwidth = 2;
-			grid8_y7_x0_w2.weightx = 1.0;
+			grid8_y7_x0_w2.weightx = 0.0;
 			grid8_y7_x0_w2.anchor = GridBagConstraints.WEST;
 			grid8_y7_x0_w2.fill = GridBagConstraints.HORIZONTAL;
 			grid8_y7_x0_w2.insets = INSETS_0_0_0_5;
-			GridBagConstraints grid8_y7_x2_w2 = new GridBagConstraints();
-			grid8_y7_x2_w2.gridy = 7;
-			grid8_y7_x2_w2.gridx = 2;
-			grid8_y7_x2_w2.gridwidth = 2;
-			grid8_y7_x2_w2.weightx = 0.0;
-			grid8_y7_x2_w2.anchor = GridBagConstraints.WEST;
-			grid8_y7_x2_w2.fill = GridBagConstraints.HORIZONTAL;
-			grid8_y7_x2_w2.insets = INSETS_0_0_0_5;
+			GridBagConstraints grid8_y7_x2_w1 = new GridBagConstraints();
+			grid8_y7_x2_w1.gridy = 7;
+			grid8_y7_x2_w1.gridx = 2;
+			grid8_y7_x2_w1.gridwidth = 1;
+			grid8_y7_x2_w1.weightx = 0.0;
+			grid8_y7_x2_w1.anchor = GridBagConstraints.WEST;
+			grid8_y7_x2_w1.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y7_x2_w1.insets = INSETS_0_0_0_5;
+			GridBagConstraints grid8_y7_x3_w1 = new GridBagConstraints();
+			grid8_y7_x3_w1.gridy = 7;
+			grid8_y7_x3_w1.gridx = 3;
+			grid8_y7_x3_w1.gridwidth = 1;
+			grid8_y7_x3_w1.weightx = 0.8;
+			grid8_y7_x3_w1.anchor = GridBagConstraints.WEST;
+			grid8_y7_x3_w1.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y7_x3_w1.insets = INSETS_0_0_0_5;
 			GridBagConstraints grid8_y7_x4_w2 = new GridBagConstraints();
 			grid8_y7_x4_w2.gridy = 7;
 			grid8_y7_x4_w2.gridx = 4;
 			grid8_y7_x4_w2.gridwidth = 2;
-			grid8_y7_x4_w2.weightx = 0.0;
+			grid8_y7_x4_w2.weightx = 0.2;
 			grid8_y7_x4_w2.anchor = GridBagConstraints.WEST;
 			grid8_y7_x4_w2.fill = GridBagConstraints.HORIZONTAL;
 			grid8_y7_x4_w2.insets = INSETS_0_0_0_5;
@@ -2300,10 +2310,26 @@ public class MainFrame extends JFrame {
 			VhookSettingPanel.add(getShadowComboBox(), grid8_y6_x1_w5);
 			FixFontSizeCheckBox.setText("フォントサイズを自動調整");
 			VhookSettingPanel.add(FixFontSizeCheckBox, grid8_y7_x0_w2);
-			resizeAdjustControlCheckBox.setText("補正%");
-			VhookSettingPanel.add(resizeAdjustControlCheckBox, grid8_y7_x2_w2);
-			resizeAdjustControlField.setText("100");
-			VhookSettingPanel.add(resizeAdjustControlField, grid8_y7_x4_w2);
+			resizeAdjustCheckBox.setText("補正%");
+			resizeAdjustCheckBox.setForeground(Color.blue);
+			VhookSettingPanel.add(resizeAdjustCheckBox, grid8_y7_x2_w1);
+			resizeAdjustField.setText("100");
+			VhookSettingPanel.add(resizeAdjustField, grid8_y7_x3_w1);
+			resizeAdjustSlider = new JSlider(0, 200, 100);
+			VhookSettingPanel.add(resizeAdjustSlider, grid8_y7_x4_w2);
+			resizeAdjustSlider.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					resizeAdjustField
+						.setText(Integer.toString(resizeAdjustSlider.getValue()));
+				}
+			});
+			resizeAdjustCheckBox.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					resizeAdjustAction(resizeAdjustCheckBox.isSelected());
+				}
+			});
 			OpaqueCommentCheckBox.setText("全てのコメントを不透明に(0.0～1.0)");
 			VhookSettingPanel.add(OpaqueCommentCheckBox, grid8_y9_x0_w3);
 			opaqueRateTextField.setForeground(Color.blue);
@@ -2329,6 +2355,11 @@ public class MainFrame extends JFrame {
 			VhookSettingPanel.add(VhookSettingPanel.getHideLabel(), c);
 		}
 		return VhookSettingPanel;
+	}
+
+	private void resizeAdjustAction(boolean is_selected) {
+		resizeAdjustField.setEditable(is_selected);
+		resizeAdjustSlider.setEnabled(is_selected);
 	}
 
 	private JPanel fontPathPanel;
@@ -3478,8 +3509,8 @@ public class MainFrame extends JFrame {
 			dateUserFirstCheckBox.isSelected(),
 			ngEnableMultilinesCheckBox.isSelected(),
 			layerControlCheckBox.isSelected(),
-			resizeAdjustControlCheckBox.isSelected(),
-			resizeAdjustControlField.getText()
+			resizeAdjustCheckBox.isSelected(),
+			resizeAdjustField.getText()
 			
 		);
 	}
@@ -3675,8 +3706,9 @@ public class MainFrame extends JFrame {
 		dateUserFirstCheckBox.setSelected(setting.isSetDateUserFirst());
 		ngEnableMultilinesCheckBox.setSelected(setting.isNGenableML());
 		layerControlCheckBox.setSelected(setting.isLayerControl());
-		resizeAdjustControlCheckBox.setSelected(setting.isResizeAdjust());
-		resizeAdjustControlField.setText(setting.getResizeAdjust());
+		resizeAdjustCheckBox.setSelected(setting.isResizeAdjust());
+		resizeAdjustAction(setting.isResizeAdjust());
+		resizeAdjustField.setText(setting.getResizeAdjust());
 	}
 
 	/**
