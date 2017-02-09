@@ -3859,6 +3859,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(Setting.isLayerControl()){
 				ffmpeg.addCmd("|--comment-layer");
 			}
+			if(Setting.isResizeAdjust()){
+				ffmpeg.addCmd("|--resize-adjust:"
+					+URLEncoder.encode(Setting.getResizeAdjust(), encoding));
+			}
 			String extra = Setting.getExtraMode();
 			if(extra.contains("-April=")){
 				int index = extra.indexOf("-April=");

@@ -216,6 +216,8 @@ public class ConvertingSetting {
 	private boolean enableDateUserFirst;
 	private boolean enableNGinML;
 	private boolean layerControl;
+	private boolean resizeAdjustEnable;
+	private String resizeAdjustControl;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -461,7 +463,9 @@ public class ConvertingSetting {
 			String comment_lf_setting,
 			boolean enable_date_UF,
 			boolean enableNG_ML,
-			boolean layer_ctrl
+			boolean layer_ctrl,
+			boolean resize_adjust_enable,
+			String resize_adjust_ctrl
 		)
 	{
 		this(	mailaddress,
@@ -622,6 +626,8 @@ public class ConvertingSetting {
 		enableDateUserFirst = enable_date_UF;
 		enableNGinML = enableNG_ML;
 		layerControl = layer_ctrl;
+		resizeAdjustEnable = resize_adjust_enable;
+		resizeAdjustControl = resize_adjust_ctrl;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1094,6 +1100,12 @@ public class ConvertingSetting {
 	public boolean isLayerControl(){
 		return layerControl;
 	}
+	public boolean isResizeAdjust(){
+		return resizeAdjustEnable;
+	}
+	public String getResizeAdjust(){
+		return resizeAdjustControl;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -1254,6 +1266,8 @@ public class ConvertingSetting {
 	static final String PROP_ENABLE_DATE_USER_FIRST = "EnableDateUserFirst";
 	static final String PROP_ENABLE_NG_MULTILINES = "EnableNGinMultilines";
 	static final String PROP_LAYER_CNTROL = "LayerControl";
+	static final String PROP_ENABLE_RESIZE_ADJUST = "EnableResizeAdjust";
+	static final String PROP_RESIZE_ADJUST_CONTROL = "ResizeAdjustControl";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1487,6 +1501,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_COMMENT_LF_SETTING, setting.getCommentLF());
 		prop.setProperty(PROP_ENABLE_DATE_USER_FIRST, Boolean.toString(setting.isSetDateUserFirst()));
 		prop.setProperty(PROP_LAYER_CNTROL, Boolean.toString(setting.isLayerControl()));
+		prop.setProperty(PROP_ENABLE_RESIZE_ADJUST, Boolean.toString(setting.isResizeAdjust()));
+		prop.setProperty(PROP_RESIZE_ADJUST_CONTROL, setting.getResizeAdjust());
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1776,7 +1792,9 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_COMMENT_LF_SETTING, ""),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_DATE_USER_FIRST, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_NG_MULTILINES, "false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_LAYER_CNTROL, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_LAYER_CNTROL, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_RESIZE_ADJUST, "false")),
+			prop.getProperty(PROP_RESIZE_ADJUST_CONTROL,"")
 		);
 	}
 

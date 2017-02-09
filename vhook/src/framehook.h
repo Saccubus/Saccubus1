@@ -167,4 +167,7 @@ void exitExtProcess();
 #define FRAMEHOOK_OPT_LAYER_CTRL	"--comment-layer"
 #define FRAMEHOOK_OPT_LAYER_CTRL_LEN	strlen(FRAMEHOOK_OPT_LAYER_CTRL)
 
+#define FRAMEHOOK_OPT_RESIZE_ADJUST	"--resize-adjust:"
+#define FRAMEHOOK_OPT_RESIZE_ADJUST_LEN	strlen(FRAMEHOOK_OPT_RESIZE_ADJUST)
+
 #endif /*FRAMEHOOK_H_*/

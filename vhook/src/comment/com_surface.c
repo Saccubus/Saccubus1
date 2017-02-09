@@ -355,7 +355,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	if(ret==NULL || ret->h == 0){
 		fprintf(log,"***ERROR*** [comsurface/makeE]comment %d has no char.\n",item->no);
 		fflush(log);
-		return ret;
+		return NULL;
 	}
 	if(ret->w == 0){
 		int hh = ret->h;
@@ -475,17 +475,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				linefeed_resized =TRUE;
 			}
 		}
-/*
-		//	コメント高さ補正
-		if(!linefeed_resized){
-			int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
-			if(h!=ret->h){
-				ret = adjustComment(ret,data,h);
-				fprintf(log,"[comsurface/adjust]comment %d adjust(%d, %d) %s\n",
-					item->no,ret->w,ret->h,(data->fontsize_fix?" fix":""));
-			}
-		}
-*/
+
 		if(location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM){
 			/* ue shitaコマンドのみリサイズあり */
 			/*
@@ -516,6 +506,10 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				limit_width_resized = TRUE;
 			}
 		}
+
+		// ユーザー補正追加
+		zoomx *= data->comment_resize_adjust;
+
 		// ue shitaコマンドのみリサイズ終わり
 		zoomy = (zoomx / font_width_rate) * font_height_rate;
 
@@ -769,14 +763,16 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	if(data->fontsize_fix){
 		if(autoscale != 1.0f){
 			zoom_w *= autoscale;
-			//zoom_h *= autoscale;
-			// zoomx *= autoscale
 			auto_scaled = TRUE;
 		}
 	}
 
 	// 実験：フォント幅・高さの調整
 	zoomx = zoom_w/(double)ret->w;
+
+	// ユーザー補正追加
+	zoomx *= data->comment_resize_adjust;
+
 	//zoomy = zoom_h/(double)ret->h;
 	zoomy = (zoomx / font_width_rate) * font_height_rate;
 

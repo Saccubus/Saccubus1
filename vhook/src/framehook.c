@@ -35,7 +35,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ƒƒO
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.67.2.03e";
+	char *ver="1.67.2.04";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -178,6 +178,7 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	setting->comment_linefeed = NULL;
 	setting->vfspeedrate = NULL;
 	setting->layerctrl = FALSE;
+	setting->comment_resize_adjust = 1.0;
 #ifdef VHOOKDEBUG
 //	setting->framerate = NULL;
 #endif
@@ -425,6 +426,14 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 			setting->layerctrl = TRUE;
 			fprintf(log,"[framehook/init]layer control: %d\n",setting->layerctrl);
 			fflush(log);
+		}
+		else if (strncmp(FRAMEHOOK_OPT_RESIZE_ADJUST,arg,FRAMEHOOK_OPT_RESIZE_ADJUST_LEN) == 0){
+			double adjust = strtod(arg+FRAMEHOOK_OPT_RESIZE_ADJUST_LEN, NULL);
+			if(adjust>=0.0){
+				setting->comment_resize_adjust = (float)(adjust / 100.0);
+				fprintf(log,"[framehook/init]resize adjust: %.2f\n",setting->comment_resize_adjust);
+				fflush(log);
+			}
 		}
 #ifdef VHOOKDEBUG
 //		else if (strncmp(FRAMEHOOK_OPT_FRAMERATE,arg,FRAMEHOOK_OPT_FRAMERATE_LEN) == 0){
