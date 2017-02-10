@@ -2666,11 +2666,21 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		checkFps = Setting.enableCheckFps();
 		fpsUp = Setting.getFpsUp();
 		fpsMin = Setting.getFpsMin();
+		String fixed = "";
 		if(frameRate == 0.0){
 			frameRate = 25.0;
 			log.println("frameRate error, set frameRate to Default");
 		}
-		log.println("frameRate:"+frameRate+",fpsUp:"+fpsUp+",fpsMin:"+fpsMin);
+		else if(Setting.isFpsIntegralMultiple()){
+			try{
+				int fpsMultiple = Math.max(1,(int)Math.round(fpsUp/frameRate));
+				fpsUp = fpsMultiple * frameRate;
+				fixed = "(fixed)";
+			}catch(RuntimeException e){
+				//
+			}
+		}
+		log.println("\nframeRate:"+frameRate+",fpsUp:"+fpsUp+fixed+",fpsMin:"+fpsMin);
 		String str;
 		if (videoAspect == null || videoAspect.isInvalid()){
 			str = "Analize Error   ";

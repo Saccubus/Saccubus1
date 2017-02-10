@@ -233,12 +233,12 @@ public class MainFrame extends JFrame {
 	JTextField commentLineFeedTextField = new JTextField();
 	JCheckBox enableCA_CheckBox = new JCheckBox();
 	JCheckBox disableEcoCheckBox = new JCheckBox();
-	JCheckBox preferSmileCheckBox;
-	JCheckBox forceDmcDlCheckBox;
-	JCheckBox enableRangeCheckBox;
-	JCheckBox enableSeqResumeCheckBox;
-	JCheckBox inhibitSmallCheckBox;
-	JCheckBox autoFlvToMp4CheckBox;
+	JCheckBox preferSmileCheckBox = new JCheckBox();
+	JCheckBox forceDmcDlCheckBox = new JCheckBox();
+	JCheckBox enableRangeCheckBox = new JCheckBox();
+	JCheckBox enableSeqResumeCheckBox = new JCheckBox();
+	JCheckBox inhibitSmallCheckBox = new JCheckBox();
+	JCheckBox autoFlvToMp4CheckBox = new JCheckBox();
 	JCheckBox fontWidthFixCheckBox = new JCheckBox();
 	JTextField fontWidthRatioTextField = new JTextField();
 	JCheckBox useLineskipAsFontsizeCheckBox = new JCheckBox();
@@ -274,6 +274,8 @@ public class MainFrame extends JFrame {
 //	private JLabel updateInfoLabel2 = new JLabel();
 	private JCheckBox nmmNewEnableCheckBox = new JCheckBox();
 	private JCheckBox fpsUpCheckBox = new JCheckBox();
+	private JPanel fpsFixPanel;
+	private JCheckBox fpsIntegralMultipleCheckBox = new JCheckBox();
 	private JRadioButton fpsFilterRadioButton = new JRadioButton();
 	private JRadioButton fpsConvRadioButton = new JRadioButton();
 	private ButtonGroup fpsConvButtonGroup = new ButtonGroup();
@@ -385,9 +387,11 @@ public class MainFrame extends JFrame {
 	private JButton playVideoBackButton;
 
 	private JButton AllSaveButton;
+	MainFrame mainFrame;
 
 	public MainFrame() {
 		try {
+			mainFrame = this;
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
 			jbInit();
 			setPopup();
@@ -720,7 +724,7 @@ public class MainFrame extends JFrame {
 		setSize(new Dimension(400, 625));
 		/* setBounds(0, 50, 400, 620); */
 		setTitle("さきゅばす " + saccubus.MainFrame_AboutBox.rev );
-		this.addWindowListener(new MainFrame_this_windowAdapter(this));
+		this.addWindowListener(new MainFrame_this_windowAdapter());
 		statusBar.setText(" ");
 		elapsedTimeBar.setText(" ");
 		elapsedTimeBar.setForeground(Color.blue);
@@ -729,14 +733,19 @@ public class MainFrame extends JFrame {
 		infoBar.setText(" ");
 		jMenuFile.setText("ファイル");
 		jMenuFileExit.setText("終了");
-		jMenuFileExit
-				.addActionListener(new MainFrame_jMenuFileExit_ActionAdapter(
-						this));
+		jMenuFileExit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				jMenuFileExit_actionPerformed(e);
+			}
+		});
 		jMenuHelp.setText("ヘルプ");
 		jMenuHelpAbout.setText("バージョン情報");
-		jMenuHelpAbout
-				.addActionListener(new MainFrame_jMenuHelpAbout_ActionAdapter(
-						this));
+		jMenuHelpAbout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jMenuHelpAbout_actionPerformed(e);
+			}
+		});
 		jMenuHelpReadme.setText("　readme(オリジナル)表示");
 		jMenuHelpReadme.addActionListener(new ActionListener() {
 			@Override
@@ -912,7 +921,14 @@ public class MainFrame extends JFrame {
 			}
 		});
 		jMenuAprilFool.setText("AprilFool再現");
-		jMenuAprilFool.addActionListener(new MainFrame_jMenuAfDialog(this));
+		jMenuAprilFool.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AprilFool_Dioalog dialog = new AprilFool_Dioalog(mainFrame);
+				dialog.init();
+				dialog.setVisible(true);
+			}
+		});
 		jMenuOpen.setText("開く(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
@@ -1017,7 +1033,12 @@ public class MainFrame extends JFrame {
 			requestTemplete.offer(s);
 		histories[2] = requestTemplete;
 		DoButton.setText(DoButtonDefString);
-		DoButton.addActionListener(new MainFrame_DoButton_actionAdapter(this));
+		DoButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				DoButton_actionPerformed(e);
+			}
+		});
 		SavingInfoTabPanel.setLayout(gridBagLayout2);
 		loginCheckPanel.setLayout(new GridBagLayout());
 		loginCheckButton.setText("ログインチェック");
@@ -1196,9 +1217,12 @@ public class MainFrame extends JFrame {
 		disableEcoCheckBox.setText("eco中止");
 		disableEcoCheckBox.setForeground(Color.blue);
 		ShowSavingVideoFileDialogButton.setText("参照");
-		ShowSavingVideoFileDialogButton
-				.addActionListener(new MainFrame_ShowSavingVideoDialogButton_actionAdapter(
-						this));
+		ShowSavingVideoFileDialogButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ShowSavingVideoDialogButton_actionPerformed(e);
+			}
+		});
 		Video_SaveFolderRadioButton.setText("保存するフォルダを指定し、ファイル名は自動で決定する");
 		openVideoSaveFolderButton.addActionListener(new ActionListener() {
 			@Override
@@ -1206,9 +1230,12 @@ public class MainFrame extends JFrame {
 				{openFolder(getFile(VideoSavedFolderField.getText()));}
 		});
 		ShowSavingVideoFolderDialogButton.setText("参照");
-		ShowSavingVideoFolderDialogButton
-				.addActionListener(new MainFrame_ShowSavingVideoFolderDialogButton_actionAdapter(
-						this));
+		ShowSavingVideoFolderDialogButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ShowSavingVideoFolderDialogButton_actionPerformed(e);
+			}
+		});
 		Video_SaveFileRadioButton.setText("保存するファイル名を指定する(置換マクロ有り)->");
 		Video_SaveFileRadioButton.setForeground(Color.blue);
 		videoFileMacroLabel.setText("説明");
@@ -1234,9 +1261,12 @@ public class MainFrame extends JFrame {
 		AddTimeStampToCommentCheckBox.setForeground(Color.blue);
 		AddTimeStampToCommentCheckBox.setToolTipText("過去ログにも現在のコメントにも日時が付く");
 		ShowSavingCommentFileDialogButton.setText("参照");
-		ShowSavingCommentFileDialogButton
-				.addActionListener(new MainFrame_ShowSavingCommentDialogButton_actionAdapter(
-						this));
+		ShowSavingCommentFileDialogButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ShowSavingCommentDialogButton_actionPerformed(e);
+			}
+		});
 		Comment_SaveFolderRadioButton.setText("保存するフォルダを指定し、ファイル名は自動で決定する");
 		openCommentSaveFolderButton.addActionListener(new ActionListener() {
 			@Override
@@ -1244,9 +1274,12 @@ public class MainFrame extends JFrame {
 				{openFolder(getFile(CommentSavedFolderField.getText()));}
 		});
 		ShowSavingCommentFolderDialogButton.setText("参照");
-		ShowSavingCommentFolderDialogButton
-				.addActionListener(new MainFrame_ShowSavingCommentFolderDialogButton_actionAdapter(
-						this));
+		ShowSavingCommentFolderDialogButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ShowSavingCommentFolderDialogButton_actionPerformed(e);
+			}
+		});
 		Comment_SaveFileRadioButton.setText("保存するファイル名を指定する");
 		openCommentSaveFileButton.addActionListener(new ActionListener() {
 			@Override
@@ -1281,9 +1314,12 @@ public class MainFrame extends JFrame {
 				{openFolder(getFile(ConvertedVideoSavedFolderField.getText()));}
 		});
 		ShowSavingConvertedVideoFileDialogButton.setText("参照");
-		ShowSavingConvertedVideoFileDialogButton
-				.addActionListener(new MainFrame_ShowSavingConvertedVideoDialogButton_actionAdapter(
-						this));
+		ShowSavingConvertedVideoFileDialogButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ShowSavingConvertedVideoDialogButton_actionPerformed(e);
+			}
+		});
 		autoPlayCheckBox.setText("変換後自動再生(拡張子の既定値)");
 		autoPlay2CheckBox.setText("自動再生");
 		autoPlayCheckBox.setForeground(Color.blue);
@@ -1307,12 +1343,12 @@ public class MainFrame extends JFrame {
 				BorderFactory.createEtchedBorder(), "オプションフォルダの位置の設定",
 				TitledBorder.LEADING, TitledBorder.TOP,
 				getFont(), Color.blue));
-		PathSettingPanel.setLayout(gridBagLayout7);
+		PathSettingPanel.setLayout(new GridBagLayout());
 		VhookPathSettingPanel = new JPanelHideable("VhookPath","拡張Vhookパスの設定",Color.black);
 		FFmpegPathSettingPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(), "FFmpegの位置の設定"));
 		FFmpegPathSettingPanel.setLayout(new GridBagLayout());
-		FFmpegPathLabel.setText("FFmpeg");
+//		FFmpegPathLabel.setText("FFmpeg");
 		CheckFFmpegVersionLabel.setText("FFmpegバージョン表示");
 		CheckFFmpegVersionLabel.setForeground(Color.blue);
 		CheckFFmpegVersionButton.setText("表");
@@ -1320,11 +1356,17 @@ public class MainFrame extends JFrame {
 		CheckFFmpegVersionButton.setForeground(Color.blue);
 		CheckFFmpegVersionButton.addActionListener(new ActionListener(){
 			@Override
-			public void actionPerformed(ActionEvent e){ FFVersionButton_actionPerformed(e); }
+			public void actionPerformed(ActionEvent e){
+				FFVersionButton_actionPerformed(e);
+			}
 		});
 		SettingFFmpegPathButton.setText("参照");
-		SettingFFmpegPathButton
-				.addActionListener(new MainFrame_SettingFFmpegPathButton_actionAdapter(this));
+		SettingFFmpegPathButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SettingFFmpegPathButton_actionPerformed(e);
+			}
+		});
 		SettingOptionPathButton.setText("参照");
 		SettingOptionPathButton.setForeground(Color.blue);
 		SettingOptionPathButton.addActionListener(new ActionListener() {
@@ -1339,8 +1381,12 @@ public class MainFrame extends JFrame {
 		UseVhookCheckBox.setForeground(Color.blue);
 		UseVhookCheckBox.setToolTipText("FFmpegの設定１を参照する");
 		SettingVhookPathButton.setText("参照");
-		SettingVhookPathButton
-				.addActionListener(new MainFrame_SettingVhookPathButton_actionAdapter(this));
+		SettingVhookPathButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SettingVhookPathButton_actionPerformed(e);
+			}
+		});
 		VhookWidePathLabel.setText("拡張vhook ワイド ");
 		VhookWidePathLabel.setForeground(Color.blue);
 		UseVhookWideCheckBox.setText("使用する（16:9用）");
@@ -1355,7 +1401,7 @@ public class MainFrame extends JFrame {
 		FFmpegSettingPanel.setBorder(BorderFactory.createTitledBorder(
 				CREATE_ETCHED_BORDER,
 				"FFmpegの設定１ （拡張Vhook 従来を選択した時）"));
-		FFmpegSettingPanel.setLayout(gridBagLayout9);
+		FFmpegSettingPanel.setLayout(new GridBagLayout());
 		WideFFmpegSettingPanel.setBorder(BorderFactory.createTitledBorder(
 			CREATE_ETCHED_BORDER,
 			"FFmpegの設定２ （拡張Vhook ワイドを選択した時）",
@@ -1366,8 +1412,12 @@ public class MainFrame extends JFrame {
 			"FFmpeg追加設定 (オプションを上書き/追加します)",
 			TitledBorder.LEADING, TitledBorder.TOP, getFont(), Color.blue));
 		SettingFontPathButton.setText("参照");
-		SettingFontPathButton
-			.addActionListener(new MainFrame_SettingFontPathButton_actionAdapter(this));
+		SettingFontPathButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SettingFontPathButton_actionPerformed(e);
+			}
+		});
 		InLabel.setText("入力オプション");
 		OutLabel.setText("出力オプション");
 		CommentNumLabel.setText("取得コメント数");
@@ -1379,9 +1429,12 @@ public class MainFrame extends JFrame {
 		OpPanel.setLayout(gridBagLayout10);
 		Conv_SaveFolderRadioButton.setText("保存するフォルダを指定し、ファイル名は自動で決定する");
 		ShowSavingConvertedVideoFolderDialogButton.setText("参照");
-		ShowSavingConvertedVideoFolderDialogButton
-				.addActionListener(new MainFrame_ShowSavingConvertedVideoFolderDialogButton_actionAdapter(
-						this));
+		ShowSavingConvertedVideoFolderDialogButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ShowSavingConvertedVideoFolderDialogButton_actionPerformed(e);
+			}
+		});
 		Conv_SaveFileRadioButton.setText("保存するファイル名を指定する(置換マクロ有り)->");
 		Conv_SaveFileRadioButton.setForeground(Color.blue);
 		convFileMacroLabel.setText("説明");
@@ -1690,8 +1743,10 @@ public class MainFrame extends JFrame {
 		CommentSaveInfoPanel.add(appendCommentCheckBox, grid4_x1_y6_);
 	//	CommentSaveInfoPanel.add(dateUserFirstCheckBox, grid4_x2_y6_2);
 		CommentSaveInfoPanel.add(AddTimeStampToCommentCheckBox, grid4_x0_y7_86);
-		CommentSaveInfoPanel.add(getDelCommentCheckBox(), grid4_x0_y8_25);
-		CommentSaveInfoPanel.add(getFixCommentNumCheckBox(),grid4_x0_y9_26);
+		DelCommentCheckBox.setText("変換後にコメントファイルを削除する");
+		CommentSaveInfoPanel.add(DelCommentCheckBox, grid4_x0_y8_25);
+		FixCommentNumCheckBox.setText("コメント取得数は自動で調整する");
+		CommentSaveInfoPanel.add(FixCommentNumCheckBox,grid4_x0_y9_26);
 		CommentSaveInfoPanel.add(CommentNumLabel, grid4_x0_y10_17);
 		CommentSaveInfoPanel.add(CommentNumField, grid4_x1_y10_22);
 		CommentSaveInfoPanel.add(Comment_SaveFolderRadioButton,grid4_x0_y11_18);
@@ -1717,8 +1772,9 @@ public class MainFrame extends JFrame {
 				grid5_x0_y2_81);
 		ConvertedVideoSavingInfoPanel.add(Conv_SaveFolderRadioButton,
 				grid5_x0_y3_40);
-		ConvertedVideoSavingInfoPanel.add(getNotAddVideoID_ConvVideoCheckBox(),
-				grid5_x0_y4_39);
+		NotAddVideoID_ConvVideoCheckBox.setText("ファイル名に動画IDを付加しない");
+		ConvertedVideoSavingInfoPanel.add(NotAddVideoID_ConvVideoCheckBox,
+			grid5_x0_y4_39);
 		ConvertedVideoSavingInfoPanel.add(AddOption_ConvVideoFileCheckBox,
 				gird5_x0_y5_89);
 		ConvertedVideoSavingInfoPanel.add(ConvertedVideoSavedFolderField,
@@ -1827,7 +1883,6 @@ public class MainFrame extends JFrame {
 		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
 		gird_x0_y2_0.insets = INSETS_0_5_0_5;
 		zqPlayerModePanel.add(zqPlayerModeCheckBox, gird_x0_y2_0);
-		zqVhookSettingLavel.setText("拡張Vhookの位置を設定する(アスペクト比共通)");
 		gird_x0_y2_0 = new GridBagConstraints();
 		gird_x0_y2_0.gridx = 0;
 		gird_x0_y2_0.gridy = 1;
@@ -1836,7 +1891,8 @@ public class MainFrame extends JFrame {
 		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
 		gird_x0_y2_0.insets = INSETS_0_5_5_5;
-		zqPlayerModePanel.add(zqVhookSettingLavel,gird_x0_y2_0);
+		zqPlayerModePanel.add(
+			new JLabel("拡張Vhookの位置を設定する(アスペクト比共通)"),gird_x0_y2_0);
 		gird_x0_y2_0 = new GridBagConstraints();
 		gird_x0_y2_0.gridx = 0;
 		gird_x0_y2_0.gridy = 2;
@@ -2363,6 +2419,7 @@ public class MainFrame extends JFrame {
 	}
 
 	private JPanel fontPathPanel;
+
 	private JPanel getFontPathPanel(){
 		if(fontPathPanel==null){
 			fontPathPanel = new JPanel(new GridBagLayout());
@@ -2568,64 +2625,74 @@ public class MainFrame extends JFrame {
 			grid14_x1_y1.insets = INSETS_0_5_0_5;
 			updateInfoPanel.add(updateInfoLabel, grid14_x1_y1);
 
+			fpsFixPanel = new JPanel();
+			fpsFixPanel.setLayout(new GridBagLayout());
 			fpsUpCheckBox.setText("fps変更");
 			fpsUpCheckBox.setForeground(Color.blue);
 			fpsUpCheckBox.setEnabled(true);
 			fpsUpCheckBox.setToolTipText("フレームレートが低い動画のfps変更。");
 			GridBagConstraints grid14_x0_y3 = new GridBagConstraints();
 			grid14_x0_y3.gridx = 0;
-			grid14_x0_y3.gridy = 3;
-			grid14_x0_y3.weightx = 0.0;
 			grid14_x0_y3.anchor = GridBagConstraints.NORTH;
 			grid14_x0_y3.fill = GridBagConstraints.HORIZONTAL;
 			grid14_x0_y3.insets = INSETS_0_5_0_5;
-			updateInfoPanel.add(fpsUpCheckBox, grid14_x0_y3);
+			fpsFixPanel.add(fpsUpCheckBox, grid14_x0_y3);
 
 			GridBagConstraints grid14_x1_y3 = new GridBagConstraints();
 			grid14_x1_y3.gridx = 1;
-			grid14_x1_y3.gridy = 3;
-			grid14_x1_y3.gridwidth = 1;
-			grid14_x1_y3.weightx = 0.0;
 			grid14_x1_y3.anchor = GridBagConstraints.CENTER;
 			grid14_x1_y3.fill = GridBagConstraints.HORIZONTAL;
-			grid14_x1_y3.insets = INSETS_0_5_0_5;
-			updateInfoPanel.add(new JLabel("最小(fps)"), grid14_x1_y3);
+			grid14_x1_y3.insets = INSETS_0_0_0_0;
+			fpsFixPanel.add(new JLabel("最小(fps)"), grid14_x1_y3);
 
 			fpsMinTextField = new JTextField();
 			fpsMinTextField.setText("23");
 			fpsMinTextField.setForeground(Color.blue);
 			GridBagConstraints grid14_x2_y3 = new GridBagConstraints();
 			grid14_x2_y3.gridx = 2;
-			grid14_x2_y3.gridy = 3;
-			grid14_x2_y3.gridwidth = 1;
-			grid14_x2_y3.weightx = 0.5;
+			grid14_x2_y3.weightx = 1.0;
 			grid14_x2_y3.anchor = GridBagConstraints.NORTH;
 			grid14_x2_y3.fill = GridBagConstraints.HORIZONTAL;
-			grid14_x2_y3.insets = INSETS_0_5_0_5;
-			updateInfoPanel.add(fpsMinTextField, grid14_x2_y3);
+			grid14_x2_y3.insets = INSETS_0_0_0_5;
+			fpsFixPanel.add(fpsMinTextField, grid14_x2_y3);
 
 			GridBagConstraints grid14_x3_y3 = new GridBagConstraints();
 			grid14_x3_y3.gridx = 3;
-			grid14_x3_y3.gridy = 3;
-			grid14_x3_y3.gridwidth = 1;
-			grid14_x3_y3.weightx = 0.0;
 			grid14_x3_y3.anchor = GridBagConstraints.CENTER;
 			grid14_x3_y3.fill = GridBagConstraints.HORIZONTAL;
-			grid14_x3_y3.insets = INSETS_0_5_0_5;
-			updateInfoPanel.add(new JLabel("変換(fps)"), grid14_x3_y3);
+			grid14_x3_y3.insets = INSETS_0_0_0_0;
+			fpsFixPanel.add(new JLabel("変換(fps)"), grid14_x3_y3);
 
 			fpsUpTextFiled = new JTextField();
 			fpsUpTextFiled.setText("25");
 			fpsUpTextFiled.setForeground(Color.blue);
 			GridBagConstraints grid14_x4_y3 = new GridBagConstraints();
 			grid14_x4_y3.gridx = 4;
-			grid14_x4_y3.gridy = 3;
-			grid14_x4_y3.gridwidth = 1;
-			grid14_x4_y3.weightx = 0.5;
+			grid14_x4_y3.weightx = 1.0;
 			grid14_x4_y3.anchor = GridBagConstraints.NORTH;
 			grid14_x4_y3.fill = GridBagConstraints.HORIZONTAL;
-			grid14_x4_y3.insets = INSETS_0_5_0_5;
-			updateInfoPanel.add(fpsUpTextFiled, grid14_x4_y3);
+			grid14_x4_y3.insets = INSETS_0_0_0_0;
+			fpsFixPanel.add(fpsUpTextFiled, grid14_x4_y3);
+
+			fpsIntegralMultipleCheckBox.setText("整数倍");
+			fpsIntegralMultipleCheckBox.setForeground(Color.blue);
+			fpsIntegralMultipleCheckBox.setToolTipText("変更後のfpsを元動画のfpsの整数倍に補正する。");
+			GridBagConstraints grid14_x5_y3 = new GridBagConstraints();
+			grid14_x5_y3.gridx = 5;
+			grid14_x5_y3.anchor = GridBagConstraints.CENTER;
+			grid14_x5_y3.fill = GridBagConstraints.HORIZONTAL;
+			grid14_x5_y3.insets = INSETS_0_0_0_0;
+			fpsFixPanel.add(fpsIntegralMultipleCheckBox, grid14_x5_y3);
+
+			GridBagConstraints grid14_x0_y3_2 = new GridBagConstraints();
+			grid14_x0_y3_2.gridx = 0;
+			grid14_x0_y3_2.gridy = 3;
+			grid14_x0_y3_2.gridwidth = 4;
+			grid14_x0_y3_2.weightx = 1.0;
+			grid14_x0_y3_2.anchor = GridBagConstraints.NORTH;
+			grid14_x0_y3_2.fill = GridBagConstraints.HORIZONTAL;
+			grid14_x0_y3_2.insets = INSETS_0_0_0_5;
+			updateInfoPanel.add(fpsFixPanel,grid14_x0_y3_2);
 
 			fpsFilterRadioButton.setText("fpsフィルター使用");
 			fpsFilterRadioButton.setForeground(Color.blue);
@@ -3203,9 +3270,9 @@ public class MainFrame extends JFrame {
 	JPanel PathSettingPanel = new JPanel();
 	JPanelHideable VhookPathSettingPanel;
 	JPanel FFmpegPathSettingPanel = new JPanel();
-	JLabel FFmpegPathLabel = new JLabel();
-	JLabel OptionPathLabel = new JLabel();
-	GridBagLayout gridBagLayout7 = new GridBagLayout();
+//	JLabel FFmpegPathLabel = new JLabel();
+//	JLabel OptionPathLabel = new JLabel();
+//	GridBagLayout gridBagLayout7 = new GridBagLayout();
 	JTextField FFmpegPathField = new JTextField();
 	JTextField OptionPathField = new JTextField();
 	JButton SettingFFmpegPathButton = new JButton();
@@ -3220,12 +3287,11 @@ public class MainFrame extends JFrame {
 	JButton SettingVhookPathButton = new JButton();
 	JButton SettingVhookWidePathButton = new JButton();
 	JPanelHideable VhookSettingPanel;
-	GridBagLayout gridBagLayout8 = new GridBagLayout();
+//	GridBagLayout gridBagLayout8 = new GridBagLayout();
 	JPanel FFmpegSettingPanel = new JPanel();
 	JPanel WideFFmpegSettingPanel = new JPanel();
-	GridBagLayout gridBagLayout9 = new GridBagLayout();
+//	GridBagLayout gridBagLayout9 = new GridBagLayout();
 	private JPanel zqPlayerModePanel = new JPanel();
-	private JLabel zqVhookSettingLavel = new JLabel();
 	private JCheckBox zqPlayerModeCheckBox = new JCheckBox();
 	private JTextField zqAdditionalOptionFiled = new JTextField();
 	private JCheckBox zqMetadataCheckBox = new JCheckBox();
@@ -3510,8 +3576,8 @@ public class MainFrame extends JFrame {
 			ngEnableMultilinesCheckBox.isSelected(),
 			layerControlCheckBox.isSelected(),
 			resizeAdjustCheckBox.isSelected(),
-			resizeAdjustField.getText()
-			
+			resizeAdjustField.getText(),
+			fpsIntegralMultipleCheckBox.isSelected()
 		);
 	}
 
@@ -3709,6 +3775,7 @@ public class MainFrame extends JFrame {
 		resizeAdjustCheckBox.setSelected(setting.isResizeAdjust());
 		resizeAdjustAction(setting.isResizeAdjust());
 		resizeAdjustField.setText(setting.getResizeAdjust());
+		fpsIntegralMultipleCheckBox.setSelected(setting.isFpsIntegralMultiple());
 	}
 
 	/**
@@ -3797,15 +3864,15 @@ public class MainFrame extends JFrame {
 	private JCheckBox UseProxyCheckBox = null;
 	private JCheckBox FixFontSizeCheckBox = new JCheckBox();
 	private JCheckBox DelVideoCheckBox = null;
-	private JCheckBox DelCommentCheckBox = null;
-	private JCheckBox FixCommentNumCheckBox = null;
+	private JCheckBox DelCommentCheckBox = new JCheckBox();
+	private JCheckBox FixCommentNumCheckBox = new JCheckBox();
 	private JCheckBox OpaqueCommentCheckBox = new JCheckBox();
 	private JPanel VideoSaveInfoPanel = null;
 	private JTabbedPane SaveInfoTabPaneEach = null;
 	private JTabbedPane FFmpegInfoTabPaneEach = new JTabbedPane();
 	private JPanel VideoSavingTabbedPanel = null;
 	private JPanel ConvertedVideoSavingTabbedPanel = null;
-	private JCheckBox NotAddVideoID_ConvVideoCheckBox = null;
+	private JCheckBox NotAddVideoID_ConvVideoCheckBox = new JCheckBox();
 	@SuppressWarnings("rawtypes")
 	private JComboBox FFmpegOptionComboBox = null;
 	@SuppressWarnings("rawtypes")
@@ -4814,32 +4881,6 @@ s	 * @return javax.swing.JPanel
 	}
 
 	/**
-	 * This method initializes DelCommentCheckBox
-	 *
-	 * @return javax.swing.JCheckBox
-	 */
-	private JCheckBox getDelCommentCheckBox() {
-		if (DelCommentCheckBox == null) {
-			DelCommentCheckBox = new JCheckBox();
-			DelCommentCheckBox.setText("変換後にコメントファイルを削除する");
-		}
-		return DelCommentCheckBox;
-	}
-
-	/**
-	 * This method initializes FixCommentNumCheckBox
-	 *
-	 * @return javax.swing.JCheckBox
-	 */
-	private JCheckBox getFixCommentNumCheckBox() {
-		if (FixCommentNumCheckBox == null) {
-			FixCommentNumCheckBox = new JCheckBox();
-			FixCommentNumCheckBox.setText("コメント取得数は自動で調整する");
-		}
-		return FixCommentNumCheckBox;
-	}
-
-	/**
 	 * This method initializes VideoSaveInfoPanel
 	 *
 	 * @return javax.swing.JPanel
@@ -4909,16 +4950,11 @@ s	 * @return javax.swing.JPanel
 					CREATE_ETCHED_BORDER,
 					"動画保存設定"
 				));
-				//	, TitledBorder.LEADING, TitledBorder.TOP,
-				//	new Font("MS UI Gothic", Font.PLAIN, 12), Color.black));
 			JPanel savingVideoSubPanel = new JPanel();
 			savingVideoSubPanel.setLayout(new GridBagLayout());
 			VideoSaveInfoPanel.add(savingVideoSubPanel, grid_x0_y0_34);
 			savingVideoSubPanel.add(SavingVideoCheckBox, new GridBagConstraints());
 			savingVideoSubPanel.add(disableEcoCheckBox, new GridBagConstraints());
-			//	savingVideoSubPanel.add(getPreferSmileCheckBox(), new GridBagConstraints());
-			//	savingVideoSubPanel.add(getForceDmcDlCheckBox(), new GridBagConstraints());
-			//	savingVideoSubPanel.add(getEnableRangeCheckBox(), new GridBagConstraints());
 
 			JPanel extraDownloadPanel0 = new JPanel();
 			extraDownloadPanel0.setLayout(new BorderLayout());
@@ -4939,14 +4975,9 @@ s	 * @return javax.swing.JPanel
 			GridBagConstraints grid000_last = new GridBagConstraints();
 			grid000_last.weightx = 1.0;
 			grid000_last.fill = GridBagConstraints.NONE;
-		//	grid000_last.anchor = GridBagConstraints.WEST;
-		//	grid000_last.insets = INSETS_0_5_0_5;
-		//	savingVideoSubPanel.add(getEnableSeqResumeCheckBox(), grid000_last);
 			savingVideoSubPanel.add(extraDownloadPanel0, grid000_last);
 
 			VideoSaveInfoPanel.add(getDelVideoCheckBox(), grid_x0_y1_15);
-		//	VideoSaveInfoPanel.add(getAutoFlvToMp4CheckBox(), grid_x1_y1_15b);
-		//	VideoSaveInfoPanel.add(getInhibitSmallCheckBox(), grid_x2_y1_15_2);
 			VideoSaveInfoPanel.add(Video_SaveFolderRadioButton,
 					grid_x0_y2_27);
 			VideoSaveInfoPanel.add(VideoSavedFolderField, grid_x0_y3_28);
@@ -5369,7 +5400,10 @@ s	 * @return javax.swing.JPanel
 		gridbagc.fill = GridBagConstraints.HORIZONTAL;
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
-		extraDownloadInfoPanel.add(getPreferSmileCheckBox(), gridbagc);
+		preferSmileCheckBox.setText("smileサーバ強制ダウンロード");
+		preferSmileCheckBox.setForeground(Color.blue);
+		preferSmileCheckBox.setToolTipText("dmcサーバに有ってもsmileサーバから読みます。");
+		extraDownloadInfoPanel.add(preferSmileCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
 		gridbagc.gridx = 0;
@@ -5378,7 +5412,10 @@ s	 * @return javax.swing.JPanel
 		gridbagc.fill = GridBagConstraints.HORIZONTAL;
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
-		extraDownloadInfoPanel.add(getForceDmcDlCheckBox(), gridbagc);
+		forceDmcDlCheckBox.setText("dmcサーバ強制ダウンロード");
+		forceDmcDlCheckBox.setForeground(Color.blue);
+		forceDmcDlCheckBox.setToolTipText("dmcサーバ動画がサイズが小さくてもダウンロードします。変換に使うのはサイズの大きい方。");
+		extraDownloadInfoPanel.add(forceDmcDlCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
 		gridbagc.gridx = 0;
@@ -5387,7 +5424,10 @@ s	 * @return javax.swing.JPanel
 		gridbagc.fill = GridBagConstraints.HORIZONTAL;
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
-		extraDownloadInfoPanel.add(getEnableRangeCheckBox(), gridbagc);
+		enableRangeCheckBox.setText("dmc(R)ダウンロード(同時接続数2　非推奨。分割ダウンロード)");
+	//	enableRangeCheckBox.setForeground(Color.blue);
+		enableRangeCheckBox.setToolTipText("可能ならHTTP/1.1 Rangeヘッダーを使用する(同時接続数2)");
+		extraDownloadInfoPanel.add(enableRangeCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
 		gridbagc.gridx = 0;
@@ -5396,7 +5436,10 @@ s	 * @return javax.swing.JPanel
 		gridbagc.fill = GridBagConstraints.HORIZONTAL;
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
-		extraDownloadInfoPanel.add(getEnableSeqResumeCheckBox(), gridbagc);
+		enableSeqResumeCheckBox.setText("dmc(S)ダウンロード(同時接続数1 resume付き。高速 )");
+		enableSeqResumeCheckBox.setForeground(Color.blue);
+		enableSeqResumeCheckBox.setToolTipText("可能ならSequentialResumeを行う(同時接続数1)");
+		extraDownloadInfoPanel.add(enableSeqResumeCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
 		gridbagc.gridx = 0;
@@ -5405,7 +5448,10 @@ s	 * @return javax.swing.JPanel
 		gridbagc.fill = GridBagConstraints.HORIZONTAL;
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
-		extraDownloadInfoPanel.add(getInhibitSmallCheckBox(), gridbagc);
+		inhibitSmallCheckBox.setText("Large強制");
+		inhibitSmallCheckBox.setForeground(Color.blue);
+		inhibitSmallCheckBox.setToolTipText("サイズの小さい動画はダウンロードしません。他より低優先");
+		extraDownloadInfoPanel.add(inhibitSmallCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
 		gridbagc.gridx = 0;
@@ -5414,88 +5460,18 @@ s	 * @return javax.swing.JPanel
 		gridbagc.fill = GridBagConstraints.HORIZONTAL;
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
-		extraDownloadInfoPanel.add(getAutoFlvToMp4CheckBox(), gridbagc);
+		autoFlvToMp4CheckBox.setText("dmcはデフォルトでmp4に(拡張子はflvのまま)↑のmp4設定併用可");
+		autoFlvToMp4CheckBox.setForeground(Color.blue);
+		autoFlvToMp4CheckBox.setToolTipText(
+			"dmc動画はmp4コンテナでダウンロードできたので設定不要。拡張子はflvのまま。↑の設定と併用すれば拡張子もmp4になります。");
+		autoFlvToMp4CheckBox.setEnabled(false);
+		extraDownloadInfoPanel.add(autoFlvToMp4CheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
 		gridbagc.gridy = 5;
 		gridbagc.anchor = GridBagConstraints.SOUTHEAST;
 		extraDownloadInfoPanel.add(extraDownloadInfoPanel.getHideLabel(), gridbagc);
 		return extraDownloadInfoPanel;
-	}
-
-	private JCheckBox getPreferSmileCheckBox(){
-		if(preferSmileCheckBox==null){
-			preferSmileCheckBox = new JCheckBox();
-			preferSmileCheckBox.setText("smileサーバ強制ダウンロード");
-			preferSmileCheckBox.setForeground(Color.blue);
-			preferSmileCheckBox.setToolTipText("dmcサーバに有ってもsmileサーバから読みます。");
-		}
-		return preferSmileCheckBox;
-	}
-
-	private JCheckBox getForceDmcDlCheckBox(){
-		if(forceDmcDlCheckBox==null){
-			forceDmcDlCheckBox = new JCheckBox();
-			forceDmcDlCheckBox.setText("dmcサーバ強制ダウンロード");
-			forceDmcDlCheckBox.setForeground(Color.blue);
-			forceDmcDlCheckBox.setToolTipText("dmcサーバ動画がサイズが小さくてもダウンロードします。変換に使うのはサイズの大きい方。");
-		}
-		return forceDmcDlCheckBox;
-	}
-
-	private JCheckBox getEnableRangeCheckBox(){
-		if(enableRangeCheckBox==null){
-			enableRangeCheckBox = new JCheckBox();
-			enableRangeCheckBox.setText("dmc(R)ダウンロード(同時接続数2　非推奨。分割ダウンロード)");
-		//	enableRangeCheckBox.setForeground(Color.blue);
-			enableRangeCheckBox.setToolTipText("可能ならHTTP/1.1 Rangeヘッダーを使用する(同時接続数2)");
-		}
-		return enableRangeCheckBox;
-	}
-
-	private JCheckBox getEnableSeqResumeCheckBox(){
-		if(enableSeqResumeCheckBox==null){
-			enableSeqResumeCheckBox = new JCheckBox();
-			enableSeqResumeCheckBox.setText("dmc(S)ダウンロード(同時接続数1 resume付き。高速 )");
-			enableSeqResumeCheckBox.setForeground(Color.blue);
-			enableSeqResumeCheckBox.setToolTipText("可能ならSequentialResumeを行う(同時接続数1)");
-		}
-		return enableSeqResumeCheckBox;
-	}
-
-	private JCheckBox getInhibitSmallCheckBox(){
-		if(inhibitSmallCheckBox==null){
-			inhibitSmallCheckBox = new JCheckBox();
-			inhibitSmallCheckBox.setText("Large強制");
-			inhibitSmallCheckBox.setForeground(Color.blue);
-			inhibitSmallCheckBox.setToolTipText("サイズの小さい動画はダウンロードしません。他より低優先");
-		}
-		return inhibitSmallCheckBox;
-	}
-
-	private JCheckBox getAutoFlvToMp4CheckBox(){
-		if(autoFlvToMp4CheckBox==null){
-			autoFlvToMp4CheckBox = new JCheckBox();
-			autoFlvToMp4CheckBox.setText("dmcはデフォルトでmp4に(拡張子はflvのまま)↑のmp4設定併用可");
-			autoFlvToMp4CheckBox.setForeground(Color.blue);
-			autoFlvToMp4CheckBox.setToolTipText(
-				"dmc動画はmp4コンテナでダウンロードできたので設定不要。拡張子はflvのまま。↑の設定と併用すれば拡張子もmp4になります。");
-			autoFlvToMp4CheckBox.setEnabled(false);
-		}
-		return autoFlvToMp4CheckBox;
-	}
-
-	/**
-	 * This method initializes NotAddVideoID_ConvVideoCheckBox
-	 *
-	 * @return javax.swing.JCheckBox
-	 */
-	private JCheckBox getNotAddVideoID_ConvVideoCheckBox() {
-		if (NotAddVideoID_ConvVideoCheckBox == null) {
-			NotAddVideoID_ConvVideoCheckBox = new JCheckBox();
-			NotAddVideoID_ConvVideoCheckBox.setText("ファイル名に動画IDを付加しない");
-		}
-		return NotAddVideoID_ConvVideoCheckBox;
 	}
 
 	/**
@@ -5512,9 +5488,7 @@ s	 * @return javax.swing.JPanel
 	private JCheckBox NotUseVhookCheckBox = new JCheckBox();
 	private JTextField ViewCommentField = null;
 	private JLabel ViewCommentLabel = null;
-//	private JLabel ShadowKindLabel;
 	private JComboBox<String> ShadowComboBox = null;
-//	private JLabel commentEraseTypeLabel;
 	private JComboBox<String> commentEraseTypeComboBox;
 
 	/**
@@ -5977,183 +5951,12 @@ s	 * @return javax.swing.JPanel
 	public void setDateUserFirst(String dateUF) {
 		WayBackField.setText(dateUF);
 	}
-}
 
-class MainFrame_ShowSavingVideoFolderDialogButton_actionAdapter implements
-		ActionListener {
-	private MainFrame adaptee;
-
-	MainFrame_ShowSavingVideoFolderDialogButton_actionAdapter(MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		adaptee.ShowSavingVideoFolderDialogButton_actionPerformed(e);
-	}
-}
-
-class MainFrame_ShowSavingCommentFolderDialogButton_actionAdapter implements
-		ActionListener {
-	private MainFrame adaptee;
-
-	MainFrame_ShowSavingCommentFolderDialogButton_actionAdapter(
-			MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		adaptee.ShowSavingCommentFolderDialogButton_actionPerformed(e);
-	}
-}
-
-class MainFrame_ShowSavingConvertedVideoFolderDialogButton_actionAdapter
-		implements ActionListener {
-	private MainFrame adaptee;
-
-	MainFrame_ShowSavingConvertedVideoFolderDialogButton_actionAdapter(
-			MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		adaptee.ShowSavingConvertedVideoFolderDialogButton_actionPerformed(e);
-	}
-}
-
-class MainFrame_this_windowAdapter extends WindowAdapter {
-	private MainFrame adaptee;
-
-	MainFrame_this_windowAdapter(MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		adaptee.this_windowClosing(e);
-	}
-}
-
-class MainFrame_SettingFontPathButton_actionAdapter implements ActionListener {
-	private MainFrame adaptee;
-
-	MainFrame_SettingFontPathButton_actionAdapter(MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		adaptee.SettingFontPathButton_actionPerformed(e);
-	}
-}
-
-class MainFrame_SettingVhookPathButton_actionAdapter implements ActionListener {
-	private MainFrame adaptee;
-
-	MainFrame_SettingVhookPathButton_actionAdapter(MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		adaptee.SettingVhookPathButton_actionPerformed(e);
-	}
-}
-
-class MainFrame_SettingFFmpegPathButton_actionAdapter implements ActionListener {
-	private MainFrame adaptee;
-
-	MainFrame_SettingFFmpegPathButton_actionAdapter(MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		adaptee.SettingFFmpegPathButton_actionPerformed(e);
-	}
-}
-
-class MainFrame_ShowSavingConvertedVideoDialogButton_actionAdapter implements
-		ActionListener {
-	private MainFrame adaptee;
-
-	MainFrame_ShowSavingConvertedVideoDialogButton_actionAdapter(
-			MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		adaptee.ShowSavingConvertedVideoDialogButton_actionPerformed(e);
-	}
-}
-
-class MainFrame_ShowSavingCommentDialogButton_actionAdapter implements
-		ActionListener {
-	private MainFrame adaptee;
-
-	MainFrame_ShowSavingCommentDialogButton_actionAdapter(MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		adaptee.ShowSavingCommentDialogButton_actionPerformed(e);
-	}
-}
-
-class MainFrame_ShowSavingVideoDialogButton_actionAdapter implements
-		ActionListener {
-	private MainFrame adaptee;
-
-	MainFrame_ShowSavingVideoDialogButton_actionAdapter(MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		adaptee.ShowSavingVideoDialogButton_actionPerformed(e);
-	}
-}
-
-class MainFrame_DoButton_actionAdapter implements ActionListener {
-	private MainFrame adaptee;
-
-	MainFrame_DoButton_actionAdapter(MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		adaptee.DoButton_actionPerformed(e);
-	}
-}
-
-class MainFrame_jMenuFileExit_ActionAdapter implements ActionListener {
-	MainFrame adaptee;
-
-	MainFrame_jMenuFileExit_ActionAdapter(MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent actionEvent) {
-		adaptee.jMenuFileExit_actionPerformed(actionEvent);
-	}
-}
-
-class MainFrame_jMenuHelpAbout_ActionAdapter implements ActionListener {
-	MainFrame adaptee;
-
-	MainFrame_jMenuHelpAbout_ActionAdapter(MainFrame adaptee) {
-		this.adaptee = adaptee;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent actionEvent) {
-		adaptee.jMenuHelpAbout_actionPerformed(actionEvent);
+	class MainFrame_this_windowAdapter extends WindowAdapter {
+		@Override
+		public void windowClosing(WindowEvent e) {
+			this_windowClosing(e);
+		}
 	}
 }
 
@@ -6195,21 +5998,6 @@ class MainFrame_noticePop implements ActionListener {
 			};
 		}
 	}
-}
-
-class MainFrame_jMenuAfDialog implements ActionListener {
-	MainFrame mainFrame;
-
-	public MainFrame_jMenuAfDialog(MainFrame frame) {
-		mainFrame = frame;
-	}
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		AprilFool_Dioalog dialog = new AprilFool_Dioalog(mainFrame);
-		dialog.init();
-		dialog.setVisible(true);
-	}
-
 }
 
 class AprilFool_Dioalog extends JDialog {

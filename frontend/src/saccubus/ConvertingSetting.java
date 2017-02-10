@@ -218,6 +218,7 @@ public class ConvertingSetting {
 	private boolean layerControl;
 	private boolean resizeAdjustEnable;
 	private String resizeAdjustControl;
+	private boolean fpsIntegralMultipleEnable;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -465,7 +466,8 @@ public class ConvertingSetting {
 			boolean enableNG_ML,
 			boolean layer_ctrl,
 			boolean resize_adjust_enable,
-			String resize_adjust_ctrl
+			String resize_adjust_ctrl,
+			boolean fps_integral_multi
 		)
 	{
 		this(	mailaddress,
@@ -628,6 +630,7 @@ public class ConvertingSetting {
 		layerControl = layer_ctrl;
 		resizeAdjustEnable = resize_adjust_enable;
 		resizeAdjustControl = resize_adjust_ctrl;
+		fpsIntegralMultipleEnable = fps_integral_multi;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1054,30 +1057,11 @@ public class ConvertingSetting {
 	public String getZqMetadataOption() {
 		return zqMetadataOption;
 	}
-	public boolean isNGenableML() {
-		return enableNGinML;
-	}
-	//
-	public static String getDefOptsFpsUp(){
-		return defOptsFpsUp;
-	}
-	public static String getDefOptsSwfJpeg(){
-		return defOptsSwfJpeg;
-	}
-	public static String getDefOptsJpegMp4(){
-		return defOptsJpegMp4;
-	}
-	public static String getDefOptsMix(){
-		return defOptsMix;
-	}
-	public boolean getDefOptsSaveThumbinfoMetadata(){
-		return defOptsSaveThumbinfoMetadata;
-	}
 	public String getPanelHideMapping(){
 		return panelHideMapping;
 	}
-	public boolean isOnlyMp4AutoPlay() {
-		return onlyMp4AutoPlay;
+	public boolean isNGenableML() {
+		return enableNGinML;
 	}
 	public int getCommentEraseType(){
 		return commentEraseType;
@@ -1105,6 +1089,28 @@ public class ConvertingSetting {
 	}
 	public String getResizeAdjust(){
 		return resizeAdjustControl;
+	}
+	public boolean isFpsIntegralMultiple(){
+		return fpsIntegralMultipleEnable;
+	}
+	//
+	public static String getDefOptsFpsUp(){
+		return defOptsFpsUp;
+	}
+	public static String getDefOptsSwfJpeg(){
+		return defOptsSwfJpeg;
+	}
+	public static String getDefOptsJpegMp4(){
+		return defOptsJpegMp4;
+	}
+	public static String getDefOptsMix(){
+		return defOptsMix;
+	}
+	public boolean getDefOptsSaveThumbinfoMetadata(){
+		return defOptsSaveThumbinfoMetadata;
+	}
+	public boolean isOnlyMp4AutoPlay() {
+		return onlyMp4AutoPlay;
 	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
@@ -1268,6 +1274,7 @@ public class ConvertingSetting {
 	static final String PROP_LAYER_CNTROL = "LayerControl";
 	static final String PROP_ENABLE_RESIZE_ADJUST = "EnableResizeAdjust";
 	static final String PROP_RESIZE_ADJUST_CONTROL = "ResizeAdjustControl";
+	static final String PROP_FPS_INTEGREL_MULTIPLE = "FpsIntegralMultiple";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1794,7 +1801,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_NG_MULTILINES, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_LAYER_CNTROL, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_RESIZE_ADJUST, "false")),
-			prop.getProperty(PROP_RESIZE_ADJUST_CONTROL,"")
+			prop.getProperty(PROP_RESIZE_ADJUST_CONTROL,"100"),
+			Boolean.parseBoolean(prop.getProperty(PROP_FPS_INTEGREL_MULTIPLE,"false"))
 		);
 	}
 
