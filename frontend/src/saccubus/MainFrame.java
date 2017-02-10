@@ -321,6 +321,14 @@ public class MainFrame extends JFrame {
 	private JCheckBox resizeAdjustCheckBox = new JCheckBox();
 	private JTextField resizeAdjustField = new JTextField();
 	private JSlider resizeAdjustSlider;
+	private JLabel zqSizeMinLabel = new JLabel();
+	private JTextField zqSizeMinField = new JTextField();
+	private JLabel zqSizeMaxLabel = new JLabel();
+	private JTextField zqSizeMaxField = new JTextField();
+	private JLabel zqFpsRangeLabel = new JLabel();
+	private JTextField zqFpsRangeField = new JTextField();
+	private JPanel zqLimitOptionPanel;
+
 
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
@@ -492,8 +500,7 @@ public class MainFrame extends JFrame {
 		grid9_x0_y2_56.insets = INSETS_0_5_5_5;
 		grid9_x0_y2_56.anchor = GridBagConstraints.WEST;
 		grid9_x0_y2_56.gridy = 2;
-		ExtOptionLabel = new JLabel();
-		ExtOptionLabel.setText("出力の拡張子");
+		ExtOptionLabel = new JLabel("出力の拡張子");
 		GridBagConstraints grid9_x0_y1_55 = new GridBagConstraints();
 		grid9_x0_y1_55.gridx = 0;
 		grid9_x0_y1_55.fill = GridBagConstraints.HORIZONTAL;
@@ -1867,62 +1874,63 @@ public class MainFrame extends JFrame {
 		zqPlayerModePanel.setForeground(Color.blue);
 		zqPlayerModePanel.setLayout(new GridBagLayout());
 		zqPlayerModePanel.setToolTipText("");
-		zqPlayerModeCheckBox.setText("共通画面を使う　(使わない→従来画面を使う)");
+		zqPlayerModeCheckBox.setText("アスペクト比共通画面を使う　(使わない→従来画面を使う)");
 		//zqPlayerModeCheckBox.setToolTipText("以下の設定が4:3と16:9が共通に使えます。");
 		zqPlayerModeCheckBox.setForeground(Color.blue);
-		GridBagConstraints gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0.gridx = 0;
-		gird_x0_y2_0.gridy = 0;
-		gird_x0_y2_0.weightx = 1.0;
-		gird_x0_y2_0.weighty = 0.0;
-		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
-		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_5_0_5;
-		zqPlayerModePanel.add(zqPlayerModeCheckBox, gird_x0_y2_0);
-		gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0.gridx = 0;
-		gird_x0_y2_0.gridy = 1;
-		gird_x0_y2_0.weightx = 1.0;
-		gird_x0_y2_0.weighty = 0.0;
-		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
-		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_5_5_5;
-		zqPlayerModePanel.add(
-			new JLabel("拡張Vhookの位置を設定する(アスペクト比共通)"),gird_x0_y2_0);
-		gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0.gridx = 0;
-		gird_x0_y2_0.gridy = 2;
-		gird_x0_y2_0.weightx = 1.0;
-		gird_x0_y2_0.weighty = 0.0;
-		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
-		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_5_0_5;
-		zqPlayerModePanel.add(zqVhookPathField, gird_x0_y2_0);
+		GridBagConstraints grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 0;
+		grid_x0_y2_0.gridy = 0;
+		grid_x0_y2_0.gridwidth = 2;
+		grid_x0_y2_0.weightx = 1.0;
+		grid_x0_y2_0.weighty = 0.0;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_5_0_5;
+		zqPlayerModePanel.add(zqPlayerModeCheckBox, grid_x0_y2_0);
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 0;
+		grid_x0_y2_0.gridy = 1;
+		grid_x0_y2_0.weightx = 1.0;
+		grid_x0_y2_0.weighty = 0.0;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_5_5_5;
+	//	zqPlayerModePanel.add(
+	//		new JLabel("拡張Vhookの位置を設定する(アスペクト比共通)"),gird_x0_y2_0);
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 0;
+		grid_x0_y2_0.gridy = 2;
+		grid_x0_y2_0.weightx = 1.0;
+		grid_x0_y2_0.weighty = 0.0;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_5_0_5;
+		zqPlayerModePanel.add(zqVhookPathField, grid_x0_y2_0);
 		zqSettingVhookPathButton.setText("参照");
 		zqSettingVhookPathButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SettingVhookZqPathButton_actionPerformed(e); }
 		});
-		gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0.gridx = 1;
-		gird_x0_y2_0.gridy = 2;
-		gird_x0_y2_0.weightx = 0.0;
-		gird_x0_y2_0.weighty = 0.0;
-		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
-		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_5_0_5;
-		zqPlayerModePanel.add(zqSettingVhookPathButton, gird_x0_y2_0);
-		gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0.gridx = 0;
-		gird_x0_y2_0.gridy = 2;
-		gird_x0_y2_0.weightx = 1.0;
-		gird_x0_y2_0.weighty = 0.0;
-		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
-		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_5_0_5;
-		FFMpegTab2Panel.add(zqPlayerModePanel,gird_x0_y2_0);
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 1;
+		grid_x0_y2_0.gridy = 2;
+		grid_x0_y2_0.weightx = 0.0;
+		grid_x0_y2_0.weighty = 0.0;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_5_0_5;
+		zqPlayerModePanel.add(zqSettingVhookPathButton, grid_x0_y2_0);
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 0;
+		grid_x0_y2_0.gridy = 2;
+		grid_x0_y2_0.weightx = 1.0;
+		grid_x0_y2_0.weighty = 0.0;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_5_0_5;
+		FFMpegTab2Panel.add(zqPlayerModePanel,grid_x0_y2_0);
 // option Q
 		zqFFmpegSettingPanel.setBorder(BorderFactory.createTitledBorder(
 			CREATE_ETCHED_BORDER,
@@ -1938,58 +1946,123 @@ public class MainFrame extends JFrame {
 		zqFFmpegSettingPanel.add(zqCommandLineInOptionField, grid9_x1_y4_52);
 		zqFFmpegSettingPanel.add(new JLabel(OutLabel.getText()), grid9_x0_y5_50);
 		zqFFmpegSettingPanel.add(zqCommandLineOutOptionField, grid9_x1_y5_53);
-		gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0.gridx = 0;
-		gird_x0_y2_0.gridy = 6;
-		gird_x0_y2_0.weightx = 0.0;
-		gird_x0_y2_0.weighty = 0.0;
-		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
-		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_5_0_5;
-		zqFFmpegSettingPanel.add(new JLabel("追加オプション"), gird_x0_y2_0);
-		gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0.gridx = 1;
-		gird_x0_y2_0.gridy = 6;
-		gird_x0_y2_0.weightx = 1.0;
-		gird_x0_y2_0.weighty = 0.0;
-		gird_x0_y2_0.gridwidth =3;
-		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
-		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_0_0_5;
-		zqFFmpegSettingPanel.add(zqAdditionalOptionFiled, gird_x0_y2_0);
-		zqFFmpegSettingPanel.setForeground(Color.blue);
 
-		gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0.gridx = 0;
-		gird_x0_y2_0.gridy = 7;
-		gird_x0_y2_0.weightx = 0.0;
-		gird_x0_y2_0.weighty = 0.0;
-		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
-		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_5_0_5;
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 0;
+		grid_x0_y2_0.gridy = 6;
+		grid_x0_y2_0.weightx = 0.0;
+		grid_x0_y2_0.weighty = 0.0;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_5_0_5;
+		zqFFmpegSettingPanel.add(new JLabel("追加オプション"), grid_x0_y2_0);
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 1;
+		grid_x0_y2_0.gridy = 6;
+		grid_x0_y2_0.weightx = 1.0;
+		grid_x0_y2_0.weighty = 0.0;
+		grid_x0_y2_0.gridwidth =3;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_0_5_5;
+		zqFFmpegSettingPanel.add(zqAdditionalOptionFiled, grid_x0_y2_0);
+
+		zqLimitOptionPanel = new JPanel();
+		zqLimitOptionPanel.setLayout(new GridBagLayout());
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 0;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_0_0_5;
+		zqSizeMinLabel.setText("最小サイズ");
+		zqSizeMinLabel.setForeground(Color.blue);
+		zqSizeMinLabel.setToolTipText("オプションファイル指定");
+		zqLimitOptionPanel.add(zqSizeMinLabel, grid_x0_y2_0);
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 1;
+		grid_x0_y2_0.weightx = 1.0;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_0_0_5;
+		zqSizeMinField.setToolTipText("最小横:縦");
+		zqLimitOptionPanel.add(zqSizeMinField, grid_x0_y2_0);
+
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 2;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_0_0_5;
+		zqSizeMaxLabel.setText("最大サイズ");
+		zqSizeMaxLabel.setForeground(Color.blue);
+		zqSizeMaxLabel.setToolTipText("オプションファイル指定");
+		zqLimitOptionPanel.add(zqSizeMaxLabel, grid_x0_y2_0);
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 3;
+		grid_x0_y2_0.weightx = 1.0;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_0_0_5;
+		zqSizeMaxField.setToolTipText("最大横:縦");
+		zqLimitOptionPanel.add(zqSizeMaxField, grid_x0_y2_0);
+
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 4;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_0_0_5;
+		zqFpsRangeLabel.setText("最小fps");
+		zqFpsRangeLabel.setForeground(Color.blue);
+		zqFpsRangeLabel.setToolTipText("オプションファイル指定");
+		zqLimitOptionPanel.add(zqFpsRangeLabel, grid_x0_y2_0);
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 5;
+		grid_x0_y2_0.weightx = 1.0;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_0_0_5;
+		zqLimitOptionPanel.add(zqFpsRangeField, grid_x0_y2_0);
+
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 0;
+		grid_x0_y2_0.gridy = 7;
+		grid_x0_y2_0.weightx = 1.0;
+		grid_x0_y2_0.gridwidth = 4;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_5_5_5;
+		zqFFmpegSettingPanel.add(zqLimitOptionPanel, grid_x0_y2_0);
+
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 0;
+		grid_x0_y2_0.gridy = 8;
+		grid_x0_y2_0.weightx = 0.0;
+		grid_x0_y2_0.weighty = 0.0;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_0_0_5;
 		zqMetadataCheckBox.setText("メタデータ");
-		zqFFmpegSettingPanel.add(zqMetadataCheckBox, gird_x0_y2_0);
-		gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0.gridx = 1;
-		gird_x0_y2_0.gridy = 7;
-		gird_x0_y2_0.weightx = 1.0;
-		gird_x0_y2_0.weighty = 0.0;
-		gird_x0_y2_0.gridwidth =3;
-		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
-		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_0_0_5;
-		zqFFmpegSettingPanel.add(zqMetadataField, gird_x0_y2_0);
+		zqFFmpegSettingPanel.add(zqMetadataCheckBox, grid_x0_y2_0);
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 1;
+		grid_x0_y2_0.gridy = 8;
+		grid_x0_y2_0.weightx = 1.0;
+		grid_x0_y2_0.weighty = 0.0;
+		grid_x0_y2_0.gridwidth =3;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_0_0_5;
+		zqFFmpegSettingPanel.add(zqMetadataField, grid_x0_y2_0);
 		zqFFmpegSettingPanel.setForeground(Color.blue);
 
-		gird_x0_y2_0 = new GridBagConstraints();
-		gird_x0_y2_0.gridx = 0;
-		gird_x0_y2_0.gridy = 4;
-		gird_x0_y2_0.weightx = 1.0;
-		gird_x0_y2_0.weighty = 0.0;
-		gird_x0_y2_0.anchor = GridBagConstraints.NORTH;
-		gird_x0_y2_0.fill = GridBagConstraints.BOTH;
-		gird_x0_y2_0.insets = INSETS_0_5_5_5;
-		FFMpegTab2Panel.add(zqFFmpegSettingPanel,gird_x0_y2_0);
+		grid_x0_y2_0 = new GridBagConstraints();
+		grid_x0_y2_0.gridx = 0;
+		grid_x0_y2_0.gridy = 4;
+		grid_x0_y2_0.weightx = 1.0;
+		grid_x0_y2_0.weighty = 0.0;
+		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
+		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
+		grid_x0_y2_0.insets = INSETS_0_5_5_5;
+		FFMpegTab2Panel.add(zqFFmpegSettingPanel,grid_x0_y2_0);
 
 		CheckFFmpegFunctionPanel = new JPanelHideable(
 			"FFmpegFunction", "FFmpeg機能チェック", Color.blue);
@@ -3575,7 +3648,10 @@ public class MainFrame extends JFrame {
 			layerControlCheckBox.isSelected(),
 			resizeAdjustCheckBox.isSelected(),
 			resizeAdjustField.getText(),
-			fpsIntegralMultipleCheckBox.isSelected()
+			fpsIntegralMultipleCheckBox.isSelected(),
+			zqSizeMinField.getText(),
+			zqSizeMaxField.getText(),
+			zqFpsRangeField.getText()
 		);
 	}
 
@@ -3774,6 +3850,9 @@ public class MainFrame extends JFrame {
 		resizeAdjustAction(setting.isResizeAdjust());
 		resizeAdjustField.setText(setting.getResizeAdjust());
 		fpsIntegralMultipleCheckBox.setSelected(setting.isFpsIntegralMultiple());
+		zqSizeMinField.setText(setting.getZqSizeMin());
+		zqSizeMaxField.setText(setting.getZqSizeMax());
+		zqFpsRangeField.setText(setting.getZqFpsFloor());
 	}
 
 	/**
@@ -5508,6 +5587,9 @@ s	 * @return javax.swing.JPanel
 								zqMainOptionField.setText(prop.getProperty("MAIN", ""));
 								zqCommandLineInOptionField.setText(prop.getProperty("IN", ""));
 								zqCommandLineOutOptionField.setText(prop.getProperty("OUT", ""));
+								zqSizeMinField.setText(prop.getProperty("MIN", ""));
+								zqSizeMaxField.setText(prop.getProperty("MAX", ""));
+								zqFpsRangeField.setText(prop.getProperty("FPS", ""));
 								zqOptionFileDescription.setText(descr);
 								zqExtOptionField.setEnabled(false);
 								zqMainOptionField.setEnabled(false);

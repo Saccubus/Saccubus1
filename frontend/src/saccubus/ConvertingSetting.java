@@ -219,6 +219,9 @@ public class ConvertingSetting {
 	private boolean resizeAdjustEnable;
 	private String resizeAdjustControl;
 	private boolean fpsIntegralMultipleEnable;
+	private String zqSizeMinOption;
+	private String zqSizeMaxOption;
+	private String zqFpsFloor;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -467,7 +470,10 @@ public class ConvertingSetting {
 			boolean layer_ctrl,
 			boolean resize_adjust_enable,
 			String resize_adjust_ctrl,
-			boolean fps_integral_multi
+			boolean fps_integral_multi,
+			String zq_size_min,
+			String zq_size_max,
+			String zq_fps_floor
 		)
 	{
 		this(	mailaddress,
@@ -631,6 +637,9 @@ public class ConvertingSetting {
 		resizeAdjustEnable = resize_adjust_enable;
 		resizeAdjustControl = resize_adjust_ctrl;
 		fpsIntegralMultipleEnable = fps_integral_multi;
+		zqSizeMinOption = zq_size_min;
+		zqSizeMaxOption = zq_size_max;
+		zqFpsFloor = zq_fps_floor;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1093,6 +1102,15 @@ public class ConvertingSetting {
 	public boolean isFpsIntegralMultiple(){
 		return fpsIntegralMultipleEnable;
 	}
+	public String getZqSizeMin(){
+		return zqSizeMinOption;
+	}
+	public String getZqSizeMax(){
+		return zqSizeMaxOption;
+	}
+	public String getZqFpsFloor(){
+		return zqFpsFloor;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1275,6 +1293,9 @@ public class ConvertingSetting {
 	static final String PROP_ENABLE_RESIZE_ADJUST = "EnableResizeAdjust";
 	static final String PROP_RESIZE_ADJUST_CONTROL = "ResizeAdjustControl";
 	static final String PROP_FPS_INTEGREL_MULTIPLE = "FpsIntegralMultiple";
+	static final String PROP_ZQ_SIZE_MIN = "ZqSizeMin";
+	static final String PROP_ZQ_SIZE_MAX = "ZqSizeMax";
+	static final String PROP_ZQ_FPS_FLOOR = "ZqFpsFloor";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1511,6 +1532,9 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ENABLE_RESIZE_ADJUST, Boolean.toString(setting.isResizeAdjust()));
 		prop.setProperty(PROP_RESIZE_ADJUST_CONTROL, setting.getResizeAdjust());
 		prop.setProperty(PROP_FPS_INTEGREL_MULTIPLE, Boolean.toString(setting.isFpsIntegralMultiple()));
+		prop.setProperty(PROP_ZQ_SIZE_MIN, setting.getZqSizeMin());
+		prop.setProperty(PROP_ZQ_SIZE_MAX, setting.getZqSizeMax());
+		prop.setProperty(PROP_ZQ_FPS_FLOOR, setting.getZqFpsFloor());
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1803,7 +1827,10 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_LAYER_CNTROL, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_RESIZE_ADJUST, "false")),
 			prop.getProperty(PROP_RESIZE_ADJUST_CONTROL,"100"),
-			Boolean.parseBoolean(prop.getProperty(PROP_FPS_INTEGREL_MULTIPLE,"false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_FPS_INTEGREL_MULTIPLE,"false")),
+			prop.getProperty(PROP_ZQ_SIZE_MIN, ""),
+			prop.getProperty(PROP_ZQ_SIZE_MAX, ""),
+			prop.getProperty(PROP_ZQ_FPS_FLOOR, "")
 		);
 	}
 
