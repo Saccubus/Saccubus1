@@ -1510,6 +1510,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_LAYER_CNTROL, Boolean.toString(setting.isLayerControl()));
 		prop.setProperty(PROP_ENABLE_RESIZE_ADJUST, Boolean.toString(setting.isResizeAdjust()));
 		prop.setProperty(PROP_RESIZE_ADJUST_CONTROL, setting.getResizeAdjust());
+		prop.setProperty(PROP_FPS_INTEGREL_MULTIPLE, Boolean.toString(setting.isFpsIntegralMultiple()));
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
