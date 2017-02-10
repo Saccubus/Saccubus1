@@ -59,7 +59,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -387,11 +386,9 @@ public class MainFrame extends JFrame {
 	private JButton playVideoBackButton;
 
 	private JButton AllSaveButton;
-	MainFrame mainFrame;
 
 	public MainFrame() {
 		try {
-			mainFrame = this;
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
 			jbInit();
 			setPopup();
@@ -924,7 +921,7 @@ public class MainFrame extends JFrame {
 		jMenuAprilFool.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AprilFool_Dioalog dialog = new AprilFool_Dioalog(mainFrame);
+				AprilFool_Dioalog dialog = new AprilFool_Dioalog(MainFrame.getMaster());
 				dialog.init();
 				dialog.setVisible(true);
 			}
@@ -1603,7 +1600,7 @@ public class MainFrame extends JFrame {
 // option default OR normal(4:3)
 		FFmpegSettingPanel.add(getFFmpegOptionComboBoxPanel(),grid9_x0_y1_55);
 		FFmpegSettingPanel.add(ExtOptionLabel, grid9_x0_y2_56);
-		FFmpegSettingPanel.add(getExtOptionField(), grid9_x1_y2_57);
+		FFmpegSettingPanel.add(ExtOptionField, grid9_x1_y2_57);
 		FFmpegSettingPanel.add(MainOptionLabel, grid9_x0_y3_48);
 		FFmpegSettingPanel.add(MainOptionField, grid9_x1_y3_51);
 		FFmpegSettingPanel.add(InLabel, grid9_x0_y4_49);
@@ -2353,17 +2350,18 @@ public class MainFrame extends JFrame {
 			VhookSettingPanel.add(NotUseVhookCheckBox, grid8_y0_x0_w3);
 			ShowConvVideoCheckBox.setText("変換中画像を表示");
 			VhookSettingPanel.add(ShowConvVideoCheckBox, grid8_y0_x3_w3);
-			ViewCommentLabel = new JLabel("表示コメント数");
-			VhookSettingPanel.add(ViewCommentLabel, grid8_y1_x0_w1);
-			VhookSettingPanel.add(getViewCommentField(), grid8_y1_x1_w5);
+			VhookSettingPanel.add(new JLabel("表示コメント数"), grid8_y1_x0_w1);
+			VhookSettingPanel.add(ViewCommentField, grid8_y1_x1_w5);
 			VhookSettingPanel.add(new JLabel("表示数超過"), grid8_y2_x0_w1);
-			VhookSettingPanel.add(getCommentEraseTypeComboBox(),grid8_y2_x1_w5);
+			commentEraseTypeComboBox = new JComboBox<String>(CommentEraseTypeArray);
+			VhookSettingPanel.add(commentEraseTypeComboBox,grid8_y2_x1_w5);
 			VhookSettingPanel.add(new JLabel("フォントパス"), grid8_y3_x0_w1);
 			VhookSettingPanel.add(getFontPathPanel(), grid8_y3_x1_w5);
 			VhookSettingPanel.add(new JLabel("フォント番号"), grid8_y5_x0_w1);
 			VhookSettingPanel.add(FontIndexField, grid8_y5_x1_w5);
 			VhookSettingPanel.add(new JLabel("影の種類"), grid8_y6_x0_w1);
-			VhookSettingPanel.add(getShadowComboBox(), grid8_y6_x1_w5);
+			ShadowComboBox = new JComboBox<String>(ConvertingSetting.ShadowKindArray);
+			VhookSettingPanel.add(ShadowComboBox, grid8_y6_x1_w5);
 			FixFontSizeCheckBox.setText("フォントサイズを自動調整");
 			VhookSettingPanel.add(FixFontSizeCheckBox, grid8_y7_x0_w2);
 			resizeAdjustCheckBox.setText("補正%");
@@ -3784,7 +3782,7 @@ public class MainFrame extends JFrame {
 	 * @param actionEvent
 	 *            ActionEvent
 	 */
-	void jMenuFileExit_actionPerformed(ActionEvent actionEvent) {
+	public void jMenuFileExit_actionPerformed(ActionEvent actionEvent) {
 		ConvertingSetting setting = this.getSetting();
 		ConvertingSetting.saveSetting(setting);
 		System.exit(0);
@@ -3813,7 +3811,6 @@ public class MainFrame extends JFrame {
 	JTextField CommentNumField = new JTextField();
 	JLabel MainOptionLabel = new JLabel();
 	JTextField MainOptionField = new JTextField();
-//	JLabel FontIndexLabel;
 	JTextField FontIndexField = new JTextField();
 	JLabel VideoID_Label = new JLabel();
 	JLabel WayBackLabel = new JLabel();
@@ -3852,18 +3849,14 @@ public class MainFrame extends JFrame {
 	JTextField wideCommandLineOutOptionField = new JTextField();
 	private JPanel ConvertingSettingPanel = null;
 	private JPanel NGWordSettingPanel = null;
-//	private JLabel NGWordLabel = null;
-	private JTextField NGWordTextField = null;
-//	private JLabel NGIDLabel = null;
-	private JTextField NGIDTextField = null;
+	private JTextField NGWordTextField = new JTextField();
+	private JTextField NGIDTextField = new JTextField();
 	private JPanelHideable ProxyInfoPanel;
-	private JLabel ProxyLabel = null;
-	private JTextField ProxyTextField = null;
-	private JLabel ProxyPortLabel = null;
-	private JTextField ProxyPortTextField = null;
-	private JCheckBox UseProxyCheckBox = null;
+	private JTextField ProxyTextField = new JTextField();
+	private JTextField ProxyPortTextField = new JTextField();
+	private JCheckBox UseProxyCheckBox = new JCheckBox();
 	private JCheckBox FixFontSizeCheckBox = new JCheckBox();
-	private JCheckBox DelVideoCheckBox = null;
+	private JCheckBox DelVideoCheckBox = new JCheckBox();
 	private JCheckBox DelCommentCheckBox = new JCheckBox();
 	private JCheckBox FixCommentNumCheckBox = new JCheckBox();
 	private JCheckBox OpaqueCommentCheckBox = new JCheckBox();
@@ -4348,12 +4341,6 @@ public class MainFrame extends JFrame {
 	//	textout.setCaretPosition(0);
 	}
 
-	// 変換動画再生
-//	private void playConvertedVideo_actionPerformed(ActionEvent e) {
-//		if(converter!=null)
-//			converter.playConvertedVideo();
-//	}
-
 	/* readme表示 */
 	public void showReadme_actionPerformed(String readmePath, String encoding){
 		HtmlView hv;
@@ -4471,8 +4458,7 @@ public class MainFrame extends JFrame {
 	}
 
 	/* コメント付きビデオ・セーブダイアログ */
-	public void ShowSavingConvertedVideoDialogButton_actionPerformed(
-			ActionEvent e) {
+	public void ShowSavingConvertedVideoDialogButton_actionPerformed(ActionEvent e) {
 		showSaveDialog("コメント付き動画の保存先(ファイル)", ConvertedVideoSavedFileField,
 				true, false);
 	}
@@ -4505,12 +4491,7 @@ public class MainFrame extends JFrame {
 		showSaveDialog("フォントへのパス", FontPathField, false, false);
 	}
 
-	public void this_windowClosing(WindowEvent e) {
-		this.jMenuFileExit_actionPerformed(null);
-	}
-
-	public void ShowSavingConvertedVideoFolderDialogButton_actionPerformed(
-			ActionEvent e) {
+	public void ShowSavingConvertedVideoFolderDialogButton_actionPerformed(ActionEvent e) {
 		/* フォルダ */
 		showSaveDialog("コメント付き動画の保存先(フォルダ)", ConvertedVideoSavedFolderField,
 				true, true);
@@ -4711,7 +4692,7 @@ s	 * @return javax.swing.JPanel
 					CREATE_ETCHED_BORDER,
 					"NGワード・ID設定"));
 			NGWordSettingPanel.add(new JLabel("NGワード"), grid_x0_y0_2);
-			NGWordSettingPanel.add(getNGWordTextField(), grid_x1_y0_3);
+			NGWordSettingPanel.add(NGWordTextField, grid_x1_y0_3);
 			ngEnableMultilinesCheckBox.setText("複");
 			ngEnableMultilinesCheckBox.setToolTipText(ngEnableMLToolchipTexts[0]);
 			ngEnableMultilinesCheckBox.addActionListener(new ActionListener() {
@@ -4726,7 +4707,7 @@ s	 * @return javax.swing.JPanel
 			});
 			NGWordSettingPanel.add(ngEnableMultilinesCheckBox, grid_x5_y0_4);
 			NGWordSettingPanel.add(new JLabel("NG ID"), grid_x0_y1_5);
-			NGWordSettingPanel.add(getNGIDTextField(), grid_x1_y1_7);
+			NGWordSettingPanel.add(NGIDTextField, grid_x1_y1_7);
 			ngCommandLabel.setText("NGコマンド");
 			ngCommandLabel.setForeground(Color.blue);
 			NGWordSettingPanel.add(ngCommandLabel, grid_x0_y3_8);
@@ -4753,30 +4734,6 @@ s	 * @return javax.swing.JPanel
 	}
 
 	/**
-	 * This method initializes NGWordTextField
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getNGWordTextField() {
-		if (NGWordTextField == null) {
-			NGWordTextField = new JTextField();
-		}
-		return NGWordTextField;
-	}
-
-	/**
-	 * This method initializes NGIDTextField
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getNGIDTextField() {
-		if (NGIDTextField == null) {
-			NGIDTextField = new JTextField();
-		}
-		return NGIDTextField;
-	}
-
-	/**
 	 * This method initializes ProxyInfoPanel
 	 *
 	 * @return javax.swing.JPanel
@@ -4800,8 +4757,6 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y2_10.gridx = 1;
 			grid_x0_y2_10.insets = INSETS_5_5_5_5;
 			grid_x0_y2_10.gridy = 1;
-			ProxyPortLabel = new JLabel();
-			ProxyPortLabel.setText("ポート番号");
 			GridBagConstraints grid_x1_y1_9 = new GridBagConstraints();
 			grid_x1_y1_9.fill = GridBagConstraints.BOTH;
 			grid_x1_y1_9.gridy = 0;
@@ -4814,70 +4769,19 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y1_8.fill = GridBagConstraints.NONE;
 			grid_x0_y1_8.anchor = GridBagConstraints.WEST;
 			grid_x0_y1_8.gridy = 0;
-			ProxyLabel = new JLabel();
-			ProxyLabel.setText("プロキシ");
 			ProxyInfoPanel = new JPanelHideable("ProxyInfo","プロキシ設定",Color.black);
-			ProxyInfoPanel.add(ProxyLabel, grid_x0_y1_8);
-			ProxyInfoPanel.add(getProxyTextField(), grid_x1_y1_9);
-			ProxyInfoPanel.add(ProxyPortLabel, grid_x0_y2_10);
-			ProxyInfoPanel.add(getProxyPortTextField(), grid_x1_y2_12);
-			ProxyInfoPanel.add(getUseProxyCheckBox(), grid_x0_y0_13);
+			ProxyInfoPanel.add(new JLabel("プロキシ"), grid_x0_y1_8);
+			ProxyInfoPanel.add(ProxyTextField, grid_x1_y1_9);
+			ProxyInfoPanel.add(new JLabel("ポート番号"), grid_x0_y2_10);
+			ProxyInfoPanel.add(ProxyPortTextField, grid_x1_y2_12);
+			UseProxyCheckBox.setText("プロキシを使う");
+			ProxyInfoPanel.add(UseProxyCheckBox, grid_x0_y0_13);
 			GridBagConstraints c = new GridBagConstraints();
 			c.gridy = 1;
 			c.anchor = GridBagConstraints.SOUTHEAST;
 			ProxyInfoPanel.add(ProxyInfoPanel.getHideLabel(),c);
 		}
 		return ProxyInfoPanel;
-	}
-
-	/**
-	 * This method initializes ProxyTextField
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getProxyTextField() {
-		if (ProxyTextField == null) {
-			ProxyTextField = new JTextField();
-		}
-		return ProxyTextField;
-	}
-
-	/**
-	 * This method initializes ProxyPortTextField
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getProxyPortTextField() {
-		if (ProxyPortTextField == null) {
-			ProxyPortTextField = new JTextField();
-		}
-		return ProxyPortTextField;
-	}
-
-	/**
-	 * This method initializes UseProxyCheckBox
-	 *
-	 * @return javax.swing.JCheckBox
-	 */
-	private JCheckBox getUseProxyCheckBox() {
-		if (UseProxyCheckBox == null) {
-			UseProxyCheckBox = new JCheckBox();
-			UseProxyCheckBox.setText("プロキシを使う");
-		}
-		return UseProxyCheckBox;
-	}
-
-	/**
-	 * This method initializes DelVideoCheckBoc
-	 *
-	 * @return javax.swing.JCheckBox
-	 */
-	private JCheckBox getDelVideoCheckBox() {
-		if (DelVideoCheckBox == null) {
-			DelVideoCheckBox = new JCheckBox();
-			DelVideoCheckBox.setText("変換後に動画削除");
-		}
-		return DelVideoCheckBox;
 	}
 
 	/**
@@ -4977,7 +4881,8 @@ s	 * @return javax.swing.JPanel
 			grid000_last.fill = GridBagConstraints.NONE;
 			savingVideoSubPanel.add(extraDownloadPanel0, grid000_last);
 
-			VideoSaveInfoPanel.add(getDelVideoCheckBox(), grid_x0_y1_15);
+			DelVideoCheckBox.setText("変換後に動画削除");
+			VideoSaveInfoPanel.add(DelVideoCheckBox, grid_x0_y1_15);
 			VideoSaveInfoPanel.add(Video_SaveFolderRadioButton,
 					grid_x0_y2_27);
 			VideoSaveInfoPanel.add(VideoSavedFolderField, grid_x0_y3_28);
@@ -5484,12 +5389,10 @@ s	 * @return javax.swing.JPanel
 	private final FFmpegComboBoxModel zqFFmpegOptionModel = new FFmpegComboBoxModel();
 
 	private JLabel ExtOptionLabel = null;
-	private JTextField ExtOptionField = null;
+	private JTextField ExtOptionField = new JTextField();
 	private JCheckBox NotUseVhookCheckBox = new JCheckBox();
-	private JTextField ViewCommentField = null;
-	private JLabel ViewCommentLabel = null;
+	private JTextField ViewCommentField = new JTextField();
 	private JComboBox<String> ShadowComboBox = null;
-	private JComboBox<String> commentEraseTypeComboBox;
 
 	/**
 	 * Initialize FFmpegOptionComboBox
@@ -5813,53 +5716,11 @@ s	 * @return javax.swing.JPanel
 		return zqFFmpegOptionComboBoxPanel;
 	}
 
-	/**
-	 * This method initializes ExtOptionField
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getExtOptionField() {
-		if (ExtOptionField == null) {
-			ExtOptionField = new JTextField();
-		}
-		return ExtOptionField;
-	}
-
-	/**
-	 * This method initializes ViewCommentField
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getViewCommentField() {
-		if (ViewCommentField == null) {
-			ViewCommentField = new JTextField();
-		}
-		return ViewCommentField;
-	}
-
-	/**
-	 * This method initializes ShadowComboBox
-	 *
-	 * @return javax.swing.JComboBox
-	 */
-
-	private JComboBox<String> getShadowComboBox() {
-		if (ShadowComboBox == null) {
-			ShadowComboBox = new JComboBox<String>(ConvertingSetting.ShadowKindArray);
-		}
-		return ShadowComboBox;
-	}
-
+	private JComboBox<String> commentEraseTypeComboBox;
 	String[] CommentEraseTypeArray= {
 		"0:従来通り(表示数を越えると古いコメントを消去)",
 		"1:表示数を越えた新規コメントを無視",
 	};;
-	private JComboBox<String> getCommentEraseTypeComboBox(){
-		if(commentEraseTypeComboBox == null){
-			commentEraseTypeComboBox = new JComboBox<String>(CommentEraseTypeArray);
-		}
-		return commentEraseTypeComboBox;
-	}
 
 	private File getFile(String path){
 		if(path==null)
@@ -5935,18 +5796,18 @@ s	 * @return javax.swing.JPanel
 		return MasterMainFrame;
 	}
 
-	public void setIsHtml5(final boolean b) {
-		if(SwingUtilities.isEventDispatchThread()){
-			html5CheckBox.setSelected(b);
-		}else{
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					html5CheckBox.setSelected(b);
-				}
-			});
-		}
-	}
+//	public void setIsHtml5(final boolean b) {
+//		if(SwingUtilities.isEventDispatchThread()){
+//			html5CheckBox.setSelected(b);
+//		}else{
+//			SwingUtilities.invokeLater(new Runnable() {
+//				@Override
+//				public void run() {
+//					html5CheckBox.setSelected(b);
+//				}
+//			});
+//		}
+//	}
 
 	public void setDateUserFirst(String dateUF) {
 		WayBackField.setText(dateUF);
@@ -5955,7 +5816,7 @@ s	 * @return javax.swing.JPanel
 	class MainFrame_this_windowAdapter extends WindowAdapter {
 		@Override
 		public void windowClosing(WindowEvent e) {
-			this_windowClosing(e);
+			jMenuFileExit_actionPerformed(null);
 		}
 	}
 }
