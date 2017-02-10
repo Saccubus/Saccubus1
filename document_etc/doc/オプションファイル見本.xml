@@ -4,10 +4,14 @@
 	ここに説明や作者コメントなどなど。
 	下の指定したところに各オプションを書き、optionフォルダに入れると
 	「さきゅばす」から認識されるようになります。
+	MIN MAX FPSエントリーは省略可能
 -->
 <properties>
 	<entry key="EXT">拡張子</entry>
 	<entry key="MAIN">メインオプション</entry>
 	<entry key="IN">入力オプション</entry>
 	<entry key="OUT">出力オプション</entry>
+	<entry key="MIN">最小解像度指定 横:縦</entry>
+	<entry key="MAX">最大解像度指定 横:縦</entry>
+	<entry key="FPS">最小fps(J付きは数値丁度)</entry>
 </properties>
