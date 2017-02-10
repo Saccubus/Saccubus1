@@ -2673,13 +2673,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(fpsRange.contains("J")){
 				fpsIntegralMulti = false;
 				fpsRange = fpsRange.replace("J", "").trim();
-			}
+			}else
+				fpsIntegralMulti = true;
 			try {
 				fpsFloor = Double.parseDouble(fpsRange);
 				fpsMin = fpsUp = fpsFloor;
 				checkFps = true;
 			}catch(NumberFormatException e){
-				//
+				fpsIntegralMulti = Setting.isFpsIntegralMultiple();
 			}
 		}
 		String fixed = "";
