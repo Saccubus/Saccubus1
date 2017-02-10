@@ -2668,7 +2668,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		fpsUp = Setting.getFpsUp();
 		fpsMin = Setting.getFpsMin();
 		String fpsRange = Setting.getZqFpsFloor();
+		boolean fpsIntegralMulti = Setting.isFpsIntegralMultiple();
 		if(fpsRange!=null){
+			if(fpsRange.contains("J")){
+				fpsIntegralMulti = false;
+				fpsRange = fpsRange.replace("J", "").trim();
+			}
 			try {
 				fpsFloor = Double.parseDouble(fpsRange);
 				fpsMin = fpsUp = fpsFloor;
@@ -2682,7 +2687,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			frameRate = 25.0;
 			log.println("frameRate error, set frameRate to Default");
 		}
-		else if(Setting.isFpsIntegralMultiple() || fpsFloor!=0.0){
+		else if(fpsIntegralMulti){
 			try{
 				int fpsMultiple = Math.max(1,(int)Math.round(fpsUp/frameRate));
 				fpsUp = fpsMultiple * frameRate;

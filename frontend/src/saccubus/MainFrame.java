@@ -2020,6 +2020,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
 		grid_x0_y2_0.insets = INSETS_0_0_0_5;
+		zqFpsRangeField.setToolTipText("既定:指定値に最も近い動画fpsの整数倍、J付きは数値丁度");
 		zqLimitOptionPanel.add(zqFpsRangeField, grid_x0_y2_0);
 
 		grid_x0_y2_0 = new GridBagConstraints();
@@ -5590,9 +5591,27 @@ s	 * @return javax.swing.JPanel
 								zqMainOptionField.setText(prop.getProperty("MAIN", ""));
 								zqCommandLineInOptionField.setText(prop.getProperty("IN", ""));
 								zqCommandLineOutOptionField.setText(prop.getProperty("OUT", ""));
-								zqSizeMinField.setText(prop.getProperty("MIN", ""));
-								zqSizeMaxField.setText(prop.getProperty("MAX", ""));
-								zqFpsRangeField.setText(prop.getProperty("FPS", ""));
+								String sizeMin = prop.getProperty("MIN", "");
+								if(!sizeMin.isEmpty()){
+									zqSizeMinField.setText(sizeMin);
+									zqSizeMinField.setForeground(Color.black);
+								}else{
+									zqSizeMinField.setForeground(Color.gray);
+								}
+								String sizeMax = prop.getProperty("MAX", "");
+								if(!sizeMax.isEmpty()){
+									zqSizeMaxField.setText(sizeMax);
+									zqSizeMaxField.setForeground(Color.black);
+								}else{
+									zqSizeMaxField.setForeground(Color.gray);
+								}
+								String fpsFloor = prop.getProperty("FPS", "");
+								if(!fpsFloor.isEmpty()){
+									zqFpsRangeField.setText(fpsFloor);
+									zqFpsRangeField.setForeground(Color.black);
+								}else{
+									zqFpsRangeField.setForeground(Color.gray);
+								}
 								zqOptionFileDescription.setText(descr);
 								zqExtOptionField.setEnabled(false);
 								zqMainOptionField.setEnabled(false);
@@ -5605,6 +5624,9 @@ s	 * @return javax.swing.JPanel
 								zqMainOptionField.setEnabled(true);
 								zqCommandLineInOptionField.setEnabled(true);
 								zqCommandLineOutOptionField.setEnabled(true);
+								zqSizeMinField.setForeground(Color.gray);
+								zqSizeMaxField.setForeground(Color.gray);
+								zqFpsRangeField.setForeground(Color.gray);
 								zqOptionFileDescription.setEnabled(true);
 							}
 						}
