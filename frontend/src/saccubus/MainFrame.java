@@ -3094,6 +3094,9 @@ public class MainFrame extends JFrame {
 			activityPane.setMaximumSize(new Dimension(200, Short.MAX_VALUE));
 			activityPane.setLayout(new BoxLayout(activityPane, BoxLayout.Y_AXIS));
 			activityScroll = new JScrollPane(activityPane);
+			//状況表示スクロール量設定
+			activityScroll.getVerticalScrollBar().setBlockIncrement(0);	//=Block=Unit
+			activityScroll.getVerticalScrollBar().setUnitIncrement(26);	//=jButton.Height()?
 			activityStatusPanel.add(activityScroll,BorderLayout.CENTER);
 			activityStatusPanel.setBorder(BorderFactory.createTitledBorder(
 					CREATE_ETCHED_BORDER,

@@ -2818,7 +2818,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 		double video_aspect = videoAspect.getValue();
 		double out_aspect = outAspect.getValue();
-		log.println("out_aspect: "+out_aspect);
 		int outw = outAspect.getWidth();
 		int outh = outAspect.getHeight();
 		boolean fixedsize = false;
@@ -2826,14 +2825,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(smin!=null && !smin.isEmpty()){
 			// size minimum
 			Aspect minAspect = toAspect(smin, outAspect);
-			log.println("minAspect: "+minAspect.explain());
 			if(!minAspect.isInvalid()){
 				double min_aspect = minAspect.getValue();
-				log.println("min_aspect: "+min_aspect);
 				int minw = minAspect.getWidth();
 				int minh = minAspect.getHeight();
-				log.println("minw: "+minw);
-				log.println("minh: "+minh);
 				if(min_aspect <= out_aspect){
 					// §ŒÀc’·¨cŠî€
 					if(minh > outh){
@@ -2853,28 +2848,23 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				if(fixedsize){
 					setSize = outAspect.getSize();
-					log.print("fixed by -smin, ");
+					log.print("fixed by MIN, ");
 					printOutputSize(setSize,outAspect);
 					outputOptionMap.put("-s", setSize.replace(':', 'x'));
 				}
 			}
 		}
 		String smax = Setting.getZqSizeMax();
-		log.println("smax: "+smax);
 		if(smax!=null && !smax.isEmpty()){
 			// size maxmum
 			fixedsize = false;
 			outw = outAspect.getWidth();
 			outh = outAspect.getHeight();
 			Aspect maxAspect = toAspect(smax, outAspect);
-			log.println("maxAspect: "+maxAspect.explain());
 			if(!maxAspect.isInvalid()){
 				double max_aspect = maxAspect.getValue();
-				log.println("max_aspect: "+max_aspect);
 				int maxw = maxAspect.getWidth();
 				int maxh = maxAspect.getHeight();
-				log.println("maxw: "+maxw);
-				log.println("maxh: "+maxh);
 				if(max_aspect <= out_aspect){
 					// §ŒÀ‰¡’Z¨‰¡Šî€
 					if(maxw < outw){
@@ -2894,7 +2884,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				if(fixedsize){
 					setSize = outAspect.getSize();
-					log.print("fixed by -smax, ");
+					log.print("fixed by MAX, ");
 					printOutputSize(setSize,outAspect);
 					outputOptionMap.put("-s", setSize.replace(':', 'x'));
 				}
