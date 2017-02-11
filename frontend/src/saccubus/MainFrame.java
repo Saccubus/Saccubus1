@@ -5592,22 +5592,22 @@ s	 * @return javax.swing.JPanel
 								zqCommandLineInOptionField.setText(prop.getProperty("IN", ""));
 								zqCommandLineOutOptionField.setText(prop.getProperty("OUT", ""));
 								String sizeMin = prop.getProperty("MIN", "");
+								zqSizeMinField.setText(sizeMin);
 								if(!sizeMin.isEmpty()){
-									zqSizeMinField.setText(sizeMin);
 									zqSizeMinField.setForeground(Color.black);
 								}else{
 									zqSizeMinField.setForeground(Color.gray);
 								}
 								String sizeMax = prop.getProperty("MAX", "");
+								zqSizeMaxField.setText(sizeMax);
 								if(!sizeMax.isEmpty()){
-									zqSizeMaxField.setText(sizeMax);
 									zqSizeMaxField.setForeground(Color.black);
 								}else{
 									zqSizeMaxField.setForeground(Color.gray);
 								}
 								String fpsFloor = prop.getProperty("FPS", "");
+								zqFpsRangeField.setText(fpsFloor);
 								if(!fpsFloor.isEmpty()){
-									zqFpsRangeField.setText(fpsFloor);
 									zqFpsRangeField.setForeground(Color.black);
 								}else{
 									zqFpsRangeField.setForeground(Color.gray);
