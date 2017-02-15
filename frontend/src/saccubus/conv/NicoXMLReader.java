@@ -457,6 +457,7 @@ public class NicoXMLReader extends DefaultHandler {
 						+",color:"+rcolor +",size:" +rsize+",pos:" +rpos+").");
 					com = "/r," + src + "," + dest + "," + fill;
 					item.setMail(rcolor + " " + rsize + " " + rpos);
+					item.setScript();
 					//log.println("Converted-Comment: " + com);
 					CommentReplace comrpl = new CommentReplace(item,src,dest,enabled,partial,target,fill,log);
 					packet.addReplace(comrpl);
@@ -630,7 +631,6 @@ public class NicoXMLReader extends DefaultHandler {
 					if(com.startsWith("置換",1)){
 						//置換
 						//item.setMail("");	//リセットサイズ、ロケーション、色
-						item.setScript();
 						script = true;
 						log.println("Converting＠置換: " + com);
 						com = com.replaceFirst("^[@＠]置換[ 　]", "");
@@ -669,9 +669,15 @@ public class NicoXMLReader extends DefaultHandler {
 							partial = "F";
 						}
 						int vpos = item.getVpos();
-						//item.setMail("");	//リセットサイズ、ロケーション、色
+						if(item.getDurationSec()==0){
+							item.setMail("@30");	//リセットduration
+						}
 						item.setScript();
-						log.println("Converted:" +vpos +":＠置換 「"+src +"」「 "+dest
+						//Html5の@置換の場合
+						//src = src.replace("\\r", "\n").replace("\\n", "\n").replace("\\t", "\t");
+						//dest = dest.replace("\\r", "\n").replace("\\n", "\n").replace("\\t", "\t");
+						//が必要か？
+						log.println("Converted:" +vpos +":＠置換 「"+src +"」「"+dest
 							+"」 "+target +" fill:"+fill +" partial:"+partial+").");
 						com = "/r," + src + "," + dest + "," + fill;
 						CommentReplace comrpl = new CommentReplace(item,src,dest,"T",partial,target,fill,log);

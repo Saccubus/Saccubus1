@@ -30,14 +30,11 @@ public class CommentReplace {
 		rlocation = item.getLocation();
 		vpos = item.getVpos();
 		int s = item.getDurationSec();
-		if(s==0)
-			sec = 30;
-		else
-			sec = s - 1;
+		sec = s;
 		fill = toBoolean(sfill);
 		log = logger;
 		log.println("Final-converted:" +vpos
-				+":"+item.getColorName()+" "+item.getSizeName()+" "+item.getLocName()
+				+":@"+item.getDurationSec()+" "+item.getColorName()+" "+item.getSizeName()+" "+item.getLocName()
 				+":/replace(src:"+src +",dest:"+dest
 				+",enabled:"+enabled +",targetOU:"+replace_owner+"+"+replace_user
 				+",fill:"+fill +",partial:"+partial+").");
@@ -86,16 +83,25 @@ public class CommentReplace {
 	}
 
 	void replace(Chat chat) {
-		int vend = vpos + sec*100;
+		int vend;
+		if(sec==0)
+			vend = Integer.MAX_VALUE;
+		else
+			vend = vpos + (sec)*100;
 		String comment = chat.getComment();
 		if(enabled && (vpos < chat.getVpos() && chat.getVpos() <= vend)){
-			if(!chat.isOwner() && replace_user){
+			if(!chat.isOwner()){
+				if(replace_user){
 				//ユーザーコメント
-				chat.process(rcolor, rsize, rlocation, replace(comment));
-			}else
-			if(!chat.isScript() && replace_owner){
-				//スクリプト以外オーナーコメント
-				chat.process(rcolor, rsize, rlocation, replace(comment));
+					chat.process(rcolor, rsize, rlocation, replace(comment));
+				}
+			}else {
+				if(!chat.isScript()){
+					if(replace_owner){
+						//スクリプト以外オーナーコメント
+						chat.process(rcolor, rsize, rlocation, replace(comment));
+					}
+				}
 			}
 		}
 	}
