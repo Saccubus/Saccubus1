@@ -116,8 +116,8 @@ void drawCommentA(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int
 					normal_x = data->vout_width - (normal_x + item->surf->w);
 				}
 			}
-			rect.x = normal_x + x;
-			rect.y = item->y + y;
+			rect.x = normal_x;
+			rect.y = item->y;
 #ifdef VHOOKDEBUG
 			fprintf(data->log,"[drawcomment/debug3]comment=%d, SDL_BlitSurface(item->surf:%p,NULL:%p,surf:%p,rect:(x=%d,y=%d))\n",
 					no,item->surf,NULL,surf,rect.x,rect.y);

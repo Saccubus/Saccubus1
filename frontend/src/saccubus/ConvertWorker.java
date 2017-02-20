@@ -4132,7 +4132,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private LinkedHashMap<String, String> mainOptionMap = new LinkedHashMap<String, String>(16);
 
 	private LinkedHashMap<String, String> addOptionMap = new LinkedHashMap<String, String>(16);
-	private final String[] SINGLE_KEYWORD = {"-an","-vn","-y","-shortest","-loop_input","-samx","-help","-h",};
+	private final String[] SINGLE_KEYWORD = {"-an","-vn","-y","-shortest","-loop_input","-samx","-help","-h","-aacp","-alcp"};
 
 	private boolean isSingleKeyword(String keyword){
 		for(String s:SINGLE_KEYWORD){
