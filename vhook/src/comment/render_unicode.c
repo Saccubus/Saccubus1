@@ -5,20 +5,20 @@
  *      Author: orz
  */
 #include <SDL/SDL_rotozoom.h>
-#include "render_unicode.h"
 #include "surf_util.h"
+#include "render_unicode.h"
 #include "com_surface.h"
 #include "../unicode/uniutil.h"
 #include "../wakuiro.h"
 
-SDL_Surface* pointsConv(DATA* data,SDL_Surface* surf,Uint16* str,int size,int fontsel);
-SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int fontsel);
-SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int size,int fontsel,int fill_bg){
+h_Surface* pointsConv(DATA* data,h_Surface* surf,Uint16* str,int size,int fontsel);
+h_Surface* widthFixConv(DATA *data,h_Surface* surf,Uint16 *str,int size,int fontsel);
+h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int size,int fontsel,int fill_bg){
 	//SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
-	SDL_Surface* ret;
+	h_Surface* ret;
 	const char* mode=data->extra_mode;
 	if(strstr(mode,"-font")==NULL && !fill_bg){
-		ret = TTF_RenderUNICODE_Blended(font,str,fg);	//default original mode
+		ret = newSurface(TTF_RenderUNICODE_Blended(font,str,fg));	//default original mode
 		if(ret==NULL){
 			fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]TTF_RenderUNICODE_Blended : %s\n",TTF_GetError());
 			fflush(data->log);
@@ -47,17 +47,16 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 				fontfg = TRUE;
 			}
 		}
-		SDL_Surface* surf;
 		Uint32 colkey;
 		SDL_Color black = COMMENT_COLOR[CMD_COLOR_BLACK];
-		surf = TTF_RenderUNICODE_Shaded(font,str,fg,black);
+		h_Surface* surf = newSurface(TTF_RenderUNICODE_Shaded(font,str,fg,black));
 		if(surf==NULL){
 			fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]TTF_RenderUNICODE_Shaded : %s\n",TTF_GetError());
 			fflush(data->log);
 			return NULL;
 		}
 		colkey = 0;		//it must be black
-		SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);	//surface for background
+		h_Surface* tmp = drawNullSurface(surf->w,surf->h);	//surface for background
 		if(tmp==NULL){
 			fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]drawNullSurface/SDL_CreateRGBSurface: %s\n",SDL_GetError());
 			fflush(data->log);
@@ -67,15 +66,15 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 			if(cmpSDLColor(fg,bg)){
 				bg.r = fg.r ^ 0xff;
 			}
-			Uint32 bgc = SDL_MapRGBA(tmp->format,bg.r,bg.g,bg.b,255);	//bg color in pixformat
+			Uint32 bgc = SDL_MapRGBA(tmp->s->format,bg.r,bg.g,bg.b,255);	//bg color in pixformat
 			SDL_Rect rect = {0,0,tmp->w,tmp->h};	//rectangle for fill with bgc
-			SDL_FillRect(tmp,&rect,bgc);
+			h_FillRect(tmp,&rect,bgc);
 		}
-		SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use surface alpha in RGBA(with pixel alpha)
-		SDL_SetColorKey(surf,SDL_SRCCOLORKEY|SDL_RLEACCEL,colkey);
-		SDL_BlitSurface(surf,NULL,tmp,NULL);
-		SDL_FreeSurface(surf);
-		SDL_SetColorKey(tmp,SDL_RLEACCEL,0xff);	//reset color key
+		h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use surface alpha in RGBA(with pixel alpha)
+		h_SetColorKey(surf,SDL_SRCCOLORKEY|SDL_RLEACCEL,colkey);
+		h_BlitSurface(surf,NULL,tmp,NULL);
+		h_FreeSurface(surf);
+		h_SetColorKey(tmp,SDL_RLEACCEL,0xff);	//reset color key
 		ret = tmp;
 	}
 	if(data->original_resize)
@@ -88,11 +87,12 @@ SDL_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,i
 	return ret;
 }
 
-SDL_Surface* pointsConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int fontsel){
-	SDL_Surface* ret;
+h_Surface* pointsConv(DATA *data,h_Surface* surf,Uint16 *str,int size,int fontsel){
+	h_Surface* ret;
 	FILE *log = data->log;
 	int sizeFix = data->fontsize_fix;
 
+	if(surf==NULL) return NULL;
 	int ow = surf->w;
 	int oh = surf->h;
 	// point(72dpi)->pixel(96dpi) 1.33333333倍
@@ -109,8 +109,8 @@ SDL_Surface* pointsConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int fo
 		return surf;
 	}
 	rate = dh/doh;
-	ret = zoomSurface(surf,rate,rate,SMOOTHING_ON);
-	SDL_FreeSurface(surf);
+	ret = newSurface(zoomSurface(surf->s,rate,rate,SMOOTHING_ON));
+	h_FreeSurface(surf);
 	if(ret==NULL){
 		fprintf(log,"***ERROR*** [comsurface/point]zoomSurface : %s\n",SDL_GetError());
 		fflush(log);
@@ -121,7 +121,7 @@ SDL_Surface* pointsConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int fo
 	return ret;
 }
 
-SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int fontsel){
+h_Surface* widthFixConv(DATA *data,h_Surface* surf,Uint16 *str,int size,int fontsel){
 	FILE* log = data->log;
 	if(fontsel < GOTHIC_FONT || (fontsel > ARIAL_FONT && fontsel!=MINGLIU_FONT)){
 		if(data->debug)
@@ -158,7 +158,7 @@ SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int 
 				fprintf(log,"[render_unicode/widthFix]not change Font %s(defalut).\n",getfontname(fontsel));
 			return surf;
 	}
-	SDL_Surface* ret = NULL;
+	h_Surface* ret = NULL;
 	int w = surf->w;
 	int h = surf->h;
 	int l = uint16len(str);
@@ -178,10 +178,10 @@ SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int 
 		SDL_Rect src = {x,0,dfw,h};
 		SDL_Rect dest = {0,0,dfw,h};
 		SDL_Rect rect = {0,0,dfw,h};
-		SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
-		SDL_BlitSurface(surf,&src,ret,&dest);
-		SDL_SetClipRect(ret,&rect);
-		SDL_FreeSurface(surf);
+		h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+		h_BlitSurface(surf,&src,ret,&dest);
+		h_SetClipRect(ret,&rect);
+		h_FreeSurface(surf);
 	}else{
 		if(data->debug)
 			fprintf(data->log,"[render_unicode/widthFix]width expanding %d to %d.\n",w,dfw);
@@ -189,17 +189,17 @@ SDL_Surface* widthFixConv(DATA *data,SDL_Surface* surf,Uint16 *str,int size,int 
 		SDL_Rect src = {0,0,w,h};
 		SDL_Rect dest = {x,0,w,h};
 		SDL_Rect rect = {0,0,dfw,h};
-		SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
-		SDL_BlitSurface(surf,&src,ret,&dest);
-		SDL_SetClipRect(ret,&rect);
-		SDL_FreeSurface(surf);
+		h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+		h_BlitSurface(surf,&src,ret,&dest);
+		h_SetClipRect(ret,&rect);
+		h_FreeSurface(surf);
 	}
 	if(data->debug)
 		fprintf(data->log,"[render_unicode/widthFix]width fixed done.\n");
 	return ret;
 }
 
-SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,int location,SDL_Surface* surf,SDL_Color col,int s){
+h_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,int location,h_Surface* surf,SDL_Color col,int s){
 	int is_color_set = FALSE;
 	int is_frame_set = strstr(data->extra_mode,"-frame")!=NULL;
 	int pixel_down = 0;
@@ -259,9 +259,9 @@ SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,int location,SDL_Surface
 	if(!is_color_set && !is_frame_set && item->waku==0){
 		//wakuiro is set, but waku is not set at this comment nor color
 		//no frame is drawn, just copy surf
-		SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);
-		SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
-		SDL_BlitSurface(surf,NULL,tmp,NULL);
+		h_Surface* tmp = drawNullSurface(surf->w,surf->h);
+		h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+		h_BlitSurface(surf,NULL,tmp,NULL);
 		return tmp;
 	}
 	if(!is_color_set && strstr(data->extra_mode,"-loc")!=NULL){
@@ -280,19 +280,19 @@ SDL_Surface* drawFrame(DATA* data,const CHAT_ITEM* item,int location,SDL_Surface
 				break;
 		}
 	}
-	SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);
+	h_Surface* tmp = drawNullSurface(surf->w,surf->h);
 	SDL_Rect rect = {0,pixel_down,tmp->w,tmp->h-pixel_down};
 	SDL_Rect rect2 = {s,0,tmp->w-(s<<1),tmp->h-(s<<1)};
 	SDL_Rect rect3 = {s,s+pixel_down,tmp->w-(s<<1),tmp->h-(s<<1)};
-	Uint32 col32 = SDL_MapRGB(tmp->format,col.r,col.g,col.b);
-	SDL_FillRect(tmp,&rect,col32);
-	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
-	SDL_BlitSurface(surf,&rect2,tmp,&rect3);
-	SDL_SetClipRect(tmp,&rect);
+	Uint32 col32 = SDL_MapRGB(tmp->s->format,col.r,col.g,col.b);
+	h_FillRect(tmp,&rect,col32);
+	h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+	h_BlitSurface(surf,&rect2,tmp,&rect3);
+	h_SetClipRect(tmp,&rect);
 	return tmp;
 }
 
-SDL_Surface* drawUserButton(DATA* data,SDL_Surface* surf){
+h_Surface* drawUserButton(DATA* data,h_Surface* surf){
 	if(data->debug)
 		fprintf(data->log,"[render_unicode/drawUserButton]waku(%d,%d)\n",surf->w,surf->h);
 	//@ボタン（視聴者）
@@ -300,41 +300,41 @@ SDL_Surface* drawUserButton(DATA* data,SDL_Surface* surf){
 	// s should be set to frame width
 	int s = MAX(surf->h / 20,1);
 	SDL_Color col = COMMENT_COLOR[CMD_COLOR_WHITE];
-	SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);
+	h_Surface* tmp = drawNullSurface(surf->w,surf->h);
 	SDL_Rect rect = {0,0,tmp->w,tmp->h};
 //	SDL_Rect rect2 = {2,0,tmp->w-4,tmp->h-(s<<1)};
 	SDL_Rect rect3 = {2,s,tmp->w-4,tmp->h-(s<<1)};
-	Uint32 col32 = SDL_MapRGB(tmp->format,col.r,col.g,col.b);
+	Uint32 col32 = SDL_MapRGB(tmp->s->format,col.r,col.g,col.b);
 	if(data->debug)
 		fprintf(data->log,"[render_unicode/drawUserButton]waku(%d,%d) color#%06x w%d\n",tmp->w,tmp->h,col32,s);
-	SDL_FillRect(tmp,&rect,col32);
-	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
-	SDL_BlitSurface(surf,&rect3,tmp,&rect3);
-	SDL_SetClipRect(tmp,&rect);
+	h_FillRect(tmp,&rect,col32);
+	h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+	h_BlitSurface(surf,&rect3,tmp,&rect3);
+	h_SetClipRect(tmp,&rect);
 	return tmp;
 }
 
-SDL_Surface* drawOwnerButton(DATA* data,SDL_Surface* surf,SDL_Color col){
+h_Surface* drawOwnerButton(DATA* data,h_Surface* surf,SDL_Color col){
 	if(data->debug)
 		fprintf(data->log,"[render_unicode/drawOwnerButton]waku(%d,%d)\n",surf->w,surf->h);
 	//@ボタン（投稿者）
 	//surface nor frame is not drawn yet,
 	//paint surface with color and draw string with WHITE
 	int s = 3;
-	SDL_Surface* tmp = drawNullSurface(surf->w,surf->h);
+	h_Surface* tmp = drawNullSurface(surf->w,surf->h);
 	SDL_Rect rect = {0,0,tmp->w,tmp->h};
 	SDL_Rect rect2 = {s,0,tmp->w-(s<<1),tmp->h-(s<<1)};
 	SDL_Rect rect3 = {s,s,tmp->w-(s<<1),tmp->h-(s<<1)};
-	Uint32 col32 = SDL_MapRGB(tmp->format,col.r,col.g,col.b);
+	Uint32 col32 = SDL_MapRGB(tmp->s->format,col.r,col.g,col.b);
 	if(data->debug)
 		fprintf(data->log,"[render_unicode/drawOwnerButton]waku(%d,%d) color#%06x w%d\n",tmp->w,tmp->h,col32,s);
-	SDL_FillRect(tmp,&rect,col32);
-	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
-	SDL_BlitSurface(surf,&rect2,tmp,&rect3);
-	SDL_SetClipRect(tmp,&rect);
+	h_FillRect(tmp,&rect,col32);
+	h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+	h_BlitSurface(surf,&rect2,tmp,&rect3);
+	h_SetClipRect(tmp,&rect);
 	return tmp;
 }
-SDL_Surface* drawButton(DATA* data,SDL_Surface* surf,SDL_Color col,int is_owner)
+h_Surface* drawButton(DATA* data,h_Surface* surf,SDL_Color col,int is_owner)
 {
 	if(is_owner!=0)
 		return drawOwnerButton(data,surf,col);

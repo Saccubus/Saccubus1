@@ -22,10 +22,11 @@ THANKS for Comment Artisan! A.K.A. SHOKUNIN!
   (resized)   > 8  10n+3    9n+3
  */
 #include <SDL/SDL.h>
+#include "surf_util.h"
 #include "../main.h"
 
 int adjustHeight(int nb_line,int size,int linefeedResize,int fontFixed);
 double linefeedResizeScale(int size,int nb_line,int fontFixed);
-SDL_Surface* adjustComment(SDL_Surface* surf,DATA* data,int height);
+h_Surface* adjustComment(h_Surface* surf,DATA* data,int height);
 
 #endif /* ADJUSTCOMMENT_H_ */

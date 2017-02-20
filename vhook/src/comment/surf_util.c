@@ -3,41 +3,102 @@
 #include "surf_util.h"
 #include "../mydef.h"
 
-SDL_Surface* connectSurface(SDL_Surface* top,SDL_Surface* bottom){
+int h_SetAlpha(h_Surface *surface, Uint32 flag, Uint8 alpha){
+	return SDL_SetAlpha(surface->s,flag,alpha);
+}
+int h_BlitSurface(h_Surface *src, SDL_Rect *srcrect, h_Surface *dst, SDL_Rect *dstrect){
+	return SDL_BlitSurface(src->s,srcrect,dst->s,dstrect);
+}
+void h_FreeSurface(h_Surface *surface){
+	SDL_FreeSurface(surface->s);
+	free(surface);
+}
+h_Surface* newSurface(SDL_Surface* surf){
+	if(surf==NULL) return NULL;
+	h_Surface* ret = (h_Surface*)malloc(sizeof(h_Surface));
+	if(ret==NULL) {
+		SDL_FreeSurface(surf);
+		return NULL;
+	}
+	ret->s = surf;
+	ret->w = surf->w;
+	ret->h = surf->h;
+	return ret;
+}
+SDL_Surface* h_SDLSurf(h_Surface* surf){
+	SDL_Surface* sdlret = nullSurface(surf->w, surf->h);
+	h_SetAlpha(surf,SDL_RLEACCEL,0xff);		//not use alpha
+	SDL_BlitSurface(surf->s,NULL,sdlret,NULL);
+	h_FreeSurface(surf);
+	return sdlret;
+}
+int h_FillRect(h_Surface *dst, SDL_Rect *dstrect, Uint32 color){
+	return SDL_FillRect(dst->s, dstrect, color);
+}
+int h_SetClipRect(h_Surface *surface, const SDL_Rect *rect){
+	return SDL_SetClipRect(surface->s, rect)==SDL_TRUE;
+}
+int h_SetColorKey(h_Surface *surface, Uint32 flag, Uint32 key){
+	return SDL_SetColorKey(surface->s, flag, key);
+}
+SDL_Surface* nullSurface(int w,int h){
+	//not make nor use alpha
+	return SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_HWACCEL,
+	                             w,h,32,
+	                        #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	                             0xff000000,
+	                             0x00ff0000,
+	                             0x0000ff00,
+	                             0x000000ff
+	                        #else
+	                             0x000000ff,
+	                             0x0000ff00,
+	                             0x00ff0000,
+	                             0xff000000
+	                        #endif
+	                    );
+}
+SDL_Surface* nullSurf(){
+	return nullSurface(0, 0);
+}
+h_Surface* drawNullSurface(int w,int h){
+	return newSurface(nullSurface(w,h));
+}
+
+h_Surface* connectSurface(h_Surface* top,h_Surface* bottom){
 	//not make nor use alpha channel
 	//either top or bottom may be NULL
 	if(top==NULL)
 		return bottom;	//bottom may be NULL
 	if(bottom==NULL)
 		return top;
-	SDL_Surface* ret = drawNullSurface(MAX(top->w,bottom->w), top->h+bottom->h);
-/*
-	SDL_Surface* ret = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_HWACCEL,
-											MAX(top->w,bottom->w),
-											top->h+bottom->h,
-											32,
-											#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-											    0xff000000,
-											    0x00ff0000,
-											    0x0000ff00,
-											    0x000000ff
-											#else
-											    0x000000ff,
-											    0x0000ff00,
-											    0x00ff0000,
-												0xff000000
-											#endif
-											);
-*/
-	SDL_SetAlpha(top,SDL_RLEACCEL,0xff);	//not use alpha
-	SDL_SetAlpha(bottom,SDL_RLEACCEL,0xff);	//not use alpha
+	h_Surface* ret = drawNullSurface(MAX(top->w,bottom->w), top->h+bottom->h);
+	if(ret == NULL) return NULL;	//for Error
+	h_SetAlpha(top,SDL_RLEACCEL,0xff);	//not use alpha
+	h_SetAlpha(bottom,SDL_RLEACCEL,0xff);	//not use alpha
+	h_BlitSurface(top,NULL,ret,NULL);
+	SDL_Rect rect = {0,top->h,ret->w,ret->h};
+	h_BlitSurface(bottom,NULL,ret,&rect);
+	h_FreeSurface(top);
+	h_FreeSurface(bottom);
+	return ret;
+}
 
-	SDL_BlitSurface(top,NULL,ret,NULL);
-
-	SDL_Rect rect2 = {0,top->h,0,0};	//use only x y
-	SDL_BlitSurface(bottom,NULL,ret,&rect2);
-	SDL_FreeSurface(top);
-	SDL_FreeSurface(bottom);
+h_Surface* arrangeSurface(h_Surface* left,h_Surface* right){
+	//not make nor use alpha
+	if(left==NULL)
+		return right;	// this may be NULL
+	if(right==NULL)
+		return left;
+	h_Surface* ret = drawNullSurface(left->w+right->w, MAX(left->h,right->h));
+	if(ret == NULL) return NULL;	//for Error
+	h_SetAlpha(left,SDL_RLEACCEL,0xff);	//not use alpha
+	h_SetAlpha(right,SDL_RLEACCEL,0xff);	//not use alpha
+	h_BlitSurface(left,NULL,ret,NULL);
+	SDL_Rect rect = {left->w,0,ret->w,ret->h};		//use only x y
+	h_BlitSurface(right,NULL,ret,&rect);
+	h_FreeSurface(left);
+	h_FreeSurface(right);
 	return ret;
 }
 

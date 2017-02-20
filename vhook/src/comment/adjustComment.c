@@ -4,8 +4,8 @@
  *  Created on: 2011/12/26
  *      Author: orz
  */
-#include "adjustComment.h"
 #include <SDL/SDL.h>
+#include "adjustComment.h"
 #include "../nicodef.h"
 #include "../main.h"
 #include "../mydef.h"
@@ -41,19 +41,19 @@ double linefeedResizeScale(int size,int nb_line,int fontFixed){
 	return (double)adjustHeight(nb_line,size,TRUE,fontFixed) / (double)adjustHeight(nb_line,size,FALSE,fontFixed);
 }
 
-SDL_Surface* adjustComment(SDL_Surface* surf,DATA* data,int height){
+h_Surface* adjustComment(h_Surface* surf,DATA* data,int height){
 	//not make nor use alpha
 	int width = surf->w;
-	SDL_Surface* ret = drawNullSurface(width, height);
+	h_Surface* ret = drawNullSurface(width, height);
 	if(ret==NULL){
 		FILE* log = data->log;
 		fprintf(log,"***ERROR*** [comsurface/adjust]drawNullSurface : %s\n",SDL_GetError());
 		fflush(log);
 		return surf;
 	}
-	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+	h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
 	SDL_Rect rect = {0,1,width,height};
-	SDL_BlitSurface(surf,&rect,ret,NULL);
-	SDL_FreeSurface(surf);
+	h_BlitSurface(surf,&rect,ret,NULL);
+	h_FreeSurface(surf);
 	return ret;
 }

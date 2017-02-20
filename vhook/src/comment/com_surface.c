@@ -3,7 +3,6 @@
 #include <SDL/SDL_rotozoom.h>
 #include <stdio.h>
 #include "com_surface.h"
-#include "surf_util.h"
 #include "../chat/chat.h"
 #include "../chat/chat_slot.h"
 #include "../nicodef.h"
@@ -14,11 +13,9 @@
 #include "adjustComment.h"
 #include "render_unicode.h"
 
-SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right);
-//SDL_Surface* drawText(DATA* data,int size,int color,Uint16* str);
-SDL_Surface* drawText2s(DATA* data,int size,SDL_Color color,Uint16* str,int fill_bg,int is_black,int shadow);
-SDL_Surface* drawText3(DATA* data,int size,SDL_Color color,FontType fonttype,Uint16* from,Uint16* to,int fill_bg);
-SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel,int fill_bg);
+h_Surface* drawText2s(DATA* data,int size,SDL_Color color,Uint16* str,int fill_bg,int is_black,int shadow);
+h_Surface* drawText3(DATA* data,int size,SDL_Color color,FontType fonttype,Uint16* from,Uint16* to,int fill_bg);
+h_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel,int fill_bg);
 //int cmpSDLColor(SDL_Color col1, SDL_Color col2);
 int isDoubleResize(double width, double limit_width, int size, int line, FILE* log, int is_full);
 int deleteLastLF(Uint16* index);
@@ -57,7 +54,7 @@ int is_blank(Uint16* up, DATA* data){
 SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int video_height){
 	Uint16* index = item->str;
 	Uint16* last = item->str;
-	SDL_Surface* ret = NULL;
+	h_Surface* ret = NULL;
 	SDL_Color SdlColor = item->color24;
 	int size = item->size;
 	int location = item->location;
@@ -93,7 +90,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			fprintf(log,"[comsurface/make script]@DEFAULT(color:%d location:%d size:%d) done\n",
 				color,location,size);
 			//nullコメントを表示
-			return drawNullSurface(0,0);
+			return nullSurf();
 		}
 		if(cmd == SCRIPT_GYAKU){	//＠逆
 			int bits = item->script & 3;
@@ -114,12 +111,12 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			}
 			fprintf(log,"[comsurface/make script]@GYAKU done vpos:%d duration:%d start:%d end:%d\n",
 				vpos,duration,item->vstart,item->vend);
-			return drawNullSurface(0,0);
+			return nullSurf();
 		}
 		if(cmd == SCRIPT_REPLACE){
 			//process comment
 			fprintf(log,"[comsurface/make script]@REPLACE done\n");
-			return drawNullSurface(0,0);
+			return nullSurf();
 		}
 		if(cmd == SCRIPT_BUTTON){
 			//@ボタン
@@ -145,7 +142,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			else {
 				// /vote stop
 				fprintf(log,"stop\n");
-				return drawNullSurface(0,0);
+				return nullSurf();
 			}
 		}
 	}
@@ -183,9 +180,9 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	/*
 	 * 影は置いておいて、とりあえず文字の描画
 	 */
-	SDL_Surface* surf = NULL;
-	SDL_Surface* before_button = NULL;
-	SDL_Surface* before_vote = NULL;
+	h_Surface* surf = NULL;
+	h_Surface* before_button = NULL;
+	h_Surface* before_vote = NULL;
 	int button_nline = 0;
 	int vote_nline = 0;
 	// last == index == item->str;
@@ -196,17 +193,17 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			*index = '\0';//ここで一旦切る
 			surf = drawText2s(data,size,SdlColor,last,is_owner,is_black,shadow);
 			if(surf!=NULL && debug)
-				fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d) %s\n",surf->w,surf->h,COM_FONTSIZE_NAME[size]);
+				fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d) %s\n",surf->s->w,surf->h,COM_FONTSIZE_NAME[size]);
 			if(is_vote){
 				// surf は無視
-				SDL_FreeSurface(surf);
+				h_FreeSurface(surf);
 				surf = NULL;
 				if(before_button!=NULL){
 					// 左右にくっつける
 					ret = arrangeSurface(before_button,ret);
 					nb_line = MAX(button_nline,nb_line);
 					if(ret!=NULL && debug)
-						fprintf(log,"[comsurface/make.01]arrange surf(%d, %d) line %d\n",ret->w,ret->h,nb_line);
+						fprintf(log,"[comsurface/make.01]arrange surf(%d, %d) line %d\n",ret->s->w,ret->h,nb_line);
 				}
 				before_button = NULL;
 				button_nline = 0;
@@ -216,7 +213,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 					before_vote = connectSurface(before_vote,ret);
 					vote_nline += nb_line;
 					if(before_vote!=NULL && debug)
-						fprintf(log,"[comsurface/make.02]connect before_vote(%d, %d) line %d\n",before_vote->w,before_vote->h,vote_nline);
+						fprintf(log,"[comsurface/make.02]connect before_vote(%d, %d) line %d\n",before_vote->s->w,before_vote->h,vote_nline);
 				}else{
 					// retは前の列before_buttonにする
 					before_button = ret;
@@ -258,7 +255,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			}
 			//ボタンを塗る
 			ret = drawButton(data,surf,SdlColor,is_owner);
-			SDL_FreeSurface(surf);
+			h_FreeSurface(surf);
 			if(ret!=NULL && debug)
 				fprintf(log,"[comsurface/make.12]drawButton surf(%d, %d) button %d\n",ret->w,ret->h,nb_line);
 			*index = ']';//ここで一旦切る
@@ -337,7 +334,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			// 2.[来た後で]の前に終了
 			surf = ret;
 			ret = drawButton(data,surf,SdlColor,is_owner);
-			SDL_FreeSurface(surf);
+			h_FreeSurface(surf);
 			if(ret!=NULL && debug)
 				fprintf(log,"[comsurface/make.35]drawButton surf(%d, %d) button %d\n",ret->w,ret->h,nb_line);
 		}
@@ -359,7 +356,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	}
 	if(ret->w == 0){
 		int hh = ret->h;
-		SDL_FreeSurface(ret);
+		h_FreeSurface(ret);
 		ret = drawNullSurface(1,hh);
 	}
 	if(debug)
@@ -398,7 +395,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	if(alpha_t<1.0){
 		if(debug)
 		fprintf(log,"[comsurface/makeA]comment %d set alpha:%5.2f%%.\n",item->no,alpha_t*100.0f);
-		setAlpha(ret,alpha_t);
+		setAlpha(ret->s,alpha_t);
 	}
 
 	// リサイズ率に無関係なスケール計算
@@ -518,10 +515,10 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			if(debug)
 			fprintf(log,"[comsurface/make4]comment %d resized.(%5.2f%%,%5.2f%%)\n",item->no,zoomx*100,zoomy*100);
 			fflush(log);
-			SDL_Surface* tmp = ret;
-			ret = zoomSurface(tmp,zoomx,zoomy,SMOOTHING_ON);
-			SDL_FreeSurface(tmp);
-			if(!ret){
+			h_Surface* tmp = ret;
+			ret = newSurface(zoomSurface(tmp->s,zoomx,zoomy,SMOOTHING_ON));
+			h_FreeSurface(tmp);
+			if(ret==NULL){
 				fprintf(log,"***ERROR*** [comsurface/makeZ]zoomSurface : %s\n",SDL_GetError());
 				fflush(log);
 				return NULL;
@@ -551,14 +548,13 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		 * 枠をつける？
 		 */
 		if(strstr(data->extra_mode,"-frame")!=NULL||data->wakuiro_dat!=NULL||item->waku){
-			SDL_Surface* tmp = ret;
+			h_Surface* tmp = ret;
 			ret = drawFrame(data,item,location,tmp,RENDER_COLOR_BG,1);
-			SDL_FreeSurface(tmp);
+			h_FreeSurface(tmp);
 		}
 
 		item->double_resized = double_resized;
-		return ret;
-
+		return h_SDLSurf(ret);
 	 }
 
 	/*実験、スケール設定はリサイズ後の値を使う*/
@@ -780,16 +776,15 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	if(zoomx!=1.0 || zoomy!=1.0){
 		if(debug)
 		fprintf(log,"[comsurface/make4]comment %d resized.(%5.2f%%,%5.2f%%)\n",item->no,zoomx*100,zoomy*100);
-		SDL_Surface* tmp = ret;
-		ret = zoomSurface(tmp,zoomx,zoomy,SMOOTHING_ON);
-		SDL_FreeSurface(tmp);
+		h_Surface* tmp = ret;
+		ret = newSurface(zoomSurface(tmp->s,zoomx,zoomy,SMOOTHING_ON));
+		h_FreeSurface(tmp);
 		if(ret==NULL){
 			fprintf(log,"***ERROR*** [comsurface/makeZ]zoomSurface : %s\n",SDL_GetError());
 			fflush(log);
 			return NULL;
 		}
 	}
-
 	fprintf(log,"[comsurface/make5]comment %d (%d, %d) %s %s %s %d lines %.0f nicolimit ",
 		item->no,ret->w,ret->h,COM_LOC_NAME[location],COM_FONTSIZE_NAME[item->size],
 		item->full?"full":"",nb_line,nicolimit_width);
@@ -813,67 +808,17 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	 * 枠をつける
 	 */
 	if(strstr(data->extra_mode,"-frame")!=NULL||data->wakuiro_dat!=NULL||item->waku){
-		SDL_Surface* tmp = ret;
+		h_Surface* tmp = ret;
 		ret = drawFrame(data,item,location,tmp,RENDER_COLOR_BG,1);
-		SDL_FreeSurface(tmp);
+		h_FreeSurface(tmp);
 	}
 
 	item->double_resized = double_resized;
-	return ret;
+	return h_SDLSurf(ret);
 }
-
-/**
- * 文字を描画
- */
-/*
-SDL_Surface* drawText(DATA* data,int size,int color,Uint16* str){
-	if(str[0] == '\0'){
-		return SDL_CreateRGBSurface(	SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
-										0,data->font_pixel_size[size],32,
-											#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-													0xff000000,
-													0x00ff0000,
-													0x0000ff00,
-													0x000000ff
-											#else
-													0x000000ff,
-													0x0000ff00,
-													0x00ff0000,
-													0xff000000
-											#endif
-									);
-	}
-	/ *
-	SDL_Surface* fmt = SDL_CreateRGBSurface(	SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
-												0,
-												0,
-												32,
-												#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-														0xff000000,
-														0x00ff0000,
-														0x0000ff00,
-														0x000000ff
-												#else
-														0x000000ff,
-														0x0000ff00,
-														0x00ff0000,
-														0xff000000
-												#endif
-											);
-
-	SDL_Surface* tmp = TTF_RenderUNICODE_Blended(data->font[size],str,COMMENT_COLOR[color]);
-	SDL_SetAlpha(tmp,SDL_SRCALPHA | SDL_RLEACCEL,0xff);
-	SDL_Surface* surf = SDL_ConvertSurface(tmp,fmt->format,SDL_SRCALPHA | SDL_HWSURFACE);
-	SDL_FreeSurface(tmp);
-	SDL_FreeSurface(fmt);
-	*//*
-	SDL_Surface* surf = TTF_RenderUNICODE_Blended(data->font[size],str,COMMENT_COLOR[color]);
-	return surf;
-}
-*/
 
 // this function should not return NULL, except fatal error.
-SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill_bg){
+h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill_bg){
 	if(str == NULL || str[0] == '\0'){
 		return drawNullSurface(0,data->font_pixel_size[size]);
 	}
@@ -882,7 +827,7 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fi
 	if(!data->enableCA){
 		return drawText4(data,size,SdlColor,data->font[size],str,UNDEFINED_FONT,fill_bg);
 	}
-	SDL_Surface* ret = NULL;
+	h_Surface* ret = NULL;
 	Uint16* index = str;
 	Uint16* last = index;
 	int basefont = getFirstFont(last,UNDEFINED_FONT);	//第一基準フォント
@@ -1007,13 +952,20 @@ SDL_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fi
 	}
 	return ret;
 }
-SDL_Surface* drawText2s(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill_bg, int is_black, int shadow){
-	SDL_Surface* surf = drawText2(data,size,SdlColor,str,fill_bg);
+h_Surface* drawText2s(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill_bg, int is_black, int shadow){
+	h_Surface* surf = drawText2(data,size,SdlColor,str,fill_bg);
 	if(surf!=null){
 		// 影の描画(１行分)
 		if(!is_blank(str, data)){
 			// 空白行でなければ
-			surf = (*ShadowFunc[shadow])(surf,is_black,data->fontsize_fix,SdlColor);
+			SDL_Surface* s = (*ShadowFunc[shadow])(surf->s,is_black,data->fontsize_fix,SdlColor);
+			if(s==NULL){
+				surf = null;
+			} else {
+				surf->s = s;
+				// surf->w = s->w;	変更しない
+				// surf->h = s->h;	変更しない
+			}
 		}
 		if(data->debug && surf!=null)
 			fprintf(data->log,"[comsurface/shadow]ShadowFunc:%d (%d, %d) %s\n",
@@ -1021,46 +973,8 @@ SDL_Surface* drawText2s(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int f
 	}
 	return surf;
 }
-SDL_Surface* drawNullSurface(int w,int h){
-	//not make nor use alpha
-	return SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_HWACCEL,
-	                             w,h,32,
-	                        #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	                             0xff000000,
-	                             0x00ff0000,
-	                             0x0000ff00,
-	                             0x000000ff
-	                        #else
-	                             0x000000ff,
-	                             0x0000ff00,
-	                             0x00ff0000,
-	                             0xff000000
-	                        #endif
-	                    );
-}
 
-SDL_Surface* arrangeSurface(SDL_Surface* left,SDL_Surface* right){
-	if(left==NULL){
-		return right;	// this may be NULL
-	}
-	if(right==NULL){
-		return left;
-	}
-	//not make nor use alpha
-	SDL_Surface* ret = drawNullSurface(left->w+right->w, MAX(left->h,right->h));
-	if(ret == NULL)
-		return NULL;	//for Error
-	SDL_SetAlpha(left,SDL_RLEACCEL,0xff);	//not use alpha
-	SDL_SetAlpha(right,SDL_RLEACCEL,0xff);	//not use alpha
-	SDL_Rect rect = {left->w,0,0,0};		//use only x y
-	SDL_BlitSurface(left,NULL,ret,NULL);
-	SDL_BlitSurface(right,NULL,ret,&rect);
-	SDL_FreeSurface(left);
-	SDL_FreeSurface(right);
-	return ret;
-}
-
-SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,Uint16* from,Uint16* to,int fill_bg){
+h_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,Uint16* from,Uint16* to,int fill_bg){
 	int len = to-from;
 	FILE* log = data->log;
 	int debug = data->debug;
@@ -1126,7 +1040,7 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,
 			return NULL;
 		}
 		//draw here
-		SDL_Surface* ret = drawNullSurface(w,h);
+		h_Surface* ret = drawNullSurface(w,h);
 		if(debug){
 			int codeno;
 			switch (code) {
@@ -1167,17 +1081,17 @@ SDL_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,
 	if(debug)
 		fprintf(log,"[comsurface/drawText3]building U+%04hX %d chars. in %s %s\n",
 			text[0],len,getfontname(fontsel),COM_FONTSIZE_NAME[size]);
-	SDL_Surface* ret = drawText4(data,size,SdlColor,data->CAfont[fontsel][size],text,fontsel,fill_bg);
+	h_Surface* ret = drawText4(data,size,SdlColor,data->CAfont[fontsel][size],text,fontsel,fill_bg);
 	free(text);
 	return ret;
 }
 
-SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel,int fill_bg){
+h_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel,int fill_bg){
 	FILE* log = data->log;
 	int debug = data->debug;
 	//SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
 	//SDL_Color bgc = COMMENT_COLOR[CMD_COLOR_YELLOW];
-	SDL_Surface* surf = render_unicode(data,font,str,SdlColor,size,fontsel,fill_bg);
+	h_Surface* surf = render_unicode(data,font,str,SdlColor,size,fontsel,fill_bg);
 
 	if(surf==NULL){
 		fprintf(log,"***ERROR*** [comsurface/drawText4]TTF_RenderUNICODE : %s\n",TTF_GetError());
@@ -1197,12 +1111,12 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 	if(debug)
 		fprintf(log,"[comsurface/drawText4]line feed size=%d\n",fontpixsize);
 	//高さ補正
-	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+	h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
 	int difh = fontpixsize - surf->h;
 	if(difh==0){
 		return surf;
 	}
-	SDL_Surface* ret = drawNullSurface(surf->w,fontpixsize);
+	h_Surface* ret = drawNullSurface(surf->w,fontpixsize);
 	if(ret==NULL){
 		fprintf(log,"***ERROR*** [comsurface/drawText4]drawNullSurface : %s\n",SDL_GetError());
 		fflush(log);
@@ -1222,8 +1136,8 @@ SDL_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uin
 	SDL_Rect srcrect = {0,biash,ret->w,ret->h};
 	SDL_Rect destrect = {0,difh,ret->w,ret->h};
 	//rect.y = 0;	// = (ret->h - surf_h)>>1
-	SDL_BlitSurface(surf,&srcrect,ret,&destrect);
-	SDL_FreeSurface(surf);
+	h_BlitSurface(surf,&srcrect,ret,&destrect);
+	h_FreeSurface(surf);
 	if(debug)
 		fprintf(log,"[comsurface/drawText4]font_surf (%d, %d)\n",ret->w, ret->h);
 	return ret;
@@ -1309,23 +1223,24 @@ SDL_Surface* getErrFont(DATA* data){
 	Uint16 errMark[2] = {0x2620, '\0'};
 #define EXTRA_ERRMARK1 "-errmark=1"
 	const char* extra_errfont = strstr(data->extra_mode,EXTRA_ERRMARK1);
-	if(data->ErrFont == NULL){
+	h_Surface* ef = newSurface(data->ErrFont);
+	if(ef == NULL){
 		if(extra_errfont!=NULL){
 			TTF_Font* font =(data->enableCA)?
 				data->CAfont[GOTHIC_FONT][CMD_FONT_SMALL]
 				: data->font[CMD_FONT_SMALL];
-			data->ErrFont = drawText4(data,CMD_FONT_SMALL,COMMENT_COLOR[CMD_COLOR_PASSIONORANGE],font,errMark,GOTHIC_FONT,FALSE);
+			ef = drawText4(data,CMD_FONT_SMALL,COMMENT_COLOR[CMD_COLOR_PASSIONORANGE],font,errMark,GOTHIC_FONT,FALSE);
 		}else
 			// errmark 2
-			data->ErrFont = drawNullSurface(2,2) ;
+			ef = drawNullSurface(2,2);
 	}
-	SDL_Surface* ret = NULL;
-	if(data->ErrFont!=NULL){
-		ret = drawNullSurface(data->ErrFont->w,data->ErrFont->h);
-		SDL_SetAlpha(ret,SDL_RLEACCEL,0xff);	//not use alpha
-		SDL_BlitSurface(data->ErrFont,NULL,ret,NULL);
+	h_Surface* ret = NULL;
+	if(ef!=NULL){
+		ret = drawNullSurface(ef->w,ef->h);
+		h_SetAlpha(ret,SDL_RLEACCEL,0xff);	//not use alpha
+		h_BlitSurface(ef,NULL,ret,NULL);
 	}
-	return ret;	//copied ErrFont
+	return ret->s;	//copied ErrFont
 }
 
 void closeErrFont(DATA* data){
