@@ -593,7 +593,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		 * 改行リサイズあり ダブルリサイズ検査
 		 * 改行リサイズかつ改行後の倍率で改行臨界幅(nicolimit_width)を超えた場合 → 改行リサイズキャンセル
 		 */
-		double linefeed_zoom = linefeedResizeScale(size,nb_line,data->fontsize_fix);
+		double linefeed_zoom = LINEFEED_RESIZE_SCALE[size];
 		int dfs = COMMENT_FONT_SIZE[size];
 		int rfs = (int)round(0.5*(double)dfs);
 		double rsRate = (double)(rfs+1)/(double)(dfs+1);

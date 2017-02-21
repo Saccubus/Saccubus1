@@ -118,10 +118,10 @@ static const float LINEFEED_RESIZE_FONT_SCALE[CMD_FONT_MAX] = {
 };
 // Base is Surface height after SDL rendering [Gothic?]
 static const float LINEFEED_RESIZE_SCALE[CMD_FONT_MAX] = {
-	0.517f,	// 0.517 15/29  0.518 378/730(25Lines)
-	0.533f,	// 0.533 24/45  0.534 387/725(16Lines)
-	0.556f,	// 0.556 10/18  0.556 383/689(38Lines)
-	0.517f,	// 0.517 15/29  0.518 378/730(25Lines)
+	0.519f,	// 0.517 15/29  0.518 378/730(25Lines) 0.519 108/208( 7Lines)
+	0.535f,	// 0.533 24/45  0.534 387/725(16Lines) 0.535  99/185( 4Lines)
+	0.557f,	// 0.556 10/18  0.556 383/689(38Lines) 0.557 103/185(10Lines)
+	0.519f,	// 0.517 15/29  0.518 378/730(25Lines) 0.519 108/208( 7Lines)
 };
 /*
 LineFeed Resize Of FontSize(font_height surface_height/96dpi) [gothic]

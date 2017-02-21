@@ -43,6 +43,10 @@ double linefeedResizeScale(int size,int nb_line,int fontFixed){
 
 h_Surface* adjustComment(h_Surface* surf,DATA* data,int height){
 	//not make nor use alpha
+	if(surf->h > height){
+		surf->h = height;
+		return surf;
+	}
 	int width = surf->w;
 	h_Surface* ret = drawNullSurface(width, height);
 	if(ret==NULL){
