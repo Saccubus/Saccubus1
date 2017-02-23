@@ -2023,7 +2023,15 @@ public class NicoClient {
 			}
 			String ret = readConnection(con);
 			if (ret == null || ret.isEmpty()){
-				log.println("ng.\nNull response.");
+				log.println("ng.\nNull response. retry with community thread");
+				Official = "";
+				if(!retry_threadkey){
+					retry_threadkey  = true;
+				 	threadKey = null;
+				 	force184 = null;
+				} else {
+					retry_threadkey = false;
+				}
 				return false;
 			}
 			nicomap.splitAndPut(ret, "&");
