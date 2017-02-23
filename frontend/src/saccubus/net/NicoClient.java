@@ -2855,6 +2855,9 @@ public class NicoClient {
 						altTag = "";
 				}
 				VideoUrl = m_video.getAsString("source");
+				if(VideoUrl==null){		// 2017.2.23
+					VideoUrl = m_video.getAsString("url");
+				}
 				log.println("VideoUrl: "+VideoUrl);
 				ContentType = m_video.getAsString("movieType");
 				log.println("ContentType: "+ContentType);
