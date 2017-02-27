@@ -2253,9 +2253,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			.replace("%TITLE%",VideoTitle)	// %TITLE% -> 動画タイトル
 			.replace("%title%", canonical)	// %title% -> 動画タイトル（空白大文字を空白小文字に）
 			.replace("%CAT%", nicoCategory)		// %CAT% -> もしあればカテゴリータグ
+			.replace("%cat%", NicoClient.eRaseMultiByteMark(nicoCategory))		// %cat% -> 全角記号削除
 			;
 		for(int i = 1; i < numTag; i++){
-			videoFilename = videoFilename.replace("%TAG"+i+"%", nicoTagList.get(i));
+			String tag = nicoTagList.get(i);
+			videoFilename = videoFilename.replace("%TAG"+i+"%", tag)
+				.replace("%tag"+i+"%", NicoClient.eRaseMultiByteMark(tag));
 		}
 		File target = new File(videoFilename);
 		File parent = target.getParentFile();

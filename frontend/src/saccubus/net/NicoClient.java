@@ -436,22 +436,30 @@ public class NicoClient {
 	private static Pattern safeFileName_SPACE = Pattern.compile(" {2}+");
 	public static String safeFileName(String str) {
 		//実体参照のパース
-		int old_index = 0;
-		int new_index = 0;
+		Pattern p = Pattern.compile("&#([0-9]+);|&#(x[0-9a-fA-F]+);");
+		Matcher m = p.matcher(str);
 		StringBuffer sb = new StringBuffer();
 		String ch;
-		while((new_index = str.indexOf("&#",old_index)) >= 0){
-			sb.append(str,old_index,new_index);
-			old_index = str.indexOf(";",new_index);
-			ch = str.substring(new_index+2,old_index);
-			sb.append(new String(new char[]{(char) Integer.parseInt(ch)}));
-			old_index++;
+		while (m.find()) {
+			ch = m.group();
+			if(ch.startsWith("x")) ch = "0"+ch;
+			try {
+				ch = new String(Character.toChars((int)Integer.decode(ch)));
+			}catch(NullPointerException|NumberFormatException e){
+				ch = "";
+			}
+			m.appendReplacement(sb, ch);
 		}
 		//最後に追加
-		sb.append(str,old_index,str.length());
+		m.appendTail(sb);
 		str = sb.toString();
 		//MS-DOSシステム(ffmpeg.exe)で扱える形に(UTF-8のまま)
 		str = toSafeWindowsName(str, "MS932");
+		return str;
+	}
+	public static String eRaseMultiByteMark(String str){
+		str = str.replaceAll("[／￥？＊：｜“＜＞．＆；]", "");
+		if(str.isEmpty()) str = "null";
 		return str;
 	}
 
@@ -2807,12 +2815,13 @@ public class NicoClient {
 					debug("\n(NicoClient)nico_tags: "+nico_tags);
 					if(!nico_tags.isEmpty()){
 						nicoCat = getXmlElement2(nico_tags,"tag category=\"1\" lock=\"1\"");
+						nicoCat = safeTag(nicoCat);
 						debug("\n(NicoClient)nicoCat: "+nicoCat);
 						String[] tagarray = nico_tags.split("\n");
 						if(tagarray!=null && tagarray.length>0){
 							for(int i = 0; i < tagarray.length; i++){
 								String tl = tagarray[i];
-								String t = getXmlElement1(tl,"tag");
+								String t = safeTag(getXmlElement1(tl,"tag"));
 								nicoTaglist.add(i, t);
 								debug("\n(NicoClient)tag["+i+"]: "+t);
 							}
@@ -2829,6 +2838,10 @@ public class NicoClient {
 			log.printStackTrace(e);
 			return null;
 		}
+	}
+	private static String safeTag(String s){
+		if(s==null) return "null";
+		return safeFileName(s);
 	}
 	private String extractDataApiDataJson(String text, String encoding, String url) {
 		// HTML5 watchpage
