@@ -4061,6 +4061,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (Setting.isDisableOriginalResize()){
 				ffmpeg.addCmd("|--disable-original-resize");
 			}
+			// flashコメントモード=既定
+			//ffmpeg.addCmd("|--flash-comment");
+			if (Setting.isHtml5Comment()
+				|| Setting.isHtml5() && Setting.isAutoHtml5Comment()){
+				ffmpeg.addCmd("|--html5-comment");
+			}
 			if (Setting.isFontWidthFix()){
 				ffmpeg.addCmd("|--font-width-fix-ratio:"
 					+ Setting.getFontWidthFixRaito());

@@ -222,6 +222,8 @@ public class ConvertingSetting {
 	private String zqSizeMinOption;
 	private String zqSizeMaxOption;
 	private String zqFpsFloor;
+	private boolean enableHtml5Comment;
+	private boolean enableAutoHtml5Comment;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -473,7 +475,9 @@ public class ConvertingSetting {
 			boolean fps_integral_multi,
 			String zq_size_min,
 			String zq_size_max,
-			String zq_fps_floor
+			String zq_fps_floor,
+			boolean html5_font,
+			boolean auto_html5_font
 		)
 	{
 		this(	mailaddress,
@@ -640,6 +644,8 @@ public class ConvertingSetting {
 		zqSizeMinOption = zq_size_min;
 		zqSizeMaxOption = zq_size_max;
 		zqFpsFloor = zq_fps_floor;
+		enableHtml5Comment = html5_font;
+		enableAutoHtml5Comment = auto_html5_font;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1111,6 +1117,12 @@ public class ConvertingSetting {
 	public String getZqFpsFloor(){
 		return zqFpsFloor;
 	}
+	public boolean isHtml5Comment(){
+		return enableHtml5Comment;
+	}
+	public boolean isAutoHtml5Comment(){
+		return enableAutoHtml5Comment;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1296,6 +1308,8 @@ public class ConvertingSetting {
 	static final String PROP_ZQ_SIZE_MIN = "ZqSizeMin";
 	static final String PROP_ZQ_SIZE_MAX = "ZqSizeMax";
 	static final String PROP_ZQ_FPS_FLOOR = "ZqFpsFloor";
+	static final String PROP_HTML5_COMMENT = "Html5CommentMode";
+	static final String PROP_AUTO_HTML5 = "AutoHtml5Comment";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1535,6 +1549,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ZQ_SIZE_MIN, setting.getZqSizeMin());
 		prop.setProperty(PROP_ZQ_SIZE_MAX, setting.getZqSizeMax());
 		prop.setProperty(PROP_ZQ_FPS_FLOOR, setting.getZqFpsFloor());
+		prop.setProperty(PROP_HTML5_COMMENT, Boolean.toString(setting.isHtml5Comment()));
+		prop.setProperty(PROP_AUTO_HTML5, Boolean.toString(setting.isAutoHtml5Comment()));
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1830,7 +1846,9 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_FPS_INTEGREL_MULTIPLE,"false")),
 			prop.getProperty(PROP_ZQ_SIZE_MIN, ""),
 			prop.getProperty(PROP_ZQ_SIZE_MAX, ""),
-			prop.getProperty(PROP_ZQ_FPS_FLOOR, "")
+			prop.getProperty(PROP_ZQ_FPS_FLOOR, ""),
+			Boolean.parseBoolean(prop.getProperty(PROP_HTML5_COMMENT, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_HTML5, "false"))
 		);
 	}
 
