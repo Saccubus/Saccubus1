@@ -31,6 +31,7 @@ int is_blank(Uint16* up, DATA* data){
 		if(u<=0x202f) continue;
 		if(isZeroWidth(u)) continue;
 		if(u<=0xE757) return FALSE;
+		if(u>=0xF900) return FALSE;
 		switch(getDetailType(u)){
 			case ZERO_WIDTH_CHAR:
 				continue;
@@ -47,7 +48,6 @@ int is_blank(Uint16* up, DATA* data){
 				}
 				continue;
 		}
-		if(u>=0xF900) return FALSE;
 	}
 	return TRUE;
 }
@@ -171,7 +171,10 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	// 影設定
 	int shadow = data->shadow_kind;
 	if(shadow >= SHADOW_MAX){
-		shadow = SHADOW_DEFAULT;
+		if(data->shadow_data.slide == 0)
+			shadow = SHADOW_DEFAULT;
+		else
+			shadow = SHADOW_MAX;
 	}
 	int is_black = cmpSDLColor(SdlColor, COMMENT_COLOR[CMD_COLOR_BLACK]);
 	if(strstr(data->extra_mode,"font")!=NULL && strstr(data->extra_mode,"fg")!=NULL){
@@ -446,7 +449,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		/*スケールの調整*/
 		nicolimit_width *= autoscale;
 		//	コメント高さ補正
-		int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
+		int h = adjustHeight(nb_line,size,FALSE,linefeed_resized,data->html5comment);
 		if(h!=ret->h && lf_control==0){
 			ret = adjustComment(ret,data,h);
 			if(debug)
@@ -459,7 +462,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		if(zoomx * 3 * ret->h > autoscale * NICO_HEIGHT && !item->ender){
 			// ダブルリサイズ検査
 			// 改行リサイズ＆改行後の倍率で臨界幅を超えた場合 → 改行リサイズキャンセル
-			double linefeed_zoom = linefeedResizeScale(size,nb_line,data->fontsize_fix);
+			double linefeed_zoom = linefeedResizeScale(size,nb_line,data->fontsize_fix,data->html5comment);
 			double resized_w = linefeed_zoom * zoomx * ret->w;
 			if((location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM)
 				&& isDoubleResize(resized_w, nicolimit_width, size, nb_line, log, item->full)){
@@ -579,7 +582,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	//nico_width += 32;	// 512->544, 640->672
 
 	//	コメント高さ補正
-	int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix);
+	int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix,data->html5comment);
 	if(h!=ret->h && lf_control==0){
 		ret = adjustComment(ret,data,h);
 		if(debug)
@@ -958,7 +961,11 @@ h_Surface* drawText2s(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fil
 		// 影の描画(１行分)
 		if(!is_blank(str, data)){
 			// 空白行でなければ
-			SDL_Surface* s = (*ShadowFunc[shadow])(surf->s,is_black,data->fontsize_fix,SdlColor);
+			SDL_Surface* s;
+			if(shadow>=SHADOW_MAX)
+				s = customShadow(surf->s,is_black,SdlColor,data);
+			else
+				s = (*ShadowFunc[shadow])(surf->s,is_black,data->fontsize_fix,SdlColor);
 			if(s==NULL){
 				surf = null;
 			} else {

@@ -87,27 +87,6 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		}
 	}
 	//フレームレート
-#ifdef VHOOKDEBUG
-//	char* fr = setting->framerate;
-//	double dfr = 0.0;
-//	if (fr){
-//		char* fr1 = strchr(fr,'/');
-//		if(fr1!=NULL){
-//			// 分数形式
-//			double dfr1 = strtod(fr,&fr1);
-//			fr1++;
-//			double dfr2 = strtod(fr1,NULL);
-//			if(dfr2!=0.0){
-//				dfr = dfr1 / dfr2;
-//			}
-//		}else{
-//			// 整数または少数
-//			dfr = strtod(fr,NULL);
-//		}
-//	}
-//	data->dts_rate = dfr;
-//	data->dts = 0.0;
-#endif
 //	data->limit_height = NICO_HEIGHT;
 	data->q_player = setting->q_player;
 	data->is_live = setting->is_live;
@@ -162,6 +141,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		data->comment_off_naka = naka;
 	}
 	data->layerctrl = setting->layerctrl;
+	data->html5comment = setting->html5comment;
 	data->comment_resize_adjust = setting->comment_resize_adjust;
 	data->comment_linefeed_ratio = 0.0f;
 	data->comment_lf_control = 0;
@@ -234,6 +214,8 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	fprintf(log,"[main/init]output: %dx%d @(%d,%d)of %d:%d\n",
 		data->vout_width,data->vout_height,data->vout_x,data->vout_y,data->pad_w,data->pad_h);
 	data->extra_mode = setting->extra_mode;
+	//カスタム影設定
+	setting_shadow(setting->extra_mode, data);
 	if(setting->april_fool != NULL){
 		set_aprilfool(setting,data);
 	}
@@ -243,11 +225,12 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		set_wakuiro(setting->wakuiro,data);
 	}
 	// 弾幕モードの高さの設定　16:9でオリジナルリサイズでない場合は上下にはみ出す
-	// Qwatchのときは、はみ出さない
+	// Qwatch,html5commentのときは、はみ出さない
 	//comment area height is independent from video height
+	data->nico_height = data->html5comment? NICO_HEIGHT_WIDE : NICO_HEIGHT;
 	data->width_scale = (double)data->vout_width / (double)data->nico_width_now;
-	double height_scale = (double)data->vout_height / (double)NICO_HEIGHT;
-	int comment_height = lround(data->width_scale * NICO_HEIGHT);
+	double height_scale = (double)data->vout_height / (double)data->nico_height;
+	int comment_height = lround(data->width_scale * data->nico_height);
 	int limit_height = data->vout_height;
 	if(data->q_player){
 		// Qwatch
@@ -262,9 +245,9 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 			fprintf(log,"[main/process]limit_height %d.\n",limit_height);
 		}else{
 			//pad以上かつ動画の高さ以上
-			data->width_scale = MAX(data->pad_h,data->vout_height) / (double)NICO_HEIGHT;
+			data->width_scale = MAX(data->pad_h,data->vout_height) / (double)data->nico_height;
 			fprintf(log,"[main/process]width scale is set-again by height. %.3f%%\n", data->width_scale * 100.0);
-			limit_height = lround(data->width_scale * NICO_HEIGHT);
+			limit_height = lround(data->width_scale * data->nico_height);
 			fprintf(log,"[main/process]limit_height %d.\n",limit_height);
 		}
 	} else if(data->original_resize){
@@ -290,7 +273,8 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		limit_height = comment_height;
 		fprintf(log,"[main/process]limit_height %d.\n",limit_height);
 	}
-	limit_height += lround(((double)limit_height / (double)NICO_HEIGHT));
+	if(!data->html5comment)
+		limit_height += lround(((double)limit_height / (double)NICO_HEIGHT));
 		//コメントの高さは385=384+1 下にはみ出す
 	data->limit_height = limit_height;
 	fprintf(data->log,"[chat_slot/add]video height %d  limit height %d\n",data->vout_height,data->limit_height);
@@ -314,18 +298,23 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	}
 	int line_skip[CMD_FONT_MAX];
 	int pointsizemode = FALSE;
+	int html5 = data->html5comment;
 	if(setting->debug && strstr(setting->extra_mode,"-point")!=NULL){
 		pointsizemode = TRUE;
 	}
 	for (i=0;i<CMD_FONT_MAX;++i) {
-		data->font_pixel_size[i] = FONT_PIXEL_SIZE[i]<<isfontdoubled;
+		if(html5)
+			data->font_pixel_size[i] = ((int)lround(HTML5_PIXEL_SIZE[i][0]+HTML5_PIXEL_SIZE[i][1]))<<isfontdoubled;
+		else
+			data->font_pixel_size[i] = FONT_PIXEL_SIZE[i]<<isfontdoubled;
 	}
 	fprintf(log,"[main/init]Font height is DEF=%dpx, MEDIUM=%dpx, BIG=%dpx, SMALL=%dpx\n",
 		data->font_pixel_size[CMD_FONT_DEF],data->font_pixel_size[CMD_FONT_MEDIUM],
 		data->font_pixel_size[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_SMALL]
 	);
 	int ttf_style = TTF_STYLE_BOLD;
-	if(strstr(setting->extra_mode,"-normal")!=NULL)
+	if(strstr(setting->extra_mode,"-normal")!=NULL
+		||data->shadow_data.fontnormal)
 		ttf_style = TTF_STYLE_NORMAL;
 	if(!setting->enableCA){
 		fputs("[main/init]initializing default Font...\n",log);
@@ -337,7 +326,11 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 				fontsize = COMMENT_POINT_SIZE[i]<<isfontdoubled;
 			}
 			//実験からSDL指定値は-1するとニコニコ動画と文字幅が合う?
-			fontsize -= 1;
+			if(html5){
+				//調整
+			}else{
+				fontsize -= 1;
+			}
 
 			font[i] = TTF_OpenFontIndex(font_path,fontsize,font_index);
 			if(font[i] == NULL){
@@ -415,12 +408,21 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 			fixed_font_index = setting->CAfont_index[f];
 			for(i=0;i<CMD_FONT_MAX;i++){
 				fontsize = COMMENT_FONT_SIZE[i];
-				//実験からSDL指定値はマイナスするとニコニコ動画と文字幅が合う?
-				fontsize -= 1;
+				if(html5){
+					//調整
+				}else{
+					//flash
+					//実験からSDL指定値はマイナスするとニコニコ動画と文字幅が合う?
+					fontsize -= 1;
+				}
 				/* ターゲットを拡大した時にフォントが滑らかにするため２倍化する。 */
 				fontsize <<= isfontdoubled;
 				try = data->original_resize ? 100 : 1;
 				target_size = fontsize;
+				if(html5){
+					// fontsize, target_sizeの調整
+					try = 100;
+				}else
 				if(pointsizemode){
 					fontsize = COMMENT_POINT_SIZE[i] << isfontdoubled;
 					target_size = fontsize;
@@ -514,17 +516,6 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 			}
 			fputs("\n",log);
 		}
-		/*
-		Uint16* u = data->zero_width;
-		if(u!=NULL){
-			fprintf(log,"zero width");
-			while(*u){
-				fprintf(log," %04x-%04x",*u,*(u+1));
-				u += 2;
-			}
-			fputs("\n",log);
-		}
-		*/
 		if(setting->fontlist!=NULL)
 			free(setting->fontlist);
 		fputs("[main/init]initialized CA(Comment Art) Feature.\n",log);
@@ -660,27 +651,18 @@ int isPathRelative(const char* path){
  */
 int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 	FILE* log = data->log;
-/*
-	int now_dts = now_vpos;
-	if(now_dts <= data->last_vpos) {
-		now_dts = data->dts + (float)VPOS_FACTOR / data->dts_rate;
-		data->dts += 1.0 / data->dts_rate;
-	}else{
-		data->last_vpos = now_dts;
-		data->dts = (float)now_dts / (float)VPOS_FACTOR;
-	}
-*/
 	if(!data->process_first_called){
 		// 弾幕モードの高さの設定　16:9でオリジナルリサイズでない場合は上下にはみ出す
-		// Qwatchのときは、はみ出さない
+		// Qwatch, html5のときは、はみ出さない
 		//comment area height is independent from video height
 		if(surf->w!=data->vout_width||surf->h!=data->vout_height){
 			fprintf(log,"[main/process]screen size != video size\n");
 			fprintf(log,"[main/process]this may be woring Ver.%s\n",data->version);
 		}
+		int nico_height = data->html5comment? NICO_HEIGHT_WIDE : NICO_HEIGHT;
 		fprintf(log,"[main/process]screen %dx%d, video %dx%d, comment %.0fx%.0f\n",
 			surf->w,surf->h,data->vout_width,data->vout_height,
-			data->width_scale*data->nico_width_now,data->width_scale*NICO_HEIGHT);
+			data->width_scale*data->nico_width_now,data->width_scale*nico_height);
 		data->aspect_rate = (float)data->vout_width/(float)data->vout_height;
 		fprintf(log,"[main/process]screen aspect:%.3f->%.3f scale:%.2f%%.\n",
 			(float)surf->w / (float)surf->h,

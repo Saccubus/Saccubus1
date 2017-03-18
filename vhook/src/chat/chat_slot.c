@@ -465,6 +465,14 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	}
 	//’Ç‰Á
 	slot_item->used = TRUE;
+	if(data->html5comment){
+		if(location==CMD_LOC_BOTTOM){
+			if(y < y_max) y++;
+		}else{
+			if(y > y_min) y--;
+		}
+
+	}
 	slot_item->y = y;
 	fprintf(data->log,"[chat_slot/add]comment %d %s %s y=%d\n",
 		item->no,COM_LOC_NAME[location],COM_FONTSIZE_NAME[size],y);

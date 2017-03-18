@@ -358,4 +358,47 @@ static char* const COM_TYPE[CID_MAX] = {
 	"user", "owner", "optional",
 };
 
+//HTML5 font types
+#define HTML5_FONT_TYPES	3
+#define HTML5_FONT_DEFONT	0
+#define HTML5_FONT_MINCHO	1
+#define HTML5_FONT_GOTHGIC	2
+/**
+ * ヒロスさんのブロマガより
+ * http://ch.nicovideo.jp/883797/blomaga/ar1149544
+ *
+ * 最小二乗法　 not resized       Line resized
+ * 定数+補正　big   medium small  big    medium  small
+ *  a       42.452 27.143 16.95  22.356 14.094  9.4058
+ *  b        4.05   5.076  4.9    2.6     2.748 3.138
+ */
+
+//Line Skip (96dpi), Not resized, in HTML5
+static const float HTML5_PIXEL_SIZE[CMD_FONT_MAX][2] = {
+	{27.143, 5.076},	//DEF
+	{42.452, 4.050},	//BIG
+	{16.950, 4.900},	//SMALL
+	{27.143, 5.076},	//MEDIUM
+};
+
+// Line Skip (96dpi), resized, in HTML5
+static const float HTML5_LINEFEED_RESIZED_SIZE[CMD_FONT_MAX][2] = {
+	{14.094, 2.748},	//DEF
+	{22.356, 2.600},	//BIG
+	{9.4058, 3.138},	//SMALL
+	{14.094, 2.748},	//MEDIUM
+};
+
+#define HTML5_FONT_MAX 3
+#define HTML5_FONT_DEFONT 0
+#define HTML5_FONT_MINCHO 1
+#define HTML5_FONT_GOTHIC 2
+
+//									[font_sel][SIZE]
+static const int HTML5_FONT_NICO_WIDTH[HTML5_FONT_MAX][CMD_FONT_MAX] = {
+	{32,47,22,32},		//gothic
+	{31,46,21,31},		//simsun
+	{31,46,21,31},		//gulim
+};
+
 #endif /*NICODEF_H_*/

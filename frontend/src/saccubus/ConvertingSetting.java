@@ -59,8 +59,11 @@ public class ConvertingSetting {
 		"02:右下",
 		"03:囲い込み",
 		"04:Saccubus2風",
-		"05:Saccubus2風v2"
-		};
+		"05:Saccubus2風v2",
+		"06:Html5プレイヤー風",
+		"07:ニコニコ動画風v2",
+		"08:カスタム（readmeNew）",
+	};
 
 	private String MailAddress;
 	private String Password;

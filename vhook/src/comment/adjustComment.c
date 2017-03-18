@@ -26,19 +26,28 @@ THANKS for Comment Artisan! A.K.A. SHOKUNIN!
   (resized)   > 8  10n+3    9n+3
  */
 
-int adjustHeight(int nb_line,int size,int linefeedResize,int fontFixed){
+int adjustHeight(int nb_line,int size,int linefeedResize,int fontFixed, int html5){
 	int h;
-	if(linefeedResize){
-		h = LINEFEED_RESIZED_PIXEL_SIZE[size] * nb_line + 3;
+	if(html5){
+		if(linefeedResize)
+			h = (int)lround(HTML5_LINEFEED_RESIZED_SIZE[size][0] * nb_line
+				+ HTML5_LINEFEED_RESIZED_SIZE[size][1]);
+		else
+			h = (int)lround(HTML5_PIXEL_SIZE[size][0] * nb_line
+				+ HTML5_PIXEL_SIZE[size][1]);
 	}else{
-		h = FONT_PIXEL_SIZE[size] * nb_line + 5;
+		if(linefeedResize)
+			h = LINEFEED_RESIZED_PIXEL_SIZE[size] * nb_line + 3;
+		else
+			h = FONT_PIXEL_SIZE[size] * nb_line + 5;
 	}
 	h <<= fontFixed;
 	return h;
 }
 
-double linefeedResizeScale(int size,int nb_line,int fontFixed){
-	return (double)adjustHeight(nb_line,size,TRUE,fontFixed) / (double)adjustHeight(nb_line,size,FALSE,fontFixed);
+double linefeedResizeScale(int size,int nb_line,int fontFixed,int html5){
+	return (double)adjustHeight(nb_line,size,TRUE,fontFixed,html5)
+		/ (double)adjustHeight(nb_line,size,FALSE,fontFixed,html5);
 }
 
 h_Surface* adjustComment(h_Surface* surf,DATA* data,int height){

@@ -181,6 +181,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private int tid;
 	private Logger log;
 	private String thumbInfoData;
+	private boolean html5CommentMode = false;
 
 	public ConvertWorker(int worker_id,
 			String url, String time, ConvertingSetting setting,
@@ -2785,6 +2786,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 		}
 
+		if (Setting.isHtml5Comment()
+			|| Setting.isHtml5() && Setting.isAutoHtml5Comment()){
+			html5CommentMode = true;
+		}
 		inSize = videoAspect.getSize();
 		setSize = getSetSize();	//videoSetSize="width"x"height"
 		padOption = getPadOption();		//padOption=width:height:x:y
@@ -2807,14 +2812,21 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			inSize = outAspect.getSize();
 		}
 		if(videoAspect.isInvalid()){ // and outAspect is also invalid
-			if(selectedVhook==VhookNormal)
-				inSize = "512:384";
+			if(selectedVhook==VhookNormal){
+				if(html5CommentMode)
+					inSize = "480:360";
+				else
+					inSize = "512:384";
+			}
 			else
 				inSize = "640:360";
 			videoAspect = toAspect(inSize, Aspect.WIDE);
 			outAspect = videoAspect;
 		}
 		str = videoAspect.explain() + "  ";
+		if (html5CommentMode){
+			MovieInfo.setText(auto + "Html5プレイヤー " + str);
+		}else
 		if (Setting.isZqPlayer()){
 			MovieInfo.setText(auto + "拡張Vhook Q " + str);
 		} else if (isPlayerWide){
@@ -2943,6 +2955,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(Setting.isZqPlayer()){
 			commentWidth = 800;		//Qwatch大画面
 			commentHeight = 480;
+		}
+		if(html5CommentMode){
+			commentWidth = 640;
+			commentHeight = 360;
 		}
 		aspect = toAspect(sizestr, aspect);
 		int width = aspect.getWidth();
@@ -4063,8 +4079,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			// flashコメントモード=既定
 			//ffmpeg.addCmd("|--flash-comment");
-			if (Setting.isHtml5Comment()
-				|| Setting.isHtml5() && Setting.isAutoHtml5Comment()){
+			if (html5CommentMode){
 				ffmpeg.addCmd("|--html5-comment");
 			}
 			if (Setting.isFontWidthFix()){
