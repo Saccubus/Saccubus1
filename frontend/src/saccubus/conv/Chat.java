@@ -29,33 +29,36 @@ import saccubus.util.Util;
  * @version 1.0
  */
 public class Chat {
+	//bit 1-0
 	private static final int CMD_LOC_DEF = 0;
-
 	private static final int CMD_LOC_TOP = 1;
-
 	private static final int CMD_LOC_BOTTOM = 2;
-
 	private static final int CMD_LOC_NAKA = 3;
-
+	//bit 2
 	private static final int CMD_EX_FULL = 4;
-
+	//bit 3
 	private static final int CMD_EX_WAKU = 8;
-
+	//bit 4
 	static final int CMD_EX_SCRIPT = 16;
-
+	//bit 5
 	private static final int CMD_EX_PATISSIER = 32;
-
+	//bit 6
 	private static final int CMD_EX_INVISIBLE = 64;
-
+	//bit 7
 	static final int CMD_EX_IS_BUTTON = 128;
-
+	//bit 8
 	private static final int CMD_EX_SCRIPT_FOR_OWNER = 256;
-
+	//bit 9
 	private static final int CMD_EX_SCRIPT_FOR_USER = 512;
-
+	//bit 10
 	private static final int CMD_EX_ENDER = 1024;
-
+	//bit 11
 	private static final int CMD_EX_ITEMFORK = 2048;
+	// bit 13-12 HTML5 font command
+	private static final int CMD_FONT_DEFONT = 0*4096;	//ゴシック標準
+	private static final int CMD_FONT_MINCHO = 1*4096;	// 4096明朝体
+	private static final int CMD_FONT_GOTHIC = 2*4096;	//丸ゴシック体
+	//private static final int CMD_FONT_OTHER = 3*4096;	//リザーブ
 
 	/**
 	 * Location bit 31-16 追加
@@ -63,13 +66,10 @@ public class Chat {
 	 */
 	private static final int CMD_MAX_SECONDS = 0x0000ffff;
 	private static final int CMD_DUR_SECONDS_BITS = 16;
-
+	// Size 
 	private static final int CMD_SIZE_DEF = 0;
-
 	private static final int CMD_SIZE_BIG = 1;
-
 	private static final int CMD_SIZE_SMALL = 2;
-
 	private static final int CMD_SIZE_MEDIUM = 3;
 
 	@SuppressWarnings("unused")
@@ -79,49 +79,27 @@ public class Chat {
 	};
 
 	private static final int CMD_COLOR_DEF = 0;
-
 	//private static final int CMD_COLOR_RED = 1;
-
 	//private static final int CMD_COLOR_ORANGE = 2;
-
 	private static final int CMD_COLOR_YELLOW = 3;
-
 	//private static final int CMD_COLOR_PINK = 4;
-
 	//private static final int CMD_COLOR_BLUE = 5;
-
 	//private static final int CMD_COLOR_PURPLE = 6;
-
 	//private static final int CMD_COLOR_CYAN = 7;
-
 	//private static final int CMD_COLOR_GREEN = 8;
-
 	private static final int CMD_COLOR_NICOWHITE = 9;
-
 	private static final int CMD_COLOR_MARINEBLUE = 10;
-
 	private static final int CMD_COLOR_MADYELLOW = 11;
-
 	private static final int CMD_COLOR_PASSIONORANGE = 12;
-
 	private static final int CMD_COLOR_NOBLEVIOLET = 13;
-
 	private static final int CMD_COLOR_ELEMENTALGREEN = 14;
-
 	private static final int CMD_COLOR_TRUERED = 15;
-
 	//private static final int CMD_COLOR_BLACK = 16;
-
 	//private static final int CMD_COLOR_WHITE = 17;
-
 	private static final int CMD_COLOR_PINK2 = 18;
-
 	private static final int CMD_COLOR_CYAN2 = 19;
-
 	private static final int CMD_COLOR_BLACK2 = 20;
-
 	private static final int CMD_COLOR_NONE = 99;
-
 	private static final int CMD_COLOR_ERROR = 100;
 
 	private static final String[] COLOR_NAME = {
@@ -196,6 +174,9 @@ public class Chat {
 	private int Location = 0;
 	private boolean isLocationAssigned = false;
 
+	private int html5Font = 0;
+	private boolean isFontAssigned = false;
+
 	private int extend = 0;
 	// "No"
 	private int No = 0;
@@ -216,12 +197,6 @@ public class Chat {
 	public Chat(Logger logger) {
 		log = logger;
 	}
-/*
-	public void setDate(String date_str) {
-		Date = Integer.parseInt(date_str);
-		// log.println("date:" + date_str);
-	}
-*/
  	String strsec = "";
 	int sec = 0;
 
@@ -230,6 +205,7 @@ public class Chat {
 		Color = CMD_COLOR_DEF;
 		Size = CMD_SIZE_DEF;
 		Location = CMD_LOC_DEF;
+		html5Font = CMD_FONT_DEFONT;
 		extend = 0;
 		sec = 0;
 		if (mail_str == null) {
@@ -248,6 +224,18 @@ public class Chat {
 			} else if (str.equals("naka") && !isLocationAssigned) {
 				Location = CMD_LOC_NAKA;
 				isLocationAssigned = true;
+			}
+			else if (str.equals("defont") && !isFontAssigned) {
+				html5Font = CMD_FONT_DEFONT;
+				isFontAssigned = true;
+			}
+			else if (str.equals("mincho") && !isFontAssigned) {
+				html5Font = CMD_FONT_MINCHO;
+				isFontAssigned = true;
+			}
+			else if (str.equals("gothic") && !isFontAssigned) {
+				html5Font = CMD_FONT_GOTHIC;
+				isFontAssigned = true;
 			}
 			// ＠秒数
 			else if ((str.startsWith("@") || str.startsWith("＠")) && strsec.isEmpty()) {
@@ -382,7 +370,8 @@ public class Chat {
 		}
 		Util.writeInt(os, No);
 		Util.writeInt(os, Vpos);
-		Util.writeInt(os, Location | extend | ((sec & CMD_MAX_SECONDS) << CMD_DUR_SECONDS_BITS));
+		Util.writeInt(os, Location | extend | html5Font
+			| ((sec & CMD_MAX_SECONDS) << CMD_DUR_SECONDS_BITS));
 		Util.writeInt(os, Size);
 		Util.writeInt(os, Color);
 		Util.writeInt(os, a.length);

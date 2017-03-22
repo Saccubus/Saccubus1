@@ -24,6 +24,14 @@ THANKS for Comment Artisan! A.K.A. SHOKUNIN!
   SMALL       1-6  18n+5   17n+5
   (resized?)  7    10n+3   17n+5
   (resized)   > 8  10n+3    9n+3
+ *
+ * html5コメントの複数行高さ　 ヒロスさんのブロマガより
+ * http://ch.nicovideo.jp/883797/blomaga/ar1149544
+ *
+ * 最小二乗法　 not resized       Line resized
+ * 定数+補正　big   medium small  big    medium  small
+ *  a       42.452 27.143 16.95  22.356 14.094  9.4058
+ *  b        4.05   5.076  4.9    2.6     2.748 3.138
  */
 
 int adjustHeight(int nb_line,int size,int linefeedResize,int fontFixed, int html5){

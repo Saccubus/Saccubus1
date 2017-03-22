@@ -21,8 +21,8 @@ int isHANKAKU(Uint16* u);
 int isZeroWidthP(Uint16* u);
 #define isMatchExtra(u, extra) isMatchKanji(u, extra)
 int getDetailType(int u);
-FontType getFontType2(Uint16* u,int fonttype,DATA* data);
-FontType getFontType(Uint16* u,int fonttype,DATA* data);
+FontType getFontType2(Uint16* u,int fonttype,DATA* data,int stable);
+FontType getFontType(Uint16* u,int fonttype,DATA* data,int stable);
 FontType getFirstFont(Uint16* u,int fonttype);
 Uint16 replaceSpace(Uint16 u);
 //void removeZeroWidth(Uint16* str,int len);

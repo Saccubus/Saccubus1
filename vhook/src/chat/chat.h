@@ -25,6 +25,11 @@ struct CHAT_ITEM{
 	int no;
 	int vpos;
 	int location;
+	int html5font;	//html5フォントコマンド
+		// 0	//ゴシック標準
+		// 1	// 4096明朝体
+		// 2	//丸ゴシック体
+		// 3	//リザーブ
 	int full;	// whether full ommand?
 	int waku;	// 黄枠付加
 	int script;	// whether nico script?

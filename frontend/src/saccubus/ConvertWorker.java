@@ -2038,12 +2038,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			duration = Setting.getLiveOperationDuration();
 		// ニコスコメントは premium "2" or "3"みたいなのでニコスコメントの時は運営コメント変換しないようにする
 		boolean live_op = Setting.isLiveOperationConversion() && !is_nicos;
+		boolean html5 = html5CommentMode;
 		if(is_nicos)
 			isOptionalTranslucent = false;
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile, CommentReplaceList,
 				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit(),
-				live_op, Setting.isPremiumColorCheck(), duration, log, isDebugNet)){
+				live_op, Setting.isPremiumColorCheck(), duration, log, isDebugNet, html5)){
 			return false;
 		}
 		//コメント数が0の時削除する
@@ -2475,6 +2476,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				manager.incNumConvert();
 				isConverting = true;
 			}
+			if (Setting.isHtml5Comment()
+				|| Setting.isHtml5() && Setting.isAutoHtml5Comment()){
+				html5CommentMode = true;
+			}
+
 			//stopwatch.show();
 			if(!makeNGPattern(Setting.isNGenableML()) || stopFlagReturn()){
 				return result;
@@ -2786,10 +2792,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 		}
 
-		if (Setting.isHtml5Comment()
-			|| Setting.isHtml5() && Setting.isAutoHtml5Comment()){
-			html5CommentMode = true;
-		}
 		inSize = videoAspect.getSize();
 		setSize = getSetSize();	//videoSetSize="width"x"height"
 		padOption = getPadOption();		//padOption=width:height:x:y

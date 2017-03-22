@@ -62,6 +62,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	int no;
 	int vpos;
 	int location;
+	int html5font;
 	int size;
 	int color;
 	int str_length;
@@ -153,6 +154,8 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		color24 = getSDL_color(color);
 		// bit 31-16 を＠秒数+1とみなす　saccubus1.37以降
 		duration = GET_CMD_DURATION(location);
+		// bit 13-12　フォント
+		html5font = GET_CMD_FONT(location);
 		// nico script & niwango
 		script = GET_CMD_SCRIPT(location);
 		if(script!=0){
@@ -202,6 +205,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		item->no = no;
 		item->vpos = vpos;
 		item->location = location;
+		item->html5font = html5font;
 		item->size = size;
 		item->color = color;
 		//removeZeroWidth(str,str_length/sizeof(Uint16));

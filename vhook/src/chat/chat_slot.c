@@ -395,7 +395,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 		}
 	}while(running);
 	y_bottom = y+surf_h;
-	if(data->comment_lf_control > 1){
+	if(data->comment_lf_control > 1 && data->html5comment==0){
 		// lf行間補正 ver2
 		// lf_control = 0:なし 　1: rev1.67.1.2 の時はしない
 		// lf制御 コメント高さの補正はrender時に済
@@ -452,11 +452,24 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 		else
 		//naka弾幕は固定
 		if(surf_h>limit_height && location==CMD_LOC_NAKA){
-			y = y_min;
+			if(data->html5comment){
+				//html5 naka弾幕は上下中央配置
+				y = (y_min + y_max - surf_h)>>1;
+			}
+			else{
+				//flash naka弾幕は上0固定
+				y = y_min;
+			}
 		}
 		else
 		//DR弾幕も固定
 		if(item->double_resized){
+			y = location==CMD_LOC_BOTTOM? (y_max - surf_h) : y_min;
+		}
+		else
+		//big16でもDRでもnakaでもない
+		//HTML5の時は高さが画面より大きいコメントは固定
+		if(data->html5comment && surf_h>=limit_height){
 			y = location==CMD_LOC_BOTTOM? (y_max - surf_h) : y_min;
 		}
 		else{
@@ -466,6 +479,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	//追加
 	slot_item->used = TRUE;
 	if(data->html5comment){
+		// html5の黄枠は重なることが多い
 		if(location==CMD_LOC_BOTTOM){
 			if(y < y_max) y++;
 		}else{

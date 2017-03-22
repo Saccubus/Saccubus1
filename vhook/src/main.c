@@ -419,9 +419,19 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 				fontsize <<= isfontdoubled;
 				try = data->original_resize ? 100 : 1;
 				target_size = fontsize;
-				if(html5){
+				if(html5 && !data->original_resize){
 					// fontsize, target_sizeÇÃí≤êÆ
-					try = 100;
+					try = 1;
+					target_size = fontsize;
+//					if(f <= ARIAL_FONT){	//gothic simsun gulim arial
+//						fontsize = HTML5_FONT_NICO_WIDTH[f][i];
+//						target_size = fontsize;
+//					}
+//					else
+					{
+						fontsize = CA_FONT_SIZE_TUNED[f][isfontdoubled][i];
+						target_size = CA_FONT_HIGHT_TUNED[f][isfontdoubled][i];
+					}
 				}else
 				if(pointsizemode){
 					fontsize = COMMENT_POINT_SIZE[i] << isfontdoubled;

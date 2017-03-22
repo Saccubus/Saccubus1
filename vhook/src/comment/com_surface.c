@@ -13,7 +13,7 @@
 #include "adjustComment.h"
 #include "render_unicode.h"
 
-h_Surface* drawText2s(DATA* data,int size,SDL_Color color,Uint16* str,int fill_bg,int is_black,int shadow);
+h_Surface* drawText2s(DATA* data,int size,SDL_Color color,Uint16* str,int fill_bg,int is_black,int shadow,int fontcmd);
 h_Surface* drawText3(DATA* data,int size,SDL_Color color,FontType fonttype,Uint16* from,Uint16* to,int fill_bg);
 h_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint16* str,int fontsel,int fill_bg);
 //int cmpSDLColor(SDL_Color col1, SDL_Color col2);
@@ -69,11 +69,15 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	int is_vote = FALSE;
 	int is_owner = item->chat->cid == CID_OWNER;
 	int lf_control = data->comment_lf_control;
+	int fontcmd = HTML5_FONT_DEFONT;
 	//動画ならcolor=10 ("blue2","marinebule")はblue2N(=21)(新しいblue2)に変更
 	if(color==10 && !data->is_live){
 		color = 21;	//blue2N(#3366ff)
 		SdlColor = item->color24 = getSDL_color(color);
 	}
+	// html5 font command
+	if(data->html5comment)
+		fontcmd = item->html5font;
 
 	//Script処理
 	if(item->script){
@@ -194,7 +198,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	while(*index != '\0'){
 		if(*index=='[' && is_button==1){
 			*index = '\0';//ここで一旦切る
-			surf = drawText2s(data,size,SdlColor,last,is_owner,is_black,shadow);
+			surf = drawText2s(data,size,SdlColor,last,is_owner,is_black,shadow,fontcmd);
 			if(surf!=NULL && debug)
 				fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d) %s\n",surf->s->w,surf->h,COM_FONTSIZE_NAME[size]);
 			if(is_vote){
@@ -245,7 +249,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		}
 		else if(*index==']' && is_button==2){
 			*index = '\0';//ここで一旦切る
-			surf = drawText2s(data,size,SdlColor,last,is_owner,is_black,shadow);
+			surf = drawText2s(data,size,SdlColor,last,is_owner,is_black,shadow,fontcmd);
 			if(ret==NULL){
 				if(surf!=NULL && debug)
 					fprintf(log,"[comsurface/make.10]drawText2 surf(%d, %d)\n",surf->w,surf->h);
@@ -281,7 +285,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		else if(*index == '\n'){
 			*index = '\0';//ここで一旦切る
 			int fill_bg = is_owner && is_button==2;
-			surf = drawText2s(data,size,SdlColor,last,fill_bg,is_black,shadow);
+			surf = drawText2s(data,size,SdlColor,last,fill_bg,is_black,shadow,fontcmd);
 			if(ret == null){//最初の改行
 				ret = surf;
 				if(ret!=NULL && debug)
@@ -298,7 +302,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		index++;
 	}
 	int fill_bg = is_owner && is_button!=0;
-	surf = drawText2s(data,size,SdlColor,last,fill_bg,is_black,shadow);
+	surf = drawText2s(data,size,SdlColor,last,fill_bg,is_black,shadow,fontcmd);
 	if(ret == null){//結局改行は無い
 		ret = surf;
 		if(debug && ret!=NULL)
@@ -821,7 +825,9 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 }
 
 // this function should not return NULL, except fatal error.
-h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill_bg){
+h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill_bg,int fontcmd){
+	int html5 = data->html5comment;
+	int stable_font = html5 && (fontcmd!=HTML5_FONT_DEFONT);
 	if(str == NULL || str[0] == '\0'){
 		return drawNullSurface(0,data->font_pixel_size[size]);
 	}
@@ -833,12 +839,20 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 	h_Surface* ret = NULL;
 	Uint16* index = str;
 	Uint16* last = index;
-	int basefont = getFirstFont(last,UNDEFINED_FONT);	//第一基準フォント
-	// FontType is font_index(bit 4..0) + space-char-unicode(bit 31..16)
+	int basefont;
+	if(html5)
+		basefont = HTML5_CA_FONT[fontcmd];
+	else
+		basefont = getFirstFont(last,UNDEFINED_FONT);	//第一基準フォント
 	int secondBase = UNDEFINED_FONT;
+	if(html5)
+		secondBase = basefont;
+	else
+		secondBase = UNDEFINED_FONT;
 	if(debug){
 		fprintf(log,"[comsurface/drawText2]first base font %s\n",getfontname(basefont));
 	}
+	// FontType is font_index(bit 4..0) + space-char-unicode(bit 31..16)
 	FontType fonttype = basefont;
 	FontType newfont = basefont;
 	int nextfont = basefont;
@@ -849,12 +863,12 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 	int wasKanji = FALSE;
 	while(*index != '\0'){
 		if(nextfont==UNDEFINED_FONT)
-			nextfont = GOTHIC_FONT;
+			nextfont = html5? basefont:GOTHIC_FONT;
 		if(debug)
 			fprintf(log,"[comsurface/drawText2]str[%d] U+%04hX try %s (base %s)",
 				index-str,*index,getfontname(nextfont),getfontname(basefont));
 		//get FontType and spaced code
-		newfont = getFontType(index,nextfont,data);
+		newfont = getFontType(index,nextfont,data,stable_font);
 		wasAscii = foundAscii;
 		foundAscii = isAscii(index);
 		wasKanji = isKanji;
@@ -865,7 +879,9 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 			fprintf(log," -->0x%08x,%s%s%s%s%s\n",(unsigned)newfont,getfontname(newfont),
 				foundAscii?" found_Ascii":"",wasAscii?" was_Ascii":"",
 				isKanji?" Kanji":"",isKanji!=wasKanji?" change_Kanji_width":"");
-		if(newfont != fonttype || (fonttype!=SIMSUN_FONT && isKanji != wasKanji)){	//別のフォント出現、又は漢字幅チェック変化
+		if((!stable_font && newfont != fonttype)
+			|| (fonttype!=SIMSUN_FONT && isKanji != wasKanji))
+		{	//別のフォント出現、又は漢字幅チェック変化
 			if(index!=last){
 				ret = arrangeSurface(ret,drawText3(data,size,SdlColor,fonttype,last,index,fill_bg));
 				if(debug && ret!=NULL){
@@ -892,6 +908,10 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 		}
 		//隣接フォントの検査
 		saved = nextfont;
+		if(stable_font){
+			// html5 mincho またはhtml5 gothic
+		}
+		else
 		if(foundAscii && !wasAscii){	//when HANKAKU showed first
 			int tryfont = basefont;
 			tryfont = getFirstFont(last,tryfont);
@@ -955,8 +975,8 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 	}
 	return ret;
 }
-h_Surface* drawText2s(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill_bg, int is_black, int shadow){
-	h_Surface* surf = drawText2(data,size,SdlColor,str,fill_bg);
+h_Surface* drawText2s(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill_bg, int is_black, int shadow,int fontcmd){
+	h_Surface* surf = drawText2(data,size,SdlColor,str,fill_bg,fontcmd);
 	if(surf!=null){
 		// 影の描画(１行分)
 		if(!is_blank(str, data)){

@@ -64,7 +64,15 @@ int isZeroWidth(Uint16 u){
 	return (getDetailType(u)==ZERO_WIDTH_CHAR);
 }
 
-FontType getFontType2(Uint16* up,int basefont,DATA* data){
+int cjka(Uint16 u){
+	if(u < 0x0080)
+		return TRUE;
+	if(u > 0x3000 && u < 0xa000)
+		return TRUE;
+	return FALSE;
+}
+
+FontType getFontType2(Uint16* up,int basefont,DATA* data,int stable){
 	Uint16 u;
 	if(up==NULL || (u = *up) == '\0'){
 		return NULL_FONT;
@@ -93,6 +101,8 @@ FontType getFontType2(Uint16* up,int basefont,DATA* data){
 	if(0x2000<=u && u<=0x200f){	//Various width Space -> fix fontsize w,h
 		return basefont|uft;	//2001..200f<<16+0000..0003;
 	}
+	if(stable && cjka(u))
+		return basefont;
 	switch(getDetailType(u)){
 		case STRONG_SIMSUN_CHAR:
 			//case UNDEF_OR_SIMSUN:	//ÅI“I‚É‚ÍXP,Vista,Win7‹¤’ÊŽž‚ÉSIMSUN‚É
@@ -152,11 +162,11 @@ FontType getFontType2(Uint16* up,int basefont,DATA* data){
 	}
 }
 
-FontType getFontType(Uint16* up,int basefont,DATA* data){
+FontType getFontType(Uint16* up,int basefont,DATA* data,int stable){
 	if(isMatchExtra(up,data->extra_change))
 		return EXTRA_FONT;
 	else
-		return getFontType2(up,basefont,data);
+		return getFontType2(up,basefont,data,stable);
 }
 
 int getFirstFont(Uint16* up,int basefont){

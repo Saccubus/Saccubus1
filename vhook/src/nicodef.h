@@ -43,6 +43,7 @@ static char* const COM_LOC_NAME[CMD_LOC_MAX] = {
 #define GET_CMD_REPLACE_OWNER(x)	((x) & 512)
 #define GET_CMD_ENDER(x)	((x) & 1024)
 #define GET_CMD_ITEMFORK(x)	((x) & 2048)
+#define GET_CMD_FONT(x)	(((x)>>12) & 0x3)
 
 #define CMD_FONT_MAX	4
 #define CMD_FONT_DEF	0
@@ -395,10 +396,12 @@ static const float HTML5_LINEFEED_RESIZED_SIZE[CMD_FONT_MAX][2] = {
 #define HTML5_FONT_GOTHIC 2
 
 //									[font_sel][SIZE]
-static const int HTML5_FONT_NICO_WIDTH[HTML5_FONT_MAX][CMD_FONT_MAX] = {
-	{32,47,22,32},		//gothic
-	{31,46,21,31},		//simsun
-	{31,46,21,31},		//gulim
+static const int HTML5_FONT_NICO_WIDTH[4][CMD_FONT_MAX] = {
+//   Def B  S  M
+	{25, 40,16,25},		//gothic
+	{25, 40,16,25},		//simsun
+	{25, 40,16,25},		//gulim
+	{25, 40,16,25},		//other
 };
 
 #endif /*NICODEF_H_*/
