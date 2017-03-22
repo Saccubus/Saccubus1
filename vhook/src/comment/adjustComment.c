@@ -37,12 +37,8 @@ THANKS for Comment Artisan! A.K.A. SHOKUNIN!
 int adjustHeight(int nb_line,int size,int linefeedResize,int fontFixed, int html5){
 	int h;
 	if(html5){
-		if(linefeedResize)
-			h = (int)lround(HTML5_LINEFEED_RESIZED_SIZE[size][0] * nb_line
-				+ HTML5_LINEFEED_RESIZED_SIZE[size][1]);
-		else
-			h = (int)lround(HTML5_PIXEL_SIZE[size][0] * nb_line
-				+ HTML5_PIXEL_SIZE[size][1]);
+		h = (int)floor(HTML5_PIXEL_SIZE[linefeedResize][size][0] * nb_line
+					+ HTML5_PIXEL_SIZE[linefeedResize][size][1]);
 	}else{
 		if(linefeedResize)
 			h = LINEFEED_RESIZED_PIXEL_SIZE[size] * nb_line + 3;
@@ -59,22 +55,39 @@ double linefeedResizeScale(int size,int nb_line,int fontFixed,int html5){
 }
 
 h_Surface* adjustComment(h_Surface* surf,DATA* data,int height){
-	//not make nor use alpha
-	if(surf->h > height){
-		surf->h = height;
-		return surf;
+	h_Surface* ret = adjustComment2(surf,height);
+	if(ret==NULL){
+		fprintf(data->log,"***ERROR*** [comsurface/adjust]adjustComment2 : %s\n",SDL_GetError());
+		fflush(data->log);
+		return NULL;
 	}
+	return ret;
+}
+h_Surface* adjustComment2(h_Surface* surf,int height){
+	if(surf==NULL)
+		return NULL;
+	int y = (height - surf->h)>>1;
+	if(y == 0)
+		return surf;
 	int width = surf->w;
 	h_Surface* ret = drawNullSurface(width, height);
-	if(ret==NULL){
-		FILE* log = data->log;
-		fprintf(log,"***ERROR*** [comsurface/adjust]drawNullSurface : %s\n",SDL_GetError());
-		fflush(log);
+	if(ret==NULL)
 		return surf;
+	int srcy = 0;
+	int dsty = 0;
+	if(y > 0){
+		srcy = 0;
+		dsty = y;
+	}else{
+		srcy = -y;
+		dsty = 0;
+		height -= srcy;
 	}
+	SDL_Rect srcrect = {0, srcy, width, height};
+	SDL_Rect dstrect = {0, dsty, width, height};
+	//not make nor use alpha
 	h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
-	SDL_Rect rect = {0,1,width,height};
-	h_BlitSurface(surf,&rect,ret,NULL);
+	h_BlitSurface(surf,&srcrect,ret,&dstrect);
 	h_FreeSurface(surf);
 	return ret;
 }

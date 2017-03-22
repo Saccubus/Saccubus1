@@ -118,11 +118,23 @@ static const float LINEFEED_RESIZE_FONT_SCALE[CMD_FONT_MAX] = {
 	0.500f,	// 12/24
 };
 // Base is Surface height after SDL rendering [Gothic?]
-static const float LINEFEED_RESIZE_SCALE[CMD_FONT_MAX] = {
+static const float LINEFEED_RESIZE_SCALE[2][CMD_FONT_MAX] = {
+	{ //flash
 	0.519f,	// 0.517 15/29  0.518 378/730(25Lines) 0.519 108/208( 7Lines)
 	0.535f,	// 0.533 24/45  0.534 387/725(16Lines) 0.535  99/185( 4Lines)
 	0.557f,	// 0.556 10/18  0.556 383/689(38Lines) 0.557 103/185(10Lines)
 	0.519f,	// 0.517 15/29  0.518 378/730(25Lines) 0.519 108/208( 7Lines)
+	},
+	{ //html5
+	  // Å¬“ñæ–@@ not resized       Line resized
+	  // ’è”+•â³@big   medium small  big    medium  small
+	  //  a       42.452 27.143 16.95  22.356 14.094  9.4058
+	  //  b        4.05   5.076  4.9    2.6     2.748 3.138
+	0.519f,	// 0.519  14.094/27.143  0.520 355/683(25Lines) 0.518 101/195( 7Lines)
+	0.527f,	// 0.527  22.356/42.452  0.527 360/683(16Lines) 0.532  92/173( 4Lines)
+	0.555f,	// 0.555   9.4058/16.95  0.555 360/649(38Lines) 0.557  97/174(10Lines)
+	0.519f,	// 0.519  14.094/27.143  0.520 355/683(25Lines) 0.518 101/195( 7Lines)
+	},
 };
 /*
 LineFeed Resize Of FontSize(font_height surface_height/96dpi) [gothic]
@@ -374,20 +386,20 @@ static char* const COM_TYPE[CID_MAX] = {
  *  b        4.05   5.076  4.9    2.6     2.748 3.138
  */
 
-//Line Skip (96dpi), Not resized, in HTML5
-static const float HTML5_PIXEL_SIZE[CMD_FONT_MAX][2] = {
-	{27.143, 5.076},	//DEF
-	{42.452, 4.050},	//BIG
-	{16.950, 4.900},	//SMALL
-	{27.143, 5.076},	//MEDIUM
-};
-
-// Line Skip (96dpi), resized, in HTML5
-static const float HTML5_LINEFEED_RESIZED_SIZE[CMD_FONT_MAX][2] = {
-	{14.094, 2.748},	//DEF
-	{22.356, 2.600},	//BIG
-	{9.4058, 3.138},	//SMALL
-	{14.094, 2.748},	//MEDIUM
+//Line Skip (96dpi), in HTML5
+static const float HTML5_PIXEL_SIZE[2][CMD_FONT_MAX][2] = {
+	{	//Not resized
+		{27.143, 5.076},	//DEF
+		{42.452, 4.050},	//BIG
+		{16.950, 4.900},	//SMALL
+		{27.143, 5.076},	//MEDIUM
+	},
+	{	//linefeed resized
+		{14.094, 2.748},	//DEF
+		{22.356, 2.600},	//BIG
+		{9.4058, 3.138},	//SMALL
+		{14.094, 2.748},	//MEDIUM
+	},
 };
 
 #define HTML5_FONT_MAX 3
@@ -396,12 +408,27 @@ static const float HTML5_LINEFEED_RESIZED_SIZE[CMD_FONT_MAX][2] = {
 #define HTML5_FONT_GOTHIC 2
 
 //									[font_sel][SIZE]
-static const int HTML5_FONT_NICO_WIDTH[4][CMD_FONT_MAX] = {
-//   Def B  S  M
-	{25, 40,16,25},		//gothic
-	{25, 40,16,25},		//simsun
-	{25, 40,16,25},		//gulim
-	{25, 40,16,25},		//other
+//static const int HTML5_FONT_NICO_WIDTH[4][CMD_FONT_MAX] = {
+////   Def B  S  M
+//	{25, 40,16,25},		//gothic
+//	{25, 40,16,25},		//simsun
+//	{25, 40,16,25},		//gulim
+//	{25, 40,16,25},		//other
+//};
+static const int HTML5_FONT_WIDTH_TUNED[4][2][CMD_FONT_MAX] = {
+//	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}}
+	{{24,35,17,24,},{48,70,34,48,}},	//gothic
+	{{25,37,17,25,},{50,74,34,50,}},	//simsun
+	{{25,37,17,25,},{50,80,34,50,}},	//gulim
+	{{24,35,16,24,},{48,70,32,48,}},	//arial 'a'
 };
+static const int HTML5_FONT_HIGHT_TUNED[4][2][CMD_FONT_MAX] = {
+//	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}for fontsize_fixed},
+	{{24,38,16,24,},{47,74,31,47,}},	//gothic glyph-advance width is {25,40,16}{50,80,33(>32)}
+	{{24,38,16,24,},{47,74,31,47,}},	//simsun
+	{{24,38,16,24,},{47,74,31,47,}},	//gulim
+	{{24,41,15,24,},{46,78,30,47,}},	//arial glyph-advance width of'a' is {13,22,8},{26,44,16}
+};
+
 
 #endif /*NICODEF_H_*/

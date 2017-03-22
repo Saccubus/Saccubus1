@@ -174,6 +174,8 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	int surf_h = surf->h;
 	if(location == CMD_LOC_BOTTOM){
 		y = y_max - surf_h;
+		if(data->html5comment)
+			y--;
 	}else{
 		y = y_min;
 	}

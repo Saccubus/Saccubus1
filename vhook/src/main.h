@@ -74,6 +74,7 @@ struct DATA{
 	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
 	int debug;
 	const char* extra_mode;
+	int drawframe;
 	struct_shadow_data shadow_data;
 	double width_scale;	//書き込み可　videowidth/nicowidth_now
 	int defcolor;	//デフォルトカラー24bit（エイプリルフール用、@デフォルト）

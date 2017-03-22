@@ -447,6 +447,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				result = "7";
 				return false;
 			}
+			if (Setting.isHtml5Comment()
+				|| Setting.isHtml5() && Setting.isAutoHtml5Comment()){
+				html5CommentMode = true;
+			}
 			if(Setting.isEnableCA()){
 				String windir = System.getenv("windir");
 				if(windir == null){
@@ -460,13 +464,23 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					result = "9";
 					return false;
 				}
-				simsunFont = new File(fontDir, "SIMSUN.TTC");
+				if(html5CommentMode){
+					simsunFont = new File(fontDir, "yumin.ttf");	//windows10
+				}
+				if(!simsunFont.canRead()){
+					simsunFont = new File(fontDir, "SIMSUN.TTC");
+				}
 				if (!simsunFont.canRead()) {
 					sendtext("CA用フォントが見つかりません。" + simsunFont.getPath());
 					result = "10";
 					return false;
 				}
-				gulimFont = new File(fontDir, "GULIM.TTC");	//windowsXP,7,8 丸文字
+				if(html5CommentMode){
+					gulimFont = new File(fontDir, "YuGothM.ttc");	//windows10丸文字
+				}
+				if (!gulimFont.canRead()) {
+					gulimFont = new File(fontDir, "GULIM.TTC");	//windowsXP,7,8 丸文字
+				}
 				File saveGulimFont = gulimFont;
 				if (!gulimFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + gulimFont.getPath());
@@ -2475,10 +2489,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(!isConverting){
 				manager.incNumConvert();
 				isConverting = true;
-			}
-			if (Setting.isHtml5Comment()
-				|| Setting.isHtml5() && Setting.isAutoHtml5Comment()){
-				html5CommentMode = true;
 			}
 
 			//stopwatch.show();

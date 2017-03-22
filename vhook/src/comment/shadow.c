@@ -497,7 +497,7 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color 
 				//Žü‚è‚ª‹ó”’‚Å‚È‚¢
 				if(((right | left | up | down | my | upl | upr | downl | downr) & Amask) != 0){
 					*pix2 &= Mask;
-					*pix2 |= ((192 >> Aloss) << Ashift) & Amask;
+					*pix2 |= ((0xff >> Aloss) << Ashift) & Amask;
 				}
 				pix = (int*)(((char*)pix)+bps);
 				pix2 = (int*)(((char*)pix2)+bps);

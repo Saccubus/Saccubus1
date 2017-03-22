@@ -10,6 +10,7 @@
 #include "april_fool.h"
 #include "wakuiro.h"
 #include "comment/com_surface.h"
+#include "comment/adjustComment.h"
 
 int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, int cid, const char* com_type);
 int isPathRelative(const char* path);
@@ -214,6 +215,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	fprintf(log,"[main/init]output: %dx%d @(%d,%d)of %d:%d\n",
 		data->vout_width,data->vout_height,data->vout_x,data->vout_y,data->pad_w,data->pad_h);
 	data->extra_mode = setting->extra_mode;
+	data->drawframe = data->extra_mode!=NULL && strstr(data->extra_mode,"-frame");
 	//カスタム影設定
 	setting_shadow(setting->extra_mode, data);
 	if(setting->april_fool != NULL){
@@ -223,6 +225,8 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	data->wakuiro_dat = NULL;
 	if(setting->wakuiro != NULL){
 		set_wakuiro(setting->wakuiro,data);
+		if(data->wakuiro_dat!=NULL)
+			data->drawframe = TRUE;
 	}
 	// 弾幕モードの高さの設定　16:9でオリジナルリサイズでない場合は上下にはみ出す
 	// Qwatch,html5commentのときは、はみ出さない
@@ -304,7 +308,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	}
 	for (i=0;i<CMD_FONT_MAX;++i) {
 		if(html5)
-			data->font_pixel_size[i] = ((int)lround(HTML5_PIXEL_SIZE[i][0]+HTML5_PIXEL_SIZE[i][1]))<<isfontdoubled;
+			data->font_pixel_size[i] = adjustHeight(1,i,FALSE,isfontdoubled,TRUE);
 		else
 			data->font_pixel_size[i] = FONT_PIXEL_SIZE[i]<<isfontdoubled;
 	}
@@ -423,14 +427,14 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 					// fontsize, target_sizeの調整
 					try = 1;
 					target_size = fontsize;
-//					if(f <= ARIAL_FONT){	//gothic simsun gulim arial
-//						fontsize = HTML5_FONT_NICO_WIDTH[f][i];
-//						target_size = fontsize;
-//					}
-//					else
-					{
-						fontsize = CA_FONT_SIZE_TUNED[f][isfontdoubled][i];
-						target_size = CA_FONT_HIGHT_TUNED[f][isfontdoubled][i];
+					if(f <= ARIAL_FONT){	//gothic simsun gulim arial
+						fontsize = HTML5_FONT_WIDTH_TUNED[f][isfontdoubled][i];
+						target_size = HTML5_FONT_HIGHT_TUNED[f][isfontdoubled][i];
+					}else if(f <= GURMUKHI_FONT){	//文字間隔は合わないが文字サイズを合わせる
+						fontsize += CA_FONT_SIZE_FIX[f][i]<<isfontdoubled;
+						target_size = fontsize;
+					}else{
+						target_size = fontsize;
 					}
 				}else
 				if(pointsizemode){
@@ -469,7 +473,14 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 							fprintf(log,"[main/init]failed to load CAfont[%s][%d]:%s size:%d index:%d.\n",getfontname(f),i,font_path,fontsize,fixed_font_index);
 						return FALSE;
 					}
-					TTF_SetFontStyle(font[i],ttf_style);
+					int tstyle = ttf_style;
+					if(html5){
+						if(f==GOTHIC_FONT || f>=ARIAL_FONT)
+							tstyle = ttf_style;
+						else
+							tstyle = TTF_STYLE_NORMAL;
+					}
+					TTF_SetFontStyle(font[i],tstyle);
 					font_height[i] = TTF_FontHeight(font[i]);
 					line_skip[i] = TTF_FontLineSkip(font[i]);
 					if(data->use_lineskip_as_fontsize){
