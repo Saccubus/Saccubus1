@@ -503,7 +503,7 @@ static char* const HTML5_FONT_CMD[] = {
 	"h5defont", "h5mincho", "h5gothic",
 };
 static int const HTML5_CA_FONT[] = {
-	GOTHIC_FONT,
+	UNDEFINED_FONT,
 	SIMSUN_FONT,
 	GULIM_FONT,
 };

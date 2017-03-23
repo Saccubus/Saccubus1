@@ -890,8 +890,6 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 	int secondBase = UNDEFINED_FONT;
 	if(html5)
 		secondBase = basefont;
-	else
-		secondBase = UNDEFINED_FONT;
 	if(debug){
 		fprintf(log,"[comsurface/drawText2]first base font %s\n",getfontname(basefont));
 	}
@@ -906,7 +904,7 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 	int wasKanji = FALSE;
 	while(*index != '\0'){
 		if(nextfont==UNDEFINED_FONT)
-			nextfont = html5? basefont:GOTHIC_FONT;
+			nextfont = GOTHIC_FONT;
 		if(debug)
 			fprintf(log,"[comsurface/drawText2]str[%d] U+%04hX try %s (base %s)",
 				index-str,*index,getfontname(nextfont),getfontname(basefont));
@@ -922,7 +920,7 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 			fprintf(log," -->0x%08x,%s%s%s%s%s\n",(unsigned)newfont,getfontname(newfont),
 				foundAscii?" found_Ascii":"",wasAscii?" was_Ascii":"",
 				isKanji?" Kanji":"",isKanji!=wasKanji?" change_Kanji_width":"");
-		if((!stable_font && newfont != fonttype)
+		if((newfont != fonttype)
 			|| (fonttype!=SIMSUN_FONT && isKanji != wasKanji))
 		{	//別のフォント出現、又は漢字幅チェック変化
 			if(index!=last){
@@ -1097,7 +1095,10 @@ h_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,Ui
 			//Here, it assumed fonttype should belog to GOTHIC
 			//but width of 2000 series DIFFERS when SIMSUN (or GULIM?) in Windows7
 			//futhermore it FAULTS (TOUFU) when ARIAL in XP
-			w = (CA_FONT_2000_WIDTH[code & 0x000f][size] * len)<<w;
+			if(data->html5comment)
+				w = (HTML5_2000_WIDTH[code & 0x000f][size] * len)<<w;
+			else
+				w = (CA_FONT_2000_WIDTH[code & 0x000f][size] * len)<<w;
 		}else if(code==CA_CODE_SPACE_0009){
 			// code 0009 TAB
 			w = (CA_FONT_TAB_WIDTH[size] * len)<<w;

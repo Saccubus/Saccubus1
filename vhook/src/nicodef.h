@@ -407,6 +407,25 @@ static const float HTML5_PIXEL_SIZE[2][CMD_FONT_MAX][2] = {
 #define HTML5_FONT_MINCHO 1
 #define HTML5_FONT_GOTHIC 2
 
+static const int HTML5_2000_WIDTH[16][CMD_FONT_MAX] = {
+//	DEF BIG SMALL MEDIUM msgothic.ttc#1
+	{13,19, 9,13},		//2000
+	{26,38,18,26},		//2001
+	{13,19, 9,13},		//2002
+	{26,38,18,26},		//2003
+	{ 9,13, 6, 9},		//2004
+	{ 7,10, 5, 7},		//2005
+	{ 5, 7, 3, 5},		//2006
+	{13,19, 9,13},		//2007
+	{ 5, 7, 3, 5},		//2008
+	{ 4, 6, 3, 4},		//2009
+	{ 3, 3, 2, 3},		//200a
+	{ 0, 0, 0, 0},		//200b
+	{ 0, 0, 0, 0},		//200c
+	{ 0, 0, 0, 0},		//200d
+	{ 0, 0, 0, 0},		//200e
+	{ 0, 0, 0, 0},		//200f
+};
 static const int HTML5_FONT_WIDTH_TUNED[4][2][CMD_FONT_MAX] = {
 //	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}}
 	{{24,35,17,24,},{48,69,33,48,}},	//gothic for DEFONT
@@ -416,10 +435,10 @@ static const int HTML5_FONT_WIDTH_TUNED[4][2][CMD_FONT_MAX] = {
 };
 static const int HTML5_FONT_HIGHT_TUNED[4][2][CMD_FONT_MAX] = {
 //	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}for fontsize_fixed},
-	{{24,38,16,24,},{47,74,30,47,}},	//gothic for DEFONT
-	{{24,38,16,24,},{47,74,31,47,}},	//simsun for MINCHO
-	{{24,38,16,24,},{47,74,31,47,}},	//gulim for GOTHIC
-	{{24,41,15,24,},{46,78,30,47,}},	//arial & other
+	{{25,36,18,25,},{49,70,34,49,}},	//gothic for DEFONT
+	{{28,42,18,28,},{57,82,36,57,}},	//simsun for MINCHO
+	{{28,42,18,28,},{57,82,36,57,}},	//gulim for GOTHIC
+	{{28,40,19,28,},{52,79,36,52,}},	//arial & other
 };
 
 

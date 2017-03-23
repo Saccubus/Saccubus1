@@ -106,6 +106,8 @@ public class MainFrame extends JFrame {
 			.createImage(saccubus.MainFrame.class.getResource("icon32.png"));
 
 	private final static File TOP_DIR= new File(".");
+	private final static File PROPERTY_SET1_XML = new File(TOP_DIR,"Saccubus_Set1.xml");
+	private final static File PROPERTY_SET2_XML = new File(TOP_DIR,"Saccubus_Set2.xml");
 	JPanel contentPane;
 	BorderLayout borderLayout1 = new BorderLayout();
 	JMenuBar jMenuBar1 = new JMenuBar();
@@ -114,6 +116,11 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuAdd = new JMenuItem();
 	JMenuItem jMenuSave = new JMenuItem();
 	JMenuItem jMenuSaveAs = new JMenuItem();
+	JMenuItem jMenuSaveSet1 = new JMenuItem();
+	JMenuItem jMenuSaveSet2 = new JMenuItem();
+	JMenuItem jMenuOpenSet1 = new JMenuItem();
+	JMenuItem jMenuOpenSet2 = new JMenuItem();
+	JMenuItem jMenuReset = new JMenuItem();
 	JMenuItem jMenuFileExit = new JMenuItem();
 	JMenuItem jMenuInit = new JMenuItem();
 	JMenu jMenuHelp = new JMenu();
@@ -330,8 +337,7 @@ public class MainFrame extends JFrame {
 	private JLabel zqFpsRangeLabel = new JLabel();
 	private JTextField zqFpsRangeField = new JTextField();
 	private JPanel zqLimitOptionPanel;
-
-
+	private ConvertingSetting initialSetting;
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
@@ -411,6 +417,7 @@ public class MainFrame extends JFrame {
 					null, "./saccubus.ini", false);
 			}
 			this.setSetting(setting);
+			initialSetting = setting;
 			new StringBuffer();
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -947,8 +954,10 @@ public class MainFrame extends JFrame {
 					return;
 				}
 				String filename = propFileField.getText();
-				if(filename!=null && !filename.isEmpty() && Path.isFile(filename))
+				if(filename!=null && !filename.isEmpty() && Path.isFile(filename)){
+					sendtext("");
 					setSetting(ConvertingSetting.loadSetting(null, null, filename));
+				}
 				else
 					sendtext("設定ファイル読み込みエラー");
 			}
@@ -997,6 +1006,48 @@ public class MainFrame extends JFrame {
 					sendtext("設定ファイル保存エラー");
 			}
 		});
+		jMenuOpenSet1.setText("設定1を開く");
+		jMenuOpenSet1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				File file = PROPERTY_SET1_XML;
+				if(file.isFile()){
+					sendtext("");
+					setSetting(ConvertingSetting.loadSetting(null, null, file.getPath()));
+				}
+				else
+					sendtext("設定1読み込みエラー");
+			}
+		});
+		jMenuOpenSet2.setText("設定2を開く");
+		jMenuOpenSet2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				File file = PROPERTY_SET2_XML;
+				if(file.isFile()){
+					sendtext("");
+					setSetting(ConvertingSetting.loadSetting(null, null, file.getPath()));
+				}
+				else
+					sendtext("設定2読み込みエラー");
+			}
+		});
+		jMenuSaveSet1.setText("設定1に現在の設定を保存");
+		jMenuSaveSet1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sendtext("");
+				ConvertingSetting.saveSetting(getSetting(), PROPERTY_SET1_XML.getPath());
+			}
+		});
+		jMenuSaveSet2.setText("設定2に現在の設定を保存");
+		jMenuSaveSet2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sendtext("");
+				ConvertingSetting.saveSetting(getSetting(), PROPERTY_SET2_XML.getPath());
+			}
+		});
 		jMenuDebug.setText(DEBUG_STRING);
 		jMenuDebug.setForeground(Color.blue);
 		jMenuDebug.addActionListener(new ActionListener() {
@@ -1012,6 +1063,13 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setSetting(ConvertingSetting.loadSetting(null, null, "./saccubus.ini", false));
+			}
+		});
+		jMenuReset.setText("起動時の設定に戻す");
+		jMenuReset.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setSetting(initialSetting);
 			}
 		});
 		VideoInfoPanel.setLayout(gridBagLayout1);
@@ -1454,6 +1512,11 @@ public class MainFrame extends JFrame {
 		jMenuFile.add(jMenuAdd);
 		jMenuFile.add(jMenuSave);
 		jMenuFile.add(jMenuSaveAs);
+		jMenuFile.add(jMenuReset);
+		jMenuFile.add(jMenuOpenSet1);
+		jMenuFile.add(jMenuSaveSet1);
+		jMenuFile.add(jMenuOpenSet2);
+		jMenuFile.add(jMenuSaveSet2);
 		jMenuFile.add(jMenuInit);
 		jMenuFile.add(jMenuDebug);
 		jMenuFile.add(jMenuFileExit);
