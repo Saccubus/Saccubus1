@@ -43,6 +43,7 @@ static char* const COM_LOC_NAME[CMD_LOC_MAX] = {
 #define GET_CMD_REPLACE_OWNER(x)	((x) & 512)
 #define GET_CMD_ENDER(x)	((x) & 1024)
 #define GET_CMD_ITEMFORK(x)	((x) & 2048)
+#define GET_CMD_FONT(x)	(((x)>>12) & 0x3)
 
 #define CMD_FONT_MAX	4
 #define CMD_FONT_DEF	0
@@ -117,11 +118,23 @@ static const float LINEFEED_RESIZE_FONT_SCALE[CMD_FONT_MAX] = {
 	0.500f,	// 12/24
 };
 // Base is Surface height after SDL rendering [Gothic?]
-static const float LINEFEED_RESIZE_SCALE[CMD_FONT_MAX] = {
+static const float LINEFEED_RESIZE_SCALE[2][CMD_FONT_MAX] = {
+	{ //flash
 	0.519f,	// 0.517 15/29  0.518 378/730(25Lines) 0.519 108/208( 7Lines)
 	0.535f,	// 0.533 24/45  0.534 387/725(16Lines) 0.535  99/185( 4Lines)
 	0.557f,	// 0.556 10/18  0.556 383/689(38Lines) 0.557 103/185(10Lines)
 	0.519f,	// 0.517 15/29  0.518 378/730(25Lines) 0.519 108/208( 7Lines)
+	},
+	{ //html5
+	  // 最小二乗法　 not resized       Line resized
+	  // 定数+補正　big   medium small  big    medium  small
+	  //  a       42.452 27.143 16.95  22.356 14.094  9.4058
+	  //  b        4.05   5.076  4.9    2.6     2.748 3.138
+	0.519f,	// 0.519  14.094/27.143  0.520 355/683(25Lines) 0.518 101/195( 7Lines)
+	0.527f,	// 0.527  22.356/42.452  0.527 360/683(16Lines) 0.532  92/173( 4Lines)
+	0.555f,	// 0.555   9.4058/16.95  0.555 360/649(38Lines) 0.557  97/174(10Lines)
+	0.519f,	// 0.519  14.094/27.143  0.520 355/683(25Lines) 0.518 101/195( 7Lines)
+	},
 };
 /*
 LineFeed Resize Of FontSize(font_height surface_height/96dpi) [gothic]
@@ -357,5 +370,76 @@ static const Uint16 KANJI_WIDTH[] =
 static char* const COM_TYPE[CID_MAX] = {
 	"user", "owner", "optional",
 };
+
+//HTML5 font types
+#define HTML5_FONT_TYPES	3
+#define HTML5_FONT_DEFONT	0
+#define HTML5_FONT_MINCHO	1
+#define HTML5_FONT_GOTHGIC	2
+/**
+ * ヒロスさんのブロマガより
+ * http://ch.nicovideo.jp/883797/blomaga/ar1149544
+ *
+ * 最小二乗法　 not resized       Line resized
+ * 定数+補正　big   medium small  big    medium  small
+ *  a       42.452 27.143 16.95  22.356 14.094  9.4058
+ *  b        4.05   5.076  4.9    2.6     2.748 3.138
+ */
+
+//Line Skip (96dpi), in HTML5
+static const float HTML5_PIXEL_SIZE[2][CMD_FONT_MAX][2] = {
+	{	//Not resized
+		{27.143, 5.076},	//DEF
+		{42.452, 4.050},	//BIG
+		{16.950, 4.900},	//SMALL
+		{27.143, 5.076},	//MEDIUM
+	},
+	{	//linefeed resized
+		{14.094, 2.748},	//DEF
+		{22.356, 2.600},	//BIG
+		{9.4058, 3.138},	//SMALL
+		{14.094, 2.748},	//MEDIUM
+	},
+};
+
+#define HTML5_FONT_MAX 3
+#define HTML5_FONT_DEFONT 0
+#define HTML5_FONT_MINCHO 1
+#define HTML5_FONT_GOTHIC 2
+
+static const int HTML5_2000_WIDTH[16][CMD_FONT_MAX] = {
+//	DEF BIG SMALL MEDIUM msgothic.ttc#1
+	{13,19, 9,13},		//2000
+	{26,38,18,26},		//2001
+	{13,19, 9,13},		//2002
+	{26,38,18,26},		//2003
+	{ 9,13, 6, 9},		//2004
+	{ 7,10, 5, 7},		//2005
+	{ 5, 7, 3, 5},		//2006
+	{13,19, 9,13},		//2007
+	{ 5, 7, 3, 5},		//2008
+	{ 4, 6, 3, 4},		//2009
+	{ 3, 3, 2, 3},		//200a
+	{ 0, 0, 0, 0},		//200b
+	{ 0, 0, 0, 0},		//200c
+	{ 0, 0, 0, 0},		//200d
+	{ 0, 0, 0, 0},		//200e
+	{ 0, 0, 0, 0},		//200f
+};
+static const int HTML5_FONT_WIDTH_TUNED[4][2][CMD_FONT_MAX] = {
+//	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}}
+	{{24,35,17,24,},{48,69,33,48,}},	//gothic for DEFONT
+	{{25,37,17,25,},{51,73,34,51,}},	//simsun for MINCHO
+	{{25,37,17,25,},{51,73,34,51,}},	//gulim for GOTHIC
+	{{24,35,16,24,},{46,70,32,46,}},	//arial & other
+};
+static const int HTML5_FONT_HIGHT_TUNED[4][2][CMD_FONT_MAX] = {
+//	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}for fontsize_fixed},
+	{{25,36,18,25,},{49,70,34,49,}},	//gothic for DEFONT
+	{{28,42,18,28,},{57,82,36,57,}},	//simsun for MINCHO
+	{{28,42,18,28,},{57,82,36,57,}},	//gulim for GOTHIC
+	{{28,40,19,28,},{52,79,36,52,}},	//arial & other
+};
+
 
 #endif /*NICODEF_H_*/

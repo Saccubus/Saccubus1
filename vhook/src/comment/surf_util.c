@@ -2,6 +2,7 @@
 #include "com_surface.h"
 #include "surf_util.h"
 #include "../mydef.h"
+#include "adjustComment.h"
 
 int h_SetAlpha(h_Surface *surface, Uint32 flag, Uint8 alpha){
 	return SDL_SetAlpha(surface->s,flag,alpha);
@@ -65,20 +66,43 @@ h_Surface* drawNullSurface(int w,int h){
 	return newSurface(nullSurface(w,h));
 }
 
-h_Surface* connectSurface(h_Surface* top,h_Surface* bottom){
+h_Surface* connectSurface(h_Surface* top,h_Surface* bottom, int height){
 	//not make nor use alpha channel
 	//either top or bottom may be NULL
-	if(top==NULL)
-		return bottom;	//bottom may be NULL
-	if(bottom==NULL)
-		return top;
-	h_Surface* ret = drawNullSurface(MAX(top->w,bottom->w), top->h+bottom->h);
+	h_Surface* ret = NULL;
+	if(top==NULL){
+		if(bottom==NULL)
+			return NULL;
+		ret = adjustComment2(bottom,height);
+		h_FreeSurface(bottom);
+		return ret;
+	}
+	if(bottom==NULL){
+		ret = adjustComment2(top,height);
+		h_FreeSurface(top);
+		return ret;
+	}
+	int h = bottom->h;
+	int y = top->h;
+	if(height==0)
+		height = y + h;
+	ret = drawNullSurface(MAX(top->w,bottom->w), height);
 	if(ret == NULL) return NULL;	//for Error
 	h_SetAlpha(top,SDL_RLEACCEL,0xff);	//not use alpha
 	h_SetAlpha(bottom,SDL_RLEACCEL,0xff);	//not use alpha
 	h_BlitSurface(top,NULL,ret,NULL);
-	SDL_Rect rect = {0,top->h,ret->w,ret->h};
-	h_BlitSurface(bottom,NULL,ret,&rect);
+	int w = bottom->w;
+	int dh = (height-(y+h))>>1 ;
+	if(dh>=0){
+		// ŠÛ‚²‚ÆBlit‚µ‚Ä‚æ‚¢B
+		SDL_Rect rect = {0,y,w,h};
+		h_BlitSurface(bottom,NULL,ret,&rect);
+	}else{
+		// dh•ª‚¾‚¯í‚éB(dh < 0)
+		SDL_Rect srcrect = {0, -dh, w, h+dh};
+		SDL_Rect dstrect = {0,y+dh,w,h+dh};
+		h_BlitSurface(bottom,&srcrect,ret,&dstrect);
+	}
 	h_FreeSurface(top);
 	h_FreeSurface(bottom);
 	return ret;

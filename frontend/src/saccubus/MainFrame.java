@@ -106,6 +106,8 @@ public class MainFrame extends JFrame {
 			.createImage(saccubus.MainFrame.class.getResource("icon32.png"));
 
 	private final static File TOP_DIR= new File(".");
+	private final static File PROPERTY_SET1_XML = new File(TOP_DIR,"Saccubus_Set1.xml");
+	private final static File PROPERTY_SET2_XML = new File(TOP_DIR,"Saccubus_Set2.xml");
 	JPanel contentPane;
 	BorderLayout borderLayout1 = new BorderLayout();
 	JMenuBar jMenuBar1 = new JMenuBar();
@@ -114,6 +116,11 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuAdd = new JMenuItem();
 	JMenuItem jMenuSave = new JMenuItem();
 	JMenuItem jMenuSaveAs = new JMenuItem();
+	JMenuItem jMenuSaveSet1 = new JMenuItem();
+	JMenuItem jMenuSaveSet2 = new JMenuItem();
+	JMenuItem jMenuOpenSet1 = new JMenuItem();
+	JMenuItem jMenuOpenSet2 = new JMenuItem();
+	JMenuItem jMenuReset = new JMenuItem();
 	JMenuItem jMenuFileExit = new JMenuItem();
 	JMenuItem jMenuInit = new JMenuItem();
 	JMenu jMenuHelp = new JMenu();
@@ -231,6 +238,8 @@ public class MainFrame extends JFrame {
 	JCheckBox commentLineFeedCheckBox = new JCheckBox();
 	JTextField commentLineFeedTextField = new JTextField();
 	JCheckBox enableCA_CheckBox = new JCheckBox();
+	JCheckBox enableHtml5CommentCheckBox = new JCheckBox();
+	JCheckBox enableAutoHtml5CheckBox = new JCheckBox();
 	JCheckBox disableEcoCheckBox = new JCheckBox();
 	JCheckBox preferSmileCheckBox = new JCheckBox();
 	JCheckBox forceDmcDlCheckBox = new JCheckBox();
@@ -328,17 +337,16 @@ public class MainFrame extends JFrame {
 	private JLabel zqFpsRangeLabel = new JLabel();
 	private JTextField zqFpsRangeField = new JTextField();
 	private JPanel zqLimitOptionPanel;
-
-
+	private ConvertingSetting initialSetting;
 //                                                   (up left down right)
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
 	private static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
-	private static final Insets INSETS_0_0_5_5 = new Insets(0, 0, 5, 5);
+//	private static final Insets INSETS_0_0_5_5 = new Insets(0, 0, 5, 5);
 	private static final Insets INSETS_0_0_0_5 = new Insets(0, 0, 0, 5);
-	private static final Insets INSETS_0_0_5_0 = new Insets(0, 0, 5, 0);
+//	private static final Insets INSETS_0_0_5_0 = new Insets(0, 0, 5, 0);
 	private static final Insets INSETS_0_0_0_0 = new Insets(0, 0, 0, 0);
-	private static final Insets INSETS_5_5_5_5 = new Insets(5, 5, 5, 5);
+//	private static final Insets INSETS_5_5_5_5 = new Insets(5, 5, 5, 5);
 	private static final Insets INSETS_0_25_0_5 = new Insets(0, 25, 0, 5);
 	private static final Insets INSETS_0_50_0_5 = new Insets(0, 50, 0, 5);
 	private static final String[] commentModeArray = {
@@ -409,6 +417,7 @@ public class MainFrame extends JFrame {
 					null, "./saccubus.ini", false);
 			}
 			this.setSetting(setting);
+			initialSetting = setting;
 			new StringBuffer();
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -493,11 +502,11 @@ public class MainFrame extends JFrame {
 		grid9_x1_y2_57.fill = GridBagConstraints.BOTH;
 		grid9_x1_y2_57.gridy = 2;
 		grid9_x1_y2_57.weightx = 1.0;
-		grid9_x1_y2_57.insets = INSETS_0_0_5_5;
+		grid9_x1_y2_57.insets = INSETS_0_0_0_5;
 		grid9_x1_y2_57.gridx = 1;
 		GridBagConstraints grid9_x0_y2_56 = new GridBagConstraints();
 		grid9_x0_y2_56.gridx = 0;
-		grid9_x0_y2_56.insets = INSETS_0_5_5_5;
+		grid9_x0_y2_56.insets = INSETS_0_5_0_5;
 		grid9_x0_y2_56.anchor = GridBagConstraints.WEST;
 		grid9_x0_y2_56.gridy = 2;
 		ExtOptionLabel = new JLabel("出力の拡張子");
@@ -509,21 +518,21 @@ public class MainFrame extends JFrame {
 		grid9_x0_y1_55.gridy = 1;
 		GridBagConstraints grid9_x1_y5_53 = new GridBagConstraints(1, 3,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, INSETS_0_0_5_5, 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_0_0_5, 0, 0);
 		grid9_x1_y5_53.gridy = 5;
 		grid9_x1_y5_53.gridheight = 1;
 		grid9_x1_y5_53.weightx = 1.0;
 		grid9_x1_y5_53.gridwidth = 3;
 		GridBagConstraints grid9_x1_y4_52 = new GridBagConstraints(2, 2,
 				1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, INSETS_0_0_5_5, 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_0_0_5, 0, 0);
 		grid9_x1_y4_52.gridy = 4;
 		grid9_x1_y4_52.gridwidth = 3;
 		grid9_x1_y4_52.weightx = 1.0;
 		grid9_x1_y4_52.gridx = 1;
 		GridBagConstraints grid9_x1_y3_51 = new GridBagConstraints(2, 1,
 				1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, INSETS_0_0_5_5, 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_0_0_5, 0, 0);
 		grid9_x1_y3_51.gridy = 2;
 		grid9_x1_y3_51.gridwidth = 1;
 		grid9_x1_y3_51.weightx = 1.0;
@@ -534,17 +543,17 @@ public class MainFrame extends JFrame {
 		grid9_x0_y5_50.gridy = 5;
 		GridBagConstraints grid9_x0_y4_49 = new GridBagConstraints(0, 2,
 				2, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.BOTH, INSETS_0_5_5_5, 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0);
 		grid9_x0_y4_49.gridy = 4;
 		grid9_x0_y4_49.gridwidth = 1;
 		GridBagConstraints grid9_x0_y3_48 = new GridBagConstraints(0, 1,
 				1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.BOTH, INSETS_0_5_5_5, 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0);
 		grid9_x0_y3_48.gridy = 2;
 		grid9_x0_y3_48.gridx = 2;
 		GridBagConstraints grid5_x3_y8_45 = new GridBagConstraints(3, 5,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, INSETS_0_0_5_5, 0, 0);
+				GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
 		grid5_x3_y8_45.gridy = 8;
 		GridBagConstraints grid5_x3_y6_44 = new GridBagConstraints(3, 3,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
@@ -552,10 +561,10 @@ public class MainFrame extends JFrame {
 		grid5_x3_y6_44.gridy = 6;
 		GridBagConstraints grid5_x0_y8_43 = new GridBagConstraints(0, 8,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(3, 50, 5, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
 		GridBagConstraints grid5_x2_y8 = new GridBagConstraints(2, 8,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, INSETS_0_0_5_0, 0, 0);
+				GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 0);
 		GridBagConstraints grid5_x0_y9 = new GridBagConstraints(0, 9,
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.BOTH, INSETS_0_25_0_5, 0, 0);
@@ -625,7 +634,7 @@ public class MainFrame extends JFrame {
 		grid4_x0_y8_25.gridy = 8;
 		GridBagConstraints grid4_x3_y14_24 = new GridBagConstraints(3, 10,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, INSETS_0_0_5_5, 0, 0);
+				GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
 		grid4_x3_y14_24.gridy = 14;
 		GridBagConstraints grid4_x3_y12_23 = new GridBagConstraints(3, 8,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
@@ -633,11 +642,11 @@ public class MainFrame extends JFrame {
 		grid4_x3_y12_23.gridy = 12;
 		GridBagConstraints grid4_x0_y14_21 = new GridBagConstraints(0, 14,
 				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 50, 5, 5), 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
 		grid4_x0_y14_21.gridy = 14;
 		GridBagConstraints grid4_x2_y14 = new GridBagConstraints(2, 14,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, INSETS_0_0_5_0, 0, 0);
+				GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 0);
 		GridBagConstraints grid4_x0_y13_20 = new GridBagConstraints(0, 9,
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0, 0);
@@ -670,7 +679,7 @@ public class MainFrame extends JFrame {
 		grid4_x1_y10_22.insets = INSETS_0_0_0_5;
 		GridBagConstraints grid4_x0_y6_16 = new GridBagConstraints(0, 5,
 				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.BOTH, INSETS_5_5_5_5, 0, 0);
+				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0);
 		grid4_x0_y6_16.gridy = 6;
 		grid4_x0_y6_16.gridwidth = 1;
 		grid4_x0_y6_16.insets = INSETS_0_5_0_0;
@@ -694,7 +703,7 @@ public class MainFrame extends JFrame {
 		grid11_x0_y0_75.weightx = 1.0;
 		grid11_x0_y0_75.anchor = GridBagConstraints.CENTER;
 		grid11_x0_y0_75.fill = GridBagConstraints.HORIZONTAL;
-		grid11_x0_y0_75.insets = INSETS_0_5_5_5;
+		grid11_x0_y0_75.insets = INSETS_0_5_0_5;
 		GridBagConstraints grid11_x1_y1_76 = new GridBagConstraints();
 		grid11_x1_y1_76.gridx = 1;
 		grid11_x1_y1_76.gridy = 1;
@@ -719,7 +728,7 @@ public class MainFrame extends JFrame {
 		grid12_x0_y2_95.gridy = 2;
 		grid12_x0_y2_95.weightx = 1.0;
 		grid12_x0_y2_95.weighty = 0.0;
-		grid12_x0_y2_95.insets = new Insets(5, 5, 0, 5);
+		grid12_x0_y2_95.insets = INSETS_0_5_0_5;
 		grid12_x0_y2_95.fill = GridBagConstraints.HORIZONTAL;
 		grid12_x0_y2_95.anchor = GridBagConstraints.NORTH;
 		this.setIconImage(WinIcon);
@@ -945,8 +954,10 @@ public class MainFrame extends JFrame {
 					return;
 				}
 				String filename = propFileField.getText();
-				if(filename!=null && !filename.isEmpty() && Path.isFile(filename))
+				if(filename!=null && !filename.isEmpty() && Path.isFile(filename)){
+					sendtext("");
 					setSetting(ConvertingSetting.loadSetting(null, null, filename));
+				}
 				else
 					sendtext("設定ファイル読み込みエラー");
 			}
@@ -995,6 +1006,48 @@ public class MainFrame extends JFrame {
 					sendtext("設定ファイル保存エラー");
 			}
 		});
+		jMenuOpenSet1.setText("設定1を開く");
+		jMenuOpenSet1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				File file = PROPERTY_SET1_XML;
+				if(file.isFile()){
+					sendtext("");
+					setSetting(ConvertingSetting.loadSetting(null, null, file.getPath()));
+				}
+				else
+					sendtext("設定1読み込みエラー");
+			}
+		});
+		jMenuOpenSet2.setText("設定2を開く");
+		jMenuOpenSet2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				File file = PROPERTY_SET2_XML;
+				if(file.isFile()){
+					sendtext("");
+					setSetting(ConvertingSetting.loadSetting(null, null, file.getPath()));
+				}
+				else
+					sendtext("設定2読み込みエラー");
+			}
+		});
+		jMenuSaveSet1.setText("設定1に現在の設定を保存");
+		jMenuSaveSet1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sendtext("");
+				ConvertingSetting.saveSetting(getSetting(), PROPERTY_SET1_XML.getPath());
+			}
+		});
+		jMenuSaveSet2.setText("設定2に現在の設定を保存");
+		jMenuSaveSet2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sendtext("");
+				ConvertingSetting.saveSetting(getSetting(), PROPERTY_SET2_XML.getPath());
+			}
+		});
 		jMenuDebug.setText(DEBUG_STRING);
 		jMenuDebug.setForeground(Color.blue);
 		jMenuDebug.addActionListener(new ActionListener() {
@@ -1010,6 +1063,13 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setSetting(ConvertingSetting.loadSetting(null, null, "./saccubus.ini", false));
+			}
+		});
+		jMenuReset.setText("起動時の設定に戻す");
+		jMenuReset.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setSetting(initialSetting);
 			}
 		});
 		VideoInfoPanel.setLayout(gridBagLayout1);
@@ -1452,6 +1512,11 @@ public class MainFrame extends JFrame {
 		jMenuFile.add(jMenuAdd);
 		jMenuFile.add(jMenuSave);
 		jMenuFile.add(jMenuSaveAs);
+		jMenuFile.add(jMenuReset);
+		jMenuFile.add(jMenuOpenSet1);
+		jMenuFile.add(jMenuSaveSet1);
+		jMenuFile.add(jMenuOpenSet2);
+		jMenuFile.add(jMenuSaveSet2);
 		jMenuFile.add(jMenuInit);
 		jMenuFile.add(jMenuDebug);
 		jMenuFile.add(jMenuFileExit);
@@ -1506,16 +1571,16 @@ public class MainFrame extends JFrame {
 		contentPane.add(VideoInfoPanel, BorderLayout.NORTH);
 		UserInfoPanel.add(PasswordField, new GridBagConstraints(1, 1, 1, 1,
 				1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				INSETS_0_5_5_5, 0, 0));
+				INSETS_0_5_0_5, 0, 0));
 		UserInfoPanel.add(MailAddrField, new GridBagConstraints(1, 0, 1, 1,
 				1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 				INSETS_0_5_5_5, 0, 0));
 		UserInfoPanel.add(PasswordLabel, new GridBagConstraints(0, 1, 1, 1,
 				0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
-				new Insets(0, 5, 5, 0), 0, 0));
+				INSETS_0_5_0_0, 0, 0));
 		UserInfoPanel.add(MailAddrLabel, new GridBagConstraints(0, 0, 1, 1,
 				0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
-				new Insets(0, 5, 5, 0), 0, 0));
+				INSETS_0_5_0_0, 0, 0));
 		PathSettingPanel.add(OptionPathField, new GridBagConstraints(0, 1, 2, 1,
 				1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0));
@@ -1738,7 +1803,7 @@ public class MainFrame extends JFrame {
 		grid12_x0_y3.gridy = 3;
 		grid12_x0_y3.weightx = 1.0;
 		grid12_x0_y3.weighty = 1.0;
-		grid12_x0_y3.insets = new Insets(5, 5, 0, 5);
+		grid12_x0_y3.insets = INSETS_0_5_0_5;
 		grid12_x0_y3.fill = GridBagConstraints.HORIZONTAL;
 		grid12_x0_y3.anchor = GridBagConstraints.NORTH;
 		BasicInfoTabPanel.add(getUpdateInfoPanel(),grid12_x0_y3);
@@ -1830,7 +1895,7 @@ public class MainFrame extends JFrame {
 		grid6_x0_y0_110.weighty = 0.0;
 		grid6_x0_y0_110.anchor = GridBagConstraints.NORTH;
 		grid6_x0_y0_110.fill = GridBagConstraints.HORIZONTAL;
-		grid6_x0_y0_110.insets = INSETS_5_5_5_5;
+		grid6_x0_y0_110.insets = INSETS_0_5_0_5;
 		FFMpegTabPanel.add(VhookPathSettingPanel, grid6_x0_y0_110);
 		GridBagConstraints grid6_x0_y1_1 = new GridBagConstraints(0, 1, 1, 1,
 				1.0, 0.0, GridBagConstraints.CENTER,
@@ -1895,7 +1960,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.weighty = 0.0;
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
-		grid_x0_y2_0.insets = INSETS_0_5_5_5;
+		grid_x0_y2_0.insets = INSETS_0_5_0_5;
 	//	zqPlayerModePanel.add(
 	//		new JLabel("拡張Vhookの位置を設定する(アスペクト比共通)"),gird_x0_y2_0);
 		grid_x0_y2_0 = new GridBagConstraints();
@@ -1964,7 +2029,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.gridwidth =3;
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
-		grid_x0_y2_0.insets = INSETS_0_0_5_5;
+		grid_x0_y2_0.insets = INSETS_0_0_0_5;
 		zqFFmpegSettingPanel.add(zqAdditionalOptionFiled, grid_x0_y2_0);
 
 		zqLimitOptionPanel = new JPanel();
@@ -2030,7 +2095,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.gridwidth = 4;
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
-		grid_x0_y2_0.insets = INSETS_0_5_5_5;
+		grid_x0_y2_0.insets = INSETS_0_5_0_5;
 		zqFFmpegSettingPanel.add(zqLimitOptionPanel, grid_x0_y2_0);
 
 		grid_x0_y2_0 = new GridBagConstraints();
@@ -2062,7 +2127,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.weighty = 0.0;
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
-		grid_x0_y2_0.insets = INSETS_0_5_5_5;
+		grid_x0_y2_0.insets = INSETS_0_5_0_5;
 		FFMpegTab2Panel.add(zqFFmpegSettingPanel,grid_x0_y2_0);
 
 		CheckFFmpegFunctionPanel = new JPanelHideable(
@@ -2181,7 +2246,7 @@ public class MainFrame extends JFrame {
 		grid6_x0_y2_82.weighty = 1.0;
 		grid6_x0_y2_82.anchor = GridBagConstraints.NORTHWEST;
 		grid6_x0_y2_82.fill = GridBagConstraints.HORIZONTAL;
-		grid6_x0_y2_82.insets = INSETS_0_5_5_5;
+		grid6_x0_y2_82.insets = INSETS_0_5_0_5;
 		FFMpegTab2Panel.add(CheckFFmpegFunctionPanel, grid6_x0_y2_82);
 
 		convertManager = new ConvertManager(new JLabel[] {statusBar, elapsedTimeBar, infoBar});
@@ -2480,6 +2545,7 @@ public class MainFrame extends JFrame {
 			GridBagConstraints c = new GridBagConstraints();
 			c.gridy = 11;
 			c.anchor = GridBagConstraints.SOUTHEAST;
+			c.insets = INSETS_0_0_0_0;
 			VhookSettingPanel.add(VhookSettingPanel.getHideLabel(), c);
 		}
 		return VhookSettingPanel;
@@ -2566,23 +2632,52 @@ public class MainFrame extends JFrame {
 			grid20_x1_y1.fill = GridBagConstraints.HORIZONTAL;
 			grid20_x1_y1.weightx = 0.5;
 			grid20_x1_y1.gridwidth = 2;
-			grid20_x1_y1.insets = INSETS_0_0_0_0;
+			grid20_x1_y1.insets = INSETS_0_0_0_5;
 			experimentPanel.add(fontHeightRatioTextField,grid20_x1_y1);
-			disableOriginalResizeCheckBox.setText("開発版を有効（従来のさきゅばすのリサイズを無効にする）");
+			disableOriginalResizeCheckBox.setText("開発版を有効");
 			disableOriginalResizeCheckBox.setForeground(Color.blue);
-			disableOriginalResizeCheckBox.setToolTipText("コメントアート用に調整中。" +
-				"現在はオフの方がいいみたいです。安定したらオフの方に反映します。");
+			disableOriginalResizeCheckBox.setToolTipText("Windows7基準");
 			GridBagConstraints grid20_x0_y7 = new GridBagConstraints();
 			grid20_x0_y7.gridx = 0;
 			grid20_x0_y7.gridy = 7;
-			grid20_x0_y7.gridwidth = 5;
+			//grid20_x0_y7.gridwidth = 5;
 			//grid20_x0_y7.gridheight = 1;
-			grid20_x0_y7.weightx = 1.0;
+			//grid20_x0_y7.weightx = 1.0;
 			//grid20_x0_y7.weighty = 0.0;
 			grid20_x0_y7.anchor = GridBagConstraints.NORTHWEST;
 			grid20_x0_y7.fill = GridBagConstraints.HORIZONTAL;
-			grid20_x0_y7.insets = INSETS_0_0_0_5;
+			grid20_x0_y7.insets = INSETS_0_0_0_0;
 			experimentPanel.add(disableOriginalResizeCheckBox, grid20_x0_y7);
+			enableHtml5CommentCheckBox.setText("html5モード");
+			enableHtml5CommentCheckBox.setForeground(Color.blue);
+			enableHtml5CommentCheckBox.setToolTipText("フォントサイズ/フォントコマンド対応。Windows10基準。調整中");
+			GridBagConstraints grid20_x1_y7 = new GridBagConstraints();
+			grid20_x1_y7.gridx = 1;
+			grid20_x1_y7.gridy = 7;
+			grid20_x1_y7.gridwidth = 1;
+			grid20_x1_y7.weightx = 0.0;
+			grid20_x1_y7.anchor = GridBagConstraints.NORTHWEST;
+			grid20_x1_y7.fill = GridBagConstraints.HORIZONTAL;
+			grid20_x1_y7.insets = INSETS_0_0_0_0;
+			experimentPanel.add(enableHtml5CommentCheckBox, grid20_x1_y7);
+			enableAutoHtml5CheckBox.setText("自動html5切り替え");
+			enableAutoHtml5CheckBox.setForeground(Color.blue);
+			enableAutoHtml5CheckBox.setToolTipText("html5プレーヤー使用に合わせる。両対応は未定");
+			enableAutoHtml5CheckBox.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					enableHtml5CommentCheckBox.setEnabled(!enableAutoHtml5CheckBox.isSelected());
+				}
+			});
+			GridBagConstraints grid20_x2_y7 = new GridBagConstraints();
+			grid20_x2_y7.gridx = 2;
+			grid20_x2_y7.gridy = 7;
+			grid20_x2_y7.gridwidth = 2;
+			grid20_x2_y7.weightx = 0.0;
+			grid20_x2_y7.anchor = GridBagConstraints.NORTHWEST;
+			grid20_x2_y7.fill = GridBagConstraints.HORIZONTAL;
+			grid20_x2_y7.insets = INSETS_0_0_0_0;
+			experimentPanel.add(enableAutoHtml5CheckBox, grid20_x2_y7);
 			enableCA_CheckBox.setText("ＣＡフォント対応");
 			enableCA_CheckBox.setForeground(Color.blue);
 			enableCA_CheckBox.setToolTipText("多種類のフォントを使ってフォント変化を強制的に使用するようになります");
@@ -2649,6 +2744,7 @@ public class MainFrame extends JFrame {
 			GridBagConstraints c = new GridBagConstraints();
 			c.gridy = 12;
 			c.anchor = GridBagConstraints.SOUTHEAST;
+			c.insets = INSETS_0_0_0_0;
 			experimentPanel.add(experimentPanel.getHideLabel(), c);
 		}
 		return experimentPanel;
@@ -3655,7 +3751,9 @@ public class MainFrame extends JFrame {
 			fpsIntegralMultipleCheckBox.isSelected(),
 			zqSizeMinField.getText(),
 			zqSizeMaxField.getText(),
-			zqFpsRangeField.getText()
+			zqFpsRangeField.getText(),
+			enableHtml5CommentCheckBox.isSelected(),
+			enableAutoHtml5CheckBox.isSelected()
 		);
 	}
 
@@ -3857,6 +3955,8 @@ public class MainFrame extends JFrame {
 		zqSizeMinField.setText(setting.getZqSizeMin());
 		zqSizeMaxField.setText(setting.getZqSizeMax());
 		zqFpsRangeField.setText(setting.getZqFpsFloor());
+		enableHtml5CommentCheckBox.setSelected(setting.isHtml5Comment());
+		enableAutoHtml5CheckBox.setSelected(setting.isAutoHtml5Comment());
 	}
 
 	/**
@@ -4834,11 +4934,11 @@ s	 * @return javax.swing.JPanel
 			grid_x1_y2_12.fill = GridBagConstraints.HORIZONTAL;
 			grid_x1_y2_12.gridy = 1;
 			grid_x1_y2_12.weightx = 1.0;
-			grid_x1_y2_12.insets = INSETS_0_5_5_5;
+			grid_x1_y2_12.insets = INSETS_0_5_0_5;
 			grid_x1_y2_12.gridx = 2;
 			GridBagConstraints grid_x0_y2_10 = new GridBagConstraints();
 			grid_x0_y2_10.gridx = 1;
-			grid_x0_y2_10.insets = INSETS_5_5_5_5;
+			grid_x0_y2_10.insets = INSETS_0_5_0_5;
 			grid_x0_y2_10.gridy = 1;
 			GridBagConstraints grid_x1_y1_9 = new GridBagConstraints();
 			grid_x1_y1_9.fill = GridBagConstraints.BOTH;
@@ -5757,12 +5857,12 @@ s	 * @return javax.swing.JPanel
 		if (FFmpegOptionComboBoxPanel == null) {
 			GridBagConstraints grid_x_y_47 = new GridBagConstraints();
 			grid_x_y_47.fill = GridBagConstraints.NONE;
-			grid_x_y_47.insets = INSETS_0_0_5_5;
+			grid_x_y_47.insets = INSETS_0_0_0_5;
 			GridBagConstraints grid_x_y_46 = new GridBagConstraints();
 			grid_x_y_46.fill = GridBagConstraints.HORIZONTAL;
 			grid_x_y_46.gridwidth = 3;
 			grid_x_y_46.weightx = 1.0;
-			grid_x_y_46.insets = INSETS_0_5_5_5;
+			grid_x_y_46.insets = INSETS_0_5_0_5;
 			FFmpegOptionComboBoxPanel = new JPanel();
 			FFmpegOptionComboBoxPanel.setLayout(new GridBagLayout());
 			FFmpegOptionComboBoxPanel.add(getFFmpegOptionComboBox(),
@@ -5782,12 +5882,12 @@ s	 * @return javax.swing.JPanel
 		if (WideFFmpegOptionComboBoxPanel == null) {
 			GridBagConstraints grid_x_y_1_ = new GridBagConstraints();
 			grid_x_y_1_.fill = GridBagConstraints.NONE;
-			grid_x_y_1_.insets = INSETS_0_0_5_5;
+			grid_x_y_1_.insets = INSETS_0_0_0_5;
 			GridBagConstraints grid_x_y_2_ = new GridBagConstraints();
 			grid_x_y_2_.fill = GridBagConstraints.HORIZONTAL;
 			grid_x_y_2_.gridwidth = 3;
 			grid_x_y_2_.weightx = 1.0;
-			grid_x_y_2_.insets = INSETS_0_5_5_5;
+			grid_x_y_2_.insets = INSETS_0_5_0_5;
 			WideFFmpegOptionComboBoxPanel = new JPanel();
 			WideFFmpegOptionComboBoxPanel.setLayout(new GridBagLayout());
 			WideFFmpegOptionComboBoxPanel.add(getWideFFmpegOptionComboBox(),
@@ -5807,12 +5907,12 @@ s	 * @return javax.swing.JPanel
 		if (zqFFmpegOptionComboBoxPanel == null) {
 			GridBagConstraints grid_x_y_1_ = new GridBagConstraints();
 			grid_x_y_1_.fill = GridBagConstraints.NONE;
-			grid_x_y_1_.insets = INSETS_0_0_5_5;
+			grid_x_y_1_.insets = INSETS_0_0_0_5;
 			GridBagConstraints grid_x_y_2_ = new GridBagConstraints();
 			grid_x_y_2_.fill = GridBagConstraints.HORIZONTAL;
 			grid_x_y_2_.gridwidth = 3;
 			grid_x_y_2_.weightx = 1.0;
-			grid_x_y_2_.insets = INSETS_0_5_5_5;
+			grid_x_y_2_.insets = INSETS_0_5_0_5;
 			zqFFmpegOptionComboBoxPanel = new JPanel();
 			zqFFmpegOptionComboBoxPanel.setLayout(new GridBagLayout());
 			zqFFmpegOptionComboBoxPanel.add(getZqFFmpegOptionComboBox(),

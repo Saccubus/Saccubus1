@@ -35,7 +35,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.67.2.15";
+	char *ver="1.67.3.07";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -179,9 +179,7 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	setting->vfspeedrate = NULL;
 	setting->layerctrl = FALSE;
 	setting->comment_resize_adjust = 1.0;
-#ifdef VHOOKDEBUG
-//	setting->framerate = NULL;
-#endif
+	setting->html5comment = FALSE;
 	setting->q_player = FALSE;
 	// CA用フォント
 	//  MS UI GOTHIC は msgothic.ttc の index=2
@@ -435,13 +433,11 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 				fflush(log);
 			}
 		}
-#ifdef VHOOKDEBUG
-//		else if (strncmp(FRAMEHOOK_OPT_FRAMERATE,arg,FRAMEHOOK_OPT_FRAMERATE_LEN) == 0){
-//			setting->framerate = arg+FRAMEHOOK_OPT_FRAMERATE_LEN;
-//			fprintf(log,"[framehook/init]framerate: %s\n",setting->framerate);
-//			fflush(log);
-//		}
-#endif
+		else if (strncmp(FRAMEHOOK_OPT_HTML5_COMMENT,arg,FRAMEHOOK_OPT_HTML5_COMMENT_LEN) == 0){
+			setting->html5comment = TRUE;
+			fprintf(log,"[framehook/init]html5 comment: %d\n",setting->html5comment);
+			fflush(log);
+		}
 		// CA用フォント
 		else if(strncmp(FRAMEHOOK_OPT_FONT_DIR,arg,FRAMEHOOK_OPT_FONT_DIR_LEN)==0){
 			setting->fontdir = arg+FRAMEHOOK_OPT_FONT_DIR_LEN;

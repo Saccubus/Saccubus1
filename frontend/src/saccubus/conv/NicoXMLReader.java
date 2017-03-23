@@ -72,9 +72,10 @@ public class NicoXMLReader extends DefaultHandler {
 	private String duration = "";
 
 	private boolean isLiveConversionDone;
+	private boolean html5comment;
 
 	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd,
-		int scoreLimit, boolean liveOp, boolean prem_color_check, String duration, Logger logger){
+		int scoreLimit, boolean liveOp, boolean prem_color_check, String duration, Logger logger, boolean html5){
 		this.packet = packet;
 		NG_Word = ngWordPat;
 		NG_ID = ngIdPat;
@@ -87,6 +88,7 @@ public class NicoXMLReader extends DefaultHandler {
 		premiumColorCheck = prem_color_check;
 		liveOpDuration = duration;
 		log = logger;
+		html5comment = html5;
 	}
 
 	public static final Pattern makePattern(String word, Logger logger, boolean enableML)
@@ -393,7 +395,8 @@ public class NicoXMLReader extends DefaultHandler {
 					item_kicked = true;
 					return;
 				}
-				if(com.startsWith("replace(",1) && com.endsWith(")")){
+				if(com.startsWith("replace(",1) && com.endsWith(")")
+					&& !html5comment){
 					// /replace実装 コメントは /replace()だけの場合
 					log.println("Converting: " + com);
 					item.setScript();
@@ -677,6 +680,9 @@ public class NicoXMLReader extends DefaultHandler {
 						//src = src.replace("\\r", "\n").replace("\\n", "\n").replace("\\t", "\t");
 						//dest = dest.replace("\\r", "\n").replace("\\n", "\n").replace("\\t", "\t");
 						//が必要か？
+						if(html5comment){
+							dest = dest.replace("\\r", "\n").replace("\\n", "\n").replace("\\t", "\t");
+						}
 						log.println("Converted:" +vpos +":＠置換 「"+src +"」「"+dest
 							+"」 "+target +" fill:"+fill +" partial:"+partial+").");
 						com = "/r," + src + "," + dest + "," + fill;

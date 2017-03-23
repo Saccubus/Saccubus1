@@ -77,7 +77,7 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int
 		h_SetColorKey(tmp,SDL_RLEACCEL,0xff);	//reset color key
 		ret = tmp;
 	}
-	if(data->original_resize)
+	if(data->original_resize||data->html5comment)
 		return ret;
 	if(strstr(mode,"-point")!=NULL || strstr(mode,"-tune")!=NULL){
 		ret = pointsConv(data,ret,str,size,fontsel);

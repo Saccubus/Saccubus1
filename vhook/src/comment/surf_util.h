@@ -19,7 +19,7 @@ h_Surface* newSurface(SDL_Surface* surf);
 SDL_Surface* nullSurface(int w,int h);
 SDL_Surface* nullSurf();
 SDL_Surface* h_SDLSurf(h_Surface* surf);
-h_Surface* connectSurface(h_Surface* top,h_Surface* bottom);
+h_Surface* connectSurface(h_Surface* top,h_Surface* bottom,int fixh);
 h_Surface* arrangeSurface(h_Surface* left,h_Surface* right);
 void setAlpha(SDL_Surface* surf,double alpha_t);
 void overrideAlpha(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect);

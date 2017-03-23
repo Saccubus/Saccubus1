@@ -496,6 +496,18 @@ static char* const CA_FONT_NAME[] = {
 };
 #define CA_FONT_NAME_SIZE (sizeof(CA_FONT_NAME)/sizeof(char* const))
 
+#define HTML5_FONT_DEFONT	0
+#define HTML5_FONT_MINCHO	1
+#define HTML5_FONT_GOTHIC	2
+static char* const HTML5_FONT_CMD[] = {
+	"h5defont", "h5mincho", "h5gothic",
+};
+static int const HTML5_CA_FONT[] = {
+	UNDEFINED_FONT,
+	SIMSUN_FONT,
+	GULIM_FONT,
+};
+
 static const int CA_FONT_SIZE_FIX[][CMD_FONT_MAX] = {
 //	DEF,BIG,SMALL
 	{0,-1,1,0},	//gothic

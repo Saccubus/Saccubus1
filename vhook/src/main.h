@@ -8,6 +8,7 @@
 #include "chat/chat.h"
 #include "chat/chat_slot.h"
 #include "unicode/unitable.h"
+#include "comment/shadow.h"
 #define CA_FONT_PATH_MAX 70
 
 struct CDATA{
@@ -49,6 +50,7 @@ struct DATA{
 	int video_length;
 //	int aspect100;		// アスペクト比*100	Not used now
 	int nico_width_now;	// 元動画の横幅
+	int nico_height;
 	int aspect_mode;		// 0: 512, 1:640
 	float aspect_rate;		// w/h
 	int vout_width;
@@ -72,6 +74,8 @@ struct DATA{
 	int use_lineskip_as_fontsize;	//フォントサイズを決めるのにLineSkipを合わせる（実験的）
 	int debug;
 	const char* extra_mode;
+	int drawframe;
+	struct_shadow_data shadow_data;
 	double width_scale;	//書き込み可　videowidth/nicowidth_now
 	int defcolor;	//デフォルトカラー24bit（エイプリルフール用、@デフォルト）
 	int deflocation;
@@ -109,12 +113,9 @@ struct DATA{
 	int vfspeedflag;		// 0:無効, 1:コメントだけ, 2:video出力も変更
 	int layerctrl;		//ue shita nakaのレイヤー順制御 0:なし 1:nakaを後ろに
 	float comment_resize_adjust;	// scaling後にリサイズ補正　ユーザー最終調整
+	int html5comment;
+		//html5コメントモード有効	defont mincho gothicコマンド有効　フォントサイズ変更
 	//char wstr[128];
-#ifdef VHOOKDEBUG
-//	float dts_rate;	// フレームレート
-//	float dts;		// DTS
-//	int last_vpos;
-#endif
 	// 実験的設定
 	short font_pixel_size[CMD_FONT_MAX];
 	short fixed_font_height[CMD_FONT_MAX];	// 修正フォント指定(ポイント指定)
@@ -167,6 +168,8 @@ typedef struct SETTING{
 	const char* vfspeedrate;	//video filter speedrate 指定
 	int layerctrl;		//ue shita nakaのレイヤー順制御 0:なし 1:nakaを後ろに
 	float comment_resize_adjust;	// scaling後にリサイズ補正
+	int html5comment;
+		//html5コメントモード有効	defont mincho gothicコマンド有効　フォントサイズ変更
 	// CA用フォント
 	const char* CAfont_path[CA_FONT_PATH_MAX];
 	int CAfont_index[CA_FONT_PATH_MAX];

@@ -181,6 +181,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private int tid;
 	private Logger log;
 	private String thumbInfoData;
+	private boolean html5CommentMode = false;
 
 	public ConvertWorker(int worker_id,
 			String url, String time, ConvertingSetting setting,
@@ -446,6 +447,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				result = "7";
 				return false;
 			}
+			if (Setting.isAutoHtml5Comment())
+				html5CommentMode = Setting.isHtml5();
+			else
+				html5CommentMode = Setting.isHtml5Comment();
 			if(Setting.isEnableCA()){
 				String windir = System.getenv("windir");
 				if(windir == null){
@@ -459,13 +464,23 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					result = "9";
 					return false;
 				}
-				simsunFont = new File(fontDir, "SIMSUN.TTC");
+				if(html5CommentMode){
+					simsunFont = new File(fontDir, "yumin.ttf");	//windows10
+				}
+				if(simsunFont==null || !simsunFont.canRead()){
+					simsunFont = new File(fontDir, "SIMSUN.TTC");
+				}
 				if (!simsunFont.canRead()) {
 					sendtext("CA用フォントが見つかりません。" + simsunFont.getPath());
 					result = "10";
 					return false;
 				}
-				gulimFont = new File(fontDir, "GULIM.TTC");	//windowsXP,7,8 丸文字
+				if(html5CommentMode){
+					gulimFont = new File(fontDir, "YuGothM.ttc");	//windows10丸文字
+				}
+				if (gulimFont==null || !gulimFont.canRead()) {
+					gulimFont = new File(fontDir, "GULIM.TTC");	//windowsXP,7,8 丸文字
+				}
 				File saveGulimFont = gulimFont;
 				if (!gulimFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + gulimFont.getPath());
@@ -2037,12 +2052,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			duration = Setting.getLiveOperationDuration();
 		// ニコスコメントは premium "2" or "3"みたいなのでニコスコメントの時は運営コメント変換しないようにする
 		boolean live_op = Setting.isLiveOperationConversion() && !is_nicos;
+		boolean html5 = html5CommentMode;
 		if(is_nicos)
 			isOptionalTranslucent = false;
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile, CommentReplaceList,
 				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit(),
-				live_op, Setting.isPremiumColorCheck(), duration, log, isDebugNet)){
+				live_op, Setting.isPremiumColorCheck(), duration, log, isDebugNet, html5)){
 			return false;
 		}
 		//コメント数が0の時削除する
@@ -2477,6 +2493,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				manager.incNumConvert();
 				isConverting = true;
 			}
+
 			//stopwatch.show();
 			if(!makeNGPattern(Setting.isNGenableML()) || stopFlagReturn()){
 				return result;
@@ -2810,14 +2827,21 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			inSize = outAspect.getSize();
 		}
 		if(videoAspect.isInvalid()){ // and outAspect is also invalid
-			if(selectedVhook==VhookNormal)
-				inSize = "512:384";
+			if(selectedVhook==VhookNormal){
+				if(html5CommentMode)
+					inSize = "480:360";
+				else
+					inSize = "512:384";
+			}
 			else
 				inSize = "640:360";
 			videoAspect = toAspect(inSize, Aspect.WIDE);
 			outAspect = videoAspect;
 		}
 		str = videoAspect.explain() + "  ";
+		if (html5CommentMode){
+			MovieInfo.setText(auto + "Html5プレイヤー " + str);
+		}else
 		if (Setting.isZqPlayer()){
 			MovieInfo.setText(auto + "拡張Vhook Q " + str);
 		} else if (isPlayerWide){
@@ -2946,6 +2970,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(Setting.isZqPlayer()){
 			commentWidth = 800;		//Qwatch大画面
 			commentHeight = 480;
+		}
+		if(html5CommentMode){
+			commentWidth = 640;
+			commentHeight = 360;
 		}
 		aspect = toAspect(sizestr, aspect);
 		int width = aspect.getWidth();
@@ -4063,6 +4091,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			if (Setting.isDisableOriginalResize()){
 				ffmpeg.addCmd("|--disable-original-resize");
+			}
+			// flashコメントモード=既定
+			//ffmpeg.addCmd("|--flash-comment");
+			if (html5CommentMode){
+				ffmpeg.addCmd("|--html5-comment");
 			}
 			if (Setting.isFontWidthFix()){
 				ffmpeg.addCmd("|--font-width-fix-ratio:"

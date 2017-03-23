@@ -25,8 +25,10 @@ THANKS for Comment Artisan! A.K.A. SHOKUNIN!
 #include "surf_util.h"
 #include "../main.h"
 
-int adjustHeight(int nb_line,int size,int linefeedResize,int fontFixed);
-double linefeedResizeScale(int size,int nb_line,int fontFixed);
+int adjustHeight(int nb_line,int size,int linefeedResize,int fontFixed,int html5);
+double linefeedResizeScale(int size,int nb_line,int fontFixed,int html5);
 h_Surface* adjustComment(h_Surface* surf,DATA* data,int height);
+h_Surface* adjustComment2(h_Surface* surf,int height);
+h_Surface* adjustCommentSize(h_Surface* surf,int width,int height);
 
 #endif /* ADJUSTCOMMENT_H_ */
