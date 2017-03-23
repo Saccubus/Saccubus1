@@ -407,27 +407,19 @@ static const float HTML5_PIXEL_SIZE[2][CMD_FONT_MAX][2] = {
 #define HTML5_FONT_MINCHO 1
 #define HTML5_FONT_GOTHIC 2
 
-//									[font_sel][SIZE]
-//static const int HTML5_FONT_NICO_WIDTH[4][CMD_FONT_MAX] = {
-////   Def B  S  M
-//	{25, 40,16,25},		//gothic
-//	{25, 40,16,25},		//simsun
-//	{25, 40,16,25},		//gulim
-//	{25, 40,16,25},		//other
-//};
 static const int HTML5_FONT_WIDTH_TUNED[4][2][CMD_FONT_MAX] = {
 //	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}}
-	{{24,35,17,24,},{48,70,34,48,}},	//gothic
-	{{25,37,17,25,},{50,74,34,50,}},	//simsun
-	{{25,37,17,25,},{50,80,34,50,}},	//gulim
-	{{24,35,16,24,},{48,70,32,48,}},	//arial 'a'
+	{{24,35,17,24,},{48,69,33,48,}},	//gothic for DEFONT
+	{{25,37,17,25,},{51,73,34,51,}},	//simsun for MINCHO
+	{{25,37,17,25,},{51,73,34,51,}},	//gulim for GOTHIC
+	{{24,35,16,24,},{46,70,32,46,}},	//arial & other
 };
 static const int HTML5_FONT_HIGHT_TUNED[4][2][CMD_FONT_MAX] = {
 //	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}for fontsize_fixed},
-	{{24,38,16,24,},{47,74,31,47,}},	//gothic glyph-advance width is {25,40,16}{50,80,33(>32)}
-	{{24,38,16,24,},{47,74,31,47,}},	//simsun
-	{{24,38,16,24,},{47,74,31,47,}},	//gulim
-	{{24,41,15,24,},{46,78,30,47,}},	//arial glyph-advance width of'a' is {13,22,8},{26,44,16}
+	{{24,38,16,24,},{47,74,30,47,}},	//gothic for DEFONT
+	{{24,38,16,24,},{47,74,31,47,}},	//simsun for MINCHO
+	{{24,38,16,24,},{47,74,31,47,}},	//gulim for GOTHIC
+	{{24,41,15,24,},{46,78,30,47,}},	//arial & other
 };
 
 

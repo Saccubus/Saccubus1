@@ -3,18 +3,24 @@
 #include "shadow.h"
 
 /*影なし*/
-SDL_Surface* noShadow(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
+SDL_Surface* noShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	return surf;
 }
 /*右下*/
 #define SHADOW_SIZE 2
 #define SHADOW2_SIZE 2
 
-SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
+SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
+	int is_fix_size = data->fontsize_fix;
 	/*スライド幅の確定*/
 	int slide = SHADOW_SIZE;
 	int slide2 = SHADOW2_SIZE;
-	if(is_fix_size){
+	int gmax = 0xff;
+	if(data->shadow_data.slide>0){
+		slide = slide2 = data->shadow_data.slide;
+		gmax *= data->shadow_data.grad_max / 100;
+	}
+	if(is_fix_size && data->shadow_data.autoresize){
 		slide <<= 1;
 		slide2 <<= 1;
 	}
@@ -99,8 +105,8 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Col
 				int my = *pix2;
 				int new_alpha = (((((my & Amask) >> Ashift) << Aloss) +(((right & Amask) >> Ashift) << Aloss)+(((left & Amask) >> Ashift) << Aloss)+(((up & Amask) >> Ashift) << Aloss)+(((down & Amask) >> Ashift) << Aloss)) / 5) & 0xff;
 				new_alpha = (new_alpha * 18) >> 4;
-				if(new_alpha > 0xff){
-					new_alpha = 0xff;
+				if(new_alpha > gmax){
+					new_alpha = gmax;
 				}
 				*pix2 &= Mask;
 				*pix2 |= ((new_alpha >> Aloss) << Ashift) & Amask;
@@ -120,17 +126,21 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Col
 	return shadow;
 }
 
-SDL_Surface* likeNicoNico2(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
+SDL_Surface* likeNicoNico2(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
+	int is_fix_size = data->fontsize_fix;
 	/*スライド幅の確定*/
 	int slide = SHADOW_SIZE;
 	int slide2 = SHADOW2_SIZE;
-	if(is_fix_size){
+	if(data->shadow_data.slide>0){
+		slide = slide2 = data->shadow_data.slide;
+	}
+	if(is_fix_size && data->shadow_data.autoresize){
 		slide <<= 1;
 		slide2 <<= 1;
 	}
 	int w = surf->w;
 	int h = surf->h;
-	surf = likeNicoNico(surf, is_black, is_fix_size, c);
+	surf = likeNicoNico(surf, is_black, c, data);
 	SDL_Rect srcrect = {slide,slide,w,h};
 	SDL_Surface *ret = nullSurface(w, h);
 	if(ret==NULL) return NULL;
@@ -142,10 +152,16 @@ SDL_Surface* likeNicoNico2(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Co
 
 /*右下*/
 #define SHADOW_SLIDE 2
-SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
+SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
+	int is_fix_size = data->fontsize_fix;
 	/*スライド幅の確定*/
 	int slide = SHADOW_SLIDE;
-	if(is_fix_size){
+	double gmax = 0.6f;
+	if(data->shadow_data.slide>0){
+		slide = data->shadow_data.slide;
+		gmax = (double)data->shadow_data.grad_max / 100.0;
+	}
+	if(is_fix_size && data->shadow_data.autoresize){
 		slide <<= 1;
 	}
 	/*黒の用意*/
@@ -176,17 +192,23 @@ SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color 
 	}else{
 		setRGB(black,SDL_MapRGB(surf->format,c.r,c.g,c.b));
 	}
-	setAlpha(black,0.6f);
+	setAlpha(black,gmax);
 	shadowBlitSurface(surf,NULL,black,NULL);
 	SDL_FreeSurface(surf);
 	return black;
 }
 
 //散らすのではなく、囲ってしまう。
-SDL_Surface* likeOld(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
+SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
+	int is_fix_size = data->fontsize_fix;
 	/*スライド幅の確定*/
 	int slide = SHADOW_SIZE;
-	if(is_fix_size){
+	int gmax = 0xff;
+	if(data->shadow_data.slide>0){
+		slide = data->shadow_data.slide;
+		gmax *= data->shadow_data.grad_max / 100;
+	}
+	if(is_fix_size && data->shadow_data.autoresize){
 		slide <<= 1;
 	}
 	int w = surf->w;
@@ -291,10 +313,16 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c)
 #define SHADOW_S2NEW 1
 #define SHADOW_SACCUBUS2 2
 //Saccubus2同様?
-SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c, int zmax_select){
+SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data,int zmax_select){
+	int is_fix_size = data->fontsize_fix;
 	/*スライド幅の確定*/
 	int slide = SHADOW_SACCUBUS2;
-	if(is_fix_size){
+	int gmax = 0xff;
+	if(data->shadow_data.slide>0){
+		slide =  data->shadow_data.slide;
+		gmax *= data->shadow_data.grad_max / 100;
+	}
+	if(is_fix_size && data->shadow_data.autoresize){
 		slide <<= 1;
 	}
 	int w = surf->w;
@@ -382,7 +410,7 @@ SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,int is_fix_size,SDL_C
 				//周りが空白でない
 				if(((right | left | up | down | my | upl | upr | downl | downr) & Amask) != 0){
 					*pix2 &= Mask;
-					*pix2 |= ((0xff >> Aloss) << Ashift) & Amask;
+					*pix2 |= ((gmax >> Aloss) << Ashift) & Amask;
 				}
 				pix = (int*)(((char*)pix)+bps);
 				pix2 = (int*)(((char*)pix2)+bps);
@@ -400,19 +428,25 @@ SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,int is_fix_size,SDL_C
 	return shadow;
 }
 
-SDL_Surface* likeSaccubus2(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
-	return likeSaccubus2a(surf,is_black,is_fix_size,c,SHADOW_SACCUBUS2);
+SDL_Surface* likeSaccubus2(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
+	return likeSaccubus2a(surf,is_black,c,data,SHADOW_SACCUBUS2);
 }
 
-SDL_Surface* likeSaccubus2new(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
-	return likeSaccubus2a(surf,is_black,is_fix_size,c,SHADOW_S2NEW);
+SDL_Surface* likeSaccubus2new(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
+	return likeSaccubus2a(surf,is_black,c,data,SHADOW_S2NEW);
 }
 
 #define HTML5_SHADOW_SIZE 1
-SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c){
+SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	/*スライド幅の確定*/
+	int is_fix_size = data->fontsize_fix;
 	int slide = HTML5_SHADOW_SIZE;
-	if(is_fix_size){
+	int gmax = 0xff;
+	if(data->shadow_data.slide>0){
+		slide = data->shadow_data.slide;
+		gmax *= data->shadow_data.grad_max / 100;
+	}
+	if(is_fix_size && data->shadow_data.autoresize){
 		slide <<= 1;
 	}
 	int w = surf->w;
@@ -497,7 +531,7 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color 
 				//周りが空白でない
 				if(((right | left | up | down | my | upl | upr | downl | downr) & Amask) != 0){
 					*pix2 &= Mask;
-					*pix2 |= ((0xff >> Aloss) << Ashift) & Amask;
+					*pix2 |= ((gmax >> Aloss) << Ashift) & Amask;
 				}
 				pix = (int*)(((char*)pix)+bps);
 				pix2 = (int*)(((char*)pix2)+bps);
@@ -515,10 +549,9 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color 
 	return shadow;
 }
 
-SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c, DATA* data){
-	/*スライド幅の確定*/
-
+SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	int is_fix_size = data->fontsize_fix;
+	/*スライド幅の確定*/
 	struct_shadow_data shd = data->shadow_data;
 	int slide = shd.slide;
 	if(is_fix_size && shd.autoresize){
@@ -645,7 +678,8 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c, DATA* data
 }
 
 //定義
-SDL_Surface* (*ShadowFunc[SHADOW_MAX])(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c) = {
+
+SDL_Surface* (*ShadowFunc[SHADOW_MAX+1])(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data) = {
 	noShadow,
 	likeNicoNico,
 	likeNovel,
@@ -654,6 +688,7 @@ SDL_Surface* (*ShadowFunc[SHADOW_MAX])(SDL_Surface* surf,int is_black,int is_fix
 	likeSaccubus2new,
 	likeHtml5,
 	likeNicoNico2,
+	customShadow,
 };
 
 //カスタム影設定
@@ -720,6 +755,7 @@ void setting_shadow(const char* datastr, DATA* data){
 		}
 	}
 	if(gradation!=0){
+		gradation = MAX(0,MIN(slide*2,gradation));
 		data->shadow_data.gradation = gradation;
 		fprintf(log,"[shadow/setting_shadow]shadow gradation=%d pixel\n", gradation);
 	}
@@ -730,6 +766,7 @@ void setting_shadow(const char* datastr, DATA* data){
 	if(ptr!=NULL && *ptr=='%')
 		ptr++;
 	if(grad_max!=0){
+		grad_max = MAX(0,MIN(100,grad_max));
 		data->shadow_data.grad_max = grad_max;
 		fprintf(log,"[shadow/setting_shadow]shadow grad_max=%d%%\n", grad_max);
 	}
@@ -740,6 +777,7 @@ void setting_shadow(const char* datastr, DATA* data){
 	if(ptr!=NULL && *ptr=='%')
 		ptr++;
 	if(grad_min!=0){
+		grad_min = MAX(0,MIN(100,grad_min));
 		data->shadow_data.grad_min = grad_min;
 		fprintf(log,"[shadow/setting_shadow]shadow grad_min=%d%%\n", grad_min);
 	}

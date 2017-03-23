@@ -91,3 +91,42 @@ h_Surface* adjustComment2(h_Surface* surf,int height){
 	h_FreeSurface(surf);
 	return ret;
 }
+
+h_Surface* adjustCommentSize(h_Surface* surf,int width,int height){
+	if(surf==NULL)
+		return NULL;
+	int y = (height - surf->h)>>1;
+	int x = (width - surf->w)>>1;
+	if(x==0 && y == 0)
+		return surf;
+	h_Surface* ret = drawNullSurface(width, height);
+	if(ret==NULL)
+		return surf;
+	int srcx = 0;
+	int srcy = 0;
+	int dstx = 0;
+	int dsty = 0;
+	if(x > 0){
+		srcx = 0;
+		dstx = x;
+	}else{
+		srcx = -x;
+		dstx = 0;
+		width -= srcx<<1;
+	}
+	if(y > 0){
+		srcy = 0;
+		dsty = y;
+	}else{
+		srcy = -y;
+		dsty = 0;
+		height -= srcy;
+	}
+	SDL_Rect srcrect = {srcx, srcy, width, height};
+	SDL_Rect dstrect = {dstx, dsty, width, height};
+	//not make nor use alpha
+	h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+	h_BlitSurface(surf,&srcrect,ret,&dstrect);
+	h_FreeSurface(surf);
+	return ret;
+}

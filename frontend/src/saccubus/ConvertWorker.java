@@ -447,10 +447,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				result = "7";
 				return false;
 			}
-			if (Setting.isHtml5Comment()
-				|| Setting.isHtml5() && Setting.isAutoHtml5Comment()){
-				html5CommentMode = true;
-			}
+			if (Setting.isAutoHtml5Comment())
+				html5CommentMode = Setting.isHtml5();
+			else
+				html5CommentMode = Setting.isHtml5Comment();
 			if(Setting.isEnableCA()){
 				String windir = System.getenv("windir");
 				if(windir == null){
@@ -467,7 +467,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(html5CommentMode){
 					simsunFont = new File(fontDir, "yumin.ttf");	//windows10
 				}
-				if(!simsunFont.canRead()){
+				if(simsunFont==null || !simsunFont.canRead()){
 					simsunFont = new File(fontDir, "SIMSUN.TTC");
 				}
 				if (!simsunFont.canRead()) {
@@ -478,7 +478,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(html5CommentMode){
 					gulimFont = new File(fontDir, "YuGothM.ttc");	//windows10ŠÛ•¶Žš
 				}
-				if (!gulimFont.canRead()) {
+				if (gulimFont==null || !gulimFont.canRead()) {
 					gulimFont = new File(fontDir, "GULIM.TTC");	//windowsXP,7,8 ŠÛ•¶Žš
 				}
 				File saveGulimFont = gulimFont;

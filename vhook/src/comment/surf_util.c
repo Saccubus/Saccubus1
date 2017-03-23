@@ -82,20 +82,20 @@ h_Surface* connectSurface(h_Surface* top,h_Surface* bottom, int height){
 		h_FreeSurface(top);
 		return ret;
 	}
+	int h = bottom->h;
+	int y = top->h;
 	if(height==0)
-		height = top->h + bottom->h;
+		height = y + h;
 	ret = drawNullSurface(MAX(top->w,bottom->w), height);
 	if(ret == NULL) return NULL;	//for Error
 	h_SetAlpha(top,SDL_RLEACCEL,0xff);	//not use alpha
 	h_SetAlpha(bottom,SDL_RLEACCEL,0xff);	//not use alpha
 	h_BlitSurface(top,NULL,ret,NULL);
 	int w = bottom->w;
-	int h = bottom->h;
-	int y = top->h;
 	int dh = (height-(y+h))>>1 ;
 	if(dh>=0){
 		// ŠÛ‚²‚ÆBlit‚µ‚Ä‚æ‚¢B
-		SDL_Rect rect = {0,y+dh,w,h};
+		SDL_Rect rect = {0,y,w,h};
 		h_BlitSurface(bottom,NULL,ret,&rect);
 	}else{
 		// dh•ª‚¾‚¯í‚éB(dh < 0)

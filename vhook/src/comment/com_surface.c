@@ -196,6 +196,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	// last == index == item->str;
 	if(deleteLastLF(index)<=0)
 		return NULL;
+	int fontdoubled = data->fontsize_fix;
 	int fixh = 0;
 	while(*index != '\0'){
 		if(*index=='[' && is_button==1){
@@ -221,7 +222,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 					// '\n'の次が'['の場合は
 					// retは上の段before_voteにする
 					if(html5)
-						fixh = adjustHeight(vote_nline,size,FALSE,data->fontsize_fix,html5);
+						fixh = adjustHeight(vote_nline,size,FALSE,fontdoubled,html5);
 					before_vote = connectSurface(before_vote,ret,fixh);
 					if(before_vote!=NULL && debug)
 						fprintf(log,"[comsurface/make.02]connect before_vote(%d, %d) line %d\n",before_vote->s->w,before_vote->h,vote_nline);
@@ -241,7 +242,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 					button_nline += nb_line;
 					//改行後のボタン開始
 					if(html5)
-						fixh = adjustHeight(button_nline,size,FALSE,data->fontsize_fix,html5);
+						fixh = adjustHeight(button_nline,size,FALSE,fontdoubled,html5);
 					before_button = connectSurface(ret,surf,fixh);
 					if(before_button!=NULL && debug)
 						fprintf(log,"[comsurface/make.03]connect before_button(%d, %d) %s line %d\n",before_button->w,before_button->h,COM_FONTSIZE_NAME[size],button_nline);
@@ -263,7 +264,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				nb_line++;
 				//複数行のボタン終了
 				if(html5)
-					fixh = adjustHeight(nb_line,size,FALSE,data->fontsize_fix,html5);
+					fixh = adjustHeight(nb_line,size,FALSE,fontdoubled,html5);
 				surf = connectSurface(ret,surf,fixh);
 				if(surf!=NULL && debug)
 					fprintf(log,"[comsurface/make.11]connectSurface surf(%d, %d) line %d\n",surf->w,surf->h,nb_line);
@@ -301,7 +302,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			}else{/*改行あり*/
 				nb_line++;
 				if(html5)
-					fixh = adjustHeight(nb_line,size,FALSE,data->fontsize_fix,html5);
+					fixh = adjustHeight(nb_line,size,FALSE,fontdoubled,html5);
 				ret = connectSurface(ret,surf,fixh);
 				if(ret!=NULL && debug)
 					fprintf(log,"[comsurface/make.21]connectSurface surf(%d, %d) %s line %d\n",ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
@@ -320,7 +321,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	}else{/*改行あり*/
 		nb_line++;
 		if(html5)
-			fixh = adjustHeight(nb_line,size,FALSE,data->fontsize_fix,html5);
+			fixh = adjustHeight(nb_line,size,FALSE,fontdoubled,html5);
 		ret = connectSurface(ret,surf,fixh);
 		if(debug && ret!=NULL)
 			fprintf(log,"[comsurface/make.31]connectSurface surf(%d, %d) %s line %d\n",ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
@@ -340,7 +341,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			nb_line += vote_nline;
 			// before_voteは今の段retにする
 			if(html5)
-				fixh = adjustHeight(nb_line,size,FALSE,data->fontsize_fix,html5);
+				fixh = adjustHeight(nb_line,size,FALSE,fontdoubled,html5);
 			ret = connectSurface(before_vote,ret,fixh);
 			if(ret!=NULL && debug)
 				fprintf(log,"[comsurface/make.34]connect surf(%d, %d) line %d\n",ret->w,ret->h,nb_line);
@@ -455,7 +456,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		//if(data->fontsize_fix || data->enableCA){
 		if(data->fontsize_fix){
 			zoomx *= autoscale;
-			if(data->fontsize_fix){
+			if(fontdoubled){
 				zoomx *= 0.5;
 			}
 			//zoomx = (0.5 * (double)video_width) / (double)data->nico_width_now;
@@ -484,7 +485,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		if(zoomx * 3 * ret->h > autoscale * NICO_HEIGHT && !item->ender){
 			// ダブルリサイズ検査
 			// 改行リサイズ＆改行後の倍率で臨界幅を超えた場合 → 改行リサイズキャンセル
-			double linefeed_zoom = linefeedResizeScale(size,nb_line,data->fontsize_fix,html5);
+			double linefeed_zoom = linefeedResizeScale(size,nb_line,fontdoubled,html5);
 			double resized_w = linefeed_zoom * zoomx * ret->w;
 			if((location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM)
 				&& isDoubleResize(resized_w, nicolimit_width, size, nb_line, log, item->full)){
@@ -537,6 +538,8 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 
 		// 画面サイズに合わせて変更
 		if(zoomx != 1.0f || zoomy != 1.0f){
+			int w = ret->w * zoomx;
+			int h = ret->h * zoomy;
 			if(debug)
 			fprintf(log,"[comsurface/make4]comment %d resized.(%5.2f%%,%5.2f%%)\n",item->no,zoomx*100,zoomy*100);
 			fflush(log);
@@ -548,6 +551,8 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				fflush(log);
 				return NULL;
 			}
+			if(html5)
+				ret = adjustCommentSize(ret,w,h);
 		}
 
 		fprintf(log,"[comsurface/make5]comment %d (%d, %d) %s %s %s %d lines %.0f nicolimit ",
@@ -595,7 +600,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	 * 文字の大きさで臨界幅は変動する←ニコ動に合わせるのは現状では無理？
 	 * 実験的に指定してみる
 	 */
-	if(data->fontsize_fix){
+	if(fontdoubled){
 		// nicolimit_width *= 2.0;
 		zoom_w *= 0.5;
 		zoom_h *= 0.5;
@@ -605,7 +610,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 
 	//	コメント高さ補正
 	if(!html5 && lf_control==0){
-		int h = adjustHeight(nb_line,size,FALSE,data->fontsize_fix,html5);
+		int h = adjustHeight(nb_line,size,FALSE,fontdoubled,html5);
 		if(h!=ret->h){
 			ret = adjustComment(ret,data,h);
 			if(debug && ret!=NULL)
@@ -772,7 +777,8 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			int dfs = COMMENT_FONT_SIZE[size];
 			double rsRate;
 			if(html5){
-				rsRate = floor(((nicolimit_width)/zoom_w) * (double)dfs) / dfs;
+				rsRate = (floor(nicolimit_width/zoom_w*(double)dfs)+1.0)
+					/ (double)(dfs+1);
 			}
 			else{
 				rsRate = (round(nicolimit_width/zoom_w*(double)dfs)+1.0)
@@ -814,6 +820,8 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 
 	//設定リサイズに合わせて変更
 	if(zoomx!=1.0 || zoomy!=1.0){
+		int w = zoomx * ret->w;
+		int h = zoomy * ret->h;
 		if(debug)
 		fprintf(log,"[comsurface/make4]comment %d resized.(%5.2f%%,%5.2f%%)\n",item->no,zoomx*100,zoomy*100);
 		h_Surface* tmp = ret;
@@ -824,6 +832,8 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			fflush(log);
 			return NULL;
 		}
+		if(html5)
+			ret = adjustCommentSize(ret,w,h);
 	}
 	fprintf(log,"[comsurface/make5]comment %d (%d, %d) %s %s %s %d lines %.0f nicolimit ",
 		item->no,ret->w,ret->h,COM_LOC_NAME[location],COM_FONTSIZE_NAME[item->size],
@@ -1015,10 +1025,7 @@ h_Surface* drawText2s(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fil
 		if(!is_blank(str, data)){
 			// 空白行でなければ
 			SDL_Surface* s;
-			if(shadow>=SHADOW_MAX)
-				s = customShadow(surf->s,is_black,SdlColor,data);
-			else
-				s = (*ShadowFunc[shadow])(surf->s,is_black,data->fontsize_fix,SdlColor);
+			s = (*ShadowFunc[shadow])(surf->s,is_black,SdlColor,data);
 			if(s==NULL){
 				surf = null;
 			} else {

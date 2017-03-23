@@ -34,9 +34,8 @@ typedef struct shadow_data {
 #define SHADOW_DOWNLEFT	0x20
 #define SHADOW_LEFT		0x10
 
-SDL_Surface* (*ShadowFunc[SHADOW_MAX])(SDL_Surface* surf,int is_black,int is_fix_size,SDL_Color c);
 #include "../main.h"
-SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data);
+SDL_Surface* (*ShadowFunc[SHADOW_MAX+1])(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data);
 void setting_shadow(const char* datastr, DATA* data);
 #include "../mydef.h"
 #endif /*SHADOW_H_*/

@@ -514,7 +514,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 				}
 			}
 			fprintf(log,"CAfont[%s]%s height is MEDIUM=%dpx %dpx(%dpx), BIG=%dpx %dpx(%dpx), SMALL=%dpx %dpx(%dpx)\n",
-				getfontname(f),(data->fontsize_fix?" Double scaled":""),
+				getfontname(f),(isfontdoubled?" Double scaled":""),
 				font_height[CMD_FONT_MEDIUM],line_skip[CMD_FONT_MEDIUM],data->font_pixel_size[CMD_FONT_MEDIUM],
 				font_height[CMD_FONT_BIG],line_skip[CMD_FONT_BIG],data->font_pixel_size[CMD_FONT_BIG],
 				font_height[CMD_FONT_SMALL],line_skip[CMD_FONT_SMALL],data->font_pixel_size[CMD_FONT_SMALL]
