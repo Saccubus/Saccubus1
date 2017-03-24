@@ -1120,11 +1120,26 @@ public class MainFrame extends JFrame {
 				mainFrame_loginCheck(loginStatusLabel);
 			}
 		});
-		loginCheckPanel.add(loginCheckButton,
-			new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, INSETS_0_5_0_5, 0, 0));
+		GridBagConstraints loginGBC; 
+		loginGBC = new GridBagConstraints(
+			1, 0,
+			1, 1,
+			0.0, 0.0,
+			GridBagConstraints.WEST,
+			GridBagConstraints.NONE,
+			INSETS_0_0_0_0,
+			0, 0);
+		loginCheckPanel.add(loginCheckButton,loginGBC);
 		loginStatusLabel.setText("");
-		loginCheckPanel.add(loginStatusLabel,
-			new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, INSETS_0_5_0_5, 0, 0));
+		loginGBC = new GridBagConstraints(
+			2, 0,
+			1, 1,
+			1.0, 0.0,
+			GridBagConstraints.WEST,
+			GridBagConstraints.HORIZONTAL,
+			INSETS_0_0_0_0,
+			0, 0);
+		loginCheckPanel.add(loginStatusLabel,loginGBC);
 		nicoLabel.setText("_");
 		nicoLabel.addMouseListener(new MouseListener() {
 			@Override
@@ -1161,15 +1176,41 @@ public class MainFrame extends JFrame {
 		});
 		html5CheckBox.setSelected(false);
 		html5CheckBox.setText("html5");
-		html5CheckBox.setToolTipText("html5プレイヤー使用を要求");
+		html5CheckBox.setToolTipText("html5プレーヤー使用を要求");
 		html5CheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setHtml5AutoDefault();
 			}
 		});
-		loginCheckPanel.add(html5CheckBox,
-			new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, INSETS_0_5_0_0, 0, 0));
+		loginGBC = new GridBagConstraints(
+			3, 0,
+			1, 1,
+			0.0, 0.0,
+			GridBagConstraints.WEST,
+			GridBagConstraints.NONE,
+			INSETS_0_0_0_0,
+			0, 0);
+		loginCheckPanel.add(html5CheckBox,loginGBC);
+		enableAutoHtml5CheckBox = new JCheckBox();
+		enableAutoHtml5CheckBox.setText("自");
+		enableAutoHtml5CheckBox.setForeground(Color.blue);
+		enableAutoHtml5CheckBox.setToolTipText("自動html5切替:コメント,影をhtml5プレーヤー使用に合わせる");
+		enableAutoHtml5CheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				enableAutoHtml5Action();
+			}
+		});
+		loginGBC = new GridBagConstraints(
+			4, 0,
+			1, 1,
+			0.0, 0.0,
+			GridBagConstraints.WEST,
+			GridBagConstraints.NONE,
+			INSETS_0_0_0_0,
+			0, 0);
+		loginCheckPanel.add(enableAutoHtml5CheckBox,loginGBC);
 		UserInfoPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
 				.createEtchedBorder(), "ユーザ設定"));
 		UserInfoPanel.setLayout(gridBagLayout3);
@@ -2461,22 +2502,22 @@ public class MainFrame extends JFrame {
 			grid8_y5_x0_w1.anchor = GridBagConstraints.WEST;
 			grid8_y5_x0_w1.fill = GridBagConstraints.NONE;
 			grid8_y5_x0_w1.insets = INSETS_0_5_0_5;
-			GridBagConstraints grid8_y5_x1_w1 = new GridBagConstraints();
-			grid8_y5_x1_w1.gridy = 5;
-			grid8_y5_x1_w1.gridx = 1;
-			grid8_y5_x1_w1.gridwidth = 1;
-			grid8_y5_x1_w1.weightx = 0.0;
-			grid8_y5_x1_w1.anchor = GridBagConstraints.WEST;
-			grid8_y5_x1_w1.fill = GridBagConstraints.HORIZONTAL;
-			grid8_y5_x1_w1.insets = INSETS_0_0_0_5;
-			GridBagConstraints grid8_y5_x2_w2 = new GridBagConstraints();
-			grid8_y5_x2_w2.gridy = 5;
-			grid8_y5_x2_w2.gridx = 2;
-			grid8_y5_x2_w2.gridwidth = 2;
-			grid8_y5_x2_w2.weightx = 0.0;
-			grid8_y5_x2_w2.anchor = GridBagConstraints.WEST;
-			grid8_y5_x2_w2.fill = GridBagConstraints.HORIZONTAL;
-			grid8_y5_x2_w2.insets = INSETS_0_0_0_5;
+			GridBagConstraints grid8_y5_x1_w2 = new GridBagConstraints();
+			grid8_y5_x1_w2.gridy = 5;
+			grid8_y5_x1_w2.gridx = 1;
+			grid8_y5_x1_w2.gridwidth = 2;
+			grid8_y5_x1_w2.weightx = 0.0;
+			grid8_y5_x1_w2.anchor = GridBagConstraints.WEST;
+			grid8_y5_x1_w2.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y5_x1_w2.insets = INSETS_0_0_0_5;
+			GridBagConstraints grid8_y5_x3_w2 = new GridBagConstraints();
+			grid8_y5_x3_w2.gridy = 5;
+			grid8_y5_x3_w2.gridx = 3;
+			grid8_y5_x3_w2.gridwidth = 2;
+			grid8_y5_x3_w2.weightx = 0.0;
+			grid8_y5_x3_w2.anchor = GridBagConstraints.WEST;
+			grid8_y5_x3_w2.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y5_x3_w2.insets = INSETS_0_0_0_5;
 			GridBagConstraints grid8_y3_x0_w1 = new GridBagConstraints();
 			grid8_y3_x0_w1.gridy = 3;
 			grid8_y3_x0_w1.gridx = 0;
@@ -2559,16 +2600,26 @@ public class MainFrame extends JFrame {
 			VhookSettingPanel.add(new JLabel("フォントパス"), grid8_y3_x0_w1);
 			VhookSettingPanel.add(getFontPathPanel(), grid8_y3_x1_w5);
 			VhookSettingPanel.add(new JLabel("フォント番号"), grid8_y5_x0_w1);
-			VhookSettingPanel.add(FontIndexField, grid8_y5_x1_w1);
-			normalFontButton.setText("細字");
-			normalFontButton.setToolTipText("normalフォントを使います(トグル)");
-			normalFontButton.addActionListener(new ActionListener() {
+			VhookSettingPanel.add(FontIndexField, grid8_y5_x1_w2);
+			normalFontCheckBox.setText("細");
+			normalFontCheckBox.setForeground(Color.blue);
+			normalFontCheckBox.setToolTipText("可能ならboldフォントを使いません(追加モード設定)");
+			normalFontCheckBox.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					setExtraNormalFont();
+					try {
+						String t = extraModeField.getText();
+						String s = "-normal";
+						t = t.replace(s, "").trim();
+						if(normalFontCheckBox.isSelected()){
+							if(!t.isEmpty()) t += " ";
+							t += "-normal";
+						}
+						extraModeField.setText(t);
+					}catch(NullPointerException e1){};
 				}
 			});
-			VhookSettingPanel.add(normalFontButton, grid8_y5_x2_w2);
+			VhookSettingPanel.add(normalFontCheckBox, grid8_y5_x3_w2);
 			shadowAutoSettingButton.setText("影既定");
 			shadowAutoSettingButton.setToolTipText("自動html5切替時の影の設定。");
 			VhookSettingPanel.add(shadowAutoSettingButton, grid8_y6_x4_w2);
@@ -2682,19 +2733,7 @@ public class MainFrame extends JFrame {
 			extraModeField.setText(s);
 		}catch(NullPointerException e){};
 	}
-	private void setExtraNormalFont(){
-		try {
-			String t = extraModeField.getText();
-			Matcher m = Pattern.compile(".*(-normal).*").matcher(t);
-			if(m.find()){
-				t = t.replace(m.group(1), "").trim();
-			}else{
-				if(!t.isEmpty()) t += " ";
-				t += "-normal";
-			}
-			extraModeField.setText(t);
-		}catch(NullPointerException e){};
-	}
+
 	private void resizeAdjustAction(boolean is_selected) {
 		resizeAdjustField.setEditable(is_selected);
 		resizeAdjustSlider.setEnabled(is_selected);
@@ -2804,24 +2843,6 @@ public class MainFrame extends JFrame {
 			grid20_x1_y7.fill = GridBagConstraints.HORIZONTAL;
 			grid20_x1_y7.insets = INSETS_0_0_0_0;
 			experimentPanel.add(enableHtml5CommentCheckBox, grid20_x1_y7);
-			enableAutoHtml5CheckBox.setText("自動html5切替");
-			enableAutoHtml5CheckBox.setForeground(Color.blue);
-			enableAutoHtml5CheckBox.setToolTipText("html5プレーヤー使用に合わせる。両対応は未定");
-			enableAutoHtml5CheckBox.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					enableAutoHtml5Action();
-				}
-			});
-			GridBagConstraints grid20_x2_y7 = new GridBagConstraints();
-			grid20_x2_y7.gridx = 2;
-			grid20_x2_y7.gridy = 7;
-			grid20_x2_y7.gridwidth = 2;
-			grid20_x2_y7.weightx = 0.0;
-			grid20_x2_y7.anchor = GridBagConstraints.NORTHWEST;
-			grid20_x2_y7.fill = GridBagConstraints.HORIZONTAL;
-			grid20_x2_y7.insets = INSETS_0_0_0_0;
-			experimentPanel.add(enableAutoHtml5CheckBox, grid20_x2_y7);
 			enableCA_CheckBox.setText("ＣＡフォント対応");
 			enableCA_CheckBox.setForeground(Color.blue);
 			enableCA_CheckBox.setToolTipText("多種類のフォントを使ってフォント変化を強制的に使用するようになります");
@@ -4144,7 +4165,7 @@ public class MainFrame extends JFrame {
 	JLabel MainOptionLabel = new JLabel();
 	JTextField MainOptionField = new JTextField();
 	JTextField FontIndexField = new JTextField();
-	JButton normalFontButton = new JButton();
+	JCheckBox normalFontCheckBox = new JCheckBox();
 	JLabel VideoID_Label = new JLabel();
 	JLabel WayBackLabel = new JLabel();
 	JTextField WayBackField = new JTextField();
