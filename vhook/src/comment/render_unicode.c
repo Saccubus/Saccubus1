@@ -13,8 +13,20 @@
 
 h_Surface* pointsConv(DATA* data,h_Surface* surf,Uint16* str,int size,int fontsel);
 h_Surface* widthFixConv(DATA *data,h_Surface* surf,Uint16 *str,int size,int fontsel);
-h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int size,int fontsel,int fill_bg){
+h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str1,SDL_Color fg,int size,int fontsel,int fill_bg){
 	//SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
+	//html5 font check
+	Uint16* str = str1;
+	if(data->html5comment){
+		int limit = 128;
+		while(*str!='\0' && --limit>0){
+			if(!isGlyphExist(data,fontsel,*str)){
+				*str = (Uint16)0x3000;
+			}
+			str++;
+		}
+		str = str1;
+	}
 	h_Surface* ret;
 	const char* mode=data->extra_mode;
 	if(strstr(mode,"-font")==NULL && !fill_bg){
