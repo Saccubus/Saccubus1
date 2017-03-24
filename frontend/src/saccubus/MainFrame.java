@@ -2461,14 +2461,22 @@ public class MainFrame extends JFrame {
 			grid8_y5_x0_w1.anchor = GridBagConstraints.WEST;
 			grid8_y5_x0_w1.fill = GridBagConstraints.NONE;
 			grid8_y5_x0_w1.insets = INSETS_0_5_0_5;
-			GridBagConstraints grid8_y5_x1_w5 = new GridBagConstraints();
-			grid8_y5_x1_w5.gridy = 5;
-			grid8_y5_x1_w5.gridx = 1;
-			grid8_y5_x1_w5.gridwidth = 5;
-			grid8_y5_x1_w5.weightx = 0.0;
-			grid8_y5_x1_w5.anchor = GridBagConstraints.WEST;
-			grid8_y5_x1_w5.fill = GridBagConstraints.HORIZONTAL;
-			grid8_y5_x1_w5.insets = INSETS_0_0_0_5;
+			GridBagConstraints grid8_y5_x1_w1 = new GridBagConstraints();
+			grid8_y5_x1_w1.gridy = 5;
+			grid8_y5_x1_w1.gridx = 1;
+			grid8_y5_x1_w1.gridwidth = 1;
+			grid8_y5_x1_w1.weightx = 0.0;
+			grid8_y5_x1_w1.anchor = GridBagConstraints.WEST;
+			grid8_y5_x1_w1.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y5_x1_w1.insets = INSETS_0_0_0_5;
+			GridBagConstraints grid8_y5_x2_w2 = new GridBagConstraints();
+			grid8_y5_x2_w2.gridy = 5;
+			grid8_y5_x2_w2.gridx = 2;
+			grid8_y5_x2_w2.gridwidth = 2;
+			grid8_y5_x2_w2.weightx = 0.0;
+			grid8_y5_x2_w2.anchor = GridBagConstraints.WEST;
+			grid8_y5_x2_w2.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y5_x2_w2.insets = INSETS_0_0_0_5;
 			GridBagConstraints grid8_y3_x0_w1 = new GridBagConstraints();
 			grid8_y3_x0_w1.gridy = 3;
 			grid8_y3_x0_w1.gridx = 0;
@@ -2551,7 +2559,16 @@ public class MainFrame extends JFrame {
 			VhookSettingPanel.add(new JLabel("フォントパス"), grid8_y3_x0_w1);
 			VhookSettingPanel.add(getFontPathPanel(), grid8_y3_x1_w5);
 			VhookSettingPanel.add(new JLabel("フォント番号"), grid8_y5_x0_w1);
-			VhookSettingPanel.add(FontIndexField, grid8_y5_x1_w5);
+			VhookSettingPanel.add(FontIndexField, grid8_y5_x1_w1);
+			normalFontButton.setText("細字");
+			normalFontButton.setToolTipText("normalフォントを使います(トグル)");
+			normalFontButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					setExtraNormalFont();
+				}
+			});
+			VhookSettingPanel.add(normalFontButton, grid8_y5_x2_w2);
 			shadowAutoSettingButton.setText("影既定");
 			shadowAutoSettingButton.setToolTipText("自動html5切替時の影の設定。");
 			VhookSettingPanel.add(shadowAutoSettingButton, grid8_y6_x4_w2);
@@ -2663,6 +2680,19 @@ public class MainFrame extends JFrame {
 			if(!t.isEmpty()) t += " ";
 			s = (t+s).trim();
 			extraModeField.setText(s);
+		}catch(NullPointerException e){};
+	}
+	private void setExtraNormalFont(){
+		try {
+			String t = extraModeField.getText();
+			Matcher m = Pattern.compile(".*(-normal).*").matcher(t);
+			if(m.find()){
+				t = t.replace(m.group(1), "").trim();
+			}else{
+				if(!t.isEmpty()) t += " ";
+				t += "-normal";
+			}
+			extraModeField.setText(t);
 		}catch(NullPointerException e){};
 	}
 	private void resizeAdjustAction(boolean is_selected) {
@@ -4114,6 +4144,7 @@ public class MainFrame extends JFrame {
 	JLabel MainOptionLabel = new JLabel();
 	JTextField MainOptionField = new JTextField();
 	JTextField FontIndexField = new JTextField();
+	JButton normalFontButton = new JButton();
 	JLabel VideoID_Label = new JLabel();
 	JLabel WayBackLabel = new JLabel();
 	JTextField WayBackField = new JTextField();
