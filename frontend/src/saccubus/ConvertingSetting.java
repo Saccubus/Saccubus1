@@ -212,6 +212,8 @@ public class ConvertingSetting {
 	private String panelHideMapping;
 	private int commentEraseType;
 	private boolean isHtml5;
+	private String shadowDefault;
+	private String html5ShadowDefault;
 	private boolean commentOffEnable;
 	private String commentOffSetting;
 	private boolean commentLFControl;
@@ -480,7 +482,9 @@ public class ConvertingSetting {
 			String zq_size_max,
 			String zq_fps_floor,
 			boolean html5_font,
-			boolean auto_html5_font
+			boolean auto_html5_font,
+			String shadow_default,
+			String html5_shadow_default
 		)
 	{
 		this(	mailaddress,
@@ -649,6 +653,8 @@ public class ConvertingSetting {
 		zqFpsFloor = zq_fps_floor;
 		enableHtml5Comment = html5_font;
 		enableAutoHtml5Comment = auto_html5_font;
+		shadowDefault = shadow_default;
+		html5ShadowDefault = html5_shadow_default;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1145,6 +1151,12 @@ public class ConvertingSetting {
 	public boolean isOnlyMp4AutoPlay() {
 		return onlyMp4AutoPlay;
 	}
+	public String getShadowDefault(){
+		return shadowDefault;
+	}
+	public String getHtml5ShadowDefault(){
+		return html5ShadowDefault;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String PROP_MAILADDR = "MailAddress";
@@ -1313,6 +1325,8 @@ public class ConvertingSetting {
 	static final String PROP_ZQ_FPS_FLOOR = "ZqFpsFloor";
 	static final String PROP_HTML5_COMMENT = "Html5CommentMode";
 	static final String PROP_AUTO_HTML5 = "AutoHtml5Comment";
+	static final String PROP_SHADOW_DEFAULT = "ShadowDefault";
+	static final String PROP_HTML5_SHADOW_DEFAULT = "Html5Shadow";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1554,6 +1568,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ZQ_FPS_FLOOR, setting.getZqFpsFloor());
 		prop.setProperty(PROP_HTML5_COMMENT, Boolean.toString(setting.isHtml5Comment()));
 		prop.setProperty(PROP_AUTO_HTML5, Boolean.toString(setting.isAutoHtml5Comment()));
+		prop.setProperty(PROP_SHADOW_DEFAULT, setting.getShadowDefault());
+		prop.setProperty(PROP_HTML5_SHADOW_DEFAULT, setting.getHtml5ShadowDefault());
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1851,7 +1867,9 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_ZQ_SIZE_MAX, ""),
 			prop.getProperty(PROP_ZQ_FPS_FLOOR, ""),
 			Boolean.parseBoolean(prop.getProperty(PROP_HTML5_COMMENT, "false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_HTML5, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_HTML5, "false")),
+			prop.getProperty(PROP_SHADOW_DEFAULT, ""),
+			prop.getProperty(PROP_HTML5_SHADOW_DEFAULT, "")
 		);
 	}
 

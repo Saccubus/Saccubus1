@@ -32,8 +32,11 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -175,6 +178,10 @@ public class MainFrame extends JFrame {
 	JLabel loginStatusLabel = new JLabel();
 	JLabel nicoLabel = new JLabel();
 	final JCheckBox html5CheckBox = new JCheckBox();
+	int html5Player = 0;
+	String[] html5PlayerArray = {"flash","html5"};
+	private String[] shadowDefaultSetting = new String[2];
+
 	JPanel UserInfoPanel = new JPanel();
 	GridBagLayout gridBagLayout3 = new GridBagLayout();
 	JLabel MailAddrLabel = new JLabel();
@@ -1155,6 +1162,12 @@ public class MainFrame extends JFrame {
 		html5CheckBox.setSelected(false);
 		html5CheckBox.setText("html5");
 		html5CheckBox.setToolTipText("html5プレイヤー使用を要求");
+		html5CheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setHtml5AutoDefault();
+			}
+		});
 		loginCheckPanel.add(html5CheckBox,
 			new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, INSETS_0_5_0_0, 0, 0));
 		UserInfoPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
@@ -2252,6 +2265,39 @@ public class MainFrame extends JFrame {
 		convertManager = new ConvertManager(new JLabel[] {statusBar, elapsedTimeBar, infoBar});
 		convertManager.start();
 	}
+	private void setHtml5AutoDefault(){
+		html5Player = html5CheckBox.isSelected()? 1 : 0;
+		if(enableAutoHtml5CheckBox.isSelected()){
+			setShadowDefault();
+			setHtml5Comment();
+		}
+	}
+	private void setShadowDefault(){
+		try {
+			String s = shadowDefaultSetting[html5Player];
+			if(s!=null && !s.isEmpty()){
+				String[] list = s.split(" ", 2);
+				Integer idx = Integer.decode(list[0]);
+				ShadowComboBox.setSelectedIndex(idx.intValue());
+				setExtraShadowText(list[1]);
+			}
+		}catch(Exception e){}
+	}
+	private void setHtml5Comment(){
+		if(enableAutoHtml5CheckBox.isSelected()){
+			enableHtml5CommentCheckBox.setEnabled(true);
+			enableHtml5CommentCheckBox.setSelected(html5CheckBox.isSelected());
+			enableHtml5CommentCheckBox.setEnabled(false);
+		}
+	}
+	private void enableAutoHtml5Action(){
+		setHtml5AutoDefault();
+		if(enableAutoHtml5CheckBox.isSelected()){
+			enableHtml5CommentCheckBox.setEnabled(false);
+		}else{
+			enableHtml5CommentCheckBox.setEnabled(true);
+		}
+	}
 
 	private String getTextField(JTextField input){
 		String val = "";
@@ -2392,14 +2438,22 @@ public class MainFrame extends JFrame {
 			grid8_y6_x0_w1.anchor = GridBagConstraints.WEST;
 			grid8_y6_x0_w1.fill = GridBagConstraints.NONE;
 			grid8_y6_x0_w1.insets = INSETS_0_5_0_5;
-			GridBagConstraints grid8_y6_x1_w5 = new GridBagConstraints();
-			grid8_y6_x1_w5.gridy = 6;
-			grid8_y6_x1_w5.gridx = 1;
-			grid8_y6_x1_w5.gridwidth = 5;
-			grid8_y6_x1_w5.weightx = 1.0;
-			grid8_y6_x1_w5.anchor = GridBagConstraints.WEST;
-			grid8_y6_x1_w5.fill = GridBagConstraints.HORIZONTAL;
-			grid8_y6_x1_w5.insets = INSETS_0_0_0_5;
+			GridBagConstraints grid8_y6_x1_w3 = new GridBagConstraints();
+			grid8_y6_x1_w3.gridy = 6;
+			grid8_y6_x1_w3.gridx = 1;
+			grid8_y6_x1_w3.gridwidth = 3;
+			grid8_y6_x1_w3.weightx = 1.0;
+			grid8_y6_x1_w3.anchor = GridBagConstraints.WEST;
+			grid8_y6_x1_w3.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y6_x1_w3.insets = INSETS_0_0_0_5;
+			GridBagConstraints grid8_y6_x4_w2 = new GridBagConstraints();
+			grid8_y6_x4_w2.gridy = 6;
+			grid8_y6_x4_w2.gridx = 4;
+			grid8_y6_x4_w2.gridwidth = 2;
+			grid8_y6_x4_w2.weightx = 0.0;
+			grid8_y6_x4_w2.anchor = GridBagConstraints.WEST;
+			grid8_y6_x4_w2.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y6_x4_w2.insets = INSETS_0_0_0_5;
 			GridBagConstraints grid8_y5_x0_w1 = new GridBagConstraints();
 			grid8_y5_x0_w1.gridy = 5;
 			grid8_y5_x0_w1.gridx = 0;
@@ -2411,7 +2465,7 @@ public class MainFrame extends JFrame {
 			grid8_y5_x1_w5.gridy = 5;
 			grid8_y5_x1_w5.gridx = 1;
 			grid8_y5_x1_w5.gridwidth = 5;
-			grid8_y5_x1_w5.weightx = 1.0;
+			grid8_y5_x1_w5.weightx = 0.0;
 			grid8_y5_x1_w5.anchor = GridBagConstraints.WEST;
 			grid8_y5_x1_w5.fill = GridBagConstraints.HORIZONTAL;
 			grid8_y5_x1_w5.insets = INSETS_0_0_0_5;
@@ -2498,9 +2552,48 @@ public class MainFrame extends JFrame {
 			VhookSettingPanel.add(getFontPathPanel(), grid8_y3_x1_w5);
 			VhookSettingPanel.add(new JLabel("フォント番号"), grid8_y5_x0_w1);
 			VhookSettingPanel.add(FontIndexField, grid8_y5_x1_w5);
+			shadowAutoSettingButton.setText("影既定");
+			shadowAutoSettingButton.setToolTipText("自動html5切替時の影の設定。");
+			VhookSettingPanel.add(shadowAutoSettingButton, grid8_y6_x4_w2);
+			shadowAutoSettingButton.addActionListener(new ActionListener() {
+				JLabel label1 = new JLabel("この影を現在のプレーヤーの規定値とします。");
+				JLabel label2 = new JLabel();
+				JLabel label3 = new JLabel();
+				JLabel label4 = new JLabel("自動html5切換オフ時は規定値は無効");
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					int player = html5CheckBox.isSelected()? 1 : 0;
+					int shadowIndex = ShadowComboBox.getSelectedIndex();
+					String extraShadow = getExtraShadowText();
+					String extraShadow2 = "";
+					if(!extraShadow.isEmpty())
+						extraShadow2 = "、　"+extraShadow;
+					label2.setText("プレーヤー：　"+html5PlayerArray[player]);
+					label2.setForeground(Color.blue);
+					label3.setText("既定の影　"+ShadowComboBox.getItemAt(shadowIndex)+extraShadow2);
+					label3.setForeground(Color.blue);
+					Box message = Box.createVerticalBox();
+					message.add(label1);
+					message.add(Box.createVerticalStrut(10));
+					message.add(label2);
+					message.add(Box.createVerticalStrut(10));
+					message.add(label3);
+					message.add(Box.createVerticalStrut(10));
+					message.add(label4);
+					int shadowNotice =
+					JOptionPane.showConfirmDialog(
+						MainFrame.MasterMainFrame,
+						message,
+						"影切替自動設定", JOptionPane.OK_CANCEL_OPTION
+					);
+					if(shadowNotice==JOptionPane.OK_OPTION){
+						shadowDefaultSetting[player] = Integer.toString(shadowIndex)+" "+extraShadow;
+					}
+				}
+			});
 			VhookSettingPanel.add(new JLabel("影の種類"), grid8_y6_x0_w1);
 			ShadowComboBox = new JComboBox<String>(ConvertingSetting.ShadowKindArray);
-			VhookSettingPanel.add(ShadowComboBox, grid8_y6_x1_w5);
+			VhookSettingPanel.add(ShadowComboBox, grid8_y6_x1_w3);
 			FixFontSizeCheckBox.setText("フォントサイズを自動調整");
 			VhookSettingPanel.add(FixFontSizeCheckBox, grid8_y7_x0_w2);
 			resizeAdjustCheckBox.setText("補正%");
@@ -2550,7 +2643,28 @@ public class MainFrame extends JFrame {
 		}
 		return VhookSettingPanel;
 	}
-
+	private String getExtraShadowText(){
+		try {
+			String t = extraModeField.getText();
+			Matcher m = Pattern.compile(".*(-shadow=[^ ]*).*").matcher(t);
+			if(m.find())
+				return m.group(1);
+		}catch(NullPointerException e){};
+		return "";
+	}
+	private void setExtraShadowText(String s){
+		if(s==null) s = "";
+		try{
+			String t = extraModeField.getText();
+			String s0 = getExtraShadowText();
+			if(!s0.isEmpty()){
+				t = t.replace(s0, "").trim();
+			}
+			if(!t.isEmpty()) t += " ";
+			s = (t+s).trim();
+			extraModeField.setText(s);
+		}catch(NullPointerException e){};
+	}
 	private void resizeAdjustAction(boolean is_selected) {
 		resizeAdjustField.setEditable(is_selected);
 		resizeAdjustSlider.setEnabled(is_selected);
@@ -2660,13 +2774,13 @@ public class MainFrame extends JFrame {
 			grid20_x1_y7.fill = GridBagConstraints.HORIZONTAL;
 			grid20_x1_y7.insets = INSETS_0_0_0_0;
 			experimentPanel.add(enableHtml5CommentCheckBox, grid20_x1_y7);
-			enableAutoHtml5CheckBox.setText("自動html5切り替え");
+			enableAutoHtml5CheckBox.setText("自動html5切替");
 			enableAutoHtml5CheckBox.setForeground(Color.blue);
 			enableAutoHtml5CheckBox.setToolTipText("html5プレーヤー使用に合わせる。両対応は未定");
 			enableAutoHtml5CheckBox.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					enableHtml5CommentCheckBox.setEnabled(!enableAutoHtml5CheckBox.isSelected());
+					enableAutoHtml5Action();
 				}
 			});
 			GridBagConstraints grid20_x2_y7 = new GridBagConstraints();
@@ -3753,7 +3867,9 @@ public class MainFrame extends JFrame {
 			zqSizeMaxField.getText(),
 			zqFpsRangeField.getText(),
 			enableHtml5CommentCheckBox.isSelected(),
-			enableAutoHtml5CheckBox.isSelected()
+			enableAutoHtml5CheckBox.isSelected(),
+			shadowDefaultSetting[0],
+			shadowDefaultSetting[1]
 		);
 	}
 
@@ -3957,6 +4073,9 @@ public class MainFrame extends JFrame {
 		zqFpsRangeField.setText(setting.getZqFpsFloor());
 		enableHtml5CommentCheckBox.setSelected(setting.isHtml5Comment());
 		enableAutoHtml5CheckBox.setSelected(setting.isAutoHtml5Comment());
+		shadowDefaultSetting[0] = setting.getShadowDefault();
+		shadowDefaultSetting[1] = setting.getHtml5ShadowDefault();
+		setHtml5AutoDefault();
 	}
 
 	/**
@@ -5576,6 +5695,7 @@ s	 * @return javax.swing.JPanel
 	private JCheckBox NotUseVhookCheckBox = new JCheckBox();
 	private JTextField ViewCommentField = new JTextField();
 	private JComboBox<String> ShadowComboBox = null;
+	private JButton shadowAutoSettingButton = new JButton();
 
 	/**
 	 * Initialize FFmpegOptionComboBox
