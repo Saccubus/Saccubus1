@@ -7,6 +7,7 @@
 #define NICO_HEIGHT	384
 #define NICO_HEIGHT_WIDE 360
 #define NICO_WIDTH_WIDE	640
+#define HTML5_WIDTH_NARROW	480
 #define NICO_COMMENT_HIGHT 385
 #define NICO_LIMIT_WIDTH	544
 #define NICO_LIMIT_WIDTH_WIDE	672
@@ -407,25 +408,42 @@ static const float HTML5_PIXEL_SIZE[2][CMD_FONT_MAX][2] = {
 #define HTML5_FONT_MINCHO 1
 #define HTML5_FONT_GOTHIC 2
 
-static const int HTML5_2000_WIDTH[16][CMD_FONT_MAX] = {
-//	DEF BIG SMALL MEDIUM msgothic.ttc#1
-	{13,19, 9,13},		//2000
-	{26,38,18,26},		//2001
-	{13,19, 9,13},		//2002
-	{26,38,18,26},		//2003
-	{ 9,13, 6, 9},		//2004
-	{ 7,10, 5, 7},		//2005
-	{ 5, 7, 3, 5},		//2006
-	{13,19, 9,13},		//2007
-	{ 5, 7, 3, 5},		//2008
-	{ 4, 6, 3, 4},		//2009
-	{ 3, 3, 2, 3},		//200a
+static const float HTML5_2000_WIDTH[16][CMD_FONT_MAX] = {
+//	DEF  BIG   SMALL MEDIUM msgothic.ttc#1
+	{13  ,19,   9,  13},		//2000
+	{26  ,38,  19,  26},		//2001
+	{13  ,19,   9,  13},		//2002
+	{26  ,38,  19,  26},		//2003
+	{ 9  ,13,   6,   9},		//2004
+	{ 6.5,10,   5, 6.5},		//2005
+	{ 4.3,6.3,3.2, 4.3},		//2006
+	{13,  19,   9,  13},		//2007
+	{ 5,   7,   3,   5},		//2008
+	{ 5,   7,   3,   5},		//2009
+	{ 3,   3,   2,   3},		//200a
 	{ 0, 0, 0, 0},		//200b
 	{ 0, 0, 0, 0},		//200c
 	{ 0, 0, 0, 0},		//200d
 	{ 0, 0, 0, 0},		//200e
 	{ 0, 0, 0, 0},		//200f
 };
+static const float HTML5_SPACE_WIDTH[CMD_FONT_MAX] = {
+//ASCII SPACE 0020/00A0 arial.ttf
+	6.625,9.57,4.45,6.625	//2012.3.24ïœçX
+};
+#define HTML5_3000_WIDTH_SZ	4
+static const float HTML5_3000_WIDTH[CA_FONT_3000_WIDTH_SZ][CMD_FONT_MAX] = {
+//KANJI SPACE 3000 msgothic.ttc#1
+	{25.6,36.7,17.1,25.6},	//defont(gothic)
+	{25.6,36.7,17.1,25.6},	//mincho(simsun)
+	{25.6,36.7,17.1,25.6},	//gothic(gulim)
+	{25.6,36.7,17.1,25.6},	//Arial
+};
+static const int HTML5_TAB_WIDTH[CMD_FONT_MAX] = {
+//TAB SPACE 0009
+	52,76,36,52,
+};
+
 static const int HTML5_FONT_WIDTH_TUNED[4][2][CMD_FONT_MAX] = {
 //	{{DEF,BIG,SMALL,MEDIUM,},{DEF,BIG,SMALL,MEDIUM,}}
 	{{24,35,17,24,},{48,69,33,48,}},	//gothic for DEFONT

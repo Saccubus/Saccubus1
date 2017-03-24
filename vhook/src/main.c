@@ -231,7 +231,17 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	// 弾幕モードの高さの設定　16:9でオリジナルリサイズでない場合は上下にはみ出す
 	// Qwatch,html5commentのときは、はみ出さない
 	//comment area height is independent from video height
-	data->nico_height = data->html5comment? NICO_HEIGHT_WIDE : NICO_HEIGHT;
+	if(data->html5comment){
+		if(data->nico_width_now==NICO_WIDTH_WIDE){
+			// wide mode
+			data->nico_height = NICO_HEIGHT_WIDE;
+		}else{
+			// 4:3 mode
+			data->nico_height = NICO_HEIGHT_WIDE;
+			data->nico_width_now = HTML5_WIDTH_NARROW;
+		}
+	}else
+		data->nico_height = NICO_HEIGHT;
 	data->width_scale = (double)data->vout_width / (double)data->nico_width_now;
 	double height_scale = (double)data->vout_height / (double)data->nico_height;
 	int comment_height = lround(data->width_scale * data->nico_height);
@@ -680,10 +690,9 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 			fprintf(log,"[main/process]screen size != video size\n");
 			fprintf(log,"[main/process]this may be woring Ver.%s\n",data->version);
 		}
-		int nico_height = data->html5comment? NICO_HEIGHT_WIDE : NICO_HEIGHT;
 		fprintf(log,"[main/process]screen %dx%d, video %dx%d, comment %.0fx%.0f\n",
 			surf->w,surf->h,data->vout_width,data->vout_height,
-			data->width_scale*data->nico_width_now,data->width_scale*nico_height);
+			data->width_scale*data->nico_width_now,data->width_scale*data->nico_height);
 		data->aspect_rate = (float)data->vout_width/(float)data->vout_height;
 		fprintf(log,"[main/process]screen aspect:%.3f->%.3f scale:%.2f%%.\n",
 			(float)surf->w / (float)surf->h,

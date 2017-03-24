@@ -1055,6 +1055,7 @@ h_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,Ui
 	int debug = data->debug;
 	int h = data->font_pixel_size[size];
 	int fontsel = GET_TYPE(fonttype);	//get fonttype
+	int html5 = data->html5comment;
 
 	//UI‚©‚ç‚Ìs‘—‚è§Œä
 	if(data->comment_lf_control!=0){
@@ -1067,55 +1068,99 @@ h_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,Ui
 	if(isSpaceFont(fonttype)){	//fonttype is one of space-char's
 		Uint16 code = GET_CODE(fonttype);	//get unicode0
 		int w = data->fontsize_fix;
-		if(code==CA_CODE_SPACE_0020 || code==CA_CODE_SPACE_00A0){
-			// half space
-			w = (CA_FONT_SPACE_WIDTH[size] * len)<<w;
-			//continue to draw
-		}else if(code==CA_CODE_SPACE_3000){
-			// full space
-			if(fontsel < GOTHIC_FONT || (fontsel > GULIM_FONT && fontsel!=MINGLIU_FONT)){	//fonttype should be 0..2 (gothic,simsun,gulim)
-				fprintf(log,"[comsurface/drawText3]fontsel error %d\n",fonttype);
+		if(html5){
+			double fw = w? 2.0:1.0;
+			if(code==CA_CODE_SPACE_0020 || code==CA_CODE_SPACE_00A0){
+				// half space
+				w = (int)lround(HTML5_SPACE_WIDTH[size] * len * fw);
+				//continue to draw
+			}else if(code==CA_CODE_SPACE_3000){
+				// full space
+				if(fontsel < GOTHIC_FONT || (fontsel > GULIM_FONT && fontsel!=MINGLIU_FONT)){	//fonttype should be 0..2 (gothic,simsun,gulim)
+					fprintf(log,"[comsurface/drawText3/html5]fontsel error %d\n",fonttype);
+					fflush(log);
+					return NULL;
+				}
+				// here, fontsel 0(GOTHIC) 1(SIMSUN), 2(GULIM),8(MINGLIU)
+				w = (int)lround(HTML5_3000_WIDTH[GOTHIC_FONT][size] * len * fw);
+				//continue to draw
+			}else if(isZeroWidth(code)){
+				// zero width
+				w = 0;
+				fprintf(log,"[comsurface/drawText3/html5]found ZERO width char 0x%04x\n",code);
+				//continue to draw
+			}else if((code & 0xfff0)==CA_CODE_SPACE_2000){
+				//code should be 2000..200a 200c
+				//Here, it assumed fonttype should belog to GOTHIC
+				//but width of 2000 series DIFFERS when SIMSUN (or GULIM?) in Windows7
+				//futhermore it FAULTS (TOUFU) when ARIAL in XP
+				w = (int)lround(HTML5_2000_WIDTH[code & 0x000f][size] * len *fw);
+			}else if(code==CA_CODE_SPACE_0009){
+				// code 0009 TAB
+				w = (HTML5_TAB_WIDTH[size] * len)<<w;
+				//continue to draw
+			}else if(code==CA_CODE_NOGLYPH_SIMSUN){
+				// code e800 NoGlyph Simsun
+				w = (int)lround(HTML5_3000_WIDTH[SIMSUN_FONT][size] * len * fw);
+				//continue to draw
+			}else if(code==CA_CODE_NOGLYPH_MINGLIU){
+				// code e900 NoGlyph MingLiu same width simsun
+				// but it makes TOUFU in XP
+				w = (int)lround(HTML5_3000_WIDTH[SIMSUN_FONT][size] * len * fw);
+				//continue to draw
+			}else {
+				fprintf(log,"[comsurface/drawText3/html5]fontsel error(B) %d\n",fonttype);
 				fflush(log);
 				return NULL;
 			}
-			// here, fontsel 0(GOTHIC) 1(SIMSUN), 2(GULIM),8(MINGLIU)
-			if(fontsel==GOTHIC_FONT)
-				w = (CA_FONT_3000_WIDTH[GOTHIC_FONT][size] * len)<<w;
-			else
-				//other 3000 space is full kanji width, same as Simsun
-				w = (CA_FONT_3000_WIDTH[SIMSUN_FONT][size] * len)<<w;
-			//continue to draw
-		}else if(isZeroWidth(code)){
-			// zero width
-			w = 0;
-			fprintf(log,"[comsurface/drawText3]found ZERO width char 0x%04x\n",code);
-			//continue to draw
-		}else if((code & 0xfff0)==CA_CODE_SPACE_2000){
-			//code should be 2000..200a 200c
-			//Here, it assumed fonttype should belog to GOTHIC
-			//but width of 2000 series DIFFERS when SIMSUN (or GULIM?) in Windows7
-			//futhermore it FAULTS (TOUFU) when ARIAL in XP
-			if(data->html5comment)
-				w = (HTML5_2000_WIDTH[code & 0x000f][size] * len)<<w;
-			else
+		}else{
+			if(code==CA_CODE_SPACE_0020 || code==CA_CODE_SPACE_00A0){
+				// half space
+				w = (CA_FONT_SPACE_WIDTH[size] * len)<<w;
+				//continue to draw
+			}else if(code==CA_CODE_SPACE_3000){
+				// full space
+				if(fontsel < GOTHIC_FONT || (fontsel > GULIM_FONT && fontsel!=MINGLIU_FONT)){	//fonttype should be 0..2 (gothic,simsun,gulim)
+					fprintf(log,"[comsurface/drawText3]fontsel error %d\n",fonttype);
+					fflush(log);
+					return NULL;
+				}
+				// here, fontsel 0(GOTHIC) 1(SIMSUN), 2(GULIM),8(MINGLIU)
+				if(fontsel==GOTHIC_FONT)
+					w = (CA_FONT_3000_WIDTH[GOTHIC_FONT][size] * len)<<w;
+				else
+					//other 3000 space is full kanji width, same as Simsun
+					w = (CA_FONT_3000_WIDTH[SIMSUN_FONT][size] * len)<<w;
+				//continue to draw
+			}else if(isZeroWidth(code)){
+				// zero width
+				w = 0;
+				fprintf(log,"[comsurface/drawText3]found ZERO width char 0x%04x\n",code);
+				//continue to draw
+			}else if((code & 0xfff0)==CA_CODE_SPACE_2000){
+				//code should be 2000..200a 200c
+				//Here, it assumed fonttype should belog to GOTHIC
+				//but width of 2000 series DIFFERS when SIMSUN (or GULIM?) in Windows7
+				//futhermore it FAULTS (TOUFU) when ARIAL in XP
 				w = (CA_FONT_2000_WIDTH[code & 0x000f][size] * len)<<w;
-		}else if(code==CA_CODE_SPACE_0009){
-			// code 0009 TAB
-			w = (CA_FONT_TAB_WIDTH[size] * len)<<w;
-			//continue to draw
-		}else if(code==CA_CODE_NOGLYPH_SIMSUN){
-			// code e800 NoGlyph Simsun
-			w = (CA_FONT_3000_WIDTH[SIMSUN_FONT][size] * len)<<w;
-			//continue to draw
-		}else if(code==CA_CODE_NOGLYPH_MINGLIU){
-			// code e900 NoGlyph MingLiu same width simsun
-			// but it makes TOUFU in XP
-			w = (CA_FONT_3000_WIDTH[SIMSUN_FONT][size] * len)<<w;
-			//continue to draw
-		}else {
-			fprintf(log,"[comsurface/drawText3]fontsel error %d\n",fonttype);
-			fflush(log);
-			return NULL;
+			}else if(code==CA_CODE_SPACE_0009){
+				// code 0009 TAB
+				w = (CA_FONT_TAB_WIDTH[size] * len)<<w;
+				//continue to draw
+			}else if(code==CA_CODE_NOGLYPH_SIMSUN){
+				// code e800 NoGlyph Simsun
+				w = (CA_FONT_3000_WIDTH[SIMSUN_FONT][size] * len)<<w;
+				//continue to draw
+			}else if(code==CA_CODE_NOGLYPH_MINGLIU){
+				// code e900 NoGlyph MingLiu same width simsun
+				// but it makes TOUFU in XP
+				w = (CA_FONT_3000_WIDTH[SIMSUN_FONT][size] * len)<<w;
+				//continue to draw
+			}else {
+				fprintf(log,"[comsurface/drawText3]fontsel error(C) %d\n",fonttype);
+				fflush(log);
+				return NULL;
+			}
 		}
 		//draw here
 		h_Surface* ret = drawNullSurface(w,h);

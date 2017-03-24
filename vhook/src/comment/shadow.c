@@ -441,7 +441,7 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	/*スライド幅の確定*/
 	int is_fix_size = data->fontsize_fix;
 	int slide = HTML5_SHADOW_SIZE;
-	int gmax = 0xff;
+	int gmax = 0xc0;
 	if(data->shadow_data.slide>0){
 		slide = data->shadow_data.slide;
 		gmax *= data->shadow_data.grad_max / 100;
