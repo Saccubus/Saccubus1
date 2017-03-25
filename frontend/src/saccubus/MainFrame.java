@@ -2624,10 +2624,10 @@ public class MainFrame extends JFrame {
 			shadowAutoSettingButton.setToolTipText("自動html5切替時の影の設定。");
 			VhookSettingPanel.add(shadowAutoSettingButton, grid8_y6_x4_w2);
 			shadowAutoSettingButton.addActionListener(new ActionListener() {
-				JLabel label1 = new JLabel("この影を現在のプレーヤーの規定値とします。");
+				JLabel label1 = new JLabel("この影を現在のプレーヤーの既定値とします。");
 				JLabel label2 = new JLabel();
 				JLabel label3 = new JLabel();
-				JLabel label4 = new JLabel("自動html5切換オフ時は規定値は無効");
+				JLabel label4 = new JLabel("自動html5切換オフ時は既定値は無効");
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					int player = html5CheckBox.isSelected()? 1 : 0;
