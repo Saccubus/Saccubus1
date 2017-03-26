@@ -12,8 +12,7 @@ import javax.swing.DefaultComboBoxModel;
  * @author Account01
  *
  */
-@SuppressWarnings("rawtypes")
-public class FFmpegComboBoxModel extends DefaultComboBoxModel {
+public class FFmpegComboBoxModel extends DefaultComboBoxModel<FFmpegSelectedItem> {
 	/**
 	 *
 	 */
@@ -38,6 +37,7 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel {
 		if (folder.isDirectory()){
 			optionFoler = folder;
 		}
+		reload();
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel {
 	 * インデックスからオブジェクトを返す。
 	 */
 	@Override
-	public Object getElementAt(int index) {
+	public FFmpegSelectedItem getElementAt(int index) {
 		if (index == 0) {
 			return DEFAULT_ITEM;
 		} else if (index < Size) {

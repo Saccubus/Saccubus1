@@ -3650,8 +3650,7 @@ public class MainFrame extends JFrame {
 	private JTextField zqVhookPathField = new JTextField();
 	private JButton zqSettingVhookPathButton = new JButton();
 	private JPanel zqFFmpegSettingPanel = new JPanel();
-	@SuppressWarnings("rawtypes")
-	private JComboBox zqFFmpegOptionComboBox = null;
+	private JComboBox<FFmpegSelectedItem> zqFFmpegOptionComboBox = null;
 	private JButton zqFFmpegOptionReloadButton = null;
 	private JPanel zqFFmpegOptionComboBoxPanel = null;
 	private JTextArea zqOptionFileDescription = new JTextArea("",2,20);
@@ -4028,6 +4027,7 @@ public class MainFrame extends JFrame {
 		OptionPathField.setText(setting.getOptionFolder());
 		FFmpegOptionModel.setOptionFolder(setting.getOptionFolder());
 		FFmpegOptionModel.reload(setting.getOptionFile());
+		FFmpegOptionReload();
 		NotUseVhookCheckBox.setSelected(setting.isVhookDisabled());
 		ShadowComboBox.setSelectedIndex(setting.getShadowIndex());
 		AddOption_ConvVideoFileCheckBox.setSelected(setting.isAddOption_ConvVideoFile());
@@ -4045,6 +4045,7 @@ public class MainFrame extends JFrame {
 		BrowserCookieField.setText(setting.getBrowserCookiePath());
 		WideFFmpegOptionModel.setOptionFolder(setting.getOptionFolder());
 		WideFFmpegOptionModel.reload(setting.getWideOptionFile());
+		WideFFmpegOptionReload();
 		wideExtOptionField.setText(setting.getWideCmdLineOptionExt());
 		wideMainOptionField.setText(setting.getWideCmdLineOptionMain());
 		wideCommandLineOutOptionField.setText(setting.getWideCmdLineOptionOut());
@@ -4082,6 +4083,7 @@ public class MainFrame extends JFrame {
 		zqVhookPathField.setText(setting.getZqVhookPath());
 		zqFFmpegOptionModel.setOptionFolder(setting.getOptionFolder());
 		zqFFmpegOptionModel.reload(setting.getZqOptionFile());
+		zqFFmpegOptionReload();
 		zqExtOptionField.setText(setting.getZqCmdLineOptionExt());
 		zqMainOptionField.setText(setting.getZqCmdLineOptionMain());
 		zqCommandLineOutOptionField.setText(setting.getZqCmdLineOptionOut());
@@ -4243,10 +4245,8 @@ public class MainFrame extends JFrame {
 	private JPanel VideoSavingTabbedPanel = null;
 	private JPanel ConvertedVideoSavingTabbedPanel = null;
 	private JCheckBox NotAddVideoID_ConvVideoCheckBox = new JCheckBox();
-	@SuppressWarnings("rawtypes")
-	private JComboBox FFmpegOptionComboBox = null;
-	@SuppressWarnings("rawtypes")
-	private JComboBox WideFFmpegOptionComboBox = null;
+	private JComboBox<FFmpegSelectedItem> FFmpegOptionComboBox = null;
+	private JComboBox<FFmpegSelectedItem> WideFFmpegOptionComboBox = null;
 	private JButton FFmpegOptionReloadButton = null;
 	private JButton WideFFmpegOptionReloadButton = null;
 	private JPanel FFmpegOptionComboBoxPanel = null;
@@ -5776,10 +5776,9 @@ s	 * @return javax.swing.JPanel
 	 * Initialize FFmpegOptionComboBox
 	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private JComboBox getFFmpegOptionComboBox() {
+	private JComboBox<FFmpegSelectedItem> getFFmpegOptionComboBox() {
 		if (FFmpegOptionComboBox == null) {
-			FFmpegOptionComboBox = new JComboBox(FFmpegOptionModel);
+			FFmpegOptionComboBox = new JComboBox<FFmpegSelectedItem>(FFmpegOptionModel);
 			FFmpegOptionComboBox
 					.addActionListener(new ActionListener() {
 						@Override
@@ -5816,10 +5815,9 @@ s	 * @return javax.swing.JPanel
 	 * Initialize WideFFmpegOptionComboBox
 	 * @return
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private JComboBox getWideFFmpegOptionComboBox() {
+	private JComboBox<FFmpegSelectedItem> getWideFFmpegOptionComboBox() {
 		if (WideFFmpegOptionComboBox == null) {
-			WideFFmpegOptionComboBox = new JComboBox(WideFFmpegOptionModel);
+			WideFFmpegOptionComboBox = new JComboBox<FFmpegSelectedItem>(WideFFmpegOptionModel);
 			WideFFmpegOptionComboBox
 					.addActionListener(new ActionListener() {
 						@Override
@@ -5858,10 +5856,9 @@ s	 * @return javax.swing.JPanel
 	 * Initialize WideFFmpegOptionComboBox
 	 * @return
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private JComboBox getZqFFmpegOptionComboBox() {
+	private JComboBox<FFmpegSelectedItem> getZqFFmpegOptionComboBox() {
 		if (zqFFmpegOptionComboBox == null) {
-			zqFFmpegOptionComboBox = new JComboBox(zqFFmpegOptionModel);
+			zqFFmpegOptionComboBox = new JComboBox<FFmpegSelectedItem>(zqFFmpegOptionModel);
 			zqFFmpegOptionComboBox
 					.addActionListener(new ActionListener() {
 						@Override
@@ -5939,29 +5936,32 @@ s	 * @return javax.swing.JPanel
 		if (FFmpegOptionReloadButton == null) {
 			FFmpegOptionReloadButton = new JButton();
 			FFmpegOptionReloadButton.setText("更新");
-			FFmpegOptionReloadButton
-					.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							FFmpegOptionModel.reload();
-							if (!FFmpegOptionModel.isFile()) {// ファイルでない
-								Properties prop = new Properties();
-								try {
-									prop.loadFromXML(new FileInputStream(ConvertingSetting.PROP_FILE));
-								} catch (IOException ex) {
-									sendtext("設定1のオプションファイルが更新できません。");
-									ex.printStackTrace();
-									return;
-								}
-								ExtOptionField.setText(prop.getProperty("CMD_EXT", ""));
-								MainOptionField.setText(prop.getProperty("CMD_MAIN", ""));
-								CommandLineInOptionField.setText(prop.getProperty("CMD_IN", ""));
-								CommandLineOutOptionField.setText(prop.getProperty("CMD_OUT", ""));
-							}
-						}
-					});
+			FFmpegOptionReloadButton.addActionListener(
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						FFmpegOptionReload();
+					}
+				});
 		}
 		return FFmpegOptionReloadButton;
+	}
+	void FFmpegOptionReload(){
+		FFmpegOptionModel.reload();
+		if (!FFmpegOptionModel.isFile()) {// ファイルでない
+			Properties prop = new Properties();
+			try {
+				prop.loadFromXML(new FileInputStream(ConvertingSetting.PROP_FILE));
+			} catch (IOException ex) {
+				sendtext("設定1のオプションファイルが更新できません。");
+				ex.printStackTrace();
+				return;
+			}
+			ExtOptionField.setText(prop.getProperty("CMD_EXT", ""));
+			MainOptionField.setText(prop.getProperty("CMD_MAIN", ""));
+			CommandLineInOptionField.setText(prop.getProperty("CMD_IN", ""));
+			CommandLineOutOptionField.setText(prop.getProperty("CMD_OUT", ""));
+		}
 	}
 	/**
 	 * This method initializes WideFFmpegOptionReloadButton
@@ -5973,32 +5973,34 @@ s	 * @return javax.swing.JPanel
 			WideFFmpegOptionReloadButton = new JButton();
 			WideFFmpegOptionReloadButton.setText("更新");
 			WideFFmpegOptionReloadButton.setForeground(Color.blue);
-			WideFFmpegOptionReloadButton
-					.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							WideFFmpegOptionModel.reload();
-							if (!WideFFmpegOptionModel.isFile()) {// ファイルでない
-								Properties prop = new Properties();
-								try {
-									prop.loadFromXML(new FileInputStream(
-										ConvertingSetting.PROP_FILE));
-								} catch (IOException ex) {
-									sendtext("設定2のオプションファイルが更新できません。");
-									ex.printStackTrace();
-									return;
-								}
-								wideExtOptionField.setText(prop.getProperty("WideCMD_EXT", ""));
-								wideMainOptionField.setText(prop.getProperty("WideCMD_MAIN", ""));
-								wideCommandLineInOptionField.setText(prop.getProperty("WideCMD_IN", ""));
-								wideCommandLineOutOptionField.setText(prop.getProperty("WideCMD_OUT", ""));
-							}
-						}
-					});
+			WideFFmpegOptionReloadButton.addActionListener(
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						WideFFmpegOptionReload();
+					}
+				});
 		}
 		return WideFFmpegOptionReloadButton;
 	}
-
+	void WideFFmpegOptionReload(){
+		WideFFmpegOptionModel.reload();
+		if (!WideFFmpegOptionModel.isFile()) {// ファイルでない
+			Properties prop = new Properties();
+			try {
+				prop.loadFromXML(new FileInputStream(
+					ConvertingSetting.PROP_FILE));
+			} catch (IOException ex) {
+				sendtext("設定2のオプションファイルが更新できません。");
+				ex.printStackTrace();
+				return;
+			}
+			wideExtOptionField.setText(prop.getProperty("WideCMD_EXT", ""));
+			wideMainOptionField.setText(prop.getProperty("WideCMD_MAIN", ""));
+			wideCommandLineInOptionField.setText(prop.getProperty("WideCMD_IN", ""));
+			wideCommandLineOutOptionField.setText(prop.getProperty("WideCMD_OUT", ""));
+		}
+	}
 	/**
 	 * This method initializes WideFFmpegOptionReloadButton
 	 *
@@ -6009,40 +6011,42 @@ s	 * @return javax.swing.JPanel
 			zqFFmpegOptionReloadButton = new JButton();
 			zqFFmpegOptionReloadButton.setText("更新");
 			zqFFmpegOptionReloadButton.setForeground(Color.blue);
-			zqFFmpegOptionReloadButton
-					.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							zqFFmpegOptionModel.reload();
-							if (!zqFFmpegOptionModel.isFile()) {// ファイルでない
-								Properties prop = new Properties();
-								String optionXml = null;
-								String descr = "";
-								try {
-									optionXml = ConvertingSetting.PROP_FILE;
-									prop.loadFromXML(new FileInputStream(optionXml));
-									descr = Path.readAllText(optionXml, "UTF-8");
-									if(descr.contains("<!--"))
-										descr = descr.replaceAll("\\s+"," ").replaceAll(".*<!--", "").replaceAll("-->.*", "");
-									else
-										descr = "";
-								} catch (IOException ex) {
-									sendtext("Qwatchのオプションファイルが更新できません。");
-									ex.printStackTrace();
-									return;
-								}
-								zqExtOptionField.setText(prop.getProperty("QCMD_EXT", ""));
-								zqMainOptionField.setText(prop.getProperty("QCMD_MAIN", ""));
-								zqCommandLineInOptionField.setText(prop.getProperty("QCMD_IN", ""));
-								zqCommandLineOutOptionField.setText(prop.getProperty("QCMD_OUT", ""));
-								zqOptionFileDescription.setText(descr);
-							}
-						}
-					});
+			zqFFmpegOptionReloadButton.addActionListener(
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						zqFFmpegOptionReload();
+					}
+				});
 		}
 		return zqFFmpegOptionReloadButton;
 	}
-
+	void zqFFmpegOptionReload(){
+		zqFFmpegOptionModel.reload();
+		if (!zqFFmpegOptionModel.isFile()) {// ファイルでない
+			Properties prop = new Properties();
+			String optionXml = null;
+			String descr = "";
+			try {
+				optionXml = ConvertingSetting.PROP_FILE;
+				prop.loadFromXML(new FileInputStream(optionXml));
+				descr = Path.readAllText(optionXml, "UTF-8");
+				if(descr.contains("<!--"))
+					descr = descr.replaceAll("\\s+"," ").replaceAll(".*<!--", "").replaceAll("-->.*", "");
+				else
+					descr = "";
+			} catch (IOException ex) {
+				sendtext("Qwatchのオプションファイルが更新できません。");
+				ex.printStackTrace();
+				return;
+			}
+			zqExtOptionField.setText(prop.getProperty("QCMD_EXT", ""));
+			zqMainOptionField.setText(prop.getProperty("QCMD_MAIN", ""));
+			zqCommandLineInOptionField.setText(prop.getProperty("QCMD_IN", ""));
+			zqCommandLineOutOptionField.setText(prop.getProperty("QCMD_OUT", ""));
+			zqOptionFileDescription.setText(descr);
+		}
+	}
 	/**
 	 * This method initializes FFmpegOptionComboBoxPanel
 	 *
