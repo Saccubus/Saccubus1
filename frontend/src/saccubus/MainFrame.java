@@ -62,6 +62,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -2319,7 +2320,17 @@ public class MainFrame extends JFrame {
 			if(s!=null && !s.isEmpty()){
 				String[] list = s.split(" ", 2);
 				Integer idx = Integer.decode(list[0]);
-				ShadowComboBox.setSelectedIndex(idx.intValue());
+				if(SwingUtilities.isEventDispatchThread()){
+					ShadowComboBox.setSelectedIndex(idx.intValue());
+				}else{
+					final int index = idx.intValue();
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							ShadowComboBox.setSelectedIndex(index);
+						}
+					});
+				}
 				setExtraShadowText(list[1]);
 			}
 		}catch(Exception e){}
@@ -3935,7 +3946,19 @@ public class MainFrame extends JFrame {
 		return null;
 	}
 */
-	private void setSetting(ConvertingSetting setting) {
+	private void setSetting(final ConvertingSetting setting){
+		if(SwingUtilities.isEventDispatchThread()){
+			doSetSetting(setting);
+		}else {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					doSetSetting(setting);
+				}
+			});
+		}
+	}
+	private void doSetSetting(ConvertingSetting setting) {
 		MailAddrField.setText(setting.getMailAddress());
 		PasswordField.setText(setting.getPassword());
 		SavingVideoCheckBox.setSelected(setting.isSaveVideo());

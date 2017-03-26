@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
 /**
@@ -83,12 +84,37 @@ public class JPanelHideable extends JPanel {
 	}
 
 	public void hidePanel(){
+		if(SwingUtilities.isEventDispatchThread()){
+			hidePanelDo();
+		}else{
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					hidePanelDo();
+				}
+			});
+		}
+	}
+	private void hidePanelDo(){
 		isContentVisible = false;
 		contentPanel.setVisible(false);
 		showLabel.setVisible(true);
 	}
 
 	public void showPanel(){
+		if(SwingUtilities.isEventDispatchThread()){
+			showPanelDo();
+		}else{
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					showPanelDo();
+				}
+			});
+		}
+	}
+
+	private void showPanelDo(){
 		isContentVisible = true;
 		showLabel.setVisible(false);
 		contentPanel.setVisible(true);
