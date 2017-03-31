@@ -3890,6 +3890,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			ffmpeg.addCmd("vhext=");
 			ffmpeg.addFile(vhookExe);
+			String vhook_title = ConvertedVideoFile.getName();
+			ffmpeg.addCmd("|--data-title:");
+			ffmpeg.addCmd(vhook_title);
 			if(CommentMiddleFile!=null){
 				ffmpeg.addCmd("|--data-user:");
 				ffmpeg.addCmd(URLEncoder.encode(

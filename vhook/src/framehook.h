@@ -4,6 +4,8 @@
 void exitExtProcess();
 
 /*Framehookに渡されるオプション用の定義*/
+#define FRAMEHOOK_OPT_TITLE		"--data-title:"
+#define FRAMEHOOK_OPT_TITLE_LEN	strlen(FRAMEHOOK_OPT_TITLE)
 
 #define FRAMEHOOK_OPT_DATA_USER		"--data-user:"
 #define FRAMEHOOK_OPT_DATA_USER_LEN	strlen(FRAMEHOOK_OPT_DATA_USER)

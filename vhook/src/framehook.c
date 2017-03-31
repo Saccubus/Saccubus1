@@ -35,7 +35,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ƒƒO
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.67.3.13";
+	char *ver="1.67.3.17";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -138,6 +138,7 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	setting->enable_user_comment = FALSE;
 	setting->enable_owner_comment = FALSE;
 	setting->enable_optional_comment = FALSE;
+	setting->data_title = NULL;
 	setting->data_user_path = NULL;
 	setting->data_owner_path = NULL;
 	setting->data_optional_path = NULL;
@@ -200,7 +201,11 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	char* arg;
 	for(i=0;i<argc;i++){
 		arg = argv[i];
-		if(!setting->data_user_path && strncmp(FRAMEHOOK_OPT_DATA_USER,arg,FRAMEHOOK_OPT_DATA_USER_LEN) == 0){
+		if(setting->data_title==NULL && strncmp(FRAMEHOOK_OPT_TITLE,arg,FRAMEHOOK_OPT_TITLE_LEN) == 0){
+			setting->data_title = arg+FRAMEHOOK_OPT_TITLE_LEN;;
+			fprintf(log,"[framehook/init]data title:%s\n",setting->data_title);
+			fflush(log);
+		}else if(!setting->data_user_path && strncmp(FRAMEHOOK_OPT_DATA_USER,arg,FRAMEHOOK_OPT_DATA_USER_LEN) == 0){
 			char* data_user = arg+FRAMEHOOK_OPT_DATA_USER_LEN;
 			setting->data_user_path = data_user;
 			setting->enable_user_comment = TRUE;

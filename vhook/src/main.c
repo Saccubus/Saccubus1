@@ -47,6 +47,7 @@ int printFontInfo(FILE* log,TTF_Font** pfont,int size,const char* name);
 int initData(DATA* data,FILE* log,SETTING* setting){
 	int i;
 	data->version = setting->version;
+	data->data_title = setting->data_title;
 	data->typeNicovideoE = setting->typeNicovideoE;
 	data->user.enable_comment = setting->enable_user_comment;
 	data->owner.enable_comment = setting->enable_owner_comment;
@@ -713,6 +714,24 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 	/*•ÏŠ·‚µ‚½‰æ‘œ‚ðŒ©‚¹‚éB*/
 	if(data->show_video){
 		if(!data->process_first_called){
+			const char *title;
+			SDL_Surface *icon;
+			/* Set the icon -- this must be done before the first mode set */
+			icon = SDL_LoadBMP("bin/icon32.bmp");
+			if ( icon != NULL ) {
+				SDL_WM_SetIcon(icon, NULL);
+			}
+			title = data->data_title;
+			fprintf(log,"[main/process]Window Title: %s\n", title);
+			SDL_WM_SetCaption(title, NULL);
+			/* See if it's really set */
+			title = NULL;
+			SDL_WM_GetCaption((char **)&title, (char **)NULL);
+			if ( title!=NULL )
+				fprintf(log,"[main/process]Title was set to: %s\n", title);
+			else
+				fprintf(log,"[main/process]No window title was set!\n");
+
 			data->screen = SDL_SetVideoMode(surf->w, surf->h, 24, SDL_HWSURFACE | SDL_DOUBLEBUF);
 			if(data->screen == NULL){
 				fputs("[main/process]failed to initialize screen.\n",log);
