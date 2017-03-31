@@ -2875,11 +2875,21 @@ public class NicoClient {
 					if(altTag.equals(videoTag))
 						altTag = "";
 				}
-				VideoUrl = m_video.getAsString("source");
-				if(VideoUrl==null){		// 2017.2.23
-					VideoUrl = m_video.getAsString("url");
+				 //2017.04.01
+				if(VideoUrl==null||VideoUrl.isEmpty())
+					VideoUrl = m_video.getAsString("source");
+				if(VideoUrl==null||VideoUrl.isEmpty()){
+					Mson m_smileInfo = m_video.get("smileInfo");
+					if(!m_smileInfo.isNull())
+						VideoUrl = m_smileInfo.getAsString("url");
 				}
 				log.println("VideoUrl: "+VideoUrl);
+				if(Debug){
+					if(VideoUrl.contains("dmc")){
+						log.println("ERROR! VideoUrl: must NOT dmc_video, THIS IS BUG! while smile server exists!\n");
+						return;
+					}
+				}
 				ContentType = m_video.getAsString("movieType");
 				log.println("ContentType: "+ContentType);
 				if(VideoTitle==null || VideoTitle.isEmpty()){
