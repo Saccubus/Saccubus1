@@ -98,6 +98,12 @@ public class Logger {
 		if(existLogview())
 			logview.setVisible(visible);
 	}
+	public static boolean isViewVisible(){
+		if(logview!=null && enableLogview)
+			return logview.isVisible();
+		else
+			return false;
+	}
 
 	public void println(String s){
 		print(s + "\n");

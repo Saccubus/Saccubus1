@@ -41,6 +41,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -145,14 +146,18 @@ public class MainFrame extends JFrame {
 	JMenu jMenuDetail = new JMenu();
 	JMenuItem jMenuNGConfig = new JMenuItem();
 	JMenuItem jMenuAprilFool = new JMenuItem();
+	JMenu jMenuTips = new JMenu();
+	JMenuItem jTips1 = new JMenuItem();
+	JMenuItem jTips2 = new JMenuItem();
+	JMenuItem jTips3 = new JMenuItem();
 	JMenu jMenuAction = new JMenu();
-	JMenuItem jMenuLogview = new JMenuItem();
+	JMenuItem jMenuLogview = new JCheckBoxMenuItem();
 	JMenuItem jMenuLatestCheck = new JMenuItem();
 	JMenuItem jMenuPanelHideAll = new JMenuItem();
 	JMenuItem jMenuPanelShowAll = new JMenuItem();
 	JMenuItem jMenuPanelInit = new JMenuItem();
 	JMenuItem jMenuPanelUpdate = new JMenuItem();
-	JMenuItem jMenuDebug = new JMenuItem();
+	JMenuItem jMenuDebug = new JCheckBoxMenuItem();
 	public JLabel statusBar = new JLabel();
 	public JLabel elapsedTimeBar = new JLabel();
 	JLabel vhookInfoBar = new JLabel();
@@ -330,8 +335,6 @@ public class MainFrame extends JFrame {
 			"オフ：複数行・運営コメ簡易変更後にはNG適用しない",
 			"オン：複数行・運営コメ簡易変更後にもNG適用する",
 	};
-	private final String DEBUG_STRING = "デバッグモードOnにする";
-	private final String NODEBUG_STRING = "デバッグモードOffにする";
 	final String DEBUG_NET_FLAG = "debug/";
 	final String DEBUG_COMMENT_FLAG = "-debug";
 	private String debug_port = "80";
@@ -843,11 +846,13 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) { FFhelp_actionPerformed("-hwaccels"); }
 		});
 		jMenuAction.setText("アクション");
-		jMenuLogview.setText("ログView ON");
+		jMenuLogview.setText("ログView On");
+		jMenuLogview.setSelected(Logger.isViewVisible());
 		jMenuLogview.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Logger.setViewVisislbe(true);
+				jMenuLogview.setSelected(Logger.isViewVisible());
 			}
 		});
 		jMenuLatestCheck.setText("最新バージョンチェック");
@@ -950,6 +955,101 @@ public class MainFrame extends JFrame {
 				dialog.setVisible(true);
 			}
 		});
+		jMenuTips.setText("設定TIPS");
+		jTips1 = new JMenuItem();
+		jTips1.setText("弾幕化しないモード");
+		jTips1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MainTabbedPane.setSelectedComponent(ConvertingSettingPanel);
+				commentOffCheckbox.setOpaque(true);
+				commentOffCheckbox.setBackground(Color.yellow);
+				boolean op = commentOffField.isOpaque();
+				commentOffField.setOpaque(true);
+				Color bc = commentOffField.getBackground();
+				commentOffField.setBackground(Color.yellow);
+				int ret = JOptionPane.showConfirmDialog(MainFrame.getMaster(),
+					" [変換設定][コメントオフエリア]をオンにして\n指定欄に何も入れない\n"
+					+"\n設定しますか？(Noはリセット)");
+				//設定
+				if(ret==JOptionPane.YES_OPTION){
+					commentOffCheckbox.setSelected(true);
+					commentOffField.setText("");
+				}else if(ret==JOptionPane.NO_OPTION){
+					commentOffCheckbox.setSelected(false);
+				}
+				commentOffCheckbox.setOpaque(false);
+				commentOffField.setOpaque(op);
+				commentOffField.setBackground(bc);
+				MainFrame.reflesh();
+			}
+		});
+		jMenuTips.add(jTips1);
+		jTips2 = new JMenuItem();
+		jTips2.setText("右端で非表示回避、動画幅で衝突判定");
+		jTips2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MainTabbedPane.setSelectedComponent(ConvertingSettingPanel);
+				boolean visible = VhookSettingPanel.isContentVisible();
+				VhookSettingPanel.showPanel();
+				commentSpeedCheckBox.setOpaque(true);
+				commentSpeedCheckBox.setBackground(Color.yellow);
+				boolean op = commentSpeedTextField.isOpaque();
+				commentSpeedTextField.setOpaque(true);
+				Color bc = commentSpeedTextField.getBackground();
+				commentSpeedTextField.setBackground(Color.yellow);
+				int ret = JOptionPane.showConfirmDialog(MainFrame.getMaster(),
+					" [変換設定][コメント速度]をオンにして\n指定欄に何も入れない\n"
+					+"\n設定しますか？(Noはリセット)");
+				if(ret==JOptionPane.YES_OPTION){
+					//設定
+					commentSpeedCheckBox.setSelected(true);
+					commentSpeedTextField.setText("");
+				}else if(ret==JOptionPane.NO_OPTION){
+					commentSpeedCheckBox.setSelected(false);
+				}
+				if(!visible)
+					VhookSettingPanel.hidePanel();
+				commentSpeedCheckBox.setOpaque(false);
+				commentSpeedTextField.setOpaque(op);
+				commentSpeedTextField.setBackground(bc);
+				MainFrame.reflesh();
+			}
+		});
+		jMenuTips.add(jTips2);
+		jTips3 = new JMenuItem();
+		jTips3.setText("途中でコメントが消えないモードにする");
+		jTips3.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MainTabbedPane.setSelectedComponent(ConvertingSettingPanel);
+				boolean visible = VhookSettingPanel.isContentVisible();
+				VhookSettingPanel.showPanel();
+				commentEraseTypeLabel.setOpaque(true);
+				commentEraseTypeLabel.setBackground(Color.yellow);
+				boolean op = commentEraseTypeComboBox.isOpaque();
+				commentEraseTypeComboBox.setOpaque(true);
+				Color bc = commentEraseTypeComboBox.getBackground();
+				commentEraseTypeComboBox.setBackground(Color.yellow);
+				int ret = JOptionPane.showConfirmDialog(MainFrame.getMaster(),
+					"  [変換設定][表示数超過]を 1 にする\n"
+					+"\n設定しますか？(Noはリセット)");
+				if(ret==JOptionPane.YES_OPTION){
+					//設定
+					commentEraseTypeComboBox.setSelectedIndex(1);
+				}else if(ret==JOptionPane.NO_OPTION){
+					commentEraseTypeComboBox.setSelectedIndex(0);
+				}
+				if(!visible)
+					VhookSettingPanel.hidePanel();
+				commentEraseTypeLabel.setOpaque(false);
+				commentEraseTypeComboBox.setOpaque(op);
+				commentEraseTypeComboBox.setBackground(bc);
+				MainFrame.reflesh();
+			}
+		});
+		jMenuTips.add(jTips3);
 		jMenuOpen.setText("開く(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
@@ -1056,13 +1156,13 @@ public class MainFrame extends JFrame {
 				ConvertingSetting.saveSetting(getSetting(), PROPERTY_SET2_XML.getPath());
 			}
 		});
-		jMenuDebug.setText(DEBUG_STRING);
+		jMenuDebug.setText("デバッグモード");
 		jMenuDebug.setForeground(Color.blue);
 		jMenuDebug.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-					debug_mode_toggle = !debug_mode_toggle;
-					debugModeSet(debug_mode_toggle);
+				boolean is_debug = jMenuDebug.isSelected();
+				debugModeSet(is_debug);
 			}
 		});
 		jMenuInit.setText("初期化 (Init)");
@@ -1578,6 +1678,7 @@ public class MainFrame extends JFrame {
 		jMenuBar1.add(jMenuDetail);
 		jMenuDetail.add(jMenuNGConfig);
 		jMenuDetail.add(jMenuAprilFool);
+		jMenuDetail.add(jMenuTips);
 		jMenuBar1.add(jMenuAction);
 		jMenuAction.add(jMenuLogview);
 		jMenuAction.add(jMenuLatestCheck);
@@ -2360,46 +2461,58 @@ public class MainFrame extends JFrame {
 		return val;
 	}
 	private boolean debugModeGet(){
-		boolean debug_now = getTextField(ProxyPortTextField).startsWith(DEBUG_NET_FLAG);
-		if(debug_now)
-			jMenuDebug.setText(NODEBUG_STRING);
-		else
-			jMenuDebug.setText(DEBUG_STRING);
-		return debug_now;
+		return jMenuDebug.isSelected();
 	}
-	private void debugModeSet(boolean b){
-		String proxy_url = getTextField(ProxyTextField);
-		String proxy_port = getTextField(ProxyPortTextField);
-		String extra_mode = getTextField(extraModeField);
-		if(b){
-			if(!proxy_url.startsWith(DEBUG_NET_FLAG)){
-				proxy_url = DEBUG_NET_FLAG + proxy_url;
-				ProxyTextField.setText(proxy_url);
-			}
-			if(proxy_port.isEmpty()){
-				ProxyPortTextField.setText(debug_port);
-			}
-			UseProxyCheckBox.setSelected(true);
-			if(!extra_mode.contains(DEBUG_COMMENT_FLAG)){
-				extra_mode = (DEBUG_COMMENT_FLAG + " " + extra_mode).trim();
-				extraModeField.setText(extra_mode);
-			}
-			jMenuDebug.setText(NODEBUG_STRING);
+	private void debugModeSet(final boolean b){
+		if(SwingUtilities.isEventDispatchThread()){
+			doDebugModeSet(b);
 		}else{
-			if(proxy_url.startsWith(DEBUG_NET_FLAG)){
-				proxy_url = proxy_url.replaceFirst(DEBUG_NET_FLAG, "");
-				ProxyTextField.setText(proxy_url);
-			}
-			if(proxy_port.equals(debug_port)){
-				ProxyPortTextField.setText("");
-				UseProxyCheckBox.setSelected(false);
-			}
-			if(extra_mode.contains(DEBUG_COMMENT_FLAG)){
-				extra_mode = extra_mode.replace(DEBUG_COMMENT_FLAG, "").trim();
-				extraModeField.setText(extra_mode);
-			}
-			jMenuDebug.setText(DEBUG_STRING);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					doDebugModeSet(b);
+				}
+			});
 		}
+	}
+	public static boolean getTextFieldBoolean(JTextField field,String key){
+		String text = field.getText();
+		if(text==null || key==null || key.isEmpty())
+			return false;
+		return text.contains(key);
+	}
+	public static boolean setTextFieldBoolean(JTextField field,String key,boolean b, String separater){
+		boolean yes = getTextFieldBoolean(field,key);
+		String text = field.getText();
+		if(text==null) text = "";
+		if(b){
+			if(!yes){
+				if(text!=null && text.isEmpty())
+					text += separater;
+				field.setText(text+key);
+			}
+		}else{
+			if(yes){
+				field.setText(text.replace(key, "").replaceAll(" +", "").trim());
+			}
+		}
+		return yes;	//old value
+	}
+	private void doDebugModeSet(boolean b){
+		setTextFieldBoolean(ProxyTextField, DEBUG_NET_FLAG, b, "");
+		setDebugProxyPort(b);
+		setTextFieldBoolean(extraModeField, DEBUG_COMMENT_FLAG, b, "");
+	}
+	private void setDebugProxyPort(boolean b){
+		String proxy_port = getTextField(ProxyPortTextField);
+		if(b){
+			if(proxy_port.isEmpty())
+				ProxyPortTextField.setText(debug_port);
+		}else{
+			if(proxy_port.equals(debug_port))
+				ProxyPortTextField.setText("");
+		}
+		UseProxyCheckBox.setSelected(b);
 	}
 
 	private JPanel getVhookSettingPanel()
@@ -2605,7 +2718,8 @@ public class MainFrame extends JFrame {
 			VhookSettingPanel.add(ShowConvVideoCheckBox, grid8_y0_x3_w3);
 			VhookSettingPanel.add(new JLabel("表示コメント数"), grid8_y1_x0_w1);
 			VhookSettingPanel.add(ViewCommentField, grid8_y1_x1_w5);
-			VhookSettingPanel.add(new JLabel("表示数超過"), grid8_y2_x0_w1);
+			commentEraseTypeLabel.setText("表示数超過");
+			VhookSettingPanel.add(commentEraseTypeLabel, grid8_y2_x0_w1);
 			commentEraseTypeComboBox = new JComboBox<String>(CommentEraseTypeArray);
 			VhookSettingPanel.add(commentEraseTypeComboBox,grid8_y2_x1_w5);
 			VhookSettingPanel.add(new JLabel("フォントパス"), grid8_y3_x0_w1);
@@ -2618,16 +2732,8 @@ public class MainFrame extends JFrame {
 			normalFontCheckBox.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					try {
-						String t = extraModeField.getText();
-						String s = "-normal";
-						t = t.replace(s, "").trim();
-						if(normalFontCheckBox.isSelected()){
-							if(!t.isEmpty()) t += " ";
-							t += "-normal";
-						}
-						extraModeField.setText(t);
-					}catch(NullPointerException e1){};
+					setTextFieldBoolean(extraModeField, "-normal"
+						, normalFontCheckBox.isSelected(), " ");
 				}
 			});
 			VhookSettingPanel.add(normalFontCheckBox, grid8_y5_x3_w2);
@@ -2661,7 +2767,7 @@ public class MainFrame extends JFrame {
 					message.add(label4);
 					int shadowNotice =
 					JOptionPane.showConfirmDialog(
-						MainFrame.MasterMainFrame,
+						MainFrame.getMaster(),
 						message,
 						"影切替自動設定", JOptionPane.OK_CANCEL_OPTION
 					);
@@ -2731,18 +2837,10 @@ public class MainFrame extends JFrame {
 		}catch(NullPointerException e){};
 		return "";
 	}
-	private void setExtraShadowText(String s){
-		if(s==null) s = "";
-		try{
-			String t = extraModeField.getText();
-			String s0 = getExtraShadowText();
-			if(!s0.isEmpty()){
-				t = t.replace(s0, "").trim();
-			}
-			if(!t.isEmpty()) t += " ";
-			s = (t+s).trim();
-			extraModeField.setText(s);
-		}catch(NullPointerException e){};
+	private void setExtraShadowText(String shadow){
+		if(shadow==null) shadow = "";
+		String old = getExtraShadowText();
+		setTextFieldBoolean(extraModeField, old, !shadow.isEmpty(), " ");
 	}
 
 	private void resizeAdjustAction(boolean is_selected) {
@@ -3634,10 +3732,9 @@ public class MainFrame extends JFrame {
 	JButton SettingVhookPathButton = new JButton();
 	JButton SettingVhookWidePathButton = new JButton();
 	JPanelHideable VhookSettingPanel;
-//	GridBagLayout gridBagLayout8 = new GridBagLayout();
+	JLabel commentEraseTypeLabel = new JLabel();
 	JPanel FFmpegSettingPanel = new JPanel();
 	JPanel WideFFmpegSettingPanel = new JPanel();
-//	GridBagLayout gridBagLayout9 = new GridBagLayout();
 	private JPanel zqPlayerModePanel = new JPanel();
 	private JCheckBox zqPlayerModeCheckBox = new JCheckBox();
 	private JTextField zqAdditionalOptionFiled = new JTextField();
@@ -4021,6 +4118,7 @@ public class MainFrame extends JFrame {
 			ProxyPortTextField.setText("");
 		}
 		debug_mode_toggle = debugModeGet();
+		debugModeSet(debug_mode_toggle);
 		FixFontSizeCheckBox.setSelected(setting.isFixFontSize());
 		FixCommentNumCheckBox.setSelected(setting.isFixCommentNum());
 		OpaqueCommentCheckBox.setSelected(setting.isOpaqueComment());
@@ -4396,6 +4494,7 @@ public class MainFrame extends JFrame {
 			boolean isLocal = checkLocal(url);
 			if(isLocal){
 				MainTabbedPane.setSelectedComponent(SavingInfoTabPanel);
+				SaveInfoTabPaneEach.setSelectedComponent(VideoSavingTabbedPanel);
 				return;
 			}
 			boolean isMylist = parseUrlMylist();
@@ -6194,26 +6293,13 @@ s	 * @return javax.swing.JPanel
 	}
 
 	static void setMaster(MainFrame frame) {
-		if(frame!=null && MasterMainFrame==null)
+		if(frame!=null && getMaster()==null)
 			MasterMainFrame = frame;
 	}
 
 	public static MainFrame getMaster(){
 		return MasterMainFrame;
 	}
-
-//	public void setIsHtml5(final boolean b) {
-//		if(SwingUtilities.isEventDispatchThread()){
-//			html5CheckBox.setSelected(b);
-//		}else{
-//			SwingUtilities.invokeLater(new Runnable() {
-//				@Override
-//				public void run() {
-//					html5CheckBox.setSelected(b);
-//				}
-//			});
-//		}
-//	}
 
 	public void setDateUserFirst(String dateUF) {
 		WayBackField.setText(dateUF);
@@ -6223,6 +6309,20 @@ s	 * @return javax.swing.JPanel
 		@Override
 		public void windowClosing(WindowEvent e) {
 			jMenuFileExit_actionPerformed(null);
+		}
+	}
+
+	public static void reflesh() {
+		if(MasterMainFrame!=null){
+			if(SwingUtilities.isEventDispatchThread())
+				MasterMainFrame.repaint();
+			else
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						MasterMainFrame.repaint();
+					}
+				});
 		}
 	}
 }

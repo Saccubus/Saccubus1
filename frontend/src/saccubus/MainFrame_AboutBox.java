@@ -52,7 +52,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.67.3.17";
+	public static final String rev = "1.67.4.01";
 	private static final String modefied = " (2017/04/01)";
 
 	String productHTML =
@@ -69,7 +69,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 		"<table border=0>" +
 		"<tr><td>Copyright (C) <td>2008 Saccubus Developers Team"+
 		"<tr><td><td>2007-2008 2012-2015(FFmpeg) PSI"+
-		"<tr><td><td>2011-2015 orz"+
+		"<tr><td><td>2011-2017 orz"+
 		"</table>" +
 		"ニコニコ動画の動画をコメントつきで保存</p>" +
 		"<p>本プログラムは<br/>" +
@@ -147,12 +147,6 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 		insetsPanel2.add(imageLabel, null);
 		panel2.add(insetsPanel2, BorderLayout.WEST);
 		getContentPane().add(panel1, null);
-/*
-		product_field.setForeground(insetsPanel3.getForeground());
-		product_field.setBackground(insetsPanel3.getBackground());
-		product_field.addMouseListener(new PopupRightClick(product_field));
-		product_field.setEditable(false);
-*/
 		editorPane = new JEditorPane("text/html", productHTML);
 		editorPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		editorPane.setEditable(false);

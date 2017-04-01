@@ -28,11 +28,14 @@ public class JPanelHideable extends JPanel {
 	private final JPanel contentPanel;
 	private final JLabel hideLabel;
 	private final JLabel showLabel;
-	private boolean isContentVisible;
+	private boolean contentVisible;
 	private String panelID;
 	/**
 	 *
 	 */
+	boolean isContentVisible(){
+		return contentVisible;
+	}
 	private JPanelHideable() {
 		super();
 		contentPanel = new JPanel();
@@ -41,7 +44,7 @@ public class JPanelHideable extends JPanel {
 		hideLabel.setForeground(Color.red);
 		showLabel = new JLabel("•\Ž¦");
 		showLabel.setForeground(Color.blue);
-		isContentVisible = true;
+		contentVisible = true;
 		FocusedHideSwitch adapter = new FocusedHideSwitch(this);
 		hideLabel.addMouseListener(adapter);
 		showLabel.addMouseListener(adapter);
@@ -96,9 +99,10 @@ public class JPanelHideable extends JPanel {
 		}
 	}
 	private void hidePanelDo(){
-		isContentVisible = false;
+		contentVisible = false;
 		contentPanel.setVisible(false);
 		showLabel.setVisible(true);
+		MainFrame.reflesh();
 	}
 
 	public void showPanel(){
@@ -115,15 +119,16 @@ public class JPanelHideable extends JPanel {
 	}
 
 	private void showPanelDo(){
-		isContentVisible = true;
+		contentVisible = true;
 		showLabel.setVisible(false);
 		contentPanel.setVisible(true);
+		MainFrame.reflesh();
 	}
 
 	public static String getHideMap(){
 		StringBuffer sb = new StringBuffer();
 		for(JPanelHideable p: hideMap.values()){
-			if(!p.isContentVisible){
+			if(!p.contentVisible){
 				sb.append(p.panelID);
 				sb.append("\t");
 			}
@@ -169,7 +174,7 @@ public class JPanelHideable extends JPanel {
 
 		@Override
 		public void  mouseClicked(MouseEvent e) {
-			if(target.isContentVisible){
+			if(target.contentVisible){
 				target.hidePanel();
 			} else {
 				target.showPanel();

@@ -35,6 +35,7 @@ public class Saccubus {
 	public Saccubus() {
 		// メインフレームの準備
 		MainFrame frame = new MainFrame();
+		MainFrame.setMaster(frame);
 		// validate() はサイズを調整する
 		// pack() は有効なサイズ情報をレイアウトなどから取得する
 		if (packFrame) {
@@ -42,7 +43,6 @@ public class Saccubus {
 		} else {
 			frame.validate();
 		}
-		MainFrame.setMaster(frame);
 
 		// ウィンドウを中央に配置
 		frame.setLocationByPlatform(true);
