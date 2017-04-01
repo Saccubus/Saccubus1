@@ -151,7 +151,7 @@ public class MainFrame extends JFrame {
 	JMenuItem jTips1 = new JMenuItem();
 	JMenuItem jTips2 = new JMenuItem();
 	JMenuItem jTips3 = new JMenuItem();
-	JMenuItem jMenuCheckSize = new JCheckBoxMenuItem();
+	JCheckBoxMenuItem jMenuCheckSize = new JCheckBoxMenuItem();
 	JMenu jMenuAction = new JMenu();
 	JMenuItem jMenuLogview = new JCheckBoxMenuItem();
 	JMenuItem jMenuLatestCheck = new JMenuItem();
@@ -331,7 +331,6 @@ public class MainFrame extends JFrame {
 	private AutoPlay autoPlay;
 	private JPanelHideable extraDownloadInfoPanel;
 	private String initialPanelHideMapping;
-	private boolean debug_mode_toggle = false;
 	private JCheckBox ngEnableMultilinesCheckBox = new JCheckBox();
 	private static final String[] ngEnableMLToolchipTexts = {
 			"オフ：複数行・運営コメ簡易変更後にはNG適用しない",
@@ -2467,9 +2466,6 @@ public class MainFrame extends JFrame {
 			val = "";
 		return val;
 	}
-	private boolean debugModeGet(){
-		return jMenuDebug.isSelected();
-	}
 	private void debugModeSet(final boolean b){
 		if(SwingUtilities.isEventDispatchThread()){
 			doDebugModeSet(b);
@@ -2500,7 +2496,7 @@ public class MainFrame extends JFrame {
 			}
 		}else{
 			if(yes){
-				field.setText(text.replaceAll(key+separater, "").replaceAll(" +", "").trim());
+				field.setText(text.replaceAll(key, "").trim());
 			}
 		}
 		return yes;	//old value
@@ -2508,7 +2504,16 @@ public class MainFrame extends JFrame {
 	private void doDebugModeSet(boolean b){
 		setTextFieldBoolean(ProxyTextField, DEBUG_NET_FLAG, b, "");
 		setDebugProxyPort(b);
-		setTextFieldBoolean(extraModeField, DEBUG_COMMENT_FLAG, b, "");
+		setTextFieldBoolean(extraModeField, DEBUG_COMMENT_FLAG, b, " ");
+	}
+	private boolean isDebugNet(){
+		return ProxyPortTextField.getText().startsWith(DEBUG_NET_FLAG);
+	}
+	private boolean isDebugComment(){
+		return getTextFieldBoolean(extraModeField, DEBUG_COMMENT_FLAG);
+	}
+	private boolean isDebugModeSet(){
+		return isDebugNet() || isDebugComment();
 	}
 	private void setDebugProxyPort(boolean b){
 		String proxy_port = getTextField(ProxyPortTextField);
@@ -4135,8 +4140,6 @@ public class MainFrame extends JFrame {
 		} else {
 			ProxyPortTextField.setText("");
 		}
-		debug_mode_toggle = debugModeGet();
-		debugModeSet(debug_mode_toggle);
 		FixFontSizeCheckBox.setSelected(setting.isFixFontSize());
 		FixCommentNumCheckBox.setSelected(setting.isFixCommentNum());
 		OpaqueCommentCheckBox.setSelected(setting.isOpaqueComment());
@@ -4269,6 +4272,8 @@ public class MainFrame extends JFrame {
 		shadowDefaultSetting[1] = setting.getHtml5ShadowDefault();
 		jMenuCheckSize.setSelected(setting.isEnableCheckSize());
 		setHtml5AutoDefault();
+		if(isDebugModeSet())
+			jMenuDebug.setSelected(true);
 	}
 
 	/**

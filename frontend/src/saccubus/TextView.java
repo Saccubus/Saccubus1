@@ -105,6 +105,7 @@ public class TextView extends JDialog implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent actionEvent) {
+		if(parent!=null)
 		dispose();
 	}
 

@@ -95,8 +95,9 @@ public class Logger {
 	}
 
 	public static void setViewVisislbe(boolean visible){
-		if(existLogview())
+		if(existLogview()){
 			logview.setVisible(visible);
+		}
 	}
 	public static boolean isViewVisible(){
 		if(logview!=null && enableLogview)

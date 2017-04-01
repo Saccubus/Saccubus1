@@ -1878,7 +1878,7 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_HTML5, "false")),
 			prop.getProperty(PROP_SHADOW_DEFAULT, ""),
 			prop.getProperty(PROP_HTML5_SHADOW_DEFAULT, ""),
-			Boolean.parseBoolean(prop.getProperty(PROP_HTML5_SHADOW_DEFAULT, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_CHECK_SIZE, "false"))
 		);
 	}
 

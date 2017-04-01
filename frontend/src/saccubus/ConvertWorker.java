@@ -838,6 +838,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							VideoFile = existVideo;
 							return true;
 						}
+						sendtext("通常動画のサイズが一致しません。");
 						log.println("通常動画のサイズが一致しません。");
 					}
 					if(client.isEco() && existVideoFile(dmcVideoFile, ".flv", ".mp4")){
@@ -850,6 +851,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							VideoFile = dmcVideoFile;
 							return true;
 						}
+						sendtext("dmc動画のサイズが一致しません。");
 						log.println("dmc動画のサイズが一致しません。");
 					}
 					if(client.isEco() && existVideoFile(lowVideoFile,".flv",".mp4")){
@@ -862,6 +864,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							VideoFile = lowVideoFile;
 							return true;
 						}
+						sendtext("エコ動画のサイズが一致しません。");
 						log.println("エコ動画のサイズが一致しません。");
 					}
 				}
@@ -882,14 +885,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 					// 通常サーバ
 					if(existVideoFile(VideoFile,".flv",".mp4")){
+						sendtext("動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
-							|| existVideo.length()==size_smile
-							|| existVideo.length()==client.getSizeDmc()){
-							sendtext("動画は既に存在します");
+							|| existVideo.length()==size_smile){
 							log.println("動画は既に存在します。ダウンロードをスキップします");
 							VideoFile = existVideo;
 							return true;
 						}
+						sendtext("動画のサイズが一致しません。");
 						log.println("動画のサイズが一致しません。");
 					}
 					if(lowVideoFile==null)
@@ -934,32 +937,53 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					else
 						log.println("bug? can't get smile size");
 					if(existVideoFile(VideoFile, ".flv", ".mp4")){
-						log.println("動画は既に存在します。");
-						sendtext("動画は既に存在します");
-						VideoFile = existVideo;
-						video_size = VideoFile.length();
-						log.println("video size: "+(video_size>>20)+"MiB");
+						if(!Setting.isEnableCheckSize()||existVideo.length()==size_high){
+							sendtext("動画は既に存在します");
+							log.println("動画は既に存在します。");
+							VideoFile = existVideo;
+							video_size = VideoFile.length();
+							log.println("video size: "+(video_size>>20)+"MiB");
+						}else{
+							sendtext("動画のサイズが一致しません。");
+							log.println("動画のサイズが一致しません。");
+							video_size = 0;
+						}
 					}
+					boolean skip = false;
 					if(existVideoFile(dmcVideoFile, ".flv", ".mp4")){
-						log.println("dmc動画は既に存在します。");
 						sendtext("dmc動画は既に存在します");
-						dmcVideoFile = existVideo;
-						dmc_size = dmcVideoFile.length();
-						log.println("dmc size: "+(dmc_size>>20)+"MiB");
-					} else {
+						if(!Setting.isEnableCheckSize()
+						 || existVideo.length()==client.getSizeDmc()){
+							log.println("dmc動画は既に存在します。ダウンロードをスキップします");
+							skip = true;
+							dmcVideoFile = existVideo;
+							dmc_size = dmcVideoFile.length();
+							log.println("dmc size: "+(dmc_size>>20)+"MiB");
+						}else{
+							sendtext("dmc動画のサイズが一致しません。");
+							if(dmcVideoFile.delete())
+								log.println("dmc動画のサイズが一致しません。dmc動画を削除します");
+							skip = false;
+						}
+					} 
+					if(!skip){
 						long min_size = Math.max(video_size, size_high);
 						long[] limits = {min_size, 0, 0};	// limits[1] is return value
 						if(Setting.doesDmcforceDl())
 							limits[0] = 0;	//途中で中止しない
 						if(Setting.canSeqResume()){
 							if(resumeDmcFile.isFile() && resumeDmcFile.canRead()){
-								if(dmcVideoFile.exists())
-									dmcVideoFile.delete();
-								if(resumeDmcFile.renameTo(dmcVideoFile)){
-									log.println("中断したdmc動画をresumeします。");
-									sendtext("中断したdmc動画resumeします");
-									resume_size = dmcVideoFile.length();
-									log.println("resumed size: "+(resume_size>>20)+"MiB");
+								if(Setting.isEnableCheckSize()){
+									resumeDmcFile.delete();
+								}else{
+									if(dmcVideoFile.exists())
+										dmcVideoFile.delete();
+									if(resumeDmcFile.renameTo(dmcVideoFile)){
+										log.println("中断したdmc動画をresumeします。");
+										sendtext("中断したdmc動画resumeします");
+										resume_size = dmcVideoFile.length();
+										log.println("resumed size: "+(resume_size>>20)+"MiB");
+									}
 								}
 							}
 							do {
@@ -994,8 +1018,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 										log.println("dmc動画サーバからの(S)ダウンロードに失敗しました。");
 										sendtext("dmc動画の(S)ダウンロードに失敗。" + ecode);
 										if(dmcVideoFile.canRead()){
-											if(dmcVideoFile.renameTo(resumeDmcFile))
-												log.println("dmcVideo renamed to "+resumeDmcFile);
+											if(Setting.isEnableCheckSize()){
+												dmcVideoFile.delete();
+											}else{
+												if(dmcVideoFile.renameTo(resumeDmcFile))
+													log.println("dmcVideo renamed to "+resumeDmcFile);
+											}
 										}
 										if(ecode.contains("98")){
 											result = "98";	// suspended, retry next
