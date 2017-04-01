@@ -51,7 +51,7 @@ public class BrowserInfo {
 		}
 	}
 
-	private BrowserCookieKind validBrowser;
+	private static BrowserCookieKind validBrowser;
 /*
 	public String getBrowserName(){
 		if (validBrowser == BrowserCookieKind.NONE){
@@ -66,6 +66,8 @@ public class BrowserInfo {
 	public static final BrowserCookieKind[] ALL_BROWSER = BrowserCookieKind.values();
 	public static final int NUM_BROWSER = ALL_BROWSER.length;
 	private Logger log;
+	private static String last_user_session = "";
+	private static BrowserCookieKind last_browser = null;
 
 	public BrowserInfo(Logger logger){
 		validBrowser = BrowserCookieKind.NONE;
@@ -86,6 +88,12 @@ public class BrowserInfo {
 		for(BrowserCookieKind browser: BrowserInfo.ALL_BROWSER){
 			if(setting.isBrowser(browser)){
 				validBrowser = browser;
+				if (browser == last_browser){
+					if (!last_user_session.isEmpty()){
+						log.println("Last user_session matched!");
+						return last_user_session;
+					}
+				}
 				if (browser == BrowserCookieKind.NONE)
 					continue;
 				if (browser == BrowserCookieKind.Other){
@@ -103,6 +111,18 @@ public class BrowserInfo {
 	}
 	public BrowserCookieKind getValidBrowser(){
 		return validBrowser;
+	}
+	synchronized static void setUsersession(String user_session){
+		if(user_session.isEmpty()){
+			last_browser = null;
+		}else{
+			last_browser = validBrowser;
+		}
+		last_user_session = user_session;
+	}
+	public static void resetUsersession(){
+		last_browser = null;
+		last_user_session = "";
 	}
 	/**
 	 *
@@ -565,6 +585,10 @@ public class BrowserInfo {
         }
         return String.join(" ", us);
     }
+
+	public static String getLastUsersession() {
+		return last_user_session;
+	}
 
 }
 

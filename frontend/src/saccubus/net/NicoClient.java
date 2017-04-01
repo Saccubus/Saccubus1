@@ -77,7 +77,7 @@ public class NicoClient {
 	private static final String HTTP_EXT_THUMBUSER = "http://ext.nicovideo.jp/thumb_user/";
 	private final String User;
 	private final String Pass;
-	private boolean Logged_in = false;
+	private static boolean Logged_in = false;
 	private final Proxy ConProxy;
 	boolean Debug = false;
 	private final NicoMap nicomap;
@@ -113,7 +113,8 @@ public class NicoClient {
 		ConProxy = conProxy(proxy, proxy_port);
 		isHtml5 = is_html5;
 		// ログイン
-		Logged_in = login() && loginCheck();
+		login();
+		setLoggedIn(loginCheck());
 	}
 
 	private Proxy conProxy(String proxy, final int proxy_port){
@@ -165,7 +166,6 @@ public class NicoClient {
 		if (user_session == null || user_session.isEmpty()){
 			log.println("Invalid user session" + browser_kind.toString());
 			setExtraError("セッションを取得出来ません");
-			Logged_in = false;
 		} else {
 			String[] sessions = user_session.split(" ");	// "user_session_12345..."+" "+...
 			for(String session: sessions){
@@ -176,7 +176,7 @@ public class NicoClient {
 					if(isHtml5)
 						Cookie.addNormalCookie("watch_html5=1");
 					if(loginCheck()){
-						Logged_in = true;	// ログイン済みのハズ
+						setLoggedIn(true);	// ログイン済みのハズ
 						setExtraError("");
 						return;
 					}
@@ -185,7 +185,7 @@ public class NicoClient {
 					setExtraError("セッションが無効です");
 				}
 			}
-			Logged_in = false;
+			setLoggedIn(false);
 		}
 	}
 
@@ -422,6 +422,9 @@ public class NicoClient {
 
 	public boolean isLoggedIn() {
 		return Logged_in;
+	}
+	private static synchronized void setLoggedIn(boolean b){
+		Logged_in = b;
 	}
 
 	public String getVideoTitle() {
@@ -2154,15 +2157,17 @@ public class NicoClient {
 		if(auth==null || auth.isEmpty() || auth.equals("0")){
 			log.println("ng. Not logged in. authflag=" + auth);
 			con.disconnect();
+			BrowserInfo.resetUsersession();	//reset last_session
 			return false;
 		}
 		Cookie.update(new_cookie);
 		debug("\n■Now Cookie is<" + Cookie.toString() + ">\n");
+		BrowserInfo.setUsersession(Cookie.getUsersession());
+		debug("\n■last_user_session is<" + BrowserInfo.getLastUsersession() + ">\n");
 		log.println("loginCheck ok.");
 		setExtraError("");
 		return true;
 	}
-
 	public String getBackCommentFromLength(String def) {
 		if (VideoLength < 0) {
 			return def;

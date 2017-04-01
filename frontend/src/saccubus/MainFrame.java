@@ -72,6 +72,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicArrowButton;
 
 import psi.lib.swing.PopupRightClick;
+import saccubus.net.BrowserInfo;
 import saccubus.net.Gate;
 import saccubus.net.Loader;
 import saccubus.net.NicoMap;
@@ -150,6 +151,7 @@ public class MainFrame extends JFrame {
 	JMenuItem jTips1 = new JMenuItem();
 	JMenuItem jTips2 = new JMenuItem();
 	JMenuItem jTips3 = new JMenuItem();
+	JMenuItem jMenuCheckSize = new JCheckBoxMenuItem();
 	JMenu jMenuAction = new JMenu();
 	JMenuItem jMenuLogview = new JCheckBoxMenuItem();
 	JMenuItem jMenuLatestCheck = new JMenuItem();
@@ -1050,6 +1052,10 @@ public class MainFrame extends JFrame {
 			}
 		});
 		jMenuTips.add(jTips3);
+		jMenuCheckSize.setText("読み込み済み動画のサイズチェックを行う");
+		jMenuCheckSize.setToolTipText(
+			"<html>サーバのファイルサイズ情報と一致しない場合再読込します。<BR>"
+			+"動画差し替えの場合はローカル変換又はオフにして下さい。</html>");
 		jMenuOpen.setText("開く(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
@@ -1679,6 +1685,7 @@ public class MainFrame extends JFrame {
 		jMenuDetail.add(jMenuNGConfig);
 		jMenuDetail.add(jMenuAprilFool);
 		jMenuDetail.add(jMenuTips);
+		jMenuDetail.add(jMenuCheckSize);
 		jMenuBar1.add(jMenuAction);
 		jMenuAction.add(jMenuLogview);
 		jMenuAction.add(jMenuLatestCheck);
@@ -2487,13 +2494,13 @@ public class MainFrame extends JFrame {
 		if(text==null) text = "";
 		if(b){
 			if(!yes){
-				if(text!=null && text.isEmpty())
-					text += separater;
-				field.setText(text+key);
+				if(!text.isEmpty())
+					key = key+separater;
+				field.setText(key+text);
 			}
 		}else{
 			if(yes){
-				field.setText(text.replace(key, "").replaceAll(" +", "").trim());
+				field.setText(text.replaceAll(key+separater, "").replaceAll(" +", "").trim());
 			}
 		}
 		return yes;	//old value
@@ -2506,13 +2513,22 @@ public class MainFrame extends JFrame {
 	private void setDebugProxyPort(boolean b){
 		String proxy_port = getTextField(ProxyPortTextField);
 		if(b){
+			// set enable debug
+			if(saveUseProxy.isEmpty())
+				saveUseProxy = Boolean.toString(UseProxyCheckBox.isSelected());
 			if(proxy_port.isEmpty())
 				ProxyPortTextField.setText(debug_port);
+			UseProxyCheckBox.setSelected(true);
 		}else{
+			// disable debug and restore proxy
+			if(!saveUseProxy.isEmpty()){
+				b = Boolean.parseBoolean(saveUseProxy);
+				UseProxyCheckBox.setSelected(b);
+				saveUseProxy = "";
+			}
 			if(proxy_port.equals(debug_port))
 				ProxyPortTextField.setText("");
 		}
-		UseProxyCheckBox.setSelected(b);
 	}
 
 	private JPanel getVhookSettingPanel()
@@ -3245,6 +3261,7 @@ public class MainFrame extends JFrame {
 
 	private void mainFrame_loginCheck(JLabel status) {
 		status.setText("ログインチェック中");
+		BrowserInfo.resetUsersession();
 		Path file = Path.mkTemp("mytop");
 		String url = "http://www.nicovideo.jp/my/top";
 		Loader loader = new Loader(getSetting(),
@@ -4027,7 +4044,8 @@ public class MainFrame extends JFrame {
 			enableHtml5CommentCheckBox.isSelected(),
 			enableAutoHtml5CheckBox.isSelected(),
 			shadowDefaultSetting[0],
-			shadowDefaultSetting[1]
+			shadowDefaultSetting[1],
+			jMenuCheckSize.isSelected()
 		);
 	}
 
@@ -4249,6 +4267,7 @@ public class MainFrame extends JFrame {
 		enableAutoHtml5CheckBox.setSelected(setting.isAutoHtml5Comment());
 		shadowDefaultSetting[0] = setting.getShadowDefault();
 		shadowDefaultSetting[1] = setting.getHtml5ShadowDefault();
+		jMenuCheckSize.setSelected(setting.isEnableCheckSize());
 		setHtml5AutoDefault();
 	}
 
@@ -4332,6 +4351,7 @@ public class MainFrame extends JFrame {
 	private JTextField ProxyTextField = new JTextField();
 	private JTextField ProxyPortTextField = new JTextField();
 	private JCheckBox UseProxyCheckBox = new JCheckBox();
+	private String saveUseProxy = "";
 	private JCheckBox FixFontSizeCheckBox = new JCheckBox();
 	private JCheckBox DelVideoCheckBox = new JCheckBox();
 	private JCheckBox DelCommentCheckBox = new JCheckBox();

@@ -820,26 +820,49 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 					resumeDmcFile = Path.getReplacedExtFile(dmcVideoFile, ".flv_dmc");
 				}
+				int size_smile = 0;
 				if(lowVideoFile!=null){
+					try {
+						size_smile = Integer.decode(client.getSizeSmile());
+					}catch(NumberFormatException e){
+						size_smile = 0;
+					}
+					if(client.getSizeVideo() > size_smile)
+						size_smile = client.getSizeVideo();
 					if(client.isEco() && existVideoFile(VideoFile, ".flv", ".mp4")){
 						sendtext("エコノミーモードで通常動画は既に存在します");
-						log.println("エコノミーモードで通常動画は既に存在します。ダウンロードをスキップします");
-						VideoFile = existVideo;
-						return true;
+						if(!Setting.isEnableCheckSize()
+							|| existVideo.length()==size_smile
+							|| existVideo.length()==client.getSizeDmc()){
+							log.println("エコノミーモードで通常動画は既に存在します。ダウンロードをスキップします");
+							VideoFile = existVideo;
+							return true;
+						}
+						log.println("通常動画のサイズが一致しません。");
 					}
 					if(client.isEco() && existVideoFile(dmcVideoFile, ".flv", ".mp4")){
 						sendtext("エコノミーモードでdmc動画は既に存在します");
-						log.println("エコノミーモードでdmc動画は既に存在します。ダウンロードをスキップします");
-						dmcVideoFile = existVideo;
-						VideoFile = dmcVideoFile;
-						return true;
+						if(!Setting.isEnableCheckSize()
+							|| existVideo.length()==client.getSizeDmc()
+							|| existVideo.length()==size_smile){
+							log.println("エコノミーモードでdmc動画は既に存在します。ダウンロードをスキップします");
+							dmcVideoFile = existVideo;
+							VideoFile = dmcVideoFile;
+							return true;
+						}
+						log.println("dmc動画のサイズが一致しません。");
 					}
 					if(client.isEco() && existVideoFile(lowVideoFile,".flv",".mp4")){
 						sendtext("エコノミーモードでエコ動画は既に存在します");
-						log.println("エコノミーモードで動画は既に存在します。ダウンロードをスキップします");
-						lowVideoFile = existVideo;
-						VideoFile = lowVideoFile;
-						return true;
+						if(!Setting.isEnableCheckSize()
+							|| existVideo.length()==size_smile
+							|| existVideo.length()==client.getSizeDmc()){
+							log.println("エコノミーモードで動画は既に存在します。ダウンロードをスキップします");
+							lowVideoFile = existVideo;
+							VideoFile = lowVideoFile;
+							return true;
+						}
+						log.println("エコ動画のサイズが一致しません。");
 					}
 				}
 				sendtext("動画のダウンロード開始中");
@@ -848,12 +871,26 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					+", forceDMC:" + Setting.doesDmcforceDl()
 					+", client.isEco:"+client.isEco());
 				if(!client.serverIsDmc() || Setting.isSmilePreferable() && !Setting.doesDmcforceDl()){
+					if(size_smile==0){
+						try {
+							size_smile = Integer.decode(client.getSizeSmile());
+						}catch(NumberFormatException e){
+							size_smile = 0;
+						}
+						if(client.getSizeVideo() > size_smile)
+							size_smile = client.getSizeVideo();
+					}
 					// 通常サーバ
 					if(existVideoFile(VideoFile,".flv",".mp4")){
-						sendtext("動画は既に存在します");
-						log.println("動画は既に存在します。ダウンロードをスキップします");
-						VideoFile = existVideo;
-						return true;
+						if(!Setting.isEnableCheckSize()
+							|| existVideo.length()==size_smile
+							|| existVideo.length()==client.getSizeDmc()){
+							sendtext("動画は既に存在します");
+							log.println("動画は既に存在します。ダウンロードをスキップします");
+							VideoFile = existVideo;
+							return true;
+						}
+						log.println("動画のサイズが一致しません。");
 					}
 					if(lowVideoFile==null)
 						lowVideoFile = VideoFile;

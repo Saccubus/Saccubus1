@@ -81,4 +81,7 @@ class NicoCookie {
 		else if(!normal_cookie.contains(string))
 			normal_cookie += "; " + string;
 	}
+	String getUsersession() {
+		return session_cookie.substring(session_cookie.indexOf("user_session_"));
+	}
 }

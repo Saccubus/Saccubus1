@@ -229,6 +229,7 @@ public class ConvertingSetting {
 	private String zqFpsFloor;
 	private boolean enableHtml5Comment;
 	private boolean enableAutoHtml5Comment;
+	private boolean enableCheckSize;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -484,7 +485,8 @@ public class ConvertingSetting {
 			boolean html5_font,
 			boolean auto_html5_font,
 			String shadow_default,
-			String html5_shadow_default
+			String html5_shadow_default,
+			boolean enable_check_size
 		)
 	{
 		this(	mailaddress,
@@ -655,6 +657,7 @@ public class ConvertingSetting {
 		enableAutoHtml5Comment = auto_html5_font;
 		shadowDefault = shadow_default;
 		html5ShadowDefault = html5_shadow_default;
+		enableCheckSize = enable_check_size;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1132,6 +1135,9 @@ public class ConvertingSetting {
 	public boolean isAutoHtml5Comment(){
 		return enableAutoHtml5Comment;
 	}
+	public boolean isEnableCheckSize(){
+		return enableCheckSize;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1327,6 +1333,7 @@ public class ConvertingSetting {
 	static final String PROP_AUTO_HTML5 = "AutoHtml5Comment";
 	static final String PROP_SHADOW_DEFAULT = "ShadowDefault";
 	static final String PROP_HTML5_SHADOW_DEFAULT = "Html5Shadow";
+	static final String PROP_ENABLE_CHECK_SIZE = "CheckSize";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1570,6 +1577,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_AUTO_HTML5, Boolean.toString(setting.isAutoHtml5Comment()));
 		prop.setProperty(PROP_SHADOW_DEFAULT, setting.getShadowDefault());
 		prop.setProperty(PROP_HTML5_SHADOW_DEFAULT, setting.getHtml5ShadowDefault());
+		prop.setProperty(PROP_ENABLE_CHECK_SIZE, Boolean.toString(setting.isEnableCheckSize()));
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1869,7 +1877,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_HTML5_COMMENT, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_HTML5, "false")),
 			prop.getProperty(PROP_SHADOW_DEFAULT, ""),
-			prop.getProperty(PROP_HTML5_SHADOW_DEFAULT, "")
+			prop.getProperty(PROP_HTML5_SHADOW_DEFAULT, ""),
+			Boolean.parseBoolean(prop.getProperty(PROP_HTML5_SHADOW_DEFAULT, "false"))
 		);
 	}
 
