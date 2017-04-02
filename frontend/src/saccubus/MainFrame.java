@@ -399,7 +399,9 @@ public class MainFrame extends JFrame {
 
 	private ErrorControl errorControl;
 	private JPanel errorStatusPanel;
+	private JPanel errorUrlPanel;
 	private JLabel errorUrlLabel;
+	private JLabel ecoUrlLabel;
 	private JButton errorResetUrlButton;
 	private JPanel errorButtonPanel;
 	private JButton errorListDeleteButton;
@@ -3452,8 +3454,10 @@ public class MainFrame extends JFrame {
 						pw.print(text);
 						pw.flush();
 						pw.close();
+						statusBar.setText("ó\ñÒóöóÇï€ë∂ÇµÇ‹ÇµÇΩ");
 					} catch (FileNotFoundException e1) {
 						e1.printStackTrace();
+						statusBar.setText("ó\ñÒóöóï€ë∂é∏îs");
 					}
 				}
 			});
@@ -3500,8 +3504,10 @@ public class MainFrame extends JFrame {
 
 			errorStatusPanel = new JPanel();
 			errorUrlLabel = new JLabel(" ");
-			errorUrlLabel.setForeground(Color.DARK_GRAY);
-			errorControl = new ErrorControl(errorUrlLabel);
+			errorUrlLabel.setForeground(Color.blue);
+			ecoUrlLabel = new JLabel(" ");
+			errorUrlLabel.setForeground(Color.red);
+			errorControl = new ErrorControl(errorUrlLabel,ecoUrlLabel);
 			errorResetUrlButton = new JButton("çƒìoò^");
 			errorResetUrlButton.setForeground(Color.BLUE);
 			errorResetUrlButton.addActionListener(new ActionListener() {
@@ -3509,9 +3515,17 @@ public class MainFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					StringBuffer vlist = new StringBuffer(errorControl.getString());
-					myListGetterDone(vlist, log);
-					errorControl.clear();
-					convertManager.clearError();
+					if(!vlist.substring(0).isEmpty()){
+						myListGetterDone(vlist, log);
+						errorControl.clearData();
+						convertManager.clearError();
+					}else{
+						StringBuffer evlist = new StringBuffer(errorControl.getEcoString());
+						if(!evlist.substring(0).isEmpty()){
+							myListGetterDone(evlist, log);
+							errorControl.clearEco();
+						}
+					}
 				}
 			});
 			errorListDeleteButton = new JButton("è¡ãé");
@@ -3542,9 +3556,17 @@ public class MainFrame extends JFrame {
 			errorButtonPanel.add(errorResetUrlButton, BorderLayout.WEST);
 			errorButtonPanel.add(errorListDeleteButton, BorderLayout.CENTER);
 			errorButtonPanel.add(errorListSaveButton, BorderLayout.EAST);
+			errorUrlPanel = new JPanel();
+			errorUrlPanel.setLayout(new BorderLayout());
+			errorUrlLabel.setForeground(Color.blue);
+			errorUrlPanel.add(errorUrlLabel, BorderLayout.NORTH);
+ 			ecoUrlLabel.setForeground(Color.gray);
+ 			errorUrlPanel.add(ecoUrlLabel, BorderLayout.SOUTH);
 			errorStatusPanel.setLayout(new BorderLayout());
-			errorStatusPanel.add(new JLabel("ÉGÉâÅ[ID  "), BorderLayout.WEST);
-			errorStatusPanel.add(errorUrlLabel, BorderLayout.CENTER);
+			errorStatusPanel.add(
+				new JLabel("<html><font color=blue>ÉGÉâÅ[ID  <br><font color=gray>ÉGÉRê¨å˜  </html>"),
+				BorderLayout.WEST);
+			errorStatusPanel.add(errorUrlPanel, BorderLayout.CENTER);
 			errorStatusPanel.add(errorButtonPanel, BorderLayout.EAST);
 			GridBagConstraints grid42 = new GridBagConstraints();
 			grid42.gridx = 0;
@@ -4422,9 +4444,9 @@ public class MainFrame extends JFrame {
 			String[] ss = id_title.split("\t");
 			String vid = ss[0];
 			String title = ss.length>1 ? ss[1] : "";
-			String watchinfo = ss.length>2 ?ss[2] : "";
+			//String watchinfo = ss.length>2 ?ss[2] : "";
 			// idÇìoò^
-			url = vid + watchinfo;
+			url = vid;
 			OneLineMode = getSetting().isOneLineMode();
 			requestHistory.add(url);
 			ListInfo listInfo = new ListInfo(vid+"_"+title,OneLineMode);

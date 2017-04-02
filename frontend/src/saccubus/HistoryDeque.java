@@ -168,7 +168,7 @@ public class HistoryDeque<T> {
 		synchronized(deque){
 			if(!deque.isEmpty()){
 				for(T t:deque){
-					if(wraparound || t==null || t.equals(initV))
+					if(t==null || t.equals(initV))
 						continue;
 					sb.append(t.toString());
 					sb.append("\n");

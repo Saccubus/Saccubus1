@@ -429,6 +429,8 @@ public class Prompt {
 			String results = "";
 			String result = "";
 			String vid = "";
+			boolean isEcoVideo;
+			boolean isEcos = false;
 			do{
 				ArrayList<ConvertWorker> doneList = new ArrayList<>();
 				for(ConvertWorker conv: converterList){
@@ -452,6 +454,9 @@ public class Prompt {
 								code = 0;
 								result = "";
 								vid = conv.getVid();
+								isEcoVideo = conv.getIsEco();
+								if(isEcoVideo)
+									isEcos = true;
 								for(int l=0;l<ret.length;l++){
 									log.println(ret[l]);
 									String[] s = ret[l].split("=");
@@ -509,10 +514,15 @@ public class Prompt {
 					results = "0";
 				log.println("終了\nRESULTS="+results);
 			}
-			if(codes!=0){
+			if(codes!=0)
 				log.println("エラーがありました");
+			if(isEcos)
+				log.println("エコノミー動画がありました");
+			if(codes!=0 || isEcos){
 				if(errorControl.save())
 					log.println("エラーリストを保存しました");
+				else
+					log.println("エラーリストを保存失敗");
 			}
 			if(!retryList.isEmpty()){
 				codes = 0x98;

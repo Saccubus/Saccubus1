@@ -158,6 +158,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	 *  ...
 	 */
 	private String result = "0";
+	private boolean isEcoVideo = false;
 	private String dateUserFirst = "";
 	//private String dateUserLast = "";
 	//private final boolean watchvideo;
@@ -772,6 +773,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						sendtext("エコノミーモードなので中止します");
 						result = "42";
 						return false;
+					}else{
+						isEcoVideo = true;
 					}
 				}
 				if (isVideoFixFileName()) {
@@ -2645,6 +2648,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			else
 			if(!result.equals("0"))
 				errorControl.setError(result,url,gettext());
+			else if(isEcoVideo){
+				errorControl.setEco("eco", url, "エコノミー成功");
+ 			}
 			synchronized(StopFlag){
 				StopFlag.finish();
 				StopFlag.setButtonEnabled(false);
@@ -4711,6 +4717,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 	public StringBuffer getSbRet() {
 		return sbRet;
+	}
+	public boolean getIsEco() {
+		return isEcoVideo;
 	}
 
 }

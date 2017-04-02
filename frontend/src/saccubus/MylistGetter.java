@@ -43,15 +43,12 @@ public class MylistGetter extends SwingWorker<String, String> {
 	private final MainFrame parent;
 	private final JLabel[] status3;
 	private JLabel Status;
-//	private JLabel MovieInfo;
 	private final ConvertStopFlag StopFlag;
 	private final StringBuffer ret;
 
 	private final ConvertingSetting Setting;
-//	private String resultText;
 	private String mylistID = "";
 	private String watchInfo;
-//	private String Tag;
 	private Gate gate;
 	private final int id;
 	private final ErrorControl errorControl;
@@ -465,9 +462,9 @@ public class MylistGetter extends SwingWorker<String, String> {
 				//Œ‹‰Êƒf[ƒ^
 				for(String[] vals:plist){
 					if(vals.length>1)
-						ret.append(vals[0]+"\t"+vals[1]+"\t"+watchInfo+"\n");
+						ret.append(vals[0]+watchInfo+"\t"+vals[1]+"\n");
 					else
-						ret.append(vals[0]+"\t"+autolist+"\t"+watchInfo+"\n");
+						ret.append(vals[0]+watchInfo+"\t"+autolist+"\n");
 				}
 				return "00";
 			}
