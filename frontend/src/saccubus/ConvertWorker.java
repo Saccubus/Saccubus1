@@ -825,7 +825,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				int size_smile = 0;
 				if(lowVideoFile!=null){
 					try {
-						size_smile = Integer.decode(client.getSizeSmile());
+						if(client.getSizeSmile()!=null)
+							size_smile = Integer.decode(client.getSizeSmile());
 					}catch(NumberFormatException e){
 						size_smile = 0;
 					}
@@ -884,7 +885,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(!client.serverIsDmc() || Setting.isSmilePreferable() && !Setting.doesDmcforceDl()){
 					if(size_smile==0){
 						try {
-							size_smile = Integer.decode(client.getSizeSmile());
+							if(client.getSizeSmile()!=null)
+								size_smile = Integer.decode(client.getSizeSmile());
 						}catch(NumberFormatException e){
 							size_smile = 0;
 						}
@@ -895,7 +897,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					if(existVideoFile(VideoFile,".flv",".mp4")){
 						sendtext("動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
-							|| existVideo.length()==size_smile){
+							|| (size_smile>0 && existVideo.length()==size_smile)){
 							log.println("動画は既に存在します。ダウンロードをスキップします");
 							VideoFile = existVideo;
 							return true;
