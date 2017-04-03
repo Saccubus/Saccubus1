@@ -5,9 +5,7 @@ package saccubus.net;
 
 import java.io.File;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import saccubus.ConvertingSetting;
@@ -54,7 +52,7 @@ public class BrowserInfo {
 		}
 	}
 
-	private BrowserCookieKind validBrowser;
+	private static BrowserCookieKind validBrowser;
 	public String getName(){
 		return validBrowser.getName();
 	}
@@ -72,8 +70,8 @@ public class BrowserInfo {
 	public static final BrowserCookieKind[] ALL_BROWSER = BrowserCookieKind.values();
 	public static final int NUM_BROWSER = ALL_BROWSER.length;
 	private Logger log;
-	private static Set<String> failedUserSessionSet = new ConcurrentSkipListSet<>();
-	private static Map<BrowserCookieKind,String> loginUserSessionMap = new ConcurrentHashMap<>();
+	private static Set<String> faultUserSessionSet = new ConcurrentSkipListSet<>();
+	private String last_user_session = "";
 
 	public BrowserInfo(Logger logger){
 		validBrowser = BrowserCookieKind.NONE;
@@ -92,64 +90,60 @@ public class BrowserInfo {
 		if(setting == null)
 			return user_session;
 		for(BrowserCookieKind browser: BrowserInfo.ALL_BROWSER){
-			user_session = "";
 			if(setting.isBrowser(browser)){
-				validBrowser = browser;
-				user_session = loginUserSessionMap.get(browser);
-				if(user_session!=null && !isFalseSession(user_session)){
-					log.println("Last user_session matched!");
-					break;
+				if(browser==validBrowser){
+					if(last_user_session!=null && !last_user_session.isEmpty()){
+						log.println("Last user_session matched! "+last_user_session);
+						return last_user_session;
+					}
 				}
-				if (browser == BrowserCookieKind.NONE)
+				if (browser == BrowserCookieKind.NONE){
 					continue;
+				}
 				if (browser == BrowserCookieKind.Other){
 					user_session = getUserSessionOther(setting.getBrowserCookiePath());
-					if(!isFalseSession(user_session))
-						break;
+					if(!isFalseSession(user_session)){
+						validBrowser = browser;
+						last_user_session = user_session;
+						return last_user_session;
+					}
 				}else{
 					user_session = getUserSession(browser);
-					if(!isFalseSession(user_session))
-						break;
+					if(!isFalseSession(user_session)){
+						validBrowser = browser;
+						last_user_session = user_session;
+						return last_user_session;
+					}
 				}
 			}
 		}
-		if(user_session.isEmpty())
-			validBrowser = BrowserCookieKind.NONE;
 		return user_session;
 	}
+
 	public static boolean isFalseSession(String s){
-		return s.isEmpty() || failedUserSessionSet.contains(s);
+		return s==null || s.isEmpty()
+			|| faultUserSessionSet.contains(s);
 	}
 	public BrowserCookieKind getValidBrowser(){
 		return validBrowser;
 	}
-	boolean isBrowser(){
-		return validBrowser != BrowserCookieKind.NONE;
-	}
 	public boolean isValid(){
-		return !getLastUsersession().isEmpty();
+		return !last_user_session.isEmpty() && validBrowser!=null;
 	}
 	public String getLastUsersession() {
-		String session = loginUserSessionMap.get(validBrowser);
-		if(session==null)
-			session = "";
-		return session;
-	}
-	void resetLastUsersession(){
-		String session = getLastUsersession();
-		if(!session.isEmpty())
-			failedUserSessionSet.add(session);
-		loginUserSessionMap.remove(validBrowser);
+		if(validBrowser==null)
+			return "";
+		return last_user_session;
 	}
 	void setLastUsersession(String session){
-		failedUserSessionSet.remove(session);
-		if(!session.isEmpty()){
-			loginUserSessionMap.put(validBrowser, session);
-		}
+		faultUserSessionSet.remove(session);
+		last_user_session = session;
 	}
 	public static void resetBrowserInfo(){
-		loginUserSessionMap.clear();
-		failedUserSessionSet.clear();
+		faultUserSessionSet.clear();
+	}
+	public void addFaultUserSession(String session) {
+		faultUserSessionSet.add(session);
 	}
 
 	/**
@@ -602,7 +596,7 @@ public class BrowserInfo {
             // C# ÇÃ string.SubString( , ) Ç∆ Java ÇÃ String.substring( , ) ÇÕà·Ç§ÇÃÇ≈íçà”ÅI
             start = str.indexOf("user_session_", index);
             if (!ret.isEmpty() && !filename.isEmpty()){
-                if(!us.contains(ret)){
+                if(!us.contains(ret) && !faultUserSessionSet.contains(ret)){
                 	log.println("Cookie found: " + filename+" "+ret.substring(ret.length()- 4));
                     us.add(ret);
                 }
@@ -610,6 +604,5 @@ public class BrowserInfo {
         }
         return String.join(" ", us);
     }
-
 }
 

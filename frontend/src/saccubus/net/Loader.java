@@ -127,7 +127,7 @@ public class Loader {
 			// セッション共有、ログイン済みのNicoClientをclientに返す
 			client = new NicoClient(browserInfo, proxy, proxyPort, stopwatch, log, isHtml5);
 		} else {
-			client = new NicoClient(mailAddress, password, proxy, proxyPort, stopwatch, log, isHtml5);
+			client = new NicoClient(mailAddress, password, browserInfo, proxy, proxyPort, stopwatch, log, isHtml5);
 		}
 		if (!client.isLoggedIn()) {
 			sendtext("ログイン失敗 " + browserInfo.getName() + " " + client.getExtraError());

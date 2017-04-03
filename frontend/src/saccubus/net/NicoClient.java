@@ -99,10 +99,11 @@ public class NicoClient {
 	 * ブラウザ共有しないでログイン
 	 * @param user
 	 * @param pass
+	 * @param browser 
 	 * @param proxy
 	 * @param proxy_port
 	 */
-	public NicoClient(final String user, final String pass,
+	public NicoClient(final String user, final String pass, BrowserInfo browser,
 			final String proxy, final int proxy_port, final Stopwatch stopwatch,
 			Logger logger, boolean is_html5) {
 		log = logger;
@@ -112,7 +113,7 @@ public class NicoClient {
 		nicomap = new NicoMap();
 		ConProxy = conProxy(proxy, proxy_port);
 		isHtml5 = is_html5;
-		browserInfo = new BrowserInfo(logger);
+		browserInfo = browser;
 		// ログイン
 		login();
 		setLoggedIn(loginCheck());
@@ -185,6 +186,7 @@ public class NicoClient {
 					}
 					Cookie = new NicoCookie();
 					log.println("Fault user session " + browserInfo.getName());
+					browserInfo.addFaultUserSession(Cookie.getUsersession());
 					setExtraError("セッションが無効です");
 				}
 			}
@@ -245,16 +247,28 @@ public class NicoClient {
 			boolean followRedirect){
 
 		try {
-			if(url==null){
-				log.println("url is NULL!");
+			debug("\n■URL<" + url + ">\n");
+			if(url==null || url.isEmpty()){
+				log.println("url is null or empty.");
+				setExtraError("URLが取得できません。");
 				return null;
 			}
-			debug("\n■URL<" + url + ">\n");
-			String host = url.substring("http://".length())+"/";
+			String host = "";
+			if(url.startsWith("http://"))
+				host = url.substring("http://".length())+"/";
+			else if(url.startsWith("https://"))
+				host = url.substring("https://".length())+"/";
+			else
+				host += "/";
 			host = host.substring(0,host.indexOf("/"));
 			debug("■HOST<" + host + ">\n");
+			if(host==null || host.isEmpty()){
+				log.println("host is null or empty.");
+				setExtraError("HOSTが取得できません。");
+				return null;
+			}
 			HttpURLConnection con = (HttpURLConnection) (new URL(url))
-				.openConnection(ConProxy);
+					.openConnection(ConProxy);
 			/* リクエストの設定 */
 	// this is a successfull request header from waterfox to nmsg.nicovideo.jp/api/
 	//POST http://nmsg.nicovideo.jp/api/ HTTP/1.1
@@ -690,11 +704,11 @@ public class NicoClient {
 					}
 				}
 			}
-			if(VideoUrl==null || VideoUrl.isEmpty()){
-				log.println("video URL ["+VideoUrl+"] is invalid. ");
-				nicomap.printAll(log);
-				return false;
-			}
+//			if(VideoUrl==null || VideoUrl.isEmpty()){
+//				log.println("video URL ["+VideoUrl+"] is invalid. ");
+//				nicomap.printAll(log);
+//				return false;
+//			}
 		} catch (IOException ex) {
 			log.printStackTrace(ex);
 			return false;
@@ -812,6 +826,10 @@ public class NicoClient {
 				|| ThreadID.isEmpty() || VideoUrl.isEmpty()
 				|| MsgUrl.isEmpty() || UserID.isEmpty()) {
 				log.println("ng.\nCan't get video information keys.");
+				if(VideoUrl==null){
+					log.println("Video url is null. maybe Forbidden or Paid");
+					return false;
+				}
 				try {
 					con = urlConnectGET(url + watchInfo);
 					if(!loginCheck(con)){
@@ -2156,13 +2174,12 @@ public class NicoClient {
 	public boolean loginCheck() {
 		String url = HTTP_WWW_NICOVIDEO_JP;
 		log.print("Checking login...");
-		// GET (NO_POST), UTF-8, AllowAutoRedirect,
-			HttpURLConnection con = urlConnectGET(url);
-			// response 200, 302 is OK
-			if (con == null){
-				log.println("ng.\nCan't read TopPage at loginCheck:" + url);
-				return false;
-			}
+		HttpURLConnection con = urlConnectGET(url);
+		// response 200, 302 is OK
+		if (con == null){
+			log.println("ng.\nCan't read TopPage at loginCheck:" + url);
+			return false;
+		}
 		return loginCheck(con);
 	}
 
@@ -2177,7 +2194,6 @@ public class NicoClient {
 			log.println("ng. Not logged in. "+browserInfo.getName()+" authflag=" + auth);
 			log.println("last_user_session="+browserInfo.getLastUsersession());
 			con.disconnect();
-			browserInfo.resetLastUsersession();	//reset last_session
 			return false;
 		}
 		Cookie.update(new_cookie);
@@ -3147,20 +3163,18 @@ public class NicoClient {
 		//	debugPrettyPrint("watchApi:\n ",watchApiMson);
 			// flvInfo
 			if(!nicomap.containsKey("flvInfo")){
-				NicoMap nicomap2 = new NicoMap();
+				if(nicomap.containsKey("url")){
+					debug("Ooops. this is duplicated url "+nicomap.get("url"));
+				}
 				flvInfo = watchApiMson.getAsString("flvInfo");
 				debug("\n■flvInfo:\n "+flvInfo);
-				nicomap2.put("flvInfo", flvInfo);
+				nicomap.put("flvInfo", flvInfo);
 				flvInfoArrays = URLDecoder.decode(flvInfo, encoding);
-				nicomap2.putArrayURLDecode(flvInfoArrays, encoding);
-				String needs_key = nicomap2.get("needs_key");
-				if(needs_key==null) needs_key = "null";
-				String url = nicomap2.get("url");
-				if(url==null || url.isEmpty()){
-					log.println("VideoUrl["+url+"] invalid . needs_key="+needs_key);
-				}else{
-					nicomap.put("flvInfo", flvInfo);
-					nicomap.putArrayURLDecode(flvInfoArrays, encoding);
+				nicomap.putArrayURLDecode(flvInfoArrays, encoding);
+				VideoUrl = nicomap.get("url");
+				if(VideoUrl==null || VideoUrl.isEmpty()){
+					debug("Ooops. url not found.");
+					return;
 				}
 			}
 			// dmcInfo

@@ -739,7 +739,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				// セッション共有、ログイン済みのNicoClientをclientに返す
 				client = new NicoClient(browser, proxy, proxy_port, stopwatch, log, is_html5);
 			} else {
-				client = new NicoClient(mailAddress, password, proxy, proxy_port, stopwatch, log, is_html5);
+				client = new NicoClient(mailAddress, password, browser, proxy, proxy_port, stopwatch, log, is_html5);
 			}
 			if (!client.isLoggedIn()) {
 				sendtext("ログイン失敗 " + browser.getName() + " " + client.getExtraError());

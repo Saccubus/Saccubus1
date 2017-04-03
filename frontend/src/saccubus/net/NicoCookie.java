@@ -82,6 +82,10 @@ class NicoCookie {
 			normal_cookie += "; " + string;
 	}
 	String getUsersession() {
-		return session_cookie.substring(session_cookie.indexOf("user_session_"));
+		if(session_cookie==null)
+				return "";
+		int index = session_cookie.indexOf("user_session_");
+		if(index < 0) return "";
+		return session_cookie.substring(index);
 	}
 }
