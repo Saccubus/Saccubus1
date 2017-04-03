@@ -2633,7 +2633,7 @@ public class NicoClient {
 	private Mson dataApiMson;
 	private Mson watchApiMson;
 	public boolean serverIsDmc(){
-		return "1".equals(isDmc) && !sessionApi.isEmpty();
+		return "1".equals(isDmc) && sessionApi!=null && !sessionApi.isEmpty();
 	}
 	public Path getThumbInfoFile(String tag){
 		String url = HTTP_EXT_THUMBINFO + tag;
