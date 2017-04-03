@@ -5,7 +5,10 @@ package saccubus.net;
 
 import java.io.File;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import saccubus.ConvertingSetting;
 import saccubus.util.Logger;
@@ -51,7 +54,10 @@ public class BrowserInfo {
 		}
 	}
 
-	private static BrowserCookieKind validBrowser;
+	private BrowserCookieKind validBrowser;
+	public String getName(){
+		return validBrowser.getName();
+	}
 /*
 	public String getBrowserName(){
 		if (validBrowser == BrowserCookieKind.NONE){
@@ -66,8 +72,8 @@ public class BrowserInfo {
 	public static final BrowserCookieKind[] ALL_BROWSER = BrowserCookieKind.values();
 	public static final int NUM_BROWSER = ALL_BROWSER.length;
 	private Logger log;
-	private static String last_user_session = "";
-	private static BrowserCookieKind last_browser = null;
+	private static Set<String> failedUserSessionSet = new ConcurrentSkipListSet<>();
+	private static Map<BrowserCookieKind,String> loginUserSessionMap = new ConcurrentHashMap<>();
 
 	public BrowserInfo(Logger logger){
 		validBrowser = BrowserCookieKind.NONE;
@@ -86,50 +92,72 @@ public class BrowserInfo {
 		if(setting == null)
 			return user_session;
 		for(BrowserCookieKind browser: BrowserInfo.ALL_BROWSER){
+			user_session = "";
 			if(setting.isBrowser(browser)){
 				validBrowser = browser;
-				if (browser == last_browser){
-					if (!last_user_session.isEmpty()){
-						log.println("Last user_session matched!");
-						return last_user_session;
-					}
+				user_session = loginUserSessionMap.get(browser);
+				if(user_session!=null && !isFalseSession(user_session)){
+					log.println("Last user_session matched!");
+					break;
 				}
 				if (browser == BrowserCookieKind.NONE)
 					continue;
 				if (browser == BrowserCookieKind.Other){
 					user_session = getUserSessionOther(setting.getBrowserCookiePath());
-					if(!user_session.isEmpty())
+					if(!isFalseSession(user_session))
 						break;
 				}else{
 					user_session = getUserSession(browser);
-					if(!user_session.isEmpty())
+					if(!isFalseSession(user_session))
 						break;
 				}
 			}
 		}
+		if(user_session.isEmpty())
+			validBrowser = BrowserCookieKind.NONE;
 		return user_session;
+	}
+	public static boolean isFalseSession(String s){
+		return s.isEmpty() || failedUserSessionSet.contains(s);
 	}
 	public BrowserCookieKind getValidBrowser(){
 		return validBrowser;
 	}
-	synchronized static void setUsersession(String user_session){
-		if(user_session.isEmpty()){
-			last_browser = null;
-		}else{
-			last_browser = validBrowser;
+	boolean isBrowser(){
+		return validBrowser != BrowserCookieKind.NONE;
+	}
+	public boolean isValid(){
+		return !getLastUsersession().isEmpty();
+	}
+	public String getLastUsersession() {
+		String session = loginUserSessionMap.get(validBrowser);
+		if(session==null)
+			session = "";
+		return session;
+	}
+	void resetLastUsersession(){
+		String session = getLastUsersession();
+		if(!session.isEmpty())
+			failedUserSessionSet.add(session);
+		loginUserSessionMap.remove(validBrowser);
+	}
+	void setLastUsersession(String session){
+		failedUserSessionSet.remove(session);
+		if(!session.isEmpty()){
+			loginUserSessionMap.put(validBrowser, session);
 		}
-		last_user_session = user_session;
 	}
-	public static void resetUsersession(){
-		last_browser = null;
-		last_user_session = "";
+	public static void resetBrowserInfo(){
+		loginUserSessionMap.clear();
+		failedUserSessionSet.clear();
 	}
+
 	/**
 	 *
 	 * @param browserKind
 	 * @return
 	 */
-	public String getUserSession(BrowserCookieKind browserKind) {
+	private String getUserSession(BrowserCookieKind browserKind) {
         String user_session = "";
         switch (browserKind)
         {
@@ -158,9 +186,6 @@ public class BrowserInfo {
             	break;
             default:
             	break;
-        }
-        if (!user_session.isEmpty()){
-        	validBrowser = browserKind;
         }
         return user_session;
     }
@@ -585,10 +610,6 @@ public class BrowserInfo {
         }
         return String.join(" ", us);
     }
-
-	public static String getLastUsersession() {
-		return last_user_session;
-	}
 
 }
 

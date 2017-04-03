@@ -3268,7 +3268,7 @@ public class MainFrame extends JFrame {
 
 	private void mainFrame_loginCheck(JLabel status) {
 		status.setText("ログインチェック中");
-		BrowserInfo.resetUsersession();
+		BrowserInfo.resetBrowserInfo();
 		Path file = Path.mkTemp("mytop");
 		String url = "http://www.nicovideo.jp/my/top";
 		Loader loader = new Loader(getSetting(),

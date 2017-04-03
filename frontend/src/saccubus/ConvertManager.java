@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
+import saccubus.net.BrowserInfo;
 import saccubus.net.Gate;
 import saccubus.net.NicoClient;
 import saccubus.util.Logger;
@@ -231,10 +232,10 @@ public class ConvertManager extends Thread {
 
 	}
 
-	public static NicoClient getManagerClient(ConvertWorker conv){
+	public static NicoClient getManagerClient(ConvertWorker conv, BrowserInfo browser){
 		NicoClient client = clientTab.get(conv);
 		if(client==null){
-			client = conv.getNicoClient();
+			client = conv.getNicoClient(browser);
 			clientTab.put(conv, client);
 		}
 		return client;

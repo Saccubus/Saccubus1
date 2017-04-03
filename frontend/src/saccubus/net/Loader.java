@@ -21,7 +21,6 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import saccubus.ConvertingSetting;
-import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.util.Logger;
 import saccubus.util.Stopwatch;
 
@@ -39,7 +38,8 @@ public class Loader {
 	private String proxy;
 	private int proxyPort;
 	private String userSession;
-	private BrowserCookieKind browserKind;
+	//private BrowserCookieKind browserKind;
+	private BrowserInfo browserInfo;
 	private Logger log;
 	private boolean Debug = false;
 	private NicoClient client;
@@ -89,10 +89,10 @@ public class Loader {
 	 * @return true if OK.
 	 */
 	private boolean check(ConvertingSetting setting) {
-		BrowserInfo browser = new BrowserInfo(log);
-		userSession = browser.getUserSession(setting);
-		browserKind = browser.getValidBrowser();
-		if (browserKind == BrowserCookieKind.NONE){
+		browserInfo = new BrowserInfo(log);
+		userSession = browserInfo.getUserSession(setting);
+		//browserKind = myBrowser.getValidBrowser();
+		if (!browserInfo.isValid()){
 			mailAddress = setting.getMailAddress();
 			password = setting.getPassword();
 			if (mailAddress == null || mailAddress.isEmpty()
@@ -101,7 +101,7 @@ public class Loader {
 				return false;
 			}
 		} else if (userSession.isEmpty()){
-			sendtext("ブラウザ" + browserKind.getName() + "のセッション取得に失敗");
+			sendtext("ブラウザ" + browserInfo.getName() + "のセッション取得に失敗");
 			return false;
 		}
 		if (setting.useProxy()){
@@ -123,18 +123,18 @@ public class Loader {
 		sendtext("ログイン中");
 		NicoClient client = null;
 		isHtml5 = setting.isHtml5();
-		if (browserKind != BrowserCookieKind.NONE){
+		if (browserInfo.isValid()){
 			// セッション共有、ログイン済みのNicoClientをclientに返す
-			client = new NicoClient(browserKind, userSession, proxy, proxyPort, stopwatch, log, isHtml5);
+			client = new NicoClient(browserInfo, proxy, proxyPort, stopwatch, log, isHtml5);
 		} else {
 			client = new NicoClient(mailAddress, password, proxy, proxyPort, stopwatch, log, isHtml5);
 		}
 		if (!client.isLoggedIn()) {
-			sendtext("ログイン失敗 " + browserKind.getName() + " " + client.getExtraError());
+			sendtext("ログイン失敗 " + browserInfo.getName() + " " + client.getExtraError());
 			log.println("\nLogin failed.");
 			return null;
 		} else {
-			sendtext("ログイン成功 " + browserKind.getName());
+			sendtext("ログイン成功 " + browserInfo.getName());
 			return client;
 		}
 	}

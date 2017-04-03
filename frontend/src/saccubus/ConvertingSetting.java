@@ -52,6 +52,7 @@ public class ConvertingSetting {
 	static final String DEFAULT_FFMPEG_PATH = "./bin/ffmpeg.exe";
 	static final boolean ONLY_MP4_AUTO_PLAY = false;
 	static final String DEFAULT_METADATA = "title=%TITLE% genre=%CAT% comment=%ID%";
+	static final boolean USE_SACCUBUS_LOCAL_COOKIE = true;
 
 	public static final String[] ShadowKindArray = {
 		"00:‚È‚µ",

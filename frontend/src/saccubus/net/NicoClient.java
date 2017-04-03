@@ -42,7 +42,6 @@ import saccubus.MainFrame_AboutBox;
 import saccubus.WayBackDate;
 import saccubus.conv.ChatSave;
 import saccubus.json.Mson;
-import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.util.Logger;
 import saccubus.util.Stopwatch;
 
@@ -86,6 +85,7 @@ public class NicoClient {
 	private Logger log;
 	private boolean isHtml5;
 	private boolean isHtml5Ok = false;
+	private BrowserInfo browserInfo = null;
 
 	public static final String DEBUG_PROXY = "debug";	// debug paramerter end with '/'
 	static final String S_QUOTE2 = "\"";
@@ -112,6 +112,7 @@ public class NicoClient {
 		nicomap = new NicoMap();
 		ConProxy = conProxy(proxy, proxy_port);
 		isHtml5 = is_html5;
+		browserInfo = new BrowserInfo(logger);
 		// ログイン
 		login();
 		setLoggedIn(loginCheck());
@@ -153,9 +154,10 @@ public class NicoClient {
 	 * @param proxy_port : int
 	 * @param watch_html5
 	 */
-	public NicoClient(final BrowserCookieKind browser_kind, final String user_session,
+	public NicoClient(final BrowserInfo browser,
 			final String proxy, final int proxy_port, final Stopwatch stopwatch,
 			Logger logger, boolean is_html5) {
+		browserInfo = browser;
 		log = logger;
 		User = "";
 		Pass = "";
@@ -163,8 +165,9 @@ public class NicoClient {
 		nicomap = new NicoMap();
 		isHtml5 = is_html5;
 		ConProxy = conProxy(proxy, proxy_port);
+		String user_session = browserInfo.getLastUsersession();
 		if (user_session == null || user_session.isEmpty()){
-			log.println("Invalid user session" + browser_kind.toString());
+			log.println("Invalid user session" + browserInfo.getName());
 			setExtraError("セッションを取得出来ません");
 		} else {
 			String[] sessions = user_session.split(" ");	// "user_session_12345..."+" "+...
@@ -181,7 +184,7 @@ public class NicoClient {
 						return;
 					}
 					Cookie = new NicoCookie();
-					log.println("Fault user session " + browser_kind.toString());
+					log.println("Fault user session " + browserInfo.getName());
 					setExtraError("セッションが無効です");
 				}
 			}
@@ -242,6 +245,10 @@ public class NicoClient {
 			boolean followRedirect){
 
 		try {
+			if(url==null){
+				log.println("url is NULL!");
+				return null;
+			}
 			debug("\n■URL<" + url + ">\n");
 			String host = url.substring("http://".length())+"/";
 			host = host.substring(0,host.indexOf("/"));
@@ -577,6 +584,7 @@ public class NicoClient {
 				con = urlConnectGET(url);
 			}
 			Cookie.update(detectCookie(con));
+			browserInfo.setLastUsersession(Cookie.getUsersession());
 			if(getWatchThread().isEmpty())
 				watchThread = getThread(url);
 			String encoding = con.getContentEncoding();
@@ -681,6 +689,11 @@ public class NicoClient {
 						isHtml5Ok = false;
 					}
 				}
+			}
+			if(VideoUrl==null || VideoUrl.isEmpty()){
+				log.println("video URL ["+VideoUrl+"] is invalid. ");
+				nicomap.printAll(log);
+				return false;
 			}
 		} catch (IOException ex) {
 			log.printStackTrace(ex);
@@ -795,10 +808,16 @@ public class NicoClient {
 			}
 			ownerFilter = nicomap.get("ng_up");
 			if (ThreadID == null || VideoUrl == null
-				|| MsgUrl == null || UserID == null) {
+				|| MsgUrl == null || UserID == null
+				|| ThreadID.isEmpty() || VideoUrl.isEmpty()
+				|| MsgUrl.isEmpty() || UserID.isEmpty()) {
 				log.println("ng.\nCan't get video information keys.");
-				con = urlConnectGET(url + watchInfo);
-				if(!loginCheck(con)){
+				try {
+					con = urlConnectGET(url + watchInfo);
+					if(!loginCheck(con)){
+						log.println("Can't logged In.");
+					}
+				}catch(NullPointerException e){
 					log.println("Can't logged In.");
 				}
 				return false;
@@ -2155,15 +2174,16 @@ public class NicoClient {
 		}
 		String auth = nicomap.get("x-niconico-authflag");
 		if(auth==null || auth.isEmpty() || auth.equals("0")){
-			log.println("ng. Not logged in. authflag=" + auth);
+			log.println("ng. Not logged in. "+browserInfo.getName()+" authflag=" + auth);
+			log.println("last_user_session="+browserInfo.getLastUsersession());
 			con.disconnect();
-			BrowserInfo.resetUsersession();	//reset last_session
+			browserInfo.resetLastUsersession();	//reset last_session
 			return false;
 		}
 		Cookie.update(new_cookie);
 		debug("\n■Now Cookie is<" + Cookie.toString() + ">\n");
-		BrowserInfo.setUsersession(Cookie.getUsersession());
-		debug("\n■last_user_session is<" + BrowserInfo.getLastUsersession() + ">\n");
+		browserInfo.setLastUsersession(Cookie.getUsersession());
+		debug("■last_user_session is<" + browserInfo.getLastUsersession() + ">\n");
 		log.println("loginCheck ok.");
 		setExtraError("");
 		return true;
@@ -2597,7 +2617,7 @@ public class NicoClient {
 	private Mson dataApiMson;
 	private Mson watchApiMson;
 	public boolean serverIsDmc(){
-		return "1".equals(isDmc);
+		return "1".equals(isDmc) && !sessionApi.isEmpty();
 	}
 	public Path getThumbInfoFile(String tag){
 		String url = HTTP_EXT_THUMBINFO + tag;
@@ -3127,11 +3147,21 @@ public class NicoClient {
 		//	debugPrettyPrint("watchApi:\n ",watchApiMson);
 			// flvInfo
 			if(!nicomap.containsKey("flvInfo")){
+				NicoMap nicomap2 = new NicoMap();
 				flvInfo = watchApiMson.getAsString("flvInfo");
 				debug("\n■flvInfo:\n "+flvInfo);
-				nicomap.put("flvInfo", flvInfo);
+				nicomap2.put("flvInfo", flvInfo);
 				flvInfoArrays = URLDecoder.decode(flvInfo, encoding);
-				nicomap.putArrayURLDecode(flvInfoArrays, encoding);
+				nicomap2.putArrayURLDecode(flvInfoArrays, encoding);
+				String needs_key = nicomap2.get("needs_key");
+				if(needs_key==null) needs_key = "null";
+				String url = nicomap2.get("url");
+				if(url==null || url.isEmpty()){
+					log.println("VideoUrl["+url+"] invalid . needs_key="+needs_key);
+				}else{
+					nicomap.put("flvInfo", flvInfo);
+					nicomap.putArrayURLDecode(flvInfoArrays, encoding);
+				}
 			}
 			// dmcInfo
 			isDmc = watchApiMson.getAsString("isDmc");

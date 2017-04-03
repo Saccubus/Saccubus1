@@ -34,7 +34,6 @@ import saccubus.conv.CommentReplace;
 import saccubus.conv.ConvertToVideoHook;
 import saccubus.conv.NicoXMLReader;
 import saccubus.net.BrowserInfo;
-import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.net.Gate;
 import saccubus.net.NicoClient;
 import saccubus.net.Path;
@@ -125,7 +124,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String OtherVideo;
 	private final String WatchInfo;
 	private InfoStack infoStack;
-	private BrowserCookieKind BrowserKind = BrowserCookieKind.NONE;
+	//private BrowserCookieKind BrowserKind = BrowserCookieKind.NONE;
 	private final BrowserInfo browserInfo;
 	private String UserSession = "";	//ブラウザから取得したユーザーセッション
 	private final Stopwatch stopwatch;
@@ -695,8 +694,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			|| Setting.isSaveThumbInfo()) {
 			// ブラウザセッション共有の場合はここでセッションを読み込む
 			UserSession = browserInfo.getUserSession(Setting);
-			BrowserKind = browserInfo.getValidBrowser();
-			if (BrowserKind == BrowserCookieKind.NONE){
+			//BrowserKind = browserInfo.getValidBrowser();
+			if (!browserInfo.isValid()){
 				mailAddress = Setting.getMailAddress();
 				password = Setting.getPassword();
 				if (mailAddress == null || mailAddress.isEmpty()
@@ -706,7 +705,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					return false;
 				}
 			} else if(UserSession.isEmpty()){
-				sendtext("ブラウザ" + BrowserKind.getName() + "のセッション取得に失敗");
+				sendtext("ブラウザ" + browserInfo.getName() + "のセッション取得に失敗");
 				result = "34";
 				return false;
 			}
@@ -729,23 +728,23 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return true;
 	}
 
-	public synchronized NicoClient getNicoClient() {
+	public synchronized NicoClient getNicoClient(BrowserInfo browser){
 
 		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
 			|| Setting.isSaveThumbInfo()) {
 			sendtext("ログイン中");
 			NicoClient client = null;
 			boolean is_html5 = Setting.isHtml5();
-			if (BrowserKind != BrowserCookieKind.NONE){
+			if (browser.isValid()){
 				// セッション共有、ログイン済みのNicoClientをclientに返す
-				client = new NicoClient(BrowserKind, UserSession, proxy, proxy_port, stopwatch, log, is_html5);
+				client = new NicoClient(browser, proxy, proxy_port, stopwatch, log, is_html5);
 			} else {
 				client = new NicoClient(mailAddress, password, proxy, proxy_port, stopwatch, log, is_html5);
 			}
 			if (!client.isLoggedIn()) {
-				sendtext("ログイン失敗 " + BrowserKind.getName() + " " + client.getExtraError());
+				sendtext("ログイン失敗 " + browser.getName() + " " + client.getExtraError());
 			} else {
-				sendtext("ログイン成功 " + BrowserKind.getName());
+				sendtext("ログイン成功 " + browser.getName());
 			}
 			return client;
 		} else {
@@ -832,23 +831,27 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 					if(client.getSizeVideo() > size_smile)
 						size_smile = client.getSizeVideo();
+					if(size_smile>0)
+						log.println("smile size: "+(size_smile>>20)+"MiB");
+					else
+						log.println("bug? can't get smile size");
+					int size_dmc = client.getSizeDmc();
 					if(client.isEco() && existVideoFile(VideoFile, ".flv", ".mp4")){
 						sendtext("エコノミーモードで通常動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
-							|| existVideo.length()==size_smile
-							|| existVideo.length()==client.getSizeDmc()){
+						 || (size_smile>0 && existVideo.length()==size_smile)){
 							log.println("エコノミーモードで通常動画は既に存在します。ダウンロードをスキップします");
 							VideoFile = existVideo;
 							return true;
 						}
 						sendtext("通常動画のサイズが一致しません。");
 						log.println("通常動画のサイズが一致しません。");
+						log.println("smile="+size_smile+"bytes, exist="+existVideo.length()+"bytes.");
 					}
 					if(client.isEco() && existVideoFile(dmcVideoFile, ".flv", ".mp4")){
 						sendtext("エコノミーモードでdmc動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
-							|| existVideo.length()==client.getSizeDmc()
-							|| existVideo.length()==size_smile){
+						 || (size_dmc>0 && existVideo.length()==size_dmc)){
 							log.println("エコノミーモードでdmc動画は既に存在します。ダウンロードをスキップします");
 							dmcVideoFile = existVideo;
 							VideoFile = dmcVideoFile;
@@ -856,12 +859,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 						sendtext("dmc動画のサイズが一致しません。");
 						log.println("dmc動画のサイズが一致しません。");
+						log.println("dmc="+size_dmc+"bytes, exist="+existVideo.length()+"bytes.");
 					}
 					if(client.isEco() && existVideoFile(lowVideoFile,".flv",".mp4")){
 						sendtext("エコノミーモードでエコ動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
-							|| existVideo.length()==size_smile
-							|| existVideo.length()==client.getSizeDmc()){
+							|| (size_smile>0 && existVideo.length()==size_smile)
+							|| (size_dmc>0 && existVideo.length()==size_dmc)){
 							log.println("エコノミーモードで動画は既に存在します。ダウンロードをスキップします");
 							lowVideoFile = existVideo;
 							VideoFile = lowVideoFile;
@@ -869,6 +873,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 						sendtext("エコ動画のサイズが一致しません。");
 						log.println("エコ動画のサイズが一致しません。");
+						log.println("low="+existVideo.length()+"bytes.");
 					}
 				}
 				sendtext("動画のダウンロード開始中");
@@ -897,6 +902,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 						sendtext("動画のサイズが一致しません。");
 						log.println("動画のサイズが一致しません。");
+						log.println("smile="+size_smile+"bytes, exist="+existVideo.length()+"bytes.");
 					}
 					if(lowVideoFile==null)
 						lowVideoFile = VideoFile;
@@ -940,37 +946,54 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					else
 						log.println("bug? can't get smile size");
 					if(existVideoFile(VideoFile, ".flv", ".mp4")){
-						if(!Setting.isEnableCheckSize()||existVideo.length()==size_high){
+						if(!Setting.isEnableCheckSize()){
 							sendtext("動画は既に存在します");
 							log.println("動画は既に存在します。");
 							VideoFile = existVideo;
 							video_size = VideoFile.length();
 							log.println("video size: "+(video_size>>20)+"MiB");
 						}else{
-							sendtext("動画のサイズが一致しません。");
-							log.println("動画のサイズが一致しません。");
-							video_size = 0;
+							if(size_high>0){
+								if(existVideo.length()==size_high){
+									sendtext("動画は既に存在します");
+									log.println("動画は既に存在します。");
+									VideoFile = existVideo;
+									video_size = VideoFile.length();
+									log.println("video size: "+(video_size>>20)+"MiB");
+								}else{
+									sendtext("動画のサイズが一致しません。");
+									log.println("動画のサイズが一致しません。");
+									log.println("high="+size_high+"bytes, exist="+existVideo.length()+"bytes.");
+									video_size = 0;
+								}
+							}else{
+								sendtext("動画のサイズが取得できません。");
+								log.println("動画のサイズが取得できません。");
+								log.println("exist="+existVideo.length()+"bytes.");
+								video_size = 0;
+							}
 						}
 					}
 					boolean skip = false;
+					long size_exist = 0;
+					File video_exist = null;
 					if(existVideoFile(dmcVideoFile, ".flv", ".mp4")){
 						sendtext("dmc動画は既に存在します");
-						if(!Setting.isEnableCheckSize()
-						 || existVideo.length()==client.getSizeDmc()){
+						if(!Setting.isEnableCheckSize()){
 							log.println("dmc動画は既に存在します。ダウンロードをスキップします");
 							skip = true;
 							dmcVideoFile = existVideo;
 							dmc_size = dmcVideoFile.length();
 							log.println("dmc size: "+(dmc_size>>20)+"MiB");
 						}else{
-							sendtext("dmc動画のサイズが一致しません。");
-							if(dmcVideoFile.delete())
-								log.println("dmc動画のサイズが一致しません。dmc動画を削除します");
+							video_exist = existVideo;
+							size_exist = video_exist.length();
+							log.println("exist size: "+(size_exist>>20)+"MiB");
 							skip = false;
 						}
 					} 
 					if(!skip){
-						long min_size = Math.max(video_size, size_high);
+						long min_size = Math.max(Math.max(video_size, size_high),size_exist);
 						long[] limits = {min_size, 0, 0};	// limits[1] is return value
 						if(Setting.doesDmcforceDl())
 							limits[0] = 0;	//途中で中止しない
@@ -1089,6 +1112,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								sendtext("dmc(S) ダウンロード済");
 								dmcVideoFile = VideoFile;
 								dmc_size = video_size;
+							}else if(size_exist == dmc_high){
+								log.println("dmc(S) ダウンロード済(size_eixst == dmc_high)");
+								sendtext("dmc(S) ダウンロード済");
+								dmcVideoFile = video_exist;
+								dmc_size = video_exist.length();
 							}else if(min_size >= dmc_size){
 								log.println("dmc(S) ダウンロード中止(min_size >= dmc_size)");
 								sendtext("dmc(S) ダウンロード中止");
@@ -2442,7 +2470,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
 					|| Setting.isSaveThumbInfo()) {
 				do{
-					client = ConvertManager.getManagerClient(this);
+					client = ConvertManager.getManagerClient(this, browserInfo);
 				}while (!stopFlagReturn() && canRetry(client, gate));
 			}
 
@@ -2459,7 +2487,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					if(Tag==null || Tag.isEmpty()){
 						sendtext("URL/IDの指定がありません " + client.getExtraError());
 					}else if(!client.loginCheck()){
-						sendtext("ログイン失敗 " + BrowserKind.getName() + " " + client.getExtraError());
+						sendtext("ログイン失敗 " + browserInfo.getName() + " " + client.getExtraError());
 					}else{
 						sendtext(Tag + "の情報の取得に失敗 " + client.getExtraError());
 					}
@@ -3465,7 +3493,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						thumbfile = new File(".\\bin\\b32.jpg");
 					}
 				}else {
-					NicoClient client = ConvertManager.getManagerClient(this);
+					NicoClient client = ConvertManager.getManagerClient(this, browserInfo);
 					if(thumbInfoFile==null || !thumbInfoFile.canRead())
 						saveThumbInfo0(client, Tag);
 					if(saveThumbnailJpg(thumbInfo, client)){
