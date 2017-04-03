@@ -152,6 +152,7 @@ public class MainFrame extends JFrame {
 	JMenuItem jTips2 = new JMenuItem();
 	JMenuItem jTips3 = new JMenuItem();
 	JCheckBoxMenuItem jMenuCheckSize = new JCheckBoxMenuItem();
+	JCheckBoxMenuItem jMenuClearErrorAtEnd = new JCheckBoxMenuItem(); 
 	JMenu jMenuAction = new JMenu();
 	JMenuItem jMenuLogview = new JCheckBoxMenuItem();
 	JMenuItem jMenuLatestCheck = new JMenuItem();
@@ -1057,6 +1058,7 @@ public class MainFrame extends JFrame {
 		jMenuCheckSize.setToolTipText(
 			"<html>サーバのファイルサイズ情報と一致しない場合再読込します。<BR>"
 			+"動画差し替えの場合はローカル変換又はオフにして下さい。</html>");
+		jMenuClearErrorAtEnd.setText("終了時エラーリスト保存&クリア");
 		jMenuOpen.setText("開く(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
@@ -1687,6 +1689,7 @@ public class MainFrame extends JFrame {
 		jMenuDetail.add(jMenuAprilFool);
 		jMenuDetail.add(jMenuTips);
 		jMenuDetail.add(jMenuCheckSize);
+		jMenuDetail.add(jMenuClearErrorAtEnd);
 		jMenuBar1.add(jMenuAction);
 		jMenuAction.add(jMenuLogview);
 		jMenuAction.add(jMenuLatestCheck);
@@ -3514,17 +3517,16 @@ public class MainFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					StringBuffer vlist = new StringBuffer(errorControl.getString());
-					if(!vlist.substring(0).isEmpty()){
+					StringBuffer vlist = new StringBuffer(errorControl.getList());
+					if(!vlist.substring(0).trim().isEmpty()){
 						myListGetterDone(vlist, log);
 						errorControl.clearData();
 						convertManager.clearError();
-					}else{
-						StringBuffer evlist = new StringBuffer(errorControl.getEcoString());
-						if(!evlist.substring(0).isEmpty()){
-							myListGetterDone(evlist, log);
-							errorControl.clearEco();
-						}
+					}
+					StringBuffer evlist = new StringBuffer(errorControl.getEcoList());
+					if(!evlist.substring(0).trim().isEmpty()){
+						myListGetterDone(evlist, log);
+						errorControl.clearEco();
 					}
 				}
 			});
@@ -4072,7 +4074,9 @@ public class MainFrame extends JFrame {
 			enableAutoHtml5CheckBox.isSelected(),
 			shadowDefaultSetting[0],
 			shadowDefaultSetting[1],
-			jMenuCheckSize.isSelected()
+			jMenuCheckSize.isSelected(),
+			errorControl.getEcoString(),
+			jMenuClearErrorAtEnd.isSelected()
 		);
 	}
 
@@ -4255,7 +4259,7 @@ public class MainFrame extends JFrame {
 		nThreadSpinner.setValue((Integer)(setting.getNumThread()));
 		PendingModeCheckbox.setSelected(setting.isPendingMode());
 		OneLineCheckbox.setSelected(setting.isOneLineMode());
-		errorControl.setError(setting.getErrorList());
+		errorControl.setError(setting.getErrorList(),false);
 		liveOparationDurationChangeCheckBox.setSelected(setting.changedLiveOperationDuration());
 		liveCommentModeCheckBox.setSelected(setting.isForcedLiveComment());
 		liveOperationDurationTextField.setText((setting.getLiveOperationDuration()));
@@ -4293,6 +4297,8 @@ public class MainFrame extends JFrame {
 		shadowDefaultSetting[0] = setting.getShadowDefault();
 		shadowDefaultSetting[1] = setting.getHtml5ShadowDefault();
 		jMenuCheckSize.setSelected(setting.isEnableCheckSize());
+		errorControl.setEco(setting.getEcoList());
+		jMenuClearErrorAtEnd.setSelected(setting.clearErrorAtEnd());
 		setHtml5AutoDefault();
 		if(isDebugModeSet())
 			jMenuDebug.setSelected(true);
@@ -4306,6 +4312,11 @@ public class MainFrame extends JFrame {
 	 */
 	public void jMenuFileExit_actionPerformed(ActionEvent actionEvent) {
 		ConvertingSetting setting = this.getSetting();
+		if(setting.clearErrorAtEnd()){
+			errorControl.save();
+			errorControl.clear();
+			setting = this.getSetting();
+		}
 		ConvertingSetting.saveSetting(setting);
 		System.exit(0);
 	}

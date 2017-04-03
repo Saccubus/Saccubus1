@@ -2434,7 +2434,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		sbRet.append("RESULT=FF\n");
 		if(!Tag.contains(WatchInfo))
 			Tag += WatchInfo;
-		errorControl.setError(result,Tag,gettext());
+		errorControl.setError(result,Tag,gettext(),VideoTitle);
 	}
 
 	@Override
@@ -2666,20 +2666,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			String url = Tag.contains(WatchInfo)? Tag : Tag+WatchInfo;
 			if(result.equals("97"))
-				errorControl.setError(result,url,"中止しました");
+				errorControl.setError(result,url,"中止しました",VideoTitle);
 			else if(result.equals("98")){
 				StringBuffer sb = new StringBuffer(Tag+"\tリトライ\t"+WatchInfo);
 				if(parent!=null){
 					parent.myListGetterDone(sb, log);
 				}else{
-					errorControl.setError(result,url,"サスペンド\t"+resumeDmcFile);
+					errorControl.setError(result,url,"サスペンド\t"+resumeDmcFile,VideoTitle);
 				}
 			}
 			else
 			if(!result.equals("0"))
-				errorControl.setError(result,url,gettext());
+				errorControl.setError(result,url,gettext(),VideoTitle);
 			else if(isEcoVideo){
-				errorControl.setEco("eco", url, "エコノミー成功");
+				errorControl.setEco("eco", url, "エコノミー成功" ,VideoTitle);
  			}
 			synchronized(StopFlag){
 				StopFlag.finish();

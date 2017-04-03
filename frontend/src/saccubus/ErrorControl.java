@@ -58,40 +58,75 @@ public class ErrorControl {
 		});
 	}
 
-	public void setError(String code, String mes, String logmsg){
+	public void setError(String code, String mes, String logmsg, String title){
 		mes = mes.replace("\n", "");
 		errList.append(mes+"\t"+code+"\n");
-		errlog.append(mes+"\t"+code+" "+logmsg+"\n");
+		errlog.append(mes+"\t"+title+"\t"+code+" "+logmsg+"\n");
 		setText();
 	}
-	public void setEco(String code, String mes, String logmsg){
+	public void setEco(String code, String mes, String logmsg, String title){
 		mes = mes.replace("\n", "");
 		ecoList.append(mes+"\t"+code+"\n");
-		ecolog.append(mes+"\t"+code+" "+logmsg+"\n");
+		ecolog.append(mes+"\t"+title+"\t"+code+" "+logmsg+"\n");
 		setText();
 	}
-	public String getString(){
-		return errList.substring(0);
+	public String getString(){	//setting String
+		return errList.substring(0).trim();
 	}
-	public String getEcoString() {
-		return ecoList.substring(0);
+	public String getEcoString() {	//setting String
+		return ecoList.substring(0).trim();
+	}
+	public String getList() {	//to reconvert list
+		return errlog.substring(0);
+	}
+	public String getEcoList() {	//to reconvert list
+		return ecolog.substring(0);
 	}
 
-	private synchronized void setText(){
+	private synchronized void setText(){	//to jlabel display
 		final String text = errList.toString().replace("\n", "　").replace("\t", "_");
 		final String text2 = ecoList.toString().replace("\n", "　").replace("\t", "_");
 		sendtext(text, text2);
 	}
 
-	public void setEco(String s){
+	public void setEco(String s){	// 1 line ecolist add
 		ecoList.append(s);
 		ecolog.append(s);
 		setText();
 	}
 
-	public void setError(String s){
+	public void setError(String s){	// 1 line error add
 		errList.append(s);
 		errlog.append(s);
+		setText();
+	}
+
+	public void setError(String errorList, boolean fromPanel) {//from savedSetting
+		if(!fromPanel){
+			String[] line = errorList.split("\n");
+			for(String s:line){
+				String[] ss = s.split("\t");
+				int t = ss.length;
+				String url = t>0? ss[0]:"";
+				String list = url + "\n";
+				errList.append(list);
+				errlog.append(s+"\n");
+			}
+		}
+		setText();
+	}
+
+	public void setEco(String saved, boolean fromPanel) {//from savedSetting
+		if(!fromPanel){
+			for(String s:saved.split("\n")){
+				String[] ss = s.split("\t");
+				int t = ss.length;
+				String url = t>0? ss[0]:"";
+				String list = url + "\n";
+				ecoList.append(list);
+				ecolog.append(s+"\n");
+			}
+		}
 		setText();
 	}
 
@@ -120,14 +155,16 @@ public class ErrorControl {
 		try {
 			text = errlog.substring(0);
 			sb = new StringBuffer();
-			if(text!=null && !text.isEmpty()){
+			if(text!=null && !text.trim().isEmpty()){
 				String[] tt2 = text.split("\n");
 				pw = new PrintWriter(errlistSave);
 				for(String t:tt2){
 					if(t.contains("42 エコノミー")){
 						sb.append(t+"\n");
-					}else{
+					}else if(!t.trim().isEmpty()){
 						pw.print(t+"\n");
+					}else{
+						// 空白行
 					}
 				}
 				pw.flush();
@@ -135,7 +172,7 @@ public class ErrorControl {
 			}
 		
 			text = sb.toString() + ecolog.substring(0);
-			if(text!=null && !text.isEmpty()){
+			if(text!=null && !text.trim().isEmpty()){
 				pw = new PrintWriter(ecolistSave);
 				pw.print(text);
 				pw.flush();
@@ -147,5 +184,4 @@ public class ErrorControl {
 			return false;
 		}
 	}
-
 }

@@ -231,6 +231,8 @@ public class ConvertingSetting {
 	private boolean enableHtml5Comment;
 	private boolean enableAutoHtml5Comment;
 	private boolean enableCheckSize;
+	private String ecoList;
+	private boolean enableClearErrorAtEnd;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -487,7 +489,9 @@ public class ConvertingSetting {
 			boolean auto_html5_font,
 			String shadow_default,
 			String html5_shadow_default,
-			boolean enable_check_size
+			boolean enable_check_size,
+			String eco_list,
+			boolean clear_error_at_end
 		)
 	{
 		this(	mailaddress,
@@ -659,6 +663,8 @@ public class ConvertingSetting {
 		shadowDefault = shadow_default;
 		html5ShadowDefault = html5_shadow_default;
 		enableCheckSize = enable_check_size;
+		ecoList = eco_list;
+		enableClearErrorAtEnd = clear_error_at_end;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1139,6 +1145,12 @@ public class ConvertingSetting {
 	public boolean isEnableCheckSize(){
 		return enableCheckSize;
 	}
+	public String getEcoList(){
+		return ecoList;
+	}
+	public boolean clearErrorAtEnd() {
+		return enableClearErrorAtEnd;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1335,6 +1347,8 @@ public class ConvertingSetting {
 	static final String PROP_SHADOW_DEFAULT = "ShadowDefault";
 	static final String PROP_HTML5_SHADOW_DEFAULT = "Html5Shadow";
 	static final String PROP_ENABLE_CHECK_SIZE = "CheckSize";
+	static final String PROP_ECONOMT_LIST = "EconimyList";
+	static final String PROP_CLEAR_ERROR = "ClearErrorAtEnd";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1579,6 +1593,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_SHADOW_DEFAULT, setting.getShadowDefault());
 		prop.setProperty(PROP_HTML5_SHADOW_DEFAULT, setting.getHtml5ShadowDefault());
 		prop.setProperty(PROP_ENABLE_CHECK_SIZE, Boolean.toString(setting.isEnableCheckSize()));
+		prop.setProperty(PROP_ECONOMT_LIST, setting.getEcoList());
+		prop.setProperty(PROP_CLEAR_ERROR, Boolean.toString(setting.clearErrorAtEnd()));
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1879,7 +1895,9 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_HTML5, "false")),
 			prop.getProperty(PROP_SHADOW_DEFAULT, ""),
 			prop.getProperty(PROP_HTML5_SHADOW_DEFAULT, ""),
-			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_CHECK_SIZE, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_CHECK_SIZE, "false")),
+			prop.getProperty(PROP_ECONOMT_LIST,""),
+			Boolean.parseBoolean(prop.getProperty(PROP_CLEAR_ERROR,"false"))
 		);
 	}
 

@@ -120,7 +120,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		Loader loader = new Loader(Setting, status3, log, Setting.isHtml5());
 		gate = Gate.open(id,log);
 		if(!loader.load(url+watchInfo,file)){
-			addError("E1",url);
+			addError("E1",url,"mylist load失敗");
 			sendtext("[E1]load失敗 "+url);
 			gate.exit("E1");
 			return "E1";
@@ -160,7 +160,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 			String json_start = "Mylist.preload(";
 			int start = text.indexOf(json_start);
 			if(start < 0){
-				addError("E2",url);
+				addError("E2",url,"JSON not found "+url);
 				sendtext("JSON not found "+url);
 				return "E2";	//JSON not found
 			}
@@ -303,7 +303,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				String json_start = "first_data: ";
 				int start = text.indexOf(json_start);
 				if(start < 0){
-					addError("E2",url);
+					addError("E2",url,"JSON not found "+url);
 					sendtext("JSON not found "+url);
 					return "E2";	//JSON not found
 				}
@@ -379,7 +379,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 					log.printStackTrace(e);
 				}
 				if(mson==null){
-					addError("E3",url);
+					addError("E3",url,"パース失敗");
 					sendtext("[E3]パース失敗");
 					return "E3";
 				}
@@ -405,7 +405,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				sendtext("抽出成功 "+mylistID + "　"+sz+"個　"+ url);
 				log.println("Success mylist/"+mylistID+" item:"+sz);
 				if(sz == 0){
-					addError("E4",url);
+					addError("E4",url,"動画がありません。"+mylistID);
 					sendtext("[E4]動画がありません。"+mylistID);
 					//return "E4";
 					keys[0] = "id";
@@ -421,7 +421,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 					sendtext("抽出成功 "+mylistID + "　"+sz+"個　"+ url);
 					log.println("Success mylist/"+mylistID+" item:"+sz);
 					if(sz == 0){
-						addError("E4",url);
+						addError("E4",url,"動画がありません。"+mylistID);
 						sendtext("[E4]動画がありません。"+mylistID);
 						return "E4";
 					}
@@ -454,7 +454,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 					return "00";
 				}else{
 					//出力失敗
-					addError("E6",url);
+					addError("E6",url,autolist+".bat 出力失敗");
 					sendtext("[E6]"+autolist+".bat 出力失敗");
 					return "E6";
 				}
@@ -475,15 +475,15 @@ public class MylistGetter extends SwingWorker<String, String> {
 		} finally{
 
 		}
-		addError("EX",url);
+		addError("EX",url,"例外発生?");
 		sendtext("[EX]例外発生?");
 		return "EX";
 	}
 
-	private void addError(String code, String errorID) {
+	private void addError(String code, String errorID, String title) {
 		if(!watchInfo.isEmpty() && !errorID.contains(watchInfo.substring(1)))
 			errorID += watchInfo;
-		errorControl.setError(code,errorID,gettext());
+		errorControl.setError(code,errorID,gettext(),title);
 	}
 
 	//終了時EDTで自動実行される
