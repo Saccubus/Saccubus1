@@ -979,6 +979,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					boolean skip = false;
 					long size_exist = 0;
 					File video_exist = null;
+					File dmcVideoFileTmp = null;
 					if(existVideoFile(dmcVideoFile, ".flv", ".mp4")){
 						sendtext("dmc動画は既に存在します");
 						if(!Setting.isEnableCheckSize()){
@@ -992,6 +993,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							size_exist = video_exist.length();
 							log.println("exist size: "+(size_exist>>20)+"MiB");
 							skip = false;
+							//log.println("video_exist: "+video_exist.getPath());
+							//log.println("dmcVideoFile: "+dmcVideoFile.getPath());
+							if(dmcVideoFile.exists()){
+								dmc_size = dmcVideoFile.length();
+								dmcVideoFileTmp = new File(dmcVideoFile.getPath()+".tmp");
+								if(dmcVideoFile.renameTo(dmcVideoFileTmp)){
+									log.println("読み込み済みdmc動画を"+dmcVideoFileTmp.getPath()+"にrenameします。");
+									log.println("dmcサーバ動画のサイズをチェックします。");
+								}
+							}
 						}
 					} 
 					if(!skip){
@@ -1004,8 +1015,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								if(Setting.isEnableCheckSize()){
 									resumeDmcFile.delete();
 								}else{
-									if(dmcVideoFile.exists())
-										dmcVideoFile.delete();
 									if(resumeDmcFile.renameTo(dmcVideoFile)){
 										log.println("中断したdmc動画をresumeします。");
 										sendtext("中断したdmc動画resumeします");
@@ -1033,7 +1042,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								dmc_high = limits[1];
 								if(dmcVideoFile.canRead())
 									dmc_size = dmcVideoFile.length();
-								log.println("dmc size: "+(dmc_high>>20)+"MiB");
+								log.println("dmc high: "+(dmc_high>>20)+"MiB");
 								if(video==null){
 									//dmc_size = 0;
 									String ecode = client.getExtraError();
@@ -1065,9 +1074,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									log.println("video ContentType: "+videoContentType);
 									dmcVideoFile = video;
 									resume_size = dmcVideoFile.length();
+									dmc_size = resume_size;
 									log.println("resumed size: "+(resume_size>>20)+"MiB");
 								}
-								if(resume_size == dmc_size)
+								if(resume_size == dmc_high)
 									break;
 								try {
 									Thread.sleep(1000);
@@ -1105,7 +1115,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									sendtext("98 dmc(S)エラーリトライ　");
 									return false;
 								}
-							} while(resume_size < dmc_size);
+							} while(resume_size < dmc_high);
 							if(dmc_high == 0){
 								log.println("dmc(S) getsize失敗!(dmc_high == 0)");
 								sendtext("dmc(S) getsize失敗!");
@@ -1117,17 +1127,30 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							}else if(size_exist == dmc_high){
 								log.println("dmc(S) ダウンロード済(size_eixst == dmc_high)");
 								sendtext("dmc(S) ダウンロード済");
-								dmcVideoFile = video_exist;
-								dmc_size = video_exist.length();
-							}else if(min_size >= dmc_size){
-								log.println("dmc(S) ダウンロード中止(min_size >= dmc_size)");
+								if(!video_exist.canRead()){
+									if(dmcVideoFileTmp.canRead()){
+										if(dmcVideoFileTmp.renameTo(video_exist)){
+											log.println("renamedファイルを"+video_exist.getPath()+"に戻します。");
+										}
+									}
+								}
+								if(!video_exist.canRead()){
+									log.println("dmc(S) rename失敗!(!video_exist.canRead())");
+									dmcVideoFile = null;
+									dmc_size = 0;
+								}else{
+									dmcVideoFile = video_exist;
+									dmc_size = video_exist.length();
+								}
+							}else if(min_size >= resume_size){
+								log.println("dmc(S) ダウンロード中止(min_size >= resume_size)");
 								sendtext("dmc(S) ダウンロード中止");
 								dmcVideoFile = null;
 								dmc_size = 0;
 							}else if(dmc_size == 0){
 								log.println("dmc(S) download失敗!(dmc_size == 0)");
 								sendtext("dmc(S) download失敗!");
-							}else if(resume_size != dmc_size){
+							}else if(resume_size != dmc_high){
 								log.println("dmc(S) resume失敗!(resume_size != dmc_size)");
 								sendtext("dmc(S) resume失敗!");
 								log.println("dmc size: "+(dmc_size>>20)+"MiB, resumed size: "+(resume_size>>20)+"MiB");
