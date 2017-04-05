@@ -126,7 +126,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private InfoStack infoStack;
 	//private BrowserCookieKind BrowserKind = BrowserCookieKind.NONE;
 	private final BrowserInfo browserInfo;
-	private String UserSession = "";	//ブラウザから取得したユーザーセッション
+	//private String UserSession = "";	//ブラウザから取得したユーザーセッション
 	private final Stopwatch stopwatch;
 	private File selectedVhook;
 	private Aspect videoAspect;
@@ -693,9 +693,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
 			|| Setting.isSaveThumbInfo()) {
 			// ブラウザセッション共有の場合はここでセッションを読み込む
-			UserSession = browserInfo.getUserSession(Setting);
+			browserInfo.checkUserSession(Setting);
 			//BrowserKind = browserInfo.getValidBrowser();
-			if (!browserInfo.isValid()){
+			if (!BrowserInfo.isBrowser(Setting)){
 				mailAddress = Setting.getMailAddress();
 				password = Setting.getPassword();
 				if (mailAddress == null || mailAddress.isEmpty()
@@ -704,7 +704,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					result = "33";
 					return false;
 				}
-			} else if(UserSession.isEmpty()){
+			} else if(!browserInfo.isValid()){
 				sendtext("ブラウザ" + browserInfo.getName() + "のセッション取得に失敗");
 				result = "34";
 				return false;

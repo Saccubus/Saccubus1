@@ -166,7 +166,7 @@ public class NicoClient {
 		nicomap = new NicoMap();
 		isHtml5 = is_html5;
 		ConProxy = conProxy(proxy, proxy_port);
-		String user_session = browserInfo.getLastUsersession();
+		String user_session = browserInfo.getLastBrowserValue();
 		if (user_session == null || user_session.isEmpty()){
 			log.println("Invalid user session" + browserInfo.getName());
 			setExtraError("セッションを取得出来ません");
@@ -598,7 +598,7 @@ public class NicoClient {
 				con = urlConnectGET(url);
 			}
 			Cookie.update(detectCookie(con));
-			browserInfo.setLastUsersession(Cookie.getUsersession());
+			BrowserInfo.setLastUsersession(Cookie.getUsersession());
 			if(getWatchThread().isEmpty())
 				watchThread = getThread(url);
 			String encoding = con.getContentEncoding();
@@ -2192,14 +2192,15 @@ public class NicoClient {
 		String auth = nicomap.get("x-niconico-authflag");
 		if(auth==null || auth.isEmpty() || auth.equals("0")){
 			log.println("ng. Not logged in. "+browserInfo.getName()+" authflag=" + auth);
-			log.println("last_user_session="+browserInfo.getLastUsersession());
+			log.println("last_user_session="+BrowserInfo.getLastUsersession());
 			con.disconnect();
+			BrowserInfo.resetLastUserSession();
 			return false;
 		}
 		Cookie.update(new_cookie);
 		debug("\n■Now Cookie is<" + Cookie.toString() + ">\n");
-		browserInfo.setLastUsersession(Cookie.getUsersession());
-		debug("■last_user_session is<" + browserInfo.getLastUsersession() + ">\n");
+		BrowserInfo.setLastUsersession(Cookie.getUsersession());
+		debug("■last_user_session is<" + BrowserInfo.getLastUsersession() + ">\n");
 		log.println("loginCheck ok.");
 		setExtraError("");
 		return true;

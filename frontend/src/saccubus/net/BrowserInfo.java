@@ -52,7 +52,7 @@ public class BrowserInfo {
 		}
 	}
 
-	private static BrowserCookieKind validBrowser;
+	private static BrowserCookieKind validBrowser = BrowserCookieKind.NONE;
 	public String getName(){
 		return validBrowser.getName();
 	}
@@ -71,10 +71,10 @@ public class BrowserInfo {
 	public static final int NUM_BROWSER = ALL_BROWSER.length;
 	private Logger log;
 	private static Set<String> faultUserSessionSet = new ConcurrentSkipListSet<>();
-	private String last_user_session = "";
+	private static String last_user_session = "";
+	private static String last_browser_value = "";
 
 	public BrowserInfo(Logger logger){
-		validBrowser = BrowserCookieKind.NONE;
 		log = logger;
 	}
 
@@ -85,62 +85,73 @@ public class BrowserInfo {
 	 * @param setting : ConvertingSetting
 	 * @return user_session : String
 	 */
-	public String getUserSession(ConvertingSetting setting){
-		String user_session = "";
+	public synchronized void checkUserSession(ConvertingSetting setting){
+		String browser_value = "";
 		if(setting == null)
-			return user_session;
+			return;
+		last_browser_value = "";
+		if(isBrowser(setting) && !isFalseSession(last_user_session)){
+			log.println("Last user_session matched! "+last_user_session);
+			last_browser_value = last_user_session;
+			return;
+		}
+		last_user_session = "";
 		for(BrowserCookieKind browser: BrowserInfo.ALL_BROWSER){
 			if(setting.isBrowser(browser)){
-				if(browser==validBrowser){
-					if(last_user_session!=null && !last_user_session.isEmpty()){
-						log.println("Last user_session matched! "+last_user_session);
-						return last_user_session;
-					}
-				}
 				if (browser == BrowserCookieKind.NONE){
 					continue;
 				}
 				if (browser == BrowserCookieKind.Other){
-					user_session = getUserSessionOther(setting.getBrowserCookiePath());
-					if(!isFalseSession(user_session)){
+					browser_value = getUserSessionOther(setting.getBrowserCookiePath());
+					if(!browser_value.isEmpty()){
 						validBrowser = browser;
-						last_user_session = user_session;
-						return last_user_session;
+						last_browser_value = browser_value;
+						return;
 					}
 				}else{
-					user_session = getUserSession(browser);
-					if(!isFalseSession(user_session)){
+					browser_value = getUserSession(browser);
+					if(!browser_value.isEmpty()){
 						validBrowser = browser;
-						last_user_session = user_session;
-						return last_user_session;
+						last_browser_value = browser_value;
+						return;
 					}
 				}
 			}
 		}
-		return user_session;
 	}
 
+
+	public static void resetLastUserSession() {
+		last_user_session = "";
+	}
+	public static boolean isBrowser(ConvertingSetting setting) {
+		return validBrowser != BrowserCookieKind.NONE && setting.isBrowser(validBrowser);
+	}
 	public static boolean isFalseSession(String s){
 		return s==null || s.isEmpty()
 			|| faultUserSessionSet.contains(s);
 	}
-	public BrowserCookieKind getValidBrowser(){
-		return validBrowser;
-	}
 	public boolean isValid(){
-		return !last_user_session.isEmpty() && validBrowser!=null;
+		return !last_browser_value.isEmpty();
 	}
-	public String getLastUsersession() {
-		if(validBrowser==null)
-			return "";
+	public static String getLastUsersession() {
 		return last_user_session;
 	}
-	void setLastUsersession(String session){
+	String getLastBrowserValue(){
+		if(last_user_session.isEmpty()){
+			return last_browser_value;
+		}
+		return last_user_session;
+	}
+	static void setLastUsersession(String session){
 		faultUserSessionSet.remove(session);
 		last_user_session = session;
 	}
 	public static void resetBrowserInfo(){
 		faultUserSessionSet.clear();
+		last_user_session = "";
+		last_browser_value = "";
+		validBrowser = BrowserCookieKind.NONE;
 	}
 	public void addFaultUserSession(String session) {
 		faultUserSessionSet.add(session);

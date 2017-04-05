@@ -37,7 +37,7 @@ public class Loader {
 	private String password;
 	private String proxy;
 	private int proxyPort;
-	private String userSession;
+	//private String userSession;
 	//private BrowserCookieKind browserKind;
 	private BrowserInfo browserInfo;
 	private Logger log;
@@ -90,9 +90,9 @@ public class Loader {
 	 */
 	private boolean check(ConvertingSetting setting) {
 		browserInfo = new BrowserInfo(log);
-		userSession = browserInfo.getUserSession(setting);
+		browserInfo.checkUserSession(setting);
 		//browserKind = myBrowser.getValidBrowser();
-		if (!browserInfo.isValid()){
+		if (!BrowserInfo.isBrowser(setting)){
 			mailAddress = setting.getMailAddress();
 			password = setting.getPassword();
 			if (mailAddress == null || mailAddress.isEmpty()
@@ -100,7 +100,7 @@ public class Loader {
 				sendtext("メールアドレスかパスワードが空白です。");
 				return false;
 			}
-		} else if (userSession.isEmpty()){
+		} else if (!browserInfo.isValid()){
 			sendtext("ブラウザ" + browserInfo.getName() + "のセッション取得に失敗");
 			return false;
 		}
