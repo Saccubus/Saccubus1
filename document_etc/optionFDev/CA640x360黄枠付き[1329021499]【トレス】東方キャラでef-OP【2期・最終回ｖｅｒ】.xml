@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>for CA-Tue Feb 21 2017-Rev1.67.2.14 </comment>
+<entry key="History1">http://www.nicovideo.jp/watch/1329021499</entry>
+<entry key="FixFontSize">true</entry>
+<entry key="QPlayerMode">true</entry>
+<entry key="QAddOption">-vf scale=584:328,pad=640:360:28:16,@</entry>
+<entry key="QCMD_EXT">mp4</entry>
+<entry key="DisableOriginalResize">true</entry>
+<entry key="SaveConvertedFile">true</entry>
+<entry key="EnableCA">true</entry>
+<entry key="AddComment">true</entry>
+<entry key="QCMD_OUT">-threads 0 -s 640x360 -acodec aac -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -async 1 -aspect 16:9 -pix_fmt yuv420p</entry>
+</properties>

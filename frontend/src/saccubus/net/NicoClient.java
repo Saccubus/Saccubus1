@@ -2633,6 +2633,8 @@ public class NicoClient {
 	private String nicoCat;
 	private Mson dataApiMson;
 	private Mson watchApiMson;
+	private String heartbeat_lifetime = "120000";
+	private String content_key_timeout = "600000";
 	public boolean serverIsDmc(){
 		return "1".equals(isDmc);
 	}
@@ -3062,20 +3064,26 @@ public class NicoClient {
 				<chat filter="1">Å@</chat>Ç≈àÕÇ›ìäÉRÉÅxmlÇ…í«â¡
 			*/
 			Mson m_ownerNGFilters = m_context.get("ownerNGFilters");
-			String ownerNGFilters = m_ownerNGFilters.getAsString();
+			String ownerNGFilters;
+			if(!m_ownerNGFilters.isNull())
+				ownerNGFilters = m_ownerNGFilters.getAsString();
+			else
+				ownerNGFilters = "";
 			debug("Å°ownerNGFilters: "+ownerNGFilters+"\n");
-			String[] keys = new String[]{"source","destination"};
-			ArrayList<String[]> list = Mson.getListString(m_ownerNGFilters, keys);
-			StringBuffer sb = new StringBuffer();
-			for(String[] s: list){
-				if(s[0]==null || s[0].isEmpty())
-					continue;
-				debug("Å°hash: "+s[0]+","+s[1]+"\n");
-				String entry = unquote(s[0])+"="+unquote(s[1])+"&";
-				sb.append(entry);
-				debug("Å°sb.append: "+entry+"\n");
+			if(!ownerNGFilters.isEmpty()){
+				String[] keys = new String[]{"source","destination"};
+				ArrayList<String[]> list = Mson.getListString(m_ownerNGFilters, keys);
+				StringBuffer sb = new StringBuffer();
+				for(String[] s: list){
+					if(s[0]==null || s[0].isEmpty())
+						continue;
+					debug("Å°hash: "+s[0]+","+s[1]+"\n");
+					String entry = unquote(s[0])+"="+unquote(s[1])+"&";
+					sb.append(entry);
+					debug("Å°sb.append: "+entry+"\n");
+				}
+				ownerNGFilters = sb.substring(0).trim();
 			}
-			ownerNGFilters = sb.substring(0).trim();
 			if(!ownerNGFilters.isEmpty()){
 				if(ownerNGFilters.endsWith("&"))
 					ownerFilter = ownerNGFilters.substring(0,ownerNGFilters.length()-1);
@@ -3243,6 +3251,10 @@ public class NicoClient {
 		debug("\nÅ°priority: "+priority);
 		signature = m_sessionApi.getAsString("signature");
 		debug("\nÅ°signature: "+signature);
+		heartbeat_lifetime = m_sessionApi.getAsString("heartbeat_lifetime");
+		debug("\nÅ°lifetime: "+heartbeat_lifetime);
+		content_key_timeout = m_sessionApi.getAsString("content_key_timeout");
+		debug("\nÅ°content_key_timeout: "+content_key_timeout);
 	}
 	public static String unquote(String str) {
 		if(str==null) return null;
@@ -3293,7 +3305,7 @@ public class NicoClient {
 		sb.append("  </content_src_id_sets>\n");
 		sb.append("  <keep_method>\n");
 		sb.append("    <heartbeat>\n");
-		sb.append("      <lifetime>60000</lifetime>\n");
+		sb.append("      <lifetime>"+heartbeat_lifetime +"</lifetime>\n");
 		sb.append("    </heartbeat>\n");
 		sb.append("  </keep_method>\n");
 		sb.append("  <timing_constraint>unlimited</timing_constraint>\n");
@@ -3308,7 +3320,7 @@ public class NicoClient {
 		sb.append("    <service_id>nicovideo</service_id>\n");
 		sb.append("    "+makeNewElement("service_user_id",service_user_id));
 		sb.append("    <max_content_count>10</max_content_count>\n");
-		sb.append("    <content_key_timeout>600000</content_key_timeout>\n");
+		sb.append("    <content_key_timeout>"+content_key_timeout +"</content_key_timeout>\n");
 		sb.append("  </content_auth>\n");
 		sb.append("  <client_info>\n");
 		sb.append("    "+makeNewElement("player_id",player_id));
