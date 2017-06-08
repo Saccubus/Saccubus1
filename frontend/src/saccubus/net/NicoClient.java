@@ -3063,8 +3063,10 @@ public class NicoClient {
 				source=destination& ‚Æ‚¢‚¤Œ`®‚É•ÏŠ·
 				<chat filter="1">@</chat>‚ÅˆÍ‚İ“ŠƒRƒxml‚É’Ç‰Á
 			*/
-			Mson m_ownerNGFilters = m_context.get("ownerNGFilters");
 			String ownerNGFilters;
+			Mson m_ownerNGFilters = m_context.get("ownerNGFilters");
+			if(m_ownerNGFilters.isNull())
+				m_ownerNGFilters = m_context.get("ownerNGList");
 			if(!m_ownerNGFilters.isNull())
 				ownerNGFilters = m_ownerNGFilters.getAsString();
 			else
