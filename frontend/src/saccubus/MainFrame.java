@@ -355,7 +355,8 @@ public class MainFrame extends JFrame {
 	private static final Insets INSETS_0_5_0_0 = new Insets(0, 5, 0, 0);
 	private static final Insets INSETS_0_5_0_5 = new Insets(0, 5, 0, 5);
 	private static final Insets INSETS_0_5_5_5 = new Insets(0, 5, 5, 5);
-//	private static final Insets INSETS_0_0_5_5 = new Insets(0, 0, 5, 5);
+	private static final Insets INSETS_0_0_5_5 = new Insets(0, 0, 5, 5);
+	private static final Insets INSETS_0_5_5_0 = new Insets(0, 5, 5, 0);
 	private static final Insets INSETS_0_0_0_5 = new Insets(0, 0, 0, 5);
 //	private static final Insets INSETS_0_0_5_0 = new Insets(0, 0, 5, 0);
 	private static final Insets INSETS_0_0_0_0 = new Insets(0, 0, 0, 0);
@@ -1179,7 +1180,17 @@ public class MainFrame extends JFrame {
 		jMenuInit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setSetting(ConvertingSetting.loadSetting(null, null, ConvertingSetting.INI_FILE, false));
+				String mlad = null;
+				String pswd = null;
+				try {
+					mlad = MailAddrField.getText();
+					pswd = new String(PasswordField.getPassword());
+				}catch(NullPointerException ex){
+					//e.printStackTrace();
+					mlad = null;
+					pswd = null;
+				}
+				setSetting(ConvertingSetting.loadSetting(mlad, pswd, ConvertingSetting.INI_FILE, false));
 			}
 		});
 		jMenuReset.setText("ãNìÆéûÇÃê›íËÇ…ñﬂÇ∑");
@@ -1736,18 +1747,24 @@ public class MainFrame extends JFrame {
 		contentPane.add(StatusPanel, BorderLayout.SOUTH);
 		contentPane.add(MainTabbedPane, BorderLayout.CENTER);
 		contentPane.add(VideoInfoPanel, BorderLayout.NORTH);
-		UserInfoPanel.add(PasswordField, new GridBagConstraints(1, 1, 1, 1,
-				1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				INSETS_0_5_0_5, 0, 0));
-		UserInfoPanel.add(MailAddrField, new GridBagConstraints(1, 0, 1, 1,
-				1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				INSETS_0_5_5_5, 0, 0));
-		UserInfoPanel.add(PasswordLabel, new GridBagConstraints(0, 1, 1, 1,
-				0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
-				INSETS_0_5_0_0, 0, 0));
 		UserInfoPanel.add(MailAddrLabel, new GridBagConstraints(0, 0, 1, 1,
 				0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
 				INSETS_0_5_0_0, 0, 0));
+		UserInfoPanel.add(MailAddrField, new GridBagConstraints(1, 0, 1, 1,
+				1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				INSETS_0_5_5_0, 0, 0));
+		UserInfoPanel.add(new ClearButton(MailAddrField), new GridBagConstraints(2, 0, 1, 1,
+				0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+				INSETS_0_0_5_5, 0, 0));
+		UserInfoPanel.add(PasswordLabel, new GridBagConstraints(0, 1, 1, 1,
+				0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+				INSETS_0_5_0_0, 0, 0));
+		UserInfoPanel.add(PasswordField, new GridBagConstraints(1, 1, 1, 1,
+				1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				INSETS_0_5_5_0, 0, 0));
+		UserInfoPanel.add(new ClearButton(PasswordField), new GridBagConstraints(2, 1, 1, 1,
+				0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+				INSETS_0_0_5_5, 0, 0));
 		PathSettingPanel.add(OptionPathField, new GridBagConstraints(0, 1, 2, 1,
 				1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_5_0_5, 0, 0));
