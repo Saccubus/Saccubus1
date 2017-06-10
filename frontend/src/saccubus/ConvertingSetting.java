@@ -5,16 +5,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import saccubus.net.BrowserInfo;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.net.NicoClient;
+import saccubus.net.Path;
 import saccubus.util.Encryption;
+import saccubus.util.Logger;
 
 /**
  * <p>
@@ -1634,11 +1636,41 @@ public class ConvertingSetting {
 	public static ConvertingSetting addSetting(ConvertingSetting setting, String propFile) {
 		Properties setProp = setProperty(setting);
 		Properties addProp = loadProperty(propFile, true);
-		for(Entry<Object, Object> e : addProp.entrySet()){
-			String key = (String)e.getKey();
-			String value = (String)e.getValue();
-			setProp.put(key, value);
-			//System.out.println(key.toString()+"="+value.toString());
+		StringBuffer sb = new StringBuffer();
+		for(Object okey : addProp.keySet()){
+			String key = (String)okey;
+			String value = addProp.getProperty(key);
+			if(value!=null){
+				String old = (String)setProp.setProperty(key, value);
+				if(old==null){
+					sb.append("追加：<entry key=\""+key+ "\">"+value+"</entry>\n\n");
+				}else {
+					String sold = Path.toUnixPath((String)old);
+					String sval = Path.toUnixPath(value);
+					if(!sold.equals(sval)){
+						sb.append("変更：<entry key=\""+key+"\">"+old+"</entry>\n"
+							+"↓\n<entry key=\""+key+"\">"+value+"</entry>\n\n");
+					}
+				}
+			}
+		}
+		String s = sb.substring(0);
+		if(!s.isEmpty()){
+			// 設定更新ログファイル出力
+			Path settingSave = new Path("設定変更"+WayBackDate.formatNow()+".txt");
+			PrintWriter pw = null;
+			try {
+				pw = new PrintWriter(settingSave);
+				pw.print(s);
+				Logger.MainLog.println("設定変更が有りました。　変更結果:"+settingSave);
+			}catch(IOException es){
+				Logger.MainLog.printStackTrace(es);
+			}finally{
+				if(pw!=null){
+					pw.flush();
+					pw.close();
+				}
+			}
 		}
 		return loadSetting(null, null, setProp);
 	}
