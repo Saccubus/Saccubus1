@@ -1274,7 +1274,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　1.65.3以降はgithubの　https://github.com/Saccubus/Saccubus1.x/releases/ で
 　1.65.2　　https://github.com/Saccubus/Saccubus1.x/releases/tag/1.65.2
 　1.65.1　　http://www1.axfc.net/u/3613928.zip
-　1.65.0　　http://www1.axfc.net/u/3611115.zip (MultiThreads 最初版)
+　1.65.0　　http://www1.axfc.net/u/3611115.zip (MultiThreads 初版)
 　1.64.2　　http://www1.axfc.net/u/3582177.zip (SingleThread 最終版)
 　1.63　　　http://www1.axfc.net/u/3526594.zip
 　1.62　　　http://www1.axfc.net/u/3509654.zip
