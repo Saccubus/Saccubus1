@@ -5,16 +5,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import saccubus.net.BrowserInfo;
 import saccubus.net.BrowserInfo.BrowserCookieKind;
 import saccubus.net.NicoClient;
+import saccubus.net.Path;
 import saccubus.util.Encryption;
+import saccubus.util.Logger;
 
 /**
  * <p>
@@ -53,6 +55,7 @@ public class ConvertingSetting {
 	static final boolean ONLY_MP4_AUTO_PLAY = false;
 	static final String DEFAULT_METADATA = "title=%TITLE% genre=%CAT% comment=%ID%";
 	static final boolean USE_SACCUBUS_LOCAL_COOKIE = true;
+	static final boolean DEFAULT_DEBUG_COMMENT_JSON = true;
 
 	public static final String[] ShadowKindArray = {
 		"00:なし",
@@ -187,6 +190,7 @@ public class ConvertingSetting {
 	private static boolean defOptsSaveThumbinfoMetadata = DEF_OPTS_SAVE_THUMBINFO_METADATA;
 	private static boolean onlyMp4AutoPlay = ONLY_MP4_AUTO_PLAY;
 	private static String defOptsMetadata = DEFAULT_METADATA;
+	private static boolean debugCommentJsonFlag = DEFAULT_DEBUG_COMMENT_JSON;
 	private Map<String, String> replaceOptions;
 	private boolean liveOparetionConversion;
 	private boolean premiumColorCheck;
@@ -1176,6 +1180,9 @@ public class ConvertingSetting {
 	public String getHtml5ShadowDefault(){
 		return html5ShadowDefault;
 	}
+	public boolean debugCommentJson() {
+		return debugCommentJsonFlag;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String INI_FILE = "./saccubus.ini";
@@ -1357,6 +1364,7 @@ public class ConvertingSetting {
 	public static final String PROP_OPTS_MIX = "OutOptionMix";
 	public static final String PROP_OPTS_SAVE_THUMBINFO_METADATA = "SaveThumbinfoMetadata";
 	public static final String PROP_ONLY_MP4_AUTO_PLAY = "AutoPlayOnlyMp4";
+	public static final String PROP_DEBUG_COMMENT_JSON = "DebugCommentJson";
 	/*
 	 * ここまで拡張設定 1.22r3 に対する
 	 */
@@ -1634,11 +1642,41 @@ public class ConvertingSetting {
 	public static ConvertingSetting addSetting(ConvertingSetting setting, String propFile) {
 		Properties setProp = setProperty(setting);
 		Properties addProp = loadProperty(propFile, true);
-		for(Entry<Object, Object> e : addProp.entrySet()){
-			String key = (String)e.getKey();
-			String value = (String)e.getValue();
-			setProp.put(key, value);
-			//System.out.println(key.toString()+"="+value.toString());
+		StringBuffer sb = new StringBuffer();
+		for(Object okey : addProp.keySet()){
+			String key = (String)okey;
+			String value = addProp.getProperty(key);
+			if(value!=null){
+				String old = (String)setProp.setProperty(key, value);
+				if(old==null){
+					sb.append("追加：<entry key=\""+key+ "\">"+value+"</entry>\n\n");
+				}else {
+					String sold = Path.toUnixPath((String)old);
+					String sval = Path.toUnixPath(value);
+					if(!sold.equals(sval)){
+						sb.append("変更：<entry key=\""+key+"\">"+old+"</entry>\n"
+							+"↓\n<entry key=\""+key+"\">"+value+"</entry>\n\n");
+					}
+				}
+			}
+		}
+		String s = sb.substring(0);
+		if(!s.isEmpty()){
+			// 設定更新ログファイル出力
+			Path settingSave = new Path("設定変更"+WayBackDate.formatNow()+".txt");
+			PrintWriter pw = null;
+			try {
+				pw = new PrintWriter(settingSave);
+				pw.print(s);
+				Logger.MainLog.println("設定変更が有りました。　変更結果:"+settingSave);
+			}catch(IOException es){
+				Logger.MainLog.printStackTrace(es);
+			}finally{
+				if(pw!=null){
+					pw.flush();
+					pw.close();
+				}
+			}
 		}
 		return loadSetting(null, null, setProp);
 	}
@@ -1723,6 +1761,8 @@ public class ConvertingSetting {
 		onlyMp4AutoPlay = Boolean.valueOf(
 			prop.getProperty(PROP_ONLY_MP4_AUTO_PLAY, Boolean.toString(ONLY_MP4_AUTO_PLAY)));
 		defOptsMetadata = prop.getProperty(PROP_ZQ_METADATA_OPTION,DEFAULT_METADATA);
+		debugCommentJsonFlag = Boolean.valueOf(prop.getProperty(
+			PROP_DEBUG_COMMENT_JSON,Boolean.toString(DEFAULT_DEBUG_COMMENT_JSON)));
 
 		File option_file = null;
 		String option_file_name = prop.getProperty(PROP_OPTION_FILE, null);

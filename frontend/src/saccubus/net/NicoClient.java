@@ -1772,7 +1772,7 @@ public class NicoClient {
 
 	public File getCommentJson(final File file, final JLabel status, final String back_comment,
 			final String time, final ConvertStopFlag flag){
-		if(Debug){
+		{
 			String comjson = downloadCommentJson(status, flag, back_comment);
 			if(comjson==null || comjson.isEmpty()){
 				log.println("\n["+videoTag+"]can't download comment json.");
@@ -1783,8 +1783,22 @@ public class NicoClient {
 		}
 		return file;
 	}
+
 	public File getOwnerComment(final File file, final JLabel status, final ConvertStopFlag flag) {
 		return downloadComment(file, status, ThreadID, false, STR_OWNER_COMMENT, CommentType.OWNER, flag, false, false);
+	}
+	public File getOwnerCommentJson(final File file, final JLabel status,
+			final String time, final ConvertStopFlag flag){
+		{
+			String comjson = downloadOwnerCommentJson(status, flag, "1000");
+			if(comjson==null || comjson.isEmpty()){
+				log.println("\n["+videoTag+"]can't download owner comment json.");
+				return null;
+			}
+			Path.writeAllText(file, comjson, "UTF-8");
+			log.println("\nwrite owner comment json to "+file);
+		}
+		return file;
 	}
 
 	public File getNicosComment(final File file, final JLabel status, final String nicos_id,
@@ -2219,7 +2233,24 @@ public class NicoClient {
 		}
 	}
 
-
+	private String commentJsonPost2006(String thread) {
+		StringBuilder sb = new StringBuilder();
+		int p = 0;
+		sb.append("[{\"ping\":{\"content\":\"rs:0\"}}");
+		{
+			sb.append(postJsonData(p++, thread, userKey, false, false));
+			sb.append(postJsonData(p++, thread, userKey, true, false));
+		}
+	/*	{
+			sb.append(postJsonData(p++, thread, threadkey, false, true));
+			sb.append(postJsonData(p++, thread, threadkey, true, true));
+			sb.append(postJsonData(p++, optional, userKey, false, false));
+			sb.append(postJsonData(p++, optional, userKey, true, false));
+		}
+	*/
+		sb.append(",{\"ping\":{\"content\":\"rf:0\"}}]");
+		return sb.substring(0);
+	}
 	private String commentJsonPost2009(String thread, String optional, String threadkey) {
 		StringBuilder sb = new StringBuilder();
 		int p = 0;
@@ -2461,6 +2492,73 @@ public class NicoClient {
 			os = con.getOutputStream();
 			String postdata;
 			postdata = commentJsonPost2009(ThreadID, optionalThreadID, threadKey);
+			debug("\nÅ°write:" + postdata + "\n");
+			os.write(postdata.getBytes());
+			os.flush();
+			os.close();
+			int code = con.getResponseCode();
+			debug("Å°Response:" + code + " " + con.getResponseMessage() + "\n");
+			if (code != HttpURLConnection.HTTP_OK) {
+				log.println("ng.\nCan't download JSON comment:" + url);
+				return null;
+			}
+			is = con.getInputStream();
+			int max_size = 0;
+			try {
+				String content_length = con.getHeaderField("Content-length");
+				if(content_length!=null)
+					max_size = Integer.parseInt(content_length);
+			} catch(NumberFormatException e){
+				max_size = 0;
+			}
+			int size = 0;
+			int read = 0;
+			//debugsInit();
+			while ((read = is.read(buf, 0, buf.length)) > 0) {
+				//debugsAdd(read);
+				fosb.append(new String(buf, 0, read, "UTF-8"));
+				size += read;
+				sendStatus(status, "comment JSON ", max_size, size, start0);
+				//Stopwatch.show();
+				if (flag.needStop()) {
+					log.println("Stopped.");
+					return null;
+				}
+			}
+			//debugsOut("Å°read+write statistics(bytes) ");
+			log.println("ok.");
+			is.close();
+			// add OwnerFilter to the end of owner comment file before </packet>
+			// fos.close();
+			con.disconnect();
+			retComment = fosb.substring(0);
+			return retComment;
+		} catch (IOException e) {
+			log.printStackTrace(e);
+		}finally{
+			if(is!=null)
+				try { is.close(); } catch(IOException e1){}
+			if(os!=null)
+				try { os.close(); } catch(IOException e2){}
+			if(con!=null)
+				con.disconnect();
+		}
+		return null;
+	}
+	public String downloadOwnerCommentJson(JLabel status, ConvertStopFlag flag, String back_comment){
+		String url = "http://nmsg.nicovideo.jp/api.json/";
+		InputStream is = null;
+		OutputStream os = null;
+		HttpURLConnection con = null;
+		StringBuffer fosb = new StringBuffer();
+		String retComment = null;
+		backcomment = back_comment;
+		try {
+			long start0 = Stopwatch.getElapsedTime(0);
+			con = urlConnect(url, "POST", Cookie, true, true, "keep-alive", true);
+			os = con.getOutputStream();
+			String postdata;
+			postdata = commentJsonPost2006(ThreadID);
 			debug("\nÅ°write:" + postdata + "\n");
 			os.write(postdata.getBytes());
 			os.flush();

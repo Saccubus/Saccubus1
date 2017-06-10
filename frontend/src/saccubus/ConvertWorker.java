@@ -33,6 +33,7 @@ import saccubus.conv.CommandReplace;
 import saccubus.conv.CommentReplace;
 import saccubus.conv.ConvertToVideoHook;
 import saccubus.conv.NicoXMLReader;
+import saccubus.json.NicoJsonParser;
 import saccubus.net.BrowserInfo;
 import saccubus.net.Gate;
 import saccubus.net.NicoClient;
@@ -1368,15 +1369,24 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			if (target == null) {
 				sendtext("コメントのダウンロードに失敗 " + client.getExtraError());
-				if(backup)
-					Path.move(appendCommentFile, CommentFile);
-				result = "53";
-				return false;
 			}
 			File commentJson = Path.getReplacedExtFile(CommentFile, "_commentJSON.txt");
 			commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag);
-			if(commentJson!=null){
-				sendtext("コメントJSONのダウンロードに成功 " + commentJson.getPath());
+			if(commentJson == null && Setting.isHtml5())
+				sendtext("コメントJSONのダウンロードに失敗 " + client.getExtraError());
+			if(target == null || Setting.debugCommentJson()){
+				boolean jsonOK = commentJson != null;
+				if(!jsonOK){
+					NicoJsonParser jsonParser = new NicoJsonParser(log, Setting);
+					jsonOK = jsonParser.commentJson2xml(commentJson, CommentFile);
+				}
+				if(!jsonOK ){
+					sendtext("コメントの取得に失敗 " + client.getExtraError());
+					if(backup)
+						Path.move(appendCommentFile, CommentFile);
+					result = "53";
+					return false;
+				}
 			}
 			// ファイル内ダブリを整理
 			backup = Path.fileCopy(CommentFile,appendCommentFile);
@@ -1551,17 +1561,33 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				result = "61";
 				return false;
 			}
-			OwnerCommentFile = client.getOwnerComment(OwnerCommentFile, Status,
+			File target = client.getOwnerComment(OwnerCommentFile, Status,
 					StopFlag);
 			if (stopFlagReturn()) {
 				result = "62";
 				return false;
 			}
-			if (OwnerCommentFile == null) {
+			if (target == null) {
 				sendtext("投稿者コメントのダウンロードに失敗");
 				log.println("投稿者コメントのダウンロードに失敗");
 				//result = "63";
-				return true;
+				//return true;
+			}
+			File ownerCommentJson = Path.getReplacedExtFile(OwnerCommentFile, "_commentJSON.txt");
+			ownerCommentJson = client.getOwnerCommentJson(ownerCommentJson, Status, Time, StopFlag);
+			if(ownerCommentJson == null && Setting.isHtml5())
+				sendtext("投稿者コメントJSONのダウンロードに失敗 " + client.getExtraError());
+			if(target == null || Setting.debugCommentJson()){
+				boolean jsonOK = ownerCommentJson != null;
+				if(!jsonOK){
+					NicoJsonParser jsonParser = new NicoJsonParser(log, Setting);
+					jsonOK = jsonParser.commentJson2xml(ownerCommentJson, OwnerCommentFile);
+				}
+				if(!jsonOK ){
+					sendtext("投稿者コメントの取得に失敗 " + client.getExtraError());
+					//result = "63";
+					return true;
+				}
 			}
 			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
 				optionalThreadID = client.getOptionalThreadID();

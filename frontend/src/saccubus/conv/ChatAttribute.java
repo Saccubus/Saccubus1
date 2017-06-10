@@ -71,7 +71,7 @@ public class ChatAttribute implements Comparable<ChatAttribute> {
 		return sb.substring(0).trim();
 	}
 
-	private static String safeReference(String s){
+	public static String safeReference(String s){
 		return ChatSave.safeReference(s).replace("\"", "&quote;");
 	}
 

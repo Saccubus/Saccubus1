@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="D:/Saccubus/lib/gson-2.2.4.jar"/>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="D:/saccubus/lib/gson-2.2.4.jar"/>
+	<classpathentry excluding="saccubus/jjs/*" kind="src" path="src"/>
 	<classpathentry kind="output" path="class"/>
 </classpath>

@@ -56,10 +56,10 @@ public class Mson {
 	private boolean isString(){
 		return isPrimitive() && json.getAsJsonPrimitive().isString();
 	}
-	private boolean isObject(){
+	boolean isObject(){
 		return json.isJsonObject();
 	}
-	private boolean isArray(){
+	boolean isArray(){
 		return json.isJsonArray();
 	}
 	public boolean isEmpty(){
@@ -68,7 +68,7 @@ public class Mson {
 	void setJson(JsonElement js) {
 		json = js;
 	}
-	private Set<Entry<String, JsonElement>> entrySet(){
+	Set<Entry<String, JsonElement>> entrySet(){
 		return getAsJsonObject().entrySet();
 	}
 	private JsonObject getAsJsonObject(){
