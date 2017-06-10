@@ -85,7 +85,7 @@ public class Logger {
 	}
 
 	private static boolean existLogview(){
-		if(logview==null && enableLogview){
+		if(logview==null && enableLogview && MainFrame.getMaster()!=null){
 			logview = new TextView(MainFrame.getMaster(), "ƒƒOView", false, false);
 			if(logview==null){
 				System.out.print("ƒƒOView‚ªì‚ê‚Ü‚¹‚ñ");

@@ -63,33 +63,36 @@ public class TextView extends JDialog implements ActionListener {
 		textArea1.setOpaque(false);
 		textArea1.addMouseListener(new PopupRightClick(textArea1));
 		add(new JScrollPane(textArea1), BorderLayout.CENTER);
-		JPanel inputPanel = new JPanel();
-		if(f!=null)
-			inputPanel.setFont(new Font(f.getFontName(), f.getStyle(), f.getSize()+1));
-		inputPanel.setLayout(new BorderLayout());
-		inputPanel.setBackground(Color.cyan);
-		inputPanel.setBorder(BorderFactory.createEtchedBorder());
-		inputPanel.add(new JLabel(" FFmpeg実行>>　ffmpeg "), BorderLayout.WEST);
-		inputField.setToolTipText("実行したいコマンドをタイプ（例: ffmpeg -h　なら -hと入力)");
-		inputField.addMouseListener(new PopupRightClick(inputField));
-		inputPanel.add(inputField, BorderLayout.CENTER);
-		JButton submitButton = new JButton();
-		submitButton.setText("実行");
-		submitButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				help_actionPerformed(inputField.getText(), false);
-			}
-		});
-		inputPanel.add(submitButton, BorderLayout.EAST);
-		add(inputPanel, BorderLayout.SOUTH);
-		pack();
 		if(parent!=null){
+			// parent==nullの時 input panelは出さない。
+			JPanel inputPanel = new JPanel();
+			if(f!=null)
+				inputPanel.setFont(new Font(f.getFontName(), f.getStyle(), f.getSize()+1));
+			inputPanel.setLayout(new BorderLayout());
+			inputPanel.setBackground(Color.cyan);
+			inputPanel.setBorder(BorderFactory.createEtchedBorder());
+			inputPanel.add(new JLabel(" FFmpeg実行>>　ffmpeg "), BorderLayout.WEST);
+			inputField.setToolTipText("実行したいコマンドをタイプ（例: ffmpeg -h　なら -hと入力)");
+			inputField.addMouseListener(new PopupRightClick(inputField));
+			inputPanel.add(inputField, BorderLayout.CENTER);
+			JButton submitButton = new JButton();
+			submitButton.setText("実行");
+			submitButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					help_actionPerformed(inputField.getText(), false);
+				}
+			});
+			inputPanel.add(submitButton, BorderLayout.EAST);
+			add(inputPanel, BorderLayout.SOUTH);
+			pack();
 			Dimension dim = parent.getSize();
 			dim.width = (int)(WIDTH_RATE * dim.width);
 			dim.height = (int)(HEIGHT_RATE * dim.height);
 			setSize(dim);
 			setLocationRelativeTo(parent);
+		}else{
+			pack();
 		}
 		super.setVisible(visible);
 		setResizable(true);
