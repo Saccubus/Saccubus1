@@ -1178,6 +1178,7 @@ public class ConvertingSetting {
 	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
+	static final String INI_FILE = "./saccubus.ini";
 	static final String PROP_MAILADDR = "MailAddress";
 	static final String PROP_PASSWORD = "Password";
 	static final String PROP_SAVE_VIDEO = "SaveVideoFile";

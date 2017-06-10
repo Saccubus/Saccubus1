@@ -424,12 +424,12 @@ public class MainFrame extends JFrame {
 			jbInit();
 			setPopup();
 			setDropTarget();
-			ConvertingSetting setting;
+			ConvertingSetting setting = null;
 			if(new File(ConvertingSetting.PROP_FILE).exists()){
 				setting = ConvertingSetting.loadSetting(null, null);
 			} else {
 				setting = ConvertingSetting.loadSetting(null,
-					null, "./saccubus.ini", false);
+					null, ConvertingSetting.INI_FILE, false);
 			}
 			this.setSetting(setting);
 			initialSetting = setting;
@@ -1179,7 +1179,7 @@ public class MainFrame extends JFrame {
 		jMenuInit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setSetting(ConvertingSetting.loadSetting(null, null, "./saccubus.ini", false));
+				setSetting(ConvertingSetting.loadSetting(null, null, ConvertingSetting.INI_FILE, false));
 			}
 		});
 		jMenuReset.setText("ãNìÆéûÇÃê›íËÇ…ñﬂÇ∑");
