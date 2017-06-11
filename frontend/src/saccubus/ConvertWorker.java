@@ -1379,9 +1379,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			else
 			if(target == null || Setting.enableJson2Xml()){
 				NicoJsonParser jsonParser = new NicoJsonParser(log);
-				if(jsonParser.commentJson2xml(commentJson, CommentFile, "")
-					&& jsonParser.getChatCount()>0)
-				target = CommentFile;
+				if(jsonParser.commentJson2xml(commentJson, CommentFile, ""))
+					target = CommentFile;
+				if(jsonParser.getChatCount()==0)
+					log.println("コメントJSON chat=0");
 			}
 			if(target == null){
 				sendtext("コメントの取得に失敗 " + client.getExtraError());
@@ -1433,9 +1434,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				else
 				if(target == null || Setting.enableJson2Xml()){
 					NicoJsonParser jsonParser = new NicoJsonParser(log);
-					if(jsonParser.commentJson2xml(optionalThreadJson, OptionalThreadFile, "optional")
-						&& jsonParser.getChatCount()>0)
+					if(jsonParser.commentJson2xml(optionalThreadJson, OptionalThreadFile, "optional"))
 						target = OptionalThreadFile;
+					if(jsonParser.getChatCount()==0)
+						log.println("オプショナルスレッドJSON chat=0");
 				}
 				if(target == null){
 					sendtext("オプショナルスレッドの取得に失敗 " + client.getExtraError());
@@ -1492,9 +1494,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				else
 				if(target == null || Setting.enableJson2Xml()){
 					NicoJsonParser jsonParser = new NicoJsonParser(log);
-					if(jsonParser.commentJson2xml(nicosCommentJson, nicosCommentFile, "nicos")
-						&& jsonParser.getChatCount() > 0)
+					if(jsonParser.commentJson2xml(nicosCommentJson, nicosCommentFile, "nicos"))
 						target = nicosCommentFile;
+					if(jsonParser.getChatCount() == 0)
+						log.println("ニコスコメントJSON chat=0");
 				}
 				if(target == null){
 					sendtext("ニコスコメントの取得に失敗 " + client.getExtraError());
