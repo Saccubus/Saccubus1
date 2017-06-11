@@ -15,12 +15,11 @@ user/
 *.txt
 *.log
 auto*
-Bin.jar
+*.jar
 comment*.xml
 debug.bat
 desktop.ini
 saccubus.ini
-saccubus.jar
 saccubus.xml
 Saccubus.exe
 video.flv
