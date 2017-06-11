@@ -55,7 +55,6 @@ public class ConvertingSetting {
 	static final boolean ONLY_MP4_AUTO_PLAY = false;
 	static final String DEFAULT_METADATA = "title=%TITLE% genre=%CAT% comment=%ID%";
 	static final boolean USE_SACCUBUS_LOCAL_COOKIE = true;
-	static final boolean DEFAULT_DEBUG_COMMENT_JSON = true;
 
 	public static final String[] ShadowKindArray = {
 		"00:Ç»Çµ",
@@ -190,7 +189,6 @@ public class ConvertingSetting {
 	private static boolean defOptsSaveThumbinfoMetadata = DEF_OPTS_SAVE_THUMBINFO_METADATA;
 	private static boolean onlyMp4AutoPlay = ONLY_MP4_AUTO_PLAY;
 	private static String defOptsMetadata = DEFAULT_METADATA;
-	private static boolean debugCommentJsonFlag = DEFAULT_DEBUG_COMMENT_JSON;
 	private Map<String, String> replaceOptions;
 	private boolean liveOparetionConversion;
 	private boolean premiumColorCheck;
@@ -237,6 +235,7 @@ public class ConvertingSetting {
 	private boolean enableCheckSize;
 	private String ecoList;
 	private boolean enableClearErrorAtEnd;
+	private boolean commentJson2Xml;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -495,7 +494,8 @@ public class ConvertingSetting {
 			String html5_shadow_default,
 			boolean enable_check_size,
 			String eco_list,
-			boolean clear_error_at_end
+			boolean clear_error_at_end,
+			boolean comment_json_to_xml
 		)
 	{
 		this(	mailaddress,
@@ -669,6 +669,7 @@ public class ConvertingSetting {
 		enableCheckSize = enable_check_size;
 		ecoList = eco_list;
 		enableClearErrorAtEnd = clear_error_at_end;
+		commentJson2Xml = comment_json_to_xml;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1180,8 +1181,8 @@ public class ConvertingSetting {
 	public String getHtml5ShadowDefault(){
 		return html5ShadowDefault;
 	}
-	public boolean debugCommentJson() {
-		return debugCommentJsonFlag;
+	public boolean enableJson2Xml() {
+		return commentJson2Xml;
 	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
@@ -1357,6 +1358,7 @@ public class ConvertingSetting {
 	static final String PROP_ENABLE_CHECK_SIZE = "CheckSize";
 	static final String PROP_ECONOMT_LIST = "EconimyList";
 	static final String PROP_CLEAR_ERROR = "ClearErrorAtEnd";
+	static final String PROP_JSON_TO_XML = "CommentJson2Xml";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1604,6 +1606,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ENABLE_CHECK_SIZE, Boolean.toString(setting.isEnableCheckSize()));
 		prop.setProperty(PROP_ECONOMT_LIST, setting.getEcoList());
 		prop.setProperty(PROP_CLEAR_ERROR, Boolean.toString(setting.clearErrorAtEnd()));
+		prop.setProperty(PROP_JSON_TO_XML, Boolean.toString(setting.enableJson2Xml()));
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1761,8 +1764,6 @@ public class ConvertingSetting {
 		onlyMp4AutoPlay = Boolean.valueOf(
 			prop.getProperty(PROP_ONLY_MP4_AUTO_PLAY, Boolean.toString(ONLY_MP4_AUTO_PLAY)));
 		defOptsMetadata = prop.getProperty(PROP_ZQ_METADATA_OPTION,DEFAULT_METADATA);
-		debugCommentJsonFlag = Boolean.valueOf(prop.getProperty(
-			PROP_DEBUG_COMMENT_JSON,Boolean.toString(DEFAULT_DEBUG_COMMENT_JSON)));
 
 		File option_file = null;
 		String option_file_name = prop.getProperty(PROP_OPTION_FILE, null);
@@ -1938,7 +1939,8 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_HTML5_SHADOW_DEFAULT, ""),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_CHECK_SIZE, "false")),
 			prop.getProperty(PROP_ECONOMT_LIST,""),
-			Boolean.parseBoolean(prop.getProperty(PROP_CLEAR_ERROR,"false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_CLEAR_ERROR,"false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_JSON_TO_XML,"false"))
 		);
 	}
 

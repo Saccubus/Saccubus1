@@ -255,6 +255,7 @@ public class MainFrame extends JFrame {
 	JTextField commentLineFeedTextField = new JTextField();
 	JCheckBox enableCA_CheckBox = new JCheckBox();
 	JCheckBox enableHtml5CommentCheckBox = new JCheckBox();
+	JCheckBox enableCommentJson2XmlCheckBox = new JCheckBox();
 	JCheckBox enableAutoHtml5CheckBox = new JCheckBox();
 	JCheckBox disableEcoCheckBox = new JCheckBox();
 	JCheckBox preferSmileCheckBox = new JCheckBox();
@@ -2995,6 +2996,18 @@ public class MainFrame extends JFrame {
 			grid20_x1_y7.fill = GridBagConstraints.HORIZONTAL;
 			grid20_x1_y7.insets = INSETS_0_0_0_0;
 			experimentPanel.add(enableHtml5CommentCheckBox, grid20_x1_y7);
+			enableCommentJson2XmlCheckBox.setText("コメントJSON仕様");
+			enableCommentJson2XmlCheckBox.setForeground(Color.blue);
+			enableCommentJson2XmlCheckBox.setToolTipText("コメントをJSONでアクセスする(2017/10～?)");
+			GridBagConstraints grid21_x2_y7 = new GridBagConstraints();
+			grid21_x2_y7.gridx = 2;
+			grid21_x2_y7.gridy = 7;
+			grid21_x2_y7.gridwidth = 3;
+			grid21_x2_y7.weightx = 0.0;
+			grid21_x2_y7.anchor = GridBagConstraints.NORTHWEST;
+			grid21_x2_y7.fill = GridBagConstraints.HORIZONTAL;
+			grid21_x2_y7.insets = INSETS_0_0_0_0;
+			experimentPanel.add(enableCommentJson2XmlCheckBox, grid21_x2_y7);
 			enableCA_CheckBox.setText("ＣＡフォント対応");
 			enableCA_CheckBox.setForeground(Color.blue);
 			enableCA_CheckBox.setToolTipText("多種類のフォントを使ってフォント変化を強制的に使用するようになります");
@@ -4093,7 +4106,8 @@ public class MainFrame extends JFrame {
 			shadowDefaultSetting[1],
 			jMenuCheckSize.isSelected(),
 			errorControl.getEcoString(),
-			jMenuClearErrorAtEnd.isSelected()
+			jMenuClearErrorAtEnd.isSelected(),
+			enableCommentJson2XmlCheckBox.isSelected()
 		);
 	}
 
@@ -4316,6 +4330,7 @@ public class MainFrame extends JFrame {
 		jMenuCheckSize.setSelected(setting.isEnableCheckSize());
 		errorControl.setEco(setting.getEcoList());
 		jMenuClearErrorAtEnd.setSelected(setting.clearErrorAtEnd());
+		enableCommentJson2XmlCheckBox.setSelected(setting.enableJson2Xml());
 		setHtml5AutoDefault();
 		if(isDebugModeSet())
 			jMenuDebug.setSelected(true);

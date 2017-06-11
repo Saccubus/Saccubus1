@@ -1836,6 +1836,32 @@ public class NicoClient {
 		}
 		return downloadComment(file, status, optionalThreadID, false, back_comment, CommentType.OPTIONAL, flag, useNewComment, isAppend);
 	}
+	public File getOptionalThreadJson(final File file, final JLabel status, final String back_comment,
+			final String time, final ConvertStopFlag flag){
+		{
+			String comjson = downloadOptionalThreadJson(status, flag, back_comment);
+			if(comjson==null || comjson.isEmpty()){
+				log.println("\n["+videoTag+"]can't download optional thread json.");
+				return null;
+			}
+			Path.writeAllText(file, comjson, "UTF-8");
+			log.println("\nwrite optional thread json to "+file);
+		}
+		return file;
+	}
+	public File getNicosCommentJson(final File file, final JLabel status, final String back_comment,
+			final String time, final ConvertStopFlag flag){
+		{
+			String comjson = downloadOptionalThreadJson(status, flag, back_comment);
+			if(comjson==null || comjson.isEmpty()){
+				log.println("\n["+videoTag+"]can't download optional thread json.");
+				return null;
+			}
+			Path.writeAllText(file, comjson, "UTF-8");
+			log.println("\nwrite optional thread json to "+file);
+		}
+		return file;
+	}
 
 	private String Official = "";
 
@@ -2233,41 +2259,43 @@ public class NicoClient {
 		}
 	}
 
-	private String commentJsonPost2006(String thread) {
-		StringBuilder sb = new StringBuilder();
-		int p = 0;
-		sb.append("[{\"ping\":{\"content\":\"rs:0\"}}");
-		{
-			sb.append(postJsonData(p++, thread, userKey, false, false));
-			sb.append(postJsonData(p++, thread, userKey, true, false));
-		}
-	/*	{
-			sb.append(postJsonData(p++, thread, threadkey, false, true));
-			sb.append(postJsonData(p++, thread, threadkey, true, true));
-			sb.append(postJsonData(p++, optional, userKey, false, false));
-			sb.append(postJsonData(p++, optional, userKey, true, false));
-		}
-	*/
-		sb.append(",{\"ping\":{\"content\":\"rf:0\"}}]");
-		return sb.substring(0);
-	}
 	private String commentJsonPost2009(String thread, String optional, String threadkey) {
 		StringBuilder sb = new StringBuilder();
 		int p = 0;
 		sb.append("[{\"ping\":{\"content\":\"rs:0\"}}");
-		if(optional==null || optional.isEmpty()){
-			sb.append(postJsonData(p++, thread, userKey, false, false));
-			sb.append(postJsonData(p++, thread, userKey, true, false));
+		if(threadkey==null || threadkey.isEmpty()){
+			//ユーザー動画
+			if(optional==null || optional.isEmpty()){
+				//											isleaf, needs_key, isOwner){
+				sb.append(postJsonData(p++, thread, userKey, false, false, false));
+				sb.append(postJsonData(p++, thread, userKey, true, false, false));
+				sb.append(postJsonData(p++, thread, userKey, false, false, true));
+			}else{
+				sb.append(postJsonData(p++, thread, userKey, false, false, false));
+				sb.append(postJsonData(p++, thread, userKey, true, false, false));
+				sb.append(postJsonData(p++, thread, userKey, false, false, true));
+				sb.append(postJsonData(p++, optional, userKey, false, false, false));
+				sb.append(postJsonData(p++, optional, userKey, true, false, false));
+			}
 		}else{
-			sb.append(postJsonData(p++, thread, threadkey, false, true));
-			sb.append(postJsonData(p++, thread, threadkey, true, true));
-			sb.append(postJsonData(p++, optional, userKey, false, false));
-			sb.append(postJsonData(p++, optional, userKey, true, false));
+			//コミュニティ動画
+			if(optional==null || optional.isEmpty()){
+				sb.append(postJsonData(p++, thread, userKey, false, false, false));
+				sb.append(postJsonData(p++, thread, userKey, true, false, false));
+				sb.append(postJsonData(p++, thread, userKey, false, false, true));
+			}else{
+				sb.append(postJsonData(p++, thread, threadkey, false, true, false));
+				sb.append(postJsonData(p++, thread, threadkey, true, true, false));
+				sb.append(postJsonData(p++, thread, threadkey, false, false, true));
+				sb.append(postJsonData(p++, optional, userKey, false, false, false));
+				sb.append(postJsonData(p++, optional, userKey, true, false, false));
+			}
 		}
 		sb.append(",{\"ping\":{\"content\":\"rf:0\"}}]");
 		return sb.substring(0);
 	}
-	private String postJsonData(int n, String thread, String key, boolean isleaf, boolean needs_key){
+	private String postJsonData(int n, String thread, String key,
+			boolean isleaf, boolean needs_key, boolean isOwner){
 		StringBuilder sb = new StringBuilder();
 		sb.append(",{\"ping\":{\"content\":\"ps:"+n+"\"}}");
 		if(!isleaf)
@@ -2275,13 +2303,21 @@ public class NicoClient {
 		else
 			sb.append(",{\"thread_leaves\":{");
 		sb.append("\"thread\":\""+thread+"\"");
-		if(!isleaf){
-			sb.append(",\"version\":\"20090904\"");
+		if(isOwner){	//投稿者コメントは2006年バージョン
+			sb.append(",\"version\":\"20061206\"");
+			sb.append(",\"fork\":\"1\"");	//投コメのみ
+		}else{
+			if(!isleaf){	//leafでなければ2009年バージョン,leafにはバージョンを付けない
+				sb.append(",\"version\":\"20090904\"");
+			}
+			sb.append(",\"language\":0");	//一般コメのみ
 		}
-		sb.append(",\"language\":0");
 		sb.append(",\"user_id\":\""+UserID+"\"");
 		if(needs_key)
 			sb.append(",\"force_184\":\"1\"");
+		if(isOwner){	//投稿者コメントは1000コメント
+			sb.append(",\"res_from\":-1000");
+		}
 		if(!isleaf)
 			sb.append(",\"with_global\":1");
 		else
@@ -2478,7 +2514,7 @@ public class NicoClient {
 //		Content-Length: 1051
 //		DNT: 1
 //		Connection: keep-alive
-	public String downloadCommentJson(JLabel status, ConvertStopFlag flag, String back_comment){
+	private String downloadCommentJson(JLabel status, ConvertStopFlag flag, String back_comment){
 		String url = "http://nmsg.nicovideo.jp/api.json/";
 		InputStream is = null;
 		OutputStream os = null;
@@ -2545,7 +2581,7 @@ public class NicoClient {
 		}
 		return null;
 	}
-	public String downloadOwnerCommentJson(JLabel status, ConvertStopFlag flag, String back_comment){
+	private String downloadOptionalThreadJson(JLabel status, ConvertStopFlag flag, String back_comment){
 		String url = "http://nmsg.nicovideo.jp/api.json/";
 		InputStream is = null;
 		OutputStream os = null;
@@ -2558,7 +2594,74 @@ public class NicoClient {
 			con = urlConnect(url, "POST", Cookie, true, true, "keep-alive", true);
 			os = con.getOutputStream();
 			String postdata;
-			postdata = commentJsonPost2006(ThreadID);
+			postdata = commentJsonPost2009(ThreadID, optionalThreadID, threadKey);
+			debug("\n■write:" + postdata + "\n");
+			os.write(postdata.getBytes());
+			os.flush();
+			os.close();
+			int code = con.getResponseCode();
+			debug("■Response:" + code + " " + con.getResponseMessage() + "\n");
+			if (code != HttpURLConnection.HTTP_OK) {
+				log.println("ng.\nCan't download JSON comment:" + url);
+				return null;
+			}
+			is = con.getInputStream();
+			int max_size = 0;
+			try {
+				String content_length = con.getHeaderField("Content-length");
+				if(content_length!=null)
+					max_size = Integer.parseInt(content_length);
+			} catch(NumberFormatException e){
+				max_size = 0;
+			}
+			int size = 0;
+			int read = 0;
+			//debugsInit();
+			while ((read = is.read(buf, 0, buf.length)) > 0) {
+				//debugsAdd(read);
+				fosb.append(new String(buf, 0, read, "UTF-8"));
+				size += read;
+				sendStatus(status, "comment JSON ", max_size, size, start0);
+				//Stopwatch.show();
+				if (flag.needStop()) {
+					log.println("Stopped.");
+					return null;
+				}
+			}
+			//debugsOut("■read+write statistics(bytes) ");
+			log.println("ok.");
+			is.close();
+			// add OwnerFilter to the end of owner comment file before </packet>
+			// fos.close();
+			con.disconnect();
+			retComment = fosb.substring(0);
+			return retComment;
+		} catch (IOException e) {
+			log.printStackTrace(e);
+		}finally{
+			if(is!=null)
+				try { is.close(); } catch(IOException e1){}
+			if(os!=null)
+				try { os.close(); } catch(IOException e2){}
+			if(con!=null)
+				con.disconnect();
+		}
+		return null;
+	}
+	private String downloadOwnerCommentJson(JLabel status, ConvertStopFlag flag, String back_comment){
+		String url = "http://nmsg.nicovideo.jp/api.json/";
+		InputStream is = null;
+		OutputStream os = null;
+		HttpURLConnection con = null;
+		StringBuffer fosb = new StringBuffer();
+		String retComment = null;
+		backcomment = back_comment;
+		try {
+			long start0 = Stopwatch.getElapsedTime(0);
+			con = urlConnect(url, "POST", Cookie, true, true, "keep-alive", true);
+			os = con.getOutputStream();
+			String postdata;
+			postdata = commentJsonPost2009(ThreadID, optionalThreadID, null);
 			debug("\n■write:" + postdata + "\n");
 			os.write(postdata.getBytes());
 			os.flush();
