@@ -236,6 +236,7 @@ public class ConvertingSetting {
 	private String ecoList;
 	private boolean enableClearErrorAtEnd;
 	private boolean commentJson2Xml;
+	private boolean debugCommentJson;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -495,7 +496,8 @@ public class ConvertingSetting {
 			boolean enable_check_size,
 			String eco_list,
 			boolean clear_error_at_end,
-			boolean comment_json_to_xml
+			boolean comment_json_to_xml,
+			boolean debug_comment_json
 		)
 	{
 		this(	mailaddress,
@@ -670,6 +672,7 @@ public class ConvertingSetting {
 		ecoList = eco_list;
 		enableClearErrorAtEnd = clear_error_at_end;
 		commentJson2Xml = comment_json_to_xml;
+		debugCommentJson = debug_comment_json;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1156,6 +1159,12 @@ public class ConvertingSetting {
 	public boolean clearErrorAtEnd() {
 		return enableClearErrorAtEnd;
 	}
+	public boolean enableJson2Xml() {
+		return commentJson2Xml;
+	}
+	public boolean debugJson(){
+		return debugCommentJson;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1180,9 +1189,6 @@ public class ConvertingSetting {
 	}
 	public String getHtml5ShadowDefault(){
 		return html5ShadowDefault;
-	}
-	public boolean enableJson2Xml() {
-		return commentJson2Xml;
 	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
@@ -1359,6 +1365,7 @@ public class ConvertingSetting {
 	static final String PROP_ECONOMT_LIST = "EconimyList";
 	static final String PROP_CLEAR_ERROR = "ClearErrorAtEnd";
 	static final String PROP_JSON_TO_XML = "CommentJson2Xml";
+	static final String PROP_DEBUG_COMMENT_JSON = "DebugCommentJson";	//disable download xml
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1366,7 +1373,6 @@ public class ConvertingSetting {
 	public static final String PROP_OPTS_MIX = "OutOptionMix";
 	public static final String PROP_OPTS_SAVE_THUMBINFO_METADATA = "SaveThumbinfoMetadata";
 	public static final String PROP_ONLY_MP4_AUTO_PLAY = "AutoPlayOnlyMp4";
-	public static final String PROP_DEBUG_COMMENT_JSON = "DebugCommentJson";
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
 	 */
@@ -1607,6 +1613,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ECONOMT_LIST, setting.getEcoList());
 		prop.setProperty(PROP_CLEAR_ERROR, Boolean.toString(setting.clearErrorAtEnd()));
 		prop.setProperty(PROP_JSON_TO_XML, Boolean.toString(setting.enableJson2Xml()));
+		prop.setProperty(PROP_DEBUG_COMMENT_JSON, Boolean.toString(setting.debugJson()));
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1940,7 +1947,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_CHECK_SIZE, "false")),
 			prop.getProperty(PROP_ECONOMT_LIST,""),
 			Boolean.parseBoolean(prop.getProperty(PROP_CLEAR_ERROR,"false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_JSON_TO_XML,"false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_JSON_TO_XML,"false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_DEBUG_COMMENT_JSON,"false"))
 		);
 	}
 

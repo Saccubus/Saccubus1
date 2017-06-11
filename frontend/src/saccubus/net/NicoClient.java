@@ -1788,9 +1788,9 @@ public class NicoClient {
 		return downloadComment(file, status, ThreadID, false, STR_OWNER_COMMENT, CommentType.OWNER, flag, false, false);
 	}
 	public File getOwnerCommentJson(final File file, final JLabel status,
-			final String time, final ConvertStopFlag flag){
+			String back_comment, final String time, final ConvertStopFlag flag){
 		{
-			String comjson = downloadOwnerCommentJson(status, flag, "1000");
+			String comjson = downloadOwnerCommentJson(status, flag, back_comment);
 			if(comjson==null || comjson.isEmpty()){
 				log.println("\n["+videoTag+"]can't download owner comment json.");
 				return null;
@@ -2514,7 +2514,8 @@ public class NicoClient {
 //		Content-Length: 1051
 //		DNT: 1
 //		Connection: keep-alive
-	private String downloadCommentJson(JLabel status, ConvertStopFlag flag, String back_comment){
+	private String downloadCommonCommentJson(JLabel status, ConvertStopFlag flag,
+			String back_comment, String postdata){
 		String url = "http://nmsg.nicovideo.jp/api.json/";
 		InputStream is = null;
 		OutputStream os = null;
@@ -2526,8 +2527,6 @@ public class NicoClient {
 			long start0 = Stopwatch.getElapsedTime(0);
 			con = urlConnect(url, "POST", Cookie, true, true, "keep-alive", true);
 			os = con.getOutputStream();
-			String postdata;
-			postdata = commentJsonPost2009(ThreadID, optionalThreadID, threadKey);
 			debug("\nÅ°write:" + postdata + "\n");
 			os.write(postdata.getBytes());
 			os.flush();
@@ -2580,6 +2579,11 @@ public class NicoClient {
 				con.disconnect();
 		}
 		return null;
+	}
+	private String downloadCommentJson(JLabel status, ConvertStopFlag flag, String back_comment){
+		String postdata;
+		postdata = commentJsonPost2009(ThreadID, optionalThreadID, threadKey);
+		return downloadCommonCommentJson(status, flag, back_comment, postdata);
 	}
 	private String downloadOptionalThreadJson(JLabel status, ConvertStopFlag flag, String back_comment){
 		String url = "http://nmsg.nicovideo.jp/api.json/";
@@ -2649,71 +2653,9 @@ public class NicoClient {
 		return null;
 	}
 	private String downloadOwnerCommentJson(JLabel status, ConvertStopFlag flag, String back_comment){
-		String url = "http://nmsg.nicovideo.jp/api.json/";
-		InputStream is = null;
-		OutputStream os = null;
-		HttpURLConnection con = null;
-		StringBuffer fosb = new StringBuffer();
-		String retComment = null;
-		backcomment = back_comment;
-		try {
-			long start0 = Stopwatch.getElapsedTime(0);
-			con = urlConnect(url, "POST", Cookie, true, true, "keep-alive", true);
-			os = con.getOutputStream();
-			String postdata;
-			postdata = commentJsonPost2009(ThreadID, optionalThreadID, null);
-			debug("\nÅ°write:" + postdata + "\n");
-			os.write(postdata.getBytes());
-			os.flush();
-			os.close();
-			int code = con.getResponseCode();
-			debug("Å°Response:" + code + " " + con.getResponseMessage() + "\n");
-			if (code != HttpURLConnection.HTTP_OK) {
-				log.println("ng.\nCan't download JSON comment:" + url);
-				return null;
-			}
-			is = con.getInputStream();
-			int max_size = 0;
-			try {
-				String content_length = con.getHeaderField("Content-length");
-				if(content_length!=null)
-					max_size = Integer.parseInt(content_length);
-			} catch(NumberFormatException e){
-				max_size = 0;
-			}
-			int size = 0;
-			int read = 0;
-			//debugsInit();
-			while ((read = is.read(buf, 0, buf.length)) > 0) {
-				//debugsAdd(read);
-				fosb.append(new String(buf, 0, read, "UTF-8"));
-				size += read;
-				sendStatus(status, "comment JSON ", max_size, size, start0);
-				//Stopwatch.show();
-				if (flag.needStop()) {
-					log.println("Stopped.");
-					return null;
-				}
-			}
-			//debugsOut("Å°read+write statistics(bytes) ");
-			log.println("ok.");
-			is.close();
-			// add OwnerFilter to the end of owner comment file before </packet>
-			// fos.close();
-			con.disconnect();
-			retComment = fosb.substring(0);
-			return retComment;
-		} catch (IOException e) {
-			log.printStackTrace(e);
-		}finally{
-			if(is!=null)
-				try { is.close(); } catch(IOException e1){}
-			if(os!=null)
-				try { os.close(); } catch(IOException e2){}
-			if(con!=null)
-				con.disconnect();
-		}
-		return null;
+		String postdata;
+		postdata = commentJsonPost2009(ThreadID, optionalThreadID, null);
+		return downloadCommonCommentJson(status, flag, back_comment, postdata);
 	}
 
 	private int dsCount = 0;

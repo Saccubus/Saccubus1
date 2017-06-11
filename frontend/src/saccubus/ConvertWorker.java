@@ -1361,32 +1361,34 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(CommentFile.exists()){
 				backup = Path.fileCopy(CommentFile,appendCommentFile);
 			}
-			File target = client.getComment(CommentFile, Status, back_comment, Time, StopFlag,
-					Setting.getCommentIndex(), isAppendComment());
-			if (stopFlagReturn()) {
-				result = "52";
-				return false;
-			}
-			if (target == null) {
-				sendtext("コメントのダウンロードに失敗 " + client.getExtraError());
+			File target = null;
+			if(!Setting.debugJson()){
+				target = client.getComment(CommentFile, Status, back_comment, Time, StopFlag,
+						Setting.getCommentIndex(), isAppendComment());
+				if (stopFlagReturn()) {
+					result = "52";
+					return false;
+				}
+				if (target == null)
+					sendtext("コメントのダウンロードに失敗 " + client.getExtraError());
 			}
 			File commentJson = Path.getReplacedExtFile(CommentFile, "_commentJSON.txt");
 			commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag);
 			if(commentJson == null)
 				sendtext("コメントJSONのダウンロードに失敗 " + client.getExtraError());
+			else
 			if(target == null || Setting.enableJson2Xml()){
-				boolean jsonOK = false;
-				if(commentJson != null){
-					NicoJsonParser jsonParser = new NicoJsonParser(log);
-					jsonOK = jsonParser.commentJson2xml(commentJson, CommentFile, "");
-				}
-				if(!jsonOK ){
-					sendtext("コメントの取得に失敗 " + client.getExtraError());
-					if(backup)
-						Path.move(appendCommentFile, CommentFile);
-					result = "53";
-					return false;
-				}
+				NicoJsonParser jsonParser = new NicoJsonParser(log);
+				if(jsonParser.commentJson2xml(commentJson, CommentFile, "")
+					&& jsonParser.getChatCount()>0)
+				target = CommentFile;
+			}
+			if(target == null){
+				sendtext("コメントの取得に失敗 " + client.getExtraError());
+				if(backup)
+					Path.move(appendCommentFile, CommentFile);
+				result = "53";
+				return false;
 			}
 			// ファイル内ダブリを整理
 			backup = Path.fileCopy(CommentFile,appendCommentFile);
@@ -1412,34 +1414,35 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(OptionalThreadFile.exists()){
 					backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
 				}
-				sendtext("オプショナルスレッドのダウンロード開始中");
-				target = client.getOptionalThread(
-					OptionalThreadFile, Status, optionalThreadID, back_comment, Time, StopFlag,
-					Setting.getCommentIndex(),isAppendComment());
-				if (stopFlagReturn()) {
-					result = "54";
-					return false;
-				}
-				if (target == null) {
-					sendtext("オプショナルスレッドのダウンロードに失敗 " + client.getExtraError());
+				if(!Setting.debugJson()){
+					sendtext("オプショナルスレッドのダウンロード開始中");
+					target = client.getOptionalThread(
+						OptionalThreadFile, Status, optionalThreadID, back_comment, Time, StopFlag,
+						Setting.getCommentIndex(),isAppendComment());
+					if (stopFlagReturn()) {
+						result = "54";
+						return false;
+					}
+					if (target == null)
+						sendtext("オプショナルスレッドのダウンロードに失敗 " + client.getExtraError());
 				}
 				File optionalThreadJson = Path.getReplacedExtFile(OptionalThreadFile, "_commentJSON.txt");
 				optionalThreadJson = client.getOptionalThreadJson(optionalThreadJson, Status, back_comment, Time, StopFlag);
 				if(optionalThreadJson == null)
 					sendtext("オプショナルスレッドJSONのダウンロードに失敗 " + client.getExtraError());
+				else
 				if(target == null || Setting.enableJson2Xml()){
-					boolean jsonOK = false;
-					if(optionalThreadJson != null){
-						NicoJsonParser jsonParser = new NicoJsonParser(log);
-						jsonOK = jsonParser.commentJson2xml(optionalThreadJson, OptionalThreadFile, "optional");
-					}
-					if(!jsonOK ){
-						sendtext("オプショナルスレッドの取得に失敗 " + client.getExtraError());
-						if(backup)
-							Path.move(appendOptionalFile, OptionalThreadFile);
-						result = "55";
-						return false;
-					}
+					NicoJsonParser jsonParser = new NicoJsonParser(log);
+					if(jsonParser.commentJson2xml(optionalThreadJson, OptionalThreadFile, "optional")
+						&& jsonParser.getChatCount()>0)
+						target = OptionalThreadFile;
+				}
+				if(target == null){
+					sendtext("オプショナルスレッドの取得に失敗 " + client.getExtraError());
+					if(backup)
+						Path.move(appendOptionalFile, OptionalThreadFile);
+					result = "55";
+					return false;
 				}
 				backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
 				filelist.clear();
@@ -1470,34 +1473,31 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(nicosCommentFile.exists()){
 					backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
 				}
-				sendtext("ニコスコメントの保存開始中");
-				target = client.getNicosComment(
-					nicosCommentFile, Status, nicos_id, back_comment, Time,
-						StopFlag, Setting.getCommentIndex(), isAppendComment());
-				if (stopFlagReturn()) {
-					result = "54";
-					return false;
-				}
-				if (target == null) {
-					sendtext("ニコスコメントのダウンロードに失敗 " + client.getExtraError());
+				if(!Setting.debugJson()){
+					sendtext("ニコスコメントの保存開始中");
+					target = client.getNicosComment(
+						nicosCommentFile, Status, nicos_id, back_comment, Time,
+							StopFlag, Setting.getCommentIndex(), isAppendComment());
+					if (stopFlagReturn()) {
+						result = "54";
+						return false;
+					}
+					if (target == null)
+						sendtext("ニコスコメントのダウンロードに失敗 " + client.getExtraError());
 				}
 				File nicosCommentJson = Path.getReplacedExtFile(nicosCommentFile, "_commentJSON.txt");
 				nicosCommentJson = client.getNicosCommentJson(nicosCommentJson, Status, back_comment, Time, StopFlag);
 				if(nicosCommentJson == null)
 					sendtext("ニコスコメントJSONのダウンロードに失敗 " + client.getExtraError());
+				else
 				if(target == null || Setting.enableJson2Xml()){
-					boolean jsonOK = false;
-					if(nicosCommentJson != null){
-						NicoJsonParser jsonParser = new NicoJsonParser(log);
-						jsonOK = jsonParser.commentJson2xml(nicosCommentJson, nicosCommentFile, "nicos");
-					}
-					if(!jsonOK ){
-						sendtext("ニコスコメントの取得に失敗 " + client.getExtraError());
-						if(backup)
-							Path.move(appendNicosFile, nicosCommentFile);
-						result = "55";
-						return false;
-					}
+					NicoJsonParser jsonParser = new NicoJsonParser(log);
+					if(jsonParser.commentJson2xml(nicosCommentJson, nicosCommentFile, "nicos")
+						&& jsonParser.getChatCount() > 0)
+						target = nicosCommentFile;
+				}
+				if(target == null){
+					sendtext("ニコスコメントの取得に失敗 " + client.getExtraError());
 					if(backup)
 						Path.move(appendNicosFile, nicosCommentFile);
 					result = "55";
@@ -1587,39 +1587,44 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			} else {
 				OwnerCommentFile = Setting.getOwnerCommentFile();
 			}
+			String back_comment = Setting.getBackComment();
+			if (Setting.isFixCommentNum()) {
+				back_comment = client.getBackCommentFromLength(back_comment);
+			}
 			sendtext("投稿者コメントのダウンロード開始中");
 			if (client == null){
 				sendtext("ログインしてないのに投稿者コメントの保存になりました");
 				result = "61";
 				return false;
 			}
-			File target = client.getOwnerComment(OwnerCommentFile, Status,
-					StopFlag);
-			if (stopFlagReturn()) {
-				result = "62";
-				return false;
-			}
-			if (target == null) {
-				sendtext("投稿者コメントのダウンロードに失敗");
-				log.println("投稿者コメントのダウンロードに失敗");
-				//result = "63";
-				//return true;
+			File target = null;
+			if(!Setting.debugJson()){
+				target = client.getOwnerComment(OwnerCommentFile, Status, StopFlag);
+				if (stopFlagReturn()) {
+					result = "62";
+					return false;
+				}
+				if (target == null) {
+					sendtext("投稿者コメントのダウンロードに失敗");
+					log.println("投稿者コメントのダウンロードに失敗");
+					//result = "63";
+					//return true;
+				}
 			}
 			File ownerCommentJson = Path.getReplacedExtFile(OwnerCommentFile, "_commentJSON.txt");
-			ownerCommentJson = client.getOwnerCommentJson(ownerCommentJson, Status, Time, StopFlag);
+			ownerCommentJson = client.getOwnerCommentJson(ownerCommentJson, Status, back_comment, Time, StopFlag);
 			if(ownerCommentJson == null)
 				sendtext("投稿者コメントJSONのダウンロードに失敗 " + client.getExtraError());
+			else
 			if(target == null || Setting.enableJson2Xml()){
-				boolean jsonOK = false;
-				if(ownerCommentJson != null){
-					NicoJsonParser jsonParser = new NicoJsonParser(log);
-					jsonOK = jsonParser.commentJson2xml(ownerCommentJson, OwnerCommentFile, "owner");
-				}
-				if(!jsonOK ){
-					sendtext("投稿者コメントの取得に失敗 " + client.getExtraError());
-					//result = "63";
-					return true;
-				}
+				NicoJsonParser jsonParser = new NicoJsonParser(log);
+				if(jsonParser.commentJson2xml(ownerCommentJson, OwnerCommentFile, "owner"))
+					target = OwnerCommentFile;
+			}
+			if(target == null || !target.canRead()){
+				sendtext("投稿者コメントの取得に失敗 " + client.getExtraError());
+				//result = "63";
+				return true;
 			}
 			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
 				optionalThreadID = client.getOptionalThreadID();
