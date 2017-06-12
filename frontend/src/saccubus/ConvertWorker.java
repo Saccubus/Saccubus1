@@ -1620,6 +1620,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				//result = "63";
 				return true;
 			}
+			client.applyOwnerFilter(OwnerCommentFile);
 			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
 				optionalThreadID = client.getOptionalThreadID();
 			}

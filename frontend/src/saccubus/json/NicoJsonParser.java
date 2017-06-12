@@ -266,6 +266,7 @@ public class NicoJsonParser {
 						+xmlAttributeValue(m, "date_usec")
 						+xmlAttributeValue(m, "score")
 						+xmlAttributeValue(m, "premium")
+					//	+xmlAttributeValue(m, "nicoru")
 						+xmlAttributeValue(m, "anonymity")
 						+xmlAttributeValue(m, "user_id")
 						+xmlAttributeValue(m, "mail")
@@ -310,6 +311,7 @@ public class NicoJsonParser {
 		else
 			val = ChatSave.safeReference(val);
 			val = val.replace("\\n", "\n")		//linefeed eval
+					.replace("\\\"", "\"")		//quote unescape
 					.replace("\\\\", "\\");		//escape eval
 		return val;
 	}

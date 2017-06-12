@@ -2061,22 +2061,11 @@ public class NicoClient {
 			log.println("ok.");
 			is.close();
 			fos.flush();
-			if(ownerFilter!=null && commentType==CommentType.OWNER){
-				// add OwnerFilter to the end of owner comment file before </packet>
-				fos.close();
-				String ownerText = Path.readAllText(file.getAbsolutePath(), "UTF-8");
-				if(!ownerText.isEmpty()){
-					int lastIndex = ownerText.toLowerCase().lastIndexOf("</packet>");
-					ownerFilter = "<chat filter=\"1\">" + ChatSave.safeReference(ownerFilter) + "</chat>";
-					if(lastIndex>=0){
-						ownerText = ownerText.substring(0, lastIndex) + ownerFilter + ownerText.substring(lastIndex);
-					}else{
-						ownerText = ownerText + ownerFilter + "</packet>\n";
-					}
-					new Path(file).writeAllText(ownerText, "UTF-8");
-				}
-			}
+			fos.close();
 			// fos.close();
+			if(commentType==CommentType.OWNER){
+				applyOwnerFilter(file);
+			}
 			con.disconnect();
 			return file;
 		} catch (IOException ex) {
@@ -2100,6 +2089,22 @@ public class NicoClient {
 		}
 
 		return null;
+	}
+	public void applyOwnerFilter(File comment_xml){
+		if(ownerFilter!=null && !ownerFilter.isEmpty()){
+			// add OwnerFilter to the end of owner comment file before </packet>
+			String ownerText = Path.readAllText(comment_xml.getAbsolutePath(), "UTF-8");
+			if(!ownerText.isEmpty()){
+				int lastIndex = ownerText.toLowerCase().lastIndexOf("</packet>");
+				ownerFilter = "<chat filter=\"1\">" + ChatSave.safeReference(ownerFilter) + "</chat>";
+				if(lastIndex>=0){
+					ownerText = ownerText.substring(0, lastIndex) + ownerFilter + ownerText.substring(lastIndex);
+				}else{
+					ownerText = ownerText + ownerFilter + "</packet>\n";
+				}
+				new Path(comment_xml).writeAllText(ownerText, "UTF-8");
+			}
+		}
 	}
 
 	private String threadKey = null;
@@ -3186,6 +3191,7 @@ public class NicoClient {
 					debug("■sb.append: "+entry+"\n");
 				}
 				ownerNGFilters = sb.substring(0).trim();
+				//%エンコードのままXML処理にデコードさせる
 			}
 			if(!ownerNGFilters.isEmpty()){
 				if(ownerNGFilters.endsWith("&"))
@@ -3746,5 +3752,4 @@ public class NicoClient {
 			}
 		}
 	}
-
 }
