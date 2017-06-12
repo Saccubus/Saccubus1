@@ -1444,9 +1444,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					if (target == null)
 						sendtext("オプショナルスレッドのダウンロードに失敗 " + client.getExtraError());
 				}
-				log.println("DEBUG: optional thread xml skipped");
-				log.println("commentJson:"+commentJson);
-				log.println("target:"+target);
 				if(commentJson != null &&
 					(target == null || Setting.enableJson2Xml())){
 					if(getJsonParser().commentJson2xml(commentJson, OptionalThreadFile, "optional"))

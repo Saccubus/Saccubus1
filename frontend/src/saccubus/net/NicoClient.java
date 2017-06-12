@@ -2556,6 +2556,7 @@ public class NicoClient {
 				log.println("ng.\nCan't download JSON comment:" + url);
 				return null;
 			}
+			debug("Å°ResponseHeader:" + con.getHeaderFields() + "\n");
 			is = con.getInputStream();
 			int max_size = 0;
 			try {
