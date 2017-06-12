@@ -235,8 +235,8 @@ public class ConvertingSetting {
 	private boolean enableCheckSize;
 	private String ecoList;
 	private boolean enableClearErrorAtEnd;
-	private boolean commentJson2Xml;
-	private boolean debugCommentJson;
+	private boolean commentJson;
+	private boolean commentXml;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -671,8 +671,8 @@ public class ConvertingSetting {
 		enableCheckSize = enable_check_size;
 		ecoList = eco_list;
 		enableClearErrorAtEnd = clear_error_at_end;
-		commentJson2Xml = comment_json_to_xml;
-		debugCommentJson = debug_comment_json;
+		commentJson = comment_json_to_xml;
+		commentXml = debug_comment_json;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1159,11 +1159,11 @@ public class ConvertingSetting {
 	public boolean clearErrorAtEnd() {
 		return enableClearErrorAtEnd;
 	}
-	public boolean enableJson2Xml() {
-		return commentJson2Xml;
+	public boolean enableCommentJson() {
+		return commentJson;
 	}
-	public boolean debugJson(){
-		return debugCommentJson;
+	public boolean enableCommentXml(){
+		return commentXml;
 	}
 	//
 	public static String getDefOptsFpsUp(){
@@ -1364,8 +1364,8 @@ public class ConvertingSetting {
 	static final String PROP_ENABLE_CHECK_SIZE = "CheckSize";
 	static final String PROP_ECONOMT_LIST = "EconimyList";
 	static final String PROP_CLEAR_ERROR = "ClearErrorAtEnd";
-	static final String PROP_JSON_TO_XML = "CommentJson2Xml";
-	static final String PROP_DEBUG_COMMENT_JSON = "DebugCommentJson";	//disable download xml
+	static final String PROP_COMMENT_JSON = "EnableCommentJson";
+	static final String PROP_COMMENT_XML = "EnableCommentXml";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1612,8 +1612,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ENABLE_CHECK_SIZE, Boolean.toString(setting.isEnableCheckSize()));
 		prop.setProperty(PROP_ECONOMT_LIST, setting.getEcoList());
 		prop.setProperty(PROP_CLEAR_ERROR, Boolean.toString(setting.clearErrorAtEnd()));
-		prop.setProperty(PROP_JSON_TO_XML, Boolean.toString(setting.enableJson2Xml()));
-		prop.setProperty(PROP_DEBUG_COMMENT_JSON, Boolean.toString(setting.debugJson()));
+		prop.setProperty(PROP_COMMENT_JSON, Boolean.toString(setting.enableCommentJson()));
+		prop.setProperty(PROP_COMMENT_XML, Boolean.toString(setting.enableCommentXml()));
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1947,8 +1947,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_CHECK_SIZE, "false")),
 			prop.getProperty(PROP_ECONOMT_LIST,""),
 			Boolean.parseBoolean(prop.getProperty(PROP_CLEAR_ERROR,"false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_JSON_TO_XML,"false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_DEBUG_COMMENT_JSON,"false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_JSON,"false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_XML,"true"))
 		);
 	}
 

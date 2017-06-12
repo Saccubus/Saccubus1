@@ -255,8 +255,8 @@ public class MainFrame extends JFrame {
 	JTextField commentLineFeedTextField = new JTextField();
 	JCheckBox enableCA_CheckBox = new JCheckBox();
 	JCheckBox enableHtml5CommentCheckBox = new JCheckBox();
-	JCheckBox enableCommentJson2XmlCheckBox = new JCheckBox();
-	JCheckBox debugCommentJsonCheckBox = new JCheckBox();
+	JCheckBox enableCommentJsonCheckBox = new JCheckBox();
+	JCheckBox enableCommentXmlCheckBox = new JCheckBox();
 	JCheckBox enableAutoHtml5CheckBox = new JCheckBox();
 	JCheckBox disableEcoCheckBox = new JCheckBox();
 	JCheckBox preferSmileCheckBox = new JCheckBox();
@@ -2998,9 +2998,9 @@ public class MainFrame extends JFrame {
 			grid20_x1_y7.insets = INSETS_0_0_0_0;
 			experimentPanel.add(enableHtml5CommentCheckBox, grid20_x1_y7);
 
-			enableCommentJson2XmlCheckBox.setText("コメントJSON仕様");
-			enableCommentJson2XmlCheckBox.setForeground(Color.blue);
-			enableCommentJson2XmlCheckBox.setToolTipText("コメントをJSONでアクセスする(2017/10～?)");
+			enableCommentJsonCheckBox.setText("コメントJson");
+			enableCommentJsonCheckBox.setForeground(Color.blue);
+			enableCommentJsonCheckBox.setToolTipText("コメントをJonでアクセスする(2017/1～?)");
 			GridBagConstraints grid21_x2_y7 = new GridBagConstraints();
 			grid21_x2_y7.gridx = 2;
 			grid21_x2_y7.gridy = 7;
@@ -3009,8 +3009,10 @@ public class MainFrame extends JFrame {
 			grid21_x2_y7.anchor = GridBagConstraints.NORTHWEST;
 			grid21_x2_y7.fill = GridBagConstraints.HORIZONTAL;
 			grid21_x2_y7.insets = INSETS_0_0_0_0;
-			experimentPanel.add(enableCommentJson2XmlCheckBox, grid21_x2_y7);
-			debugCommentJsonCheckBox.setText("");
+			experimentPanel.add(enableCommentJsonCheckBox, grid21_x2_y7);
+			enableCommentXmlCheckBox.setText("xml");
+			enableCommentXmlCheckBox.setForeground(Color.black);
+			enableCommentXmlCheckBox.setToolTipText("コメントをXmlでアクセスする(従来)");
 			GridBagConstraints grid22_x4_y7 = new GridBagConstraints();
 			grid22_x4_y7.gridx = 4;
 			grid22_x4_y7.gridy = 7;
@@ -3019,7 +3021,7 @@ public class MainFrame extends JFrame {
 			grid22_x4_y7.anchor = GridBagConstraints.NORTHWEST;
 			grid22_x4_y7.fill = GridBagConstraints.HORIZONTAL;
 			grid22_x4_y7.insets = INSETS_0_0_0_0;
-			experimentPanel.add(debugCommentJsonCheckBox, grid22_x4_y7);
+			experimentPanel.add(enableCommentXmlCheckBox, grid22_x4_y7);
 
 			enableCA_CheckBox.setText("ＣＡフォント対応");
 			enableCA_CheckBox.setForeground(Color.blue);
@@ -4120,8 +4122,8 @@ public class MainFrame extends JFrame {
 			jMenuCheckSize.isSelected(),
 			errorControl.getEcoString(),
 			jMenuClearErrorAtEnd.isSelected(),
-			enableCommentJson2XmlCheckBox.isSelected(),
-			debugCommentJsonCheckBox.isSelected()
+			enableCommentJsonCheckBox.isSelected(),
+			enableCommentXmlCheckBox.isSelected()
 		);
 	}
 
@@ -4344,8 +4346,8 @@ public class MainFrame extends JFrame {
 		jMenuCheckSize.setSelected(setting.isEnableCheckSize());
 		errorControl.setEco(setting.getEcoList());
 		jMenuClearErrorAtEnd.setSelected(setting.clearErrorAtEnd());
-		enableCommentJson2XmlCheckBox.setSelected(setting.enableJson2Xml());
-		debugCommentJsonCheckBox.setSelected(setting.debugJson());
+		enableCommentJsonCheckBox.setSelected(setting.enableCommentJson());
+		enableCommentXmlCheckBox.setSelected(setting.enableCommentXml());
 		setHtml5AutoDefault();
 		if(isDebugModeSet())
 			jMenuDebug.setSelected(true);
