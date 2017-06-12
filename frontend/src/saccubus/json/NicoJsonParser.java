@@ -185,6 +185,7 @@ public class NicoJsonParser {
 				Mson m = new Mson(value);
 				String contents;
 				char p;	// p= 0,1,2,3,4 固定
+				// kind :"user" 一般コメント又はコミュニティコメント(p=0,1)
 				// kind :"owner" 投稿者コメント抽出(P=2のみ, fork==1のみ)
 				// kind :"oprional" オプショナルスレッド抽出(p=3,4のみ)
 				// kind :"nicos" ニコスコメント抽出(p=???)
@@ -198,13 +199,19 @@ public class NicoJsonParser {
 						// contents: "rs:0" json スタート
 						// contents: "rf:0" json フィニッシュ
 						log.println("contetns="+contents+", p="+p);
+						if(kind.equals("user")){
+							outflag = p == '0' || p == '1';
+							log.println("user_comment p="+p+", out="+outflag);
+						}else
 						if(kind.equals("owner")){
 							outflag = p == '2';
 							log.println("owner_comment p="+p+", out="+outflag);
-						}else if(kind.equals("optional")){
+						}else
+						if(kind.equals("optional")){
 							outflag = p == '3' || p == '4';
 							log.println("optional_thread p="+p+", out="+outflag);
-						}else if(kind.equals("nicos")){
+						}else
+						if(kind.equals("nicos")){
 							outflag = true;
 							log.println("nicos_comment p="+p+", out="+outflag);
 						}else{

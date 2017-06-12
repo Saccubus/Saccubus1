@@ -1787,19 +1787,19 @@ public class NicoClient {
 	public File getOwnerComment(final File file, final JLabel status, final ConvertStopFlag flag) {
 		return downloadComment(file, status, ThreadID, false, STR_OWNER_COMMENT, CommentType.OWNER, flag, false, false);
 	}
-	public File getOwnerCommentJson(final File file, final JLabel status,
-			String back_comment, final String time, final ConvertStopFlag flag){
-		{
-			String comjson = downloadOwnerCommentJson(status, flag, back_comment);
-			if(comjson==null || comjson.isEmpty()){
-				log.println("\n["+videoTag+"]can't download owner comment json.");
-				return null;
-			}
-			Path.writeAllText(file, comjson, "UTF-8");
-			log.println("\nwrite owner comment json to "+file);
-		}
-		return file;
-	}
+//	public File getOwnerCommentJson(final File file, final JLabel status,
+//			String back_comment, final String time, final ConvertStopFlag flag){
+//		{
+//			String comjson = downloadOwnerCommentJson(status, flag, back_comment);
+//			if(comjson==null || comjson.isEmpty()){
+//				log.println("\n["+videoTag+"]can't download owner comment json.");
+//				return null;
+//			}
+//			Path.writeAllText(file, comjson, "UTF-8");
+//			log.println("\nwrite owner comment json to "+file);
+//		}
+//		return file;
+//	}
 
 	public File getNicosComment(final File file, final JLabel status, final String nicos_id,
 			final String back_comment, final String time, final ConvertStopFlag flag,
@@ -1836,29 +1836,29 @@ public class NicoClient {
 		}
 		return downloadComment(file, status, optionalThreadID, false, back_comment, CommentType.OPTIONAL, flag, useNewComment, isAppend);
 	}
-	public File getOptionalThreadJson(final File file, final JLabel status, final String back_comment,
-			final String time, final ConvertStopFlag flag){
-		{
-			String comjson = downloadOptionalThreadJson(status, flag, back_comment);
-			if(comjson==null || comjson.isEmpty()){
-				log.println("\n["+videoTag+"]can't download optional thread json.");
-				return null;
-			}
-			Path.writeAllText(file, comjson, "UTF-8");
-			log.println("\nwrite optional thread json to "+file);
-		}
-		return file;
-	}
+//	public File getOptionalThreadJson(final File file, final JLabel status, final String back_comment,
+//			final String time, final ConvertStopFlag flag){
+//		{
+//			String comjson = downloadOptionalThreadJson(status, flag, back_comment);
+//			if(comjson==null || comjson.isEmpty()){
+//				log.println("\n["+videoTag+"]can't download optional thread json.");
+//				return null;
+//			}
+//			Path.writeAllText(file, comjson, "UTF-8");
+//			log.println("\nwrite optional thread json to "+file);
+//		}
+//		return file;
+//	}
 	public File getNicosCommentJson(final File file, final JLabel status, final String back_comment,
 			final String time, final ConvertStopFlag flag){
 		{
-			String comjson = downloadOptionalThreadJson(status, flag, back_comment);
+			String comjson = downloadNicosCommentJson(status, flag, back_comment);
 			if(comjson==null || comjson.isEmpty()){
-				log.println("\n["+videoTag+"]can't download optional thread json.");
+				log.println("\n["+videoTag+"]can't download nicos comment json.");
 				return null;
 			}
 			Path.writeAllText(file, comjson, "UTF-8");
-			log.println("\nwrite optional thread json to "+file);
+			log.println("\nwrite nicos comment json to "+file);
 		}
 		return file;
 	}
@@ -1961,6 +1961,16 @@ public class NicoClient {
 		return officialkey;
 	}
 
+	int getKeyCount = 0;
+	public boolean getThreadKey(){
+		String officialOption = getOfficial(ThreadID, NeedsKey);
+		if(officialOption==null && ++getKeyCount < 2){
+			officialOption = getOfficial(optionalThreadID, NeedsKey);
+		}
+		// also threadKey , force184, have been set.
+		log.println("Getting ThreadKey succeeded for: "+succeededKeyThread);
+		return officialOption!=null;
+	}
 	private File downloadComment(final File file, final JLabel status, String thread,
 			boolean needs_key, String back_comment, CommentType commentType, final ConvertStopFlag flag,
 			boolean useNewComment, boolean isAppend) {
@@ -2095,6 +2105,7 @@ public class NicoClient {
 	private String threadKey = null;
 	private String force184 = null;
 	private boolean retry_threadkey = false;
+	private String succeededKeyThread;
 
 	private boolean getOfficialOption(String threadId) {
 		String url = HTTP_FLAPI_GETTHREADKEY+threadId;
@@ -2143,6 +2154,7 @@ public class NicoClient {
 				return false;
 			}
 			log.println("ok.  Thread Key: " + threadKey);
+			succeededKeyThread = threadId;
 			return true;
 		} catch (IOException e) {
 			log.printStackTrace(e);
@@ -2280,13 +2292,20 @@ public class NicoClient {
 		}else{
 			//コミュニティ動画
 			if(optional==null || optional.isEmpty()){
-				sb.append(postJsonData(p++, thread, userKey, false, false, false));
-				sb.append(postJsonData(p++, thread, userKey, true, false, false));
-				sb.append(postJsonData(p++, thread, userKey, false, false, true));
-			}else{
+				if(!thread.equals(succeededKeyThread)){
+					thread = succeededKeyThread;
+				}
 				sb.append(postJsonData(p++, thread, threadkey, false, true, false));
 				sb.append(postJsonData(p++, thread, threadkey, true, true, false));
-				sb.append(postJsonData(p++, thread, threadkey, false, false, true));
+				sb.append(postJsonData(p++, thread, threadkey, false, true, true));
+			}else{
+				if(!thread.equals(succeededKeyThread)){
+					optional = thread;
+					thread = succeededKeyThread;
+				}
+				sb.append(postJsonData(p++, thread, threadkey, false, true, false));
+				sb.append(postJsonData(p++, thread, threadkey, true, true, false));
+				sb.append(postJsonData(p++, thread, threadkey, false, true, true));
 				sb.append(postJsonData(p++, optional, userKey, false, false, false));
 				sb.append(postJsonData(p++, optional, userKey, true, false, false));
 			}
@@ -2585,14 +2604,14 @@ public class NicoClient {
 		postdata = commentJsonPost2009(ThreadID, optionalThreadID, threadKey);
 		return downloadCommonCommentJson(status, flag, back_comment, postdata);
 	}
-	private String downloadOptionalThreadJson(JLabel status, ConvertStopFlag flag, String back_comment){
+//	private String downloadOwnerCommentJson(JLabel status, ConvertStopFlag flag, String back_comment){
+//		String postdata;
+//		postdata = commentJsonPost2009(ThreadID, optionalThreadID, null);
+//		return downloadCommonCommentJson(status, flag, back_comment, postdata);
+//	}
+	private String downloadNicosCommentJson(JLabel status, ConvertStopFlag flag, String back_comment){
 		String postdata;
-		postdata = commentJsonPost2009(ThreadID, optionalThreadID, threadKey);
-		return downloadCommonCommentJson(status, flag, back_comment, postdata);
-	}
-	private String downloadOwnerCommentJson(JLabel status, ConvertStopFlag flag, String back_comment){
-		String postdata;
-		postdata = commentJsonPost2009(ThreadID, optionalThreadID, null);
+		postdata = commentJsonPost2009(nicosID, null, null);
 		return downloadCommonCommentJson(status, flag, back_comment, postdata);
 	}
 

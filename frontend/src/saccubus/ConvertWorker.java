@@ -1296,6 +1296,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File log_vhext = null;
 	private Path video_vhext = null;
 	private String vhspeedrate;
+	private File commentJson;
+	private NicoJsonParser jsonParser;
+	private String back_comment;
+	private String prefix = "";
+	private NicoJsonParser getJsonParser() {
+		if(jsonParser==null){
+			jsonParser = new NicoJsonParser(log);
+		}
+		return jsonParser;
+	}
 	private boolean existVideoFile(File file, String ext1, String ext2) {
 		existVideo = file;
 		if(existVideo.isFile() && existVideo.canRead())
@@ -1308,56 +1318,59 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			return true;
 		return false;
 	}
+	private boolean setupCommentFile(NicoClient client){
+		File folder = Setting.getCommentFixFileNameFolder();
+		if (isCommentFixFileName()) {
+			if (folder.mkdir()) {
+				log.println("Folder created: " + folder.getPath());
+			}
+			if (!folder.isDirectory()) {
+				sendtext("コメントの保存先フォルダが作成できません。");
+				result = "50";
+				return false;
+			}
+			if (Setting.isAddTimeStamp()) {	// prefix set
+				if(Time == null || Time.isEmpty() || Time.equals("0")
+					|| Time.equals("Owner") || Time.equals("Optional")){
+					prefix = "[" + WayBackDate.formatNow() + "]";
+				} else {
+					WayBackDate wbDate = new WayBackDate(Time);
+					if (wbDate.isValid()){
+						prefix = "[" + wbDate.format() + "]";
+					} else {
+						prefix = "[" + Time + "]";
+					}
+				}
+			}else
+				prefix = "";
+			CommentFile = new File(folder, getVideoBaseName()+prefix + ".xml");
+		} else {
+			CommentFile = Setting.getCommentFile();
+		}
+		commentJson = Path.getReplacedExtFile(CommentFile, "_commentJSON.txt");
+		if (client == null){
+			sendtext("ログインしてないのにコメントの保存になりました");
+			result = "51";
+			return false;
+		}
+		back_comment = Setting.getBackComment();
+		if (Setting.isFixCommentNum()) {
+			back_comment = client.getBackCommentFromLength(back_comment);
+		}
+		return true;
+	}
 	private boolean saveComment(NicoClient client) {
 		sendtext("コメントの保存");
-		File folder = Setting.getCommentFixFileNameFolder();
-		String commentTitle = "";
-		String prefix = "";
-		String back_comment = Setting.getBackComment();
 		ArrayList<File> filelist = new ArrayList<>();
 		boolean backup = false;
 		if (isSaveComment()) {
-			if (isCommentFixFileName()) {
-				if (folder.mkdir()) {
-					log.println("Folder created: " + folder.getPath());
-				}
-				if (!folder.isDirectory()) {
-					sendtext("コメントの保存先フォルダが作成できません。");
-					result = "50";
-					return false;
-				}
-				if (Setting.isAddTimeStamp()) {	// prefix set
-					if(Time == null || Time.isEmpty() || Time.equals("0")
-						|| Time.equals("Owner") || Time.equals("Optional")){
-						prefix = "[" + WayBackDate.formatNow() + "]";
-					} else {
-						WayBackDate wbDate = new WayBackDate(Time);
-						if (wbDate.isValid()){
-							prefix = "[" + wbDate.format() + "]";
-						} else {
-							prefix = "[" + Time + "]";
-						}
-					}
-				}
-				commentTitle = getVideoBaseName() + prefix;
-			//	commentTitle = (Setting.isChangeTitleId()? VideoTitle + VideoID : VideoID + VideoTitle) + prefix;
-				CommentFile = new File(folder, commentTitle + ".xml");
-			} else {
-				CommentFile = Setting.getCommentFile();
-			}
-			if (client == null){
-				sendtext("ログインしてないのにコメントの保存になりました");
-				result = "51";
+			// ファイル名設定
+			if(!setupCommentFile(client)){
 				return false;
 			}
-			if (Setting.isFixCommentNum()) {
-				back_comment = client
-						.getBackCommentFromLength(back_comment);
-			}
 			sendtext("コメントのダウンロード開始中");
-			// ファイル名設定
-			appendCommentFile = mkTemp("_"+tid+TMP_APPEND_EXT);
 			// 前処理
+			appendCommentFile = mkTemp("_"+tid+TMP_APPEND_EXT);
 			if(CommentFile.exists()){
 				backup = Path.fileCopy(CommentFile,appendCommentFile);
 			}
@@ -1371,17 +1384,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				if (target == null)
 					sendtext("コメントのダウンロードに失敗 " + client.getExtraError());
+				// thread key はgetCommentで取得済み
+			}else{
+				// thread key 取得
+				if(!client.getThreadKey())
+					return false;
 			}
-			File commentJson = Path.getReplacedExtFile(CommentFile, "_commentJSON.txt");
 			commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag);
 			if(commentJson == null)
 				sendtext("コメントJSONのダウンロードに失敗 " + client.getExtraError());
 			else
 			if(target == null || Setting.enableJson2Xml()){
-				NicoJsonParser jsonParser = new NicoJsonParser(log);
-				if(jsonParser.commentJson2xml(commentJson, CommentFile, ""))
+				if(getJsonParser().commentJson2xml(commentJson, CommentFile, "user"))
 					target = CommentFile;
-				if(jsonParser.getChatCount()==0)
+				if(getJsonParser().getChatCount()==0)
 					log.println("コメントJSON chat=0");
 			}
 			if(target == null){
@@ -1415,6 +1431,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(OptionalThreadFile.exists()){
 					backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
 				}
+				target = null;
 				if(!Setting.debugJson()){
 					sendtext("オプショナルスレッドのダウンロード開始中");
 					target = client.getOptionalThread(
@@ -1427,17 +1444,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					if (target == null)
 						sendtext("オプショナルスレッドのダウンロードに失敗 " + client.getExtraError());
 				}
-				File optionalThreadJson = Path.getReplacedExtFile(OptionalThreadFile, "_commentJSON.txt");
-				optionalThreadJson = client.getOptionalThreadJson(optionalThreadJson, Status, back_comment, Time, StopFlag);
-				if(optionalThreadJson == null)
-					sendtext("オプショナルスレッドJSONのダウンロードに失敗 " + client.getExtraError());
-				else
-				if(target == null || Setting.enableJson2Xml()){
-					NicoJsonParser jsonParser = new NicoJsonParser(log);
-					if(jsonParser.commentJson2xml(optionalThreadJson, OptionalThreadFile, "optional"))
+				log.println("DEBUG: optional thread xml skipped");
+				log.println("commentJson:"+commentJson);
+				log.println("target:"+target);
+				if(commentJson != null &&
+					(target == null || Setting.enableJson2Xml())){
+					if(getJsonParser().commentJson2xml(commentJson, OptionalThreadFile, "optional"))
 						target = OptionalThreadFile;
-					if(jsonParser.getChatCount()==0)
-						log.println("オプショナルスレッドJSON chat=0");
+					log.println("オプショナルスレッドJSON chatCount="+getJsonParser().getChatCount());
 				}
 				if(target == null){
 					sendtext("オプショナルスレッドの取得に失敗 " + client.getExtraError());
@@ -1493,10 +1507,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("ニコスコメントJSONのダウンロードに失敗 " + client.getExtraError());
 				else
 				if(target == null || Setting.enableJson2Xml()){
-					NicoJsonParser jsonParser = new NicoJsonParser(log);
-					if(jsonParser.commentJson2xml(nicosCommentJson, nicosCommentFile, "nicos"))
+					if(getJsonParser().commentJson2xml(nicosCommentJson, nicosCommentFile, "nicos"))
 						target = nicosCommentFile;
-					if(jsonParser.getChatCount() == 0)
+					if(getJsonParser().getChatCount() == 0)
 						log.println("ニコスコメントJSON chat=0");
 				}
 				if(target == null){
@@ -1575,31 +1588,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private boolean saveOwnerComment(NicoClient client){
 		sendtext("投稿者コメントの保存");
-		File folder = Setting.getCommentFixFileNameFolder();
 		if (isSaveOwnerComment()) {
-			if (isCommentFixFileName()) {
-				if (folder.mkdir()) {
-					log.println("Folder created: " + folder.getPath());
-				}
-				if (!folder.isDirectory()) {
-					sendtext("投稿者コメントの保存先フォルダが作成できません。");
-					result = "60";
-					return false;
-				}
-				OwnerCommentFile = new File(folder, getVideoBaseName() + OWNER_EXT);
-			} else {
-				OwnerCommentFile = Setting.getOwnerCommentFile();
-			}
-			String back_comment = Setting.getBackComment();
-			if (Setting.isFixCommentNum()) {
-				back_comment = client.getBackCommentFromLength(back_comment);
-			}
-			sendtext("投稿者コメントのダウンロード開始中");
-			if (client == null){
-				sendtext("ログインしてないのに投稿者コメントの保存になりました");
-				result = "61";
+			// ファイル名の設定
+			if(!setupCommentFile(client)){
 				return false;
 			}
+			String basename = CommentFile.getPath().replace(prefix, "");
+			OwnerCommentFile = Path.getReplacedExtFile(new File(basename), OWNER_EXT);
+			sendtext("投稿者コメントのダウンロード開始中");
 			File target = null;
 			if(!Setting.debugJson()){
 				target = client.getOwnerComment(OwnerCommentFile, Status, StopFlag);
@@ -1614,14 +1610,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					//return true;
 				}
 			}
-			File ownerCommentJson = Path.getReplacedExtFile(OwnerCommentFile, "_commentJSON.txt");
-			ownerCommentJson = client.getOwnerCommentJson(ownerCommentJson, Status, back_comment, Time, StopFlag);
-			if(ownerCommentJson == null)
-				sendtext("投稿者コメントJSONのダウンロードに失敗 " + client.getExtraError());
+			commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag);
+			if(commentJson == null)
+				sendtext("コメントJSONのダウンロードに失敗 " + client.getExtraError());
 			else
 			if(target == null || Setting.enableJson2Xml()){
-				NicoJsonParser jsonParser = new NicoJsonParser(log);
-				if(jsonParser.commentJson2xml(ownerCommentJson, OwnerCommentFile, "owner"))
+				if(getJsonParser().commentJson2xml(commentJson, OwnerCommentFile, "owner"))
 					target = OwnerCommentFile;
 			}
 			if(target == null || !target.canRead()){
