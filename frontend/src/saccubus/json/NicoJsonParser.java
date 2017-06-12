@@ -256,6 +256,16 @@ public class NicoJsonParser {
 					if(outflag) sb.append(s);
 					continue;
 				}
+				if(key.equals("num_click")){
+					//num_clickˆ—
+					s = "<num_click"
+						+xmlAttributeValue(m, "thread")
+						+xmlAttributeValue(m, "no")
+						+xmlAttributeValue(m, "count")
+						+"/>";
+					if(outflag) sb.append(s);
+					continue;
+				}
 				if(key.equals("chat")){
 					//chatˆ—
 					s = "<chat"

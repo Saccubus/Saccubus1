@@ -900,6 +900,12 @@ public class NicoClient {
 	public String getSizeSmile(){
 		return size_video_thumbinfo;
 	}
+	public String getSizeHigh(){
+		return size_high;
+	}
+	public String getSizeLow(){
+		return size_low;
+	}
 	public int getSizeDmc(){
 		return sizeDmc;
 	}

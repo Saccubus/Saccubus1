@@ -824,12 +824,26 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					resumeDmcFile = Path.getReplacedExtFile(dmcVideoFile, ".flv_dmc");
 				}
 				int size_smile = 0;
+				int size_smile_high = 0;
+				int size_smile_low = 0;
 				if(lowVideoFile!=null){
 					try {
 						if(client.getSizeSmile()!=null)
 							size_smile = Integer.decode(client.getSizeSmile());
 					}catch(NumberFormatException e){
 						size_smile = 0;
+					}
+					try {
+						if(client.getSizeHigh()!=null)
+							size_smile_high = Integer.decode(client.getSizeHigh());
+					}catch(NumberFormatException e){
+						size_smile_high = 0;
+					}
+					try {
+						if(client.getSizeLow()!=null)
+							size_smile_low = Integer.decode(client.getSizeLow());
+					}catch(NumberFormatException e){
+						size_smile_low = 0;
 					}
 					if(client.getSizeVideo() > size_smile)
 						size_smile = client.getSizeVideo();
@@ -841,14 +855,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					if(client.isEco() && existVideoFile(VideoFile, ".flv", ".mp4")){
 						sendtext("エコノミーモードで通常動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
-						 || (size_smile>0 && existVideo.length()==size_smile)){
+						 || (size_smile_high>0 && existVideo.length()==size_smile_high)){
 							log.println("エコノミーモードで通常動画は既に存在します。ダウンロードをスキップします");
 							VideoFile = existVideo;
 							return true;
 						}
 						sendtext("通常動画のサイズが一致しません。");
 						log.println("通常動画のサイズが一致しません。");
-						log.println("smile="+size_smile+"bytes, exist="+existVideo.length()+"bytes.");
+						log.println("smile="+size_smile_high+"bytes, exist="+existVideo.length()+"bytes.");
 					}
 					if(client.isEco() && existVideoFile(dmcVideoFile, ".flv", ".mp4")){
 						sendtext("エコノミーモードでdmc動画は既に存在します");
@@ -866,7 +880,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					if(client.isEco() && existVideoFile(lowVideoFile,".flv",".mp4")){
 						sendtext("エコノミーモードでエコ動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
-							|| (size_smile>0 && existVideo.length()==size_smile)
+							|| (size_smile_low>0 && existVideo.length()==size_smile_low)
+							|| (size_smile_high>0 && existVideo.length()==size_smile_high)
 							|| (size_dmc>0 && existVideo.length()==size_dmc)){
 							log.println("エコノミーモードで動画は既に存在します。ダウンロードをスキップします");
 							lowVideoFile = existVideo;
@@ -884,28 +899,28 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					+", forceDMC:" + Setting.doesDmcforceDl()
 					+", client.isEco:"+client.isEco());
 				if(!client.serverIsDmc() || Setting.isSmilePreferable() && !Setting.doesDmcforceDl()){
-					if(size_smile==0){
+					if(size_smile_high==0){
 						try {
-							if(client.getSizeSmile()!=null)
-								size_smile = Integer.decode(client.getSizeSmile());
+							if(client.getSizeHigh()!=null)
+								size_smile_high = Integer.decode(client.getSizeHigh());
 						}catch(NumberFormatException e){
-							size_smile = 0;
+							size_smile_high = 0;
 						}
-						if(client.getSizeVideo() > size_smile)
-							size_smile = client.getSizeVideo();
+//						if(client.getSizeVideo() > size_smile)
+//							size_smile = client.getSizeVideo();
 					}
 					// 通常サーバ
 					if(existVideoFile(VideoFile,".flv",".mp4")){
 						sendtext("動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
-							|| (size_smile>0 && existVideo.length()==size_smile)){
+							|| (size_smile_high>0 && existVideo.length()==size_smile_high)){
 							log.println("動画は既に存在します。ダウンロードをスキップします");
 							VideoFile = existVideo;
 							return true;
 						}
 						sendtext("動画のサイズが一致しません。");
 						log.println("動画のサイズが一致しません。");
-						log.println("smile="+size_smile+"bytes, exist="+existVideo.length()+"bytes.");
+						log.println("smile="+size_smile_high+"bytes, exist="+existVideo.length()+"bytes.");
 					}
 					if(lowVideoFile==null)
 						lowVideoFile = VideoFile;
@@ -934,18 +949,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					long dmc_high = 0;
 					long resume_size = 0;
 					long video_size = 0;
-					long size_high = 0;
-					String size_high_str = client.getSizeSmile();
-					if(size_high_str!=null){
-						try {
-							size_high = Long.decode(size_high_str);
-						}catch(NumberFormatException e){
-							log.printStackTrace(e);
-							size_high = 0;
-						}
-					}
-					if(size_high>0)
-						log.println("smile size: "+(size_high>>20)+"MiB");
+					long long_size_smile = (long)size_smile;
+					if(long_size_smile>0)
+						log.println("smile size: "+(long_size_smile>>20)+"MiB");
 					else
 						log.println("bug? can't get smile size");
 					if(existVideoFile(VideoFile, ".flv", ".mp4")){
@@ -956,8 +962,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							video_size = VideoFile.length();
 							log.println("video size: "+(video_size>>20)+"MiB");
 						}else{
-							if(size_high>0){
-								if(existVideo.length()==size_high){
+							if(long_size_smile>0){
+								if(existVideo.length()==long_size_smile){
 									sendtext("動画は既に存在します");
 									log.println("動画は既に存在します。");
 									VideoFile = existVideo;
@@ -966,7 +972,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								}else{
 									sendtext("動画のサイズが一致しません。");
 									log.println("動画のサイズが一致しません。");
-									log.println("high="+size_high+"bytes, exist="+existVideo.length()+"bytes.");
+									log.println("high="+long_size_smile+"bytes, exist="+existVideo.length()+"bytes.");
 									video_size = 0;
 								}
 							}else{
@@ -1007,7 +1013,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 					} 
 					if(!skip){
-						long min_size = Math.max(Math.max(video_size, size_high),size_exist);
+						long min_size = Math.max(Math.max(video_size, long_size_smile),size_exist);
 						long[] limits = {min_size, 0, 0};	// limits[1] is return value
 						if(Setting.doesDmcforceDl())
 							limits[0] = 0;	//途中で中止しない
@@ -1203,8 +1209,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 					}
 					// video_size , dmc_size should be real size of a file which exists now or has been loaded
-					if ( (size_high > video_size && size_high > dmc_size && !Setting.isInhibitSmaller())
-						||(size_high != video_size && size_high != dmc_size && Setting.isSmilePreferable())){
+					if ( (long_size_smile > video_size && long_size_smile > dmc_size && !Setting.isInhibitSmaller())
+						||(long_size_smile != video_size && long_size_smile != dmc_size && Setting.isSmilePreferable())){
 						// smile動画をダウンロード
 						log.println("Smile download start.");
 						if(lowVideoFile==null)
