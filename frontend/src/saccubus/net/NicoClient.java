@@ -2544,10 +2544,13 @@ public class NicoClient {
 		InputStream is = null;
 		OutputStream os = null;
 		HttpURLConnection con = null;
-		StringBuffer fosb = new StringBuffer();
+		long thid = Thread.currentThread().getId();
+		File buffile = Path.mkTemp(ThreadID+"_"+thid+"_json.txt");
+		FileOutputStream fosb = null;
 		String retComment = null;
 		backcomment = back_comment;
 		try {
+			fosb = new FileOutputStream(buffile);
 			long start0 = Stopwatch.getElapsedTime(0);
 			con = urlConnect(url, "POST", Cookie, true, true, "keep-alive", true);
 			os = con.getOutputStream();
@@ -2576,7 +2579,7 @@ public class NicoClient {
 			//debugsInit();
 			while ((read = is.read(buf, 0, buf.length)) > 0) {
 				//debugsAdd(read);
-				fosb.append(new String(buf, 0, read, "UTF-8"));
+				fosb.write(buf, 0, read);
 				size += read;
 				sendStatus(status, "comment JSON ", max_size, size, start0);
 				//Stopwatch.show();
@@ -2587,11 +2590,11 @@ public class NicoClient {
 			}
 			//debugsOut("Å°read+write statistics(bytes) ");
 			log.println("ok.");
+			fosb.flush();
+			fosb.close();
 			is.close();
-			// add OwnerFilter to the end of owner comment file before </packet>
-			// fos.close();
 			con.disconnect();
-			retComment = fosb.substring(0);
+			retComment = Path.readAllText(buffile, "UTF-8");
 			return retComment;
 		} catch (IOException e) {
 			log.printStackTrace(e);
@@ -2602,6 +2605,8 @@ public class NicoClient {
 				try { os.close(); } catch(IOException e2){}
 			if(con!=null)
 				con.disconnect();
+			if(fosb!=null)
+				try { fosb.close(); } catch(IOException e3){}
 		}
 		return null;
 	}

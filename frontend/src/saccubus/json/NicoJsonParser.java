@@ -3,6 +3,8 @@ package saccubus.json;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.gson.JsonElement;
 
@@ -306,13 +308,38 @@ public class NicoJsonParser {
 	private static String xmlContents(Mson m){
 		// return empty string when value is null or empty
 		String val = m.getAsString("content");
-		if(val==null || val.isEmpty())
+		if(val==null || val.isEmpty()){
 			val = "";
-		else
+		}else{
 			val = ChatSave.safeReference(val);
-			val = val.replace("\\n", "\n")		//linefeed eval
-					.replace("\\\"", "\"")		//quote unescape
-					.replace("\\\\", "\\");		//escape eval
+			val = evalUnicodeDescr(val)		//unicode description
+				.replace("\\n", "\n")		//linefeed eval
+				.replace("\\t", "\t")		//linefeed eval
+				.replace("\\\"", "\"")		//quote unescape
+				.replace("\\\\", "\\");		//escape eval
+		}
 		return val;
+	}
+
+	private static String evalUnicodeDescr(String val) {
+		Pattern p = Pattern.compile("\\\\u([0-9a-fA-F]{4})", Pattern.UNIX_LINES);
+		Matcher m = p.matcher(val);
+		StringBuffer sb = new StringBuffer();
+		while(m.find()){
+			m.appendReplacement(sb, unicodeReplace(m.group(1)));
+		}
+		m.appendTail(sb);
+		return sb.substring(0);
+	}
+
+	private static String unicodeReplace(String xDigits) {
+		try {
+			int codepoint = Integer.parseInt(xDigits, 16);
+			char c = (char)codepoint;
+			return ""+c;
+		}catch(NumberFormatException e){
+			Logger.MainLog.printStackTrace(e);
+			return ""+'\u200C';
+		}
 	}
 }
