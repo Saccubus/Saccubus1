@@ -1,7 +1,8 @@
 package saccubus.json;
 
 import java.io.File;
-import java.io.PrintWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -128,27 +129,27 @@ public class NicoJsonParser {
 	public int getChatCount(){
 		return chatCount;
 	}
-	public boolean commentJson2xml(File json, File xml, String kind){
+	public boolean commentJson2xml(File json, File xml, String kind, boolean append){
 		// json 入力コメントJsonテキストファイル
 		// xml 出力コメントxmlファイル
 		String jsonText = Path.readAllText(json, ENCODING);
 		Mson mson = Mson.parse(jsonText);
 		//mson.prettyPrint(log);
-		PrintWriter pw = null;
+		FileOutputStream pw = null;
 		try {
 			String xmlString = makeCommentXml(mson, kind);
 			if(xmlString!=null){
-				Path.writeAllText(xml, xmlString, ENCODING);
+				pw = new FileOutputStream(xml, append);
+				pw.write(xmlString.getBytes(ENCODING));
+				pw.flush();
+				pw.close();
 				log.println(kind+"コメントJSONをXMLに変換しました: "+xml.getPath());
 				return true;
 			}
-			return false;
-		}finally{
-			if(pw!=null){
-				pw.flush();
-				pw.close();
-			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		return false;
 	}
 
 	private String makeCommentXml(Mson mson, String kind){
@@ -277,8 +278,8 @@ public class NicoJsonParser {
 						+xmlAttributeValue(m, "date")
 						+xmlAttributeValue(m, "date_usec")
 						+xmlAttributeValue(m, "score")
+						+xmlAttributeValue(m, "nicoru")
 						+xmlAttributeValue(m, "premium")
-					//	+xmlAttributeValue(m, "nicoru")
 						+xmlAttributeValue(m, "anonymity")
 						+xmlAttributeValue(m, "user_id")
 						+xmlAttributeValue(m, "mail")

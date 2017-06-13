@@ -638,46 +638,46 @@ public class MainFrame extends JFrame {
 		grid2_x__y__35.weightx = 1.0;
 		GridBagConstraints grid4_x0_y9_26 = new GridBagConstraints();
 		grid4_x0_y9_26.gridx = 0;
-		grid4_x0_y9_26.gridwidth = 4;
+		grid4_x0_y9_26.gridwidth = 6;
 		grid4_x0_y9_26.insets = INSETS_0_25_0_5;
 		grid4_x0_y9_26.weightx = 1.0;
 		grid4_x0_y9_26.fill = GridBagConstraints.HORIZONTAL;
 		grid4_x0_y9_26.gridy = 9;
 		GridBagConstraints grid4_x0_y8_25 = new GridBagConstraints();
 		grid4_x0_y8_25.gridx = 0;
-		grid4_x0_y8_25.gridwidth = 4;
+		grid4_x0_y8_25.gridwidth = 6;
 		grid4_x0_y8_25.fill = GridBagConstraints.HORIZONTAL;
 		grid4_x0_y8_25.insets = INSETS_0_25_0_5;
 		grid4_x0_y8_25.weightx = 1.0;
 		grid4_x0_y8_25.gridy = 8;
-		GridBagConstraints grid4_x3_y14_24 = new GridBagConstraints(3, 10,
-				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+		GridBagConstraints grid4_x5_y14_24 = new GridBagConstraints(5, 14,
+				1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
-		grid4_x3_y14_24.gridy = 14;
-		GridBagConstraints grid4_x3_y12_23 = new GridBagConstraints(3, 8,
-				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+		grid4_x5_y14_24.gridy = 14;
+		GridBagConstraints grid4_x5_y12_23 = new GridBagConstraints(5, 12,
+				1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.NONE, INSETS_0_0_0_5, 0, 0);
-		grid4_x3_y12_23.gridy = 12;
+		grid4_x5_y12_23.gridy = 12;
 		GridBagConstraints grid4_x0_y14_21 = new GridBagConstraints(0, 14,
-				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+				4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
 		grid4_x0_y14_21.gridy = 14;
-		GridBagConstraints grid4_x2_y14 = new GridBagConstraints(2, 14,
+		GridBagConstraints grid4_x4_y14 = new GridBagConstraints(4, 14,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 0);
-		GridBagConstraints grid4_x0_y13_20 = new GridBagConstraints(0, 9,
-				4, 1, 1.0, 0.0, GridBagConstraints.WEST,
+		GridBagConstraints grid4_x0_y13_20 = new GridBagConstraints(0, 13,
+				6, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0, 0);
 		grid4_x0_y13_20.gridy = 13;
 		GridBagConstraints grid4_x0_y12_19 = new GridBagConstraints(0, 12,
-				2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+				4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, INSETS_0_50_0_5, 0, 0);
 		grid4_x0_y12_19.gridy = 12;
-		GridBagConstraints grid4_x2_y12 = new GridBagConstraints(2, 12,
+		GridBagConstraints grid4_x4_y12 = new GridBagConstraints(4, 12,
 				1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, INSETS_0_0_0_0, 0, 0);
 		GridBagConstraints grid4_x0_y11_18 = new GridBagConstraints(0, 7,
-				4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+				6, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.HORIZONTAL, INSETS_0_25_0_5, 0, 0);
 		grid4_x0_y11_18.gridy = 11;
 		GridBagConstraints grid4_x0_y10_17 = new GridBagConstraints();
@@ -688,9 +688,9 @@ public class MainFrame extends JFrame {
 		grid4_x0_y10_17.fill = GridBagConstraints.BOTH;
 		grid4_x0_y10_17.insets = INSETS_0_50_0_5;
 		GridBagConstraints grid4_x1_y10_22 = new GridBagConstraints();
-		//grid4_x1_y10_22.gridx = 1;
+		grid4_x1_y10_22.gridx = 1;
 		grid4_x1_y10_22.gridy = 10;
-		grid4_x1_y10_22.gridwidth = 4;
+		grid4_x1_y10_22.gridwidth = 5;
 		grid4_x1_y10_22.weightx = 1.0;
 		grid4_x1_y10_22.anchor = GridBagConstraints.CENTER;
 		grid4_x1_y10_22.fill = GridBagConstraints.BOTH;
@@ -701,16 +701,29 @@ public class MainFrame extends JFrame {
 		grid4_x0_y6_16.gridy = 6;
 		grid4_x0_y6_16.gridwidth = 1;
 		grid4_x0_y6_16.insets = INSETS_0_5_0_0;
-		GridBagConstraints grid4_x1_y6_ = new GridBagConstraints();
-		//grid4_x1_y6_.gridx = 2;
-		grid4_x1_y6_.gridy = 6;
-		grid4_x1_y6_.anchor = GridBagConstraints.WEST;
-		grid4_x1_y6_.fill = GridBagConstraints.HORIZONTAL;
-		grid4_x1_y6_.insets = INSETS_0_5_0_5;
+		GridBagConstraints grid4_x1_y6 = new GridBagConstraints();
+		grid4_x1_y6.gridx = 1;
+		grid4_x1_y6.gridy = 6;
+		grid4_x1_y6.anchor = GridBagConstraints.WEST;
+		grid4_x1_y6.fill = GridBagConstraints.HORIZONTAL;
+		grid4_x1_y6.insets = INSETS_0_5_0_0;
+		GridBagConstraints grid4_x2_y6 = new GridBagConstraints();
+		grid4_x2_y6.gridx = 2;
+		grid4_x2_y6.gridy = 6;
+		grid4_x2_y6.anchor = GridBagConstraints.WEST;
+		grid4_x2_y6.fill = GridBagConstraints.HORIZONTAL;
+		grid4_x2_y6.insets = INSETS_0_5_0_0;
+		GridBagConstraints grid4_x3_y6_ = new GridBagConstraints();
+		grid4_x3_y6_.gridx = 3;
+		grid4_x3_y6_.gridy = 6;
+		grid4_x3_y6_.gridwidth = 3;
+		grid4_x3_y6_.anchor = GridBagConstraints.WEST;
+		grid4_x3_y6_.fill = GridBagConstraints.HORIZONTAL;
+		grid4_x3_y6_.insets = INSETS_0_5_0_5;
 		GridBagConstraints grid4_x0_y7_86 = new GridBagConstraints();
 		grid4_x0_y7_86.gridx = 0;
 		grid4_x0_y7_86.gridy = 7;
-		grid4_x0_y7_86.gridwidth = 4;
+		grid4_x0_y7_86.gridwidth = 5;
 		grid4_x0_y7_86.anchor = GridBagConstraints.WEST;
 		grid4_x0_y7_86.fill = GridBagConstraints.HORIZONTAL;
 		grid4_x0_y7_86.insets = INSETS_0_25_0_5;
@@ -1496,8 +1509,14 @@ public class MainFrame extends JFrame {
 			//	new Font("MS UI Gothic", Font.PLAIN, 12), Color.black));
 		CommentSaveInfoPanel.setLayout(gridBagLayout4);
 		SavingCommentCheckBox.setText("コメントをダウンロード");
-		appendCommentCheckBox.setText("追加モード");
+		appendCommentCheckBox.setText("コメント追加");
 		appendCommentCheckBox.addActionListener(new MainFrame_noticePop(this));
+		enableCommentJsonCheckBox.setText("Json");
+		enableCommentJsonCheckBox.setForeground(Color.blue);
+		enableCommentJsonCheckBox.setToolTipText("コメントをJonでアクセスする(2017/1～?)");
+		enableCommentXmlCheckBox.setText("xml");
+		enableCommentXmlCheckBox.setForeground(Color.black);
+		enableCommentXmlCheckBox.setToolTipText("コメントをXmlでアクセスする(従来)");
 		AddTimeStampToCommentCheckBox.setText("コメントファイル名に日時付加（フォルダ指定時）");
 		AddTimeStampToCommentCheckBox.setForeground(Color.blue);
 		AddTimeStampToCommentCheckBox.setToolTipText("過去ログにも現在のコメントにも日時が付く");
@@ -1995,7 +2014,9 @@ public class MainFrame extends JFrame {
 		BasicInfoTabPanel.add(getUpdateInfoPanel(),grid12_x0_y3);
 
 		CommentSaveInfoPanel.add(SavingCommentCheckBox, grid4_x0_y6_16);
-		CommentSaveInfoPanel.add(appendCommentCheckBox, grid4_x1_y6_);
+		CommentSaveInfoPanel.add(appendCommentCheckBox, grid4_x1_y6);
+		CommentSaveInfoPanel.add(enableCommentJsonCheckBox, grid4_x2_y6);
+		CommentSaveInfoPanel.add(enableCommentXmlCheckBox, grid4_x3_y6_);
 	//	CommentSaveInfoPanel.add(dateUserFirstCheckBox, grid4_x2_y6_2);
 		CommentSaveInfoPanel.add(AddTimeStampToCommentCheckBox, grid4_x0_y7_86);
 		DelCommentCheckBox.setText("変換後にコメントファイルを削除する");
@@ -2006,12 +2027,12 @@ public class MainFrame extends JFrame {
 		CommentSaveInfoPanel.add(CommentNumField, grid4_x1_y10_22);
 		CommentSaveInfoPanel.add(Comment_SaveFolderRadioButton,grid4_x0_y11_18);
 		CommentSaveInfoPanel.add(CommentSavedFolderField, grid4_x0_y12_19);
-		CommentSaveInfoPanel.add(openCommentSaveFolderButton, grid4_x2_y12);
-		CommentSaveInfoPanel.add(ShowSavingCommentFolderDialogButton,grid4_x3_y12_23);
+		CommentSaveInfoPanel.add(openCommentSaveFolderButton, grid4_x4_y12);
+		CommentSaveInfoPanel.add(ShowSavingCommentFolderDialogButton,grid4_x5_y12_23);
 		CommentSaveInfoPanel.add(Comment_SaveFileRadioButton,grid4_x0_y13_20);
 		CommentSaveInfoPanel.add(CommentSavedFileField, grid4_x0_y14_21);
-		CommentSaveInfoPanel.add(openCommentSaveFileButton, grid4_x2_y14);
-		CommentSaveInfoPanel.add(ShowSavingCommentFileDialogButton,grid4_x3_y14_24);
+		CommentSaveInfoPanel.add(openCommentSaveFileButton, grid4_x4_y14);
+		CommentSaveInfoPanel.add(ShowSavingCommentFileDialogButton,grid4_x5_y14_24);
 		OldCommentModePanel.add(commentModeComboBox, grid11_x0_y0_75);
 		c = new GridBagConstraints();
 		c.gridy = 1;
@@ -2997,31 +3018,6 @@ public class MainFrame extends JFrame {
 			grid20_x1_y7.fill = GridBagConstraints.HORIZONTAL;
 			grid20_x1_y7.insets = INSETS_0_0_0_0;
 			experimentPanel.add(enableHtml5CommentCheckBox, grid20_x1_y7);
-
-			enableCommentJsonCheckBox.setText("コメントJson");
-			enableCommentJsonCheckBox.setForeground(Color.blue);
-			enableCommentJsonCheckBox.setToolTipText("コメントをJonでアクセスする(2017/1～?)");
-			GridBagConstraints grid21_x2_y7 = new GridBagConstraints();
-			grid21_x2_y7.gridx = 2;
-			grid21_x2_y7.gridy = 7;
-			grid21_x2_y7.gridwidth = 2;
-			grid21_x2_y7.weightx = 0.0;
-			grid21_x2_y7.anchor = GridBagConstraints.NORTHWEST;
-			grid21_x2_y7.fill = GridBagConstraints.HORIZONTAL;
-			grid21_x2_y7.insets = INSETS_0_0_0_0;
-			experimentPanel.add(enableCommentJsonCheckBox, grid21_x2_y7);
-			enableCommentXmlCheckBox.setText("xml");
-			enableCommentXmlCheckBox.setForeground(Color.black);
-			enableCommentXmlCheckBox.setToolTipText("コメントをXmlでアクセスする(従来)");
-			GridBagConstraints grid22_x4_y7 = new GridBagConstraints();
-			grid22_x4_y7.gridx = 4;
-			grid22_x4_y7.gridy = 7;
-			grid22_x4_y7.gridwidth = 1;
-			grid22_x4_y7.weightx = 0.0;
-			grid22_x4_y7.anchor = GridBagConstraints.NORTHWEST;
-			grid22_x4_y7.fill = GridBagConstraints.HORIZONTAL;
-			grid22_x4_y7.insets = INSETS_0_0_0_0;
-			experimentPanel.add(enableCommentXmlCheckBox, grid22_x4_y7);
 
 			enableCA_CheckBox.setText("ＣＡフォント対応");
 			enableCA_CheckBox.setForeground(Color.blue);
