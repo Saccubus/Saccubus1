@@ -131,6 +131,7 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuInit = new JMenuItem();
 	JMenu jMenuHelp = new JMenu();
 	JMenuItem jMenuHelpAbout = new JMenuItem();
+	JMenuItem jMenuHelpUpdate = new JMenuItem();
 	JMenuItem jMenuHelpReadme = new JMenuItem();
 	JMenuItem jMenuHelpReadmeNew = new JMenuItem();
 	JMenuItem jMenuHelpReadmePlus = new JMenuItem();
@@ -160,6 +161,7 @@ public class MainFrame extends JFrame {
 	JMenuItem jMenuPanelShowAll = new JMenuItem();
 	JMenuItem jMenuPanelInit = new JMenuItem();
 	JMenuItem jMenuPanelUpdate = new JMenuItem();
+	JMenuItem jMenuFolderOpen = new JMenuItem();
 	JMenuItem jMenuDebug = new JCheckBoxMenuItem();
 	public JLabel statusBar = new JLabel();
 	public JLabel elapsedTimeBar = new JLabel();
@@ -792,6 +794,13 @@ public class MainFrame extends JFrame {
 				jMenuHelpAbout_actionPerformed(e);
 			}
 		});
+		jMenuHelpUpdate.setText("更新履歴");
+		jMenuHelpUpdate.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showReadme_actionPerformed("更新履歴.txt", "UTF-8");
+			}
+		});
 		jMenuHelpReadme.setText("　readme(オリジナル)表示");
 		jMenuHelpReadme.addActionListener(new ActionListener() {
 			@Override
@@ -950,6 +959,13 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				initialPanelHideMapping = JPanelHideable.getHideMap();
+			}
+		});
+		jMenuFolderOpen.setText("さきゅばすフォルダを開く");
+		jMenuFolderOpen.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openFolder(getFile("."));
 			}
 		});
 		jMenuDetail.setText("詳細設定");
@@ -1731,8 +1747,10 @@ public class MainFrame extends JFrame {
 		jMenuAction.add(jMenuPanelHideAll);
 		jMenuAction.add(jMenuPanelInit);
 		jMenuAction.add(jMenuPanelUpdate);
+		jMenuAction.add(jMenuFolderOpen);
 		jMenuBar1.add(jMenuHelp);
 		jMenuHelp.add(jMenuHelpAbout);
+		jMenuHelp.add(jMenuHelpUpdate);
 		jMenuHelp.add(jMenuHelpReadmeNew);
 		jMenuHelp.add(jMenuHelpReadme);
 		jMenuHelp.add(jMenuHelpReadmePlus);
