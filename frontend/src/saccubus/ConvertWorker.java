@@ -1400,7 +1400,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			if(Setting.enableCommentJson() || target == null){
 				// JSONは一般コメント・オプショナルスレッド共通(同時DL)
-				commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag);
+				commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag,
+						Setting.getCommentIndex());
 				if(commentJson == null)
 					sendtext("コメントJSONのダウンロードに失敗 " + client.getExtraError());
 			}
@@ -1511,7 +1512,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				File nicosCommentJson = null;
 				if(Setting.enableCommentJson() || target == null){
 					nicosCommentJson = Path.getReplacedExtFile(nicosCommentFile, "_commentJSON.txt");
-					nicosCommentJson = client.getNicosCommentJson(nicosCommentJson, Status, back_comment, Time, StopFlag);
+					nicosCommentJson = client.getNicosCommentJson(nicosCommentJson, Status, back_comment,
+							Time, StopFlag, Setting.getCommentIndex());
 					if(nicosCommentJson == null)
 						sendtext("ニコスコメントJSONのダウンロードに失敗 " + client.getExtraError());
 				}
@@ -1619,7 +1621,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 			}
 			if(Setting.enableCommentJson() || target == null){
-				commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag);
+				commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag,
+						Setting.getCommentIndex());
 				if(commentJson == null)
 					sendtext("コメントJSONのダウンロードに失敗 " + client.getExtraError());
 			}
@@ -2198,11 +2201,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			OwnerMiddleFile = mkTemp(TMP_OWNERCOMMENT);
 			//ここで commentReplaceが作られる
 			log.println("投稿者コメント変換");
-			if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile, isNicos)){
-				sendtext("投稿者コメント変換に失敗");
-				OwnerMiddleFile = null;
-				result = "83";
-				return false;
+			if(OwnerCommentFile!=null && OwnerCommentFile.canRead()){
+				if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile, isNicos)){
+					sendtext("投稿者コメント変換に失敗");
+					OwnerMiddleFile = null;
+					result = "83";
+					return false;
+				}
 			}
 			//コメント数を検査
 			if(!OwnerMiddleFile.canRead()){

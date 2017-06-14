@@ -1789,9 +1789,9 @@ public class NicoClient {
 		return true;
 	}
 	public File getCommentJson(final File file, final JLabel status, final String back_comment,
-			final String time, final ConvertStopFlag flag){
+			final String time, final ConvertStopFlag flag, int comment_mode){
 		{
-			String comjson = downloadCommentJson(file, status, flag, back_comment, time);
+			String comjson = downloadCommentJson(file, status, flag, back_comment, time, comment_mode);
 			if(comjson==null || comjson.isEmpty()){
 				log.println("\n["+videoTag+"]can't download comment json.");
 				return null;
@@ -1842,9 +1842,9 @@ public class NicoClient {
 		return downloadComment(file, status, optionalThreadID, false, back_comment, CommentType.OPTIONAL, flag, useNewComment, isAppend);
 	}
 	public File getNicosCommentJson(final File file, final JLabel status, final String back_comment,
-			final String time, final ConvertStopFlag flag){
+			final String time, final ConvertStopFlag flag, int comment_mode){
 		{
-			String comjson = downloadNicosCommentJson(file, status, flag, back_comment, time);
+			String comjson = downloadNicosCommentJson(file, status, flag, back_comment, time, comment_mode);
 			if(comjson==null || comjson.isEmpty()){
 				log.println("\n["+videoTag+"]can't download nicos comment json.");
 				return null;
@@ -2303,7 +2303,7 @@ public class NicoClient {
 		else
 		if(threadkey==null || threadkey.isEmpty()){
 			//ユーザー動画
-			//										isleaf, needs_key, isOwner, wayback){
+			//										isleaf, needs_key, isOwner, wayback
 			sb.append(postJsonData(p++, thread, userKey, false, false, false, null));
 			sb.append(postJsonData(p++, thread, userKey, true, false, false, null));
 			sb.append(postJsonData(p++, thread, userKey, false, false, true, null));
@@ -2328,6 +2328,86 @@ public class NicoClient {
 			}
 		}
 		sb.append(",{\"ping\":{\"content\":\"rf:0\"}}]");
+		return sb.substring(0);
+	}
+	String commentJsonPost2006(String thread, String optional, String threadkey, String time){
+		String waybackkey = WayBackKey;
+		StringBuilder sb = new StringBuilder();
+		//int p = 0;
+		sb.append("[{\"ping\":{\"content\":\"rs:0\"}}");
+		if(isWayback(time, thread)){
+			// 過去ログ
+			if(threadkey == null || threadkey.isEmpty()){
+				//ユーザー動画
+				//															needs_key, isOwner, wayback
+				sb.append(postJson2006(0, thread, userKey, false, false, waybackkey));
+				sb.append(postJson2006(2, thread, userKey, false, true, waybackkey));
+				if(optional!=null && !optional.isEmpty()){
+					sb.append(postJson2006(3, optional, userKey, false, false, waybackkey));
+				}
+			}else{
+				//コミュニティ動画
+				//															needs_key, isOwner, wayback
+				sb.append(postJson2006(0, thread, threadkey, true, false, waybackkey));
+				sb.append(postJson2006(2, thread, threadkey, true, true, waybackkey));
+				if(optional!=null && !optional.isEmpty()){
+					// 過去ログ オプショナルスレッドあり
+					String optwaybackkey = null;
+					if(isWayback(time, optional)){
+						optwaybackkey = WayBackKey;
+					}
+					sb.append(postJson2006(3, optional, threadkey, true, false, optwaybackkey));
+				}
+			}
+		}else{
+			if(threadkey == null || threadkey.isEmpty()){
+				//ユーザー動画
+				//															needs_key, isOwner, wayback
+				sb.append(postJson2006(0, thread, userKey, false, false, null));
+				sb.append(postJson2006(2, thread, userKey, false, true, null));
+				if(optional!=null && !optional.isEmpty()){
+					sb.append(postJson2006(3, optional, userKey, false, false, null));
+				}
+			}else{
+				//コミュニティ動画
+				//															needs_key, isOwner, wayback
+				sb.append(postJson2006(0, thread, threadkey, true, false, null));
+				sb.append(postJson2006(2, thread, threadkey, true, true, null));
+				if(optional!=null && !optional.isEmpty()){
+					sb.append(postJson2006(3, optional, threadkey, true, false, null));
+				}
+			}
+		}
+		sb.append(",{\"ping\":{\"content\":\"rf:0\"}}]");
+		return sb.substring(0);
+	}
+	private String postJson2006(int n, String thread, String key,
+			boolean needs_key, boolean isOwner, String waybackkey){
+		StringBuilder sb = new StringBuilder();
+		sb.append(",{\"ping\":{\"content\":\"ps:"+n+"\"}}");
+	//	if(!isleaf)
+			sb.append(",{\"thread\":{");
+	//	else
+	//		sb.append(",{\"thread_leaves\":{");
+		sb.append( "\"thread\":\""+thread+"\"");
+		sb.append(",\"version\":\"20061206\"");
+		if(isOwner){
+			sb.append(",\"fork\":\"1\"");	//投コメのみ
+			sb.append(",\"res_from\":-1000");
+		}else{
+			sb.append(",\"res_from\":-" + backcomment);
+		}
+		sb.append(",\"user_id\":\""+UserID+"\"");
+		sb.append(",\"scores\":1,\"nicoru\":1");	//nicoru:1実験
+		if(needs_key){
+			sb.append(",\"force_184\":\"1\"");
+			sb.append(",\"threadkey\":\""+key+"\"");
+		}
+		if(waybackkey!=null){
+			sb.append(",\"when\":\""+WayBackTime+"\"");
+			sb.append(",\"waybackkey\":\"" + waybackkey+ "\"");
+		}
+		sb.append("}},{\"ping\":{\"content\":\"pf:"+n+"\"}}");
 		return sb.substring(0);
 	}
 	private String postJsonData(int n, String thread, String key,
@@ -2634,15 +2714,33 @@ public class NicoClient {
 		return null;
 	}
 	private String downloadCommentJson(File file, JLabel status, ConvertStopFlag flag, String back_comment,
-			String time){
+			String time, int comment_mode){
 		String postdata;
-		postdata = commentJsonPost2009(ThreadID, optionalThreadID, threadKey, time);
+		boolean useNewComment = true;
+		isWayback(time, ThreadID);	//get waybackkey
+		if(comment_mode == 2 || comment_mode == 0 && !hasNewCommentBegun){
+			useNewComment = false;
+		}
+		backcomment = back_comment;
+		if(useNewComment)
+			postdata = commentJsonPost2009(ThreadID, optionalThreadID, threadKey, time);
+		else
+			postdata = commentJsonPost2006(ThreadID, optionalThreadID, threadKey, time);
 		return downloadCommonCommentJson(file, status, flag, back_comment, postdata);
 	}
 	private String downloadNicosCommentJson(File file, JLabel status, ConvertStopFlag flag, String back_comment,
-			String time){
+			String time, int comment_mode){
 		String postdata;
-		postdata = commentJsonPost2009(nicosID, null, null, time);
+		boolean useNewComment = true;
+		isWayback(time, nicosID);	//get waybackkey
+		if(comment_mode == 2 || comment_mode == 0 && !hasNewCommentBegun){
+			useNewComment = false;
+		}
+		backcomment = back_comment;
+		if(useNewComment)
+			postdata = commentJsonPost2009(nicosID, null, null, time);
+		else
+			postdata = commentJsonPost2006(nicosID, null, null, time);
 		return downloadCommonCommentJson(file, status, flag, back_comment, postdata);
 	}
 
