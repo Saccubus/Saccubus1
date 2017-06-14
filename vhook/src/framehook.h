@@ -175,4 +175,7 @@ void exitExtProcess();
 #define FRAMEHOOK_OPT_HTML5_COMMENT	"--html5-comment"
 #define FRAMEHOOK_OPT_HTML5_COMMENT_LEN	strlen(FRAMEHOOK_OPT_HTML5_COMMENT)
 
+#define FRAMEHOOK_OPT_MIN_VPOS	"--min-vpos:"
+#define FRAMEHOOK_OPT_MIN_VPOS_LEN	strlen(FRAMEHOOK_OPT_MIN_VPOS)
+
 #endif /*FRAMEHOOK_H_*/

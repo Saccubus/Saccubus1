@@ -97,6 +97,10 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		double vpos_shift = (double)strtod(setting->comment_shift,NULL);
 		data->comment_vpos_shift = (int)(vpos_shift * VPOS_FACTOR);
 	}
+	data->min_vpos = 0;
+	if(setting->min_vpos_sec != 0.0){
+		data->min_vpos = (int)(setting->min_vpos_sec * VPOS_FACTOR);
+	}
 	if(setting->comment_erase !=NULL){
 		int erase_type = (int)strtol(setting->comment_erase,NULL,10);
 		data->comment_erase_type = erase_type;
@@ -598,7 +602,7 @@ int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int m
 		fprintf(log,"[main/init]%s comment is enabled.\n",com_type);
 		//コメントデータ
 		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length, data->nico_width_now,
-				cid, com_type, tl, data->is_live, data->comment_vpos_shift, data->ahead_vpos)){
+				cid, com_type, tl, data->is_live, data->comment_vpos_shift, data->ahead_vpos, data->min_vpos)){
 			fprintf(log,"[main/init]initialized %s comment.\n",com_type);
 		}else{
 			fprintf(log,"[main/init]failed to initialize %s comment.",com_type);

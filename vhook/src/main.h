@@ -116,6 +116,7 @@ struct DATA{
 	float comment_resize_adjust;	// scaling後にリサイズ補正　ユーザー最終調整
 	int html5comment;
 		//html5コメントモード有効	defont mincho gothicコマンド有効　フォントサイズ変更
+	int min_vpos;	//vpos最小値
 	//char wstr[128];
 	// 実験的設定
 	short font_pixel_size[CMD_FONT_MAX];
@@ -171,6 +172,7 @@ typedef struct SETTING{
 	int layerctrl;		//ue shita nakaのレイヤー順制御 0:なし 1:nakaを後ろに
 	float comment_resize_adjust;	// scaling後にリサイズ補正
 	int html5comment;
+	float min_vpos_sec;	//表示Vpos最小値(補正後)
 		//html5コメントモード有効	defont mincho gothicコマンド有効　フォントサイズ変更
 	// CA用フォント
 	const char* CAfont_path[CA_FONT_PATH_MAX];

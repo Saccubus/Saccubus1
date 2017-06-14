@@ -14,7 +14,7 @@ SDL_Color convColor24(int color);
  * 出力 CHAT_SLOT chat->slot ← slot ポインタ設定のみ
  */
 int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,
-		int cid,const char* com_type,int toLeft,int is_live,int vpos_shift,int ahead_vpos){
+		int cid,const char* com_type,int toLeft,int is_live,int vpos_shift,int ahead_vpos, int minvpos){
 	int i;
 	int max_no = INTEGER_MIN;
 	int min_no = INTEGER_MAX;
@@ -244,6 +244,10 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		item->script = script;
 		if(duration == INTEGER_MAX)
 			item->vend = INTEGER_MAX;
+		if(item->vpos < minvpos){
+			//コメント開始時刻
+			item->invisible = true;
+		}
 		if(script==SCRIPT_VOTE){
 			if(previous_vote!=NULL){
 				previous_vote->vend = item->vstart - 1;

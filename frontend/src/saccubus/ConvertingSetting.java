@@ -237,6 +237,8 @@ public class ConvertingSetting {
 	private boolean enableClearErrorAtEnd;
 	private boolean commentJson;
 	private boolean commentXml;
+	private boolean enableLiveCommentMinimumVpos;
+	private String liveCommentMinimumVpos;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -497,7 +499,9 @@ public class ConvertingSetting {
 			String eco_list,
 			boolean clear_error_at_end,
 			boolean comment_json_to_xml,
-			boolean debug_comment_json
+			boolean debug_comment_json,
+			boolean enable_livecomment_minimum,
+			String livecomment_minimum
 		)
 	{
 		this(	mailaddress,
@@ -673,6 +677,8 @@ public class ConvertingSetting {
 		enableClearErrorAtEnd = clear_error_at_end;
 		commentJson = comment_json_to_xml;
 		commentXml = debug_comment_json;
+		enableLiveCommentMinimumVpos = enable_livecomment_minimum;
+		liveCommentMinimumVpos = livecomment_minimum;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1165,6 +1171,12 @@ public class ConvertingSetting {
 	public boolean enableCommentXml(){
 		return commentXml;
 	}
+	public boolean isEnableLiveCommentMinVpos(){
+		return enableLiveCommentMinimumVpos;
+	}
+	public String getLivecommentMinVpos(){
+		return liveCommentMinimumVpos;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1366,6 +1378,8 @@ public class ConvertingSetting {
 	static final String PROP_CLEAR_ERROR = "ClearErrorAtEnd";
 	static final String PROP_COMMENT_JSON = "EnableCommentJson";
 	static final String PROP_COMMENT_XML = "EnableCommentXml";
+	static final String PROP_ENABLE_LIVECOMMENT_MINIMUM_VPOS = "EnableCommentMinimumVpos";
+	static final String PROP_LIVECOMMENT_MINIMUM_VPOS = "LiveCommentMinimumVpos";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1614,6 +1628,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_CLEAR_ERROR, Boolean.toString(setting.clearErrorAtEnd()));
 		prop.setProperty(PROP_COMMENT_JSON, Boolean.toString(setting.enableCommentJson()));
 		prop.setProperty(PROP_COMMENT_XML, Boolean.toString(setting.enableCommentXml()));
+		prop.setProperty(PROP_ENABLE_LIVECOMMENT_MINIMUM_VPOS, Boolean.toString(setting.isEnableLiveCommentMinVpos()));
+		prop.setProperty(PROP_LIVECOMMENT_MINIMUM_VPOS, setting.getLivecommentMinVpos());
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1948,7 +1964,9 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_ECONOMT_LIST,""),
 			Boolean.parseBoolean(prop.getProperty(PROP_CLEAR_ERROR,"false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_JSON,"false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_XML,"true"))
+			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_XML,"true")),
+			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_LIVECOMMENT_MINIMUM_VPOS,"false")),
+			prop.getProperty(PROP_LIVECOMMENT_MINIMUM_VPOS, "0.0")
 		);
 	}
 

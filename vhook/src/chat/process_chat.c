@@ -26,7 +26,7 @@ int process_chat(DATA* data,CDATA* cdata,SDL_Surface* surf,const int now_vpos){
 		/*Œ©‚¹‚È‚¢‚à‚Ì‚ðíœ */
 		slot = &cdata->slot;
 		resetChatSlotIterator(slot);
-		while((slot_item = getChatSlotErased(slot,now_vpos)) != NULL){
+		while((slot_item = getChatSlotErased(slot,now_vpos,data->min_vpos)) != NULL){
 			deleteChatSlot(slot_item,data);
 		}
 		/*Œ©‚¹‚é‚à‚Ì‚ðƒZƒbƒg*/
@@ -64,7 +64,8 @@ int process_chat(DATA* data,CDATA* cdata,SDL_Surface* surf,const int now_vpos){
 			surf->w,surf->h,now_vpos,data->vout_x,data->vout_y,
 			data->aspect_mode,data->width_scale,data->vout_width,data->vout_height);
 */
-		drawComment(data,surf,slot,now_vpos,data->vout_x,data->vout_y);
+		if(now_vpos >= data->min_vpos)
+			drawComment(data,surf,slot,now_vpos,data->vout_x,data->vout_y);
 	}
 	return TRUE;
 }

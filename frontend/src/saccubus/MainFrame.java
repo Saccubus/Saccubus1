@@ -320,6 +320,8 @@ public class MainFrame extends JFrame {
 	private JCheckBox liveCommentModeCheckBox = new JCheckBox();
 	private JCheckBox liveCommentVposShiftCheckBox = new JCheckBox();
 	private JTextField liveCommentVposShiftTextField = new JTextField();
+	private JCheckBox liveCommentMinVposCheckBox = new JCheckBox();
+	private JTextField liveCommentMinVposTextField = new JTextField();
 	private JPanelHideable liveConvertInfoPanel;
 	private JCheckBox liveOparationDurationChangeCheckBox = new JCheckBox();
 	private JCheckBox premiumColorCheckBox = new JCheckBox();
@@ -4119,7 +4121,9 @@ public class MainFrame extends JFrame {
 			errorControl.getEcoString(),
 			jMenuClearErrorAtEnd.isSelected(),
 			enableCommentJsonCheckBox.isSelected(),
-			enableCommentXmlCheckBox.isSelected()
+			enableCommentXmlCheckBox.isSelected(),
+			liveCommentMinVposCheckBox.isSelected(),
+			liveCommentMinVposTextField.getText()
 		);
 	}
 
@@ -4344,6 +4348,8 @@ public class MainFrame extends JFrame {
 		jMenuClearErrorAtEnd.setSelected(setting.clearErrorAtEnd());
 		enableCommentJsonCheckBox.setSelected(setting.enableCommentJson());
 		enableCommentXmlCheckBox.setSelected(setting.enableCommentXml());
+		liveCommentMinVposCheckBox.setSelected(setting.isEnableLiveCommentMinVpos());
+		liveCommentMinVposTextField.setText(setting.getLivecommentMinVpos());
 		setHtml5AutoDefault();
 		if(isDebugModeSet())
 			jMenuDebug.setSelected(true);
@@ -5636,8 +5642,29 @@ s	 * @return javax.swing.JPanel
 			grid14_x2_y7.fill = GridBagConstraints.HORIZONTAL;
 			grid14_x2_y7.insets = INSETS_0_5_0_5;
 			liveConvertInfoPanel.add(liveCommentVposShiftTextField,grid14_x2_y7);
+			liveCommentMinVposCheckBox.setText("↑適用後のコメント表示最小VPOS(時刻)(秒)");
+			liveCommentMinVposCheckBox.setForeground(Color.blue);
+			liveCommentMinVposCheckBox.setToolTipText("コメント遅延補正後,最小値より時刻（VPOS）の早いコメントを表示しません。(マイナス可)");
+			GridBagConstraints grid14_x0_y8 = new GridBagConstraints();
+			grid14_x0_y8.gridx = 0;
+			grid14_x0_y8.gridy = 8;
+			grid14_x0_y8.gridwidth = 2;
+			grid14_x0_y8.weightx = 0.0;
+			grid14_x0_y8.anchor = GridBagConstraints.NORTHWEST;
+			grid14_x0_y8.fill = GridBagConstraints.HORIZONTAL;
+			grid14_x0_y8.insets = INSETS_0_5_0_5;
+			liveConvertInfoPanel.add(liveCommentMinVposCheckBox,grid14_x0_y8);
+			GridBagConstraints grid14_x2_y8 = new GridBagConstraints();
+			grid14_x2_y8.gridx = 2;
+			grid14_x2_y8.gridy = 8;
+			grid14_x2_y8.gridwidth = 1;
+			grid14_x2_y8.weightx = 1.0;
+			grid14_x2_y8.anchor = GridBagConstraints.NORTHWEST;
+			grid14_x2_y8.fill = GridBagConstraints.HORIZONTAL;
+			grid14_x2_y8.insets = INSETS_0_5_0_5;
+			liveConvertInfoPanel.add(liveCommentMinVposTextField,grid14_x2_y8);
 			GridBagConstraints c = new GridBagConstraints();
-			c.gridy = 7;
+			c.gridy = 8;
 			c.anchor = GridBagConstraints.SOUTHEAST;
 			liveConvertInfoPanel.add(liveConvertInfoPanel.getHideLabel(), c);
 

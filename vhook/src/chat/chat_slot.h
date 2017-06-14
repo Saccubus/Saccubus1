@@ -38,7 +38,7 @@ void deleteChatSlot(CHAT_SLOT_ITEM* item,DATA* log);
 void deleteChatSlotFromIndex(CHAT_SLOT* slot,int index);
 //イテレータ
 void resetChatSlotIterator(CHAT_SLOT* slot);
-CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos);
+CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos,int min_vpos);
 //pair計算
 int set_crossed(double ret[2],double pair1[2],double pair2[2]);
 double d_width(double pair[2]);

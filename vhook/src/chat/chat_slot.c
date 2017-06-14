@@ -102,6 +102,12 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			item->no,item->chat->com_type);
 		return 0;
 	}
+	//min vpos
+	if(item->vpos < data->min_vpos){
+		fprintf(data->log,"[chat_slot/add]comment %d %s earlier than min_vpos %d.\n",
+			item->no,item->chat->com_type, data->min_vpos);
+		return 0;
+	}
 	//invisibleコマンド
 	if(item->invisible){
 		fprintf(data->log,"[chat_slot/add]comment %d %s invisible.\n",
@@ -512,7 +518,7 @@ void resetChatSlotIterator(CHAT_SLOT* slot){
 /*
  * イテレータを得る
  */
-CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos){
+CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos,int min_vpos){
 	int *i = &slot->iterator_index;
 	int max_item = slot->max_item;
 	CHAT_ITEM* item;
@@ -525,6 +531,8 @@ CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos){
 		item = slot_item->chat_item;
 		if(item==NULL)continue;
 		if(now_vpos > item->vend){
+			return slot_item;
+		if(min_vpos > item->vpos)
 			return slot_item;
 		}
 	}

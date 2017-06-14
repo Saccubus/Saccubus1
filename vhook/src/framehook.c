@@ -35,7 +35,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.67.3.17";
+	char *ver="1.67.6.18";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -181,6 +181,7 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	setting->layerctrl = FALSE;
 	setting->comment_resize_adjust = 1.0;
 	setting->html5comment = FALSE;
+	setting->min_vpos_sec = -4.0;
 	setting->q_player = FALSE;
 	// CA用フォント
 	//  MS UI GOTHIC は msgothic.ttc の index=2
@@ -441,6 +442,12 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 		else if (strncmp(FRAMEHOOK_OPT_HTML5_COMMENT,arg,FRAMEHOOK_OPT_HTML5_COMMENT_LEN) == 0){
 			setting->html5comment = TRUE;
 			fprintf(log,"[framehook/init]html5 comment: %d\n",setting->html5comment);
+			fflush(log);
+		}
+		else if (strncmp(FRAMEHOOK_OPT_MIN_VPOS,arg,FRAMEHOOK_OPT_MIN_VPOS_LEN) == 0){
+			double min_vpos = strtod(arg+FRAMEHOOK_OPT_MIN_VPOS_LEN, NULL);
+			setting->min_vpos_sec = min_vpos;
+			fprintf(log,"[framehook/init]minimum vpos: %.2f\n",setting->min_vpos_sec);
 			fflush(log);
 		}
 		// CA用フォント

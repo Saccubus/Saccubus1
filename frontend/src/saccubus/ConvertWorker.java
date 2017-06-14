@@ -4200,6 +4200,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ffmpeg.addCmd("|--resize-adjust:"
 					+URLEncoder.encode(Setting.getResizeAdjust(), encoding));
 			}
+			if(Setting.isEnableLiveCommentMinVpos()){
+				ffmpeg.addCmd("|--min-vpos:"
+					+URLEncoder.encode(Setting.getLivecommentMinVpos(), encoding));
+			}
 			String extra = Setting.getExtraMode();
 			if(extra.contains("-April=")){
 				int index = extra.indexOf("-April=");
