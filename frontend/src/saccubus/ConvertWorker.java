@@ -1407,7 +1407,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(target == null && commentJson!=null){
 				if(getJsonParser().commentJson2xml(commentJson, CommentFile, "user", isAppendComment()))
 					target = CommentFile;
-				log.println("変換 コメントJSON: chatCount="+getJsonParser().getChatCount());
+				log.println("変換 userコメントJSON: "+getJsonParser().getChatCount());
 			}
 			if(target == null){
 				sendtext("コメントの取得に失敗 " + client.getExtraError());
@@ -1420,7 +1420,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			backup = Path.fileCopy(CommentFile,appendCommentFile);
 			filelist.add(CommentFile);
 			sendtext("コメントファイル整理中");
-			if (!CombineXML.combineXML(filelist, CommentFile)){
+			if (!CombineXML.combineXML(filelist, CommentFile, log)){
 				sendtext("コメントファイルが整理出来ませんでした");
 				if(backup)
 					Path.move(appendCommentFile, CommentFile);	// 失敗したらバックアップを戻す
@@ -1457,7 +1457,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(target == null && commentJson != null){
 					if(getJsonParser().commentJson2xml(commentJson, OptionalThreadFile, "optional", isAppendComment()))
 						target = OptionalThreadFile;
-					log.println("変換 オプショナルスレッドJSON: chatCount="+getJsonParser().getChatCount());
+					log.println("変換 optional thread JSON: "+getJsonParser().getChatCount());
 				}
 				if(target == null){
 					sendtext("オプショナルスレッドの取得に失敗 " + client.getExtraError());
@@ -1470,7 +1470,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				filelist.clear();
 				filelist.add(OptionalThreadFile);
 				sendtext("オプショナルスレッド整理中");
-				if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
+				if (!CombineXML.combineXML(filelist, OptionalThreadFile, log)){
 					sendtext("オプショナルスレッドが整理出来ませんでした");
 					if(backup)
 						Path.move(appendOptionalFile, OptionalThreadFile);
@@ -1518,7 +1518,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(target == null && nicosCommentJson != null){
 					if(getJsonParser().commentJson2xml(nicosCommentJson, nicosCommentFile, "nicos", isAppendComment()))
 						target = nicosCommentFile;
-					log.println("変換 ニコスコメントJSON: chatCount="+getJsonParser().getChatCount());
+					log.println("変換 nicos JSON: "+getJsonParser().getChatCount());
 				}
 				if(target == null){
 					sendtext("ニコスコメントの取得に失敗 " + client.getExtraError());
@@ -1532,7 +1532,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				filelist.clear();
 				filelist.add(nicosCommentFile);
 				sendtext("ニコスコメント整理中");
-				if (!CombineXML.combineXML(filelist, nicosCommentFile)){
+				if (!CombineXML.combineXML(filelist, nicosCommentFile, log)){
 					sendtext("ニコスコメントが整理出来ませんでした");
 					if(backup)
 						Path.move(appendNicosFile, nicosCommentFile);
@@ -1626,7 +1626,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(target == null && commentJson != null){
 				if(getJsonParser().commentJson2xml(commentJson, OwnerCommentFile, "owner", false))
 					target = OwnerCommentFile;
-				log.println("変換 投稿者コメントJSON: chatcount="+getJsonParser().getChatCount());
+				log.println("変換 ownerコメントJSON: "+getJsonParser().getChatCount());
 			}
 			if(target == null || !target.canRead()){
 				sendtext("投稿者コメントの取得に失敗 " + client.getExtraError());
@@ -1908,7 +1908,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					CommentFile = mkTemp(TMP_COMBINED_XML);
 					sendtext("コメントファイル結合中");
 					log.println("コメントファイル結合中");
-					if (!CombineXML.combineXML(filelist, CommentFile)){
+					if (!CombineXML.combineXML(filelist, CommentFile, log)){
 						sendtext("コメントファイルが結合出来ませんでした（バグ？）");
 						result = "72";
 						return false;
@@ -1970,7 +1970,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			CombinedCommentFile = mkTemp(TMP_COMBINED_XML3);
 			sendtext("コメントファイルマージ中");
 			log.println("コメントファイルマージ中");
-			if (!CombineXML.combineXML(filelist, CombinedCommentFile)){
+			if (!CombineXML.combineXML(filelist, CombinedCommentFile, log)){
 				sendtext("コメントファイルがマージ出来ませんでした");
 				result = "72";
 				return false;
@@ -2040,7 +2040,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					OptionalThreadFile = mkTemp(TMP_COMBINED_XML2);
 					sendtext("オプショナルスレッド結合中");
 					log.println(gettext());
-					if (!CombineXML.combineXML(filelist, OptionalThreadFile)){
+					if (!CombineXML.combineXML(filelist, OptionalThreadFile, log)){
 						sendtext("オプショナルスレッドが結合出来ませんでした（バグ？）");
 						result = "77";
 						//return false;
@@ -2131,7 +2131,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			CombinedOptionalFile = mkTemp(TMP_COMBINED_XML4);
 			sendtext("オプショナルスレッドマージ中");
 			log.println(gettext());
-			if (!CombineXML.combineXML(filelist, CombinedOptionalFile)){
+			if (!CombineXML.combineXML(filelist, CombinedOptionalFile, log)){
 				sendtext("オプショナルスレッドがマージ出来ませんでした");
 				result = "77";
 			//	return false;

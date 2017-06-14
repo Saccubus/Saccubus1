@@ -3,6 +3,9 @@ package saccubus.json;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -135,30 +138,36 @@ public class NicoJsonParser {
 		String jsonText = Path.readAllText(json, ENCODING);
 		Mson mson = Mson.parse(jsonText);
 		//mson.prettyPrint(log);
-		FileOutputStream pw = null;
+		FileOutputStream fos = null;
+		OutputStreamWriter ow = null;
 		try {
 			String xmlString = makeCommentXml(mson, kind);
 			if(xmlString!=null){
-				pw = new FileOutputStream(xml, append);
-				pw.write(xmlString.getBytes(ENCODING));
-				pw.flush();
-				pw.close();
+				fos = new FileOutputStream(xml, append);
+				ow = new OutputStreamWriter(fos, ENCODING);
+				ow.write(xmlString);
+				ow.flush();
+				ow.close();
 				log.println(kind+"コメントJSONをXMLに変換しました: "+xml.getPath());
 				return true;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.printStackTrace(e);
+		} finally {
+			if(ow!=null) try {ow.close();}catch(IOException e){};
+			if(fos!=null) try {fos.close();}catch(IOException e){};
 		}
 		return false;
 	}
 
 	private String makeCommentXml(Mson mson, String kind){
-		StringBuffer sb = new StringBuffer();
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
 		chatCount = 0;
 		// ヘッダ
-		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		// パケット開始
-		sb.append("<packet>");
+		pw.println("<packet>");
 		//msonの全てのArrayについてxmlElementStringを作成
 		if(mson.isArray()){
 			String s;
@@ -201,25 +210,25 @@ public class NicoJsonParser {
 						// contents: "pf:n" n番目 pフィニッシュ
 						// contents: "rs:0" json スタート
 						// contents: "rf:0" json フィニッシュ
-						log.println("contetns="+contents+", p="+p);
+						//log.println("contetns="+contents+", p="+p);
 						if(kind.equals("user")){
 							outflag = p == '0' || p == '1';
-							log.println("user_comment p="+p+", out="+outflag);
+							if(outflag) log.println(kind+"_comment p="+p);
 						}else
 						if(kind.equals("owner")){
 							outflag = p == '2';
-							log.println("owner_comment p="+p+", out="+outflag);
+							if(outflag) log.println(kind+"_comment p="+p);
 						}else
 						if(kind.equals("optional")){
 							outflag = p == '3' || p == '4';
-							log.println("optional_thread p="+p+", out="+outflag);
+							if(outflag) log.println(kind+"_comment p="+p);
 						}else
 						if(kind.equals("nicos")){
 							outflag = true;
-							log.println("nicos_comment p="+p+", out="+outflag);
+							if(outflag) log.println(kind+"_comment p="+p);
 						}else{
 							outflag = p == '0' || p == '1';
-							log.println("user_comment p="+p+", out="+outflag);
+							if(outflag) log.println(kind+"_comment p="+p);
 						}
 					}
 					continue;
@@ -235,7 +244,7 @@ public class NicoJsonParser {
 						+xmlAttributeValue(m, "ticket")
 						+xmlAttributeValue(m, "revision")
 						+"/>";
-					if(outflag) sb.append(s);
+					if(outflag) pw.println(s);
 					continue;
 				}
 				if(key.equals("leaf")){
@@ -245,7 +254,7 @@ public class NicoJsonParser {
 						+xmlAttributeValue(m, "leaf")
 						+xmlAttributeValue(m, "count")
 						+"/>";
-					if(outflag) sb.append(s);
+					if(outflag) pw.println(s);
 					continue;
 				}
 				if(key.equals("global_num_res")){
@@ -254,7 +263,7 @@ public class NicoJsonParser {
 						+xmlAttributeValue(m, "thread")
 						+xmlAttributeValue(m, "num_res")
 						+"/>";
-					if(outflag) sb.append(s);
+					if(outflag) pw.println(s);
 					continue;
 				}
 				if(key.equals("num_click")){
@@ -264,7 +273,7 @@ public class NicoJsonParser {
 						+xmlAttributeValue(m, "no")
 						+xmlAttributeValue(m, "count")
 						+"/>";
-					if(outflag) sb.append(s);
+					if(outflag) pw.println(s);
 					continue;
 				}
 				if(key.equals("chat")){
@@ -286,7 +295,7 @@ public class NicoJsonParser {
 						+xmlAttributeValue(m, "deleted")
 						+">"+xmlContents(m)+"</chat>";
 					if(outflag) {
-						sb.append(s);
+						pw.println(s);
 						chatCount++;
 					}
 					continue;
@@ -296,7 +305,7 @@ public class NicoJsonParser {
 					s = "<"+key
 						+xmlAttributeValue(m, "thread")
 						+">"+xmlContents(m)+"</"+key+">";
-					if(outflag) sb.append(s);
+					if(outflag) pw.println(s);
 				}
 			}
 		}else{
@@ -304,8 +313,9 @@ public class NicoJsonParser {
 			return null;
 		}
 		// パケット終了
-		sb.append("</packet>");
-		return sb.substring(0);
+		pw.println("</packet>");
+		pw.close();
+		return sw.toString();
 	}
 	private static String xmlAttributeValue(Mson m, String key){
 		// return empty string when value is null or empty
@@ -346,6 +356,12 @@ public class NicoJsonParser {
 	private static String unicodeReplace(String xDigits) {
 		try {
 			int codepoint = Integer.parseInt(xDigits, 16);
+			if(codepoint< 0x20 && codepoint!=0x09 && codepoint!=0x0a && codepoint!=0x0d){
+				// unprintable char and SAXPY will cause exception
+				Logger.MainLog.println("warning: illegal unicode description found: u+"+codepoint);
+				Logger.MainLog.println("change to spase u+0020");
+				codepoint = 0x20;
+			}
 			char c = (char)codepoint;
 			return ""+c;
 		}catch(NumberFormatException e){

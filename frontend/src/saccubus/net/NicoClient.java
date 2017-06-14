@@ -1731,7 +1731,7 @@ public class NicoClient {
 		new WayBackDate("2010/12/22 18:00").getSecond();
 	// Refer to http://blog.nicovideo.jp/2010/12/post_261.php
 	// 2010年12月22日 18:00 動画のコメントが消えにくくなる対応について
-	private  enum CommentType {
+	public  enum CommentType {
 		USER{
 			@Override
 			public String dlmsg(){ return "コメント"; }
@@ -1754,7 +1754,7 @@ public class NicoClient {
 	public File getComment(final File file, final JLabel status, final String back_comment,
 			final String time, final ConvertStopFlag flag, final int comment_mode, boolean isAppend) {
 		if (time != null && !time.isEmpty() && "0".equals(WayBackKey)){
-			if (!getWayBackKey(time)) { // WayBackKey
+			if (!getWayBackKey(time, ThreadID)) { // WayBackKey
 				log.println("It may be wrong Date.");
 				//return null;
 			}
@@ -1776,27 +1776,28 @@ public class NicoClient {
 		return dl;
 	}
 
-	boolean isWayback(String time){
+	boolean isWayback(String time, String thread){
+		if (time == null || time.isEmpty())
+			return false;
+		if(time.equals(WayBackTime) && thread.equals(WayBackThread))
+			return true;	// WayBackKey is valid
 		WayBackKey = "0";
-		if (time != null && !time.isEmpty()){
-			if (!getWayBackKey(time)) { // WayBackKey
-				log.println("It may be wrong Date.");
-				return false;
-			}
-			return true;
+		if (!getWayBackKey(time, thread)) { // WayBackKey
+			log.println("It may be wrong Date.");
+			return false;
 		}
-		return false;
+		return true;
 	}
 	public File getCommentJson(final File file, final JLabel status, final String back_comment,
 			final String time, final ConvertStopFlag flag){
 		{
-			String comjson = downloadCommentJson(file, status, flag, back_comment, isWayback(time));
+			String comjson = downloadCommentJson(file, status, flag, back_comment, time);
 			if(comjson==null || comjson.isEmpty()){
 				log.println("\n["+videoTag+"]can't download comment json.");
 				return null;
 			}
 			Path.writeAllText(file, comjson, "UTF-8");
-			log.println("\nwrite comment json to "+file);
+			debug("write comment json to "+file);
 		}
 		return file;
 	}
@@ -1811,7 +1812,7 @@ public class NicoClient {
 		Official = "";
 		if (time != null && !time.isEmpty()){
 		 	WayBackKey = "0";
-			if (!getWayBackKey(time)) { // WayBackKey
+			if (!getWayBackKey(time, nicos_id)) { // WayBackKey
 				log.println("It may be wrong Date.");
 			}
 		}
@@ -1829,7 +1830,7 @@ public class NicoClient {
 		// この後でOwnerCommentを取得するとユーザー動画の投稿者コメントが取得される。
 		if (time != null && !time.isEmpty()){
 		 	WayBackKey = "0";
-			if (!getWayBackKey(time)) { // WayBackKey
+			if (!getWayBackKey(time, optionalThreadID)) { // WayBackKey
 				log.println("It may be wrong Date.");
 				//return null;
 			}
@@ -1843,7 +1844,7 @@ public class NicoClient {
 	public File getNicosCommentJson(final File file, final JLabel status, final String back_comment,
 			final String time, final ConvertStopFlag flag){
 		{
-			String comjson = downloadNicosCommentJson(file, status, flag, back_comment);
+			String comjson = downloadNicosCommentJson(file, status, flag, back_comment, time);
 			if(comjson==null || comjson.isEmpty()){
 				log.println("\n["+videoTag+"]can't download nicos comment json.");
 				return null;
@@ -2146,9 +2147,12 @@ public class NicoClient {
 
 	private String WayBackKey = "0";
 	private String WayBackTime = "0";
+	private String WayBackThread = "";
 	private String ExtraError = "";
 	private boolean hasNewCommentBegun = true;
 	private String backcomment;
+	//private HashMap<String, String> waybackMap = new HashMap<>();
+	// key=ThreadID+Time
 
 	/**
 	 * Parse String time to canonical String WayBackTime<br/>
@@ -2157,7 +2161,7 @@ public class NicoClient {
 	 * @param time
 	 * @return
 	 */
-	private boolean getWayBackKey(String time) {
+	private boolean getWayBackKey(String time, String thread_id) {
 		log.print("Setting wayback time...");
 		try {
 			if(!"0".equals(WayBackKey)){
@@ -2174,7 +2178,7 @@ public class NicoClient {
 			String waybacktime = wayback.getWayBackTime();
 			log.println("ok. [" + wayback.format() + "]: " + waybacktime);
 			log.print("Getting wayback key...");
-			String url = HTTP_FLAPI_GETWAYBACKKEY + ThreadID;
+			String url = HTTP_FLAPI_GETWAYBACKKEY + thread_id;
 			HttpURLConnection con = urlConnectGET(url);
 			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
 				log.println("ng.\nCan't open connection: " + url);
@@ -2197,6 +2201,8 @@ public class NicoClient {
 			log.println("ok.  Wayback key: " + waybackkey);
 			WayBackTime = waybacktime;
 			WayBackKey = waybackkey;
+			WayBackThread = thread_id;
+			log.println("Wayback thread: " + WayBackThread);
 			hasNewCommentBegun = wayback.getSecond() > NEW_COMMENT_BEGIN_SECOND;
 			return true;
 		} catch (IOException e) {
@@ -2253,57 +2259,79 @@ public class NicoClient {
 		}
 	}
 
-	private String commentJsonPost2009(String thread, String optional, String threadkey, boolean wayback) {
+	private String commentJsonPost2009(String thread, String optional, String threadkey,
+			String time) {
 		StringBuilder sb = new StringBuilder();
 		int p = 0;
 		sb.append("[{\"ping\":{\"content\":\"rs:0\"}}");
-		if(wayback){
-			// 過去ログ オプショナルスレッドなし
-			sb.append(postJsonData(p++, thread, WayBackKey, false, false, false, true));
-			sb.append(postJsonData(p++, thread, WayBackKey, true, false, false, true));
-			sb.append(postJsonData(p++, thread, WayBackKey, false, false, true, true));
+		if(isWayback(time, thread)){
+			// 過去ログ
+			String waybackkey = WayBackKey;
+			String optwaybackkey = null;
+			if(threadkey==null || threadkey.isEmpty()){
+				//ユーザー動画 過去ログ
+				//										isleaf, needs_key, isOwner, wayback
+				sb.append(postJsonData(p++, thread, userKey, false, false, false, waybackkey));
+				sb.append(postJsonData(p++, thread, userKey, true, false, false, waybackkey));
+				sb.append(postJsonData(p++, thread, userKey, false, false, true, waybackkey));
+			}else{
+				//コミュニティ動画
+				if(!thread.equals(succeededKeyThread)){
+					if(optional!=null && !optional.isEmpty()){
+						optional = thread;
+						optwaybackkey = waybackkey;
+					}
+					thread = succeededKeyThread;
+					if(isWayback(time, thread)){
+						waybackkey = WayBackKey;
+					}
+				}
+				//										isleaf, needs_key, isOwner, wayback
+				sb.append(postJsonData(p++, thread, threadkey, false, true, false, waybackkey));
+				sb.append(postJsonData(p++, thread, threadkey, true, true, false, waybackkey));
+				sb.append(postJsonData(p++, thread, threadkey, false, true, true, waybackkey));
+				if(optional!=null && !optional.isEmpty()){
+					// 過去ログ オプショナルスレッドあり
+					if(isWayback(time, optional)){
+						optwaybackkey = WayBackKey;
+					}
+					sb.append(postJsonData(p++, optional, userKey, false, false, false, optwaybackkey));
+					sb.append(postJsonData(p++, optional, userKey, true, false, false, optwaybackkey));
+				}
+			}
 		}
 		else
 		if(threadkey==null || threadkey.isEmpty()){
 			//ユーザー動画
-			if(optional==null || optional.isEmpty()){
-				//											isleaf, needs_key, isOwner){
-				sb.append(postJsonData(p++, thread, userKey, false, false, false, false));
-				sb.append(postJsonData(p++, thread, userKey, true, false, false, false));
-				sb.append(postJsonData(p++, thread, userKey, false, false, true, false));
-			}else{
-				sb.append(postJsonData(p++, thread, userKey, false, false, false, false));
-				sb.append(postJsonData(p++, thread, userKey, true, false, false, false));
-				sb.append(postJsonData(p++, thread, userKey, false, false, true, false));
-				sb.append(postJsonData(p++, optional, userKey, false, false, false, false));
-				sb.append(postJsonData(p++, optional, userKey, true, false, false, false));
+			//										isleaf, needs_key, isOwner, wayback){
+			sb.append(postJsonData(p++, thread, userKey, false, false, false, null));
+			sb.append(postJsonData(p++, thread, userKey, true, false, false, null));
+			sb.append(postJsonData(p++, thread, userKey, false, false, true, null));
+			if(optional!=null && !optional.isEmpty()){
+				// this case does not exist?;
+				sb.append(postJsonData(p++, optional, userKey, false, false, false, null));
+				sb.append(postJsonData(p++, optional, userKey, true, false, false, null));
 			}
 		}else{
 			//コミュニティ動画
-			if(optional==null || optional.isEmpty()){
-				if(!thread.equals(succeededKeyThread)){
-					thread = succeededKeyThread;
-				}
-				sb.append(postJsonData(p++, thread, threadkey, false, true, false, false));
-				sb.append(postJsonData(p++, thread, threadkey, true, true, false, false));
-				sb.append(postJsonData(p++, thread, threadkey, false, true, true, false));
-			}else{
-				if(!thread.equals(succeededKeyThread)){
+			if(!thread.equals(succeededKeyThread)){
+				if(optional!=null && !optional.isEmpty())
 					optional = thread;
-					thread = succeededKeyThread;
-				}
-				sb.append(postJsonData(p++, thread, threadkey, false, true, false, false));
-				sb.append(postJsonData(p++, thread, threadkey, true, true, false, false));
-				sb.append(postJsonData(p++, thread, threadkey, false, true, true, false));
-				sb.append(postJsonData(p++, optional, userKey, false, false, false, false));
-				sb.append(postJsonData(p++, optional, userKey, true, false, false, false));
+				thread = succeededKeyThread;
+			}
+			sb.append(postJsonData(p++, thread, threadkey, false, true, false, null));
+			sb.append(postJsonData(p++, thread, threadkey, true, true, false, null));
+			sb.append(postJsonData(p++, thread, threadkey, false, true, true, null));
+			if(optional!=null && !optional.isEmpty()){
+				sb.append(postJsonData(p++, optional, userKey, false, false, false, null));
+				sb.append(postJsonData(p++, optional, userKey, true, false, false, null));
 			}
 		}
 		sb.append(",{\"ping\":{\"content\":\"rf:0\"}}]");
 		return sb.substring(0);
 	}
 	private String postJsonData(int n, String thread, String key,
-			boolean isleaf, boolean needs_key, boolean isOwner, boolean wayback){
+			boolean isleaf, boolean needs_key, boolean isOwner, String waybackkey){
 		StringBuilder sb = new StringBuilder();
 		sb.append(",{\"ping\":{\"content\":\"ps:"+n+"\"}}");
 		if(!isleaf)
@@ -2320,7 +2348,7 @@ public class NicoClient {
 			}
 			sb.append(",\"language\":0");	//一般コメのみ
 		}
-		if(wayback){
+		if(waybackkey!=null){
 			sb.append(",\"when\":\""+WayBackTime+"\"");
 		}
 		sb.append(",\"user_id\":\""+UserID+"\"");
@@ -2334,14 +2362,20 @@ public class NicoClient {
 		else
 			sb.append(",\"content\":\"0-"+((VideoLength+59)/60)+":100,"+backcomment+"\"");	//0-10:100,1000
 		sb.append(",\"scores\":1,\"nicoru\":1");	//nicoru:1実験
-		if(key!=null && !key.isEmpty()){
-			if(wayback)
-				sb.append(",\"waybackkey\":\""+key+"\"");
-			else
-			if(!needs_key)
-				sb.append(",\"userkey\":\""+key+"\"");
-			else
-				sb.append(",\"threadkey\":\""+key +"\"");
+		if(waybackkey!=null){
+			if(key!=null && !key.isEmpty()){
+				if(needs_key){
+					sb.append(",\"threadkey\":\""+key +"\"");
+				}
+				sb.append(",\"waybackkey\":\""+waybackkey +"\"");
+			}
+		}else{
+			if(key!=null && !key.isEmpty()){
+				if(!needs_key)
+					sb.append(",\"userkey\":\""+key+"\"");
+				else
+					sb.append(",\"threadkey\":\""+key +"\"");
+			}
 		}
 		sb.append("}},{\"ping\":{\"content\":\"pf:"+n+"\"}}");
 		return sb.substring(0);
@@ -2530,6 +2564,7 @@ public class NicoClient {
 //		Connection: keep-alive
 	private String downloadCommonCommentJson(File file, JLabel status, ConvertStopFlag flag,
 			String back_comment, String postdata){
+		log.print("Getting JSON...");
 		String url = "http://nmsg.nicovideo.jp/api.json/";
 		InputStream is = null;
 		OutputStream os = null;
@@ -2577,7 +2612,7 @@ public class NicoClient {
 				}
 			}
 			//debugsOut("■read+write statistics(bytes) ");
-			log.println("ok.");
+			log.println("JSON ok.");
 			fosb.flush();
 			fosb.close();
 			is.close();
@@ -2598,14 +2633,16 @@ public class NicoClient {
 		}
 		return null;
 	}
-	private String downloadCommentJson(File file, JLabel status, ConvertStopFlag flag, String back_comment, boolean wayback){
+	private String downloadCommentJson(File file, JLabel status, ConvertStopFlag flag, String back_comment,
+			String time){
 		String postdata;
-		postdata = commentJsonPost2009(ThreadID, optionalThreadID, threadKey, wayback);
+		postdata = commentJsonPost2009(ThreadID, optionalThreadID, threadKey, time);
 		return downloadCommonCommentJson(file, status, flag, back_comment, postdata);
 	}
-	private String downloadNicosCommentJson(File file, JLabel status, ConvertStopFlag flag, String back_comment){
+	private String downloadNicosCommentJson(File file, JLabel status, ConvertStopFlag flag, String back_comment,
+			String time){
 		String postdata;
-		postdata = commentJsonPost2009(nicosID, null, null, false);
+		postdata = commentJsonPost2009(nicosID, null, null, time);
 		return downloadCommonCommentJson(file, status, flag, back_comment, postdata);
 	}
 

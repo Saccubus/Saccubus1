@@ -14,6 +14,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 
 import saccubus.net.Path;
+import saccubus.util.Logger;
 
 /**
  *
@@ -24,8 +25,8 @@ import saccubus.net.Path;
 public class CombineXML {
 
 	public static boolean combineXML(
-			ArrayList<File> filelist, File output){
-			System.out.print("Starting Combining XML files. ");
+			ArrayList<File> filelist, File output, Logger log){
+			log.print("Starting Combining XML files. ");
 		try {
 			if (filelist == null || filelist.isEmpty()){
 				return false;
@@ -47,11 +48,13 @@ public class CombineXML {
 				}
 				System.out.print(filename + ". ");
 				String text = Path.readAllText(file, "UTF-8");
-				String rexp = "</packet>.*<\\?xml [^>]*>.?<packet>";
+				String rexp = "(</packet>.*<\\?xml [^>]*>.?<packet>|[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F])";
 				Pattern p = Pattern.compile(rexp, Pattern.DOTALL);
 				Matcher m = p.matcher(text);
 				text = m.replaceAll("");
+				String linecount = text.replaceAll("[^\n]", "");
 				Path.writeAllText(file, text, "UTF-8");
+				log.println("\nLines: "+linecount.length()+", File:"+file.getPath());
 				saxparser.parse(file, xmlhandler);
 			}
 			// ïœä∑åãâ ÇÃèëÇ´çûÇ›
