@@ -204,6 +204,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 
 
 □拡張機能（変更点）説明
+●dmc動画のsmileサイズ取得ミス修正(1.67.6.19)
+
 ●メニューにさきゅばすフォルダを開く,ヘルプに更新履歴表示を追加。(1.67.6.18)
 ●コメント表示最小時刻を指定(マイナス時刻コメ非表示などのため)(1.67.6.18)
 ●Jsonコメント不具合修正等(1.67.6.15)
@@ -1227,7 +1229,7 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ・bin フォルダ配下
 　　ffmpeg3.2.2.exe ライセンスGPLV3
 　　　library3.2.2.txt　　外部ライブラリーバージョン
-　　nicovideoE.dll(2017.03.25版)拡張Vhookライブラリ
+　　nicovideoE.dll(2017.06.14版)拡張Vhookライブラリ
 　　SDL.dll(2012.01.16ビルド)、COPYNG、README-SDL.txt
 　　　ライセンスはLGPL
 　　SDL_ttf.dll(2011.11.02ビルド)、COPYING.sdl_ttf
@@ -1254,6 +1256,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　readme+.txt(1.22r3)
 　　readme150.txt(1.50)
 　　readme.txt(1.22r)
+　　Saccubus2っぽい描画.xml
+　　saccubusHtml5コメント影設定追加.xml
 　　変更履歴.txt
 　　TIPS.txt
 　　ToDo.txt
