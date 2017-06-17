@@ -719,7 +719,7 @@ public class NicoClient {
 		return true;
 	}
 	private String getAltTag(String text) {
-		Pattern p = Pattern.compile("www.nicovideo.jp/allegation/([a-zA-Z]+[0-9]+)");
+		Pattern p = Pattern.compile("/allegation/([a-zA-Z]+[0-9]+)");
 		Matcher m = p.matcher(text);
 		String ret = "";
 		while(m.find()){
@@ -2933,6 +2933,14 @@ public class NicoClient {
 				}
 			}
 			if(s.indexOf("status=\"ok\"") < 0 && titleHtml!=null){
+				if(!altTag.isEmpty() && !altTag.equals(tag)){
+					Path path = getThumbInfoFile(altTag);
+					if(path==null) return null;
+					s = Path.readAllText(path, encoding);
+					if(s.indexOf("status=\"ok\"") >= 0 || titleHtml==null){
+						return path;
+					}
+				}
 				// â¬î\Ç»ÇÁthumbXmlÇtitleHtmlÇ©ÇÁç\ê¨Ç∑ÇÈ
 				sb = new StringBuilder();
 				sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -3081,6 +3089,11 @@ public class NicoClient {
 				size_low = getXmlElement(thumbInfoData, "size_low");
 				log.println("size_high="+size_high+", size_low="+size_low);
 			}
+			if(size_video_thumbinfo==null && VideoUrl!=null){
+				size_video_thumbinfo = isEco()? size_low : size_high;
+				if(size_video_thumbinfo!=null)
+					log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
+			}
 			if(nicoTaglist.isEmpty() && thumbInfoData!=null && !thumbInfoData.isEmpty()){
 				String nico_tags = getXmlElement1(thumbInfoData, "tags");
 				if(nico_tags!=null){
@@ -3162,6 +3175,12 @@ public class NicoClient {
 						log.println("ERROR! VideoUrl: must NOT dmc_video, THIS IS BUG! while smile server exists!\n");
 						return;
 					}
+				}
+				if(size_video_thumbinfo==null){
+					economy = VideoUrl.toLowerCase().contains("low");
+					size_video_thumbinfo = isEco()? size_low : size_high;
+					if(size_video_thumbinfo!=null)
+						log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
 				}
 				ContentType = m_video.getAsString("movieType");
 				log.println("ContentType: "+ContentType);
@@ -3327,9 +3346,10 @@ public class NicoClient {
 			debug("Å°}\n");
 			economy = VideoUrl.toLowerCase().contains("low");
 			log.println("economy: "+economy +" ,isEco(): "+ isEco());
-			if(size_video_thumbinfo==null && size_high!=null && size_low!=null){
+			if(size_video_thumbinfo==null){
 				size_video_thumbinfo = economy? size_low : size_high;
-				log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
+				if(size_video_thumbinfo!=null)
+					log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -3416,6 +3436,12 @@ public class NicoClient {
 				if(VideoUrl==null || VideoUrl.isEmpty()){
 					debug("Ooops. url not found.");
 					return;
+				}
+				if(size_video_thumbinfo==null){
+					economy = VideoUrl.toLowerCase().contains("low");
+					size_video_thumbinfo = economy? size_low : size_high;
+					if(size_video_thumbinfo!=null)
+						log.println("video size): "+size_video_thumbinfo +" bytes.");
 				}
 			}
 			// dmcInfo
