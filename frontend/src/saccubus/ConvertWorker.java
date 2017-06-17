@@ -949,7 +949,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					long dmc_high = 0;
 					long resume_size = 0;
 					long video_size = 0;
-					long long_size_smile = (long)size_smile;
+					long long_size_smile = 0;
+					try {
+						if(client.getSizeSmile()!=null)
+							size_smile = Integer.decode(client.getSizeSmile());
+					}catch(NumberFormatException e){
+						size_smile = 0;
+					}
+					long_size_smile = (long)size_smile;
 					if(long_size_smile>0)
 						log.println("smile size: "+(long_size_smile>>20)+"MiB");
 					else
