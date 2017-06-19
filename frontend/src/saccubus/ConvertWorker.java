@@ -1910,6 +1910,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		File folder = Setting.getCommentFixFileNameFolder();
 		if(isConvertWithComment()){
 			if(Setting.isCommentFixFileName()){
+				if(CommentFile == null)
+					setupCommentFile0();
 				if(commentJson==null){
 					String jsonname = detectTitleFromCommentJson(folder);
 					if(jsonname == null){
@@ -1931,10 +1933,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			// commentJsonは読めた。
 			if(isConvertWithOwnerComment()){
 				//投稿者コメント作成
-				if(CommentFile == null && !setupCommentFile0()){
-					// 以下は実行不可
-					return true;
-				}
 				if(OwnerCommentFile==null){
 					String basename = CommentFile.getPath().replace(prefix, "");
 					OwnerCommentFile = Path.getReplacedExtFile(new File(basename), OWNER_EXT);
@@ -1949,6 +1947,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							OwnerCommentFile.delete();
 					}
 				}
+				if(OwnerCommentFile.length()==0)
+					OwnerCommentFile.delete();
 			}
 			boolean backup;
 			ArrayList<File> filelist = new ArrayList<>();
@@ -2013,6 +2013,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 				}
 			}
+			if(!CommentFile.canRead()||CommentFile.length()==0)
+				CommentFile.delete();
+			if(!OptionalThreadFile.canRead()||OptionalThreadFile.length()==0)
+				OptionalThreadFile.delete();
+			if(!nicosCommentFile.canRead()||nicosCommentFile.length()==0)
+				nicosCommentFile.delete();
 		}
 		return true;
 	}
@@ -2096,6 +2102,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			//combine ファイル内ダブリも削除
 			filelist.clear();
+			if(!CommentFile.canRead()||CommentFile.length()==0){
+				CommentMiddleFile = null;
+				// But OK!
+				return true;
+			}
 			filelist.add(CommentFile);
 			CombinedCommentFile = mkTemp(TMP_COMBINED_XML3);
 			sendtext("コメントファイルマージ中");
@@ -2257,6 +2268,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			//combine ファイル内ダブリも削除
 			filelist.clear();
+			if(!OptionalThreadFile.canRead()||OptionalThreadFile.length()==0){
+				OptionalMiddleFile = null;
+				// But OK!
+				return true;
+			}
 			filelist.add(OptionalThreadFile);
 			CombinedOptionalFile = mkTemp(TMP_COMBINED_XML4);
 			sendtext("オプショナルスレッドマージ中");
