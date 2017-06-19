@@ -113,6 +113,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	public static final String OWNER_EXT = "[Owner].xml";	// 投稿者コメントサフィックス
 	public static final String OPTIONAL_EXT = "{Optional}.xml";	// オプショナルスレッドサフィックス
 	public static final String NICOS_EXT = "{Nicos}.xml";	//ニコスコメントサフィックス
+	static final String JSON_EXT = "_commentJSON.txt";
 	public static final String TMP_APPEND_EXT = "_all_comment.xml";
 	public static final String TMP_APPEND_OPTIONAL_EXT = "_all_optional.xml";
 	public static final String TMP_APPEND_NICOS_EXT = "_all_nicos.xml";
@@ -1331,7 +1332,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			return true;
 		return false;
 	}
-	private boolean setupCommentFile(NicoClient client){
+	private boolean setupCommentFile0(){
+		// CommentFile CommentJson設定
 		File folder = Setting.getCommentFixFileNameFolder();
 		if (isCommentFixFileName()) {
 			if (folder.mkdir()) {
@@ -1360,7 +1362,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		} else {
 			CommentFile = Setting.getCommentFile();
 		}
-		commentJson = Path.getReplacedExtFile(CommentFile, "_commentJSON.txt");
+		commentJson = Path.getReplacedExtFile(CommentFile, JSON_EXT);
+		return true;
+	}
+	private boolean setupCommentFile(NicoClient client){
+		if(!setupCommentFile0())
+			return false;
 		if (client == null){
 			sendtext("ログインしてないのにコメントの保存になりました");
 			result = "51";
@@ -1518,7 +1525,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				File nicosCommentJson = null;
 				if(Setting.enableCommentJson() || target == null){
-					nicosCommentJson = Path.getReplacedExtFile(nicosCommentFile, "_commentJSON.txt");
+					nicosCommentJson = Path.getReplacedExtFile(nicosCommentFile, JSON_EXT);
 					nicosCommentJson = client.getNicosCommentJson(nicosCommentJson, Status, back_comment,
 							Time, StopFlag, Setting.getCommentIndex());
 					if(nicosCommentJson == null)
@@ -1895,6 +1902,119 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private Path mkTemp(String uniq){
 		return Path.mkTemp(Tag + uniq);
+	}
+
+	private boolean convertCommentJson(){
+		//JsonがあってXMLがなければJsonをローカルに変換する。
+		sendtext("コメントJsonをxmlへの変換");
+		File folder = Setting.getCommentFixFileNameFolder();
+		if(isConvertWithComment()){
+			if(Setting.isCommentFixFileName()){
+				if(commentJson==null){
+					String jsonname = detectTitleFromCommentJson(folder);
+					if(jsonname == null){
+					//	コメントJsonファイルがフォルダに存在しません
+						return true;
+					}
+					commentJson = new File(folder, jsonname);
+				}
+			}else{
+				if(CommentFile == null)
+					CommentFile = Setting.getCommentFile();
+				commentJson = Path.getReplacedExtFile(CommentFile, JSON_EXT);
+			}
+			if (!commentJson.canRead()) {
+				sendtext("コメントJsonファイルが読み込めません。");
+				log.println("コメントJsonファイルが読めません。"+commentJson.getPath());
+				return true;
+			}
+			// commentJsonは読めた。
+			if(isConvertWithOwnerComment()){
+				//投稿者コメント作成
+				if(CommentFile == null && !setupCommentFile0()){
+					// 以下は実行不可
+					return true;
+				}
+				if(OwnerCommentFile==null){
+					String basename = CommentFile.getPath().replace(prefix, "");
+					OwnerCommentFile = Path.getReplacedExtFile(new File(basename), OWNER_EXT);
+					// ファイル名設定
+				}
+				if(!OwnerCommentFile.canRead()){
+					if(getJsonParser().commentJson2xml(commentJson, OwnerCommentFile,
+							"owner", false, true)){
+						int cnt = getJsonParser().getChatCount();
+						log.println("変換 owner JSON: "+cnt);
+						if(cnt==0)
+							OwnerCommentFile.delete();
+					}
+				}
+			}
+			boolean backup;
+			ArrayList<File> filelist = new ArrayList<>();
+			if(!CommentFile.canRead() || isAppendComment()){
+				if(getJsonParser().commentJson2xml(commentJson, CommentFile,
+						"user", isAppendComment())){
+					int cnt = getJsonParser().getChatCount();
+					if(cnt==0)
+						CommentFile.delete();
+					else {
+						log.println("変換 user JSON: "+cnt);
+						appendCommentFile = mkTemp("_"+tid+TMP_APPEND_EXT);
+						backup = Path.fileCopy(CommentFile,appendCommentFile);
+						filelist.clear();
+						filelist.add(CommentFile);
+						if (!CombineXML.combineXML(filelist, CommentFile, log)){
+							if(backup)
+								Path.move(appendCommentFile, CommentFile);	// 失敗したらバックアップを戻す
+						}
+					}
+				}
+			}
+			OptionalThreadFile = Path.getReplacedExtFile(CommentFile, OPTIONAL_EXT);
+			if(!OptionalThreadFile.canRead() || isAppendComment()){
+				if(getJsonParser().commentJson2xml(commentJson, OptionalThreadFile,
+						"optional", isAppendComment())){
+					int cnt = getJsonParser().getChatCount();
+					log.println("変換 optional thread JSON: "+cnt);
+					if(cnt == 0)
+						OptionalThreadFile.delete();
+					else{
+						appendOptionalFile = mkTemp(TMP_APPEND_OPTIONAL_EXT);
+						backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
+						filelist.clear();
+						filelist.add(OptionalThreadFile);
+						if (!CombineXML.combineXML(filelist, OptionalThreadFile, log)){
+							if(backup)
+								Path.move(appendOptionalFile, OptionalThreadFile);
+						}
+					}
+				}
+			}
+			nicosCommentFile = Path.getReplacedExtFile(CommentFile, NICOS_EXT);
+			File nicosCommentJson = Path.getReplacedExtFile(nicosCommentFile, JSON_EXT);
+			if(!nicosCommentFile.canRead() || isAppendComment()){
+				if(getJsonParser().commentJson2xml(nicosCommentJson, nicosCommentFile,
+						"nicos", isAppendComment())){
+					int cnt = getJsonParser().getChatCount();
+					log.println("変換 nicos JSON: "+cnt);
+					if(cnt==0)
+						nicosCommentFile.delete();
+					else{
+						backup = false;
+						File appendNicosFile = mkTemp(TMP_APPEND_NICOS_EXT);
+						backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
+						filelist.clear();
+						filelist.add(nicosCommentFile);
+						if (!CombineXML.combineXML(filelist, nicosCommentFile, log)){
+							if(backup)
+								Path.move(appendNicosFile, nicosCommentFile);
+						}
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	private boolean convertComment(){
@@ -2703,7 +2823,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return result;
 			}
 
-			//stopwatch.show();
+			if(!convertCommentJson() || stopFlagReturn()){
+				return result; 
+			}
+
 			if (!convertOwnerComment() || stopFlagReturn()){
 				return result;
 			}
@@ -4753,6 +4876,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			setVideoTitleIfNull(path.replace(ext,""));
 			return path;
+		}
+		return null;
+	}
+
+	private String detectTitleFromCommentJson(File dir){
+		String list[] = dir.list(DefaultVideoIDFilter);
+		if(list == null){ return null; }
+		for (int i = 0; i < list.length; i++) {
+			String path = list[i];
+			String ext = JSON_EXT;
+			if (path.endsWith(ext)) {
+				setVideoTitleIfNull(path.replace(ext,""));
+				return path;
+			}
 		}
 		return null;
 	}

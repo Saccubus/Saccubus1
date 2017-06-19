@@ -133,6 +133,9 @@ public class NicoJsonParser {
 		return chatCount;
 	}
 	public boolean commentJson2xml(File json, File xml, String kind, boolean append){
+		return commentJson2xml(json, xml, kind, append, false);
+	}
+	public boolean commentJson2xml(File json, File xml, String kind, boolean append, boolean localconv) {
 		// json 入力コメントJsonテキストファイル
 		// xml 出力コメントxmlファイル
 		String jsonText = Path.readAllText(json, ENCODING);
@@ -141,7 +144,7 @@ public class NicoJsonParser {
 		FileOutputStream fos = null;
 		OutputStreamWriter ow = null;
 		try {
-			String xmlString = makeCommentXml(mson, kind);
+			String xmlString = makeCommentXml(mson, kind, localconv);
 			if(xmlString!=null){
 				fos = new FileOutputStream(xml, append);
 				ow = new OutputStreamWriter(fos, ENCODING);
@@ -160,7 +163,7 @@ public class NicoJsonParser {
 		return false;
 	}
 
-	private String makeCommentXml(Mson mson, String kind){
+	private String makeCommentXml(Mson mson, String kind, boolean localconv){
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		chatCount = 0;
@@ -235,6 +238,11 @@ public class NicoJsonParser {
 				}
 				if(key.equals("thread")){
 					// thread処理
+					String fork = m.getAsString("fork");
+					if(localconv && kind.equals("owner")){
+						outflag = fork!=null && fork.equals("1"); 
+						if(outflag) log.println(kind+"_comment fork="+fork);
+					}
 					s = "<thread"
 						+xmlAttributeValue(m, "resultcode")
 						+xmlAttributeValue(m, "thread")
@@ -292,6 +300,8 @@ public class NicoJsonParser {
 						+xmlAttributeValue(m, "anonymity")
 						+xmlAttributeValue(m, "user_id")
 						+xmlAttributeValue(m, "mail")
+						+xmlAttributeValue(m, "filter")
+						+xmlAttributeValue(m, "locale")
 						+xmlAttributeValue(m, "deleted")
 						+">"+xmlContents(m)+"</chat>";
 					if(outflag) {
