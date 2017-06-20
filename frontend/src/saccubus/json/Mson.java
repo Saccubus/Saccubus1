@@ -20,7 +20,7 @@ public class Mson {
 
 //	private final static boolean DEBUG = false;
 	private JsonElement json;
-	private static final Mson MSON_NULL = new Mson("null");
+	public static final Mson MSON_NULL = new Mson("null");
 	public Mson(JsonElement je) {
 		setJson(je);
 	}

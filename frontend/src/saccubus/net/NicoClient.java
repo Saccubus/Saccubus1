@@ -2851,7 +2851,7 @@ public class NicoClient {
 	private String apiUrls;
 	private String sessionData;
 	private String player_id;
-	private String apiSessionUrl;
+	private String apiSessionUrl = "http://api.dmc.nico:2805/api/sessions";
 	private String videoTag;
 	private String recipe_id;
 //	private String t_created_time;
@@ -3497,9 +3497,32 @@ public class NicoClient {
 			audiolist.add(m_audios.getAsString(i));
 		}
 		debug("\nÅ°audiolist: "+audiolist);
-		apiUrls = m_sessionApi.getAsString("api_urls");
-		debug("\nÅ°apiUrls: "+apiUrls);
-		apiSessionUrl = m_sessionApi.get("api_urls").getAsString(0);
+		Mson m_apiUrls;
+		Mson m_apiUrls0;
+		m_apiUrls = m_sessionApi.get("api_urls");
+		if(m_apiUrls.isNull()){
+			m_apiUrls = m_sessionApi.get("urls");
+		}
+		if(!m_apiUrls.isNull()){
+			apiUrls = m_apiUrls.getAsString();
+			debug("\nÅ°apiUrls: "+apiUrls);
+			m_apiUrls0 = m_apiUrls.get(0);
+			if(!m_apiUrls0.isNull()){
+				debug("\nÅ°apiUrls[0]: "+m_apiUrls0);
+				apiSessionUrl = m_apiUrls0.getAsString("url");
+			}
+		}else{
+			m_apiUrls0 = m_sessionApi.get("url");
+			debug("\nÅ°apiUrls[0]: "+m_apiUrls0);
+			if(!m_apiUrls0.isNull()){
+				apiSessionUrl = m_apiUrls0.getAsString();
+			}
+		}
+		if(apiSessionUrl==null
+		 ||(!apiSessionUrl.toLowerCase().contains("session")
+		  &&!apiSessionUrl.toLowerCase().contains("api"))){
+			apiSessionUrl = "http://api.dmc.nico:2805/api/sessions";
+		}
 		debug("\nÅ°apiSessionUrl: "+apiSessionUrl);
 		player_id = m_sessionApi.getAsString("player_id");
 		debug("\nÅ°player_id: "+player_id);
