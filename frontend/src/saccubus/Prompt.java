@@ -2,7 +2,6 @@ package saccubus;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +16,6 @@ import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import saccubus.net.Path;
 import saccubus.util.Logger;
@@ -383,7 +381,7 @@ public class Prompt {
 			}
 			String[] lists = text.split("\n");
 			//int nConvert = lists.length;
-			JPanel activityPane = new JPanel();
+			ActivityControl activities = new ActivityControl();
 			ArrayList<ConvertWorker> converterList = new ArrayList<>();
 			stopButton.addActionListener(new ActionListener() {
 				@Override
@@ -398,14 +396,15 @@ public class Prompt {
 				String vid = MainFrame.treatUrlHttp(ss[0]);
 				if(vid.trim().isEmpty()||vid.charAt(0)==':') continue;
 				// idÇìoò^
-				ListInfo listInfo = new ListInfo(vid+"\tauto", true);
-				listInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
-				activityPane.add(listInfo);
 				int indexNow = convNo++;
+				JButton jbutton = new JButton();
+				final ConvertStopFlag autoStop = new ConvertStopFlag(jbutton, "í‚é~", "ë“ã@", "èIóπ", "ïœä∑", false);
+				ListInfo listInfo = new ListInfo(vid+"\tauto", true, indexNow,
+					jbutton, autoStop);
+				activities.add(listInfo);
 				log.println(">"+indexNow+" "+vid+watchinfo);
 				// ConverManagerèàóùÇóvãÅ
 				StringBuffer sbRet = new StringBuffer();
-				final ConvertStopFlag autoStop = new ConvertStopFlag(new JButton(), "í‚é~", "ë“ã@", "èIóπ", "ïœä∑", false);
 				converter = manager.request(
 					indexNow,
 					setting.getNumThread(),

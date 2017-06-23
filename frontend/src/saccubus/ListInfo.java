@@ -23,18 +23,24 @@ public class ListInfo extends JComponent {
 	private final JLabel[] status3;
 	private final JButton jButton;
 	private boolean oneLine;
+	private int key;
+	private boolean deleted = false;
+	private ConvertStopFlag flag = null;
 
 	/**
 	 * @param isOneLine
 	 *
 	 */
-	public ListInfo(String vid, JLabel[] status, JButton button, boolean isOneLine) {
+	public ListInfo(String vid, JLabel[] status, JButton button,
+			boolean isOneLine, int index, ConvertStopFlag stop_flag) {
 		vidArea = status[3];
 		url = vid;
 		vidArea.setText(vid);
 		status3 = status;
 		jButton = button;
 		oneLine = isOneLine;
+		key = index;
+		flag = stop_flag;
 		init();
 	}
 	private void init() {
@@ -140,17 +146,21 @@ public class ListInfo extends JComponent {
 		//Dimension sz = getjButton().getMaximumSize();
 		int height = getjButton().getMaximumSize().height;
 		if(oneLine) {
-			setMaximumSize(new Dimension(Short.MAX_VALUE, (int)(height * 2.0f)));
+			setMaximumSize(new Dimension(Short.MAX_VALUE, (int)(height * 1.0f)));
+			setPreferredSize(new Dimension(Short.MAX_VALUE, (int)(height * 1.0f)));
 		}else{
-			setMaximumSize(new Dimension(Short.MAX_VALUE, (int)(height * 4.5f)));
+			setMaximumSize(new Dimension(Short.MAX_VALUE, (int)(height * 1.8f)));
+			setPreferredSize(new Dimension(1024, (int)(height * 1.8f)));
 		}
 
 		setAlignmentX(0.0f);
 		setAlignmentY(0.0f);
 		setVisible(true);
 	}
-	public ListInfo(String vid, boolean isOneLine){
-		this(vid, new JLabel[]{new JLabel(),new JLabel(), new JLabel(), new JLabel()}, new JButton(), isOneLine);
+	public ListInfo(String vid, boolean isOneLine, int index,
+		JButton button, ConvertStopFlag flag){
+		this(vid, new JLabel[]{new JLabel(),new JLabel(), new JLabel(), new JLabel()},
+				button, isOneLine, index, flag);
 	}
 	public JLabel getVidArea() {
 		return vidArea;
@@ -163,5 +173,22 @@ public class ListInfo extends JComponent {
 	}
 	public JLabel[] getStatus() {
 		return status3;
+	}
+	public int getKey(){
+		return key;
+	}
+	public void resetVid() {
+		String vid = "("+key+")"+url;
+		vidArea.setText(vid);
+		//url = vid;
+	}
+	public void setDelete() {
+		deleted  = true;
+	}
+	public boolean isDeleted(){
+		return deleted;
+	}
+	public ConvertStopFlag getStopFlag() {
+		return flag;
 	}
 }

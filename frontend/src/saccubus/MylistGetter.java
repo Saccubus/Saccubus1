@@ -25,6 +25,7 @@ import saccubus.net.Gate;
 import saccubus.net.Loader;
 import saccubus.net.Path;
 import saccubus.util.Logger;
+import saccubus.util.Stopwatch;
 
 //import saccubus.util.Stopwatch;
 
@@ -53,6 +54,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 	private final int id;
 	private final ErrorControl errorControl;
 	private Logger log;
+	private final Stopwatch stopwatch;
 
 	public MylistGetter(int worker_id, String tag, String info, MainFrame frame,
 		JLabel[] in_status,ConvertStopFlag flag, ErrorControl error_control,
@@ -64,6 +66,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		parent = frame;
 		status3 = in_status;
 		Status = status3[0];
+		stopwatch = Stopwatch.create(status3[1]);
 		StopFlag = flag;
 		Setting = frame.getSetting();
 		ret = sb;
@@ -82,6 +85,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		parent = null;
 		status3 = in_status;
 		Status = status3[0];
+		stopwatch = Stopwatch.create(new JLabel());
 		StopFlag = flag;
 		Setting = setting;
 		ret = sb;
@@ -108,6 +112,8 @@ public class MylistGetter extends SwingWorker<String, String> {
 
 	@Override
 	protected String doInBackground() throws Exception {
+		stopwatch.clear();
+		stopwatch.start();
 		if(!url.startsWith("http")){
 			// return ret unchanged
 			return "00";
@@ -473,7 +479,8 @@ public class MylistGetter extends SwingWorker<String, String> {
 		} catch (Exception e) {
 			log.printStackTrace(e);
 		} finally{
-
+			stopwatch.stop();
+			stopwatch.cancel();
 		}
 		addError("EX",url,"ó·äOî≠ê∂?");
 		sendtext("[EX]ó·äOî≠ê∂?");

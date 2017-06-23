@@ -2,7 +2,6 @@ package saccubus;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -37,7 +36,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -55,7 +53,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
@@ -394,8 +391,7 @@ public class MainFrame extends JFrame {
 
 	private String input_url;
 	private String url;
-	private JPanel activityPane;
-	private JScrollPane activityScroll;
+	private ActivityControl activities;
 	private JButton AllCancelButton;
 	private JButton AllDeleteButton;
 	private ChangeListener changeListener;
@@ -3573,22 +3569,8 @@ public class MainFrame extends JFrame {
 			grid41.anchor = GridBagConstraints.NORTH;
 			grid41.fill = GridBagConstraints.BOTH;
 			grid41.insets = INSETS_0_0_0_0;
-			activityStatusPanel = new JPanel();
-			activityStatusPanel.setLayout(new BorderLayout());
-			activityPane = new JPanel();
-			activityPane.setMaximumSize(new Dimension(200, Short.MAX_VALUE));
-			activityPane.setLayout(new BoxLayout(activityPane, BoxLayout.Y_AXIS));
-			activityScroll = new JScrollPane(activityPane);
-			//状況表示スクロール量設定
-			activityScroll.getVerticalScrollBar().setBlockIncrement(0);	//=Block=Unit
-			activityScroll.getVerticalScrollBar().setUnitIncrement(26);	//=jButton.Height()?
-			activityStatusPanel.add(activityScroll,BorderLayout.CENTER);
-			activityStatusPanel.setBorder(BorderFactory.createTitledBorder(
-					CREATE_ETCHED_BORDER,
-					"状況表示", TitledBorder.LEADING, TitledBorder.TOP,
-					new JLabel().getFont(), Color.red));
-
-			managementPanel.add(activityStatusPanel, grid41);
+			activities = new ActivityControl();
+			managementPanel.add(activities.getVisiblePane(), grid41);
 
 			errorStatusPanel = new JPanel();
 			errorUrlLabel = new JLabel(" ");
@@ -3744,9 +3726,7 @@ public class MainFrame extends JFrame {
 	private void AllDelete_ActionHandler(ActionEvent e) {
 		AllCancel_ActionHandler(e);
 		convertManager.allDelete();
-		activityPane.removeAll();
-		activityPane.repaint();
-		activityPane.setLayout(new BoxLayout(activityPane, BoxLayout.Y_AXIS));
+		activities.removeAll();
 	}
 
 	private void setPopup() {
@@ -3805,7 +3785,7 @@ public class MainFrame extends JFrame {
 		BrowserCookieField.addMouseListener(
 				new PopupRightClick(this.BrowserCookieField));
 
-		activityPane.addMouseListener(new PopupRightClick(this.VideoID_TextField));
+		activities.setPopup(VideoID_TextField);
 		managementControl.addMouseListener(new PopupRightClick(this.VideoID_TextField));
 	}
 
@@ -3827,7 +3807,7 @@ public class MainFrame extends JFrame {
 
 		addTarget(BrowserCookieField, false);
 
-		addComponentTarget(VideoID_TextField, activityPane, false);
+		activities.addDropTarget(VideoID_TextField, false);
 		addComponentTarget(VideoID_TextField, managementControl, false);
 	}
 
@@ -4515,7 +4495,7 @@ public class MainFrame extends JFrame {
 	public static StringBuffer resultHistory = new StringBuffer("");
 	private JPanel managementPanel;
 	private JPanel managementControl = new JPanel();
-	private JPanel activityStatusPanel;
+//	private JPanel activityStatusPanel;
 	private MylistGetter mylistGetter;
 	private StringBuffer movieList;
 	private int numThread;
@@ -4555,11 +4535,13 @@ public class MainFrame extends JFrame {
 			url = vid;
 			OneLineMode = getSetting().isOneLineMode();
 			requestHistory.add(url);
-			ListInfo listInfo = new ListInfo(vid+"_"+title,OneLineMode);
-			listInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
-			JLabel[] status3 = listInfo.getStatus();
-			activityPane.add(listInfo);
-			JButton stopButton = listInfo.getjButton();
+			int indexNow = convNo++;
+			JButton stopButton = new JButton();
+			ConvertStopFlag stopFlag =
+				new ConvertStopFlag(stopButton,"停","待","終", "変", pending);
+			ListInfo listInfo = new ListInfo(vid+"_"+title,OneLineMode,indexNow,
+				stopButton, stopFlag);
+			activities.add(listInfo);
 			stopButton.addActionListener(new ActionListener() {
 
 				@Override
@@ -4567,12 +4549,9 @@ public class MainFrame extends JFrame {
 					stopButton_actionPerformed(e);
 				}
 			});
-			int indexNow = convNo++;
 			//log.println(">"+indexNow+"個目の要求: "+vid);
 			sendtext(">"+indexNow+"個目の要求: "+vid);
-			status3[3].setText("("+indexNow+")"+vid+"_"+title);
-			ConvertStopFlag stopFlag =
-				new ConvertStopFlag(stopButton,"停","待","終", "変", pending);
+			listInfo.resetVid();
 			buttonTable.put(stopButton, stopFlag);
 			ConvertingSetting setting1 = getSetting();
 			// ConverManager処理を要求
@@ -4582,7 +4561,7 @@ public class MainFrame extends JFrame {
 				url,
 				WayBackField.getText(),
 				setting1,
-				status3,
+				listInfo.getStatus(),
 				stopFlag,
 				this,
 				autoPlay,
@@ -4656,12 +4635,13 @@ public class MainFrame extends JFrame {
 			log.println("url="+url+", watchinfo="+watchInfo+", Tag="+Tag);
 			managementPanel.addNotify();
 			MainTabbedPane.setSelectedComponent(managementPanel);
-			ListInfo listInfo = new ListInfo(vid,OneLineMode);
-			JLabel[] status3 = listInfo.getStatus();
-			activityPane.add(listInfo);
-			listInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
+			int indexNow = convNo++;
+			JButton stopButton = new JButton();
+			ConvertStopFlag stopFlag =
+				new ConvertStopFlag(stopButton,"停","待","終", "変", PendingMode);
+			ListInfo listInfo = new ListInfo(vid,OneLineMode,indexNow,stopButton,stopFlag);
+			activities.add(listInfo);
 			VideoID_TextField.setText("");
-			JButton stopButton = listInfo.getjButton();
 			stopButton.addActionListener(new ActionListener() {
 
 				@Override
@@ -4669,12 +4649,9 @@ public class MainFrame extends JFrame {
 					stopButton_actionPerformed(e);
 				}
 			});
-			int indexNow = convNo++;
 			//log.println(">"+indexNow+"個目の要求: "+vid);
 			sendtext(">"+indexNow+"個目の要求: "+vid);
-			status3[3].setText("("+indexNow+")"+vid);
-			ConvertStopFlag stopFlag =
-				new ConvertStopFlag(stopButton,"停","待","終", "変", PendingMode);
+			listInfo.resetVid();
 			buttonTable.put(stopButton, stopFlag);
 			ConvertingSetting setting1 = getSetting();
 			if (isMylist){
@@ -4687,7 +4664,7 @@ public class MainFrame extends JFrame {
 					url,
 					watchInfo,
 					this,
-					status3,
+					listInfo.getStatus(),
 					stopFlag,
 					errorControl,
 					movieList,
@@ -4713,7 +4690,7 @@ public class MainFrame extends JFrame {
 					Tag+watchInfo,
 					WayBackField.getText(),
 					setting1,
-					status3,
+					listInfo.getStatus(),
 					stopFlag,
 					this,
 					autoPlay,
