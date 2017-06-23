@@ -3331,19 +3331,43 @@ public class MainFrame extends JFrame {
 	}
 
 	private void mainFrame_loginCheck(JLabel status) {
-		status.setText("ログインチェック中");
+		sendLoginStatus(status, "ログインチェック中");
 		BrowserInfo.resetBrowserInfo();
 		Path file = Path.mkTemp("mytop");
 		String url = "http://www.nicovideo.jp/my/top";
 		Loader loader = new Loader(getSetting(),
 			new JLabel[]{status, elapsedTimeBar, new JLabel()},log,html5CheckBox.isSelected());
 		if (loader.load(url, file) || loader.isLoggedIn()){
-			status.setText(status.getText()+"　ログイン済み");
+			appendLoginStatus(status, "　ログイン済み");
 			file.delete();
 			loader.getIsHtml5();
 			return;
 		}
-		status.setText(status.getText()+"　ログインしていません");
+		appendLoginStatus(status, "　ログインしていません");
+	}
+
+	private void sendLoginStatus(final JLabel label, final String mes, final boolean is_append){
+		if(label!=null){
+			if(SwingUtilities.isEventDispatchThread()){
+				label.setText(is_append? label.getText()+mes :mes );
+			}else{
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						label.setText(is_append? label.getText()+mes :mes );
+					}
+				});
+			}
+		}
+	}
+	private void sendLoginStatus(final JLabel label, final String st){
+		sendLoginStatus(label, st, false);
+	}
+	private void appendLoginStatus(final JLabel label, final String st){
+		sendLoginStatus(label, st, true);
+	}
+	public void sendLoginStatus(String st){
+		sendLoginStatus(loginStatusLabel, st);
 	}
 
 	private JPanel getManagentPanel() {

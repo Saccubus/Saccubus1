@@ -745,6 +745,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			if (!client.isLoggedIn()) {
 				sendtext("ログイン失敗 " + browser.getName() + " " + client.getExtraError());
+				if(parent!=null) parent.sendLoginStatus(" ");
 			} else {
 				sendtext("ログイン成功 " + browser.getName());
 			}
@@ -2732,6 +2733,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						sendtext("URL/IDの指定がありません " + client.getExtraError());
 					}else if(!client.loginCheck()){
 						sendtext("ログイン失敗 " + browserInfo.getName() + " " + client.getExtraError());
+						if(parent!=null) parent.sendLoginStatus(" ");
 					}else{
 						sendtext(Tag + "の情報の取得に失敗 " + client.getExtraError());
 					}
