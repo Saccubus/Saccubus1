@@ -49,7 +49,7 @@ public class Loader {
 		log = logger;
 		this.setting = setting;
 		this.status = status3[0];
-		stopwatch = new Stopwatch(status3[2]);
+		stopwatch = Stopwatch.create(status3[2]);
 		Debug = setting.isDebugNicovideo();
 		isHtml5 = is_html5;
 	}
