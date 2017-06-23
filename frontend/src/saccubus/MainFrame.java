@@ -3957,6 +3957,7 @@ public class MainFrame extends JFrame {
 		String duration = liveOperationDurationTextField.getText();
 		int live_op_duration = 0;
 		try {
+			live_op_duration = Integer.valueOf(duration);
 			if(live_op_duration <= 0)
 				duration = "";
 			else
@@ -3965,6 +3966,7 @@ public class MainFrame extends JFrame {
 			//log.printStackTrace(e);
 			duration = "";
 		}
+		// duration -> setting‚Ö
 		String vposshift = liveCommentVposShiftTextField.getText();
 		double vpos_shift_sec = 0.0;
 		if(!vposshift.isEmpty()){
