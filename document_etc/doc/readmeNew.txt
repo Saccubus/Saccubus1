@@ -1209,13 +1209,13 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 ■収録物
 　　ffmpeg3.2.2同梱版
 □フォルダ構成
-　saccubus1.67.3.13.zip
+　saccubus1.67.6.24.zip
 　├読んで下さいtxt
 　├最初に必ず読んで.txt
 　└saccubus　　  本体exe jar xml bat
 　　├bin          実行ファイルフォルダ exe dll
 　　├doc          ドキュメントフォルダ
-　　├optionFFAAC  オプションフォルダ(80914d用)
+　　├optionFFAAC  オプションフォルダ(3.2.2用)
 　　├optionFDev   オプションフォルダ(開発用)　CA用設定サンプル５種
 　　└Saccubus_lib Javaライブラリーフォルダ jar
 
