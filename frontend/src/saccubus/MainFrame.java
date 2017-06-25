@@ -4606,7 +4606,7 @@ public class MainFrame extends JFrame {
 	static int convNo = 1;
 	public void DoButton_actionPerformed(ActionEvent e) {
 		try{
-			SelfTerminate.restartTimer();
+			SelfTerminate.restartTimer2();
 			if(changeListener!=null){
 				nThreadSpinner.addChangeListener(changeListener);
 				changeListener = null;

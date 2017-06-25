@@ -44,10 +44,15 @@ public class SelfTerminate {
 	}
 	long SECOND_IN_MILIS = 1000;
 	long restsec;
+	static boolean started = false;
 	private void doSetting(long time){
 		timeout = time;
 		restsec = time/SECOND_IN_MILIS;
 		log.println("SelfTerminate timeout="+timeout+" msec");
+		if(timer!=null){
+			timer.cancel();
+			timer = null;
+		}
 		if(timer2!=null){
 			timer2.cancel();
 			timer2 = null;
@@ -56,15 +61,25 @@ public class SelfTerminate {
 		timertask2 = new TimerTask() {
 			@Override
 			public void run() {
-				if(timer!=null){
-					restsec--;
-					if(restartFlag.getAndSet(false)){
-						restsec = timeout/SECOND_IN_MILIS;
-						timer.cancel();
-						timer = null;
+				restTimeMenu.setText("Ž©“®I—¹‚Ü‚Å"+restsec+"•b");
+				if(!started){
+					if(restartFlag.getAndSet(false))
+						started = true;
+				}else{
+					// timer had started
+					if(timer==null){
 						startTimer();
+					}else {
+						restsec--;
+						// timer!=null
+						if(restartFlag.getAndSet(false)){
+							// restart
+							restsec = timeout/SECOND_IN_MILIS;
+							timer.cancel();
+							timer = null;
+							startTimer();
+						}
 					}
-					restTimeMenu.setText("Ž©“®I—¹‚Ü‚Å"+restsec+"•b");
 				}
 			}
 		};
@@ -84,10 +99,13 @@ public class SelfTerminate {
 				doTerminate();
 			}
 		};
-		timer.schedule(timertask, timeout);
+		timer.schedule(timertask, timeout+SECOND_IN_MILIS);
 	}
 	public static void restartTimer(){
 		restartFlag.set(true);
+	}
+	public static void restartTimer2(){
+		restartFlag.set(started);
 	}
 
 	boolean choice = false;
@@ -158,7 +176,7 @@ public class SelfTerminate {
 			}
 			if(ans==JOptionPane.YES_OPTION && timeval > 0){
 				doSetting(timeval);
-				startTimer();
+			//	startTimer();
 				return;
 			}
 		}
