@@ -8,6 +8,8 @@ import java.util.TimerTask;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
+import saccubus.MainFrame;
+
 /**
  *
  * @author orz
@@ -36,6 +38,7 @@ public class Stopwatch {
 			@Override
 			public void run() {
 				show();
+				MainFrame.restartTimer();
 			}
 		};
 	}

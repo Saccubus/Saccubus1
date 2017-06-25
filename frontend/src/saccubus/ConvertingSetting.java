@@ -55,6 +55,7 @@ public class ConvertingSetting {
 	static final boolean ONLY_MP4_AUTO_PLAY = false;
 	static final String DEFAULT_METADATA = "title=%TITLE% genre=%CAT% comment=%ID%";
 	static final boolean USE_SACCUBUS_LOCAL_COOKIE = true;
+	static final long DEFAULT_TERMINATE_TIMEOUT = 3600000;
 
 	public static final String[] ShadowKindArray = {
 		"00:Ç»Çµ",
@@ -239,6 +240,7 @@ public class ConvertingSetting {
 	private boolean commentXml;
 	private boolean enableLiveCommentMinimumVpos;
 	private String liveCommentMinimumVpos;
+	private static long terminateTimeout = DEFAULT_TERMINATE_TIMEOUT;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -1202,6 +1204,9 @@ public class ConvertingSetting {
 	public String getHtml5ShadowDefault(){
 		return html5ShadowDefault;
 	}
+	public long getTerminateTimeout(){
+		return terminateTimeout;
+	}
 
 	static final String PROP_FILE = "."+File.separator+"saccubus.xml";
 	static final String INI_FILE = "./saccubus.ini";
@@ -1387,6 +1392,7 @@ public class ConvertingSetting {
 	public static final String PROP_OPTS_MIX = "OutOptionMix";
 	public static final String PROP_OPTS_SAVE_THUMBINFO_METADATA = "SaveThumbinfoMetadata";
 	public static final String PROP_ONLY_MP4_AUTO_PLAY = "AutoPlayOnlyMp4";
+	public static final String PROP_TERMINATE_TIMEOUT = "SelfTerminateTimeout";
 	/*
 	 * Ç±Ç±Ç‹Ç≈ägí£ê›íË 1.22r3 Ç…ëŒÇ∑ÇÈ
 	 */
@@ -1637,6 +1643,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_OPTS_SWF_JPEG, defOptsSwfJpeg);
 		prop.setProperty(PROP_OPTS_SAVE_THUMBINFO_METADATA, Boolean.toString(defOptsSaveThumbinfoMetadata));
 		prop.setProperty(PROP_ONLY_MP4_AUTO_PLAY, Boolean.toString(onlyMp4AutoPlay));
+		prop.setProperty(PROP_TERMINATE_TIMEOUT, Long.toString(setting.getTerminateTimeout()));
 		/*
 		 * Ç±Ç±Ç‹Ç≈ägí£ê›íËï€ë∂ 1.22r3 Ç…ëŒÇ∑ÇÈ
 		 */
@@ -1787,6 +1794,8 @@ public class ConvertingSetting {
 		onlyMp4AutoPlay = Boolean.valueOf(
 			prop.getProperty(PROP_ONLY_MP4_AUTO_PLAY, Boolean.toString(ONLY_MP4_AUTO_PLAY)));
 		defOptsMetadata = prop.getProperty(PROP_ZQ_METADATA_OPTION,DEFAULT_METADATA);
+		terminateTimeout = Long.valueOf(
+			prop.getProperty(PROP_TERMINATE_TIMEOUT, Long.toString(DEFAULT_TERMINATE_TIMEOUT)));
 
 		File option_file = null;
 		String option_file_name = prop.getProperty(PROP_OPTION_FILE, null);

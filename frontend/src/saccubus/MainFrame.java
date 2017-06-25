@@ -76,6 +76,7 @@ import saccubus.net.NicoMap;
 import saccubus.net.Path;
 import saccubus.util.FileDropTarget;
 import saccubus.util.Logger;
+import saccubus.util.SelfTerminate;
 
 /**
  * <p>
@@ -151,6 +152,7 @@ public class MainFrame extends JFrame {
 	JMenuItem jTips3 = new JMenuItem();
 	JCheckBoxMenuItem jMenuCheckSize = new JCheckBoxMenuItem();
 	JCheckBoxMenuItem jMenuClearErrorAtEnd = new JCheckBoxMenuItem(); 
+	JMenuItem jMenuSelfTerminate = new JMenuItem();
 	JMenu jMenuAction = new JMenu();
 	JMenuItem jMenuLogview = new JCheckBoxMenuItem();
 	JMenuItem jMenuLatestCheck = new JMenuItem();
@@ -420,6 +422,8 @@ public class MainFrame extends JFrame {
 	private JButton playVideoBackButton;
 
 	private JButton AllSaveButton;
+
+	private SelfTerminate selfTerminateSetting;
 
 	public MainFrame() {
 		try {
@@ -1089,6 +1093,8 @@ public class MainFrame extends JFrame {
 			"<html>サーバのファイルサイズ情報と一致しない場合再読込します。<BR>"
 			+"動画差し替えの場合はローカル変換又はオフにして下さい。</html>");
 		jMenuClearErrorAtEnd.setText("終了時エラーリスト保存&クリア");
+		selfTerminateSetting = new SelfTerminate(log, this);
+		jMenuSelfTerminate = selfTerminateSetting.initMenu(getTerminateTimeout());
 		jMenuOpen.setText("開く(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
@@ -1736,6 +1742,7 @@ public class MainFrame extends JFrame {
 		jMenuDetail.add(jMenuTips);
 		jMenuDetail.add(jMenuCheckSize);
 		jMenuDetail.add(jMenuClearErrorAtEnd);
+		jMenuDetail.add(jMenuSelfTerminate);
 		jMenuBar1.add(jMenuAction);
 		jMenuAction.add(jMenuLogview);
 		jMenuAction.add(jMenuLatestCheck);
@@ -2474,6 +2481,9 @@ public class MainFrame extends JFrame {
 
 		convertManager = new ConvertManager(new JLabel[] {statusBar, elapsedTimeBar, infoBar});
 		convertManager.start();
+	}
+	public static void restartTimer(){
+		SelfTerminate.restartTimer();
 	}
 	private void setHtml5AutoDefault(){
 		html5Player = html5CheckBox.isSelected()? 1 : 0;
@@ -4375,6 +4385,7 @@ public class MainFrame extends JFrame {
 		liveCommentMinVposCheckBox.setSelected(setting.isEnableLiveCommentMinVpos());
 		liveCommentMinVposTextField.setText(setting.getLivecommentMinVpos());
 		setHtml5AutoDefault();
+		terminateTimeout = setting.getTerminateTimeout();
 		if(isDebugModeSet())
 			jMenuDebug.setSelected(true);
 	}
@@ -4595,6 +4606,7 @@ public class MainFrame extends JFrame {
 	static int convNo = 1;
 	public void DoButton_actionPerformed(ActionEvent e) {
 		try{
+			restartTimer();
 			if(changeListener!=null){
 				nThreadSpinner.addChangeListener(changeListener);
 				changeListener = null;
@@ -6475,6 +6487,11 @@ s	 * @return javax.swing.JPanel
 					}
 				});
 		}
+	}
+
+	private long terminateTimeout;
+	public long getTerminateTimeout() {
+		return terminateTimeout;
 	}
 }
 

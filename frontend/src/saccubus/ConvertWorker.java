@@ -217,11 +217,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		StopFlag = flag;
 		MovieInfo = jLabels[1];
 		MovieInfo.setText(" ");
+		parent = frame;
 		stopwatch = Stopwatch.create(jLabels[2]);
 		vidLabel = jLabels[3];
 		manager = conv;
 		autoPlay = autoplay;
-		parent = frame;
 		sbRet = sb;
 		errorControl = errcon;
 		tid = worker_id;
