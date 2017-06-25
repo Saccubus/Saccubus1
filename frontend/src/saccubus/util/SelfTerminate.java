@@ -47,7 +47,7 @@ public class SelfTerminate {
 	private void doSetting(long time){
 		timeout = time;
 		restsec = time/SECOND_IN_MILIS;
-		log.println("SelfTerminate timeout="+timeout);
+		log.println("SelfTerminate timeout="+timeout+" msec");
 		if(timer2!=null){
 			timer2.cancel();
 			timer2 = null;
@@ -56,16 +56,16 @@ public class SelfTerminate {
 		timertask2 = new TimerTask() {
 			@Override
 			public void run() {
-				restsec--;
-				if(restartFlag.getAndSet(false)){
-					if(timer!=null){
+				if(timer!=null){
+					restsec--;
+					if(restartFlag.getAndSet(false)){
 						restsec = timeout/SECOND_IN_MILIS;
 						timer.cancel();
 						timer = null;
 						startTimer();
 					}
+					restTimeMenu.setText("é©ìÆèIóπÇ‹Ç≈"+restsec+"ïb");
 				}
-				restTimeMenu.setText("é©ìÆèIóπÇ‹Ç≈"+restsec+"ïb");
 			}
 		};
 		timer2.schedule(timertask2, SECOND_IN_MILIS, SECOND_IN_MILIS);
