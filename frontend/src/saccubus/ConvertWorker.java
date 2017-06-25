@@ -1,5 +1,6 @@
 package saccubus;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -60,6 +61,9 @@ import saccubus.util.Util;
  */
 public class ConvertWorker extends SwingWorker<String, String> {
 
+	private static final String DMC_PREFIX = "dmc_";
+	private static final String LOW_PREFIX = "low_";
+	private static final String ECO_PREFIX = "eco_";
 	private static final String END_OF_ARGUMENT = "|--end-of-argument";
 	class Tick extends TimerTask {
 		private JLabel label;
@@ -204,8 +208,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		int index2 = url.lastIndexOf('/');
 		Tag = url.substring(index2+1);
 		VideoID = "[" + Tag + "]";
-		lowVideoID = VideoID + "low_";
-		dmcVideoID = VideoID + "dmc_";
+		lowVideoID = VideoID + LOW_PREFIX;
+		dmcVideoID = VideoID + DMC_PREFIX;
 		DefaultVideoIDFilter = new VideoIDFilter(Tag);
 		if (time.equals("000000") || time.equals("0")){		// for auto.bat
 			Time = "";
@@ -329,8 +333,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	protected void process(List<String> chunk){
 		while(!chunk.isEmpty()){
 			String text = chunk.remove(0);
+			// @vid : vid表示指示
+			// low_付き時は色を変える
 			if(text.startsWith("@vid ")){
 				text = text.substring(5);
+				if(text.startsWith(ECO_PREFIX))
+					vidLabel.setForeground(Color.gray);
+				else
+					vidLabel.setForeground(Color.blue);
 				vidLabel.setText(text);
 			}else{
 				Status.setText(text);
@@ -805,7 +815,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					if(client.isEco()){
 						lowVideoFile = replaceFilenamePattern(file, true, false);
 						// %LOW%は置換済み
-						if(!Path.contains(lowVideoFile, "low_")){
+						if(!Path.contains(lowVideoFile, LOW_PREFIX)){
 							log.println("MACRO doesn't contain %LOW%. "+lowVideoFile.getPath());
 							// ID->IDlow_ , [ID]->[ID]low_
 							if(name.contains(lowVideoID)){
@@ -814,9 +824,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							}else if(name.contains(VideoID)){
 								lowVideoFile = new File(dir,name.replace(VideoID, lowVideoID));
 							}else if(name.contains(Tag)){
-								lowVideoFile = new File(dir,name.replace(Tag, Tag+"low_"));
+								lowVideoFile = new File(dir,name.replace(Tag, Tag+LOW_PREFIX));
 							}else
-								lowVideoFile = new File(dir,"low_"+name);
+								lowVideoFile = new File(dir,LOW_PREFIX+name);
 						}
 						log.println("client.isEco:: low_VideoFile:"+lowVideoFile.getPath());
 						dmcVideoFile = lowVideoFile;
@@ -1297,7 +1307,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						return false;
 					}
 					VideoFile = existVideo;
-					setVidTitile(tid, Tag, VideoTitle);
+					setVidTitile(tid, Tag, VideoTitle, client.isEco());
 				}
 			}
 			sendtext("動画の保存を終了");
@@ -2494,11 +2504,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				conv_name = conv_name.trim();
 			}
 			conv_name = safeAsciiFileName(conv_name);
-			if(Path.contains(VideoFile,"low_") && !conv_name.contains("low_")){
+			if(Path.contains(VideoFile,LOW_PREFIX) && !conv_name.contains(LOW_PREFIX)){
 				if(conv_name.contains(VideoID))
 					conv_name = conv_name.replace(VideoID, lowVideoID);
 				else
-					conv_name = "low_" + conv_name;
+					conv_name = LOW_PREFIX + conv_name;
 			}
 			ConvertedVideoFile = new File(folder, conv_name + ExtOption);
 		} else {
@@ -2506,7 +2516,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (!Path.hasExt(file, ExtOption)) {
 				file = Path.getReplacedExtFile(file,ExtOption);
 			}
-			boolean videoIsLow = Path.contains(VideoFile,"low_");
+			boolean videoIsLow = Path.contains(VideoFile,LOW_PREFIX);
 			//boolean videoIsDmc = Path.contains(VideoFile, "dmc_");
 			if(VideoTitle==null){
 				setVideoTitleIfNull(file.getName());
@@ -2514,13 +2524,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			file = replaceFilenamePattern(file, videoIsLow, false);
 			String convfilename = file.getName();
 			folder = file.getParentFile();
-			if(videoIsLow && !convfilename.contains("low_")){
+			if(videoIsLow && !convfilename.contains(LOW_PREFIX)){
 				if(convfilename.contains(VideoID))
 					convfilename = convfilename.replace(VideoID, lowVideoID);
 				else if(convfilename.contains(Tag))
-					convfilename = convfilename.replace(Tag, Tag+"low_");
+					convfilename = convfilename.replace(Tag, Tag+LOW_PREFIX);
 				else
-					convfilename = "low_" + convfilename;
+					convfilename = LOW_PREFIX + convfilename;
 			}
 			ConvertedVideoFile = new File(folder, convfilename);
 		}
@@ -2576,8 +2586,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return false;
 	}
 
-	private void setVidTitile(int tid, String tag, String title) {
-		sendtext("@vid"+" ("+tid+")"+tag+"_"+title);
+	private void setVidTitile(int tid, String tag, String title, boolean isEco) {
+		String eco_prefix = "";
+		if(isEco || tag.contains(LOW_PREFIX)){
+			eco_prefix= ECO_PREFIX;
+		}
+		sendtext("@vid"+" "+eco_prefix+"("+tid+")"+tag+"_"+title);
 	}
 
 	/**
@@ -2601,7 +2615,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		String canonical =
 			VideoTitle.replace("　", " ").replaceAll(" +", " ").trim()
 			.replace("．", ".");
-		String lowString = economy? "low_":(dmc?"dmc_":"");
+		String lowString = economy? LOW_PREFIX:(dmc?DMC_PREFIX:"");
 		String surfix = videoFilename.contains("%LOW%")? "":lowString;
 		videoFilename =
 			videoFilename.replace("%ID%", Tag+surfix) 	// %ID% -> 動画ID
@@ -2765,7 +2779,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				nicoTagList.remove(nicoCategory);
 				nicoTagList.add(0, "");
 				numTag = nicoTagList.size();
-				setVidTitile(tid, Tag, VideoTitle);
+				setVidTitile(tid, Tag, VideoTitle, client==null? false: client.isEco());
 				sendtext(Tag + "の情報の取得に成功");
 				if(alternativeTag.isEmpty()){
 					alternativeTag = client.getAlternativeTag();
@@ -4795,7 +4809,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return true;
 			}
 			if(name.startsWith(VideoTag + "_")
-				|| name.startsWith(VideoTag + "low_") || name.startsWith(VideoTag + "dmc_")){
+				|| name.startsWith(VideoTag + LOW_PREFIX) || name.startsWith(VideoTag + DMC_PREFIX)){
 				return true;
 			}
 			return false;
@@ -4816,7 +4830,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		//	}
 			log.println("Title<" + videoTitle + ">");
 			VideoTitle = videoTitle;
-			setVidTitile(tid,Tag,VideoTitle);
+			setVidTitile(tid,Tag,VideoTitle,Tag.contains(LOW_PREFIX));
 		}
 	}
 
@@ -4833,7 +4847,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				OtherVideo = path;
 			}
-			if(path.startsWith(Tag+"_")||path.startsWith(Tag+"low_")||path.startsWith(Tag+"dmc_")){
+			if(path.startsWith(Tag+"_")||path.startsWith(Tag+LOW_PREFIX)||path.startsWith(Tag+DMC_PREFIX)){
 				if(path.endsWith(".flv") ||  path.endsWith(".mp4")){
 					setVideoTitleIfNull(path);
 					return path;

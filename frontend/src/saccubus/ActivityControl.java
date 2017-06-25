@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -31,7 +31,7 @@ public class ActivityControl {
 	final private JPanel activityStatusPanel;	//親コンテナパネル
 	final private JPanel activityPane;				//スクロール内部データ
 	final private JScrollPane activityScroll;	//スクロール枠
-	private ConcurrentHashMap<Integer, ListInfo> listInfoMap;
+	private ConcurrentSkipListMap<Integer, ListInfo> listInfoMap;
 	private JTextComponent copyTarget;
 	private int max_n = 0;
 
@@ -50,7 +50,7 @@ public class ActivityControl {
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"状況表示", TitledBorder.LEADING, TitledBorder.TOP,
 				new JLabel().getFont(), Color.red));
-		listInfoMap = new ConcurrentHashMap<>();
+		listInfoMap = new ConcurrentSkipListMap<>();
 	}
 	JPanel getVisiblePane(){
 		return activityStatusPanel;
@@ -86,8 +86,8 @@ public class ActivityControl {
 	}
 
 	private synchronized void remakeListView() {
-		ConcurrentHashMap<Integer, ListInfo> copyMap = listInfoMap;
-		listInfoMap = new ConcurrentHashMap<Integer, ListInfo>();
+		ConcurrentSkipListMap<Integer, ListInfo> copyMap = listInfoMap;
+		listInfoMap = new ConcurrentSkipListMap<Integer, ListInfo>();
 		activityPane.setVisible(false);
 		activityPane.removeAll();
 		activityPane.setVisible(true);
