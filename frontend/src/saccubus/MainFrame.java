@@ -150,6 +150,7 @@ public class MainFrame extends JFrame {
 	JMenuItem jTips1 = new JMenuItem();
 	JMenuItem jTips2 = new JMenuItem();
 	JMenuItem jTips3 = new JMenuItem();
+	JMenu jRestTimeMenu;
 	JCheckBoxMenuItem jMenuCheckSize = new JCheckBoxMenuItem();
 	JCheckBoxMenuItem jMenuClearErrorAtEnd = new JCheckBoxMenuItem(); 
 	JMenuItem jMenuSelfTerminate = new JMenuItem();
@@ -1095,6 +1096,7 @@ public class MainFrame extends JFrame {
 		jMenuClearErrorAtEnd.setText("終了時エラーリスト保存&クリア");
 		selfTerminateSetting = new SelfTerminate(log, this);
 		jMenuSelfTerminate = selfTerminateSetting.initMenu(getTerminateTimeout());
+		jRestTimeMenu = selfTerminateSetting.getRestTimeMenu();
 		jMenuOpen.setText("開く(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
@@ -1752,6 +1754,7 @@ public class MainFrame extends JFrame {
 		jMenuAction.add(jMenuPanelUpdate);
 		jMenuAction.add(jMenuFolderOpen);
 		jMenuBar1.add(jMenuHelp);
+		jMenuBar1.add(jRestTimeMenu);
 		jMenuHelp.add(jMenuHelpAbout);
 		jMenuHelp.add(jMenuHelpUpdate);
 		jMenuHelp.add(jMenuHelpReadmeNew);
@@ -2481,9 +2484,6 @@ public class MainFrame extends JFrame {
 
 		convertManager = new ConvertManager(new JLabel[] {statusBar, elapsedTimeBar, infoBar});
 		convertManager.start();
-	}
-	public static void restartTimer(){
-		SelfTerminate.restartTimer();
 	}
 	private void setHtml5AutoDefault(){
 		html5Player = html5CheckBox.isSelected()? 1 : 0;
@@ -4606,7 +4606,7 @@ public class MainFrame extends JFrame {
 	static int convNo = 1;
 	public void DoButton_actionPerformed(ActionEvent e) {
 		try{
-			restartTimer();
+			SelfTerminate.restartTimer();
 			if(changeListener!=null){
 				nThreadSpinner.addChangeListener(changeListener);
 				changeListener = null;

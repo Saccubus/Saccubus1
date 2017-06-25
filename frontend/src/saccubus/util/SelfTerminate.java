@@ -42,25 +42,33 @@ public class SelfTerminate {
 		timeout = Long.MAX_VALUE;
 		timertask = null;
 	}
+	long SECOND_IN_MILIS = 1000;
+	long restsec;
 	private void doSetting(long time){
 		timeout = time;
+		restsec = time/SECOND_IN_MILIS;
 		log.println("SelfTerminate timeout="+timeout);
-		if(timer2==null){
-			timer2 = new Timer(false);
-			timertask2 = new TimerTask() {
-				@Override
-				public void run() {
-					if(restartFlag.getAndSet(false)){
-						if(timer!=null){
-							timer.cancel();
-							timer = null;
-							startTimer();
-						}
+		if(timer2!=null){
+			timer2.cancel();
+			timer2 = null;
+		}
+		timer2 = new Timer(false);
+		timertask2 = new TimerTask() {
+			@Override
+			public void run() {
+				restsec--;
+				if(restartFlag.getAndSet(false)){
+					if(timer!=null){
+						restsec = timeout/SECOND_IN_MILIS;
+						timer.cancel();
+						timer = null;
+						startTimer();
 					}
 				}
-			};
-			timer2.schedule(timertask2, 0, 500);
-		}
+				restTimeMenu.setText("自動終了まで"+restsec+"秒");
+			}
+		};
+		timer2.schedule(timertask2, SECOND_IN_MILIS, SECOND_IN_MILIS);
 	}
 	private void doTerminate(){
 		log.println("SelfTerminate: 時すでに時間切れ.\n"+new Date());
@@ -77,57 +85,56 @@ public class SelfTerminate {
 			}
 		};
 		timer.schedule(timertask, timeout);
-		jMenuSelfTerminate.setText("自動終了 時間制限 オン "+(timeout/1000)+"秒");
 	}
 	public static void restartTimer(){
 		restartFlag.set(true);
 	}
 
-	JMenu selfTerminateMenu = new JMenu();
 	boolean choice = false;
 	JTextField inputArea = new JTextField();
 	String inputValue;
 	String[] units = {"秒","分","時間 "};
 	JComboBox<String> cBox = new JComboBox<>(units);
-	public void setUp(long timedef) {
-		final JDialog dialog = new JDialog(parent,"時間制限設定",true);
-		dialog.setBounds(parent.getX()+64, parent.getY()+164, 168, 110);
-		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		dialog.setLayout(new BorderLayout(10, 5));
-		dialog.add(new JLabel("時間制限値を入力してください"),
-				BorderLayout.NORTH);
-		JPanel inputPanel = new JPanel();
-		inputPanel.setLayout(new BorderLayout());
-		inputArea.setText(""+(timedef/1000));
-		inputPanel.add(inputArea,BorderLayout.CENTER);
-		cBox.setSelectedIndex(0);
-		inputPanel.add(cBox,BorderLayout.EAST);
-		dialog.add(inputPanel, BorderLayout.CENTER);
-		JButton ok = new JButton("OK");
-		ok.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				choice = true;
-				dialog.dispose();
-			}
-		});
-		JButton cancel = new JButton("キャンセル");
-		cancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				choice = false;
-				dialog.dispose();
-			}
-		});
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-		buttonPanel.add(ok);
-		buttonPanel.add(cancel);
-		dialog.add(buttonPanel, BorderLayout.SOUTH);
-		dialog.setVisible(true);
-		jMenuSelfTerminate.setSelected(false);
+	public void setUp(long timedef, boolean enable) {
+		if(enable){
+			final JDialog dialog = new JDialog(parent,"時間制限設定",true);
+			dialog.setBounds(parent.getX()+64, parent.getY()+164, 168, 110);
+			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setLayout(new BorderLayout(10, 5));
+			dialog.add(new JLabel("時間制限値を入力してください"),
+					BorderLayout.NORTH);
+			JPanel inputPanel = new JPanel();
+			inputPanel.setLayout(new BorderLayout());
+			inputArea.setText(""+(timedef/SECOND_IN_MILIS));
+			inputPanel.add(inputArea,BorderLayout.CENTER);
+			cBox.setSelectedIndex(0);
+			inputPanel.add(cBox,BorderLayout.EAST);
+			dialog.add(inputPanel, BorderLayout.CENTER);
+			JButton ok = new JButton("OK");
+			ok.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					choice = true;
+					dialog.dispose();
+				}
+			});
+			JButton cancel = new JButton("キャンセル");
+			cancel.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					choice = false;
+					dialog.dispose();
+				}
+			});
+			JPanel buttonPanel = new JPanel();
+			buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+			buttonPanel.add(ok);
+			buttonPanel.add(cancel);
+			dialog.add(buttonPanel, BorderLayout.SOUTH);
+			dialog.setVisible(true);
+		}
 
-		if(choice){
+		if(enable && choice){
 			inputValue = inputArea.getText();
 			int unitsel = cBox.getSelectedIndex();
 			long[] unitLength = { 1000, 60000, 360000}; 
@@ -139,31 +146,36 @@ public class SelfTerminate {
 			}
 			timeval *= unitLength[unitsel];
 
-			int ans =
-			JOptionPane.showConfirmDialog(
-				parent,
-				"設定値は "+inputValue+units[unitsel]
-					+"("+timeval+"ミリ秒) でよろしいですか?",
-				"確認",
-				JOptionPane.YES_NO_OPTION,
-				JOptionPane.INFORMATION_MESSAGE);
-			if(ans==JOptionPane.YES_OPTION ){
-				if(timeval > 0){
-					doSetting(timeval);
-					startTimer();
-				}
-			}else{
-				if(timer!=null){
-					timer.cancel();
-					timer = null;
-					timeout = Long.MAX_VALUE;
-					log.println("Timer canceled, timeout="+timeout);
-				}
-				jMenuSelfTerminate.setText("自動終了 時間制限設定");
+			int ans = JOptionPane.NO_OPTION;
+			if(timeval>0){
+				ans = JOptionPane.showConfirmDialog(
+					parent,
+					"設定値は "+inputValue+units[unitsel]
+						+"("+timeval+"ミリ秒) でよろしいですか?",
+					"確認",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.INFORMATION_MESSAGE);
+			}
+			if(ans==JOptionPane.YES_OPTION && timeval > 0){
+				doSetting(timeval);
+				startTimer();
+				return;
 			}
 		}
-		jMenuSelfTerminate.setSelected(true);
+		// disable
+		if(timer!=null){
+			timer.cancel();
+			timer = null;
+			timeout = Long.MAX_VALUE;
+			if(timer2!=null){
+				timer2.cancel();
+				timer2 = null;
+			}
+			restTimeMenu.setText(" ");
+			log.println("Timer canceled.");
+		}
 	}
+
 	JCheckBoxMenuItem jMenuSelfTerminate = new JCheckBoxMenuItem();
 	public JMenuItem initMenu(final long timeval) {
 		jMenuSelfTerminate.setText("自動終了 時間制限設定");
@@ -171,9 +183,13 @@ public class SelfTerminate {
 		jMenuSelfTerminate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setUp(timeval);
+				setUp(timeval, jMenuSelfTerminate.isSelected());
 			}
 		});
 		return jMenuSelfTerminate;
+	}
+	private JMenu restTimeMenu = new JMenu();
+	public JMenu getRestTimeMenu() {
+		return restTimeMenu;
 	}
 }
