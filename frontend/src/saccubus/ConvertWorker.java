@@ -767,6 +767,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private boolean saveVideo(NicoClient client) {
 		File dmcVideoFile;
+		File dmcLowVideoFile = null;
 		File lowVideoFile;
 		File folder = Setting.getVideoFixFileNameFolder();
 		sendtext("動画の保存");
@@ -800,9 +801,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 					String name = getVideoBaseName() + ".flv";
 					VideoFile = new File(folder, name);
-					if(client.isEco()){
+					if(isEcoVideo){
 						lowVideoFile = new File(folder, name.replace(VideoID, lowVideoID));
 						log.println("client.isEco:: low_VideoFile:"+lowVideoFile.getPath());
+						dmcLowVideoFile = new File(folder, name.replace(VideoID, dmcVideoID+LOW_PREFIX));
 					}
 					dmcVideoFile = new File(folder, name.replace(VideoID, dmcVideoID));
 					resumeDmcFile = Path.getReplacedExtFile(dmcVideoFile, ".flv_dmc");	// suspended video
@@ -812,7 +814,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					VideoFile = replaceFilenamePattern(file, false, false);	//置換後
 					String name = VideoFile.getName();	//置換後
 					File dir = VideoFile.getParentFile();
-					if(client.isEco()){
+					if(isEcoVideo){
 						lowVideoFile = replaceFilenamePattern(file, true, false);
 						// %LOW%は置換済み
 						if(!Path.contains(lowVideoFile, LOW_PREFIX)){
@@ -829,16 +831,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								lowVideoFile = new File(dir,LOW_PREFIX+name);
 						}
 						log.println("client.isEco:: low_VideoFile:"+lowVideoFile.getPath());
-						dmcVideoFile = lowVideoFile;
-					}else{
-						dmcVideoFile = replaceFilenamePattern(file, false, true);
+						dmcLowVideoFile = new File(dir,lowVideoFile.getName().replace(LOW_PREFIX, DMC_PREFIX+LOW_PREFIX));
 					}
+					dmcVideoFile = replaceFilenamePattern(file, isEcoVideo, true);
 					resumeDmcFile = Path.getReplacedExtFile(dmcVideoFile, ".flv_dmc");
 				}
 				int size_smile = 0;
 				int size_smile_high = 0;
 				int size_smile_low = 0;
-				if(lowVideoFile!=null){
+				if(isEcoVideo){
 					try {
 						if(client.getSizeSmile()!=null)
 							size_smile = Integer.decode(client.getSizeSmile());
@@ -864,10 +865,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					else
 						log.println("bug? can't get smile size");
 					int size_dmc = client.getSizeDmc();
-					if(client.isEco() && existVideoFile(VideoFile, ".flv", ".mp4")){
+					if(existVideoFile(VideoFile, ".flv", ".mp4")){
 						sendtext("エコノミーモードで通常動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
-						 || (size_smile_high>0 && existVideo.length()==size_smile_high)){
+							|| (size_smile_high>0 && existVideo.length()==size_smile_high)
+							|| (size_smile_low>0 && existVideo.length()==size_smile_low)){
 							log.println("エコノミーモードで通常動画は既に存在します。ダウンロードをスキップします");
 							VideoFile = existVideo;
 							return true;
@@ -876,7 +878,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						log.println("通常動画のサイズが一致しません。");
 						log.println("smile="+size_smile_high+"bytes, exist="+existVideo.length()+"bytes.");
 					}
-					if(client.isEco() && existVideoFile(dmcVideoFile, ".flv", ".mp4")){
+					if(existVideoFile(dmcVideoFile, ".flv", ".mp4")){
 						sendtext("エコノミーモードでdmc動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
 						 || (size_dmc>0 && existVideo.length()==size_dmc)){
@@ -889,7 +891,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						log.println("dmc動画のサイズが一致しません。");
 						log.println("dmc="+size_dmc+"bytes, exist="+existVideo.length()+"bytes.");
 					}
-					if(client.isEco() && existVideoFile(lowVideoFile,".flv",".mp4")){
+					if(existVideoFile(lowVideoFile,".flv",".mp4")){
 						sendtext("エコノミーモードでエコ動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
 							|| (size_smile_low>0 && existVideo.length()==size_smile_low)
@@ -961,14 +963,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					long dmc_high = 0;
 					long resume_size = 0;
 					long video_size = 0;
-					long long_size_smile = 0;
-					try {
-						if(client.getSizeSmile()!=null)
-							size_smile = Integer.decode(client.getSizeSmile());
-					}catch(NumberFormatException e){
-						size_smile = 0;
+					long long_size_smile = (long)size_smile;
+					if(long_size_smile==0){
+						try {
+							if(client.getSizeSmile()!=null)
+								size_smile = Integer.decode(client.getSizeSmile());
+						}catch(NumberFormatException e){
+							size_smile = 0;
+						}
+						long_size_smile = (long)size_smile;
 					}
-					long_size_smile = (long)size_smile;
 					if(long_size_smile>0)
 						log.println("smile size: "+(long_size_smile>>20)+"MiB");
 					else
@@ -1051,7 +1055,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							}
 							do {
 								limits[2] = resume_size;
-								File dmclowFile = lowVideoFile;
+								File dmclowFile = dmcLowVideoFile;
+								if(dmclowFile==null)
+									dmclowFile = lowVideoFile;
 								if(dmclowFile==null)
 									dmclowFile = dmcVideoFile;
 								File video = client.getVideoDmc(
@@ -1256,6 +1262,28 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						return false;
 					}
 					setVideoTitleIfNull(VideoFile.getName());
+					if(isEcoVideo){
+						if(dmcLowVideoFile!=null && dmcLowVideoFile.canRead()
+							&&(lowVideoFile==null
+							 ||!lowVideoFile.canRead()
+							 ||(dmcLowVideoFile.length()>lowVideoFile.length()))){
+							// dmcLow採用
+							lowVideoFile.delete();
+							dmcLowVideoFile.renameTo(lowVideoFile);
+							lowVideoFile = dmcLowVideoFile;
+							if(dmc_size>0 && !dmcVideoFile.canRead()){
+								dmcVideoFile = lowVideoFile;
+								dmc_size = dmcVideoFile.length();
+							}
+							dmcLowVideoFile = null;
+						}else{
+							// low採用
+							if(dmcLowVideoFile!=null){
+								dmcLowVideoFile.delete();
+								dmcLowVideoFile = null;
+							}
+						}
+					}
 					if(dmc_size!=0)
 						log.println("dmc size: "+(dmc_size>>20)+"MiB");
 					if(video_size!=0)
