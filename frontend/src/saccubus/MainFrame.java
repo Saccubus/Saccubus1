@@ -3456,7 +3456,7 @@ public class MainFrame extends JFrame {
 			grid415.weightx = 1.0;
 			grid415.anchor = GridBagConstraints.NORTH;
 			grid415.fill = GridBagConstraints.HORIZONTAL;
-			grid415.insets = INSETS_0_5_0_0;
+			grid415.insets = INSETS_0_0_0_0;
 			OneLineCheckbox = new JCheckBox("１行表示", false);
 			OneLineCheckbox.setToolTipText("1動画ごとに１行で表示");
 			managementControl.add(OneLineCheckbox, grid415);
@@ -3534,7 +3534,7 @@ public class MainFrame extends JFrame {
 			grid414.weightx = 0.0;
 			grid414.anchor = GridBagConstraints.WEST;
 			grid414.fill = GridBagConstraints.HORIZONTAL;
-			grid414.insets = INSETS_0_0_0_0;
+			grid414.insets = INSETS_0_0_0_5;
 			AllSaveButton = new JButton("保存");
 			AllSaveButton.setForeground(Color.BLACK);
 			AllSaveButton.setToolTipText("変換予約履歴を保存します");
@@ -3556,8 +3556,20 @@ public class MainFrame extends JFrame {
 				}
 			});
 			managementControl.add(AllSaveButton, grid414);
+
+			GridBagConstraints grid416 = new GridBagConstraints();
+			grid416.gridx = 12;
+			grid416.gridy = 1;
+			grid416.gridwidth = 2;
+			grid416.gridheight = 1;
+			grid416.weightx = 0.0;
+			grid416.anchor = GridBagConstraints.WEST;
+			grid416.fill = GridBagConstraints.HORIZONTAL;
+			grid416.insets = INSETS_0_0_0_0;
+			showConvThumbnailCheckBox.setText("サムネ表示");
+			managementControl.add(showConvThumbnailCheckBox,grid416);
 			managementControl.add(new JPanel(),
-				new GridBagConstraints(13, 1, 1, 1, 1.0, 1, GridBagConstraints.WEST,
+				new GridBagConstraints(14, 1, 1, 1, 1.0, 1, GridBagConstraints.WEST,
 						GridBagConstraints.BOTH, INSETS_0_0_0_0, 0,	0));
 
 			GridBagConstraints grid40 = new GridBagConstraints();
@@ -3877,6 +3889,7 @@ public class MainFrame extends JFrame {
 	JTextField FontPathField = new JTextField();
 	JButton SettingFontPathButton = new JButton();
 	JCheckBox ShowConvVideoCheckBox = new JCheckBox();
+	JCheckBox showConvThumbnailCheckBox = new JCheckBox();
 	JTextField CommandLineOutOptionField = new JTextField();
 
 	final int DIALOG_OK = JFileChooser.APPROVE_OPTION;
@@ -4157,7 +4170,8 @@ public class MainFrame extends JFrame {
 			enableCommentJsonCheckBox.isSelected(),
 			enableCommentXmlCheckBox.isSelected(),
 			liveCommentMinVposCheckBox.isSelected(),
-			liveCommentMinVposTextField.getText()
+			liveCommentMinVposTextField.getText(),
+			showConvThumbnailCheckBox.isSelected()
 		);
 	}
 
@@ -4209,6 +4223,7 @@ public class MainFrame extends JFrame {
 		FontPathField.setText(setting.getFontPath());
 		FontIndexField.setText(setting.getFontIndex());
 		ShowConvVideoCheckBox.setSelected(setting.isVhook_ShowConvertingVideo());
+		showConvThumbnailCheckBox.setSelected(setting.isShowThumbnail());
 		DelVideoCheckBox.setSelected(setting.isDeleteVideoAfterConverting());
 		VideoSavedFolderField.setText(setting.getVideoFixFileNameFolder().getPath());
 		CommentSavedFolderField.setText(setting.getCommentFixFileNameFolder().getPath());
