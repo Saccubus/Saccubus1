@@ -1272,7 +1272,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							// dmcLow採用
 							lowVideoFile.delete();
 							dmcLowVideoFile.renameTo(lowVideoFile);
-							lowVideoFile = dmcLowVideoFile;
+						//	lowVideoFile = dmcLowVideoFile; //bug fix
 							if(dmc_size>0 && !dmcVideoFile.canRead()){
 								dmcVideoFile = lowVideoFile;
 								dmc_size = dmcVideoFile.length();
@@ -1706,7 +1706,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private boolean saveThumbInfo0(NicoClient client,String vtag) {
 		sendtext("動画情報の保存");
 		/*ページの保存*/
-		boolean reterr = !Setting.isSaveThumbInfo() && Setting.isShowThumbnail();
 		String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
 		File folder = Setting.getVideoFixFileNameFolder();
 		if (isVideoFixFileName()) {
@@ -1716,7 +1715,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (!folder.isDirectory()) {
 				sendtext("動画情報の保存先フォルダが作成できません。");
 				result = "A0";
-				return reterr;
+				return false;
 			}
 			thumbInfoFile = new File(folder, getVideoBaseName() + THUMB_INFO + ext);
 		} else {
@@ -1726,35 +1725,35 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(thumbInfoFile==null){
 			sendtext("動画情報ファイルがnullです");
 			result = "A1";
-			return reterr;
+			return false;
 		}
 		sendtext("動画情報の保存中");
 		if (client == null){
 			sendtext("ログインしてないのに動画情報の保存になりました");
 			result = "A2";
-			return reterr;
+			return false;
 		}
 		thumbInfo = client.getThumbInfoFile(vtag);
 		if (stopFlagReturn()) {
 			result = "A3";
-			return reterr;
+			return false;
 		}
 		if (thumbInfo == null) {
 			sendtext("動画情報の取得に失敗" + client.getExtraError());
 			result = "A4";
-			return reterr;
+			return false;
 		}
 		log.println("reading:" + thumbInfo);
 		boolean isOK = true;
 		if(!saveThumbUser(thumbInfo, client)){
 			sendtext("投稿者情報の取得に失敗");
 			log.println("投稿者情報の取得に失敗");
-			isOK = reterr;
+			isOK = false;
 		}
 		if(!saveThumbnailJpg(thumbInfo, client)){
 			sendtext("サムネイル画像の取得に失敗");
 			log.println("サムネイル画像の取得に失敗");
-			isOK = reterr;
+			isOK = false;
 		}
 		if(Path.fileCopy(thumbInfo, thumbInfoFile)){
 			if(thumbInfo.delete()){
@@ -1762,23 +1761,22 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 		}
 		else
-			isOK = reterr;
+			isOK = false;
 		if(isOK)
 			sendtext("動画情報の保存終了");
 		return isOK;
 	}
 
 	private boolean saveThumbInfo(NicoClient client, String vtag) {
-		if(!Setting.isSaveThumbInfo() && !Setting.isShowThumbnail())
+		if(thumbInfoFile!=null && thumbInfoFile.canRead())
 			return true;
-		boolean reterr = !Setting.isSaveThumbInfo() && Setting.isShowThumbnail();
 		if(saveThumbInfo0(client, vtag))
 			return true;
 		// コミュニティ動画はthumbinfoが取れないのでsmIDを使う
 		if(alternativeTag.isEmpty())
 			alternativeTag = client.getAlternativeTag();
 		if(alternativeTag.isEmpty() || alternativeTag.equals(Tag))
-			return reterr;
+			return false;
 		return saveThumbInfo0(client, alternativeTag);
 	}
 
@@ -1894,7 +1892,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean saveThumbnailJpg(Path infoFile, NicoClient client) {
-		boolean reterr = !Setting.isSaveThumbnailJpg() && Setting.isShowThumbnail();
 		if(Setting.isSaveThumbnailJpg() || Setting.isShowThumbnail()){
 			sendtext("サムネイル画像の保存");
 			thumbnailJpg = null;
@@ -1903,16 +1900,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(url==null || url.isEmpty() || !url.startsWith("http")){
 				sendtext("サムネイル画像の情報がありません");
 				result = "A8";
-				return reterr;
+				return false;
 			}
 			if(!setThumbnailJpg())
-				return reterr;
+				return false;
 			sendtext("サムネイル画像の保存中");
 			if (!client.getThumbnailJpg(url+".L", thumbnailJpg)
 				&& !client.getThumbnailJpg(url, thumbnailJpg)) {
 				sendtext("サムネイル画像の取得に失敗" + client.getExtraError());
 				result = "AA";
-				return reterr;
+				return false;
 			}
 			sendtext("サムネイル画像の保存終了");
 		}
@@ -2822,14 +2819,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 			//thumbnail iconセット
 			if(Setting.isShowThumbnail()){
-				if(saveThumbInfo(client, Tag)){
-					if(thumbnailJpg!=null && thumbnailJpg.canRead()){
-						ImageIcon icon = new ImageIcon(thumbnailJpg.getPath());
-						thumbIcon = new ImageIcon(icon.getImage()
-							.getScaledInstance(32,32,Image.SCALE_FAST));
-						//thumbnail表示
-						StopFlag.getButton().setIcon(thumbIcon);
-					}
+				saveThumbInfo(client, Tag);
+				if(thumbnailJpg!=null && thumbnailJpg.canRead()){
+					ImageIcon icon = new ImageIcon(thumbnailJpg.getPath());
+					thumbIcon = new ImageIcon(icon.getImage()
+						.getScaledInstance(32,32,Image.SCALE_FAST));
+					//thumbnail表示
+					StopFlag.getButton().setIcon(thumbIcon);
 				}
 			}
 
@@ -2858,7 +2854,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			gate.resetError();
 
 			//stopwatch.show();
-			if(!saveThumbInfo(client, Tag)){
+			if(Setting.isSaveThumbInfo() && !saveThumbInfo(client, Tag)){
 				if(isSaveConverted())
 					log.println("追加情報の取得に失敗しましたが続行します。");
 				else {
