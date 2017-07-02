@@ -11,6 +11,7 @@
 #include "wakuiro.h"
 #include "comment/com_surface.h"
 #include "comment/adjustComment.h"
+#include "SDL/SDL_rotozoom.h"
 
 int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, int cid, const char* com_type);
 int isPathRelative(const char* path);
@@ -48,6 +49,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	int i;
 	data->version = setting->version;
 	data->data_title = setting->data_title;
+	data->show_thumbnail_size = setting->show_thumbnail_size;
 	data->typeNicovideoE = setting->typeNicovideoE;
 	data->user.enable_comment = setting->enable_user_comment;
 	data->owner.enable_comment = setting->enable_owner_comment;
@@ -687,13 +689,19 @@ int isPathRelative(const char* path){
  */
 int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 	FILE* log = data->log;
+	double zoomy;
+	int zoomed_width = 256;
+	int zoomed_height = 144;
+	zoomy = (double)zoomed_height / (double)data->vout_height;
+	zoomed_width = (int)(data->vout_width * zoomy);
+
 	if(!data->process_first_called){
 		// 弾幕モードの高さの設定　16:9でオリジナルリサイズでない場合は上下にはみ出す
 		// Qwatch, html5のときは、はみ出さない
 		//comment area height is independent from video height
 		if(surf->w!=data->vout_width||surf->h!=data->vout_height){
 			fprintf(log,"[main/process]screen size != video size\n");
-			fprintf(log,"[main/process]this may be woring Ver.%s\n",data->version);
+			fprintf(log,"[main/process]this may be warning Ver.%s\n",data->version);
 		}
 		fprintf(log,"[main/process]screen %dx%d, video %dx%d, comment %.0fx%.0f\n",
 			surf->w,surf->h,data->vout_width,data->vout_height,
@@ -717,6 +725,8 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 	fflush(log);
 	/*変換した画像を見せる。*/
 	if(data->show_video){
+		SDL_Surface* zoomed = null;
+		SDL_Event event;
 		if(!data->process_first_called){
 			const char *title;
 			SDL_Surface *icon;
@@ -736,17 +746,30 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 			else
 				fprintf(log,"[main/process]No window title was set!\n");
 
-			data->screen = SDL_SetVideoMode(surf->w, surf->h, 24, SDL_HWSURFACE | SDL_DOUBLEBUF);
+			if(data->show_thumbnail_size)
+				data->screen = SDL_SetVideoMode(zoomed_width, zoomed_height, 24, SDL_HWSURFACE | SDL_DOUBLEBUF);
+			else
+				data->screen = SDL_SetVideoMode(surf->w, surf->h, 24, SDL_HWSURFACE | SDL_DOUBLEBUF);
 			if(data->screen == NULL){
 				fputs("[main/process]failed to initialize screen.\n",log);
 				fflush(log);
 				return FALSE;
 			}
 		}
-		SDL_BlitSurface(surf,NULL,data->screen,NULL);
-		SDL_Flip(data->screen);
-		SDL_Event event;
-		while(SDL_PollEvent(&event)){}
+		//映像表示
+		if(data->show_thumbnail_size){
+			zoomed = zoomSurface(surf,zoomy,zoomy,SMOOTHING_OFF);
+			if(zoomed!=null){
+				SDL_BlitSurface(zoomed,NULL,data->screen,NULL);
+				SDL_Flip(data->screen);
+				while(SDL_PollEvent(&event)){}
+				SDL_FreeSurface(zoomed);
+			}
+		}else{
+			SDL_BlitSurface(surf,NULL,data->screen,NULL);
+			SDL_Flip(data->screen);
+			while(SDL_PollEvent(&event)){}
+		}
 	}
 	//一回目以降はTRUEになる。
 	data->process_first_called=TRUE;

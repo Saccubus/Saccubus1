@@ -2779,22 +2779,29 @@ public class MainFrame extends JFrame {
 			grid8_y1_x1_w5.anchor = GridBagConstraints.WEST;
 			grid8_y1_x1_w5.fill = GridBagConstraints.HORIZONTAL;
 			grid8_y1_x1_w5.insets = INSETS_0_0_0_5;
-			GridBagConstraints grid8_y0_x0_w3 = new GridBagConstraints();
-			grid8_y0_x0_w3.gridy = 0;
-			grid8_y0_x0_w3.gridx = 0;
-			grid8_y0_x0_w3.gridwidth = 3;
-			grid8_y0_x0_w3.weightx = 0.0;
-			grid8_y0_x0_w3.anchor = GridBagConstraints.WEST;
-			grid8_y0_x0_w3.fill = GridBagConstraints.HORIZONTAL;
-			grid8_y0_x0_w3.insets = INSETS_0_0_0_5;
-			GridBagConstraints grid8_y0_x3_w3 = new GridBagConstraints();
-			grid8_y0_x3_w3.gridy = 0;
-			grid8_y0_x3_w3.gridx = 3;
-			grid8_y0_x3_w3.gridwidth = 3;
-			grid8_y0_x3_w3.anchor = GridBagConstraints.WEST;
-			grid8_y0_x3_w3.fill = GridBagConstraints.HORIZONTAL;
-			grid8_y0_x3_w3.insets = INSETS_0_0_0_5;
-			NotUseVhookCheckBox.setText("拡張vhookライブラリ無効(デバッグ用)");
+			GridBagConstraints grid8_y0_x0_w2 = new GridBagConstraints();
+			grid8_y0_x0_w2.gridy = 0;
+			grid8_y0_x0_w2.gridx = 0;
+			grid8_y0_x0_w2.gridwidth = 2;
+			grid8_y0_x0_w2.weightx = 0.0;
+			grid8_y0_x0_w2.anchor = GridBagConstraints.WEST;
+			grid8_y0_x0_w2.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y0_x0_w2.insets = INSETS_0_0_0_0;
+			GridBagConstraints grid8_y0_x2_w3 = new GridBagConstraints();
+			grid8_y0_x2_w3.gridy = 0;
+			grid8_y0_x2_w3.gridx = 2;
+			grid8_y0_x2_w3.gridwidth = 3;
+			grid8_y0_x2_w3.anchor = GridBagConstraints.WEST;
+			grid8_y0_x2_w3.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y0_x2_w3.insets = INSETS_0_0_0_0;
+			GridBagConstraints grid8_y0_x5_w1 = new GridBagConstraints();
+			grid8_y0_x5_w1.gridy = 0;
+			grid8_y0_x5_w1.gridx = 5;
+			grid8_y0_x5_w1.gridwidth = 1;
+			grid8_y0_x5_w1.anchor = GridBagConstraints.WEST;
+			grid8_y0_x5_w1.fill = GridBagConstraints.HORIZONTAL;
+			grid8_y0_x5_w1.insets = INSETS_0_0_0_0;
+			NotUseVhookCheckBox.setText("拡張vhook無効(デバッグ用)");
 			NotUseVhookCheckBox.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -2805,9 +2812,13 @@ public class MainFrame extends JFrame {
 					}
 				}
 			});
-			VhookSettingPanel.add(NotUseVhookCheckBox, grid8_y0_x0_w3);
-			ShowConvVideoCheckBox.setText("変換中画像を表示");
-			VhookSettingPanel.add(ShowConvVideoCheckBox, grid8_y0_x3_w3);
+			VhookSettingPanel.add(NotUseVhookCheckBox, grid8_y0_x0_w2);
+			ShowConvVideoCheckBox.setText("変換中画像表示");
+			VhookSettingPanel.add(ShowConvVideoCheckBox, grid8_y0_x2_w3);
+			videoThumbnailSizeCheckBox.setForeground(Color.blue);
+			videoThumbnailSizeCheckBox.setText("小画面");
+			videoThumbnailSizeCheckBox.setToolTipText("変換サイズとは関係なく表示だけを小さくします");
+			VhookSettingPanel.add(videoThumbnailSizeCheckBox, grid8_y0_x5_w1);
 			VhookSettingPanel.add(new JLabel("表示コメント数"), grid8_y1_x0_w1);
 			VhookSettingPanel.add(ViewCommentField, grid8_y1_x1_w5);
 			commentEraseTypeLabel.setText("表示数超過");
@@ -3566,8 +3577,8 @@ public class MainFrame extends JFrame {
 			grid416.anchor = GridBagConstraints.WEST;
 			grid416.fill = GridBagConstraints.HORIZONTAL;
 			grid416.insets = INSETS_0_0_0_0;
-			showConvThumbnailCheckBox.setText("サムネ表示");
-			managementControl.add(showConvThumbnailCheckBox,grid416);
+			showIconThumbnailCheckBox.setText("サムネ表示");
+			managementControl.add(showIconThumbnailCheckBox,grid416);
 			managementControl.add(new JPanel(),
 				new GridBagConstraints(14, 1, 1, 1, 1.0, 1, GridBagConstraints.WEST,
 						GridBagConstraints.BOTH, INSETS_0_0_0_0, 0,	0));
@@ -3889,7 +3900,8 @@ public class MainFrame extends JFrame {
 	JTextField FontPathField = new JTextField();
 	JButton SettingFontPathButton = new JButton();
 	JCheckBox ShowConvVideoCheckBox = new JCheckBox();
-	JCheckBox showConvThumbnailCheckBox = new JCheckBox();
+	JCheckBox videoThumbnailSizeCheckBox = new JCheckBox();
+	JCheckBox showIconThumbnailCheckBox = new JCheckBox();
 	JTextField CommandLineOutOptionField = new JTextField();
 
 	final int DIALOG_OK = JFileChooser.APPROVE_OPTION;
@@ -4171,7 +4183,8 @@ public class MainFrame extends JFrame {
 			enableCommentXmlCheckBox.isSelected(),
 			liveCommentMinVposCheckBox.isSelected(),
 			liveCommentMinVposTextField.getText(),
-			showConvThumbnailCheckBox.isSelected()
+			showIconThumbnailCheckBox.isSelected(),
+			videoThumbnailSizeCheckBox.isSelected()
 		);
 	}
 
@@ -4223,7 +4236,8 @@ public class MainFrame extends JFrame {
 		FontPathField.setText(setting.getFontPath());
 		FontIndexField.setText(setting.getFontIndex());
 		ShowConvVideoCheckBox.setSelected(setting.isVhook_ShowConvertingVideo());
-		showConvThumbnailCheckBox.setSelected(setting.isShowThumbnail());
+		videoThumbnailSizeCheckBox.setSelected(setting.isVideoThumbnailSize());
+		showIconThumbnailCheckBox.setSelected(setting.isShowThumbnail());
 		DelVideoCheckBox.setSelected(setting.isDeleteVideoAfterConverting());
 		VideoSavedFolderField.setText(setting.getVideoFixFileNameFolder().getPath());
 		CommentSavedFolderField.setText(setting.getCommentFixFileNameFolder().getPath());

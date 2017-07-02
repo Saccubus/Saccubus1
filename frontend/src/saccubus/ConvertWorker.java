@@ -4345,6 +4345,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (Setting.isVhook_ShowConvertingVideo()) {
 				ffmpeg.addCmd("|--enable-show-video");
 			}
+			if (Setting.isVideoThumbnailSize()) {
+				ffmpeg.addCmd("|--show-thumbnail-size");
+			}
 			if (Setting.isFixFontSize()) {
 				ffmpeg.addCmd("|--enable-fix-font-size");
 			}

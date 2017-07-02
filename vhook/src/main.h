@@ -41,6 +41,7 @@ struct DATA{
 	int typeNicovideoE;	// this is SwitchFlag wheather nicovideoE(TRUE) or nicovideoH(FALSE)
 	//一般的なデータ
 	const char* data_title;
+	int show_thumbnail_size;
 	int shadow_kind;
 	int show_video;
 	int fontsize_fix;
@@ -125,6 +126,7 @@ struct DATA{
 
 typedef struct SETTING{
 	const char* data_title;
+	int show_thumbnail_size;
 	const char* data_user_path;
 	const char* data_owner_path;
 	const char* data_optional_path;

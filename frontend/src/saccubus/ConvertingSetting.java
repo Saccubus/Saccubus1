@@ -242,6 +242,7 @@ public class ConvertingSetting {
 	private String liveCommentMinimumVpos;
 	private static long terminateTimeout = DEFAULT_TERMINATE_TIMEOUT;
 	private boolean showThumbnail;
+	private boolean videoShowThumbnailSize;
 
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
@@ -505,7 +506,8 @@ public class ConvertingSetting {
 			boolean debug_comment_json,
 			boolean enable_livecomment_minimum,
 			String livecomment_minimum,
-			boolean show_thumbnail
+			boolean show_thumbnail,
+			boolean video_show_thumbnail
 		)
 	{
 		this(	mailaddress,
@@ -684,6 +686,7 @@ public class ConvertingSetting {
 		enableLiveCommentMinimumVpos = enable_livecomment_minimum;
 		liveCommentMinimumVpos = livecomment_minimum;
 		showThumbnail = show_thumbnail;
+		videoShowThumbnailSize = video_show_thumbnail;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1185,6 +1188,9 @@ public class ConvertingSetting {
 	public boolean isShowThumbnail(){
 		return showThumbnail;
 	}
+	public boolean isVideoThumbnailSize(){
+		return videoShowThumbnailSize;
+	}
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1392,6 +1398,7 @@ public class ConvertingSetting {
 	static final String PROP_ENABLE_LIVECOMMENT_MINIMUM_VPOS = "EnableCommentMinimumVpos";
 	static final String PROP_LIVECOMMENT_MINIMUM_VPOS = "LiveCommentMinimumVpos";
 	static final String PROP_SHOW_THUMBNAIL = "ShowThumbnail";
+	static final String PROP_VIDEO_SHOW_THUMBNAIL_SIZE = "VideoShowThumbnailSize";
 	// ï€ë∂Ç∑ÇÈÇ™GUIÇ≈ÇÕïœçXÇµÇ»Ç¢
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1644,6 +1651,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ENABLE_LIVECOMMENT_MINIMUM_VPOS, Boolean.toString(setting.isEnableLiveCommentMinVpos()));
 		prop.setProperty(PROP_LIVECOMMENT_MINIMUM_VPOS, setting.getLivecommentMinVpos());
 		prop.setProperty(PROP_SHOW_THUMBNAIL, Boolean.toString(setting.isShowThumbnail()));
+		prop.setProperty(PROP_VIDEO_SHOW_THUMBNAIL_SIZE, Boolean.toString(setting.isVideoThumbnailSize()));
 		//GUIÇ»Çµ inièâä˙ílÇ†ÇË
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -1984,7 +1992,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_XML,"true")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_LIVECOMMENT_MINIMUM_VPOS,"false")),
 			prop.getProperty(PROP_LIVECOMMENT_MINIMUM_VPOS, "0.0"),
-			Boolean.parseBoolean(prop.getProperty(PROP_SHOW_THUMBNAIL, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_SHOW_THUMBNAIL, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_VIDEO_SHOW_THUMBNAIL_SIZE, "false"))
 		);
 	}
 

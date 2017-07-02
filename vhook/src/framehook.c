@@ -35,7 +35,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ƒƒO
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.67.6.18";
+	char *ver="1.67.7.01b";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -139,6 +139,7 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	setting->enable_owner_comment = FALSE;
 	setting->enable_optional_comment = FALSE;
 	setting->data_title = NULL;
+	setting->show_thumbnail_size = FALSE;
 	setting->data_user_path = NULL;
 	setting->data_owner_path = NULL;
 	setting->data_optional_path = NULL;
@@ -253,6 +254,10 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 			fputs("[framehook/init]show video while converting.\n",log);
 			fflush(log);
 			setting->show_video=TRUE;
+		}else if(!setting->show_thumbnail_size && strcmp(arg,"--show-thumbnail-size") == 0){
+			fputs("[framehook/init]Show thumbnail size.\n",log);
+			fflush(log);
+			setting->show_thumbnail_size = TRUE;
 		}else if(!setting->fontsize_fix && strcmp(arg,"--enable-fix-font-size") == 0){
 			fputs("[framehook/init]fix font size automatically.\n",log);
 			fflush(log);
