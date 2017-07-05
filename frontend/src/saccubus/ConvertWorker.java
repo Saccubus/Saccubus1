@@ -2751,6 +2751,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(parent!= null){
 				Setting = parent.getSetting();
 			}
+			NicoClient.setEnableUnicode(Setting.isEnableUnicode());
 			if (!checkOK()) {
 				return result;
 			}

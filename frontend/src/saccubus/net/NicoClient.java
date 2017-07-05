@@ -86,6 +86,7 @@ public class NicoClient {
 	private boolean isHtml5;
 	private boolean isHtml5Ok = false;
 	private BrowserInfo browserInfo = null;
+	private static boolean enableUnicode = false;
 
 	public static final String DEBUG_PROXY = "debug";	// debug paramerter end with '/'
 	static final String S_QUOTE2 = "\"";
@@ -192,6 +193,13 @@ public class NicoClient {
 			}
 			setLoggedIn(false);
 		}
+	}
+
+	public static void setEnableUnicode(boolean b){
+		enableUnicode = b;
+	}
+	public static boolean isEnableUnicode() {
+		return enableUnicode;
 	}
 
 	void debug(String messege){
@@ -488,7 +496,8 @@ public class NicoClient {
 	}
 
 	public static String toSafeWindowsName(String str, String encoding){
-		str = toSafeString(str, encoding);
+		if(!enableUnicode)
+			str = toSafeString(str, encoding);
 		//ファイルシステムで扱える形に
 		str = str.replace('/', '／');
 		str = str.replace('\\', '￥');

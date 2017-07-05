@@ -154,6 +154,7 @@ public class MainFrame extends JFrame {
 	JCheckBoxMenuItem jMenuCheckSize = new JCheckBoxMenuItem();
 	JCheckBoxMenuItem jMenuClearErrorAtEnd = new JCheckBoxMenuItem(); 
 	JMenuItem jMenuSelfTerminate = new JMenuItem();
+	JCheckBoxMenuItem jMenuEnableUnicode = new JCheckBoxMenuItem();
 	JMenu jMenuAction = new JMenu();
 	JMenuItem jMenuLogview = new JCheckBoxMenuItem();
 	JMenuItem jMenuLatestCheck = new JMenuItem();
@@ -1097,6 +1098,9 @@ public class MainFrame extends JFrame {
 		selfTerminateSetting = new SelfTerminate(log, this);
 		jMenuSelfTerminate = selfTerminateSetting.initMenu(getTerminateTimeout());
 		jRestTimeMenu = selfTerminateSetting.getRestTimeMenu();
+		jMenuEnableUnicode.setText("Unicode表示を有効にする。(従来はshift-jis)");
+		jMenuEnableUnicode.setForeground(Color.blue);
+		jMenuEnableUnicode.setToolTipText("ファイルタイトルやログ表示でUnicodeのままにする。");
 		jMenuOpen.setText("開く(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
@@ -1745,6 +1749,7 @@ public class MainFrame extends JFrame {
 		jMenuDetail.add(jMenuCheckSize);
 		jMenuDetail.add(jMenuClearErrorAtEnd);
 		jMenuDetail.add(jMenuSelfTerminate);
+		jMenuDetail.add(jMenuEnableUnicode);
 		jMenuBar1.add(jMenuAction);
 		jMenuAction.add(jMenuLogview);
 		jMenuAction.add(jMenuLatestCheck);
@@ -4184,7 +4189,8 @@ public class MainFrame extends JFrame {
 			liveCommentMinVposCheckBox.isSelected(),
 			liveCommentMinVposTextField.getText(),
 			showIconThumbnailCheckBox.isSelected(),
-			videoThumbnailSizeCheckBox.isSelected()
+			videoThumbnailSizeCheckBox.isSelected(),
+			jMenuEnableUnicode.isSelected()
 		);
 	}
 
@@ -4415,6 +4421,7 @@ public class MainFrame extends JFrame {
 		liveCommentMinVposTextField.setText(setting.getLivecommentMinVpos());
 		setHtml5AutoDefault();
 		terminateTimeout = setting.getTerminateTimeout();
+		jMenuEnableUnicode.setSelected(setting.isEnableUnicode());
 		if(isDebugModeSet())
 			jMenuDebug.setSelected(true);
 	}
