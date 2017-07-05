@@ -7,7 +7,6 @@ import java.io.PrintStream;
 
 import saccubus.MainFrame;
 import saccubus.TextView;
-import saccubus.net.NicoClient;
 import saccubus.net.Path;
 
 /**
@@ -30,8 +29,6 @@ public class Logger {
 
 	public Logger(File file){
 		this(file, false);
-		if(NicoClient.isEnableUnicode())
-			println(Character.toString((char)0x00a0)+"Unicode Enabled.");
 	}
 
 	public Logger(File file, boolean append){
