@@ -178,8 +178,13 @@ public class NicoClient {
 					String this_session = "user_session=" + session;
 					Cookie = new NicoCookie();
 					Cookie.setSession(this_session);
-					if(isHtml5)
+					if(isHtml5){
 						Cookie.addNormalCookie("watch_html5=1");
+						Cookie.addNormalCookie("watch_flash=0");
+					}else{
+						Cookie.addNormalCookie("watch_html5=0");
+						Cookie.addNormalCookie("watch_flash=1");
+					}
 					if(loginCheck()){
 						setLoggedIn(true);	// ログイン済みのハズ
 						setExtraError("");
@@ -297,11 +302,15 @@ public class NicoClient {
 	// the following commented source code lines can be made valid in the future, and it would be ok (already tested).
 
 			con.setRequestMethod(method);
+			if(cookieProp == null){
+				cookieProp = new NicoCookie();
+			}
 			if(isHtml5){
-				if(cookieProp == null){
-					cookieProp = new NicoCookie();
-				}
 				cookieProp.addNormalCookie("watch_html5=1");
+				cookieProp.addNormalCookie("watch_flash=0");
+			}else{
+				cookieProp.addNormalCookie("watch_html5=0");
+				cookieProp.addNormalCookie("watch_flash=1");
 			}
 			if (cookieProp != null)
 				con.addRequestProperty("Cookie", cookieProp.get(url));
