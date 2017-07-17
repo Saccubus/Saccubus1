@@ -30,6 +30,9 @@ public class FFmpeg {
 		exePath = path.replace(File.separator, "/");
 	}
 
+	public String getExePath(){
+		return exePath;
+	}
 	public void setCmd(String string) {
 		sb = new StringBuffer();
 		sb.append("\"");

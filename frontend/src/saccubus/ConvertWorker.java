@@ -3171,6 +3171,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			sendtext("追加オプションの設定に失敗しました。");
 			return false;
 		}
+		// ffmpegの環境変数PATHの設定
+		String dllPath = selectedVhook.getParentFile().getAbsolutePath();
+		Saccubus.pathenv = "."+File.pathSeparator + dllPath;
+		String exePath = new File(ffmpeg.getExePath()).getParentFile().getAbsolutePath();
+		if(!Saccubus.pathenv.contains(exePath)){
+			Saccubus.pathenv += File.pathSeparator + exePath;
+		}
+		log.println("FFmpeg env PATH: "+Saccubus.pathenv);
 
 		//replaceチェック
 		if(Setting.getReplaceOptions()!=null){

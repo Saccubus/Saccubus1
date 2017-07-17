@@ -5030,7 +5030,7 @@ public class MainFrame extends JFrame {
 					url,
 					WayBackField.getText(),
 					setting,
-					new JLabel[]{statusBar,new JLabel(),new JLabel()},
+					new JLabel[]{statusBar,new JLabel(),new JLabel(), new JLabel()},
 					new ConvertStopFlag(new JButton()),
 					this,
 					autoPlay,
