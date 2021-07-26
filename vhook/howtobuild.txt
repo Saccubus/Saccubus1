@@ -1,0 +1,18 @@
+nicovideoE.dll のコンパイル手順
+
+やったこと
+・Eclipse はJAVAとCの開発ができるアルティメット版
+・MinGW をインストール
+・Eclipse で vhook をインポート
+・適当なところに MinGW用のSDL関連のライブラリーとインクルードファイルを作成
+   SDL-devel-1.2.15-mingw32.tar.gz
+   SDL_ttf-2.0.11-win32.zip
+   ※includeファイルは SDL_ttf-devel-2.0.11-VC.zip の中の物を使用
+   SDL_gfx-2.0.26.tar.gz (これはソースからコンパイルしてライブラリーを作る)
+   freetype-2.3.5-1-lib.zip (とりあえずこれ、ちゃんとやるならソースからコンパイル)
+・Eclipse のプロジェクトvhook右クリック→プロパティ
+   C/C++ビルド→環境 MINGW_HOME、MSYS_HOMEを修正
+   C/C++一般→パスおよびシンボル
+     インクルードにSDLのインクルードディレクトリーを追加
+     ライブラリーパスにSDLのライブラリーディレクトリーを追加
+
