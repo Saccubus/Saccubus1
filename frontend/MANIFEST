@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: . saccubus_lib/gson-2.2.4.jar
+Main-Class: saccubus.Saccubus
+
