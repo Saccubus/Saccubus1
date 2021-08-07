@@ -201,7 +201,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	while(*index != '\0'){
 		if(*index=='[' && is_button==1){
 			*index = '\0';//ここで一旦切る
-			surf = drawText2s(data,size,SdlColor,last,is_owner,is_black,shadow,fontcmd);
+			surf = drawText2s(data,size,SdlColor,last,0,is_black,shadow,fontcmd);
 			if(surf!=NULL && debug)
 				fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d) %s\n",surf->s->w,surf->h,COM_FONTSIZE_NAME[size]);
 			if(is_vote){
@@ -256,7 +256,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		}
 		else if(*index==']' && is_button==2){
 			*index = '\0';//ここで一旦切る
-			surf = drawText2s(data,size,SdlColor,last,is_owner,is_black,shadow,fontcmd);
+			surf = drawText2s(data,size,SdlColor,last,0,is_black,shadow,fontcmd);
 			if(ret==NULL){
 				if(surf!=NULL && debug)
 					fprintf(log,"[comsurface/make.10]drawText2 surf(%d, %d)\n",surf->w,surf->h);
@@ -293,8 +293,18 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		}
 		else if(*index == '\n'){
 			*index = '\0';//ここで一旦切る
-			int fill_bg = is_owner && is_button==2;
-			surf = drawText2s(data,size,SdlColor,last,fill_bg,is_black,shadow,fontcmd);
+			//int fill_bg = is_owner && is_button==2;
+			// /vote start/showresult だったらlastのポインタを2つめスペースの次にする
+			int cmd = item->script & 0xffff0000;
+			if(cmd == SCRIPT_VOTE){
+				if (last[8]=='a') {
+					last += 12;
+				}
+				else if(last[7]=='h'){
+					last += 11;
+				}
+			}
+			surf = drawText2s(data,size,SdlColor,last,0,is_black,shadow,fontcmd);
 			if(ret == null){//最初の改行
 				ret = surf;
 				if(ret!=NULL && debug)
@@ -312,8 +322,8 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		}
 		index++;
 	}
-	int fill_bg = is_owner && is_button!=0;
-	surf = drawText2s(data,size,SdlColor,last,fill_bg,is_black,shadow,fontcmd);
+	//int fill_bg = is_owner && is_button!=0;
+	surf = drawText2s(data,size,SdlColor,last,0,is_black,shadow,fontcmd);
 	if(ret == null){//結局改行は無い
 		ret = surf;
 		if(debug && ret!=NULL)
