@@ -66,14 +66,14 @@ import saccubus.util.Stopwatch;
  * @version 1.0
  */
 public class NicoClient {
-	private static final String HTTP_WWW_NICOVIDEO_JP = "http://www.nicovideo.jp/";
+	private static final String HTTP_WWW_NICOVIDEO_JP = "https://www.nicovideo.jp/";
 	private static final String HTTP_WWW_NICOVIDEO_WATCH = HTTP_WWW_NICOVIDEO_JP + "watch/";
 	private static final String HTTP_WWW_NICOVIDEO_USER = HTTP_WWW_NICOVIDEO_JP + "user/";
-	private static final String HTTP_FLAPI_GETFLV = "http://flapi.nicovideo.jp/api/getflv/";
-	private static final String HTTP_FLAPI_GETTHREADKEY = "http://flapi.nicovideo.jp/api/getthreadkey?thread=";
-	private static final String HTTP_FLAPI_GETWAYBACKKEY = "http://flapi.nicovideo.jp/api/getwaybackkey?thread=";
-	private static final String HTTP_EXT_THUMBINFO = "http://ext.nicovideo.jp/api/getthumbinfo/";
-	private static final String HTTP_EXT_THUMBUSER = "http://ext.nicovideo.jp/thumb_user/";
+	private static final String HTTP_FLAPI_GETFLV = "https://flapi.nicovideo.jp/api/getflv/";
+	private static final String HTTP_FLAPI_GETTHREADKEY = "https://flapi.nicovideo.jp/api/getthreadkey?thread=";
+	private static final String HTTP_FLAPI_GETWAYBACKKEY = "https://flapi.nicovideo.jp/api/getwaybackkey?thread=";
+	private static final String HTTP_EXT_THUMBINFO = "https://ext.nicovideo.jp/api/getthumbinfo/";
+	private static final String HTTP_EXT_THUMBUSER = "https://ext.nicovideo.jp/thumb_user/";
 	private final String User;
 	private final String Pass;
 	private static boolean Logged_in = false;
@@ -411,7 +411,7 @@ public class NicoClient {
 	private boolean login() {
 		try {
 			log.print("Trying login...");
-			String url = "https://account.nicovideo.jp/api/v1/login?show_button_twitter=1&site=niconico&show_button_facebook=1";
+			String url = "https://account.nicovideo.jp/api/v1/login";
 			debug("\nÅ°HTTPS<" + url + ">\n");
 			HttpURLConnection con = (HttpsURLConnection) (new URL(url))
 				.openConnection(ConProxy);
@@ -424,7 +424,6 @@ public class NicoClient {
 			debug("Å°Connect: POST,DoOutput,Connection close\n");
 			connect(con);
 			StringBuffer sb = new StringBuffer(4096);
-			sb.append("next_url=/&");
 			sb.append("mail_tel=");
 			sb.append(URLEncoder.encode(User, "Shift_JIS"));
 			sb.append("&password=");
@@ -1052,7 +1051,7 @@ public class NicoClient {
 			sessionData = makeSessionXml(sessionXml, sessionApi, "mp4");
 			log.println("sessionXML save to "+sessionXml.getPath());
 			String url = apiSessionUrl;
-			int index1 = url.indexOf("/","http://".length());
+			int index1 = url.indexOf("/","https://".length());
 			String host_url = url.substring(0, index1);
 			// GET /crossdomain.xml HTTP/1.1
 			// Host: api.dmc.nico:2805
@@ -2663,7 +2662,7 @@ public class NicoClient {
 	private String downloadCommonCommentJson(File file, JLabel status, ConvertStopFlag flag,
 			String back_comment, String postdata){
 		log.print("Getting JSON...");
-		String url = "http://nmsg.nicovideo.jp/api.json/";
+		String url = "https://nmsg.nicovideo.jp/api.json/";
 		InputStream is = null;
 		OutputStream os = null;
 		HttpURLConnection con = null;
@@ -2869,7 +2868,7 @@ public class NicoClient {
 	private String apiUrls;
 	private String sessionData;
 	private String player_id;
-	private String apiSessionUrl = "http://api.dmc.nico:2805/api/sessions";
+	private String apiSessionUrl = "https://api.dmc.nico:2805/api/sessions";
 	private String videoTag;
 	private String recipe_id;
 //	private String t_created_time;
@@ -3539,7 +3538,7 @@ public class NicoClient {
 		if(apiSessionUrl==null
 		 ||(!apiSessionUrl.toLowerCase().contains("session")
 		  &&!apiSessionUrl.toLowerCase().contains("api"))){
-			apiSessionUrl = "http://api.dmc.nico:2805/api/sessions";
+			apiSessionUrl = "https://api.dmc.nico:2805/api/sessions";
 		}
 		debug("\nÅ°apiSessionUrl: "+apiSessionUrl);
 		player_id = m_sessionApi.getAsString("player_id");

@@ -90,7 +90,7 @@ public class HtmlView extends JDialog implements ActionListener {
 		text = text.replaceAll("<", "&lt;")
 			.replaceAll(">", "&gt;")
 			.replaceAll("\n", "<br/>")
-			.replaceAll("http://[a-zA-Z0-9%._\\-\\?=/]+","<a href=\"$0\">$0</a>");
+			.replaceAll("https?://[a-zA-Z0-9%._\\-\\?=/]+","<a href=\"$0\">$0</a>");
 		text = "<html>" + text + "<br/></html>";
 		return text;
 	}

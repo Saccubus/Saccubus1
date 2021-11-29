@@ -378,7 +378,7 @@ public class MainFrame extends JFrame {
 
 	public static final String THUMB_DEFALT_STRING = "<自動>";
 	private static final String MY_MYLIST = "my/mylist";
-	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
+	private static final String VIDEO_URL_PARSER = "https://www.nicovideo.jp/watch/";
 	static final Logger log = Logger.MainLog;
 	static MainFrame MasterMainFrame = null;
 	static final String renameFileMacro = "ファイル名置換マクロ";
@@ -980,7 +980,7 @@ public class MainFrame extends JFrame {
 					new JLabel[]{statusBar, elapsedTimeBar, new JLabel()},
 					log,html5CheckBox.isSelected());
 				Path file = new Path("configNG.xml");
-				String url = "http://ext.nicovideo.jp/api/configurengclient?mode=get";
+				String url = "https://ext.nicovideo.jp/api/configurengclient?mode=get";
 				if (loader.load(url, file)){
 					sendtext("ニコニコ動画のNG設定を保存しました：" + file.getRelativePath());
 				}
@@ -1242,7 +1242,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 		VideoInfoPanel.setLayout(gridBagLayout1);
-		VideoID_TextField.setText("http://www.nicovideo.jp/watch/");
+		VideoID_TextField.setText("https://www.nicovideo.jp/watch/");
 		requestHistory = new HistoryDeque<String>(" [リクエスト履歴終り] ", true);
 		histories[0] = requestHistory;
 		mylistHistory = new HistoryDeque<String>(" [マイリスト履歴終り] ", true);
@@ -1313,7 +1313,7 @@ public class MainFrame extends JFrame {
 					url = treatUrlHttp(url);
 				}
 				if(!url.startsWith("http"))
-					url = "http://www.nicovideo.jp/watch/"+url;
+					url = "https://www.nicovideo.jp/watch/"+url;
 				try {
 					URI uri = URI.create(url);
 					Desktop.getDesktop().browse(uri);
@@ -3356,7 +3356,7 @@ public class MainFrame extends JFrame {
 		sendLoginStatus(status, "ログインチェック中");
 		BrowserInfo.resetBrowserInfo();
 		Path file = Path.mkTemp("mytop");
-		String url = "http://www.nicovideo.jp/my/top";
+		String url = "https://www.nicovideo.jp/my/top";
 		Loader loader = new Loader(getSetting(),
 			new JLabel[]{status, elapsedTimeBar, new JLabel()},log,html5CheckBox.isSelected());
 		if (loader.load(url, file) || loader.isLoggedIn()){
@@ -4704,7 +4704,7 @@ public class MainFrame extends JFrame {
 			ConvertingSetting setting1 = getSetting();
 			if (isMylist){
 				//マイリストページ動画ID解析
-				// url = "http://www/nicovideo.jp/mylist/1234567?watch_harmful=1" など
+				// url = "https://www/nicovideo.jp/mylist/1234567?watch_harmful=1" など
 				mylistHistory.add(input_url);
 				movieList = new StringBuffer();
 				mylistGetter = new MylistGetter(
@@ -4837,13 +4837,13 @@ public class MainFrame extends JFrame {
 		}
 		if(url.startsWith(VIDEO_URL_PARSER)){
 			url = url.substring(VIDEO_URL_PARSER.length());
-		}else if(url.startsWith("http://www.nicovideo.jp/" + MY_MYLIST)
+		}else if(url.startsWith("https://www.nicovideo.jp/" + MY_MYLIST)
 				||url.startsWith(MY_MYLIST)){
 			int index = url.indexOf("/#/");
 			if(index < 0){
-				url = "http://www.nicovideo.jp/api/deflist/list";
+				url = "https://www.nicovideo.jp/api/deflist/list";
 			}else{
-				url = "http://www.nicovideo.jp/api/mylist/list?group_id="+url.substring(index+3);
+				url = "https://www.nicovideo.jp/api/mylist/list?group_id="+url.substring(index+3);
 				//url = url.replace("my/mylist/#/","mylist/");
 			}
 		}else if(!url.startsWith("http")){
@@ -4853,16 +4853,16 @@ public class MainFrame extends JFrame {
 				||url.startsWith("watch/")
 				||url.startsWith("search/")
 				||url.startsWith("tag/")){
-				url = "http://www.nicovideo.jp/" + url;	//may not work
+				url = "https://www.nicovideo.jp/" + url;	//may not work
 			}else if(url.startsWith("lv")){
-				url = "http://live.nicovideo.jp/watch/"+ url;	//may not work
+				url = "https://live.nicovideo.jp/watch/"+ url;	//may not work
 			}else if(url.startsWith("co")){
-				url = "http://com.nicovideo.jp/watch/" + url;	//may not work
+				url = "https://com.nicovideo.jp/watch/" + url;	//may not work
 			}
 		}
-		if(url.startsWith("http://www.nicovideo.jp/tag/")
-			||url.startsWith("http://www.nicovideo.jp/search/")){
-			String keyword = url.replaceFirst("http://www.nicovideo.jp/(search|tag)/", "");
+		if(url.startsWith("https://www.nicovideo.jp/tag/")
+			||url.startsWith("https://www.nicovideo.jp/search/")){
+			String keyword = url.replaceFirst("https://www.nicovideo.jp/(search|tag)/", "");
 			String param = "";
 			int index = keyword.indexOf('?');
 			if (index > 0){
@@ -6732,7 +6732,7 @@ class MainFrame_LoadViewHistory implements ActionListener {
 		status.setText("視聴履歴のロード");
 		Loader loader = new Loader(mainFrame.getSetting(), status, watch);
 		Path file = new Path("myhistory.html");
-		String url = "http://www.nicovideo.jp/my/history";
+		String url = "https://www.nicovideo.jp/my/history";
 		if (loader.load(url, file)){
 			status.setText("視聴履歴をロードしました：" + file.getRelativePath());
 		}
