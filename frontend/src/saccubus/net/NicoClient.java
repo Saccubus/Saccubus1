@@ -94,7 +94,8 @@ public class NicoClient {
 	static final String S_ESCAPE = "\\";
 	static final char C_ESCAPE = '\\';
 	static final String JSON_START = "{&quot;flashvars&quot;:";
-	static final String JSON_START2 = "{&quot;video&quot;:";	// HTML5(beta) 2016.11.12
+	//static final String JSON_START2 = "{&quot;video&quot;:";	// HTML5(beta) 2016.11.12
+	static final String JSON_START2 = "{&quot;ads&quot;:";	// HTML5 2021.12.02
 
 	/**
 	 * ブラウザ共有しないでログイン
@@ -705,20 +706,13 @@ public class NicoClient {
 				log.println(" <" + Path.toUnixPath(titleHtml) + "> saved.");
 			}
 			//Json解析
-			if(ss.contains(JSON_START)){
-				if(extractWatchApiJson(ss, encoding, url)!=null){
-					log.println("video history flash ok.");
-				}
-			}else{
-				log.println("JSON_START not found, try HTML5_JSON");
-				if(ss.contains(JSON_START2)){
-					if(extractDataApiDataJson(ss, encoding, url)!=null){
-						log.println("video history html5 ok.");
-						isHtml5Ok = true;
-					} else {
-						log.println("video history html5 NG.");
-						isHtml5Ok = false;
-					}
+			if(ss.contains(JSON_START2)){
+				if(extractDataApiDataJson(ss, encoding, url)!=null){
+					log.println("video history html5 ok.");
+					isHtml5Ok = true;
+				} else {
+					log.println("video history html5 NG.");
+					isHtml5Ok = false;
 				}
 			}
 //			if(VideoUrl==null || VideoUrl.isEmpty()){
