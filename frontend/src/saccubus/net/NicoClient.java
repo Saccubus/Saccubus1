@@ -3167,6 +3167,7 @@ public class NicoClient {
 			Mson m_video = dataApiMson.get("video");
 			debugPrettyPrint("\nÅ°video: ",m_video);
 			{
+				/*
 				if(altTag.isEmpty()){
 					altTag = m_video.getAsString("id");
 					if(altTag.equals(videoTag))
@@ -3214,7 +3215,8 @@ public class NicoClient {
 					NeedsKey = true;
 					log.println("NeedsKey: "+NeedsKey);
 				}
-				Mson m_dmcInfo = m_video.get("dmcInfo");
+				*/
+				Mson m_dmcInfo = dataApiMson.get("urls");
 				if(!m_dmcInfo.isNull()){
 					debugPrettyPrint("Å°m_dmcInfo: ",m_dmcInfo+"\n");
 					dmcInfo = m_dmcInfo.getAsString();
@@ -3223,10 +3225,16 @@ public class NicoClient {
 				}
 				log.println("isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc());
 				if(serverIsDmc()){
+					String l = dataApiMson.getAsString("duration");
+					try {
+						VideoLength = (int)Integer.valueOf(l);
+					} catch(NumberFormatException e){
+						VideoLength = 0;
+					};
 					dmcVideoLength = VideoLength;
 					log.println("dmcVideoLength: "+dmcVideoLength);
-					Mson m_sessionApi = m_dmcInfo.get("session_api");
-					sessionApi = m_sessionApi.getAsString();
+					Mson m_sessionApi = dataApiMson.get("session");
+					sessionApi = m_sessionApi.getAsString("url");
 					log.println("sessionApi: "+sessionApi);
 					dmcToken = m_sessionApi.getAsString("token");
 					log.println("dmcToken: "+dmcToken);
@@ -3492,7 +3500,7 @@ public class NicoClient {
 
 	private void setFromSessionApi(Mson m_sessionApi){
 		// flash html5 common
-		recipe_id = m_sessionApi.getAsString("recipe_id");
+		recipe_id = m_sessionApi.getAsString("recipeId");
 		debug("\nÅ°recipe_id: "+recipe_id);
 		Mson m_videos = m_sessionApi.get("videos");
 		debug("\nÅ°videos: "+m_videos.getAsString());
@@ -3535,17 +3543,17 @@ public class NicoClient {
 			apiSessionUrl = "https://api.dmc.nico:2805/api/sessions";
 		}
 		debug("\nÅ°apiSessionUrl: "+apiSessionUrl);
-		player_id = m_sessionApi.getAsString("player_id");
+		player_id = m_sessionApi.getAsString("playerId");
 		debug("\nÅ°player_id: "+player_id);
-		service_user_id = m_sessionApi.getAsString("service_user_id");
+		service_user_id = m_sessionApi.getAsString("serviceUserId");
 		debug("\nÅ°service_user_id: "+service_user_id);
 		priority = m_sessionApi.getAsString("priority");
 		debug("\nÅ°priority: "+priority);
 		signature = m_sessionApi.getAsString("signature");
 		debug("\nÅ°signature: "+signature);
-		heartbeat_lifetime = m_sessionApi.getAsString("heartbeat_lifetime");
+		heartbeat_lifetime = m_sessionApi.getAsString("heartbeatLifetime");
 		debug("\nÅ°lifetime: "+heartbeat_lifetime);
-		content_key_timeout = m_sessionApi.getAsString("content_key_timeout");
+		content_key_timeout = m_sessionApi.getAsString("contentKeyTimeout");
 		debug("\nÅ°content_key_timeout: "+content_key_timeout);
 	}
 	public static String unquote(String str) {
