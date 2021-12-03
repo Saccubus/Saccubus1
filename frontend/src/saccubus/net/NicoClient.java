@@ -2862,7 +2862,7 @@ public class NicoClient {
 	private String apiUrls;
 	private String sessionData;
 	private String player_id;
-	private String apiSessionUrl = "https://api.dmc.nico:2805/api/sessions";
+	private String apiSessionUrl = "https://api.dmc.nico/api/sessions";
 	private String videoTag;
 	private String recipe_id;
 //	private String t_created_time;
@@ -3164,87 +3164,34 @@ public class NicoClient {
 				return;
 			}
 			isDmc = "0";
-			Mson m_video = dataApiMson.get("video");
-			debugPrettyPrint("\nÅ°video: ",m_video);
-			{
-				/*
-				if(altTag.isEmpty()){
-					altTag = m_video.getAsString("id");
-					if(altTag.equals(videoTag))
-						altTag = "";
-				}
-				 //2017.04.01
-				if(VideoUrl==null||VideoUrl.isEmpty())
-					VideoUrl = m_video.getAsString("source");
-				if(VideoUrl==null||VideoUrl.isEmpty()){
-					Mson m_smileInfo = m_video.get("smileInfo");
-					if(!m_smileInfo.isNull())
-						VideoUrl = m_smileInfo.getAsString("url");
-				}
-				log.println("VideoUrl: "+VideoUrl);
-				if(Debug){
-					if(VideoUrl.contains("dmc")){
-						log.println("ERROR! VideoUrl: must NOT dmc_video, THIS IS BUG! while smile server exists!\n");
-						return;
-					}
-				}
-				if(size_video_thumbinfo==null){
-					economy = VideoUrl.toLowerCase().contains("low");
-					size_video_thumbinfo = isEco()? size_low : size_high;
-					if(size_video_thumbinfo!=null)
-						log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
-				}
-				ContentType = m_video.getAsString("movieType");
-				log.println("ContentType: "+ContentType);
-				if(VideoTitle==null || VideoTitle.isEmpty()){
-					VideoTitle = m_video.getAsString("title");
-					log.println("VideoTitle: "+VideoTitle);
-					VideoTitle = safeFileName(VideoTitle);
-				}
-				log.println("VideoTitle(safe): "+VideoTitle);
-				String l = m_video.getAsString("duration");
+			Mson m_dmcInfo = dataApiMson.get("urls");
+			if(!m_dmcInfo.isNull()){
+				debugPrettyPrint("Å°m_dmcInfo: ",m_dmcInfo+"\n");
+				dmcInfo = m_dmcInfo.getAsString();
+				debug("Å°dmcInfo: "+dmcInfo+"\n");
+				isDmc = "1";
+			}
+			log.println("isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc());
+			if(serverIsDmc()){
+				String l = dataApiMson.getAsString("duration");
 				try {
 					VideoLength = (int)Integer.valueOf(l);
 				} catch(NumberFormatException e){
 					VideoLength = 0;
 				};
-				log.println("VideoLength: "+VideoLength);
-				String isOfficial = m_video.getAsString("isOfficial");
-				debug("Å°isOfficial: "+isOfficial+"\n");
-				if(isOfficial!=null && isOfficial.equals("true")){
-					NeedsKey = true;
-					log.println("NeedsKey: "+NeedsKey);
-				}
-				*/
-				Mson m_dmcInfo = dataApiMson.get("urls");
-				if(!m_dmcInfo.isNull()){
-					debugPrettyPrint("Å°m_dmcInfo: ",m_dmcInfo+"\n");
-					dmcInfo = m_dmcInfo.getAsString();
-					debug("Å°dmcInfo: "+dmcInfo+"\n");
-					isDmc = "1";
-				}
-				log.println("isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc());
-				if(serverIsDmc()){
-					String l = dataApiMson.getAsString("duration");
-					try {
-						VideoLength = (int)Integer.valueOf(l);
-					} catch(NumberFormatException e){
-						VideoLength = 0;
-					};
-					dmcVideoLength = VideoLength;
-					log.println("dmcVideoLength: "+dmcVideoLength);
-					Mson m_sessionApi = dataApiMson.get("session");
-					sessionApi = m_sessionApi.getAsString("url");
-					log.println("sessionApi: "+sessionApi);
-					dmcToken = m_sessionApi.getAsString("token");
-					log.println("dmcToken: "+dmcToken);
-					dmcTokenUnEscape =
-						dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
-					debug("Å°dmcTokenUnEscape:\n "+dmcTokenUnEscape+"\n");
-					//
-					setFromSessionApi(m_sessionApi);
-					debug("\n");
-				}
+				dmcVideoLength = VideoLength;
+				log.println("dmcVideoLength: "+dmcVideoLength);
+				Mson m_sessionApi = dataApiMson.get("session");
+				sessionApi = m_sessionApi.getAsString("url");
+				log.println("sessionApi: "+sessionApi);
+				dmcToken = m_sessionApi.getAsString("token");
+				log.println("dmcToken: "+dmcToken);
+				dmcTokenUnEscape =
+					dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
+				debug("Å°dmcTokenUnEscape:\n "+dmcTokenUnEscape+"\n");
+				//
+				setFromSessionApi(m_sessionApi);
+				debug("\n");
 			}
 			Mson m_thread = dataApiMson.get("thread");
 			debugPrettyPrint("Å°thread: ",m_thread);
@@ -3518,19 +3465,8 @@ public class NicoClient {
 		debug("\nÅ°audiolist: "+audiolist);
 		Mson m_apiUrls;
 		Mson m_apiUrls0;
-		m_apiUrls = m_sessionApi.get("api_urls");
-		if(m_apiUrls.isNull()){
-			m_apiUrls = m_sessionApi.get("urls");
-		}
+		m_apiUrls = m_sessionApi.get("urls");
 		if(!m_apiUrls.isNull()){
-			apiUrls = m_apiUrls.getAsString();
-			debug("\nÅ°apiUrls: "+apiUrls);
-			m_apiUrls0 = m_apiUrls.get(0);
-			if(!m_apiUrls0.isNull()){
-				debug("\nÅ°apiUrls[0]: "+m_apiUrls0);
-				apiSessionUrl = m_apiUrls0.getAsString("url");
-			}
-		}else{
 			m_apiUrls0 = m_sessionApi.get("url");
 			debug("\nÅ°apiUrls[0]: "+m_apiUrls0);
 			if(!m_apiUrls0.isNull()){
@@ -3540,7 +3476,7 @@ public class NicoClient {
 		if(apiSessionUrl==null
 		 ||(!apiSessionUrl.toLowerCase().contains("session")
 		  &&!apiSessionUrl.toLowerCase().contains("api"))){
-			apiSessionUrl = "https://api.dmc.nico:2805/api/sessions";
+			apiSessionUrl = "https://api.dmc.nico/api/sessions";
 		}
 		debug("\nÅ°apiSessionUrl: "+apiSessionUrl);
 		player_id = m_sessionApi.getAsString("playerId");
