@@ -2656,7 +2656,8 @@ public class NicoClient {
 	private String downloadCommonCommentJson(File file, JLabel status, ConvertStopFlag flag,
 			String back_comment, String postdata){
 		log.print("Getting JSON...");
-		String url = "https://nmsg.nicovideo.jp/api.json/";
+		//String url = "https://nmsg.nicovideo.jp/api.json/";
+		String url = MsgUrl + "/api.json/thread";	//2021.12.04
 		InputStream is = null;
 		OutputStream os = null;
 		HttpURLConnection con = null;
@@ -2859,7 +2860,7 @@ public class NicoClient {
 	private ArrayList<String> videolist;
 	//private String audios;
 	private ArrayList<String> audiolist;
-	private String apiUrls;
+//	private String apiUrls;
 	private String sessionData;
 	private String player_id;
 	private String apiSessionUrl = "https://api.dmc.nico/api/sessions";
@@ -3193,7 +3194,7 @@ public class NicoClient {
 				setFromSessionApi(m_sessionApi);
 				debug("\n");
 			}
-			Mson m_thread = dataApiMson.get("thread");
+			Mson m_thread = dataApiMson.get("threads");
 			debugPrettyPrint("■thread: ",m_thread);
 			Mson m_thread_id = m_thread.get("thread_id");
 			debug("\n■thread_id: "+m_thread_id+"\n");
@@ -3229,30 +3230,15 @@ public class NicoClient {
 					log.println("nicosID: "+nicosID);
 				}
 			}else{
-				Mson m_ids = m_thread.get("ids");
-				ThreadID = m_ids.getAsString("default");
+				Mson m_ids = dataApiMson.get("threads");
+				ThreadID = m_ids.get(0).getAsString("id");
 				log.println("ThreadID: "+ThreadID);
-				Mson m_community = m_ids.get("community");
-				if(!m_community.isNull()){
-					optionalThreadID = m_community.getAsString();
-					if(videoTag.equals(optionalThreadID)){
-						// html5の場合逆になっているようだ
-						// ThreadKey が引けるのは メインthreadの方だけ
-						// chanelの場合 メイン=チャンネル=threadKey optionalは何もない
-						// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
-						optionalThreadID = ThreadID;
-						ThreadID = videoTag;
-						log.println("reset ThreadID: "+ThreadID);
-					}
-					log.println("OptionalThreadID: "+optionalThreadID);
-					NeedsKey = true;
-				}
 				Mson m_nicos = m_ids.get("nicos");
 				if(!m_nicos.isNull()){
 					nicosID = m_nicos.getAsString();
 					log.println("nicosID: "+nicosID);
 				}
-				MsgUrl = m_thread.getAsString("serverUrl");
+				MsgUrl = m_ids.getAsString("server");
 				log.println("MsgUrl: "+MsgUrl);
 			}
 			log.println("NeedsKey: "+NeedsKey);
@@ -3262,9 +3248,9 @@ public class NicoClient {
 			Premium = m_viewer.getAsString("isPremium");
 			log.println("Premium: "+Premium);
 			nicomap.put("is_premium", Premium);
-			Mson m_context = dataApiMson.get("context");
+			Mson m_context = dataApiMson.get("comment");
 			if(userKey==null || userKey.isEmpty()){
-				userKey = m_context.getAsString("userkey");
+				userKey = m_context.getAsString("userKey");
 				log.println("userkey(html5): "+userKey);
 			}
 			debug("\n");
@@ -3310,13 +3296,13 @@ public class NicoClient {
 					ownerFilter = null;
 			}
 			debug("■}\n");
-			economy = VideoUrl.toLowerCase().contains("low");
-			log.println("economy: "+economy +" ,isEco(): "+ isEco());
-			if(size_video_thumbinfo==null){
-				size_video_thumbinfo = economy? size_low : size_high;
-				if(size_video_thumbinfo!=null)
-					log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
-			}
+			//economy = VideoUrl.toLowerCase().contains("low");
+			//log.println("economy: "+economy +" ,isEco(): "+ isEco());
+			//if(size_video_thumbinfo==null){
+			//	size_video_thumbinfo = economy? size_low : size_high;
+			//	if(size_video_thumbinfo!=null)
+			//		log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
+			//}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
