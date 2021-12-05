@@ -121,7 +121,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		final ArrayList<String[]> plist = new ArrayList<String[]>();
 		//start here.
 		String autolist = "auto";
-		Path file = Path.mkTemp(url.replace("http://","").replace("nicovideo.jp/","")
+		Path file = Path.mkTemp(url.replace("https://","").replace("nicovideo.jp/","")
 				.replaceAll("[/\\:\\?=\\&]+", "_") + ".html");
 		Loader loader = new Loader(Setting, status3, log, Setting.isHtml5());
 		gate = Gate.open(id,log);
@@ -281,7 +281,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				//別の抽出
 				// <a href="watch/sm999999">タイトル</a>
 				map.clear();
-				regex = "<a +href=\"(http://www.nicovideo.jp/)?watch/((s[a-z]|n[a-z])?[1-9][0-9]*)\"[^>]*>([^<]+)</a>";
+				regex = "<a +href=\"(https://www.nicovideo.jp/)?watch/((s[a-z]|n[a-z])?[1-9][0-9]*)\"[^>]*>([^<]+)</a>";
 				p = Pattern.compile(regex);
 				m = p.matcher(text);
 				while(m.find()){

@@ -3174,7 +3174,8 @@ public class NicoClient {
 			}
 			log.println("isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc());
 			if(serverIsDmc()){
-				String l = dataApiMson.getAsString("duration");
+				Mson m_video = dataApiMson.get2("video");
+				String l = m_video.getAsString("duration");
 				try {
 					VideoLength = (int)Integer.valueOf(l);
 				} catch(NumberFormatException e){
@@ -3242,13 +3243,13 @@ public class NicoClient {
 				log.println("MsgUrl: "+MsgUrl);
 			}
 			log.println("NeedsKey: "+NeedsKey);
-			Mson m_viewer = dataApiMson.get("viewer");
+			Mson m_viewer = dataApiMson.get2("viewer");
 			UserID = m_viewer.getAsString("id");
 			debug("Å°UserID: "+UserID+"\n");
 			Premium = m_viewer.getAsString("isPremium");
 			log.println("Premium: "+Premium);
 			nicomap.put("is_premium", Premium);
-			Mson m_context = dataApiMson.get("comment");
+			Mson m_context = dataApiMson.get2("comment");
 			if(userKey==null || userKey.isEmpty()){
 				userKey = m_context.getAsString("userKey");
 				log.println("userkey(html5): "+userKey);
@@ -3296,13 +3297,13 @@ public class NicoClient {
 					ownerFilter = null;
 			}
 			debug("Å°}\n");
-			//economy = VideoUrl.toLowerCase().contains("low");
-			//log.println("economy: "+economy +" ,isEco(): "+ isEco());
-			//if(size_video_thumbinfo==null){
-			//	size_video_thumbinfo = economy? size_low : size_high;
-			//	if(size_video_thumbinfo!=null)
-			//		log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
-			//}
+			economy = dataApiMson.get("isPeakTime").getAsBoolean();
+			log.println("economy: "+economy +" ,isEco(): "+ isEco());
+			if(size_video_thumbinfo==null){
+				size_video_thumbinfo = economy? size_low : size_high;
+				if(size_video_thumbinfo!=null)
+					log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

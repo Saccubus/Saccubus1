@@ -39,6 +39,9 @@ public class Mson {
 	public String getAsString(String key){
 		return get(key).getAsString();
 	}
+	public boolean getAsBoolean(){
+		return json.getAsBoolean();
+	}
 	final String S_QUOTE2 = "\"";
 	private String unquote(String str) {
 		if(str==null) return null;
@@ -126,6 +129,13 @@ public class Mson {
 					return sje;
 			}
 			return MSON_NULL;
+		}
+		return MSON_NULL;
+	}
+	public Mson get2(String key) { // Å‰‚Ì1ŠK‘w‚¾‚¯’²‚×‚é
+		if(isObject()) {
+			if (json.getAsJsonObject().has(key))
+				return new Mson(json.getAsJsonObject().get(key));
 		}
 		return MSON_NULL;
 	}
