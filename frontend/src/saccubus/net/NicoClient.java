@@ -1989,7 +1989,7 @@ public class NicoClient {
 				}
 			}
 			fos = new FileOutputStream(file, isAppend);
-			con = urlConnect(MsgUrl, "POST", Cookie, true, true, "keep-alive",true);
+			con = urlConnect(MsgUrl+"/api", "POST", Cookie, true, true, "keep-alive",true);	//2021.12.05
 			os = con.getOutputStream();
 			/*
 			 * 投稿者コメントは2006versionを使用するらしい。「いんきゅばす1.7.0」
@@ -2657,7 +2657,7 @@ public class NicoClient {
 			String back_comment, String postdata){
 		log.print("Getting JSON...");
 		//String url = "https://nmsg.nicovideo.jp/api.json/";
-		String url = MsgUrl + "/api.json/thread";	//2021.12.04
+		String url = MsgUrl + "/api.json";	//2021.12.05
 		InputStream is = null;
 		OutputStream os = null;
 		HttpURLConnection con = null;
