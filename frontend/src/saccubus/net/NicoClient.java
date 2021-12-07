@@ -3232,11 +3232,28 @@ public class NicoClient {
 				}
 			}else{
 				Mson m_ids = dataApiMson.get("threads");
-				ThreadID = m_ids.get(0).getAsString("id");
+				//log.println("label(1): "+m_ids.get(1).getAsString("label"));
+				ThreadID = m_ids.get(1).getAsString("id");
 				log.println("ThreadID: "+ThreadID);
+				Mson m_community = m_ids.get(2);
+				//log.println("label(2): "+m_ids.get(2).getAsString("label"));
+				if(!m_community.isNull() && m_ids.get(2).getAsString("label").equals("community")){
+					optionalThreadID = m_community.getAsString("id");
+					if(videoTag.equals(optionalThreadID)){
+						// html5の場合逆になっているようだ
+						// ThreadKey が引けるのは メインthreadの方だけ
+						// chanelの場合 メイン=チャンネル=threadKey optionalは何もない
+						// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
+						optionalThreadID = ThreadID;
+						ThreadID = videoTag;
+						log.println("reset ThreadID: "+ThreadID);
+					}
+					log.println("OptionalThreadID: "+optionalThreadID);
+					NeedsKey = true;
+				}
 				Mson m_nicos = m_ids.get("nicos");
 				if(!m_nicos.isNull()){
-					nicosID = m_nicos.getAsString();
+					nicosID = m_nicos.getAsString("id");
 					log.println("nicosID: "+nicosID);
 				}
 				MsgUrl = m_ids.getAsString("server");
