@@ -199,11 +199,12 @@ public class NicoJsonParser {
 				}
 				Mson m = new Mson(value);
 				String contents;
-				char p;	// p= 0,1,2,3,4 固定
+				char p;	// p= 0,1,2,3,4,5,6 固定
 				// kind :"user" 一般コメント又はコミュニティコメント(p=0,1)
-				// kind :"owner" 投稿者コメント抽出(P=2のみ, fork==1のみ)
-				// kind :"oprional" オプショナルスレッド抽出(p=3,4のみ)
+				// kind :"owner" 投稿者コメント抽出(p=4のみ, fork==1のみ)
+				// kind :"oprional" オプショナルスレッド抽出(p=5,6のみ)
 				// kind :"nicos" ニコスコメント抽出(p=???)
+				// kind :"easy" かんたんコメント抽出(p=2.3のみ, fork==2のみ)
 				if(key.equals("ping")){
 					// コンテンツ区切り
 					contents = xmlContents(m);
@@ -219,15 +220,19 @@ public class NicoJsonParser {
 							if(outflag) log.println(kind+"_comment p="+p);
 						}else
 						if(kind.equals("owner")){
-							outflag = p == '2';
+							outflag = p == '4';
 							if(outflag) log.println(kind+"_comment p="+p);
 						}else
 						if(kind.equals("optional")){
-							outflag = p == '3' || p == '4';
+							outflag = p == '5' || p == '6';
 							if(outflag) log.println(kind+"_comment p="+p);
 						}else
 						if(kind.equals("nicos")){
 							outflag = true;
+							if(outflag) log.println(kind+"_comment p="+p);
+						}else
+						if(kind.equals("easy")){
+							outflag = p == '2' || p == '3';
 							if(outflag) log.println(kind+"_comment p="+p);
 						}else{
 							outflag = p == '0' || p == '1';

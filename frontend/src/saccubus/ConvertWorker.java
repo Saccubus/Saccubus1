@@ -118,15 +118,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 //	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
 	public static final String OWNER_EXT = "[Owner].xml";	// 投稿者コメントサフィックス
 	public static final String OPTIONAL_EXT = "{Optional}.xml";	// オプショナルスレッドサフィックス
+	public static final String EASY_EXT = "{Easy}.xml";	// かんたんコメントサフィックス
 	public static final String NICOS_EXT = "{Nicos}.xml";	//ニコスコメントサフィックス
 	static final String JSON_EXT = "_commentJSON.txt";
 	public static final String TMP_APPEND_EXT = "_all_comment.xml";
+	public static final String TMP_APPEND_EASY_EXT = "_all_easy.xml";
 	public static final String TMP_APPEND_OPTIONAL_EXT = "_all_optional.xml";
 	public static final String TMP_APPEND_NICOS_EXT = "_all_nicos.xml";
 	private static final String TMP_COMBINED_XML = "_tmp_comment.xml";
 	private static final String TMP_COMBINED_XML2 = "_tmp_optional.xml";
 	private static final String TMP_COMBINED_XML3 = "_tmp_comment2.xml";
 	private static final String TMP_COMBINED_XML4 = "_tmp_optiona2.xml";
+	private static final String TMP_COMBINED_XML5 = "_tmp_easy.xml";
+	private static final String TMP_COMBINED_XML6 = "_tmp_easy2.xml";
+
 	static final String TMP_LOG_FRONTEND = "frontend.txt";
 	private static final String THUMB_INFO = "_thumb_info";
 	private String OtherVideo;
@@ -239,10 +244,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File OwnerCommentFile = null;
 	private File OptionalThreadFile = null;
 	private File nicosCommentFile = null;
+	private File EasyCommentFile = null;
 	private File ConvertedVideoFile = null;
 	private File CommentMiddleFile = null;
 	private File OwnerMiddleFile = null;
 	private File OptionalMiddleFile = null;
+	private File EasyMiddleFile = null;
 	private FFmpeg ffmpeg = null;
 	private File VhookNormal = null;
 	private File VhookWide = null;
@@ -289,8 +296,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private String addOption;
 	private File CombinedCommentFile;
 	private File CombinedOptionalFile;
+	private File CombinedEasyFile;
 	private File appendCommentFile;
 	private File appendOptionalFile;
+	private File appendEasyFile;
 	//private File lowVideoFile;
 	//private File dmcVideoFile;
 	private File resumeDmcFile;
@@ -1487,6 +1496,60 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
 			dateUserFirst = getDateUserFirst(CommentFile);
 			sendtext("コメントのダウンロード終了");
+
+			sendtext("かんたんコメントの保存");
+			if (CommentFile!=null){
+				EasyCommentFile = Path.getReplacedExtFile(CommentFile, EASY_EXT);
+				backup = false;
+				appendEasyFile = mkTemp(TMP_APPEND_EASY_EXT);
+				// 前処理
+				if(EasyCommentFile.exists()){
+					backup = Path.fileCopy(EasyCommentFile, appendEasyFile);
+				}
+				target = null;
+				if(Setting.enableCommentXml()){
+					sendtext("かんたんコメントのダウンロード開始中");
+					//target = client.getOptionalThread(
+					//	OptionalThreadFile, Status, optionalThreadID, back_comment, Time, StopFlag,
+					//	Setting.getCommentIndex(),isAppendComment());
+					//if (stopFlagReturn()) {
+					//	result = "54";
+					//	return false;
+					//}
+					//if (target == null)
+					//	sendtext("かんたんコメントのダウンロードに失敗 " + client.getExtraError());
+				}
+				// commentJsonはダウンロード済み
+				if(target == null && commentJson != null){
+					if(getJsonParser().commentJson2xml(commentJson, EasyCommentFile, "easy", isAppendComment()))
+						target = EasyCommentFile;
+					log.println("変換 easyコメントJSON: "+getJsonParser().getChatCount());
+				}
+				if(target == null){
+					sendtext("かんたんコメントの取得に失敗 " + client.getExtraError());
+					if(backup)
+						Path.move(appendEasyFile, EasyCommentFile);
+					result = "55";
+					return false;
+				}
+				backup = Path.fileCopy(EasyCommentFile, appendEasyFile);
+				filelist.clear();
+				filelist.add(EasyCommentFile);
+				sendtext("かんたんコメント整理中");
+				if (!CombineXML.combineXML(filelist, EasyCommentFile, log)){
+					sendtext("かんたんコメントが整理出来ませんでした");
+					if(backup)
+						Path.move(appendEasyFile, EasyCommentFile);
+					result = "5B";
+					return false;
+				}
+				if (dateUserFirst.isEmpty()) {
+					//ファイルの最初のdate="integer"を探して dateUserFirst にセット
+					dateUserFirst = getDateUserFirst(EasyCommentFile);
+				}
+				sendtext("かんたんコメントの保存終了");
+			}
+
 			optionalThreadID = client.getOptionalThreadID();
 			sendtext("オプショナルスレッドの保存");
 			if (optionalThreadID != null && !optionalThreadID.isEmpty() && CommentFile!=null ){

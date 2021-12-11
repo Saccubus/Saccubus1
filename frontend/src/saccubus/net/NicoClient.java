@@ -2281,10 +2281,12 @@ public class NicoClient {
 			String optwaybackkey = null;
 			if(threadkey==null || threadkey.isEmpty()){
 				//ユーザー動画 過去ログ
-				//										isleaf, needs_key, isOwner, wayback
-				sb.append(postJsonData(p++, thread, userKey, false, false, false, waybackkey));
-				sb.append(postJsonData(p++, thread, userKey, true, false, false, waybackkey));
-				sb.append(postJsonData(p++, thread, userKey, false, false, true, waybackkey));
+				//										isleaf, needs_key, isOwner, fork, wayback
+				sb.append(postJsonData(p++, thread, userKey, false, false, false, "0", waybackkey));
+				sb.append(postJsonData(p++, thread, userKey, true, false, false, "0", waybackkey));
+				sb.append(postJsonData(p++, thread, userKey, false, false, false, "2", waybackkey));
+				sb.append(postJsonData(p++, thread, userKey, true, false, false, "2", waybackkey));
+				sb.append(postJsonData(p++, thread, userKey, false, false, true, "1", waybackkey));
 			}else{
 				//コミュニティ動画
 				if(!thread.equals(succeededKeyThread)){
@@ -2297,31 +2299,35 @@ public class NicoClient {
 						waybackkey = WayBackKey;
 					}
 				}
-				//										isleaf, needs_key, isOwner, wayback
-				sb.append(postJsonData(p++, thread, threadkey, false, true, false, waybackkey));
-				sb.append(postJsonData(p++, thread, threadkey, true, true, false, waybackkey));
-				sb.append(postJsonData(p++, thread, threadkey, false, true, true, waybackkey));
+				//										isleaf, needs_key, isOwner, fork, wayback
+				sb.append(postJsonData(p++, thread, threadkey, false, true, false, "0", waybackkey));
+				sb.append(postJsonData(p++, thread, threadkey, true, true, false, "0", waybackkey));
+				sb.append(postJsonData(p++, thread, threadkey, false, true, false, "2", waybackkey));
+				sb.append(postJsonData(p++, thread, threadkey, true, true, false, "2", waybackkey));
+				sb.append(postJsonData(p++, thread, threadkey, false, true, true, "1", waybackkey));
 				if(optional!=null && !optional.isEmpty()){
 					// 過去ログ オプショナルスレッドあり
 					if(isWayback(time, optional)){
 						optwaybackkey = WayBackKey;
 					}
-					sb.append(postJsonData(p++, optional, userKey, false, false, false, optwaybackkey));
-					sb.append(postJsonData(p++, optional, userKey, true, false, false, optwaybackkey));
+					sb.append(postJsonData(p++, optional, userKey, false, false, false, "0", optwaybackkey));
+					sb.append(postJsonData(p++, optional, userKey, true, false, false, "0", optwaybackkey));
 				}
 			}
 		}
 		else
 		if(threadkey==null || threadkey.isEmpty()){
 			//ユーザー動画
-			//										isleaf, needs_key, isOwner, wayback
-			sb.append(postJsonData(p++, thread, userKey, false, false, false, null));
-			sb.append(postJsonData(p++, thread, userKey, true, false, false, null));
-			sb.append(postJsonData(p++, thread, userKey, false, false, true, null));
+			//										isleaf, needs_key, isOwner, fork, wayback
+			sb.append(postJsonData(p++, thread, userKey, false, false, false, "0", null));
+			sb.append(postJsonData(p++, thread, userKey, true, false, false, "0", null));
+			sb.append(postJsonData(p++, thread, userKey, false, false, false, "2", null));
+			sb.append(postJsonData(p++, thread, userKey, true, false, false, "2", null));
+			sb.append(postJsonData(p++, thread, userKey, false, false, true, "1", null));
 			if(optional!=null && !optional.isEmpty()){
 				// this case does not exist?;
-				sb.append(postJsonData(p++, optional, userKey, false, false, false, null));
-				sb.append(postJsonData(p++, optional, userKey, true, false, false, null));
+				sb.append(postJsonData(p++, optional, userKey, false, false, false, "0", null));
+				sb.append(postJsonData(p++, optional, userKey, true, false, false, "0", null));
 			}
 		}else{
 			//コミュニティ動画
@@ -2330,12 +2336,15 @@ public class NicoClient {
 					optional = thread;
 				thread = succeededKeyThread;
 			}
-			sb.append(postJsonData(p++, thread, threadkey, false, true, false, null));
-			sb.append(postJsonData(p++, thread, threadkey, true, true, false, null));
-			sb.append(postJsonData(p++, thread, threadkey, false, true, true, null));
+			//										isleaf, needs_key, isOwner, fork, wayback
+			sb.append(postJsonData(p++, thread, threadkey, false, true, false, "0", null));
+			sb.append(postJsonData(p++, thread, threadkey, true, true, false, "0", null));
+			sb.append(postJsonData(p++, thread, threadkey, false, true, false, "2", null));
+			sb.append(postJsonData(p++, thread, threadkey, true, true, false, "2", null));
+			sb.append(postJsonData(p++, thread, threadkey, false, true, true, "1", null));
 			if(optional!=null && !optional.isEmpty()){
-				sb.append(postJsonData(p++, optional, userKey, false, false, false, null));
-				sb.append(postJsonData(p++, optional, userKey, true, false, false, null));
+				sb.append(postJsonData(p++, optional, userKey, false, false, false, "0", null));
+				sb.append(postJsonData(p++, optional, userKey, true, false, false, "0", null));
 			}
 		}
 		sb.append(",{\"ping\":{\"content\":\"rf:0\"}}]");
@@ -2422,7 +2431,7 @@ public class NicoClient {
 		return sb.substring(0);
 	}
 	private String postJsonData(int n, String thread, String key,
-			boolean isleaf, boolean needs_key, boolean isOwner, String waybackkey){
+			boolean isleaf, boolean needs_key, boolean isOwner, String fork, String waybackkey){
 		StringBuilder sb = new StringBuilder();
 		sb.append(",{\"ping\":{\"content\":\"ps:"+n+"\"}}");
 		if(!isleaf)
@@ -2437,6 +2446,7 @@ public class NicoClient {
 			if(!isleaf){	//leafでなければ2009年バージョン,leafにはバージョンを付けない
 				sb.append(",\"version\":\"20090904\"");
 			}
+			sb.append(",\"fork\":\""+fork+"\"");	//1
 			sb.append(",\"language\":0");	//一般コメのみ
 		}
 		if(waybackkey!=null){
@@ -2452,7 +2462,7 @@ public class NicoClient {
 			sb.append(",\"with_global\":1");
 		else
 			sb.append(",\"content\":\"0-"+((VideoLength+59)/60)+":100,"+backcomment+"\"");	//0-10:100,1000
-		sb.append(",\"scores\":1,\"nicoru\":1");	//nicoru:1実験
+		sb.append(",\"scores\":1,\"nicoru\":3");	//nicoru:1実験 3.2021/3～？
 		if(waybackkey!=null){
 			if(key!=null && !key.isEmpty()){
 				if(needs_key){
