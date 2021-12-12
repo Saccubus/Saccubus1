@@ -249,7 +249,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File CommentMiddleFile = null;
 	private File OwnerMiddleFile = null;
 	private File OptionalMiddleFile = null;
-	private File EasyMiddleFile = null;
 	private FFmpeg ffmpeg = null;
 	private File VhookNormal = null;
 	private File VhookWide = null;
@@ -2408,6 +2407,123 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return true;
 	}
 
+	private boolean convertEasyComment(){
+		sendtext("かんたんコメントの中間ファイルへの変換中");
+		log.println(gettext());
+		File folder = Setting.getCommentFixFileNameFolder();
+		ArrayList<File> filelist = new ArrayList<File>();
+		String optext;
+		if (isConvertWithComment()) {
+			if (isCommentFixFileName()) {
+				if (Setting.isAddTimeStamp() && !isAppendComment()) {
+					// フォルダ指定時、複数のオプショナルスレッド（過去ログ）があるかも
+					optext = EASY_EXT;
+					ArrayList<String> pathlist = detectFilelistFromOptionalThread(folder, optext);
+					if (pathlist == null || pathlist.isEmpty()){
+						sendtext(Tag + ": かんたんコメント・過去ログが存在しません。");
+						log.println(gettext());
+						log.println("No easy comment.");
+						EasyCommentFile = null;
+						return true;
+					}
+					// VideoTitle は見つかった。
+					for (String path: pathlist){
+						filelist.add(new File(folder, path));
+					}
+					EasyCommentFile = mkTemp(TMP_COMBINED_XML5);
+					sendtext("かんたんコメント結合中");
+					log.println(gettext());
+					if (!CombineXML.combineXML(filelist, EasyCommentFile, log)){
+						sendtext("かんたんコメントが結合出来ませんでした（バグ？）");
+						result = "77";
+						//return false;
+						EasyCommentFile = null;
+						return true;
+					}
+					if (dateUserFirst.isEmpty()) {
+						//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
+						dateUserFirst = getDateUserFirst(EasyCommentFile);
+					}
+					listOfCommentFile.addAll(filelist);
+				} else {
+					// フォルダ指定時、オプショナルスレッドは１つ
+					if(isSaveComment()){
+						if(EasyCommentFile==null){
+							return true;
+						}
+					}else{
+						// フォルダ指定時、オプショナルスレッドを検索
+						optext = EASY_EXT;
+						String filename = detectTitleFromOptionalThread(folder, optext);
+						if (filename == null || filename.isEmpty()){
+							sendtext(Tag + ": かんたんコメントがフォルダに存在しません。");
+							log.println(gettext());
+							log.println("No easy comment.");
+							EasyCommentFile = null;
+							return true;
+						}
+						EasyCommentFile = new File(folder, filename);
+					}
+					if (dateUserFirst.isEmpty()) {
+						//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
+						dateUserFirst = getDateUserFirst(EasyCommentFile);
+					}
+				}
+			} else {
+				if(isSaveComment()){
+					// ファイル指定の時、オプショナルスレッドは１つ
+					if(EasyCommentFile==null){
+						return true;
+					}
+				}else{
+					// ファイル指定の時検索
+					optext = EASY_EXT;
+					EasyCommentFile = Path.getReplacedExtFile(CommentFile, optext);
+					if (!EasyCommentFile.exists()){
+						sendtext("かんたんコメントが存在しません。");
+						log.println(gettext());
+						log.println("No easy comment.");
+						EasyCommentFile = null;
+						return true;
+					}
+				}
+				if (dateUserFirst.isEmpty()) {
+					//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
+					dateUserFirst = getDateUserFirst(EasyCommentFile);
+				}
+			}
+			//combine ファイル内ダブリも削除
+			filelist.clear();
+			if(!EasyCommentFile.canRead()||EasyCommentFile.length()==0){
+				// But OK!
+				return true;
+			}
+			filelist.add(EasyCommentFile);
+			filelist.add(CombinedCommentFile);
+			CombinedEasyFile = mkTemp(TMP_COMBINED_XML6);
+			sendtext("コメント・かんたんコメントマージ中");
+			log.println(gettext());
+			if (!CombineXML.combineXML(filelist, CombinedEasyFile, log)){
+				sendtext("コメント・かんたんコメントがマージ出来ませんでした");
+				result = "77";
+			//	return false;
+				return true;
+			}
+			CommentMiddleFile = mkTemp(TMP_COMMENT);
+			if(!convertToCommentMiddle(CombinedEasyFile, CommentMiddleFile, isNicos)){
+				sendtext("コメント変換に失敗");
+				CommentMiddleFile = null;
+				result = "76";
+				return false;
+			}
+			if(!CommentMiddleFile.canRead()){
+				CommentMiddleFile = null;
+				// But OK!
+			}
+		}
+		return true;
+	}
+
 	private boolean convertOwnerComment(){
 		sendtext("投稿者コメントの中間ファイルへの変換中");
 		File folder = Setting.getCommentFixFileNameFolder();
@@ -2972,6 +3088,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 			//stopwatch.show();
 			if (!convertComment() || stopFlagReturn()) {
+				return result;
+			}
+
+			//stopwatch.show();
+			if (!convertEasyComment() || stopFlagReturn()) {
 				return result;
 			}
 
@@ -5000,6 +5121,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			String path = list[i];
 			if (!path.endsWith(".xml")
 					|| path.endsWith(OWNER_EXT)
+					|| path.endsWith(EASY_EXT)
 					|| path.endsWith(OPTIONAL_EXT)
 					|| path.endsWith(NICOS_EXT)){
 				continue;
@@ -5065,6 +5187,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		for (String path : list){
 			if (!path.endsWith(".xml")
 					|| path.endsWith(OWNER_EXT)
+					|| path.endsWith(EASY_EXT)
 					|| path.endsWith(OPTIONAL_EXT)
 					|| path.endsWith(NICOS_EXT)){
 				continue;

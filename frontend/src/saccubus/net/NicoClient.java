@@ -3261,11 +3261,11 @@ public class NicoClient {
 					log.println("OptionalThreadID: "+optionalThreadID);
 					NeedsKey = true;
 				}
-				Mson m_nicos = m_ids.get("nicos");
-				if(!m_nicos.isNull()){
-					nicosID = m_nicos.getAsString("id");
-					log.println("nicosID: "+nicosID);
-				}
+				//Mson m_nicos = m_ids.get("nicos");
+				//if(!m_nicos.isNull()){
+				//	nicosID = m_nicos.getAsString("id");
+				//	log.println("nicosID: "+nicosID);
+				//}
 				MsgUrl = m_ids.getAsString("server");
 				log.println("MsgUrl: "+MsgUrl);
 			}
