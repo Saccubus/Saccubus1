@@ -3131,6 +3131,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				deleteFile(OwnerMiddleFile);
 				deleteFile(OptionalMiddleFile);
 				deleteFile(CombinedCommentFile);
+				deleteFile(CombinedEasyFile);
 				deleteFile(CombinedOptionalFile);
 				return result;
 			}

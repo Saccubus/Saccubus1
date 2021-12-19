@@ -48,9 +48,28 @@ public class CombineXML {
 				}
 				System.out.print(filename + ". ");
 				String text = Path.readAllText(file, "UTF-8");
-				String rexp = "(</packet>.*<\\?xml [^>]*>.?<packet>|[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F])";
+				StringBuilder sb = new StringBuilder();
+				if (text.startsWith("\uFEFF"))	//BOMÉRÅ[ÉhçÌèú
+					sb.append(text.substring(1));
+				else
+					sb.append(text);
+				String rexp = "^\s*<(chat|thread) ";
 				Pattern p = Pattern.compile(rexp, Pattern.DOTALL);
-				Matcher m = p.matcher(text);
+				Matcher m = p.matcher(sb.toString());
+				if (m.find()) {
+					sb.insert(0, "<packet>" + System.getProperty("line.separator"));
+					sb.insert(0, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator"));
+				}
+				rexp = "</packet>";
+				p = Pattern.compile(rexp, Pattern.DOTALL);
+				m = p.matcher(sb.toString());
+				if (!m.find()) {
+					sb.append("</packet>" + System.getProperty("line.separator"));
+				}
+				text = sb.toString();
+				rexp = "(</packet>.*<\\?xml [^>]*>.?<packet>|[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F])";
+				p = Pattern.compile(rexp, Pattern.DOTALL);
+				m = p.matcher(text);
 				text = m.replaceAll("");
 				String linecount = text.replaceAll("[^\n]", "");
 				Path.writeAllText(file, text, "UTF-8");

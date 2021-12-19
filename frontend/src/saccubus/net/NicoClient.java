@@ -3324,7 +3324,8 @@ public class NicoClient {
 					ownerFilter = null;
 			}
 			debug("Å°}\n");
-			economy = dataApiMson.get("isPeakTime").getAsBoolean();
+			//economy = dataApiMson.get("isPeakTime").getAsBoolean();
+			economy = VideoUrl.toLowerCase().contains("low");
 			log.println("economy: "+economy +" ,isEco(): "+ isEco());
 			if(size_video_thumbinfo==null){
 				size_video_thumbinfo = economy? size_low : size_high;
