@@ -1537,12 +1537,14 @@ public class MainFrame extends JFrame {
 		SavingCommentCheckBox.setText("コメントをダウンロード");
 		appendCommentCheckBox.setText("コメント追加");
 		appendCommentCheckBox.addActionListener(new MainFrame_noticePop(this));
-		enableCommentJsonCheckBox.setText("Json");
-		enableCommentJsonCheckBox.setForeground(Color.blue);
-		enableCommentJsonCheckBox.setToolTipText("コメントをJonでアクセスする(2017/1～?)");
-		enableCommentXmlCheckBox.setText("xml");
-		enableCommentXmlCheckBox.setForeground(Color.black);
-		enableCommentXmlCheckBox.setToolTipText("コメントをXmlでアクセスする(従来)");
+		//enableCommentJsonCheckBox.setText("Json");
+		//enableCommentJsonCheckBox.setForeground(Color.blue);
+		//enableCommentJsonCheckBox.setToolTipText("コメントをJsonでアクセスする");
+		//enableCommentJsonCheckBox.setEnabled(false);
+		//enableCommentXmlCheckBox.setText("xml");
+		//enableCommentXmlCheckBox.setForeground(Color.black);
+		//enableCommentXmlCheckBox.setToolTipText("コメントをXmlでアクセスする(旧仕様)");
+		//enableCommentXmlCheckBox.setEnabled(false);
 		AddTimeStampToCommentCheckBox.setText("コメントファイル名に日時付加（フォルダ指定時）");
 		AddTimeStampToCommentCheckBox.setForeground(Color.blue);
 		AddTimeStampToCommentCheckBox.setToolTipText("過去ログにも現在のコメントにも日時が付く");
@@ -2046,8 +2048,8 @@ public class MainFrame extends JFrame {
 
 		CommentSaveInfoPanel.add(SavingCommentCheckBox, grid4_x0_y6_16);
 		CommentSaveInfoPanel.add(appendCommentCheckBox, grid4_x1_y6);
-		CommentSaveInfoPanel.add(enableCommentJsonCheckBox, grid4_x2_y6);
-		CommentSaveInfoPanel.add(enableCommentXmlCheckBox, grid4_x3_y6_);
+	//	CommentSaveInfoPanel.add(enableCommentJsonCheckBox, grid4_x2_y6);
+	//	CommentSaveInfoPanel.add(enableCommentXmlCheckBox, grid4_x3_y6_);
 	//	CommentSaveInfoPanel.add(dateUserFirstCheckBox, grid4_x2_y6_2);
 		CommentSaveInfoPanel.add(AddTimeStampToCommentCheckBox, grid4_x0_y7_86);
 		DelCommentCheckBox.setText("変換後にコメントファイルを削除する");

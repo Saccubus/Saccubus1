@@ -236,8 +236,8 @@ public class ConvertingSetting {
 	private boolean enableCheckSize;
 	private String ecoList;
 	private boolean enableClearErrorAtEnd;
-	private boolean commentJson;
-	private boolean commentXml;
+	//private boolean commentJson;
+	//private boolean commentXml;
 	private boolean enableLiveCommentMinimumVpos;
 	private String liveCommentMinimumVpos;
 	private static long terminateTimeout = DEFAULT_TERMINATE_TIMEOUT;
@@ -683,8 +683,8 @@ public class ConvertingSetting {
 		enableCheckSize = enable_check_size;
 		ecoList = eco_list;
 		enableClearErrorAtEnd = clear_error_at_end;
-		commentJson = comment_json_to_xml;
-		commentXml = debug_comment_json;
+		//commentJson = comment_json_to_xml;
+		//commentXml = debug_comment_json;
 		enableLiveCommentMinimumVpos = enable_livecomment_minimum;
 		liveCommentMinimumVpos = livecomment_minimum;
 		showThumbnail = show_thumbnail;
@@ -1177,10 +1177,12 @@ public class ConvertingSetting {
 		return enableClearErrorAtEnd;
 	}
 	public boolean enableCommentJson() {
-		return commentJson;
+		//return commentJson;
+		return true;
 	}
 	public boolean enableCommentXml(){
-		return commentXml;
+		//return commentXml;
+		return false;
 	}
 	public boolean isEnableLiveCommentMinVpos(){
 		return enableLiveCommentMinimumVpos;
@@ -1653,8 +1655,8 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ENABLE_CHECK_SIZE, Boolean.toString(setting.isEnableCheckSize()));
 		prop.setProperty(PROP_ECONOMT_LIST, setting.getEcoList());
 		prop.setProperty(PROP_CLEAR_ERROR, Boolean.toString(setting.clearErrorAtEnd()));
-		prop.setProperty(PROP_COMMENT_JSON, Boolean.toString(setting.enableCommentJson()));
-		prop.setProperty(PROP_COMMENT_XML, Boolean.toString(setting.enableCommentXml()));
+		prop.setProperty(PROP_COMMENT_JSON, Boolean.toString(true));
+		prop.setProperty(PROP_COMMENT_XML, Boolean.toString(false));
 		prop.setProperty(PROP_ENABLE_LIVECOMMENT_MINIMUM_VPOS, Boolean.toString(setting.isEnableLiveCommentMinVpos()));
 		prop.setProperty(PROP_LIVECOMMENT_MINIMUM_VPOS, setting.getLivecommentMinVpos());
 		prop.setProperty(PROP_SHOW_THUMBNAIL, Boolean.toString(setting.isShowThumbnail()));
@@ -1996,8 +1998,8 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_CHECK_SIZE, "false")),
 			prop.getProperty(PROP_ECONOMT_LIST,""),
 			Boolean.parseBoolean(prop.getProperty(PROP_CLEAR_ERROR,"false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_JSON,"false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_XML,"true")),
+			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_JSON,"true")),
+			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_XML,"false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_LIVECOMMENT_MINIMUM_VPOS,"false")),
 			prop.getProperty(PROP_LIVECOMMENT_MINIMUM_VPOS, "0.0"),
 			Boolean.parseBoolean(prop.getProperty(PROP_SHOW_THUMBNAIL, "false")),
