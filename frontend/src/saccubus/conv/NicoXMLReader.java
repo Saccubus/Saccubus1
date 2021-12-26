@@ -11,6 +11,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import saccubus.SharedNgScore;
 import saccubus.util.Logger;
+import saccubus.util.Util;
 
 /**
  * <p>
@@ -380,6 +381,8 @@ public class NicoXMLReader extends DefaultHandler {
 	public void endElement(String uri, String localName, String qName) {
 		if (qName.toLowerCase().equals("chat")) {
 			String com = sb.substring(0);
+			if (!com.startsWith("/emotion "))
+				com = Util.DelEmoji(sb.substring(0), "@");
 			// log.println("\t| "+com+" |");
 			boolean script = false;
 			//ƒjƒƒ“Œêˆ—

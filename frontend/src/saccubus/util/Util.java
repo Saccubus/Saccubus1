@@ -23,4 +23,29 @@ public class Util {
 		return num;
 	}
 
+	//サロゲートペア＆(結合文字) 検出＆文字除去
+	public static String DelEmoji(String str, String t)
+	{
+		if (!IsSurrogatePair(str)) return str;
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+			if (Character.isHighSurrogate(c)) {
+				sb.append(t);
+				++i;
+			}
+			else {
+				sb.append(c);
+			}
+		}
+		return sb.toString();
+	}
+
+	public static Boolean IsSurrogatePair(String str)
+	{
+		int ll = str.length();
+		if (ll < 1) return false;
+		return str.codePointCount(0, ll) < ll;
+	}
 }
