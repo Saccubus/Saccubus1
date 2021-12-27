@@ -474,7 +474,7 @@ public class NicoXMLReader extends DefaultHandler {
 				}
 			}
 			//‰^‰cƒRƒƒ“ƒg
-			if(liveConversion && !premium.isEmpty() && !premium.equals("1")){
+			if(liveConversion && !premium.isEmpty() && (Integer.parseInt(premium) > 1 && Integer.parseInt(premium) < 8)){
 				if(com.startsWith("/")){
 					//‰^‰cƒRƒ}ƒ“ƒh premium="3" or "6" only? not check
 					String[] list = com.trim().split(" +");
@@ -610,7 +610,7 @@ public class NicoXMLReader extends DefaultHandler {
 							com = "@ƒ{ƒ^ƒ“ u["+com+"]v";
 					}
 				}
-				else if(!premium.isEmpty() && !premium.equals("1")){
+				else if(!premium.isEmpty() && (Integer.parseInt(premium) > 1 && Integer.parseInt(premium) < 8)){
 					//‰^‰cƒRƒƒ“ƒg(¶å or BSP?) ƒRƒ}ƒ“ƒh‚È‚µ
 					// premium="3" or "6" ? not check
 					if(duration.isEmpty())
