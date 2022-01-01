@@ -597,6 +597,63 @@ public class NicoXMLReader extends DefaultHandler {
 							script = true;
 						}
 					}
+					else if(list[0].equals("/gift")) {
+						Pattern ptn = Pattern.compile("\"([^\"]+)\" (\\d+) \"([^\"]*)\" \"([^\"]+)\" ?(\\d*)");
+						Matcher m = ptn.matcher(com);
+						if (m.find())
+							com = "/gift "+ m.group(1) + "さん:"
+								+ m.group(4) 
+								+ "(+" + m.group(2) + ")";
+						item.setMail("shita middle @3");
+						item_fork = true;
+					}
+					else if(list[0].equals("/emotion")) {
+						//com = Util.ReplaceEmoji(com, (char )0x26C4, (char )0x0, "ゆき");
+						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF3B, "ひまわり");
+						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF40, "クローバー");
+						item.setMail("shita middle @2");
+						item_fork = true;
+					}
+					else if(list[0].equals("/nicoad")) {
+						Pattern ptn = Pattern.compile(",\"message\":\"([^\"]+)\",");
+						Matcher m = ptn.matcher(com);
+						if (m.find())
+							com = "/nicoad "+ m.group(1);
+						item.setMail("shita small @3");
+						item_fork = true;
+					}
+					else if(list[0].equals("/cruise")) {
+						Pattern ptn = Pattern.compile(" \"([^\"]+)\"$");
+						Matcher m = ptn.matcher(com);
+						if (m.find())
+							com = "/cruise " + m.group(1);
+						item.setMail("shita small @3");
+						item_fork = true;
+					}
+					else if(list[0].equals("/quote")) {
+						Pattern ptn = Pattern.compile(" \"([^\"]+)\"$");
+						Matcher m = ptn.matcher(com);
+						if (m.find())
+							com = "/quote " + m.group(1);
+						item.setMail("shita small @3");
+						item_fork = true;
+					}
+					else if(list[0].equals("/info")) {
+						Pattern ptn = Pattern.compile(" (\\d+) (.+)$");
+						Matcher m = ptn.matcher(com);
+						if (m.find())
+							com = "/info " + m.group(2);
+						item.setMail("shita small @3");
+						item_fork = true;
+					}
+					else if(list[0].equals("/spi")) {
+						Pattern ptn = Pattern.compile(" \"([^\"]+)\"$");
+						Matcher m = ptn.matcher(com);
+						if (m.find())
+							com = "/spi " + m.group(1);
+						item.setMail("shita small @3");
+						item_fork = true;
+					}
 					else {
 						//運営コマンド該当無し
 						// /disconnect など?
@@ -771,6 +828,12 @@ public class NicoXMLReader extends DefaultHandler {
 				item_kicked = true;
 				countNG_Word++;
 				return;
+			}
+			//
+			if (isLiveConversionDone && com.startsWith("/")) {
+				if (!com.startsWith("/vote ")) {
+					com = com.substring(com.indexOf(' ')+1);
+				}
 			}
 			//プレミアム専用カラー　一般アカウントでは無効
 			if (premiumColorCheck && (premium==null || premium.isEmpty())){

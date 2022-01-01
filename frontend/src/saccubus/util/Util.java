@@ -42,6 +42,32 @@ public class Util {
 		return sb.toString();
 	}
 
+	//サロゲートペア＆(結合文字) 文字置き換え
+	public static String ReplaceEmoji(String str, char hs, char ls, String t)
+	{
+		if (!IsSurrogatePair(str)) return str;
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < str.length(); i++) {
+			char ch = str.charAt(i);
+			if (Character.isHighSurrogate(ch)) {
+				char cl = str.charAt(++i);
+				//sb.append("high="+Integer.toHexString((int) ch)+ ":low="+Integer.toHexString((int) cl));
+				if ((ch == hs) && (cl == ls)) {
+					sb.append(t);
+				}
+				else {
+					sb.append(ch);
+					sb.append(cl);
+				}
+			}
+			else {
+				sb.append(ch);
+			}
+		}
+		return sb.toString();
+	}
+
 	public static Boolean IsSurrogatePair(String str)
 	{
 		int ll = str.length();
