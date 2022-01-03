@@ -91,10 +91,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　同梱のrewdmeNew.txt、さきゅばす1.50のreadme150.txt
 　さきゅばす1.22rのreadme.txt、1.22r3のreadme+.txtをご覧下さい。
 　不具合報告等はissues(https://github.com/Saccubus/Saccubus1.x/issues)
-　または2chさきゅばすスレでお願いします。
-　2ch【ニコニコ】コメント付動画作成ツール さきゅばす5
-　　http://potato.2ch.net/test/read.cgi/software/1449586179/
-　(http://anago.2ch.net/test/read.cgi/software/1346798166/　前スレ)
+　または5chさきゅばすスレでお願いします。
+　5ch【ニコニコ】コメント付動画作成ツールさきゅばす6 
+  https://egg.5ch.net/test/read.cgi/software/1554556329/
 
 □動作環境
 　Windows XP/7/8/8.1/10 desktop　（多分Vistaも動くはず）
@@ -104,9 +103,8 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　最近アップデートしていない場合は必ず更新して下さい。
 　Java7 - JRE7 と JDK1.7はPublicUpdate終了のため非推奨。
 　JRE6 JDK1.6 JRE5 JDK1.5はテストしていません。
-　　http://java.com/ja/
-　からインストールして下さい。通常は32bit版です。
-　64bit版をダウンロードするには説明を読んで従って下さい。
+　　https://java.com/ja/
+　からインストールして下さい。(2022/01/04現在64bit版のみダウンロードのようです。)
 
 ◆Javaのパスの設定(参考)
 　auto.batやdebug.batを実行するにはjava.exeがPathに設定されていることが必要です。
@@ -171,9 +169,9 @@ SDL_gfx.dll(zlibライセンス)については改変なし再配布です。
 　　(3)別の場所に新規にzipを解凍し直すのが確実です。
 
 □起動までの準備について
-　http://java.com/ja/
+　https://java.com/ja/
 　Javaのサイトから各自最新のJRE(Java実行環境)を
-　ダウンロードしてインストールしてください。（32ビット版推奨）
+　ダウンロードしてインストールしてください。
 　また◆Javaのパスの設定(参考)を参照してください。
 
 □起動
