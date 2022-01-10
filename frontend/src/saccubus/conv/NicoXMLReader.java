@@ -2,6 +2,8 @@ package saccubus.conv;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -168,7 +170,37 @@ public class NicoXMLReader extends DefaultHandler {
 		return pat.matcher(word).matches();
 	}
 
-	/**
+	// /voteコマンド専用のsplit
+	private static String[] splitvote(String data) {
+		List<String> li = new ArrayList<String>();
+
+		String[] ddd = data.trim().split(" ");
+		for (int i = 0; i < ddd.length; i++)
+		{
+			if (ddd[i].length() < 1)
+				continue;
+			if (ddd[i].startsWith("\"")) {
+				StringBuilder sb = new StringBuilder(ddd[i].substring(1));
+				while (++i < ddd.length) {
+					sb.append(" ");
+					if (ddd[i].length() > 0 && ddd[i].endsWith("\"")) {
+						sb.append(ddd[i].substring(0, ddd[i].length()-1));
+						break;
+					}
+					else {
+						sb.append(ddd[i]);
+					}
+				}
+				li.add(sb.toString());
+			}
+			else {
+				li.add(ddd[i]);
+			}
+		}
+		return li.toArray(new String[0]);
+	}
+
+    /**
 	 *
 	 */
 	@Override
@@ -477,7 +509,11 @@ public class NicoXMLReader extends DefaultHandler {
 			if(liveConversion && !premium.isEmpty() && (Integer.parseInt(premium) > 1 && Integer.parseInt(premium) < 8)){
 				if(com.startsWith("/")){
 					//運営コマンド premium="3" or "6" only? not check
-					String[] list = com.trim().split(" +");
+					String[] list;
+					if (com.startsWith("/vote"))
+						list = splitvote(com);
+					else
+						list = com.trim().split(" +");
 					if(list[0].equals("/perm")){
 						// prem
 						if(duration.isEmpty())
@@ -485,7 +521,6 @@ public class NicoXMLReader extends DefaultHandler {
 						item.setMail("ue ender @"+duration);
 					}
 					else if(list[0].equals("/vote")){
-						int lfLim = 4;
 						String VOTECMD = "ue cyan ender full";
 						// vote
 						// 数値を変換する
@@ -493,30 +528,20 @@ public class NicoXMLReader extends DefaultHandler {
 						if(list.length>1 && list[1].equals("start")){
 							///vote start 今日の番組はいかがでしたか？ とても良かった まぁまぁ良かった ふつうだった あまり良くなかった 良くなかった
 							voteN = list.length-2;
-							voteStr = new String[voteN];
-							voteStr[0] = list[2];
+							voteStr = new String[10];
+							voteStr[0] = "Ｑ." + list[2];
 							for(int i=1; i<voteN; i++){
-								voteStr[i] = (list[i+2] + "          ")
-												.substring(0, 9);
+								voteStr[i] = list[i+2];
 							}
 							voteRate = new String[voteN];
 							StringBuffer sb = new StringBuffer();
 							sb.append(voteStr[0]);
 							sb.append("\n");
-							lfLim = 4;
-							if(voteN==5) lfLim = 3;
 							for(int i=1; i<voteN;i++){
-								if(i == lfLim){
-									sb.append("\n");
-									lfLim = 7;
-								}
-								sb.append("[            \n");
 								sb.append(Integer.toString(i));
 								sb.append(".");
 								sb.append(voteStr[i]);
 								sb.append("\n");
-								sb.append(" \n");
-								sb.append("]");
 							}
 							com = "/vote start "+sb.substring(0).trim();
 							item.setMail(VOTECMD);
@@ -537,12 +562,12 @@ public class NicoXMLReader extends DefaultHandler {
 									"あまり良くなかった",
 									"　良くなかった　　"
 								};
-								voteRate = new String[voteN];
+								voteRate = new String[10];
 							}
 							for(int i=1; i<voteN; i++){
 								String s = list[i+2].trim();
 								int rate = 0;
-								voteRate[i] = "           %";
+								voteRate[i] = "%";
 								if(s!=null && !s.isEmpty()){
 									try{
 										rate = Integer.valueOf(s);
@@ -550,26 +575,18 @@ public class NicoXMLReader extends DefaultHandler {
 										log.printStackTrace(e);
 									}
 								}
-								voteRate[i] = String.format("% 11.1f%%",(rate/10.0));
+								voteRate[i] = String.format("%3.1f%%",(rate/10.0));
 							}
 							StringBuffer sb = new StringBuffer();
 							sb.append(voteStr[0]);
 							sb.append("\n");
-							lfLim = 4;
-							if(voteN==5) lfLim = 3;
 							for(int i=1; i<voteN;i++){
-								if(i == lfLim){
-									sb.append("\n");
-									lfLim = 7;
-								}
-								sb.append("[            \n");
 								sb.append(Integer.toString(i));
 								sb.append(".");
 								sb.append(voteStr[i]);
-								sb.append("\n");
+								sb.append("(");
 								sb.append(voteRate[i]);
-								sb.append("\n");
-								sb.append("]");
+								sb.append(")\n");
 							}
 							com = "/vote show "+sb.substring(0).trim();
 							item.setMail(VOTECMD);
