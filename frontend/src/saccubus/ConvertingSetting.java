@@ -207,7 +207,7 @@ public class ConvertingSetting {
 	private String liveOperationDuration;
 	private boolean enableCommentVposShift;
 	private String commentVposShiftString;
-	private boolean smilePreferable;
+	//private boolean smilePreferable;
 	private boolean forceDmcDl;
 	private boolean enableRange;
 	private boolean enableSeqResume;
@@ -652,7 +652,7 @@ public class ConvertingSetting {
 		liveOperationDuration = live_operation_duration;
 		enableCommentVposShift = enable_comment_vpos_shift;
 		commentVposShiftString = vpos_shift_sec;
-		smilePreferable = smile_preferable;
+		//smilePreferable = smile_preferable;
 		forceDmcDl = force_dmc_dl;
 		enableRange = enable_range;
 		enableSeqResume = enable_sequential;
@@ -1090,7 +1090,7 @@ public class ConvertingSetting {
 		return commentVposShiftString;
 	}
 	public boolean isSmilePreferable(){
-		return smilePreferable;
+		return false;
 	}
 	public boolean doesDmcforceDl(){
 		return forceDmcDl;
@@ -1625,7 +1625,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_FORCE_LIVE_COMMENT, Boolean.toString(setting.isForcedLiveComment()));
 		prop.setProperty(PROP_ENABLE_COMMENT_VPOS_SHIFT, Boolean.toString(setting.isEnableCommentVposShift()));
 		prop.setProperty(PROP_COMMENT_VPOS_SHIFT, setting.getCommentVposShiftString());
-		prop.setProperty(PROP_PREFER_SMILE, Boolean.toString(setting.isSmilePreferable()));
+		prop.setProperty(PROP_PREFER_SMILE, Boolean.toString(false));
 		prop.setProperty(PROP_FORCE_DMC_DL, Boolean.toString(setting.doesDmcforceDl()));
 		prop.setProperty(PROP_ENABLE_RANGE, Boolean.toString(setting.canRangeRequest()));
 		prop.setProperty(PROP_ENABLE_SEQ_RESUME, Boolean.toString(setting.canSeqResume()));

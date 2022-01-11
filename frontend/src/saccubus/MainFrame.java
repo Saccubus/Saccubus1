@@ -4837,6 +4837,8 @@ public class MainFrame extends JFrame {
 		if(url.startsWith("/")){
 			url = url.substring(1);
 		}
+		if (url.startsWith("http:"))
+			url = url.replace("http:", "https:");				
 		if(url.startsWith(VIDEO_URL_PARSER)){
 			url = url.substring(VIDEO_URL_PARSER.length());
 		}else if(url.startsWith("https://www.nicovideo.jp/" + MY_MYLIST)
@@ -4856,10 +4858,10 @@ public class MainFrame extends JFrame {
 				||url.startsWith("search/")
 				||url.startsWith("tag/")){
 				url = "https://www.nicovideo.jp/" + url;	//may not work
-			}else if(url.startsWith("lv")){
-				url = "https://live.nicovideo.jp/watch/"+ url;	//may not work
-			}else if(url.startsWith("co")){
-				url = "https://com.nicovideo.jp/watch/" + url;	//may not work
+			//}else if(url.startsWith("lv")){
+			//	url = "https://live.nicovideo.jp/watch/"+ url;	//may not work
+			//}else if(url.startsWith("co")){
+			//	url = "https://com.nicovideo.jp/watch/" + url;	//may not work
 			}
 		}
 		if(url.startsWith("https://www.nicovideo.jp/tag/")
@@ -5985,6 +5987,7 @@ s	 * @return javax.swing.JPanel
 		preferSmileCheckBox.setText("smileサーバ強制ダウンロード");
 		preferSmileCheckBox.setForeground(Color.blue);
 		preferSmileCheckBox.setToolTipText("dmcサーバに有ってもsmileサーバから読みます。");
+		preferSmileCheckBox.setEnabled(false);
 		extraDownloadInfoPanel.add(preferSmileCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
