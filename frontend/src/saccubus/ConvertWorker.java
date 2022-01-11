@@ -5081,14 +5081,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		for (int i = 0; i < list.length; i++) {
 			String path = list[i];
 			if (path.contains(VideoID)) {
-				if(path.endsWith(".flv") ||  path.endsWith(".mp4")){
+				if(path.endsWith(".flv") ||  path.endsWith(".mp4") ||  path.endsWith(".ts")){
 					setVideoTitleIfNull(path);
 					return path;
 				}
 				OtherVideo = path;
 			}
 			if(path.startsWith(Tag+"_")||path.startsWith(Tag+LOW_PREFIX)||path.startsWith(Tag+DMC_PREFIX)){
-				if(path.endsWith(".flv") ||  path.endsWith(".mp4")){
+				if(path.endsWith(".flv") ||  path.endsWith(".mp4") || path.endsWith(".ts")){
 					setVideoTitleIfNull(path);
 					return path;
 				}
@@ -5107,7 +5107,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				int index = path.lastIndexOf(".");
 				if (index < 0) continue;
 				String ext = path.substring(index).toLowerCase();
-				if(".flv.f4v.mp4.avi.mpg.mpeg.wmv.webm".contains(ext)){
+				if(".flv.f4v.mp4.avi.mpg.mpeg.wmv.webm.mkv.ts".contains(ext)){
 					return path;
 				}
 			}
