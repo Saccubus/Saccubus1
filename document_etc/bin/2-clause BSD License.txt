@@ -1,5 +1,5 @@
 Saccubus
-Copyright (c) 2007- PSI, 2009- orz
+Copyright (c) 2007- PSI, 2009- orz 2021- nnn-revo2021
 All rights reserved.
 
 Redistribution and use in source and binary forms,
