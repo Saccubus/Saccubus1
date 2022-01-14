@@ -521,7 +521,7 @@ public class NicoXMLReader extends DefaultHandler {
 						item.setMail("ue ender @"+duration);
 					}
 					else if(list[0].equals("/vote")){
-						String VOTECMD = "ue cyan ender full";
+						String VOTECMD = "ue white ender full";
 						// vote
 						// 数値を変換する
 						// 投票数字を各行に
@@ -625,7 +625,7 @@ public class NicoXMLReader extends DefaultHandler {
 						item_fork = true;
 					}
 					else if(list[0].equals("/emotion")) {
-						//com = Util.ReplaceEmoji(com, (char )0x26C4, (char )0x0, "ゆき");
+						com = Util.ReplaceEmoji(com, (char )0x26C4, (char )0x0, "ゆき");
 						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF3B, "ひまわり");
 						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF40, "クローバー");
 						item.setMail("shita middle @2");

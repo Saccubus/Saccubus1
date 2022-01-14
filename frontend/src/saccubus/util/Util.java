@@ -45,7 +45,7 @@ public class Util {
 	//サロゲートペア＆(結合文字) 文字置き換え
 	public static String ReplaceEmoji(String str, char hs, char ls, String t)
 	{
-		if (!IsSurrogatePair(str)) return str;
+		if (str.length() <= 0) return str;
 
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < str.length(); i++) {
@@ -60,6 +60,9 @@ public class Util {
 					sb.append(ch);
 					sb.append(cl);
 				}
+			}
+			else if (ch == hs) {
+				sb.append(t);
 			}
 			else {
 				sb.append(ch);
