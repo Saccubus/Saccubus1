@@ -3324,8 +3324,17 @@ public class NicoClient {
 					ownerFilter = null;
 			}
 			debug("¡}\n");
-			economy = dataApiMson.get("isPeakTime").getAsBoolean();
+			log.println("isPeakTime: "+dataApiMson.get("isPeakTime"));
+			log.println("isPremium: "+m_viewer.get("isPremium"));
+			//ƒvƒŒƒ~ƒA‰ïˆõ‚È‚çí‚Éeconomy=false
+			//ˆê”Ê‰ïˆõ‚È‚çisPeakTime‚Å”»’è
 			//economy = VideoUrl.toLowerCase().contains("low");
+			if (m_viewer.get("isPremium").getAsBoolean()) {
+				economy = false;				
+			}
+			else {
+				economy = dataApiMson.get("isPeakTime").getAsBoolean();
+			}
 			log.println("economy: "+economy +" ,isEco(): "+ isEco());
 			if(size_video_thumbinfo==null){
 				size_video_thumbinfo = economy? size_low : size_high;
