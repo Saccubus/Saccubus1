@@ -1,49 +1,21 @@
-“Ç‚ñ‚Å‰º‚³‚¢.txt
+èª­ã‚“ã§ä¸‹ã•ã„.txt
 
-¦¡‰ñ‚ÌC³‚ÍƒjƒR“®EƒjƒR¶‚ÉŠÖ‚·‚éŽd—l•ÏX‚ª‘½‚¢‚Ì‚ÅƒeƒXƒg”Åiƒx[ƒ^ƒo[ƒWƒ‡ƒ“j‚Æ‚³‚¹‚Ä‚¢‚½‚¾‚«‚Ü‚·B
+â€»ä»Šå›žã®ä¿®æ­£ã¯ãƒ‹ã‚³å‹•ãƒ»ãƒ‹ã‚³ç”Ÿã«é–¢ã™ã‚‹ä»•æ§˜å¤‰æ›´ãŒå¤šã„ã®ã§ãƒ†ã‚¹ãƒˆç‰ˆï¼ˆãƒ™ãƒ¼ã‚¿ãƒãƒ¼ã‚¸ãƒ§ãƒ³ï¼‰ã¨ã•ã›ã¦ã„ãŸã ãã¾ã™ã€‚
 
-•ÏX“à—e
-1.67.8.03(2022/01/16)
-- ƒvƒŒƒ~ƒA‰ïˆõ‚È‚Ì‚ÉƒGƒRƒmƒ~[ƒ^ƒCƒ€‚Éƒtƒ@ƒCƒ‹‚É _low_ ‚ª‚Â‚­‚Ì‚ðC³
-- ƒjƒR“®ƒ_ƒEƒ“ƒ[ƒhŽž‚ÌƒGƒRƒmƒ~[”»’è‚ðC³
-- CAƒtƒHƒ“ƒg‚ðŽg‚í‚È‚¢Ý’è‚ÌÛ‚É•¶Žš‚ª•\Ž¦‚³‚ê‚È‚©‚Á‚½‚Ì‚ðC³
-- CAƒtƒHƒ“ƒg‚ðŽg‚¤Ý’è‚Ìê‡A•\Ž¦‚Å‚«‚È‚¢•¶Žš‚Í•\Ž¦‚µ‚È‚¢‚æ‚¤‚ÉC³
-  ¦CAƒtƒHƒ“ƒg‚ðŽg‚í‚È‚¢Ý’è‚Ìê‡‚Í•\Ž¦‚Å‚«‚È‚¢•¶Žš‚à ‚Æ‚µ‚Ä•\Ž¦‚³‚ê‚é‚±‚Æ‚ª‚ ‚è‚Ü‚·
-- smileƒT[ƒo‹­§ƒ_ƒEƒ“ƒ[ƒh‚ÍíŽžfalse‚É‚µAƒ`ƒFƒbƒN•s‰Â‚ÉC³
-- URL/ID‚É http://... ‚Æ“ü—Í‚³‚ê‚½ê‡Ahttps:// ‚É‹­§•ÏŠ·‚·‚é
-- ƒjƒR¶ƒAƒ“ƒP‹@”\‚ÌŽd—l•ÏX
-  - BOX•\Ž¦‚ðŽ~‚ß‚Ä 1.‚Í‚¢(50%) ‚Ì‚æ‚¤‚É‰Óð‘‚«‚Å•\Ž¦‚·‚é
-  - Ž¿–â‚ÌÅ‰‚É‚p.‚Ì•¶Žš‚ð•t‰Á
-  - ƒAƒ“ƒP“à—e‚É”¼ŠpƒXƒy[ƒX‚ª“ü‚Á‚Ä‚¢‚Ä‚à•\Ž¦‚³‚ê‚é‚æ‚¤‚ÉC³
-  - •\Ž¦F‚ðcyan‚©‚çwhite‚É•ÏX
-- ƒjƒR¶emotion‚Ì‚ä‚«‚¾‚é‚ÜŠG•¶Žš‚ð"‚ä‚«"‚É•ÏX
-- Šg’£Žq.ts‚Ì“®‰æƒtƒ@ƒCƒ‹‚àŒ‹‡ˆ—‚Å‚«‚é‚æ‚¤‚ÉC³
-- URL/ID‚É lv... or co... ‚Æ“ü—Í‚³‚ê‚½ÛURL‚É•ÏŠ·‚µ‚È‚¢
- -> ƒjƒR¶‚Ì“®‰æ/ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ð [lv....] ‚Æ‚·‚é‚ÆŒ‹‡ˆ—‚µ‚Ü‚·
+å¤‰æ›´å†…å®¹
+1.67.8.04(2022/01/21)
+- ãƒ—ãƒ¬ãƒŸã‚¢ãƒ åˆ¤å®šã€ä¸€èˆ¬ä¼šå“¡ã®ã‚¨ã‚³ãƒŽãƒŸãƒ¼åˆ¤å®šã‚’ä¿®æ­£
+  å‹•ç”»ãŒä»¥ä¸‹ã®å ´åˆã¯ã‚¨ã‚³ãƒŽãƒŸãƒ¼ã‚¿ã‚¤ãƒ ã§ã‚‚é€šå¸¸å‹•ç”»ã¨ã—ã¦å–å¾—
+  - æœ€é«˜ç”»è³ªãŒ360pã®å‹•ç”»
+  - ã‚¨ã‚³ãƒŽãƒŸãƒ¼ã‚¿ã‚¤ãƒ ã§ã‚‚ç”»è³ªåˆ¶é™ã®ãªã„å‹•ç”»
 
-1.67.8.02(2022/01/04)
-- 2017/08ˆÈ~‚ÌƒjƒR“®Žd—l•ÏX‚É‘Î‰ž
-  - ƒTƒCƒghttps‘Î‰ž
-  - uƒƒOƒCƒ“Ž¸”svƒGƒ‰[•\Ž¦
-  - HTML5Š®‘SˆÚsiƒtƒ‰ƒbƒVƒ…I—¹j
-  - “®‰æAPII—¹‚¨‚æ‚Ñ“®‰æƒy[ƒW“à‚Ì“®‰æî•ñjsonŽd—l•ÏX
-  - ƒRƒƒ“ƒgƒT[ƒo[ˆÚ“]
-  - ŠÈ’PƒRƒƒ“ƒg‘Î‰ž
-  - ƒRƒƒ“ƒgŽæ“¾‚ÍjsonŒ`Ž®‚Ì‚Ý‚É‚µA[ ]json [ ]xmlƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚Í”pŽ~
-- 2017/08ˆÈ~‚ÌƒjƒR¶Žd—l•ÏX‚É‘Î‰ž
-  - ”¼“§–¾ƒRƒƒ“ƒg‚ª˜g•t‚«•\Ž¦‚³‚ê‚é‚Ì‚ðC³
-  - ‰^‰cƒRƒƒ“ƒg•\Ž¦‘Î‰ž
-    /gift /emotion /nicoad /cruise /quote /info /spi
-- ƒRƒƒ“ƒg’†‚ÌŠG•¶ŽšiƒTƒƒQ[ƒgƒyƒA•¶Žšj‚ðƒXƒy[ƒX‚É•ÏŠ·
-- ƒRƒƒ“ƒgxmlƒtƒ@ƒCƒ‹‚É<packet>...</packet>‚ª‚È‚¢ê‡ƒtƒ@ƒCƒ‹‚É•t‰Á
-
-Žg‚¢•û‚Í
-Å‰‚É•K‚¸“Ç‚ñ‚Å.txt
+ä½¿ã„æ–¹ã¯
+æœ€åˆã«å¿…ãšèª­ã‚“ã§.txt
 doc\readmeNew.txt
-‚ð‚¨“Ç‚Ý‰º‚³‚¢B
+ã‚’ãŠèª­ã¿ä¸‹ã•ã„ã€‚
 
-docƒtƒHƒ‹ƒ_‚Ì’†‚É‚ÍX‚É‘¼‚Ì•¶‘‚ª—L‚è‚Ü‚·B
+docãƒ•ã‚©ãƒ«ãƒ€ã®ä¸­ã«ã¯æ›´ã«ä»–ã®æ–‡æ›¸ãŒæœ‰ã‚Šã¾ã™ã€‚
 
-‚Ü‚½‹N“®‰æ–Ê‚Ì [ƒwƒ‹ƒv]ƒƒjƒ…[‚©‚ç‚à‚¨“Ç‚Ý’¸‚¯‚Ü‚·B
+ã¾ãŸèµ·å‹•ç”»é¢ã® [ãƒ˜ãƒ«ãƒ—]ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‹ã‚‰ã‚‚ãŠèª­ã¿é ‚ã‘ã¾ã™ã€‚
 
-’†‚ÌSaccubus.jar‚Éƒ\[ƒX(.javaƒtƒ@ƒCƒ‹)‚ª«•ï‚³‚ê‚Ä‚¢‚Ü‚·B
+ä¸­ã®Saccubus.jarã«ã‚½ãƒ¼ã‚¹(.javaãƒ•ã‚¡ã‚¤ãƒ«)ãŒæ¢±åŒ…ã•ã‚Œã¦ã„ã¾ã™ã€‚

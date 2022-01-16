@@ -3205,75 +3205,41 @@ public class NicoClient {
 				setFromSessionApi(m_sessionApi);
 				debug("\n");
 			}
-			Mson m_thread = dataApiMson.get("threads");
-			debugPrettyPrint("■thread: ",m_thread);
-			Mson m_thread_id = m_thread.get("thread_id");
-			debug("\n■thread_id: "+m_thread_id+"\n");
-			if(!m_thread_id.isNull()){
-				ThreadID = m_thread_id.getAsString();
-				log.println("ThreadID: "+ThreadID);
-				MsgUrl = m_thread.getAsString("server_url");
-				log.println("MsgUrl: "+MsgUrl);
-				String key_required = m_thread.getAsString("thread_key_required");
-				debug("■thread_key_required: "+key_required+"\n");
-				Mson m_optional_thread_id = m_thread.get("optional_thread_id");
-				if(!m_optional_thread_id.isNull()){
-					optionalThreadID = m_optional_thread_id.getAsString();
-					if(videoTag.equals(optionalThreadID)){
-						// html5の場合逆になっているようだ
-						// ThreadKey が引けるのは メインthreadの方だけ
-						// chanelの場合 メイン=チャンネル=threadKey optionalは何もない
-						// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
-						optionalThreadID = ThreadID;
-						ThreadID = videoTag;
-						log.println("reset ThreadID: "+ThreadID);
-					}
-					log.println("OptionalThreadID: "+optionalThreadID);
-					NeedsKey =  true;
+			//comments
+			Mson m_ids = dataApiMson.get("threads");
+			//log.println("label(1): "+m_ids.get(1).getAsString("label"));
+			ThreadID = m_ids.get(1).getAsString("id");
+			log.println("ThreadID: "+ThreadID);
+			Mson m_community = m_ids.get(2);
+			//log.println("label(2): "+m_ids.get(2).getAsString("label"));
+			if(!m_community.isNull() && m_ids.get(2).getAsString("label").equals("community")){
+				optionalThreadID = m_community.getAsString("id");
+				if(videoTag.equals(optionalThreadID)){
+					// html5の場合逆になっているようだ
+					// ThreadKey が引けるのは メインthreadの方だけ
+					// chanelの場合 メイン=チャンネル=threadKey optionalは何もない
+					// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
+					optionalThreadID = ThreadID;
+					ThreadID = videoTag;
+					log.println("reset ThreadID: "+ThreadID);
 				}
-				if(key_required.equals("true")){
-					NeedsKey =  true;
-				}
-				log.println("NeedsKey: "+NeedsKey);
-				Mson m_nicos_thread_id = m_thread.get("nicos_thread_id");
-				if(!m_nicos_thread_id.isNull()){
-					nicosID = m_nicos_thread_id.getAsString();
-					log.println("nicosID: "+nicosID);
-				}
-			}else{
-				Mson m_ids = dataApiMson.get("threads");
-				//log.println("label(1): "+m_ids.get(1).getAsString("label"));
-				ThreadID = m_ids.get(1).getAsString("id");
-				log.println("ThreadID: "+ThreadID);
-				Mson m_community = m_ids.get(2);
-				//log.println("label(2): "+m_ids.get(2).getAsString("label"));
-				if(!m_community.isNull() && m_ids.get(2).getAsString("label").equals("community")){
-					optionalThreadID = m_community.getAsString("id");
-					if(videoTag.equals(optionalThreadID)){
-						// html5の場合逆になっているようだ
-						// ThreadKey が引けるのは メインthreadの方だけ
-						// chanelの場合 メイン=チャンネル=threadKey optionalは何もない
-						// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
-						optionalThreadID = ThreadID;
-						ThreadID = videoTag;
-						log.println("reset ThreadID: "+ThreadID);
-					}
-					log.println("OptionalThreadID: "+optionalThreadID);
-					NeedsKey = true;
-				}
-				//Mson m_nicos = m_ids.get("nicos");
-				//if(!m_nicos.isNull()){
-				//	nicosID = m_nicos.getAsString("id");
-				//	log.println("nicosID: "+nicosID);
-				//}
-				MsgUrl = m_ids.getAsString("server");
-				log.println("MsgUrl: "+MsgUrl);
+				log.println("OptionalThreadID: "+optionalThreadID);
+				NeedsKey = true;
 			}
+			//Mson m_nicos = m_ids.get("nicos");
+			//if(!m_nicos.isNull()){
+			//	nicosID = m_nicos.getAsString("id");
+			//	log.println("nicosID: "+nicosID);
+			//}
+			MsgUrl = m_ids.getAsString("server");
+			log.println("MsgUrl: "+MsgUrl);
 			log.println("NeedsKey: "+NeedsKey);
+
 			Mson m_viewer = dataApiMson.get2("viewer");
 			UserID = m_viewer.getAsString("id");
 			debug("■UserID: "+UserID+"\n");
-			Premium = m_viewer.getAsString("isPremium");
+			//Premium = m_viewer.getAsString("isPremium");
+			Premium = m_viewer.get("isPremium").getAsBoolean() ? "1" : "0";
 			log.println("Premium: "+Premium);
 			nicomap.put("is_premium", Premium);
 			Mson m_context = dataApiMson.get2("comment");
@@ -3324,16 +3290,25 @@ public class NicoClient {
 					ownerFilter = null;
 			}
 			debug("■}\n");
-			log.println("isPeakTime: "+dataApiMson.get("isPeakTime"));
-			log.println("isPremium: "+m_viewer.get("isPremium"));
+			//economy = VideoUrl.toLowerCase().contains("low");
 			//プレミア会員なら常にeconomy=false
 			//一般会員ならisPeakTimeで判定
-			//economy = VideoUrl.toLowerCase().contains("low");
-			if (m_viewer.get("isPremium").getAsBoolean()) {
-				economy = false;				
+			//ただし例外があるので注意(以下)
+			//- 最高画質が360pの動画
+			//- エコノミータイムでも最高画質取得できる動画
+			log.println("isPeakTime: "+dataApiMson.get("isPeakTime"));
+			Mson m_delivery = dataApiMson.get("delivery");
+			if ("1".equals(Premium)) {
+				economy = false;
 			}
 			else {
 				economy = dataApiMson.get("isPeakTime").getAsBoolean();
+				if (economy) {
+					if (!m_delivery.isNull()) {
+						Mson m_videos = m_delivery.get("videos");
+						economy = m_videos.get(0).get("isAvailable").getAsBoolean() ? false : true;
+					}
+				}
 			}
 			log.println("economy: "+economy +" ,isEco(): "+ isEco());
 			if(size_video_thumbinfo==null){
