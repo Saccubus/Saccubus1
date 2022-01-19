@@ -3107,8 +3107,9 @@ public class NicoClient {
 				thumbInfoData = s;
 			}
 			if(size_high==null && thumbInfoData!=null && !thumbInfoData.isEmpty()){
-				size_high = getXmlElement(thumbInfoData, "size_high");
-				size_low = getXmlElement(thumbInfoData, "size_low");
+				//size_high = getXmlElement(thumbInfoData, "size_high");
+				//size_low = getXmlElement(thumbInfoData, "size_low");
+				size_high = size_low = "1";
 				log.println("size_high="+size_high+", size_low="+size_low);
 			}
 			if(size_video_thumbinfo==null && VideoUrl!=null){
