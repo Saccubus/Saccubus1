@@ -34,6 +34,7 @@
  h THAANA_FONT		(mvboli.ttf)ターナ
  i MALAYALAM_FONT	(kartika.ttf)マラヤラム
  I TELUGU_CHAR		(gautami.ttf)テルグ
+ K SEGOEUI_SYM		(segoeuisym.ttf)Segoe UI Symbol(シーゴー) 2022/01/22追加
  Z ZERO_WIDTH     	(200b-200f)2000series 2028-202f (No Font Griph)
 
  参考資料（Windows Vistaに基づく）
@@ -72,6 +73,7 @@
 #define THAANA_CHAR 'h'
 #define MALAYALAM_CHAR 'i'
 #define TELUGU_CHAR 'I'
+#define SEGOEUI_SYM_CHAR 'K'
 #define ZERO_WIDTH_CHAR 'Z'
 
 /* コメントアウトは参考資料による定義 */
@@ -460,7 +462,8 @@ ffe0-ffff 特殊文字
 #define THAANA_FONT	17
 #define MALAYALAM_FONT 18
 #define TELUGU_FONT 19
-#define EXTRA_FONT 20
+#define SEGOEUI_SYM_FONT	20
+#define EXTRA_FONT 21
 #define UNDEFINED_FONT	(EXTRA_FONT+1)
 #define NULL_FONT	(EXTRA_FONT+2)
 #define CA_FONT_MAX	(EXTRA_FONT+1)
@@ -489,6 +492,7 @@ static char* const CA_FONT_NAME[] = {
 	"THAANA",
 	"MALAYALAM",
 	"TELUGU",
+	"SEGOEUI_SYM",
 	"EXTRA",
 	//--end of font type---//
 	"UNDEFINED",	//EXTRA_FONT+1
@@ -526,6 +530,11 @@ static const int CA_FONT_SIZE_FIX[][CMD_FONT_MAX] = {
 	{0,0,2,0},	//tamil
 	{0,0,2,0},	//laoo
 	{0,0,2,0},	//gurmukhi
+	{0,0,0,0},	//kannada
+	{0,0,0,0},	//thaana
+	{0,0,0,0},	//malayalam
+	{0,0,0,0},	//telugu
+	{0,0,0,0},	//Segoe UI Symbol
 	{0,0,0,0},	//extra
 };
 

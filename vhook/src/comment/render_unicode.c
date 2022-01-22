@@ -20,11 +20,12 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str1,SDL_Color fg,in
 	int limit = 380;
 	Uint16* str = buffer;
 	while(*str1!='\0' && --limit>0){
-		if((data->enableCA && isGlyphExist(data,fontsel,*str1)) ||
-			(!data->enableCA && (*str1!=(Uint16)0xfe0e && *str1!=(Uint16)0xfe0f))){
-			*str++ = *str1;
+		if((*str1==(Uint16)0xfe0e || *str1==(Uint16)0xfe0f) ||
+			(data->enableCA && !isGlyphExist(data,fontsel,*str1))){
+			str1++;
+			continue;
 		}
-		str1++;
+		*str++ = *str1++;
 	}
 	*str = '\0';
 	if(buffer[0] =='\0'){

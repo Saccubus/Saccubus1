@@ -283,6 +283,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File thaanaFont = null;
 	private File malayalamFont = null;
 	private File teluguFont = null;
+	private File segoeuisymFont = null;
 	private File nirmalaFont = null;
 	private Pattern ngWordPat;
 	private Pattern ngIDPat;
@@ -689,6 +690,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					//return false;
 					log.println("CA用フォント" + teluguFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					teluguFont = arialUnicodeFont;
+				}
+				segoeuisymFont = new File(fontDir, "seguisym.ttf");
+				if (!segoeuisymFont.canRead()) {
+					segoeuisymFont = nirmalaFont;
+				}
+				if (!segoeuisymFont.canRead()) {
+					sendtext("警告　CA用フォントが見つかりません。" + segoeuisymFont.getPath());
+					//retValue = "29";
+					//return false;
+					log.println("CA用フォント" + segoeuisymFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					segoeuisymFont = arialUnicodeFont;
 				}
 			}else{
 				a = new File(Setting.getFontPath());
@@ -4689,6 +4701,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ffmpeg.addCmd(getFontUrl(malayalamFont, encoding));
 				ffmpeg.addCmd("+19:");
 				ffmpeg.addCmd(getFontUrl(teluguFont, encoding));
+				ffmpeg.addCmd("+20:");
+				ffmpeg.addCmd(getFontUrl(segoeuisymFont, encoding));
 				if(Setting.isUseLineSkip()){
 					ffmpeg.addCmd("|--use-lineskip-as-fontsize");
 				}

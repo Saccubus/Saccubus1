@@ -153,6 +153,8 @@ FontType getFontType2(Uint16* up,int basefont,DATA* data,int stable){
 			return LAOO_FONT;
 		case GURMUKHI_CHAR:
 			return GURMUKHI_FONT;
+		case SEGOEUI_SYM_CHAR:
+			return SEGOEUI_SYM_FONT;
 		default:
 		//include UNDEFINED_CHAR
 			if(isGlyphExist(data,basefont,u))

@@ -35,7 +35,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ƒƒO
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.67.8.03";
+	char *ver="1.67.8.05";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
@@ -572,7 +572,12 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 			setting->CAfont_path[GURMUKHI_FONT] = font;
 			fprintf(log,"[framehook/init]GURMUKHI Font path:%s\n",setting->CAfont_path[GURMUKHI_FONT]);
 			fflush(log);
-
+		}else if(strncmp(FRAMEHOOK_OPT_SEGOEUI_SYM_FONT,arg,FRAMEHOOK_OPT_SEGOEUI_SYM_FONT_LEN) == 0
+				&& setting->CAfont_path[SEGOEUI_SYM_FONT]==NULL){
+			char* font = arg+FRAMEHOOK_OPT_SEGOEUI_SYM_FONT_LEN;
+			setting->CAfont_path[SEGOEUI_SYM_FONT] = font;
+			fprintf(log,"[framehook/init]SEGOEUI SYM Font path:%s\n",setting->CAfont_path[SEGOEUI_SYM_FONT]);
+			fflush(log);
 		}else if(strncmp(FRAMEHOOK_OPT_FONT_LIST,arg,FRAMEHOOK_OPT_FONT_LIST_LEN) == 0
 				&& setting->fontlist==NULL){
 			char* font = arg+FRAMEHOOK_OPT_FONT_LIST_LEN;
@@ -667,6 +672,10 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	if(!setting->CAfont_path[GURMUKHI_FONT]){
 		setting->CAfont_path[GURMUKHI_FONT] = setting->CAfont_path[ARIAL_FONT];
 		fprintf(log,"[framehook/init]no GURMUKHI Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
+	}
+	if(!setting->CAfont_path[SEGOEUI_SYM_FONT]){
+		setting->CAfont_path[SEGOEUI_SYM_FONT] = setting->CAfont_path[ARIAL_FONT];
+		fprintf(log,"[framehook/init]no SEGOEUI_SYM Font path. Use Font path<%s>.\n",setting->CAfont_path[ARIAL_FONT]);
 	}
 
 	fflush(log);
