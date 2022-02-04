@@ -16,12 +16,11 @@ h_Surface* pointsConv(DATA* data,h_Surface* surf,Uint16* str,int size,int fontse
 h_Surface* widthFixConv(DATA *data,h_Surface* surf,Uint16 *str,int size,int fontsel);
 h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str1,SDL_Color fg,int size,int fontsel,int fill_bg){
 	//SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
-	//2022/01/15 CAフォント対応の時だけisGlyphExistでチェックする
+	//2022/02/04 異体字セレクタのみ削除する
 	int limit = 380;
 	Uint16* str = buffer;
 	while(*str1!='\0' && --limit>0){
-		if((*str1==(Uint16)0xfe0e || *str1==(Uint16)0xfe0f) ||
-			(data->enableCA && !isGlyphExist(data,fontsel,*str1))){
+		if ((*str1 >= (Uint16)0xfe00) && (*str1 <= (Uint16)0xfe0f)) {
 			str1++;
 			continue;
 		}

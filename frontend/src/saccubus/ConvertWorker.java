@@ -527,6 +527,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					return false;
 				}
 				gothicFont = new File(fontDir, "MSGOTHIC.TTC");
+				if (Setting.getFontPath().length() > 0)
+					gothicFont = new File(Setting.getFontPath());
 				if (!gothicFont.canRead()) {
 					sendtext("CA用フォントが見つかりません。" + gothicFont.getPath());
 					result = "13";
@@ -4656,8 +4658,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ffmpeg.addCmd("|--font-dir:"
 					+ URLEncoder.encode(Path.toUnixPath(fontDir) + "/", encoding));
 				ffmpeg.addCmd("|--font-list:");
-				ffmpeg.addCmd("0:1+");
-				ffmpeg.addCmd(getFontUrl(gothicFont, encoding));
+				//ffmpeg.addCmd("0:1+");
+				//ffmpeg.addCmd(getFontUrl(gothicFont, encoding));
+				String newGothicPath = getFontUrl(gothicFont, encoding);
+				if (Setting.getFontPath().length() < 1)
+					newGothicPath = "1+" + newGothicPath;
+				else if (Setting.getFontIndex().length() > 0 &&
+						!Setting.getFontIndex().equals("0"))
+					newGothicPath = Setting.getFontIndex() + "+" + newGothicPath;
+				ffmpeg.addCmd("0:");
+				ffmpeg.addCmd(newGothicPath);
 				ffmpeg.addCmd("+1:");
 				ffmpeg.addCmd(getFontUrl(simsunFont, encoding));
 				ffmpeg.addCmd("+2:");
