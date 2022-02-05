@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment>settings-Mon Jan 17 06:48:20 JST 2022-Rev1.67.8.03</comment>
+<comment>settings-Fri Feb 04 10:39:18 JST 2022-Rev1.67.8.06</comment>
 <entry key="ShareBrowserIE">false</entry>
 <entry key="UseCookiePath">false</entry>
 <entry key="ZqSizeMin"/>
@@ -54,7 +54,7 @@
 <entry key="SwfTo3Path">true</entry>
 <entry key="SaveThumbAsText">false</entry>
 <entry key="PreferSmileServer">false</entry>
-<entry key="History1">3</entry>
+<entry key="History1"/>
 <entry key="CommentSpeed"/>
 <entry key="Html5CommentMode">false</entry>
 <entry key="CMD_EXT">mp4</entry>
@@ -63,12 +63,12 @@
 <entry key="SaveWatchPage">false</entry>
 <entry key="OpaqueRate">1.0</entry>
 <entry key="WideCMD_EXT">mp4</entry>
-<entry key="ShadowIndex">1</entry>
+<entry key="ShadowIndex">6</entry>
 <entry key="AutoPlayOnlyMp4">false</entry>
 <entry key="VideoFixFileNameFolder">.\[out]video</entry>
 <entry key="ShareChrome">false</entry>
 <entry key="OptionFolder">./optionFFAAC</entry>
-<entry key="FontIndex">4</entry>
+<entry key="FontIndex">0</entry>
 <entry key="ConvFixFileNameFolder">.\[out]converted</entry>
 <entry key="AddComment">true</entry>
 <entry key="FpsMin">30.0</entry>
@@ -101,7 +101,7 @@
 <entry key="CommentFixFileNameFolder">.\[out]comment</entry>
 <entry key="DisableEco">false</entry>
 <entry key="SaveThumbInfo">false</entry>
-<entry key="FontWidthFixRatio">105</entry>
+<entry key="FontWidthFixRatio"/>
 <entry key="Proxy"/>
 <entry key="FFnpegPath">./bin/ffmpeg3.2.2.exe</entry>
 <entry key="CMD_MAIN"/>
@@ -119,7 +119,7 @@
 <entry key="LineFeedSetting">-3</entry>
 <entry key="CommentMode">0</entry>
 <entry key="LiveConvertSetting">false</entry>
-<entry key="FontHeightFixRaito">104</entry>
+<entry key="FontHeightFixRaito"/>
 <entry key="VideoShowThumbnailSize">false</entry>
 <entry key="AutoHtml5Comment">false</entry>
 <entry key="AutoPlay">false</entry>
@@ -132,7 +132,7 @@
 <entry key="LayerControl">false</entry>
 <entry key="ClearErrorAtEnd">false</entry>
 <entry key="OutOptionSwfJpeg"> -an -vcodec copy -r 1 -f image2 </entry>
-<entry key="FontHeightFix">true</entry>
+<entry key="FontHeightFix">false</entry>
 <entry key="ZqFpsFloor"/>
 <entry key="ConvertedFile">.\[conv]%CAT%\%id%%TITLE%.mp4</entry>
 <entry key="UseFolder">.\user</entry>
@@ -164,7 +164,7 @@
 <entry key="SoundOnly">true</entry>
 <entry key="ProxyPort">-1</entry>
 <entry key="SaveAutoList">false</entry>
-<entry key="FontWidthFix">true</entry>
+<entry key="FontWidthFix">false</entry>
 <entry key="ConvFixFileName">true</entry>
 <entry key="EnableCommentMinimumVpos">false</entry>
 <entry key="QCMD_IN">-analyzeduration 10M</entry>
