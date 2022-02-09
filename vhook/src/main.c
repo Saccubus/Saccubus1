@@ -16,7 +16,7 @@
 int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, int cid, const char* com_type);
 int isPathRelative(const char* path);
 /**
- * ƒ‰ƒCƒuƒ‰ƒŠ‰Šú‰»
+ * ãƒ©ã‚¤ãƒ–ãƒ©ãƒªåˆæœŸåŒ–
  */
 int init(FILE* log){
 	fputs("[main/init]initializing libs...\n",log);
@@ -42,8 +42,8 @@ int checkMSPGOTHIC(TTF_Font* font);
 int printFontInfo(FILE* log,TTF_Font** pfont,int size,const char* name);
 //int extra_font(SETTING* setting, FILE* log);
 /*
- * ƒf[ƒ^‚Ì‰Šú‰»
- * ContextInfo ci->DATA data © SETTING setting
+ * ãƒ‡ãƒ¼ã‚¿ã®åˆæœŸåŒ–
+ * ContextInfo ci->DATA data â† SETTING setting
  */
 int initData(DATA* data,FILE* log,SETTING* setting){
 	int i;
@@ -90,7 +90,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 			}
 		}
 	}
-	//ƒtƒŒ[ƒ€ƒŒ[ƒg
+	//ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¬ãƒ¼ãƒˆ
 //	data->limit_height = NICO_HEIGHT;
 	data->q_player = setting->q_player;
 	data->is_live = setting->is_live;
@@ -109,17 +109,17 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	}
 	data->comment_off = FALSE;
 	if(setting->comment_off !=NULL){
-		// [•ûŒü][•¶šƒTƒCƒYw’è]”’l[ƒp[ƒZƒ“ƒgw’è][nakaƒRƒƒ“ƒgƒtƒ‰ƒO]
-		// •ûŒü:ã‚©‚ç+–”‚ÍƒXƒy[ƒX,‰º‚©‚ç-
-		// •¶šƒTƒCƒYw’è:b=big m=medium s=small
-		// ƒp[ƒZƒ“ƒgw’è:%“®‰æ‚‚³‚É‘Î‚·‚é‘Š‘Î’l(100•ª—¦)
-		// nakaƒRƒƒ“ƒgƒtƒ‰ƒO:n
+		// [æ–¹å‘][æ–‡å­—ã‚µã‚¤ã‚ºæŒ‡å®š]æ•°å€¤[ãƒ‘ãƒ¼ã‚»ãƒ³ãƒˆæŒ‡å®š][nakaã‚³ãƒ¡ãƒ³ãƒˆãƒ•ãƒ©ã‚°]
+		// æ–¹å‘:ä¸Šã‹ã‚‰+åˆã¯ã‚¹ãƒšãƒ¼ã‚¹,ä¸‹ã‹ã‚‰-
+		// æ–‡å­—ã‚µã‚¤ã‚ºæŒ‡å®š:b=big m=medium s=small
+		// ãƒ‘ãƒ¼ã‚»ãƒ³ãƒˆæŒ‡å®š:%å‹•ç”»é«˜ã•ã«å¯¾ã™ã‚‹ç›¸å¯¾å€¤(100åˆ†ç‡)
+		// nakaã‚³ãƒ¡ãƒ³ãƒˆãƒ•ãƒ©ã‚°:n
 		data->comment_off = TRUE;
 		const char* ptr = setting->comment_off;
 		char* endptr = NULL;
 		int val = 0;
 		int sign = 1;
-		int kind = 0; // 0:pixelw’è, 1:big, 2:small, 3:medium, 4:ƒp[ƒZƒ“ƒgw’è
+		int kind = 0; // 0:pixelæŒ‡å®š, 1:big, 2:small, 3:medium, 4:ãƒ‘ãƒ¼ã‚»ãƒ³ãƒˆæŒ‡å®š
 		int naka = FALSE;
 		char c = *ptr++;
 		if(c=='+'||c==' ') sign = 1;
@@ -181,7 +181,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 			data->vfspeedflag = 1;
 			if(endptr!=NULL){
 				if(*endptr=='v'||*endptr=='V'){
-					// v•t‚«‚Ío—Í‘¬“x‚à”{—¦‚Å•ÏX
+					// vä»˜ãã¯å‡ºåŠ›é€Ÿåº¦ã‚‚å€ç‡ã§å¤‰æ›´
 					data->vfspeedflag = 2;
 				}
 			}
@@ -223,20 +223,20 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		data->vout_width,data->vout_height,data->vout_x,data->vout_y,data->pad_w,data->pad_h);
 	data->extra_mode = setting->extra_mode;
 	data->drawframe = data->extra_mode!=NULL && strstr(data->extra_mode,"-frame");
-	//ƒJƒXƒ^ƒ€‰eİ’è
+	//ã‚«ã‚¹ã‚¿ãƒ å½±è¨­å®š
 	setting_shadow(setting->extra_mode, data);
 	if(setting->april_fool != NULL){
 		set_aprilfool(setting,data);
 	}
-	//‰©˜g‚ÌF‚ğİ’è
+	//é»„æ ã®è‰²ã‚’è¨­å®š
 	data->wakuiro_dat = NULL;
 	if(setting->wakuiro != NULL){
 		set_wakuiro(setting->wakuiro,data);
 		if(data->wakuiro_dat!=NULL)
 			data->drawframe = TRUE;
 	}
-	// ’e–‹ƒ‚[ƒh‚Ì‚‚³‚Ìİ’è@16:9‚ÅƒIƒŠƒWƒiƒ‹ƒŠƒTƒCƒY‚Å‚È‚¢ê‡‚Íã‰º‚É‚Í‚İo‚·
-	// Qwatch,html5comment‚Ì‚Æ‚«‚ÍA‚Í‚İo‚³‚È‚¢
+	// å¼¾å¹•ãƒ¢ãƒ¼ãƒ‰ã®é«˜ã•ã®è¨­å®šã€€16:9ã§ã‚ªãƒªã‚¸ãƒŠãƒ«ãƒªã‚µã‚¤ã‚ºã§ãªã„å ´åˆã¯ä¸Šä¸‹ã«ã¯ã¿å‡ºã™
+	// Qwatch,html5commentã®ã¨ãã¯ã€ã¯ã¿å‡ºã•ãªã„
 	//comment area height is independent from video height
 	if(data->html5comment){
 		if(data->nico_width_now==NICO_WIDTH_WIDE){
@@ -258,45 +258,45 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 		if(data->vout_height >= comment_height){
 			//data->width_scale = width_scale;
 			//limit_height = data->vout_height+1;
-			// scalek¬ limit‚»‚Ì‚Ü‚Ü
+			// scaleç¸®å° limitãã®ã¾ã¾
 		}else if(data->pad_h >= comment_height){
-			//pad‚ª‚ ‚ê‚ÎpadˆÈ‰º‚È‚çlimit_height‚¾‚¯•ÏX
-			// scale ‚»‚Ì‚Ü‚Ü limit •ÏX
+			//padãŒã‚ã‚Œã°padä»¥ä¸‹ãªã‚‰limit_heightã ã‘å¤‰æ›´
+			// scale ãã®ã¾ã¾ limit å¤‰æ›´
 			limit_height = comment_height;
 			fprintf(log,"[main/process]limit_height %d.\n",limit_height);
 		}else{
-			//padˆÈã‚©‚Â“®‰æ‚Ì‚‚³ˆÈã
+			//padä»¥ä¸Šã‹ã¤å‹•ç”»ã®é«˜ã•ä»¥ä¸Š
 			data->width_scale = MAX(data->pad_h,data->vout_height) / (double)data->nico_height;
 			fprintf(log,"[main/process]width scale is set-again by height. %.3f%%\n", data->width_scale * 100.0);
 			limit_height = lround(data->width_scale * data->nico_height);
 			fprintf(log,"[main/process]limit_height %d.\n",limit_height);
 		}
 	} else if(data->original_resize){
-		// Œ´h ‹ŒƒŠƒTƒCƒY
-		// scale ‚»‚Ì‚Ü‚Ü limit ‚»‚Ì‚Ü‚Ü(‹N“_‚Í‚Í‚İo‚³‚È‚¢AI“_‚Í‚Í‚İ‚¾‚·‚©‚à)
+		// åŸå®¿ æ—§ãƒªã‚µã‚¤ã‚º
+		// scale ãã®ã¾ã¾ limit ãã®ã¾ã¾(èµ·ç‚¹ã¯ã¯ã¿å‡ºã•ãªã„ã€çµ‚ç‚¹ã¯ã¯ã¿ã ã™ã‹ã‚‚)
 		//data->width_scale = width_scale;
 		//data->limit_height = data->vout_height+1;
 	} else if(data->pad_h==0){
-		// Œ´h pad‚È‚µ
+		// åŸå®¿ padãªã—
 		if(data->vout_height < comment_height){
-			// scalek¬ limit‚»‚Ì‚Ü‚Ü
+			// scaleç¸®å° limitãã®ã¾ã¾
 			data->width_scale = height_scale;
 			fprintf(log,"[main/process]width scale is set-again by height. %.3f%%\n", data->width_scale * 100.0);
 		}else{
-			// scale ‚»‚Ì‚Ü‚Ü limit ‚»‚Ì‚Ü‚Ü
+			// scale ãã®ã¾ã¾ limit ãã®ã¾ã¾
 			//data->width_scale = width_scale;
 		}
 		//limit_height = data->vout_height+1;
 	} else {
-		// Œ´h pad‚ ‚è
-		// scale ‚»‚Ì‚Ü‚Ü limitŠg‘å
+		// åŸå®¿ padã‚ã‚Š
+		// scale ãã®ã¾ã¾ limitæ‹¡å¤§
 		//data->width_scale = width_scale;
 		limit_height = comment_height;
 		fprintf(log,"[main/process]limit_height %d.\n",limit_height);
 	}
 	if(!data->html5comment)
 		limit_height += lround(((double)limit_height / (double)NICO_HEIGHT));
-		//ƒRƒƒ“ƒg‚Ì‚‚³‚Í385=384+1 ‰º‚É‚Í‚İo‚·
+		//ã‚³ãƒ¡ãƒ³ãƒˆã®é«˜ã•ã¯385=384+1 ä¸‹ã«ã¯ã¿å‡ºã™
 	data->limit_height = limit_height;
 	fprintf(data->log,"[chat_slot/add]video height %d  limit height %d\n",data->vout_height,data->limit_height);
 	int y_min = (data->vout_height>>1) - (limit_height>>1);
@@ -305,14 +305,14 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	data->y_max = y_max;
 	fprintf(data->log,"[chat_slot/add]height min %d  max %d\n",y_min,y_max);
 	fputs("[main/init]initializing context...\n",log);
-	//ƒtƒHƒ“ƒg
+	//ãƒ•ã‚©ãƒ³ãƒˆ
 	TTF_Font** font = data->font;
 	const char* font_path = setting->font_path;
 	const int font_index = setting->font_index;
 	const char* fontdir = setting->fontdir;
 	int fixed_font_index = font_index;
 	int fontsize;
-	/* ƒ^[ƒQƒbƒg‚ğŠg‘å‚µ‚½‚ÉƒtƒHƒ“ƒg‚ªŠŠ‚ç‚©‚É‚·‚é‚½‚ß‚Q”{‰»‚·‚éB */
+	/* ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’æ‹¡å¤§ã—ãŸæ™‚ã«ãƒ•ã‚©ãƒ³ãƒˆãŒæ»‘ã‚‰ã‹ã«ã™ã‚‹ãŸã‚ï¼’å€åŒ–ã™ã‚‹ã€‚ */
 	int isfontdoubled = 0;
 	if(data->fontsize_fix){
 		isfontdoubled = 1;
@@ -340,15 +340,15 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	if(!setting->enableCA){
 		fputs("[main/init]initializing default Font...\n",log);
 		for(i=0;i<CMD_FONT_MAX;i++){
-			/* ƒ^[ƒQƒbƒg‚ğŠg‘å‚µ‚½‚ÉƒtƒHƒ“ƒg‚ªŠŠ‚ç‚©‚É‚·‚é‚½‚ß‚Q”{‰»‚·‚éB */
+			/* ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’æ‹¡å¤§ã—ãŸæ™‚ã«ãƒ•ã‚©ãƒ³ãƒˆãŒæ»‘ã‚‰ã‹ã«ã™ã‚‹ãŸã‚ï¼’å€åŒ–ã™ã‚‹ã€‚ */
 			//int fontsize = setting->fixed_font_size[i];
 			fontsize = COMMENT_FONT_SIZE[i]<<isfontdoubled;
 			if(pointsizemode){
 				fontsize = COMMENT_POINT_SIZE[i]<<isfontdoubled;
 			}
-			//ÀŒ±‚©‚çSDLw’è’l‚Í-1‚·‚é‚ÆƒjƒRƒjƒR“®‰æ‚Æ•¶š•‚ª‡‚¤?
+			//å®Ÿé¨“ã‹ã‚‰SDLæŒ‡å®šå€¤ã¯-1ã™ã‚‹ã¨ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã¨æ–‡å­—å¹…ãŒåˆã†?
 			if(html5){
-				//’²®
+				//èª¿æ•´
 			}else{
 				fontsize -= 1;
 			}
@@ -356,7 +356,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 			font[i] = TTF_OpenFontIndex(font_path,fontsize,font_index);
 			if(font[i] == NULL){
 				fprintf(log,"[main/init]failed to load font:%s size:%d index:%d.\n",font_path,fontsize,font_index);
-				//0‚Å‚à‚µ‚Ä‚İ‚éB
+				//0ã§ã‚‚è©¦ã—ã¦ã¿ã‚‹ã€‚
 				fputs("[main/init]retrying to open font at index:0...",log);
 				font[i] = TTF_OpenFontIndex(font_path,fontsize,0);
 				if(font[i] == NULL){
@@ -369,13 +369,13 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 			}
 			TTF_SetFontStyle(font[i],ttf_style);
 			data->fixed_font_height[i] = TTF_FontHeight(font[i]);
-			// TTF_FontHeight()‚ª³‚µ‚¢‚©‚Ç‚¤‚©‚Í‹^–âH
-			// ÀŒ±‚Å‚Íİ’è’l‚Æˆá‚¤’l‚É‚È‚Á‚½
+			// TTF_FontHeight()ãŒæ­£ã—ã„ã‹ã©ã†ã‹ã¯ç–‘å•ï¼Ÿ
+			// å®Ÿé¨“ã§ã¯è¨­å®šå€¤ã¨é•ã†å€¤ã«ãªã£ãŸ
 			line_skip[i] = TTF_FontLineSkip(font[i]);
-			//‚±‚ê‚àˆá‚¤’l‚¾‚Á‚½B
-			// Ql 1 pt = 1/72 inch, 1 px = 1 dot
+			//ã“ã‚Œã‚‚é•ã†å€¤ã ã£ãŸã€‚
+			// å‚è€ƒ 1 pt = 1/72 inch, 1 px = 1 dot
 			data->font_pixel_size[i] = FONT_PIXEL_SIZE[i]<<isfontdoubled;
-			// SDL_Surface ‚É•`‰æŒã‚Ì‚‚³‚Í•¶š(—ñ)–ˆ‚ÉˆÙ‚È‚é‚Ì‚Å‚±‚Ì’l‚ÅC³‚·‚éBdrawText()
+			// SDL_Surface ã«æç”»å¾Œã®é«˜ã•ã¯æ–‡å­—(åˆ—)æ¯ã«ç•°ãªã‚‹ã®ã§ã“ã®å€¤ã§ä¿®æ­£ã™ã‚‹ã€‚drawText()
 			fprintf(log,"[main/init]load font[%d]:%s size:%d index:%d.\n",i,font_path,fontsize,fixed_font_index);
 			printFontInfo(log,font,i,"");
 		}
@@ -394,7 +394,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	char font_file_path[128];
 	if(data->enableCA){
 		fputs("[main/init]initializing CA(Comment Art) Font...\n",log);
-		// CAƒtƒHƒ“ƒg
+		// CAãƒ•ã‚©ãƒ³ãƒˆ
 		for(f=0;f<CA_FONT_MAX;f++){
 			for(i=0;i<CMD_FONT_MAX;i++){
 				data->CAfont[f][i] = NULL;
@@ -430,24 +430,24 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 			for(i=0;i<CMD_FONT_MAX;i++){
 				fontsize = COMMENT_FONT_SIZE[i];
 				if(html5){
-					//’²®
+					//èª¿æ•´
 				}else{
 					//flash
-					//ÀŒ±‚©‚çSDLw’è’l‚Íƒ}ƒCƒiƒX‚·‚é‚ÆƒjƒRƒjƒR“®‰æ‚Æ•¶š•‚ª‡‚¤?
+					//å®Ÿé¨“ã‹ã‚‰SDLæŒ‡å®šå€¤ã¯ãƒã‚¤ãƒŠã‚¹ã™ã‚‹ã¨ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã¨æ–‡å­—å¹…ãŒåˆã†?
 					fontsize -= 1;
 				}
-				/* ƒ^[ƒQƒbƒg‚ğŠg‘å‚µ‚½‚ÉƒtƒHƒ“ƒg‚ªŠŠ‚ç‚©‚É‚·‚é‚½‚ß‚Q”{‰»‚·‚éB */
+				/* ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’æ‹¡å¤§ã—ãŸæ™‚ã«ãƒ•ã‚©ãƒ³ãƒˆãŒæ»‘ã‚‰ã‹ã«ã™ã‚‹ãŸã‚ï¼’å€åŒ–ã™ã‚‹ã€‚ */
 				fontsize <<= isfontdoubled;
 				try = data->original_resize ? 100 : 1;
 				target_size = fontsize;
 				if(html5 && !data->original_resize){
-					// fontsize, target_size‚Ì’²®
+					// fontsize, target_sizeã®èª¿æ•´
 					try = 1;
 					target_size = fontsize;
 					if(f <= ARIAL_FONT){	//gothic simsun gulim arial
 						fontsize = HTML5_FONT_WIDTH_TUNED[f][isfontdoubled][i];
 						target_size = HTML5_FONT_HIGHT_TUNED[f][isfontdoubled][i];
-					}else if(f <= GURMUKHI_FONT){	//•¶šŠÔŠu‚Í‡‚í‚È‚¢‚ª•¶šƒTƒCƒY‚ğ‡‚í‚¹‚é
+					}else if(f <= GURMUKHI_FONT){	//æ–‡å­—é–“éš”ã¯åˆã‚ãªã„ãŒæ–‡å­—ã‚µã‚¤ã‚ºã‚’åˆã‚ã›ã‚‹
 						fontsize += CA_FONT_SIZE_FIX[f][i]<<isfontdoubled;
 						target_size = fontsize;
 					}else{
@@ -462,7 +462,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 					if(f <= ARIAL_FONT){	//gothic simsun gulim arial
 						fontsize = CA_FONT_SIZE_TUNED[f][isfontdoubled][i];
 						target_size = CA_FONT_HIGHT_TUNED[f][isfontdoubled][i];
-					}else if(f <= GURMUKHI_FONT){	//•¶šŠÔŠu‚Í‡‚í‚È‚¢‚ª•¶šƒTƒCƒY‚ğ‡‚í‚¹‚é
+					}else if(f <= GURMUKHI_FONT){	//æ–‡å­—é–“éš”ã¯åˆã‚ãªã„ãŒæ–‡å­—ã‚µã‚¤ã‚ºã‚’åˆã‚ã›ã‚‹
 						fontsize += CA_FONT_SIZE_FIX[f][i]<<isfontdoubled;
 						target_size = fontsize;
 					}else{
@@ -558,7 +558,7 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 			free(setting->fontlist);
 		fputs("[main/init]initialized CA(Comment Art) Feature.\n",log);
 	}
-	//ƒGƒ‰[ƒtƒHƒ“ƒg
+	//ã‚¨ãƒ©ãƒ¼ãƒ•ã‚©ãƒ³ãƒˆ
 	fprintf(log, "[main/init]initialize ErrFont.\n");
 	(void)getErrFont(data);
 	//
@@ -566,35 +566,35 @@ int initData(DATA* data,FILE* log,SETTING* setting){
 	fprintf(log, "[main/init]font height fix ratio:%.0f%% (experimental)\n",(data->font_h_fix_r * 100));
 	fflush(log);
 	/*
-	 * ƒ†[ƒUƒRƒƒ“ƒg
+	 * ãƒ¦ãƒ¼ã‚¶ã‚³ãƒ¡ãƒ³ãƒˆ
 	 */
 	if (!initCommentData(data, &data->user, log,
 			setting->data_user_path, setting->user_slot_max, CID_USER, COM_TYPE[CID_USER])){
 		return FALSE;
 	}
 	/*
-	 * ƒI[ƒiƒRƒƒ“ƒg
+	 * ã‚ªãƒ¼ãƒŠã‚³ãƒ¡ãƒ³ãƒˆ
 	 */
 	if (!initCommentData(data, &data->owner, log,
 			setting->data_owner_path, setting->owner_slot_max, CID_OWNER, COM_TYPE[CID_OWNER])){
 		return FALSE;
 	}
 	/*
-	 * ƒIƒvƒVƒ‡ƒiƒ‹ƒRƒƒ“ƒg
+	 * ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚³ãƒ¡ãƒ³ãƒˆ
 	 */
 	if (!initCommentData(data, &data->optional, log,
 			setting->data_optional_path, setting->optional_slot_max, CID_OPTIONAL, COM_TYPE[CID_OPTIONAL])){
 		return FALSE;
 	}
 
-	//ƒGƒ‰[—pƒtƒHƒ“ƒg
+	//ã‚¨ãƒ©ãƒ¼ç”¨ãƒ•ã‚©ãƒ³ãƒˆ
 	data->ErrFont = NULL;
-	//I‚í‚èB
+	//çµ‚ã‚ã‚Šã€‚
 	fputs("[main/init]initialized context.\n",log);
 	return TRUE;
 }
 /*
- * ƒRƒƒ“ƒgƒf[ƒ^‚Ì‰Šú‰»
+ * ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ã®åˆæœŸåŒ–
  * DATA data->user owner optional
  */
 int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, int cid, const char* dummy_com_type){
@@ -602,17 +602,17 @@ int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int m
 	int tl = data->comment_speed<0? -1:1;
 	if (cdata->enable_comment){
 		fprintf(log,"[main/init]%s comment is enabled.\n",com_type);
-		//ƒRƒƒ“ƒgƒf[ƒ^
+		//ã‚³ãƒ¡ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿
 		if (initChat(log, &cdata->chat, path, &cdata->slot, data->video_length, data->nico_width_now,
 				cid, com_type, tl, data->is_live, data->comment_vpos_shift, data->ahead_vpos, data->min_vpos)){
 			fprintf(log,"[main/init]initialized %s comment.\n",com_type);
 		}else{
 			fprintf(log,"[main/init]failed to initialize %s comment.",com_type);
-			// closeChat(&cdata->chat);	// ƒƒ‚ƒŠƒŠ[ƒN–h~
+			// closeChat(&cdata->chat);	// ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯é˜²æ­¢
 			return FALSE;
 		}
 		if (cdata->chat.max_item > 0){
-			//ƒRƒƒ“ƒgƒXƒƒbƒg
+			//ã‚³ãƒ¡ãƒ³ãƒˆã‚¹ãƒ­ãƒƒãƒˆ
 			if(max_slot > cdata->chat.max_item){
 				max_slot = cdata->chat.max_item;
 				fprintf(log,"[main/init]%s comment max_slot changed to %d.\n",com_type, max_slot);
@@ -621,7 +621,7 @@ int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int m
 				fprintf(log,"[main/init]initialized %s comment slot.\n",com_type);
 			}else{
 				fprintf(log,"[main/init]failed to initialize %s comment slot.",com_type);
-				// closeChatSlot(&cdata->slot);	// ƒƒ‚ƒŠƒŠ[ƒN–h~
+				// closeChatSlot(&cdata->slot);	// ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯é˜²æ­¢
 				return FALSE;
 			}
 		} else {
@@ -685,7 +685,7 @@ int isPathRelative(const char* path){
 	return TRUE;
 }
 /*
- * ‰f‘œ‚Ì•ÏŠ·
+ * æ˜ åƒã®å¤‰æ›
  */
 int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 	FILE* log = data->log;
@@ -696,8 +696,8 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 	zoomed_width = (int)(data->vout_width * zoomy);
 
 	if(!data->process_first_called){
-		// ’e–‹ƒ‚[ƒh‚Ì‚‚³‚Ìİ’è@16:9‚ÅƒIƒŠƒWƒiƒ‹ƒŠƒTƒCƒY‚Å‚È‚¢ê‡‚Íã‰º‚É‚Í‚İo‚·
-		// Qwatch, html5‚Ì‚Æ‚«‚ÍA‚Í‚İo‚³‚È‚¢
+		// å¼¾å¹•ãƒ¢ãƒ¼ãƒ‰ã®é«˜ã•ã®è¨­å®šã€€16:9ã§ã‚ªãƒªã‚¸ãƒŠãƒ«ãƒªã‚µã‚¤ã‚ºã§ãªã„å ´åˆã¯ä¸Šä¸‹ã«ã¯ã¿å‡ºã™
+		// Qwatch, html5ã®ã¨ãã¯ã€ã¯ã¿å‡ºã•ãªã„
 		//comment area height is independent from video height
 		if(surf->w!=data->vout_width||surf->h!=data->vout_height){
 			fprintf(log,"[main/process]screen size != video size\n");
@@ -716,14 +716,14 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 		}
 		fflush(log);
 	}
-	/*ƒtƒBƒ‹ƒ^‚ğ‚©‚¯‚é*/
+	/*ãƒ•ã‚£ãƒ«ã‚¿ã‚’ã‹ã‘ã‚‹*/
 	if(data->vfspeedflag > 0){
 		now_vpos = (double)now_vpos * data->vfspeedrate;
 	}
 	if(process(data,surf,now_vpos)){
 	}
 	fflush(log);
-	/*•ÏŠ·‚µ‚½‰æ‘œ‚ğŒ©‚¹‚éB*/
+	/*å¤‰æ›ã—ãŸç”»åƒã‚’è¦‹ã›ã‚‹ã€‚*/
 	if(data->show_video){
 		SDL_Surface* zoomed = null;
 		SDL_Event event;
@@ -756,7 +756,7 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 				return FALSE;
 			}
 		}
-		//‰f‘œ•\¦
+		//æ˜ åƒè¡¨ç¤º
 		if(data->show_thumbnail_size){
 			zoomed = zoomSurface(surf,zoomy,zoomy,SMOOTHING_OFF);
 			if(zoomed!=null){
@@ -771,40 +771,40 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 			while(SDL_PollEvent(&event)){}
 		}
 	}
-	//ˆê‰ñ–ÚˆÈ~‚ÍTRUE‚É‚È‚éB
+	//ä¸€å›ç›®ä»¥é™ã¯TRUEã«ãªã‚‹ã€‚
 	data->process_first_called=TRUE;
 	fflush(log);
 	return TRUE;
 }
 /*
- * ƒf[ƒ^‚ÌƒNƒ[ƒY
+ * ãƒ‡ãƒ¼ã‚¿ã®ã‚¯ãƒ­ãƒ¼ã‚º
  */
 int closeData(DATA* data){
 	int i;
-	//ƒ†[ƒUƒRƒƒ“ƒg‚ª—LŒø‚È‚çŠJ•ú
+	//ãƒ¦ãƒ¼ã‚¶ã‚³ãƒ¡ãƒ³ãƒˆãŒæœ‰åŠ¹ãªã‚‰é–‹æ”¾
 	if(data->user.enable_comment){
 		closeChat(&data->user.chat);
 		closeChatSlot(&data->user.slot);
 	}
-	//ƒI[ƒiƒRƒƒ“ƒg‚ª—LŒø‚È‚çŠJ•ú
+	//ã‚ªãƒ¼ãƒŠã‚³ãƒ¡ãƒ³ãƒˆãŒæœ‰åŠ¹ãªã‚‰é–‹æ”¾
 	if(data->owner.enable_comment){
 		closeChat(&data->owner.chat);
 		closeChatSlot(&data->owner.slot);
 	}
-	//ƒIƒvƒVƒ‡ƒiƒ‹ƒRƒƒ“ƒg‚ª—LŒø‚È‚çŠJ•ú
+	//ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚³ãƒ¡ãƒ³ãƒˆãŒæœ‰åŠ¹ãªã‚‰é–‹æ”¾
 	if(data->optional.enable_comment){
 		closeChat(&data->optional.chat);
 		closeChatSlot(&data->optional.slot);
 	}
 	fprintf(data->log,"All Chat closed.\n");
-	//ƒGƒ‰[—pƒtƒHƒ“ƒgŠJ•ú
+	//ã‚¨ãƒ©ãƒ¼ç”¨ãƒ•ã‚©ãƒ³ãƒˆé–‹æ”¾
 	closeErrFont(data);
 	fprintf(data->log,"ErrFont closed.\n");
-	//ƒtƒHƒ“ƒgŠJ•ú
+	//ãƒ•ã‚©ãƒ³ãƒˆé–‹æ”¾
 	for(i=0;i<CMD_FONT_MAX;i++){
 		TTF_CloseFont(data->font[i]);
 	}
-	//CAƒtƒHƒ“ƒgŠJ•ú
+	//CAãƒ•ã‚©ãƒ³ãƒˆé–‹æ”¾
 	if(data->enableCA){
 		int f;
 		for(f=0;f<CA_FONT_MAX;f++){
@@ -823,12 +823,12 @@ int closeData(DATA* data){
 }
 
 /*
- * ƒ‰ƒCƒuƒ‰ƒŠƒVƒƒƒbƒgƒ_ƒEƒ“
+ * ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚·ãƒ£ãƒƒãƒˆãƒ€ã‚¦ãƒ³
  */
 int close(){
-	//SDL‚ğƒVƒƒƒbƒgƒ_ƒEƒ“
+	//SDLã‚’ã‚·ãƒ£ãƒƒãƒˆãƒ€ã‚¦ãƒ³
 	SDL_Quit();
-	//“¯‚¶‚­TTF‚ğƒVƒƒƒbƒgƒ_ƒEƒ“
+	//åŒã˜ãTTFã‚’ã‚·ãƒ£ãƒƒãƒˆãƒ€ã‚¦ãƒ³
 	TTF_Quit();
 	return TRUE;
 }

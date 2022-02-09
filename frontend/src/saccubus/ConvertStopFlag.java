@@ -7,22 +7,22 @@ import javax.swing.JButton;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * <p>
- * ’˜ìŒ : Copyright (c) 2007 PSI
+ * è‘—ä½œæ¨©: Copyright (c) 2007 PSI
  * </p>
  *
  * <p>
- * ‰ïĞ–¼:
+ * ä¼šç¤¾å:
  * </p>
  *
- * @author –¢“ü—Í
+ * @author æœªå…¥åŠ›
  * @version 1.0
  *
  */
@@ -46,11 +46,11 @@ public class ConvertStopFlag {
 	private final String PendingText;
 
 /*
- * ó‘Ô‚Í@•ÏŠ·‘Ò‚¿,•ÏŠ·‘Ò‹@(disable),’â~‘Ò‚¿,I—¹‘Ò‹@(disable),I—¹ ‚Ì‚T‚Â
- * method go •ÏŠ·‘Ò‚¿¨boolean=readyToGo¨•ÏŠ·‘Ò‹@
- * method started •ÏŠ·‘Ò‹@¨’â~‘Ò‚¿
- * method stop ’â~‘Ò‚¿¨boolean=needstop¨I—¹‘Ò‹@
- * method finish I—¹‘Ò‚¿¨I—¹ or Ä•ÏŠ·‘Ò‚¿
+ * çŠ¶æ…‹ã¯ã€€å¤‰æ›å¾…ã¡,å¤‰æ›å¾…æ©Ÿ(disable),åœæ­¢å¾…ã¡,çµ‚äº†å¾…æ©Ÿ(disable),çµ‚äº† ã®ï¼•ã¤
+ * method go å¤‰æ›å¾…ã¡â†’boolean=readyToGoâ†’å¤‰æ›å¾…æ©Ÿ
+ * method started å¤‰æ›å¾…æ©Ÿâ†’åœæ­¢å¾…ã¡
+ * method stop åœæ­¢å¾…ã¡â†’boolean=needstopâ†’çµ‚äº†å¾…æ©Ÿ
+ * method finish çµ‚äº†å¾…ã¡â†’çµ‚äº† or å†å¤‰æ›å¾…ã¡
  */
 
 	public ConvertStopFlag(

@@ -2,7 +2,7 @@
 #define NICODEF_H_
 #include <SDL/SDL_ttf.h>
 
-//’è‹`
+//å®šç¾©
 #define NICO_WIDTH		512
 #define NICO_HEIGHT	384
 #define NICO_HEIGHT_WIDE 360
@@ -12,7 +12,7 @@
 #define NICO_LIMIT_WIDTH	544
 #define NICO_LIMIT_WIDTH_WIDE	672
 
-#define VPOS_FACTOR		100	//‘½•ªŒW”‚ÌˆÓ–¡‚Å‚ÍEEE‚â‚Í‚è1/100‚Å‹L˜^‚µ‚Ä‚é‚Á‚Û‚¢
+#define VPOS_FACTOR		100	//å¤šåˆ†ä¿‚æ•°ã®æ„å‘³ã§ã¯ãƒ»ãƒ»ãƒ»ã‚„ã¯ã‚Š1/100ã§è¨˜éŒ²ã—ã¦ã‚‹ã£ã½ã„
 #define TEXT_AHEAD_SEC	(1 * VPOS_FACTOR)
 #define TEXT_SHOW_SEC	(4 * VPOS_FACTOR)
 #define TEXT_SHOW_SEC_S	(3 * VPOS_FACTOR)
@@ -127,8 +127,8 @@ static const float LINEFEED_RESIZE_SCALE[2][CMD_FONT_MAX] = {
 	0.519f,	// 0.517 15/29  0.518 378/730(25Lines) 0.519 108/208( 7Lines)
 	},
 	{ //html5
-	  // Å¬“ñæ–@@ not resized       Line resized
-	  // ’è”+•â³@big   medium small  big    medium  small
+	  // æœ€å°äºŒä¹—æ³•ã€€ not resized       Line resized
+	  // å®šæ•°+è£œæ­£ã€€big   medium small  big    medium  small
 	  //  a       42.452 27.143 16.95  22.356 14.094  9.4058
 	  //  b        4.05   5.076  4.9    2.6     2.748 3.138
 	0.519f,	// 0.519  14.094/27.143  0.520 355/683(25Lines) 0.518 101/195( 7Lines)
@@ -161,17 +161,17 @@ static const int COMMENT_POINT_SIZE[CMD_FONT_MAX] = {
 };
 //Big double resize height
 /*
-big“ñdƒŠƒTƒCƒY9s(‚‚³392pxEŒÅ’èŽž‰¡•1041`1067px)F Š¿Žš•26•¶Žš’ö“x
-big“ñdƒŠƒTƒCƒY10s(‚‚³384pxEŒÅ’èŽž‰¡•1137`1167px)F Š¿Žš•~29•¶Žš’ö“x
-big“ñdƒŠƒTƒCƒY11s(‚‚³389pxEŒÅ’èŽž‰¡•1247`1283px)F Š¿Žš•~32•¶Žš’ö“x
-big“ñdƒŠƒTƒCƒY12s(‚‚³388pxEŒÅ’èŽž‰¡•1385`1433px)F Š¿Žš•~35•¶Žš’ö“x
-big“ñdƒŠƒTƒCƒY13s(‚‚³381pxEŒÅ’èŽž‰¡•1553`1565px)F Š¿Žš•~39•¶Žš’ö“x
-big“ñdƒŠƒTƒCƒY14s(‚‚³381pxEŒÅ’èŽž‰¡•1619`1687px)F Š¿Žš•~41•¶Žš’ö“x
+bigäºŒé‡ãƒªã‚µã‚¤ã‚º9è¡Œ(é«˜ã•392pxãƒ»å›ºå®šæ™‚æ¨ªå¹…1041ï½ž1067px)ï¼š æ¼¢å­—å¹…26æ–‡å­—ç¨‹åº¦
+bigäºŒé‡ãƒªã‚µã‚¤ã‚º10è¡Œ(é«˜ã•384pxãƒ»å›ºå®šæ™‚æ¨ªå¹…1137ï½ž1167px)ï¼š æ¼¢å­—å¹…Ã—29æ–‡å­—ç¨‹åº¦
+bigäºŒé‡ãƒªã‚µã‚¤ã‚º11è¡Œ(é«˜ã•389pxãƒ»å›ºå®šæ™‚æ¨ªå¹…1247ï½ž1283px)ï¼š æ¼¢å­—å¹…Ã—32æ–‡å­—ç¨‹åº¦
+bigäºŒé‡ãƒªã‚µã‚¤ã‚º12è¡Œ(é«˜ã•388pxãƒ»å›ºå®šæ™‚æ¨ªå¹…1385ï½ž1433px)ï¼š æ¼¢å­—å¹…Ã—35æ–‡å­—ç¨‹åº¦
+bigäºŒé‡ãƒªã‚µã‚¤ã‚º13è¡Œ(é«˜ã•381pxãƒ»å›ºå®šæ™‚æ¨ªå¹…1553ï½ž1565px)ï¼š æ¼¢å­—å¹…Ã—39æ–‡å­—ç¨‹åº¦
+bigäºŒé‡ãƒªã‚µã‚¤ã‚º14è¡Œ(é«˜ã•381pxãƒ»å›ºå®šæ™‚æ¨ªå¹…1619ï½ž1687px)ï¼š æ¼¢å­—å¹…Ã—41æ–‡å­—ç¨‹åº¦
 */
 static const int COMMENT_BIG_DR_HEIGHT[16] = {
 	NICO_HEIGHT,NICO_HEIGHT,NICO_HEIGHT,NICO_HEIGHT,NICO_HEIGHT,	//0-4
 	NICO_HEIGHT,NICO_HEIGHT,NICO_HEIGHT,NICO_HEIGHT,	//5-8
-	392,		//9s
+	392,		//9è¡Œ
 	384,		//10
 	389,		//11
 	388,		//12
@@ -213,7 +213,7 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 	{0xc0,0x00,0xff,0x00},//PURPLE
 	{0x00,0xff,0xff,0x00},//CYAN
 	{0x00,0xff,0x00,0x00},//GREEN
-	/*ƒvƒŒƒ~ƒAê—p*/
+	/*ãƒ—ãƒ¬ãƒŸã‚¢å°‚ç”¨*/
 	{0xCC,0xCC,0x99,0x00},//NICOWHITE
 	{0x33,0xff,0xFC,0x00},//MARINEBLUE
 	{0x99,0x99,0x00,0x00},//MADYELLOW
@@ -227,7 +227,7 @@ static const SDL_Color COMMENT_COLOR[CMD_COLOR_MAX] = {
 	{0xff,0x33,0xcc,0x00},//PINK2
 	{0x00,0xcc,0xcc,0x00},//CYAN2
 	{0x66,0x66,0x66,0x00},//BLACK2
-	{0x33,0x66,0xff,0x00},//BLUE2(NP3‚©‚ç“®‰æ‚Ì‚Ý)
+	{0x33,0x66,0xff,0x00},//BLUE2(NP3ã‹ã‚‰å‹•ç”»ã®ã¿)
 };
 
 //
@@ -292,29 +292,29 @@ static const int CA_FONT_NICO_WIDTH[4][CMD_FONT_MAX] = {
 	{25,40,16,25},		//arial
 };
 /*
-ŽQÆteacupŒfŽ¦”Â@CAŒ¤‹†—p1@http://8713.teacup.com/cas/bbs/t2/17
+å‚ç…§teacupæŽ²ç¤ºæ¿ã€€CAç ”ç©¶ç”¨1ã€€http://8713.teacup.com/cas/bbs/t2/17
 
-•¶Žš‚Ì•ˆê——iˆê•”j “ŠeŽÒFƒ`ƒƒƒŠƒC “Še“úF2009”N 2ŒŽ13“ú(‹à)04Žž05•ª32•b •ÔM
-  ‚ ‚è‚ª‚Æ‚¤‚²‚´‚¢‚Ü‚·D‚¨ˆü—l‚Åƒ^ƒu‚Ì”Žš‚àW‚Ü‚è‚Ü‚µ‚½D
-ˆÈ‰º‚ª‚»‚ê‚ðŠÜ‚ß‚½‹ó”’ŠÖŒW‚Ì•‚Ì•\‚Å‚·Dƒcƒ“ƒfƒŒ‚Í20‚Æ“¯‚¶’l‚É‚È‚è‚Ü‚·D
-–Ü˜_‘å•”•ª‚ÍˆÈ‘O‚®‚¾‚®‚¾‚³‚ñ‚Æˆê‚Éì‚Á‚½‚à‚Ì‚Å‚·D
+æ–‡å­—ã®å¹…ä¸€è¦§ï¼ˆä¸€éƒ¨ï¼‰ æŠ•ç¨¿è€…ï¼šãƒãƒ£ãƒªã‚¤ æŠ•ç¨¿æ—¥ï¼š2009å¹´ 2æœˆ13æ—¥(é‡‘)04æ™‚05åˆ†32ç§’ è¿”ä¿¡
+  ã‚ã‚ŠãŒã¨ã†ã”ã–ã„ã¾ã™ï¼ŽãŠè”­æ§˜ã§ã‚¿ãƒ–ã®æ•°å­—ã‚‚é›†ã¾ã‚Šã¾ã—ãŸï¼Ž
+ä»¥ä¸‹ãŒãã‚Œã‚’å«ã‚ãŸç©ºç™½é–¢ä¿‚ã®å¹…ã®è¡¨ã§ã™ï¼Žãƒ„ãƒ³ãƒ‡ãƒ¬ã¯20ã¨åŒã˜å€¤ã«ãªã‚Šã¾ã™ï¼Ž
+å‹¿è«–å¤§éƒ¨åˆ†ã¯ä»¥å‰ãã ãã ã•ã‚“ã¨ä¸€ç·’ã«ä½œã£ãŸã‚‚ã®ã§ã™ï¼Ž
 
 Win, Mac (b, m, s, br, mr, sr)
-2000@21,20@13,12@09,13@11,10@07,06@05,04
-2001@40,39@25,24@16,15@21,20@13,12@09,08
-2002@21,20@13,12@09,08@11,10@07,06@05,04
-2003@40,39@25,24@16,15@21,20@13,12@09,08
-2004@14,13@09,08@06,05@08,07@05,04@04,03
-2005@12,10@07,06@05,04@06,05@04,03@03,02
-2006@07,07@05,04@03,03@04,03@03,02@02,01
-2007@25,26@16,16@10,10@14,13@09,08@06,05
-2008@13,10@09,06@06,04@07,05@05,03@04,02
-2009@06,08@04,05@03,03@04,04@03,02@02,02
-200a@03,05@03,03@02,02@02,03@02,02@02,01
-3000@27,39@17,24@11,15@14,20@09,12@06,08
-0020@11,11@07,07@04,04@06,06@03,03@02,02
-0009@76,84@44,52@28,33@40,43@24,27@16,16
-i‘SŠpƒXƒy[ƒX3000C”¼ŠpƒXƒy[ƒX20Cƒ^ƒu9j
+2000ã€€21,20ã€€13,12ã€€09,13ã€€11,10ã€€07,06ã€€05,04
+2001ã€€40,39ã€€25,24ã€€16,15ã€€21,20ã€€13,12ã€€09,08
+2002ã€€21,20ã€€13,12ã€€09,08ã€€11,10ã€€07,06ã€€05,04
+2003ã€€40,39ã€€25,24ã€€16,15ã€€21,20ã€€13,12ã€€09,08
+2004ã€€14,13ã€€09,08ã€€06,05ã€€08,07ã€€05,04ã€€04,03
+2005ã€€12,10ã€€07,06ã€€05,04ã€€06,05ã€€04,03ã€€03,02
+2006ã€€07,07ã€€05,04ã€€03,03ã€€04,03ã€€03,02ã€€02,01
+2007ã€€25,26ã€€16,16ã€€10,10ã€€14,13ã€€09,08ã€€06,05
+2008ã€€13,10ã€€09,06ã€€06,04ã€€07,05ã€€05,03ã€€04,02
+2009ã€€06,08ã€€04,05ã€€03,03ã€€04,04ã€€03,02ã€€02,02
+200aã€€03,05ã€€03,03ã€€02,02ã€€02,03ã€€02,02ã€€02,01
+3000ã€€27,39ã€€17,24ã€€11,15ã€€14,20ã€€09,12ã€€06,08
+0020ã€€11,11ã€€07,07ã€€04,04ã€€06,06ã€€03,03ã€€02,02
+0009ã€€76,84ã€€44,52ã€€28,33ã€€40,43ã€€24,27ã€€16,16
+ï¼ˆå…¨è§’ã‚¹ãƒšãƒ¼ã‚¹ï¼3000ï¼ŒåŠè§’ã‚¹ãƒšãƒ¼ã‚¹ï¼20ï¼Œã‚¿ãƒ–ï¼9ï¼‰
  */
 
 static const int CA_FONT_2000_WIDTH[16][CMD_FONT_MAX] = {
@@ -338,7 +338,7 @@ static const int CA_FONT_2000_WIDTH[16][CMD_FONT_MAX] = {
 };
 static const int CA_FONT_SPACE_WIDTH[CMD_FONT_MAX] = {
 //ASCII SPACE 0020/00A0 arial.ttf
-	7,11,4,7	//2012.3.24•ÏX
+	7,11,4,7	//2012.3.24å¤‰æ›´
 };
 #define CA_FONT_3000_WIDTH_SZ	4
 static const int CA_FONT_3000_WIDTH[CA_FONT_3000_WIDTH_SZ][CMD_FONT_MAX] = {
@@ -353,16 +353,16 @@ static const int CA_FONT_TAB_WIDTH[CMD_FONT_MAX] = {
 	44,76,28,44,
 };
 /*
- * CJKƒtƒHƒ“ƒg‚ÌŠù’è•¶Žš•
- * U+3400-D7FF	‘SŠpAŠ¿Žš•
- * U+E750-F8FF	‘SŠpAŠ¿Žš•(Ž„—p—ÌˆæAŠOŽš)
- * U+F900-FAFF	‘SŠpAŠ¿Žš•
+ * CJKãƒ•ã‚©ãƒ³ãƒˆã®æ—¢å®šæ–‡å­—å¹…
+ * U+3400-D7FF	å…¨è§’ã€æ¼¢å­—å¹…
+ * U+E750-F8FF	å…¨è§’ã€æ¼¢å­—å¹…(ç§ç”¨é ˜åŸŸã€å¤–å­—)
+ * U+F900-FAFF	å…¨è§’ã€æ¼¢å­—å¹…
  */
 static const Uint16 KANJI_WIDTH[] =
 	{0x3400,0xd7ff,0xe750,0xf8ff,0xf900,0xfaff,0,0};
 
 /*
- * ƒRƒƒ“ƒgƒ^ƒCƒv CID
+ * ã‚³ãƒ¡ãƒ³ãƒˆã‚¿ã‚¤ãƒ— CID
  */
 #define CID_USER 0
 #define CID_OWNER 1
@@ -378,11 +378,11 @@ static char* const COM_TYPE[CID_MAX] = {
 #define HTML5_FONT_MINCHO	1
 #define HTML5_FONT_GOTHGIC	2
 /**
- * ƒqƒƒX‚³‚ñ‚Ìƒuƒƒ}ƒK‚æ‚è
+ * ãƒ’ãƒ­ã‚¹ã•ã‚“ã®ãƒ–ãƒ­ãƒžã‚¬ã‚ˆã‚Š
  * http://ch.nicovideo.jp/883797/blomaga/ar1149544
  *
- * Å¬“ñæ–@@ not resized       Line resized
- * ’è”+•â³@big   medium small  big    medium  small
+ * æœ€å°äºŒä¹—æ³•ã€€ not resized       Line resized
+ * å®šæ•°+è£œæ­£ã€€big   medium small  big    medium  small
  *  a       42.452 27.143 16.95  22.356 14.094  9.4058
  *  b        4.05   5.076  4.9    2.6     2.748 3.138
  */
@@ -429,7 +429,7 @@ static const float HTML5_2000_WIDTH[16][CMD_FONT_MAX] = {
 };
 static const float HTML5_SPACE_WIDTH[CMD_FONT_MAX] = {
 //ASCII SPACE 0020/00A0 arial.ttf
-	6.625,9.57,4.45,6.625	//2012.3.24•ÏX
+	6.625,9.57,4.45,6.625	//2012.3.24å¤‰æ›´
 };
 #define HTML5_3000_WIDTH_SZ	4
 static const float HTML5_3000_WIDTH[CA_FONT_3000_WIDTH_SZ][CMD_FONT_MAX] = {

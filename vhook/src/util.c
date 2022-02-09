@@ -2,12 +2,12 @@
 #include "util.h"
 
 #include <stdlib.h>
-/*—”*/
+/*ä¹±æ•°*/
 int rnd(){
 	static int Seed = 23573;
 	int result;
 	Seed *= 214013;
-	Seed += 2531011; // ->Ÿ‚ÉŒÄ‚Ño‚³‚ê‚½‚Æ‚«‚Ìseed‚Ég‚¤
+	Seed += 2531011; // ->æ¬¡ã«å‘¼ã³å‡ºã•ã‚ŒãŸã¨ãã®seedã«ä½¿ã†
 	result = Seed;
 	result = result >> 0x10;
 	return result;

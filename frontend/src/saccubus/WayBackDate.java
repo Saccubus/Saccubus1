@@ -6,11 +6,11 @@ import java.util.Date;
 
 /**
  * <p>
- * ‚³‚«‚ã‚Î‚·@Šg’£
+ * ã•ãã‚…ã°ã™ã€€æ‹¡å¼µ
  *
  * class MyDateFormat extends DateFormat
  *
- * ‰ß‹ƒƒO‚ğ‹‚ß‚é‚½‚ß‚ÌƒtƒH[ƒ}ƒbƒg•ÏŠ·A‚È‚Ç
+ * éå»ãƒ­ã‚°ã‚’æ±‚ã‚ã‚‹ãŸã‚ã®ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆå¤‰æ›ã€ãªã©
  * </p>
  * @author orz
  *
@@ -24,8 +24,8 @@ public class WayBackDate {
 	private String wayBackTime = "";
 	private Date date;
 	private String time;
-	public final static String STR_FMT = "yyyy^MM^dd_HHFmmFss";
-	public final static String STR_FMT_REGEX = "[0-9]{4}(^[0-3][0-9]){2}_[0-2][0-9](F[0-5][0-9]){2}";
+	public final static String STR_FMT = "yyyyï¼MMï¼dd_HHï¼šmmï¼šss";
+	public final static String STR_FMT_REGEX = "[0-9]{4}(ï¼[0-3][0-9]){2}_[0-2][0-9](ï¼š[0-5][0-9]){2}";
 	private final static SimpleDateFormat MyDateFmt
 		= new SimpleDateFormat(STR_FMT);
 
@@ -39,11 +39,11 @@ public class WayBackDate {
 	/**
 	 *
 	 * @param time
-	 * @‰ß‹ƒƒO‚ÌŠÔw’è•¶š—ñ<br>
-	 * yyyy/MM/dd –”‚Í yyyy/MM/dd HH:mm –”‚Í yyyy/MM/dd HH:mm:ss<br>
-	 * –”‚Í 1970/1/1 ‚©‚ç‚Ì•b”
+	 * ã€€éå»ãƒ­ã‚°ã®æ™‚é–“æŒ‡å®šæ–‡å­—åˆ—<br>
+	 * yyyy/MM/dd åˆã¯ yyyy/MM/dd HH:mm åˆã¯ yyyy/MM/dd HH:mm:ss<br>
+	 * åˆã¯ 1970/1/1 ã‹ã‚‰ã®ç§’æ•°
 	 * @return
-	 * @•ÏŠ·Œ‹‰Ê‚Ì‰Â”Û
+	 * ã€€å¤‰æ›çµæœã®å¯å¦
 	 */
 	synchronized public boolean parse(String time) {
 		Date tmpdate = null;
@@ -103,7 +103,7 @@ public class WayBackDate {
 	}
 
 	/**
-	 * waybackdate ‚Ì 1970/1/1 0:0:0 ‚©‚ç‚Ì•b”‚ğ•Ô‚·
+	 * waybackdate ã® 1970/1/1 0:0:0 ã‹ã‚‰ã®ç§’æ•°ã‚’è¿”ã™
 	 */
 	public long getSecond(){
 		return date.getTime() / 1000;
@@ -112,12 +112,12 @@ public class WayBackDate {
 	/**
 	 *
 	 * @param time
-	 * @ƒƒO‚ÌŠÔw’è•¶š—ñ<br>
-	 * yyyy/MM/dd –”‚Í yyyy/MM/dd HH:mm –”‚Í yyyy/MM/dd HH:mm:ss<br>
-	 * –”‚Í 1970/1/1 0:0:0 ‚©‚ç‚Ì•b”
+	 * ã€€ãƒ­ã‚°ã®æ™‚é–“æŒ‡å®šæ–‡å­—åˆ—<br>
+	 * yyyy/MM/dd åˆã¯ yyyy/MM/dd HH:mm åˆã¯ yyyy/MM/dd HH:mm:ss<br>
+	 * åˆã¯ 1970/1/1 0:0:0 ã‹ã‚‰ã®ç§’æ•°
 	 * @return
-	 * @•ÏŠ·‰Â”\‚Ìê‡‚Íƒtƒ@ƒCƒ‹–¼‚ÌƒvƒŠƒtƒBƒbƒNƒX‚É—p‚¢‚é•¶š—ñ<br>
-	 * @•s‰Â‚Ìê‡‚Í@‹ó•¶š—ñ
+	 * ã€€å¤‰æ›å¯èƒ½ã®å ´åˆã¯ãƒ•ã‚¡ã‚¤ãƒ«åã®ãƒ—ãƒªãƒ•ã‚£ãƒƒã‚¯ã‚¹ã«ç”¨ã„ã‚‹æ–‡å­—åˆ—<br>
+	 * ã€€ä¸å¯ã®å ´åˆã¯ã€€ç©ºæ–‡å­—åˆ—
 	 */
 	public static String format(String time){
 		return new WayBackDate(time).format();
@@ -133,7 +133,7 @@ public class WayBackDate {
 
 	/**
 	 * @return
-	 * @‰ß‹ƒƒO“ú‚Ìƒp[ƒXŒ‹‰Ê‚Ì•¶š—ñ
+	 * ã€€éå»ãƒ­ã‚°æ—¥æ™‚ã®ãƒ‘ãƒ¼ã‚¹çµæœã®æ–‡å­—åˆ—
 	 */
 	synchronized public String format(){
 		if (date != null){
@@ -145,7 +145,7 @@ public class WayBackDate {
 
 	/**
 	 * @return
-	 * Œ»İ‚ğƒtƒH[ƒ}ƒbƒg‚µ‚Ä•Ô‚·
+	 * ç¾åœ¨æ™‚åˆ»ã‚’ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã—ã¦è¿”ã™
 	 */
 	synchronized public static String formatNow(){
 		return MyDateFmt.format(new Date());

@@ -22,7 +22,7 @@ import javax.swing.SwingUtilities;
 import psi.lib.swing.PopupRightClick;
 
 /**
- * <P>‚³‚«‚ã‚Î‚·</P>
+ * <P>ã•ãã‚…ã°ã™</P>
  * @author orz
  * @version 1.39
  */
@@ -64,19 +64,19 @@ public class TextView extends JDialog implements ActionListener {
 		textArea1.addMouseListener(new PopupRightClick(textArea1));
 		add(new JScrollPane(textArea1), BorderLayout.CENTER);
 		if(parent!=null){
-			// parent==null‚Ì input panel‚Ío‚³‚È‚¢B
+			// parent==nullã®æ™‚ input panelã¯å‡ºã•ãªã„ã€‚
 			JPanel inputPanel = new JPanel();
 			if(f!=null)
 				inputPanel.setFont(new Font(f.getFontName(), f.getStyle(), f.getSize()+1));
 			inputPanel.setLayout(new BorderLayout());
 			inputPanel.setBackground(Color.cyan);
 			inputPanel.setBorder(BorderFactory.createEtchedBorder());
-			inputPanel.add(new JLabel(" FFmpegÀs>>@ffmpeg "), BorderLayout.WEST);
-			inputField.setToolTipText("Às‚µ‚½‚¢ƒRƒ}ƒ“ƒh‚ğƒ^ƒCƒvi—á: ffmpeg -h@‚È‚ç -h‚Æ“ü—Í)");
+			inputPanel.add(new JLabel(" FFmpegå®Ÿè¡Œ>>ã€€ffmpeg "), BorderLayout.WEST);
+			inputField.setToolTipText("å®Ÿè¡Œã—ãŸã„ã‚³ãƒãƒ³ãƒ‰ã‚’ã‚¿ã‚¤ãƒ—ï¼ˆä¾‹: ffmpeg -hã€€ãªã‚‰ -hã¨å…¥åŠ›)");
 			inputField.addMouseListener(new PopupRightClick(inputField));
 			inputPanel.add(inputField, BorderLayout.CENTER);
 			JButton submitButton = new JButton();
-			submitButton.setText("Às");
+			submitButton.setText("å®Ÿè¡Œ");
 			submitButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -126,14 +126,14 @@ public class TextView extends JDialog implements ActionListener {
 				MainFrame.log.println(textArea1.getText());
 			}
 			else {
-				inputField.setText("‚±‚ÌView‚Å‚Íg‚¦‚Ü‚¹‚ñ");
+				inputField.setText("ã“ã®Viewã§ã¯ä½¿ãˆã¾ã›ã‚“");
 				MainFrame.log.println(inputField.getText());
 			}
 		} catch(NullPointerException ex){
 			if(parent!=null)
-				parent.sendtext("(LÍM)ƒ‚Ê‚é‚Û\nƒKƒb\n");
+				parent.sendtext("(Â´âˆ€ï½€)ï¼œã¬ã‚‹ã½\nã‚¬ãƒƒ\n");
 			else
-				inputField.setText("‚±‚ÌView‚Å‚Íg‚¦‚Ü‚¹‚ñ");
+				inputField.setText("ã“ã®Viewã§ã¯ä½¿ãˆã¾ã›ã‚“");
 			ex.printStackTrace();
 		} catch (FileNotFoundException ex) {
 			textArea1.setText(ex.getMessage());

@@ -86,7 +86,7 @@ FontType getFontType2(Uint16* up,int basefont,DATA* data,int stable){
 	}
 */
 	FontType uft = u<<16;
-	if(uft==CA_TYPE_SPACE_3000){	//‘SŠp‹ó”’->fix fontsize w,h
+	if(uft==CA_TYPE_SPACE_3000){	//å…¨è§’ç©ºç™½->fix fontsize w,h
 		if(basefont<=GOTHIC_FONT)
 			return uft;				// GOTHIC 30000000 (UNDEFINED 30000000)
 		if(basefont<=GULIM_FONT||basefont==MINGLIU_FONT)
@@ -105,7 +105,7 @@ FontType getFontType2(Uint16* up,int basefont,DATA* data,int stable){
 		return basefont;
 	switch(getDetailType(u)){
 		case STRONG_SIMSUN_CHAR:
-			//case UNDEF_OR_SIMSUN:	//ÅI“I‚É‚ÍXP,Vista,Win7‹¤’ÊŽž‚ÉSIMSUN‚É
+			//case UNDEF_OR_SIMSUN:	//æœ€çµ‚çš„ã«ã¯XP,Vista,Win7å…±é€šæ™‚ã«SIMSUNã«
 			if(0xE758<=u && u<=0xE864){	//Simsun
 				if(!isGlyphExist(data,SIMSUN_FONT,u))
 					//even if glyph does not exist, fonttype should be defined
@@ -115,7 +115,7 @@ FontType getFontType2(Uint16* up,int basefont,DATA* data,int stable){
 		case WEAK_SIMSUN_CHAR:
 		case SIMSUN_NOT_CHANGE_CHAR:
 			return SIMSUN_FONT;
-		case MINGLIU_CHAR:	//Žb’èC³F–¾’©•Ï‰»‚·‚é(XP‚æ‚èŒã‚Í)
+		case MINGLIU_CHAR:	//æš«å®šä¿®æ­£ï¼šæ˜Žæœå¤‰åŒ–ã™ã‚‹(XPã‚ˆã‚Šå¾Œã¯)
 			if(0xE865<=u && u<=0xF8FF){	//MingLiu
 				if(!isGlyphExist(data,MINGLIU_FONT,u))
 					//even if glyph does not exist, fonttype should be defined
@@ -123,12 +123,12 @@ FontType getFontType2(Uint16* up,int basefont,DATA* data,int stable){
 			}
 			//return MINGLIU_FONT|CA_TYPE_NOGLYPH_MINGLIU;	//debug 2014.5.9
 			return MINGLIU_FONT;	//debug 2014.5.9
-		case N_MINCHO_CHAR:	//–¾’©•Ï‰»‚È‚µ simsun or ngulim
+		case N_MINCHO_CHAR:	//æ˜Žæœå¤‰åŒ–ãªã— simsun or ngulim
 			return N_MINCHO_FONT;
 		case GULIM_CHAR:
 			return GULIM_FONT;
-		case GOTHIC_CHAR:	//ƒSƒVƒbƒN•ÛŒì
-		case GOTHIC_NOT_PROTECT:	//•ÛŒì‚È‚µƒSƒVƒbƒN
+		case GOTHIC_CHAR:	//ã‚´ã‚·ãƒƒã‚¯ä¿è­·
+		case GOTHIC_NOT_PROTECT:	//ä¿è­·ãªã—ã‚´ã‚·ãƒƒã‚¯
 			return GOTHIC_FONT;
 		case ZERO_WIDTH_CHAR:
 			return basefont|uft;

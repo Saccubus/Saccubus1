@@ -3,10 +3,10 @@ package saccubus.conv;
 import java.util.ArrayList;
 
 /**
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·<br/>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶<br/>
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™<br/>
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜<br/>
  *
- * @author –¢“ü—Í<br/>
+ * @author æœªå…¥åŠ›<br/>
  * @version 1.30<br/>
  */
 public class CommandReplace {

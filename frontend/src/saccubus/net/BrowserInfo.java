@@ -13,11 +13,11 @@ import saccubus.util.Logger;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * @version 1.22r3e
@@ -30,7 +30,7 @@ public class BrowserInfo {
 		NONE {
 			@Override
 			public String getName(){
-				return "‚³‚«‚ã‚Î‚·";
+				return "ã•ãã‚…ã°ã™";
 			}
 		},
 		MSIE {
@@ -59,7 +59,7 @@ public class BrowserInfo {
 /*
 	public String getBrowserName(){
 		if (validBrowser == BrowserCookieKind.NONE){
-			return "‚³‚«‚ã‚Î‚·";
+			return "ã•ãã‚…ã°ã™";
 		} else if (validBrowser == BrowserCookieKind.MSIE) {
 			return "Internet Exploror";
 		} else {
@@ -227,7 +227,7 @@ public class BrowserInfo {
 	}
 
     /// <summary>
-    /// Firefox3 ‚©‚ç user_session ‚ğæ“¾BƒGƒ‰[‚ª‹N‚±‚Á‚½ê‡A—áŠO‚ğ“Š‚°‚¸‚É‹ó•¶š‚ğ•Ô‚·
+    /// Firefox3 ã‹ã‚‰ user_session ã‚’å–å¾—ã€‚ã‚¨ãƒ©ãƒ¼ãŒèµ·ã“ã£ãŸå ´åˆã€ä¾‹å¤–ã‚’æŠ•ã’ãšã«ç©ºæ–‡å­—ã‚’è¿”ã™
     /// </summary>
     /// <returns>user_session</returns>
     private String getUserSessionFromFilefox3()
@@ -255,7 +255,7 @@ public class BrowserInfo {
     }
 
     /// <summary>
-    /// Firefox4, 5, 6 ‚©‚ç user_session ‚ğæ“¾BƒGƒ‰[‚ª‹N‚±‚Á‚½ê‡A—áŠO‚ğ“Š‚°‚¸‚É‹ó•¶š‚ğ•Ô‚·
+    /// Firefox4, 5, 6 ã‹ã‚‰ user_session ã‚’å–å¾—ã€‚ã‚¨ãƒ©ãƒ¼ãŒèµ·ã“ã£ãŸå ´åˆã€ä¾‹å¤–ã‚’æŠ•ã’ãšã«ç©ºæ–‡å­—ã‚’è¿”ã™
     /// </summary>
     /// <returns>user_session</returns>
     private String getUserSessionFromFilefox4()
@@ -293,9 +293,9 @@ public class BrowserInfo {
     }
 /*
     /// <summary>
-    /// IE6 ‚©‚ç user_session ‚ğæ“¾
+    /// IE6 ã‹ã‚‰ user_session ã‚’å–å¾—
     /// </summary>
-    /// <param name="url">ƒTƒCƒgiƒjƒRƒjƒR“®‰æj‚ÌURL</param>
+    /// <param name="url">ã‚µã‚¤ãƒˆï¼ˆãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ï¼‰ã®URL</param>
     /// <returns>user_session</returns>
     private String getUserSessionFromIE6(String url)
     {
@@ -303,10 +303,10 @@ public class BrowserInfo {
     }
 
     /// <summary>
-    /// IE6 ‚©‚çƒNƒbƒL[‚ğæ“¾
+    /// IE6 ã‹ã‚‰ã‚¯ãƒƒã‚­ãƒ¼ã‚’å–å¾—
     /// </summary>
-    /// <param name="url">æ“¾‚·‚éƒNƒbƒL[‚ÉŠÖ˜A‚Ã‚¯‚ç‚ê‚½URL</param>
-    /// <returns>ƒNƒbƒL[•¶š—ñ</returns>
+    /// <param name="url">å–å¾—ã™ã‚‹ã‚¯ãƒƒã‚­ãƒ¼ã«é–¢é€£ã¥ã‘ã‚‰ã‚ŒãŸURL</param>
+    /// <returns>ã‚¯ãƒƒã‚­ãƒ¼æ–‡å­—åˆ—</returns>
     private String getCookieFromIE6(String url)
     {
         int size = 4096;
@@ -327,8 +327,8 @@ public class BrowserInfo {
  */
 
     /** <p>
-     *  IE7/IE8/IE9/IE10/IE11 (Win8.1‘Î‰) ‚©‚ç user_session ‚ğæ“¾B<br/>
-     *  ƒGƒ‰[‚ª‹N‚±‚Á‚½ê‡A—áŠO‚ğ“Š‚°‚¸‚É‹ó•¶š‚ğ•Ô‚·
+     *  IE7/IE8/IE9/IE10/IE11 (Win8.1å¯¾å¿œ) ã‹ã‚‰ user_session ã‚’å–å¾—ã€‚<br/>
+     *  ã‚¨ãƒ©ãƒ¼ãŒèµ·ã“ã£ãŸå ´åˆã€ä¾‹å¤–ã‚’æŠ•ã’ãšã«ç©ºæ–‡å­—ã‚’è¿”ã™
      *  </p>
      *  @return user_session
      */
@@ -371,7 +371,7 @@ public class BrowserInfo {
         return user_session;
     }
     /**
-     *  profile ƒtƒHƒ‹ƒ_‚ğ‚à‚ç‚¢ cookieƒtƒHƒ‹ƒ_–¼‚ğ•Ï‚¦‚Ä‚Q‰ñŒŸõ
+     *  profile ãƒ•ã‚©ãƒ«ãƒ€ã‚’ã‚‚ã‚‰ã„ cookieãƒ•ã‚©ãƒ«ãƒ€åã‚’å¤‰ãˆã¦ï¼’å›æ¤œç´¢
      *  @return user_session
      */
     private String getUserSessionFromMSIE(String folder)
@@ -394,7 +394,7 @@ public class BrowserInfo {
         return user_session;
     }
     /**
-     *  Cookies ƒtƒHƒ‹ƒ_‚ğ‚à‚ç‚¢ ‰ºˆÊ‚ÌcookieƒtƒHƒ‹ƒ_–¼‚ğ•Ï‚¦‚Ä‚Q‰ñŒŸõ
+     *  Cookies ãƒ•ã‚©ãƒ«ãƒ€ã‚’ã‚‚ã‚‰ã„ ä¸‹ä½ã®cookieãƒ•ã‚©ãƒ«ãƒ€åã‚’å¤‰ãˆã¦ï¼’å›æ¤œç´¢
      *  @return user_session
      */
     private String getUserSessionFromMSIE2(String folder)
@@ -416,7 +416,7 @@ public class BrowserInfo {
     }
 
     /**
-     * dir_name ƒfƒBƒŒƒNƒgƒŠ‚©‚ç MSIE ‚ÌƒNƒbƒL[‚ğŒ©‚Â‚¯‚Ä user_session ‚ğ•Ô‚·
+     * dir_name ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‹ã‚‰ MSIE ã®ã‚¯ãƒƒã‚­ãƒ¼ã‚’è¦‹ã¤ã‘ã¦ user_session ã‚’è¿”ã™
      * @param dir_name
      * @return
      */
@@ -468,7 +468,7 @@ public class BrowserInfo {
     }
 
     /** <p>
-     *  Chrome ‚©‚ç user_session ‚ğæ“¾BƒGƒ‰[‚ª‹N‚±‚Á‚½ê‡A—áŠO‚ğ“Š‚°‚¸‚É‹ó•¶š‚ğ•Ô‚·
+     *  Chrome ã‹ã‚‰ user_session ã‚’å–å¾—ã€‚ã‚¨ãƒ©ãƒ¼ãŒèµ·ã“ã£ãŸå ´åˆã€ä¾‹å¤–ã‚’æŠ•ã’ãšã«ç©ºæ–‡å­—ã‚’è¿”ã™
      *  </p>
      *  @return user_session
      */
@@ -519,7 +519,7 @@ public class BrowserInfo {
 	}
 
     /** <p>
-     *  Chromium ‚©‚ç user_session ‚ğæ“¾BƒGƒ‰[‚ª‹N‚±‚Á‚½ê‡A—áŠO‚ğ“Š‚°‚¸‚É‹ó•¶š‚ğ•Ô‚·
+     *  Chromium ã‹ã‚‰ user_session ã‚’å–å¾—ã€‚ã‚¨ãƒ©ãƒ¼ãŒèµ·ã“ã£ãŸå ´åˆã€ä¾‹å¤–ã‚’æŠ•ã’ãšã«ç©ºæ–‡å­—ã‚’è¿”ã™
      *  </p>
      *  @return user_session
      */
@@ -558,7 +558,7 @@ public class BrowserInfo {
     }
 
     /** <p>
-     *  Opera ‚©‚ç user_session ‚ğæ“¾BƒGƒ‰[‚ª‹N‚±‚Á‚½ê‡A—áŠO‚ğ“Š‚°‚¸‚É‹ó•¶š‚ğ•Ô‚·
+     *  Opera ã‹ã‚‰ user_session ã‚’å–å¾—ã€‚ã‚¨ãƒ©ãƒ¼ãŒèµ·ã“ã£ãŸå ´åˆã€ä¾‹å¤–ã‚’æŠ•ã’ãšã«ç©ºæ–‡å­—ã‚’è¿”ã™
      *  </p>
      *  @return user_session
      */
@@ -585,10 +585,10 @@ public class BrowserInfo {
     }
 
     /// <summary>
-    /// •¶š—ñ‚©‚ç user_session_ ‚Ån‚Ü‚é•¶š—ñ‚ğØ‚èo‚µ‚Ä•Ô‚·B‰p”š‚ÆƒAƒ“ƒ_[ƒo[ˆÈŠO‚Ì•¶š‚ÅØ‚ê‚éB
+    /// æ–‡å­—åˆ—ã‹ã‚‰ user_session_ ã§å§‹ã¾ã‚‹æ–‡å­—åˆ—ã‚’åˆ‡ã‚Šå‡ºã—ã¦è¿”ã™ã€‚è‹±æ•°å­—ã¨ã‚¢ãƒ³ãƒ€ãƒ¼ãƒãƒ¼ä»¥å¤–ã®æ–‡å­—ã§åˆ‡ã‚Œã‚‹ã€‚
     /// </summary>
-    /// <param name="str">Ø‚èo‚·‘ÎÛ•¶š—ñ</param>
-    /// <returns>user_session •¶š—ñBŒ©‚Â‚©‚ç‚È‚¯‚ê‚Î‹ó•¶š‚ğ•Ô‚·</returns>
+    /// <param name="str">åˆ‡ã‚Šå‡ºã™å¯¾è±¡æ–‡å­—åˆ—</param>
+    /// <returns>user_session æ–‡å­—åˆ—ã€‚è¦‹ã¤ã‹ã‚‰ãªã‘ã‚Œã°ç©ºæ–‡å­—ã‚’è¿”ã™</returns>
     private String cutUserSession(String str, String filename)
     {
     	String ret = "";
@@ -604,7 +604,7 @@ public class BrowserInfo {
                 ++index;
             }
             ret = str.substring(start, index);
-            // C# ‚Ì string.SubString( , ) ‚Æ Java ‚Ì String.substring( , ) ‚Íˆá‚¤‚Ì‚Å’ˆÓI
+            // C# ã® string.SubString( , ) ã¨ Java ã® String.substring( , ) ã¯é•ã†ã®ã§æ³¨æ„ï¼
             start = str.indexOf("user_session_", index);
             if (!ret.isEmpty() && !filename.isEmpty()){
                 if(!us.contains(ret) && !faultUserSessionSet.contains(ret)){

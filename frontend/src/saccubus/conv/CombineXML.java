@@ -49,7 +49,7 @@ public class CombineXML {
 				System.out.print(filename + ". ");
 				String text = Path.readAllText(file, "UTF-8");
 				StringBuilder sb = new StringBuilder();
-				if (text.startsWith("\uFEFF"))	//BOMƒR[ƒhíœ
+				if (text.startsWith("\uFEFF"))	//BOMã‚³ãƒ¼ãƒ‰å‰Šé™¤
 					sb.append(text.substring(1));
 				else
 					sb.append(text);
@@ -76,7 +76,7 @@ public class CombineXML {
 				log.println("\nLines: "+linecount.length()+", File:"+file.getPath());
 				saxparser.parse(file, xmlhandler);
 			}
-			// •ÏŠ·Œ‹‰Ê‚Ì‘‚«‚İ
+			// å¤‰æ›çµæœã®æ›¸ãè¾¼ã¿
 			chatArray.writeXML(output);
 			System.out.println("\nCombining finished.");
 			return true;

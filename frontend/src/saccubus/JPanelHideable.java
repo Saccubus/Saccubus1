@@ -40,9 +40,9 @@ public class JPanelHideable extends JPanel {
 		super();
 		contentPanel = new JPanel();
 		contentPanel.setLayout(new GridBagLayout());
-		hideLabel = new JLabel("è¡");
+		hideLabel = new JLabel("Ê∂à");
 		hideLabel.setForeground(Color.red);
-		showLabel = new JLabel("ï\é¶");
+		showLabel = new JLabel("Ë°®Á§∫");
 		showLabel.setForeground(Color.blue);
 		contentVisible = true;
 		FocusedHideSwitch adapter = new FocusedHideSwitch(this);

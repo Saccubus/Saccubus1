@@ -1,10 +1,10 @@
 /**
  * <p>
- * QÆŒ³:
+ * å‚ç…§å…ƒ:
  * <a href="http://www.ne.jp/asahi/hishidama/home/tech/java/aes.html"
- *  >JavauAESˆÃ†vƒƒ‚(Hishidama's AES Sample)</a><br/>
- * ’Pƒ‚È—á
- * ”é–§Œ®iˆÃ†‰»E•œ†‰»‚Å“¯‚¶‚à‚Ì‚ğg‚¤j‚ğƒoƒCƒg—ñ‚Å—pˆÓ‚µ‚Äg‚¤—áB
+ *  >Javaã€ŒAESæš—å·ã€ãƒ¡ãƒ¢(Hishidama's AES Sample)</a><br/>
+ * å˜ç´”ãªä¾‹
+ * ç§˜å¯†éµï¼ˆæš—å·åŒ–ãƒ»å¾©å·åŒ–ã§åŒã˜ã‚‚ã®ã‚’ä½¿ã†ï¼‰ã‚’ãƒã‚¤ãƒˆåˆ—ã§ç”¨æ„ã—ã¦ä½¿ã†ä¾‹ã€‚
  * </p>
  */
 package saccubus.util;
@@ -16,8 +16,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·<br/>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶<br/>
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™<br/>
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜<br/>
  * @author Hishidama
  * @author orz
  * @version 1.30
@@ -30,16 +30,16 @@ public class Encryption {
 		setSeed(seed);
 		Key skey = makeKey(128);
 
-		// ˆÃ†‰»
+		// æš—å·åŒ–
 		byte[] enc = encode(args[0].getBytes(), skey);
 		System.out.println(new String(enc));
-		// ƒAƒXƒL[‰»
+		// ã‚¢ã‚¹ã‚­ãƒ¼åŒ–
 		byte[] a64 = utoa(enc);
 		System.out.println(new String(a64));
-		// ƒoƒCƒg‰»
+		// ãƒã‚¤ãƒˆåŒ–
 		byte[] b64 = atou(a64);
 		System.out.println(new String(b64));
-		// •œ†‰»
+		// å¾©å·åŒ–
 		byte[] dec = decode1(b64, skey);
 		System.out.println(new String(dec));
 	}
@@ -47,7 +47,7 @@ public class Encryption {
 	private static byte[] bseed = null;
 
 	/**
-	 * seed‚ğİ’è
+	 * seedã‚’è¨­å®š
 	 * @param seed : String
 	 */
 	public static void setSeed(String seed){
@@ -55,14 +55,14 @@ public class Encryption {
 	}
 
 	/**
-	 * ”é–§Œ®‚ğƒoƒCƒg—ñ‚©‚ç¶¬‚·‚é
-	 * @param key_bits Œ®‚Ì’·‚³iƒrƒbƒg’PˆÊj
+	 * ç§˜å¯†éµã‚’ãƒã‚¤ãƒˆåˆ—ã‹ã‚‰ç”Ÿæˆã™ã‚‹
+	 * @param key_bits éµã®é•·ã•ï¼ˆãƒ“ãƒƒãƒˆå˜ä½ï¼‰
 	 */
 	private static Key makeKey(int key_bits){
-		// ƒoƒCƒg—ñ
+		// ãƒã‚¤ãƒˆåˆ—
 		byte[] key = new byte[key_bits / 8];
 		int i;
-		// ƒoƒCƒg—ñ‚Ì“à—ei”é–§Œ®‚Ì’lj‚ÍƒvƒƒOƒ‰ƒ}[‚ªŒˆ‚ß‚é
+		// ãƒã‚¤ãƒˆåˆ—ã®å†…å®¹ï¼ˆç§˜å¯†éµã®å€¤ï¼‰ã¯ãƒ—ãƒ­ã‚°ãƒ©ãƒãƒ¼ãŒæ±ºã‚ã‚‹
 		for(i = 0; i < key.length && i < bseed.length; i++){
 			key[i] = (byte) (bseed[i] ^ i);
 		}
@@ -73,8 +73,8 @@ public class Encryption {
 	}
 
 	/**
-	 * ”é–§Œ®‚ğseed‚©‚ç¶¬‚·‚é
-	 * @param key_bits Œ®‚Ì’·‚³iƒrƒbƒg’PˆÊj
+	 * ç§˜å¯†éµã‚’seedã‹ã‚‰ç”Ÿæˆã™ã‚‹
+	 * @param key_bits éµã®é•·ã•ï¼ˆãƒ“ãƒƒãƒˆå˜ä½ï¼‰
 	 * @param seed : String
 	 * @return
 	 */
@@ -84,7 +84,7 @@ public class Encryption {
 	}
 
 	/**
-	 * ˆÃ†‰»
+	 * æš—å·åŒ–
 	 */
 	public static byte[] encode(byte[] src, Key skey) {
 		try {
@@ -97,7 +97,7 @@ public class Encryption {
 	}
 
 	/**
-	 * •œ†‰»
+	 * å¾©å·åŒ–
 	 */
 	public static byte[] decode(byte[] src, Key skey) {
 		try {
@@ -115,7 +115,7 @@ public class Encryption {
 		"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_ ";
 
 	/**
-	 * ƒAƒXƒL[‰»
+	 * ã‚¢ã‚¹ã‚­ãƒ¼åŒ–
 	 * @param indata : binary byte[]
 	 * @return ascii byte[]
 	 */
@@ -135,7 +135,7 @@ public class Encryption {
 	}
 
 	/**
-	 * ƒoƒCƒiƒŠ[‰»
+	 * ãƒã‚¤ãƒŠãƒªãƒ¼åŒ–
 	 * @param indata : ascii byte[]
 	 * @return binary byte[]
 	 */

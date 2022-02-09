@@ -20,22 +20,22 @@ import saccubus.util.Logger;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * <p>
- * ’˜ìŒ : Copyright (c) 2007 PSI
+ * è‘—ä½œæ¨©: Copyright (c) 2007 PSI
  * </p>
  *
  * <p>
- * ‰ïĞ–¼:
+ * ä¼šç¤¾å:
  * </p>
  *
- * @author –¢“ü—Í
+ * @author æœªå…¥åŠ›
  * @version 1.0
  */
 public class ConvertingSetting {
@@ -58,15 +58,15 @@ public class ConvertingSetting {
 	static final long DEFAULT_TERMINATE_TIMEOUT = 3600000;
 
 	public static final String[] ShadowKindArray = {
-		"00:‚È‚µ",
-		"01:ƒjƒRƒjƒR“®‰æ•—",
-		"02:‰E‰º",
-		"03:ˆÍ‚¢‚İ",
-		"04:Saccubus2•—",
-		"05:Saccubus2•—v2",
-		"06:Html5ƒvƒŒƒCƒ„[•—",
-		"07:ƒjƒRƒjƒR“®‰æ•—v2",
-		"08:ƒJƒXƒ^ƒ€ireadmeNewj",
+		"00:ãªã—",
+		"01:ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»é¢¨",
+		"02:å³ä¸‹",
+		"03:å›²ã„è¾¼ã¿",
+		"04:Saccubus2é¢¨",
+		"05:Saccubus2é¢¨v2",
+		"06:Html5ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼é¢¨",
+		"07:ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»é¢¨v2",
+		"08:ã‚«ã‚¹ã‚¿ãƒ ï¼ˆreadmeNewï¼‰",
 	};
 
 	private String MailAddress;
@@ -140,7 +140,7 @@ public class ConvertingSetting {
 	private boolean setCommentSpeed;
 	private String commentSpeed;
 //	private String debugNicovideo;
-	private boolean enableCA;	//‰¼İ’è
+	private boolean enableCA;	//ä»®è¨­å®š
 	private int scoreLimit;
 	private boolean disableEco;
 	private boolean fontWidthFix;
@@ -345,7 +345,7 @@ public class ConvertingSetting {
 	}
 
 	/*
-	 * Šg’£İ’èƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	 * æ‹¡å¼µè¨­å®šã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	 */
 	public ConvertingSetting(
 			String mailaddress,
@@ -648,7 +648,7 @@ public class ConvertingSetting {
 		if(forceLiveComment)
 			liveFlag = true;
 		else
-			liveFlag = !(savevideo || savecomment || save_thumb_info);	//ƒ[ƒJƒ‹•ÏŠ·=¶•ú‘—‚Å”»’f(‰¼)
+			liveFlag = !(savevideo || savecomment || save_thumb_info);	//ãƒ­ãƒ¼ã‚«ãƒ«å¤‰æ›=ç”Ÿæ”¾é€ã§åˆ¤æ–­(ä»®)
 		liveOperationDuration = live_operation_duration;
 		enableCommentVposShift = enable_comment_vpos_shift;
 		commentVposShiftString = vpos_shift_sec;
@@ -1271,7 +1271,7 @@ public class ConvertingSetting {
 	static final String PROP_SHADOW_INDEX = "ShadowIndex";
 
 	/*
-	 * ‚±‚±‚©‚çŠg’£İ’è 1.22r3 ‚É‘Î‚·‚é
+	 * ã“ã“ã‹ã‚‰æ‹¡å¼µè¨­å®š 1.22r3 ã«å¯¾ã™ã‚‹
 	 */
 	static final String PROP_CONV_WITH_COMMENT = "AddComment";	//"ConvertWithComment";
 	static final String PROP_SAVE_OWNERCOMMENT = "TCDownload";	//"SaveOwnerComment";
@@ -1308,7 +1308,7 @@ public class ConvertingSetting {
 	static final String PROP_WIDE_CMDLINE_MAIN = "WideCMD_MAIN";
 	static final String PROP_WIDE_CMDLINE_IN = "WideCMD_IN";
 	static final String PROP_WIDE_CMDLINE_OUT = "WideCMD_OUT";
-	static final String PROP_OPTIONAL_TRANSLUCENT = "OptionalTranslucent";	// Optional_thread‚ğ”¼“§–¾‚É‚·‚é
+	static final String PROP_OPTIONAL_TRANSLUCENT = "OptionalTranslucent";	// Optional_threadã‚’åŠé€æ˜ã«ã™ã‚‹
 	static final String PROP_FONT_HEIGHT_FIX = "FontHeightFix";
 	static final String PROP_FONT_HEIGHT_FIX_RAITO = "FontHeightFixRaito";
 	static final String PROP_DISABLE_ORIGINAL_RESIZE = "DisableOriginalResize";
@@ -1408,7 +1408,7 @@ public class ConvertingSetting {
 	static final String PROP_SHOW_THUMBNAIL = "ShowThumbnail";
 	static final String PROP_VIDEO_SHOW_THUMBNAIL_SIZE = "VideoShowThumbnailSize";
 	static final String PROP_ENABLE_UNICODE = "EnableUnicode";
-	// •Û‘¶‚·‚é‚ªGUI‚Å‚Í•ÏX‚µ‚È‚¢
+	// ä¿å­˜ã™ã‚‹ãŒGUIã§ã¯å¤‰æ›´ã—ãªã„
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
 	public static final String PROP_OPTS_JPEG_MP4 = "OutOptionJpegMp4";
@@ -1417,7 +1417,7 @@ public class ConvertingSetting {
 	public static final String PROP_ONLY_MP4_AUTO_PLAY = "AutoPlayOnlyMp4";
 	public static final String PROP_TERMINATE_TIMEOUT = "SelfTerminateTimeout";
 	/*
-	 * ‚±‚±‚Ü‚ÅŠg’£İ’è 1.22r3 ‚É‘Î‚·‚é
+	 * ã“ã“ã¾ã§æ‹¡å¼µè¨­å®š 1.22r3 ã«å¯¾ã™ã‚‹
 	 */
 
 	public static void saveSetting(ConvertingSetting setting, String propFile) {
@@ -1439,19 +1439,19 @@ public class ConvertingSetting {
 		if(password == null) password = "";
 		if(encrypt_pass == null) encrypt_pass = "";
 		if (!user.isEmpty() && !password.isEmpty() && encrypt_pass.isEmpty()){
-			// ƒpƒXƒ[ƒh‚ğˆÃ†‰»‚·‚é
+			// ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’æš—å·åŒ–ã™ã‚‹
 			Key skey = Encryption.makeKey(128,user);
 			String try_encryption = Encryption.encode(password, skey);
 			if (Encryption.decode(try_encryption, skey).equals(password)){
-				//•œ†Šm”FOK
+				//å¾©å·ç¢ºèªOK
 				password = "#";
 				encrypt_pass = "_" + try_encryption;
-				System.out.println("ƒpƒXƒ[ƒh‚ÍˆÃ†‰»‚³‚ê‚Ü‚µ‚½@ Entry:" + PROP_ENCRYPT_PASS);
+				System.out.println("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¯æš—å·åŒ–ã•ã‚Œã¾ã—ãŸã€€ Entry:" + PROP_ENCRYPT_PASS);
 			} else {
-				System.out.println("ƒpƒXƒ[ƒhˆÃ†‰»¸”s");
+				System.out.println("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰æš—å·åŒ–å¤±æ•—");
 			}
 		}else if(encrypt_pass.isEmpty()) {
-			System.out.println("ƒ[ƒ‹ƒAƒhƒŒƒX‚ª–³Œø‚È‚½‚ßAƒpƒXƒ[ƒh‚ğˆÃ†‰»‚µ‚Ü‚¹‚ñ");
+			System.out.println("ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ãŒç„¡åŠ¹ãªãŸã‚ã€ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’æš—å·åŒ–ã—ã¾ã›ã‚“");
 		}
 		prop.setProperty(PROP_MAILADDR, user);
 		prop.setProperty(PROP_PASSWORD, password);
@@ -1518,7 +1518,7 @@ public class ConvertingSetting {
 			.isVhookDisabled()));
 		prop.setProperty(PROP_SHADOW_INDEX, Integer.toString(setting.getShadowIndex()));
 		/*
-		 * ‚±‚±‚©‚çŠg’£İ’è•Û‘¶ 1.22r3 ‚É‘Î‚·‚é
+		 * ã“ã“ã‹ã‚‰æ‹¡å¼µè¨­å®šä¿å­˜ 1.22r3 ã«å¯¾ã™ã‚‹
 		 */
 		prop.setProperty(PROP_CONV_WITH_COMMENT, Boolean.toString(setting
 				.isConvertWithComment()));
@@ -1662,7 +1662,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_SHOW_THUMBNAIL, Boolean.toString(setting.isShowThumbnail()));
 		prop.setProperty(PROP_VIDEO_SHOW_THUMBNAIL_SIZE, Boolean.toString(setting.isVideoThumbnailSize()));
 		prop.setProperty(PROP_ENABLE_UNICODE, Boolean.toString(setting.isEnableUnicode()));
-		//GUI‚È‚µ ini‰Šú’l‚ ‚è
+		//GUIãªã— iniåˆæœŸå€¤ã‚ã‚Š
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
 		prop.setProperty(PROP_OPTS_MIX, defOptsMix);
@@ -1671,7 +1671,7 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_ONLY_MP4_AUTO_PLAY, Boolean.toString(onlyMp4AutoPlay));
 		prop.setProperty(PROP_TERMINATE_TIMEOUT, Long.toString(setting.getTerminateTimeout()));
 		/*
-		 * ‚±‚±‚Ü‚ÅŠg’£İ’è•Û‘¶ 1.22r3 ‚É‘Î‚·‚é
+		 * ã“ã“ã¾ã§æ‹¡å¼µè¨­å®šä¿å­˜ 1.22r3 ã«å¯¾ã™ã‚‹
 		 */
 		return prop;
 	}
@@ -1708,26 +1708,26 @@ public class ConvertingSetting {
 			if(value!=null){
 				String old = (String)setProp.setProperty(key, value);
 				if(old==null){
-					sb.append("’Ç‰ÁF<entry key=\""+key+ "\">"+value+"</entry>\n\n");
+					sb.append("è¿½åŠ ï¼š<entry key=\""+key+ "\">"+value+"</entry>\n\n");
 				}else {
 					String sold = Path.toUnixPath((String)old);
 					String sval = Path.toUnixPath(value);
 					if(!sold.equals(sval)){
-						sb.append("•ÏXF<entry key=\""+key+"\">"+old+"</entry>\n"
-							+"«\n<entry key=\""+key+"\">"+value+"</entry>\n\n");
+						sb.append("å¤‰æ›´ï¼š<entry key=\""+key+"\">"+old+"</entry>\n"
+							+"â†“\n<entry key=\""+key+"\">"+value+"</entry>\n\n");
 					}
 				}
 			}
 		}
 		String s = sb.substring(0);
 		if(!s.isEmpty()){
-			// İ’èXVƒƒOƒtƒ@ƒCƒ‹o—Í
-			Path settingSave = new Path("İ’è•ÏX"+WayBackDate.formatNow()+".txt");
+			// è¨­å®šæ›´æ–°ãƒ­ã‚°ãƒ•ã‚¡ã‚¤ãƒ«å‡ºåŠ›
+			Path settingSave = new Path("è¨­å®šå¤‰æ›´"+WayBackDate.formatNow()+".txt");
 			PrintWriter pw = null;
 			try {
 				pw = new PrintWriter(settingSave);
 				pw.print(s);
-				Logger.MainLog.println("İ’è•ÏX‚ª—L‚è‚Ü‚µ‚½B@•ÏXŒ‹‰Ê:"+settingSave);
+				Logger.MainLog.println("è¨­å®šå¤‰æ›´ãŒæœ‰ã‚Šã¾ã—ãŸã€‚ã€€å¤‰æ›´çµæœ:"+settingSave);
 			}catch(IOException es){
 				Logger.MainLog.printStackTrace(es);
 			}finally{
@@ -1770,29 +1770,29 @@ public class ConvertingSetting {
 			if (!user.isEmpty() && password.startsWith("#")){
 				//encrypt_pass = prop.getProperty(PROP_ENCRYPT_PASS, "");
 				if (encrypt_pass.startsWith("_")){
-					// ˆÃ†‰»ƒpƒXƒ[ƒh‚ğ•œ†‚·‚é
+					// æš—å·åŒ–ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’å¾©å·ã™ã‚‹
 					encrypt_pass = encrypt_pass.substring(1);
 					Key skey = Encryption.makeKey(128, user);
 					password = Encryption.decode(encrypt_pass, skey);
 					String try_encryption = Encryption.encode(password, skey);
 					if (try_encryption.equals(encrypt_pass)){
-						System.out.println("ƒpƒXƒ[ƒh‚Í•œ†‚³‚ê‚Ü‚µ‚½");
+						System.out.println("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¯å¾©å·ã•ã‚Œã¾ã—ãŸ");
 						encrypt_pass = "";
 					}else{
-						System.out.println("ƒpƒXƒ[ƒh•œ†¸”s");
+						System.out.println("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰å¾©å·å¤±æ•—");
 						password = "";
 						encrypt_pass = "";
 					}
 				} else {
 					password = encrypt_pass;
 					encrypt_pass = "#";
-					System.out.println("ƒpƒXƒ[ƒh‚Í•œ†‚³‚ê‚Ü‚¹‚ñ");
+					System.out.println("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¯å¾©å·ã•ã‚Œã¾ã›ã‚“");
 				}
 			} else {
-				// password encrypt_pass ‚»‚Ì‚Ü‚ÜBXV‚Ípassword‚ğˆÃ†‰»‚·‚é
-				System.out.println("ƒpƒXƒ[ƒh‚ÍˆÃ†‰»‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
+				// password encrypt_pass ãã®ã¾ã¾ã€‚æ›´æ–°ã¯passwordã‚’æš—å·åŒ–ã™ã‚‹
+				System.out.println("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¯æš—å·åŒ–ã•ã‚Œã¦ã„ã¾ã›ã‚“");
 				if (encrypt_pass.isEmpty()){
-					System.out.println("I—¹ƒpƒXƒ[ƒh‚ªˆÃ†‰»‚³‚ê‚Ü‚·");
+					System.out.println("çµ‚äº†æ™‚ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãŒæš—å·åŒ–ã•ã‚Œã¾ã™");
 				}
 			}
 		} else {
@@ -1805,9 +1805,9 @@ public class ConvertingSetting {
 				String try_decode = Encryption.decode(encrypt_pass.substring(1), skey);
 				if (Encryption.encode(try_decode, skey).equals(encrypt_pass.substring(1))){
 					password = try_decode;
-					System.out.println("ƒpƒXƒ[ƒh‚Í•œ†‚³‚ê‚Ü‚µ‚½");
+					System.out.println("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¯å¾©å·ã•ã‚Œã¾ã—ãŸ");
 				}else{
-					System.out.println("ƒpƒXƒ[ƒh•œ†¸”s");
+					System.out.println("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰å¾©å·å¤±æ•—");
 				}
 			}
 		}
@@ -1898,7 +1898,7 @@ public class ConvertingSetting {
 			Boolean.parseBoolean(prop.getProperty(PROP_CHROMIUM, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_OPERA, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_COOKIE_PATH, "false")),
-			prop.getProperty(PROP_BROWSER_COOKIE_PATH,"‘¼‚Ìƒuƒ‰ƒEƒUCookie‚Ìƒtƒ@ƒCƒ‹/ƒtƒHƒ‹ƒ_‚ğw’è"),
+			prop.getProperty(PROP_BROWSER_COOKIE_PATH,"ä»–ã®ãƒ–ãƒ©ã‚¦ã‚¶Cookieã®ãƒ•ã‚¡ã‚¤ãƒ«/ãƒ•ã‚©ãƒ«ãƒ€ã‚’æŒ‡å®š"),
 			prop.getProperty(PROP_OPTION_FOLDER, DEFAULT_OPTION_FOLDER),
 			wide_option_file,
 			prop.getProperty(PROP_WIDE_CMDLINE_EXT, "mp4"),
@@ -1949,7 +1949,7 @@ public class ConvertingSetting {
 			Double.parseDouble(prop.getProperty(PROP_FPS_UP, "25.0")),
 			Double.parseDouble(prop.getProperty(PROP_FPS_MIN, "23.0")),
 			Boolean.parseBoolean(prop.getProperty(PROP_SOUNDONLY, "false")),
-			prop.getProperty(PROP_THUMBNIAL, "<©“®>"),
+			prop.getProperty(PROP_THUMBNIAL, "<è‡ªå‹•>"),
 			Boolean.parseBoolean(prop.getProperty(PROP_SAVE_AUTOLIST, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_USE_FPS_FILTER,"false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_AUTO_PLAY,"false")),
@@ -2013,7 +2013,7 @@ public class ConvertingSetting {
 	}
 
 	/**
-	 * @param replaceOptions ƒZƒbƒg‚·‚é replaceOptions
+	 * @param replaceOptions ã‚»ãƒƒãƒˆã™ã‚‹ replaceOptions
 	 */
 	public void setReplaceOptions(Map<String, String> replaceOptions) {
 		this.replaceOptions = replaceOptions;

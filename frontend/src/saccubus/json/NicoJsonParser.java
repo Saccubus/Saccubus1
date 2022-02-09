@@ -52,11 +52,11 @@ import saccubus.util.Logger;
 //		"date": 1401116767,
 //		"premium": 1,
 //		"anonymity": 1,
-//		"user_id": ƒ†[ƒU[ID_4877,
+//		"user_id": ãƒ¦ãƒ¼ã‚¶ãƒ¼ID_4877,
 //		"mail": "184",
-//		"content": ’ÊíƒRƒƒ“ƒg4877}
+//		"content": é€šå¸¸ã‚³ãƒ¡ãƒ³ãƒˆ4877}
 //	},
-//	’†—ª
+//	ä¸­ç•¥
 //	{"chat": {
 //		"thread": "9999999993",
 //		"no": 7496,
@@ -66,7 +66,7 @@ import saccubus.util.Logger;
 //		"anonymity": 1,
 //		"user_id": "wyT4hdcnpRa5gKm7EiagcCsO20A",
 //		"mail": "184",
-//		"content": ’ÊíƒRƒƒ“ƒg7496}
+//		"content": é€šå¸¸ã‚³ãƒ¡ãƒ³ãƒˆ7496}
 //	},
 //	{"ping": {"content": "pf:1"}},
 //	{"ping": {"content": "ps:2"}},
@@ -99,10 +99,10 @@ import saccubus.util.Logger;
 //		"date": 1324739748,
 //		"premium": 1,
 //		"anonymity": 1,
-//		"user_id": ƒ†[ƒU[ID_1,
-//		"content": ƒRƒ~ƒ…ƒjƒeƒBƒRƒƒ“ƒg1}
+//		"user_id": ãƒ¦ãƒ¼ã‚¶ãƒ¼ID_1,
+//		"content": ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£ã‚³ãƒ¡ãƒ³ãƒˆ1}
 //	},
-//	’†—ª
+//	ä¸­ç•¥
 //	{"chat": {
 //		"thread": "9999999994",
 //		"no": 51,
@@ -111,8 +111,8 @@ import saccubus.util.Logger;
 //		"date_usec": 890564,
 //		"premium": 1,
 //		"anonymity": 1,
-//		"user_id": ƒ†[ƒU[ID_51,
-//		"content": ƒRƒ~ƒ…ƒjƒeƒBƒRƒƒ“ƒg51}
+//		"user_id": ãƒ¦ãƒ¼ã‚¶ãƒ¼ID_51,
+//		"content": ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£ã‚³ãƒ¡ãƒ³ãƒˆ51}
 //	},
 //	{"ping": {"content": "pf:3"}},
 //	{"ping": {"content": "rf:0"}}
@@ -136,8 +136,8 @@ public class NicoJsonParser {
 		return commentJson2xml(json, xml, kind, append, false);
 	}
 	public boolean commentJson2xml(File json, File xml, String kind, boolean append, boolean localconv) {
-		// json “ü—ÍƒRƒƒ“ƒgJsonƒeƒLƒXƒgƒtƒ@ƒCƒ‹
-		// xml o—ÍƒRƒƒ“ƒgxmlƒtƒ@ƒCƒ‹
+		// json å…¥åŠ›ã‚³ãƒ¡ãƒ³ãƒˆJsonãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«
+		// xml å‡ºåŠ›ã‚³ãƒ¡ãƒ³ãƒˆxmlãƒ•ã‚¡ã‚¤ãƒ«
 		String jsonText = Path.readAllText(json, ENCODING);
 		Mson mson = Mson.parse(jsonText);
 		//mson.prettyPrint(log);
@@ -151,7 +151,7 @@ public class NicoJsonParser {
 				ow.write(xmlString);
 				ow.flush();
 				ow.close();
-				log.println(kind+"ƒRƒƒ“ƒgJSON‚ğXML‚É•ÏŠ·‚µ‚Ü‚µ‚½: "+xml.getPath());
+				log.println(kind+"ã‚³ãƒ¡ãƒ³ãƒˆJSONã‚’XMLã«å¤‰æ›ã—ã¾ã—ãŸ: "+xml.getPath());
 				return true;
 			}
 		} catch (IOException e) {
@@ -167,11 +167,11 @@ public class NicoJsonParser {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		chatCount = 0;
-		// ƒwƒbƒ_
+		// ãƒ˜ãƒƒãƒ€
 		pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		// ƒpƒPƒbƒgŠJn
+		// ãƒ‘ã‚±ãƒƒãƒˆé–‹å§‹
 		pw.println("<packet>");
-		//mson‚Ì‘S‚Ä‚ÌArray‚É‚Â‚¢‚ÄxmlElementString‚ğì¬
+		//msonã®å…¨ã¦ã®Arrayã«ã¤ã„ã¦xmlElementStringã‚’ä½œæˆ
 		if(mson.isArray()){
 			String s;
 			boolean outflag = true;
@@ -186,11 +186,11 @@ public class NicoJsonParser {
 							value = e.getValue();
 						}
 					}else{
-						//ƒnƒbƒVƒ…‚Íˆê‚Â
+						//ãƒãƒƒã‚·ãƒ¥ã¯ä¸€ã¤
 						return null;
 					}
 				}else{
-					//”z—ñ‚Ì’†g‚ªArray‚âprimitive‚âNull‚ÍƒGƒ‰[
+					//é…åˆ—ã®ä¸­èº«ãŒArrayã‚„primitiveã‚„Nullã¯ã‚¨ãƒ©ãƒ¼
 					return null;
 				}
 				// key: value
@@ -199,21 +199,21 @@ public class NicoJsonParser {
 				}
 				Mson m = new Mson(value);
 				String contents;
-				char p;	// p= 0,1,2,3,4,5,6 ŒÅ’è
-				// kind :"user" ˆê”ÊƒRƒƒ“ƒg–”‚ÍƒRƒ~ƒ…ƒjƒeƒBƒRƒƒ“ƒg(p=0,1)
-				// kind :"owner" “ŠeÒƒRƒƒ“ƒg’Šo(p=4‚Ì‚İ, fork==1‚Ì‚İ)
-				// kind :"oprional" ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh’Šo(p=5,6‚Ì‚İ)
-				// kind :"nicos" ƒjƒRƒXƒRƒƒ“ƒg’Šo(p=???)
-				// kind :"easy" ‚©‚ñ‚½‚ñƒRƒƒ“ƒg’Šo(p=2.3‚Ì‚İ, fork==2‚Ì‚İ)
+				char p;	// p= 0,1,2,3,4,5,6 å›ºå®š
+				// kind :"user" ä¸€èˆ¬ã‚³ãƒ¡ãƒ³ãƒˆåˆã¯ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£ã‚³ãƒ¡ãƒ³ãƒˆ(p=0,1)
+				// kind :"owner" æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆæŠ½å‡º(p=4ã®ã¿, fork==1ã®ã¿)
+				// kind :"oprional" ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰æŠ½å‡º(p=5,6ã®ã¿)
+				// kind :"nicos" ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆæŠ½å‡º(p=???)
+				// kind :"easy" ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆæŠ½å‡º(p=2.3ã®ã¿, fork==2ã®ã¿)
 				if(key.equals("ping")){
-					// ƒRƒ“ƒeƒ“ƒc‹æØ‚è
+					// ã‚³ãƒ³ãƒ†ãƒ³ãƒ„åŒºåˆ‡ã‚Š
 					contents = xmlContents(m);
 					if(contents.contains("ps:")){
 						p = contents.charAt(contents.indexOf(":")+1);
-						// contents: "ps:n" n”Ô–Ú pƒXƒ^[ƒg
-						// contents: "pf:n" n”Ô–Ú pƒtƒBƒjƒbƒVƒ…
-						// contents: "rs:0" json ƒXƒ^[ƒg
-						// contents: "rf:0" json ƒtƒBƒjƒbƒVƒ…
+						// contents: "ps:n" nç•ªç›® pã‚¹ã‚¿ãƒ¼ãƒˆ
+						// contents: "pf:n" nç•ªç›® pãƒ•ã‚£ãƒ‹ãƒƒã‚·ãƒ¥
+						// contents: "rs:0" json ã‚¹ã‚¿ãƒ¼ãƒˆ
+						// contents: "rf:0" json ãƒ•ã‚£ãƒ‹ãƒƒã‚·ãƒ¥
 						//log.println("contetns="+contents+", p="+p);
 						if(kind.equals("user")){
 							outflag = p == '0' || p == '1';
@@ -242,7 +242,7 @@ public class NicoJsonParser {
 					continue;
 				}
 				if(key.equals("thread")){
-					// threadˆ—
+					// threadå‡¦ç†
 					String fork = m.getAsString("fork");
 					if(localconv && kind.equals("owner")){
 						outflag = fork!=null && fork.equals("1"); 
@@ -261,7 +261,7 @@ public class NicoJsonParser {
 					continue;
 				}
 				if(key.equals("leaf")){
-					// leafˆ—
+					// leafå‡¦ç†
 					s = "<leaf"
 						+xmlAttributeValue(m, "thread")
 						+xmlAttributeValue(m, "leaf")
@@ -271,7 +271,7 @@ public class NicoJsonParser {
 					continue;
 				}
 				if(key.equals("global_num_res")){
-					//global_num_resˆ—
+					//global_num_reså‡¦ç†
 					s = "<global_num_res"
 						+xmlAttributeValue(m, "thread")
 						+xmlAttributeValue(m, "num_res")
@@ -280,7 +280,7 @@ public class NicoJsonParser {
 					continue;
 				}
 				if(key.equals("num_click")){
-					//num_clickˆ—
+					//num_clickå‡¦ç†
 					s = "<num_click"
 						+xmlAttributeValue(m, "thread")
 						+xmlAttributeValue(m, "no")
@@ -290,7 +290,7 @@ public class NicoJsonParser {
 					continue;
 				}
 				if(key.equals("chat")){
-					//chatˆ—
+					//chatå‡¦ç†
 					s = "<chat"
 						+xmlAttributeValue(m, "thread")
 						+xmlAttributeValue(m, "fork")
@@ -315,7 +315,7 @@ public class NicoJsonParser {
 					}
 					continue;
 				}
-				// ‚»‚Ì‘¼
+				// ãã®ä»–
 				{
 					s = "<"+key
 						+xmlAttributeValue(m, "thread")
@@ -324,10 +324,10 @@ public class NicoJsonParser {
 				}
 			}
 		}else{
-			//‘S‘Ì‚ª”z—ñ‚Å‚È‚¢‚È‚çƒGƒ‰[
+			//å…¨ä½“ãŒé…åˆ—ã§ãªã„ãªã‚‰ã‚¨ãƒ©ãƒ¼
 			return null;
 		}
-		// ƒpƒPƒbƒgI—¹
+		// ãƒ‘ã‚±ãƒƒãƒˆçµ‚äº†
 		pw.println("</packet>");
 		pw.close();
 		return sw.toString();

@@ -41,10 +41,10 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel<FFmpegSelectedItem
 	}
 
 	/**
-	 * ƒtƒ@ƒCƒ‹“Ç‚Ýž‚Ý‚»‚Ì‘¼‚ðs‚¤
+	 * ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ãã®ä»–ã‚’è¡Œã†
 	 */
 	private static final FFmpegSelectedItem DEFAULT_ITEM = new FFmpegSelectedItem(
-			0, null, "ŠO•”ƒtƒ@ƒCƒ‹‚ð—p‚¢‚¸A‰º‚É’¼Ú“ü—Í‚·‚éB");
+			0, null, "å¤–éƒ¨ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç”¨ã„ãšã€ä¸‹ã«ç›´æŽ¥å…¥åŠ›ã™ã‚‹ã€‚");
 
 	protected void reload() {
 		File original_file = ((FFmpegSelectedItem) getSelectedItem()).getFile();
@@ -54,9 +54,9 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel<FFmpegSelectedItem
 	protected void reload(File original_file) {
 		int original_index = -1;
 		int index = 1;
-		// ƒŠƒXƒgƒNƒŠƒA
+		// ãƒªã‚¹ãƒˆã‚¯ãƒªã‚¢
 		List.clear();
-		// ƒtƒ@ƒCƒ‹ƒŠƒXƒgXV
+		// ãƒ•ã‚¡ã‚¤ãƒ«ãƒªã‚¹ãƒˆæ›´æ–°
 		File[] file_array = optionFoler.listFiles();
 		if(file_array != null){
 /*			for (int i = 0; i < file_array.length; i++) {
@@ -65,7 +65,7 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel<FFmpegSelectedItem
 			for(File file:file_array){
 				if (file.getName().endsWith(".xml")) {
 					List.add(new FFmpegSelectedItem(index, file, null));
-					// ‘O‰ñŽ¦‚µ‚Ä‚¢‚½‚Ì‚Æ“¯‚¶ƒtƒ@ƒCƒ‹‚ð”­Œ©B
+					// å‰å›žç¤ºã—ã¦ã„ãŸã®ã¨åŒã˜ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç™ºè¦‹ã€‚
 					if (original_index < 0 && file.equals(original_file)) {
 						original_index = index;
 					}
@@ -73,7 +73,7 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel<FFmpegSelectedItem
 				}
 			}
 		}
-		// ‰Šú‰»
+		// åˆæœŸåŒ–
 		if (original_index < 0) {
 			Index = 0;
 		} else {
@@ -84,7 +84,7 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel<FFmpegSelectedItem
 	}
 
 	/**
-	 * ‘I‚Î‚ê‚Ä‚¢‚éƒIƒuƒWƒFƒNƒg‚ð•Ô‚·
+	 * é¸ã°ã‚Œã¦ã„ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿”ã™
 	 */
 	@Override
 	public Object getSelectedItem() {
@@ -100,7 +100,7 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel<FFmpegSelectedItem
 	}
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚©‚çAƒCƒ“ƒfƒbƒNƒX‚ð’T‚·B
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‹ã‚‰ã€ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’æŽ¢ã™ã€‚
 	 */
 	@Override
 	public void setSelectedItem(Object anItem) {
@@ -113,7 +113,7 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel<FFmpegSelectedItem
 	}
 
 	/**
-	 * ƒCƒ“ƒfƒbƒNƒX‚©‚çƒIƒuƒWƒFƒNƒg‚ð•Ô‚·B
+	 * ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‹ã‚‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿”ã™ã€‚
 	 */
 	@Override
 	public FFmpegSelectedItem getElementAt(int index) {
@@ -127,7 +127,7 @@ public class FFmpegComboBoxModel extends DefaultComboBoxModel<FFmpegSelectedItem
 	}
 
 	/**
-	 * ƒTƒCƒY‚ð•Ô‚·B
+	 * ã‚µã‚¤ã‚ºã‚’è¿”ã™ã€‚
 	 */
 
 	@Override
@@ -173,7 +173,7 @@ class FFmpegSelectedItem {
 	}
 
 	/**
-	 * Ž¯•Ê‚ÉŽg‚¤
+	 * è­˜åˆ¥ã«ä½¿ã†
 	 *
 	 * @return
 	 */

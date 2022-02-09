@@ -17,22 +17,22 @@ import saccubus.util.Util;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * <p>
- * ’˜ìŒ : Copyright (c) 2007 PSI
+ * è‘—ä½œæ¨©: Copyright (c) 2007 PSI
  * </p>
  *
  * <p>
- * ‰ïĞ–¼:
+ * ä¼šç¤¾å:
  * </p>
  *
- * @author –¢“ü—Í
+ * @author æœªå…¥åŠ›
  * @version 1.0
  */
 public class NicoXMLReader extends DefaultHandler {
@@ -70,7 +70,7 @@ public class NicoXMLReader extends DefaultHandler {
 	private String[] voteStr = null;
 	private String[] voteRate = null;
 
-	private String liveOpDuration = "";	// 0ˆÈã‚È‚ç“K—p
+	private String liveOpDuration = "";	// 0ä»¥ä¸Šãªã‚‰é©ç”¨
 	private Logger log;
 	private String duration = "";
 
@@ -87,7 +87,7 @@ public class NicoXMLReader extends DefaultHandler {
 		owner_filter = null;
 		premium = "";
 		liveConversion = liveOp;
-		// ƒjƒRƒXƒRƒƒ“ƒg‚Í premium "2" or "3"‚İ‚½‚¢‚È‚Ì‚ÅƒjƒRƒXƒRƒƒ“ƒg‚Ì‚Í‰^‰cƒRƒƒ“ƒg•ÏŠ·‚µ‚È‚¢‚æ‚¤‚É‚·‚é
+		// ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã¯ premium "2" or "3"ã¿ãŸã„ãªã®ã§ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã®æ™‚ã¯é‹å–¶ã‚³ãƒ¡ãƒ³ãƒˆå¤‰æ›ã—ãªã„ã‚ˆã†ã«ã™ã‚‹
 		premiumColorCheck = prem_color_check;
 		liveOpDuration = duration;
 		log = logger;
@@ -170,7 +170,7 @@ public class NicoXMLReader extends DefaultHandler {
 		return pat.matcher(word).matches();
 	}
 
-	// /voteƒRƒ}ƒ“ƒhê—p‚Ìsplit
+	// /voteã‚³ãƒãƒ³ãƒ‰å°‚ç”¨ã®split
 	private static String[] splitvote(String data) {
 		List<String> li = new ArrayList<String>();
 
@@ -237,20 +237,20 @@ public class NicoXMLReader extends DefaultHandler {
 			premium = "";
 			sb = new StringBuffer();
 			item.setNo(attributes.getValue("no"));
-			//“ŠeÒƒtƒBƒ‹ƒ^[
+			//æŠ•ç¨¿è€…ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼
 			owner_filter = attributes.getValue("filter");
 			if(owner_filter!=null){
 				item_fork = true;
 				return;
 			}
-			//ƒ}ƒCƒƒ‚ƒŠíœ‘ÎÛ
-			//‰^‰cíœ‘ÎÛ
+			//ãƒã‚¤ãƒ¡ãƒ¢ãƒªå‰Šé™¤å¯¾è±¡
+			//é‹å–¶å‰Šé™¤å¯¾è±¡
 			String deleted = attributes.getValue("deleted");
 			if("1".equals(deleted) || "2".equals(deleted)){
 				item_kicked = true;
 				return;
 			}
-			//NG‹¤—LƒŒƒxƒ‹‘ÎÛíœ
+			//NGå…±æœ‰ãƒ¬ãƒ™ãƒ«å¯¾è±¡å‰Šé™¤
 			if(ng_Score>SharedNgScore.MINSCORE){
 				String score_str = attributes.getValue("score");
 				int score = 0;
@@ -269,7 +269,7 @@ public class NicoXMLReader extends DefaultHandler {
 			}
 			// item.setDate(attributes.getValue("date"));
 			String mail = attributes.getValue("mail");
-			//184i“½–¼j‚Å‚È‚¢ê‡‚ÍA186i’Ê’mj‚ğÅŒã‚É•t‰Á
+			//184ï¼ˆåŒ¿åï¼‰ã§ãªã„å ´åˆã¯ã€186ï¼ˆé€šçŸ¥ï¼‰ã‚’æœ€å¾Œã«ä»˜åŠ 
 			if(mail==null){
 				mail = "186";
 			}else if(!mail.contains("184")){
@@ -348,21 +348,21 @@ public class NicoXMLReader extends DefaultHandler {
 			if(intext.isEmpty())
 				return ret;
 			char h = intext.charAt(0);
-			if(intext.length() > 1 && (h=='"'||h=='u')){
-				if(h=='u')
-					h = 'v';
+			if(intext.length() > 1 && (h=='"'||h=='ã€Œ')){
+				if(h=='ã€Œ')
+					h = 'ã€';
 				index = intext.indexOf(h,1);
 				if(index >= 1){
 					ret[i] = intext.substring(1, index);
 					intext = intext.substring(index+1);
 					if(!intext.isEmpty())
-						if(intext.charAt(0)==' '||intext.charAt(0)=='@')
+						if(intext.charAt(0)==' '||intext.charAt(0)=='ã€€')
 							intext = intext.substring(1);
 					continue;
 				}
 			}
 			index = intext.indexOf(' ');
-			index1 = intext.indexOf('@');
+			index1 = intext.indexOf('ã€€');
 			if(index < 0 || (index1 >= 0 && index1 < index))
 				index = index1;
 			if(index < 0) {
@@ -414,10 +414,10 @@ public class NicoXMLReader extends DefaultHandler {
 		if (qName.toLowerCase().equals("chat")) {
 			String com = sb.substring(0);
 			if (!com.startsWith("/emotion "))
-				com = Util.DelEmoji(sb.substring(0), "@");
+				com = Util.DelEmoji(sb.substring(0), "ã€€");
 			// log.println("\t| "+com+" |");
 			boolean script = false;
-			//ƒjƒƒ“Œêˆ—
+			//ãƒ‹ãƒ¯ãƒ³èªå‡¦ç†
 			if (item_fork && com.startsWith("/")){
 				String[] lines = com.substring(1).split(";");
 				for(String nicos: lines){
@@ -432,11 +432,11 @@ public class NicoXMLReader extends DefaultHandler {
 				}
 				if(com.startsWith("replace(",1) && com.endsWith(")")
 					&& !html5comment){
-					// /replaceÀ‘• ƒRƒƒ“ƒg‚Í /replace()‚¾‚¯‚Ìê‡
+					// /replaceå®Ÿè£… ã‚³ãƒ¡ãƒ³ãƒˆã¯ /replace()ã ã‘ã®å ´åˆ
 					log.println("Converting: " + com);
 					item.setScript();
 					script = true;
-					com = com.replaceFirst("^/replace\\(", "").replaceFirst("\\)[ @]*$", "");
+					com = com.replaceFirst("^/replace\\(", "").replaceFirst("\\)[ ã€€]*$", "");
 					String[] terms = com.split(",");
 					if(terms.length<2){
 						item_kicked = true;
@@ -505,10 +505,10 @@ public class NicoXMLReader extends DefaultHandler {
 					return;
 				}
 			}
-			//‰^‰cƒRƒƒ“ƒg
+			//é‹å–¶ã‚³ãƒ¡ãƒ³ãƒˆ
 			if(liveConversion && !premium.isEmpty() && (Integer.parseInt(premium) > 1 && Integer.parseInt(premium) < 8)){
 				if(com.startsWith("/")){
-					//‰^‰cƒRƒ}ƒ“ƒh premium="3" or "6" only? not check
+					//é‹å–¶ã‚³ãƒãƒ³ãƒ‰ premium="3" or "6" only? not check
 					String[] list;
 					if (com.startsWith("/vote"))
 						list = splitvote(com);
@@ -523,13 +523,13 @@ public class NicoXMLReader extends DefaultHandler {
 					else if(list[0].equals("/vote")){
 						String VOTECMD = "ue white ender full";
 						// vote
-						// ”’l‚ğ•ÏŠ·‚·‚é
-						// “Š•[”š‚ğŠes‚É
+						// æ•°å€¤ã‚’å¤‰æ›ã™ã‚‹
+						// æŠ•ç¥¨æ•°å­—ã‚’å„è¡Œã«
 						if(list.length>1 && list[1].equals("start")){
-							///vote start ¡“ú‚Ì”Ô‘g‚Í‚¢‚©‚ª‚Å‚µ‚½‚©H ‚Æ‚Ä‚à—Ç‚©‚Á‚½ ‚Ü‚Ÿ‚Ü‚Ÿ—Ç‚©‚Á‚½ ‚Ó‚Â‚¤‚¾‚Á‚½ ‚ ‚Ü‚è—Ç‚­‚È‚©‚Á‚½ —Ç‚­‚È‚©‚Á‚½
+							///vote start ä»Šæ—¥ã®ç•ªçµ„ã¯ã„ã‹ãŒã§ã—ãŸã‹ï¼Ÿ ã¨ã¦ã‚‚è‰¯ã‹ã£ãŸ ã¾ãã¾ãè‰¯ã‹ã£ãŸ ãµã¤ã†ã ã£ãŸ ã‚ã¾ã‚Šè‰¯ããªã‹ã£ãŸ è‰¯ããªã‹ã£ãŸ
 							voteN = list.length-2;
 							voteStr = new String[10];
-							voteStr[0] = "‚p." + list[2];
+							voteStr[0] = "ï¼±." + list[2];
 							for(int i=1; i<voteN; i++){
 								voteStr[i] = list[i+2];
 							}
@@ -551,16 +551,16 @@ public class NicoXMLReader extends DefaultHandler {
 						}
 						else if(list.length>1 && list[1].equals("showresult")){
 							///vote showresult per  602 181 60 47 108 0 0 0 0 0
-							//  15•b‚®‚ç‚¢
+							//  15ç§’ãã‚‰ã„
 							if(voteN==1 || voteStr==null || voteRate==null){
 								voteN = 6;
 								voteStr = new String[]{
-									"¡“ú‚Ì”Ô‘g‚Í‚¢‚©‚ª‚Å‚µ‚½‚©H",
-									"@‚Æ‚Ä‚à—Ç‚©‚Á‚½@",
-									"‚Ü‚Ÿ‚Ü‚Ÿ—Ç‚©‚Á‚½@",
-									"@‚Ó‚Â‚¤‚¾‚Á‚½@@",
-									"‚ ‚Ü‚è—Ç‚­‚È‚©‚Á‚½",
-									"@—Ç‚­‚È‚©‚Á‚½@@"
+									"ä»Šæ—¥ã®ç•ªçµ„ã¯ã„ã‹ãŒã§ã—ãŸã‹ï¼Ÿ",
+									"ã€€ã¨ã¦ã‚‚è‰¯ã‹ã£ãŸã€€",
+									"ã¾ãã¾ãè‰¯ã‹ã£ãŸã€€",
+									"ã€€ãµã¤ã†ã ã£ãŸã€€ã€€",
+									"ã‚ã¾ã‚Šè‰¯ããªã‹ã£ãŸ",
+									"ã€€è‰¯ããªã‹ã£ãŸã€€ã€€"
 								};
 								voteRate = new String[10];
 							}
@@ -602,7 +602,7 @@ public class NicoXMLReader extends DefaultHandler {
 							script = true;
 						}
 						else {
-							// /vote ‚»‚Ì‘¼
+							// /vote ãã®ä»–
 							StringBuffer sb = new StringBuffer();
 							for(int i=1; i<list.length; i++){
 								sb.append(list[i]);
@@ -618,15 +618,15 @@ public class NicoXMLReader extends DefaultHandler {
 						Pattern ptn = Pattern.compile("\"([^\"]+)\" (\\d+) \"([^\"]*)\" \"([^\"]+)\" ?(\\d*)");
 						Matcher m = ptn.matcher(com);
 						if (m.find())
-							com = "/gift "+ m.group(1) + "‚³‚ñ:"
+							com = "/gift "+ m.group(1) + "ã•ã‚“:"
 								+ m.group(4) 
 								+ "(+" + m.group(2) + ")";
 						item.setMail("shita middle @3");
 						item_fork = true;
 					}
 					else if(list[0].equals("/emotion")) {
-						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF3B, "‚Ğ‚Ü‚í‚è");
-						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF40, "ƒNƒ[ƒo[");
+						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF3B, "ã²ã¾ã‚ã‚Š");
+						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF40, "ã‚¯ãƒ­ãƒ¼ãƒãƒ¼");
 						item.setMail("shita middle @2");
 						item_fork = true;
 					}
@@ -671,29 +671,29 @@ public class NicoXMLReader extends DefaultHandler {
 						item_fork = true;
 					}
 					else {
-						//‰^‰cƒRƒ}ƒ“ƒhŠY“––³‚µ
-						// /disconnect ‚È‚Ç?
+						//é‹å–¶ã‚³ãƒãƒ³ãƒ‰è©²å½“ç„¡ã—
+						// /disconnect ãªã©?
 						if(duration.isEmpty())
 							duration = "4";
 						item.setMail("ue ender @"+duration);
 						item_fork = true;
-						if(com.contains("v"))
-							com = "@ƒ{ƒ^ƒ“ u["+com.replaceAll("u", "w").replaceAll("v", "x")+"]v";
+						if(com.contains("ã€"))
+							com = "@ãƒœã‚¿ãƒ³ ã€Œ["+com.replaceAll("ã€Œ", "ã€").replaceAll("ã€", "ã€")+"]ã€";
 						else
-							com = "@ƒ{ƒ^ƒ“ u["+com+"]v";
+							com = "@ãƒœã‚¿ãƒ³ ã€Œ["+com+"]ã€";
 					}
 				}
 				else if(!premium.isEmpty() && (Integer.parseInt(premium) > 1 && Integer.parseInt(premium) < 8)){
-					//‰^‰cƒRƒƒ“ƒg(¶å or BSP?) ƒRƒ}ƒ“ƒh‚È‚µ
+					//é‹å–¶ã‚³ãƒ¡ãƒ³ãƒˆ(ç”Ÿä¸» or BSP?) ã‚³ãƒãƒ³ãƒ‰ãªã—
 					// premium="3" or "6" ? not check
 					if(duration.isEmpty())
 						duration = "12";
-					item.setMail("ue ender @"+duration);	//4•b‚Å‚¢‚¢H
+					item.setMail("ue ender @"+duration);	//4ç§’ã§ã„ã„ï¼Ÿ
 					item_fork = true;
-					if(com.contains("v"))
-						com = "@ƒ{ƒ^ƒ“ u["+com.replaceAll("u", "w").replaceAll("v", "x")+"]v";
+					if(com.contains("ã€"))
+						com = "@ãƒœã‚¿ãƒ³ ã€Œ["+com.replaceAll("ã€Œ", "ã€").replaceAll("ã€", "ã€")+"]ã€";
 					else
-						com = "@ƒ{ƒ^ƒ“ u["+com+"]v";
+						com = "@ãƒœã‚¿ãƒ³ ã€Œ["+com+"]ã€";
 				}
 				com = com.replace("<u>", "\n").replace("</u>", "")
 					.replace("<b>", "\n").replace("</b>", "")
@@ -704,15 +704,15 @@ public class NicoXMLReader extends DefaultHandler {
 					.replaceAll("\n+","\n");
 				isLiveConversionDone = true;
 			}
-			//ƒjƒRƒXƒNƒŠƒvƒgˆ—
-			if(com.startsWith("@")||com.startsWith("—")){
+			//ãƒ‹ã‚³ã‚¹ã‚¯ãƒªãƒ—ãƒˆå‡¦ç†
+			if(com.startsWith("@")||com.startsWith("ï¼ ")){
 				if(item_fork){
-					if(com.startsWith("’uŠ·",1)){
-						//’uŠ·
-						//item.setMail("");	//ƒŠƒZƒbƒgƒTƒCƒYAƒƒP[ƒVƒ‡ƒ“AF
+					if(com.startsWith("ç½®æ›",1)){
+						//ç½®æ›
+						//item.setMail("");	//ãƒªã‚»ãƒƒãƒˆã‚µã‚¤ã‚ºã€ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã€è‰²
 						script = true;
-						log.println("Converting—’uŠ·: " + com);
-						com = com.replaceFirst("^[@—]’uŠ·[ @]", "");
+						log.println("Convertingï¼ ç½®æ›: " + com);
+						com = com.replaceFirst("^[@ï¼ ]ç½®æ›[ ã€€]", "");
 						String src = "";
 						String dest = "";
 						String fill = "F";
@@ -723,67 +723,67 @@ public class NicoXMLReader extends DefaultHandler {
 						src = list[0];
 						dest = list[1];
 						int p = 2;
-						if(list[p].startsWith("‘S")){
+						if(list[p].startsWith("å…¨")){
 							fill = "T";
 							p++;
 						}
-						if(list[p].startsWith("’P")){
+						if(list[p].startsWith("å˜")){
 							fill = "F";
 							p++;
 						}
-						if(list[p].startsWith("ŠÜ‚Ş")){
+						if(list[p].startsWith("å«ã‚€")){
 							item.setScriptForOwner();
 							target = "user owner";
 							p++;
 						}
-						if(list[p].startsWith("ŠÜ‚Ü‚È‚¢")){
+						if(list[p].startsWith("å«ã¾ãªã„")){
 							target = "user";
 							p++;
 						}
-						if(list[p].startsWith("•”•ªˆê’v")){
+						if(list[p].startsWith("éƒ¨åˆ†ä¸€è‡´")){
 							partial = "T";
 							p++;
 						}
-						if(list[p].startsWith("Š®‘Sˆê’v")){
+						if(list[p].startsWith("å®Œå…¨ä¸€è‡´")){
 							partial = "F";
 						}
 						int vpos = item.getVpos();
 						if(item.getDurationSec()==0){
-							item.setMail("@30");	//ƒŠƒZƒbƒgduration
+							item.setMail("@30");	//ãƒªã‚»ãƒƒãƒˆduration
 						}
 						item.setScript();
-						//Html5‚Ì@’uŠ·‚Ìê‡
+						//Html5ã®@ç½®æ›ã®å ´åˆ
 						//src = src.replace("\\r", "\n").replace("\\n", "\n").replace("\\t", "\t");
 						//dest = dest.replace("\\r", "\n").replace("\\n", "\n").replace("\\t", "\t");
-						//‚ª•K—v‚©H
+						//ãŒå¿…è¦ã‹ï¼Ÿ
 						if(html5comment){
 							dest = dest.replace("\\r", "\n").replace("\\n", "\n").replace("\\t", "\t");
 						}
-						log.println("Converted:" +vpos +":—’uŠ· u"+src +"vu"+dest
-							+"v "+target +" fill:"+fill +" partial:"+partial+").");
+						log.println("Converted:" +vpos +":ï¼ ç½®æ› ã€Œ"+src +"ã€ã€Œ"+dest
+							+"ã€ "+target +" fill:"+fill +" partial:"+partial+").");
 						com = "/r," + src + "," + dest + "," + fill;
 						CommentReplace comrpl = new CommentReplace(item,src,dest,"T",partial,target,fill,log);
 						packet.addReplace(comrpl);
 					}
-					if(com.startsWith("‹t",1)){
-						//‹t‘–
+					if(com.startsWith("é€†",1)){
+						//é€†èµ°
 						item.setScript();
 						script = true;
-					}else if(com.startsWith("ƒfƒtƒHƒ‹ƒg",1)){
-						//ƒfƒtƒHƒ‹ƒg’lİ’è
+					}else if(com.startsWith("ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ",1)){
+						//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤è¨­å®š
 						item.setScript();
 						script = true;
-					}else if(com.startsWith("ƒ{ƒ^ƒ“",1)){
-						//ƒ{ƒ^ƒ“i“ŠeÒ—pj
+					}else if(com.startsWith("ãƒœã‚¿ãƒ³",1)){
+						//ãƒœã‚¿ãƒ³ï¼ˆæŠ•ç¨¿è€…ç”¨ï¼‰
 						item.setScript();
 						is_button = true;
-						//item‚É’Ç‰Á
+						//itemã«è¿½åŠ 
 						item.setButton();
-						com = com.replaceFirst("^.ƒ{ƒ^ƒ“[ @]+", "");
+						com = com.replaceFirst("^.ãƒœã‚¿ãƒ³[ ã€€]+", "");
 						char c0 = com.charAt(0);
 						int index1 = -2;
-						if(c0=='u')
-							index1 = com.indexOf('v');
+						if(c0=='ã€Œ')
+							index1 = com.indexOf('ã€');
 						else if(c0=='"')
 							index1 = com.indexOf('"');
 						if(index1 > 0)
@@ -791,24 +791,24 @@ public class NicoXMLReader extends DefaultHandler {
 						else if(index1 == -1)
 							com = com.substring(1);
 						else
-							com = com.replaceFirst("[ @].*$", "");
+							com = com.replaceFirst("[ ã€€].*$", "");
 						if(!com.contains("[")){
-							//•¶š—ñ‘S‘Ì‚ğƒ{ƒ^ƒ“•\¦‚·‚é‚É‚Í[]‚Å‘S‘Ì‚ğˆÍ‚Ş
+							//æ–‡å­—åˆ—å…¨ä½“ã‚’ãƒœã‚¿ãƒ³è¡¨ç¤ºã™ã‚‹ã«ã¯[]ã§å…¨ä½“ã‚’å›²ã‚€
 							com = "[" + com + "]";
 						}
 						script = true;
 					}
 				}
 			}
-			//ƒ{ƒ^ƒ“@‹’®ÒA“ŠeÒ‹¤
+			//ãƒœã‚¿ãƒ³ã€€è¦–è´è€…ã€æŠ•ç¨¿è€…å…±
 			if(is_button){
 				item.setScript();
 				script = true;
 			}
-			//“ŠeÒƒtƒBƒ‹ƒ^[
+			//æŠ•ç¨¿è€…ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼
 			if (owner_filter!=null){
 				item.setVpos("0");
-				item.setMail("@"+(2900*3600));	//ƒŠƒZƒbƒgƒTƒCƒYAƒƒP[ƒVƒ‡ƒ“AFA—LŒø•b”2900ŠÔ
+				item.setMail("@"+(2900*3600));	//ãƒªã‚»ãƒƒãƒˆã‚µã‚¤ã‚ºã€ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã€è‰²ã€æœ‰åŠ¹ç§’æ•°2900æ™‚é–“
 				item.setScript();
 				item.setScriptForUser();
 				item.setScriptForOwner();
@@ -830,7 +830,7 @@ public class NicoXMLReader extends DefaultHandler {
 							fill = "T";
 							src = src.substring(1);
 						}
-						log.println("Converted:0" +":ƒtƒBƒ‹ƒ^[ \""+src +"\" \""+dest
+						log.println("Converted:0" +":ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ \""+src +"\" \""+dest
 								+"\" "+target +" fill:"+fill +" partial:T).");
 						com = "/r," + src + "," + dest + "," + fill;
 						CommentReplace comrpl = new CommentReplace(item, src, dest, "T", "T", target, fill, log);
@@ -838,7 +838,7 @@ public class NicoXMLReader extends DefaultHandler {
 					}
 				}
 			}
-			//NGƒ[ƒh
+			//NGãƒ¯ãƒ¼ãƒ‰
 			if ( !script && match(NG_Word, com)
 				|| isLiveConversionDone && match(NG_Word, com)) {
 				item_kicked = true;
@@ -851,7 +851,7 @@ public class NicoXMLReader extends DefaultHandler {
 					com = com.substring(com.indexOf(' ')+1);
 				}
 			}
-			//ƒvƒŒƒ~ƒAƒ€ê—pƒJƒ‰[@ˆê”ÊƒAƒJƒEƒ“ƒg‚Å‚Í–³Œø
+			//ãƒ—ãƒ¬ãƒŸã‚¢ãƒ å°‚ç”¨ã‚«ãƒ©ãƒ¼ã€€ä¸€èˆ¬ã‚¢ã‚«ã‚¦ãƒ³ãƒˆã§ã¯ç„¡åŠ¹
 			if (premiumColorCheck && (premium==null || premium.isEmpty())){
 				if(item.isPremumColor()){
 					item.setDefColor();
@@ -869,7 +869,7 @@ public class NicoXMLReader extends DefaultHandler {
 	}
 
 	/**
-	 * ƒhƒLƒ…ƒƒ“ƒgI—¹
+	 * ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆçµ‚äº†
 	 */
 	@Override
 	public void endDocument() {

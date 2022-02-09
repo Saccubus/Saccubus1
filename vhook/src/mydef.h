@@ -1,7 +1,7 @@
 #ifndef MYDEF_H_
 #define MYDEF_H_
 
-/*’Ç‰ÁDefine*/
+/*è¿½åŠ Define*/
 
 #define	MAX(a,b)	(((a)>(b))?(a):(b))
 #define	MIN(a,b)	(((a)<(b))?(a):(b))

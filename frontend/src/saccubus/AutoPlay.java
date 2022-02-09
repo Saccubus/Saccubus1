@@ -41,7 +41,7 @@ public class AutoPlay {
 
 	public void chooseDownload(boolean isDownload){
 		playDownload = isDownload;
-		String s = isDownload? "DLŒã@":"•ÏŠ·Œã@";
+		String s = isDownload? "DLå¾Œã€€":"å¤‰æ›å¾Œã€€";
 		playlistChoiceLabel.setText(s);
 		Color c = isDownload? Color.red : Color.black;
 		playlistChoiceLabel.setForeground(c);
@@ -110,7 +110,7 @@ public class AutoPlay {
 		else
 			playlist.offer(file);
 	}
-	// •ÏŠ·“®‰æÄ¶
+	// å¤‰æ›å‹•ç”»å†ç”Ÿ
 	private void setPlayList(final File video) {
 		synchronized (label) {
 			label.setVisible(false);
@@ -145,11 +145,11 @@ public class AutoPlay {
 			video = getNow();
 		}
 		if(video==null){
-			sendtext("•ÏŠ·Œã‚Ì“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñ");
+			sendtext("å¤‰æ›å¾Œã®å‹•ç”»ãŒã‚ã‚Šã¾ã›ã‚“");
 			return;
 		}
 		if(!video.canRead()){
-			sendtext("•ÏŠ·Œã‚Ì“®‰æ‚ª“Ç‚ß‚Ü‚¹‚ñF" + video.getName());
+			sendtext("å¤‰æ›å¾Œã®å‹•ç”»ãŒèª­ã‚ã¾ã›ã‚“ï¼š" + video.getName());
 			return;
 		}
 		if(vplayer!=null && vplayer.isAlive()){

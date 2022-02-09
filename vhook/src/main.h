@@ -21,25 +21,25 @@ struct DATA{
 	FILE* log;
 	TTF_Font* font[CMD_FONT_MAX];
 	SDL_Surface* screen;
-	/*‚»‚ê‚¼‚ê‚ÌƒRƒƒ“ƒg‚É‰‚¶‚½ƒf[ƒ^*/
-	//ƒ†[ƒUƒRƒƒ“ƒg
+	/*ãã‚Œãã‚Œã®ã‚³ãƒ¡ãƒ³ãƒˆã«å¿œã˜ãŸãƒ‡ãƒ¼ã‚¿*/
+	//ãƒ¦ãƒ¼ã‚¶ã‚³ãƒ¡ãƒ³ãƒˆ
 	CDATA user;
 //	int enable_user_comment;
 //	CHAT chat;
 //	CHAT_SLOT slot;
-	//“ŠeÒƒRƒƒ“ƒg
+	//æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆ
 	CDATA owner;
 //	int enable_owner_comment;
 //	CHAT ownerchat;
 //	CHAT_SLOT ownerslot;
-	//ƒIƒvƒVƒ‡ƒiƒ‹ƒRƒƒ“ƒg
+	//ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚³ãƒ¡ãƒ³ãƒˆ
 	CDATA optional;
 //	int enable_optional_comment;
 //	CHAT optionalchat;
 //	CHAT_SLOT optionalslot;
 	const char* version;
 	int typeNicovideoE;	// this is SwitchFlag wheather nicovideoE(TRUE) or nicovideoH(FALSE)
-	//ˆê”Ê“I‚Èƒf[ƒ^
+	//ä¸€èˆ¬çš„ãªãƒ‡ãƒ¼ã‚¿
 	const char* data_title;
 	int show_thumbnail_size;
 	int shadow_kind;
@@ -50,8 +50,8 @@ struct DATA{
 	int optional_trunslucent;
 	int process_first_called;
 	int video_length;
-//	int aspect100;		// ƒAƒXƒyƒNƒg”ä*100	Not used now
-	int nico_width_now;	// Œ³“®‰æ‚Ì‰¡•
+//	int aspect100;		// ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”*100	Not used now
+	int nico_width_now;	// å…ƒå‹•ç”»ã®æ¨ªå¹…
 	int nico_height;
 	int aspect_mode;		// 0: 512, 1:640
 	float aspect_rate;		// w/h
@@ -64,27 +64,27 @@ struct DATA{
 	int limit_height;
 	int y_min;
 	int y_max;
-	float font_w_fix_r;	// ƒtƒHƒ“ƒg‚Ì•‚ğnicoplayer.swf‚É‡‚í‚¹‚é”{—¦(0< <2)iÀŒ±“Ij
-	float font_h_fix_r;	// ƒtƒHƒ“ƒg‚Ì‚‚³‚ğnicoplayer.swf‚É‡‚í‚¹‚é”{—¦(0< <2)iÀŒ±“Ij
-	int original_resize;	// ‚³‚«‚ã‚Î‚·“Æ©ƒŠƒTƒCƒY‚ª—LŒøiƒfƒtƒHƒ‹ƒg—LŒøj
-	int comment_speed;	// ƒRƒƒ“ƒg‘¬“x‚ğw’è‚·‚éê‡‚0
-	float comment_duration;	// UI‚ÅƒRƒƒ“ƒg•b”w’è‚·‚éê‡‚0
+	float font_w_fix_r;	// ãƒ•ã‚©ãƒ³ãƒˆã®å¹…ã‚’nicoplayer.swfã«åˆã‚ã›ã‚‹å€ç‡(0< <2)ï¼ˆå®Ÿé¨“çš„ï¼‰
+	float font_h_fix_r;	// ãƒ•ã‚©ãƒ³ãƒˆã®é«˜ã•ã‚’nicoplayer.swfã«åˆã‚ã›ã‚‹å€ç‡(0< <2)ï¼ˆå®Ÿé¨“çš„ï¼‰
+	int original_resize;	// ã•ãã‚…ã°ã™ç‹¬è‡ªãƒªã‚µã‚¤ã‚ºãŒæœ‰åŠ¹ï¼ˆãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæœ‰åŠ¹ï¼‰
+	int comment_speed;	// ã‚³ãƒ¡ãƒ³ãƒˆé€Ÿåº¦ã‚’æŒ‡å®šã™ã‚‹å ´åˆâ‰ 0
+	float comment_duration;	// UIã§ã‚³ãƒ¡ãƒ³ãƒˆç§’æ•°æŒ‡å®šã™ã‚‹å ´åˆâ‰ 0
 	int ahead_vpos;
-	int fixmode;	//ƒRƒƒ“ƒgÕ“Ë”»’è‚ğ•ÏX‚·‚é
+	int fixmode;	//ã‚³ãƒ¡ãƒ³ãƒˆè¡çªåˆ¤å®šã‚’å¤‰æ›´ã™ã‚‹
 	int enableCA;
 	const char* fontdir;
-	int use_lineskip_as_fontsize;	//ƒtƒHƒ“ƒgƒTƒCƒY‚ğŒˆ‚ß‚é‚Ì‚ÉLineSkip‚ğ‡‚í‚¹‚éiÀŒ±“Ij
+	int use_lineskip_as_fontsize;	//ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’æ±ºã‚ã‚‹ã®ã«LineSkipã‚’åˆã‚ã›ã‚‹ï¼ˆå®Ÿé¨“çš„ï¼‰
 	int debug;
 	const char* extra_mode;
 	int drawframe;
 	struct_shadow_data shadow_data;
-	double width_scale;	//‘‚«‚İ‰Â@videowidth/nicowidth_now
-	int defcolor;	//ƒfƒtƒHƒ‹ƒgƒJƒ‰[24bitiƒGƒCƒvƒŠƒ‹ƒt[ƒ‹—pA@ƒfƒtƒHƒ‹ƒgj
+	double width_scale;	//æ›¸ãè¾¼ã¿å¯ã€€videowidth/nicowidth_now
+	int defcolor;	//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚«ãƒ©ãƒ¼24bitï¼ˆã‚¨ã‚¤ãƒ—ãƒªãƒ«ãƒ•ãƒ¼ãƒ«ç”¨ã€@ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆï¼‰
 	int deflocation;
 	int defsize;
-	// CA—pƒtƒHƒ“ƒg
+	// CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ
 	TTF_Font* CAfont[CA_FONT_PATH_MAX][CMD_FONT_MAX];
-	// CAØ‘Ö—pUnicodeŒQ
+	// CAåˆ‡æ›¿ç”¨Unicodeç¾¤
 	//Uint16* font_change[CA_FONT_MAX];
 	// 0:*protect_gothic
 	// 1:*change_simsun
@@ -105,23 +105,23 @@ struct DATA{
 	int comment_vpos_shift;
 	int comment_erase_type;
 	int comment_off;
-	int comment_off_y;	//”’l
-	int comment_off_sign;	// 1:ã‚©‚ç, -1:‰º‚©‚ç
-	int comment_off_kind;	// 0:pixel, 1:big, 2:small, 3:medium, 4:ƒp[ƒZƒ“ƒg
-	int comment_off_naka;	// TRUE‚Ìê‡nakaƒRƒƒ“ƒg‚¾‚¯ƒ}ƒXƒN
-	int comment_lf_control;	//s‘—‚è§Œä 0:–³‚µ 1:rev.1.67.1.12 2:new(ƒtƒHƒ“ƒgí‚ê‚É‚­‚­)
-	float comment_linefeed_ratio;	// ƒRƒƒ“ƒgs‘—‚èŠ„‡ -1.0 ‚Ìê‡‚Í–³Œø(0.0`1.0f)
-	float vfspeedrate;		// ƒRƒƒ“ƒg‚ÌPTS‚ğ”{—¦”{‚·‚éB
-	int vfspeedflag;		// 0:–³Œø, 1:ƒRƒƒ“ƒg‚¾‚¯, 2:videoo—Í‚à•ÏX
-	int layerctrl;		//ue shita naka‚ÌƒŒƒCƒ„[‡§Œä 0:‚È‚µ 1:naka‚ğŒã‚ë‚É
-	float comment_resize_adjust;	// scalingŒã‚ÉƒŠƒTƒCƒY•â³@ƒ†[ƒU[ÅI’²®
+	int comment_off_y;	//æ•°å€¤
+	int comment_off_sign;	// 1:ä¸Šã‹ã‚‰, -1:ä¸‹ã‹ã‚‰
+	int comment_off_kind;	// 0:pixel, 1:big, 2:small, 3:medium, 4:ãƒ‘ãƒ¼ã‚»ãƒ³ãƒˆ
+	int comment_off_naka;	// TRUEã®å ´åˆnakaã‚³ãƒ¡ãƒ³ãƒˆã ã‘ãƒã‚¹ã‚¯
+	int comment_lf_control;	//è¡Œé€ã‚Šåˆ¶å¾¡ 0:ç„¡ã— 1:rev.1.67.1.12 2:new(ãƒ•ã‚©ãƒ³ãƒˆå‰Šã‚Œã«ãã)
+	float comment_linefeed_ratio;	// ã‚³ãƒ¡ãƒ³ãƒˆè¡Œé€ã‚Šå‰²åˆ -1.0 ã®å ´åˆã¯ç„¡åŠ¹(0.0ï½1.0f)
+	float vfspeedrate;		// ã‚³ãƒ¡ãƒ³ãƒˆã®PTSã‚’å€ç‡å€ã™ã‚‹ã€‚
+	int vfspeedflag;		// 0:ç„¡åŠ¹, 1:ã‚³ãƒ¡ãƒ³ãƒˆã ã‘, 2:videoå‡ºåŠ›ã‚‚å¤‰æ›´
+	int layerctrl;		//ue shita nakaã®ãƒ¬ã‚¤ãƒ¤ãƒ¼é †åˆ¶å¾¡ 0:ãªã— 1:nakaã‚’å¾Œã‚ã«
+	float comment_resize_adjust;	// scalingå¾Œã«ãƒªã‚µã‚¤ã‚ºè£œæ­£ã€€ãƒ¦ãƒ¼ã‚¶ãƒ¼æœ€çµ‚èª¿æ•´
 	int html5comment;
-		//html5ƒRƒƒ“ƒgƒ‚[ƒh—LŒø	defont mincho gothicƒRƒ}ƒ“ƒh—LŒø@ƒtƒHƒ“ƒgƒTƒCƒY•ÏX
-	int min_vpos;	//vposÅ¬’l
+		//html5ã‚³ãƒ¡ãƒ³ãƒˆãƒ¢ãƒ¼ãƒ‰æœ‰åŠ¹	defont mincho gothicã‚³ãƒãƒ³ãƒ‰æœ‰åŠ¹ã€€ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºå¤‰æ›´
+	int min_vpos;	//vposæœ€å°å€¤
 	//char wstr[128];
-	// ÀŒ±“Iİ’è
+	// å®Ÿé¨“çš„è¨­å®š
 	short font_pixel_size[CMD_FONT_MAX];
-	short fixed_font_height[CMD_FONT_MAX];	// C³ƒtƒHƒ“ƒgw’è(ƒ|ƒCƒ“ƒgw’è)
+	short fixed_font_height[CMD_FONT_MAX];	// ä¿®æ­£ãƒ•ã‚©ãƒ³ãƒˆæŒ‡å®š(ãƒã‚¤ãƒ³ãƒˆæŒ‡å®š)
 };
 
 typedef struct SETTING{
@@ -134,16 +134,16 @@ typedef struct SETTING{
 	const char* version;	// Saccubus1 version (ver>=1.60)   (version of frontend FFmpeg nicovideo set)
 	int typeNicovideoE;	// this is SwitchFlag wheather nicovideoE(TRUE) or nicovideoH(FALSE)
 	int video_length;
-	// V‚µ‚¢ffmpeg‚©‚çvideo‚ÌŠÔ‚ğ–á‚¤Interface‚ª•ª‚©‚é‚Ü‚Å‘ã‚í‚è‚É
-	// ‚³‚«‚ã‚Î‚·‚©‚ç“n‚·i’A‚µ•s–¾‚Ìê‡‚Í@0@or@-1j
-	// ƒRƒƒ“ƒg•\¦‚ÌÅŒã‚Ì’²®‚¾‚¯‚È‚Ì‚Å‚È‚­‚Ä‚à‰ä–‚·‚é‚æ‚¤‚É•ÏXB
-	// ª•K—v‚È‚­‚È‚Á‚½¨•œŠˆ
+	// æ–°ã—ã„ffmpegã‹ã‚‰videoã®æ™‚é–“ã‚’è²°ã†InterfaceãŒåˆ†ã‹ã‚‹ã¾ã§ä»£ã‚ã‚Šã«
+	// ã•ãã‚…ã°ã™ã‹ã‚‰æ¸¡ã™ï¼ˆä½†ã—ä¸æ˜ã®å ´åˆã¯ã€€0ã€€orã€€-1ï¼‰
+	// ã‚³ãƒ¡ãƒ³ãƒˆè¡¨ç¤ºã®æœ€å¾Œã®èª¿æ•´ã ã‘ãªã®ã§ãªãã¦ã‚‚æˆ‘æ…¢ã™ã‚‹ã‚ˆã†ã«å¤‰æ›´ã€‚
+	// â†‘å¿…è¦ãªããªã£ãŸâ†’å¾©æ´»
 	int font_index;
 	int user_slot_max;
 	int owner_slot_max;
 	int optional_slot_max;
 	int shadow_kind;
-	int nico_width_now;	// Œ³“®‰æ‚Ì‰¡•
+	int nico_width_now;	// å…ƒå‹•ç”»ã®æ¨ªå¹…
 	//int nico_height_now = 384
 	//int aspect_mode;		// 0: 512, 1:640
 	const char* input_size;
@@ -159,51 +159,51 @@ typedef struct SETTING{
 	int opaque_comment;
 	const char* opaque_rate;
 	int optional_trunslucent;
-	int q_player;		//ƒRƒƒ“ƒg‚ª“®‰æ‚Ì‚‚³ˆÈ‰º‚É‚È‚é‚©H
-	int is_live;	//¶•ú‘—‚©?(‰¼) ƒRƒƒ“ƒgƒRƒ}ƒ“ƒh‚Ìd—l‚ª•Ï‚í‚é
+	int q_player;		//ã‚³ãƒ¡ãƒ³ãƒˆãŒå‹•ç”»ã®é«˜ã•ä»¥ä¸‹ã«ãªã‚‹ã‹ï¼Ÿ
+	int is_live;	//ç”Ÿæ”¾é€ã‹?(ä»®) ã‚³ãƒ¡ãƒ³ãƒˆã‚³ãƒãƒ³ãƒ‰ã®ä»•æ§˜ãŒå¤‰ã‚ã‚‹
 	const char* comment_shift;
-	const char* comment_erase;	//ƒRƒƒ“ƒg‚Ì“¯•\¦”’´‰ß‚ÌÁ‚µ•û 0: 1:
-	const char* comment_off;	//ƒRƒƒ“ƒgƒIƒtw’è
-	const char* comment_linefeed;	//ƒRƒƒ“ƒgs‘—‚èw’è
-	// [•ûŒü][•¶šƒTƒCƒYw’è]”’l[ƒp[ƒZƒ“ƒgw’è][nakaƒRƒƒ“ƒgƒtƒ‰ƒO]
-	// •ûŒü:ã‚©‚ç+,‰º‚©‚ç-
-	// •¶šƒTƒCƒYw’è:b=big m=medium s=small
-	// ƒp[ƒZƒ“ƒgw’è:%“®‰æ‚‚³‚É‘Î‚·‚é‘Š‘Î’l(100•ª—¦)
-	// nakaƒRƒƒ“ƒgƒtƒ‰ƒO:n
-	const char* vfspeedrate;	//video filter speedrate w’è
-	int layerctrl;		//ue shita naka‚ÌƒŒƒCƒ„[‡§Œä 0:‚È‚µ 1:naka‚ğŒã‚ë‚É
-	float comment_resize_adjust;	// scalingŒã‚ÉƒŠƒTƒCƒY•â³
+	const char* comment_erase;	//ã‚³ãƒ¡ãƒ³ãƒˆã®åŒæ™‚è¡¨ç¤ºæ•°è¶…éæ™‚ã®æ¶ˆã—æ–¹ 0: 1:
+	const char* comment_off;	//ã‚³ãƒ¡ãƒ³ãƒˆã‚ªãƒ•æŒ‡å®š
+	const char* comment_linefeed;	//ã‚³ãƒ¡ãƒ³ãƒˆè¡Œé€ã‚ŠæŒ‡å®š
+	// [æ–¹å‘][æ–‡å­—ã‚µã‚¤ã‚ºæŒ‡å®š]æ•°å€¤[ãƒ‘ãƒ¼ã‚»ãƒ³ãƒˆæŒ‡å®š][nakaã‚³ãƒ¡ãƒ³ãƒˆãƒ•ãƒ©ã‚°]
+	// æ–¹å‘:ä¸Šã‹ã‚‰+,ä¸‹ã‹ã‚‰-
+	// æ–‡å­—ã‚µã‚¤ã‚ºæŒ‡å®š:b=big m=medium s=small
+	// ãƒ‘ãƒ¼ã‚»ãƒ³ãƒˆæŒ‡å®š:%å‹•ç”»é«˜ã•ã«å¯¾ã™ã‚‹ç›¸å¯¾å€¤(100åˆ†ç‡)
+	// nakaã‚³ãƒ¡ãƒ³ãƒˆãƒ•ãƒ©ã‚°:n
+	const char* vfspeedrate;	//video filter speedrate æŒ‡å®š
+	int layerctrl;		//ue shita nakaã®ãƒ¬ã‚¤ãƒ¤ãƒ¼é †åˆ¶å¾¡ 0:ãªã— 1:nakaã‚’å¾Œã‚ã«
+	float comment_resize_adjust;	// scalingå¾Œã«ãƒªã‚µã‚¤ã‚ºè£œæ­£
 	int html5comment;
-	float min_vpos_sec;	//•\¦VposÅ¬’l(•â³Œã)
-		//html5ƒRƒƒ“ƒgƒ‚[ƒh—LŒø	defont mincho gothicƒRƒ}ƒ“ƒh—LŒø@ƒtƒHƒ“ƒgƒTƒCƒY•ÏX
-	// CA—pƒtƒHƒ“ƒg
+	float min_vpos_sec;	//è¡¨ç¤ºVposæœ€å°å€¤(è£œæ­£å¾Œ)
+		//html5ã‚³ãƒ¡ãƒ³ãƒˆãƒ¢ãƒ¼ãƒ‰æœ‰åŠ¹	defont mincho gothicã‚³ãƒãƒ³ãƒ‰æœ‰åŠ¹ã€€ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºå¤‰æ›´
+	// CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ
 	const char* CAfont_path[CA_FONT_PATH_MAX];
 	int CAfont_index[CA_FONT_PATH_MAX];
 	const char* fontdir;
-	// CAØ‘Ö—pUnicodeŒQ
+	// CAåˆ‡æ›¿ç”¨Unicodeç¾¤
 	//const char* CAfont_change_uc[CA_FONT_MAX];
 	//const char* zero_width_uc;
 	//const char* spaceable_uc;
-	// ÀŒ±—p’Ç‰ÁƒtƒHƒ“ƒg
+	// å®Ÿé¨“ç”¨è¿½åŠ ãƒ•ã‚©ãƒ³ãƒˆ
 	const char* extra_path;
 	const char* extra_uc;
 	//int extra_fontindex;
-	// ƒRƒ~ƒ…ƒjƒeƒB“®‰æ‚Å‚Í’ÊíƒRƒƒ“ƒg‚ğƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚Æ‚µ‚Ä”¼“§–¾‚É‚µ‚Ä‚¢‚é‚½‚ßA‘I‘ğ‰Â”\‚É‚·‚é
-	float font_w_fix_r;	// ƒtƒHƒ“ƒg‚Ì•‚ğnicoplayer.swf‚É‡‚í‚¹‚é”{—¦iÀŒ±“Ij
-	float font_h_fix_r;	// ƒtƒHƒ“ƒg‚Ì‚‚³‚ğnicoplayer.swf‚É‡‚í‚¹‚é”{—¦iÀŒ±“Ij
-	int original_resize;	// ‚³‚«‚ã‚Î‚·“Æ©ƒŠƒTƒCƒY‚ª—LŒøiƒfƒtƒHƒ‹ƒg—LŒøj
-	int comment_speed;	// ƒRƒƒ“ƒg‘¬“x‚ğw’è‚·‚éê‡‚0
-	float comment_duration;	// UI‚ÅƒRƒƒ“ƒg•b”w’è‚·‚éê‡‚0
+	// ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£å‹•ç”»ã§ã¯é€šå¸¸ã‚³ãƒ¡ãƒ³ãƒˆã‚’ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã¨ã—ã¦åŠé€æ˜ã«ã—ã¦ã„ã‚‹ãŸã‚ã€é¸æŠå¯èƒ½ã«ã™ã‚‹
+	float font_w_fix_r;	// ãƒ•ã‚©ãƒ³ãƒˆã®å¹…ã‚’nicoplayer.swfã«åˆã‚ã›ã‚‹å€ç‡ï¼ˆå®Ÿé¨“çš„ï¼‰
+	float font_h_fix_r;	// ãƒ•ã‚©ãƒ³ãƒˆã®é«˜ã•ã‚’nicoplayer.swfã«åˆã‚ã›ã‚‹å€ç‡ï¼ˆå®Ÿé¨“çš„ï¼‰
+	int original_resize;	// ã•ãã‚…ã°ã™ç‹¬è‡ªãƒªã‚µã‚¤ã‚ºãŒæœ‰åŠ¹ï¼ˆãƒ‡ãƒ•ã‚©ãƒ«ãƒˆæœ‰åŠ¹ï¼‰
+	int comment_speed;	// ã‚³ãƒ¡ãƒ³ãƒˆé€Ÿåº¦ã‚’æŒ‡å®šã™ã‚‹å ´åˆâ‰ 0
+	float comment_duration;	// UIã§ã‚³ãƒ¡ãƒ³ãƒˆç§’æ•°æŒ‡å®šã™ã‚‹å ´åˆâ‰ 0
 	int comment_ahead_vpos;
-	int fixmode;	//ƒRƒƒ“ƒgÕ“Ë”»’è‚ğ•ÏX‚·‚é
+	int fixmode;	//ã‚³ãƒ¡ãƒ³ãƒˆè¡çªåˆ¤å®šã‚’å¤‰æ›´ã™ã‚‹
 	int enableCA;
-	int use_lineskip_as_fontsize;	//ƒtƒHƒ“ƒgƒTƒCƒY‚ğŒˆ‚ß‚é‚Ì‚ÉLineSkip‚ğ‡‚í‚¹‚éiÀŒ±“Ij
+	int use_lineskip_as_fontsize;	//ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’æ±ºã‚ã‚‹ã®ã«LineSkipã‚’åˆã‚ã›ã‚‹ï¼ˆå®Ÿé¨“çš„ï¼‰
 	int debug;
-	const char* extra_mode;	// debugƒ‚[ƒh•¶š—ñ
-	const char* april_fool;	// ƒGƒCƒvƒŠƒ‹ƒt[ƒ‹•¶š—ñ
-	const char* wakuiro;	// ‰©˜gFw’è•¶š—ñ
-//	const char* framerate;	// ƒtƒŒ[ƒ€ƒŒ[ƒg
-	char* fontlist;	// ƒtƒHƒ“ƒg‚ÌƒŠƒXƒg@999fontname ...i128ŒÂ‚Ü‚Åj
+	const char* extra_mode;	// debugãƒ¢ãƒ¼ãƒ‰æ–‡å­—åˆ—
+	const char* april_fool;	// ã‚¨ã‚¤ãƒ—ãƒªãƒ«ãƒ•ãƒ¼ãƒ«æ–‡å­—åˆ—
+	const char* wakuiro;	// é»„æ è‰²æŒ‡å®šæ–‡å­—åˆ—
+//	const char* framerate;	// ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¬ãƒ¼ãƒˆ
+	char* fontlist;	// ãƒ•ã‚©ãƒ³ãƒˆã®ãƒªã‚¹ãƒˆã€€999fontname ...ï¼ˆ128å€‹ã¾ã§ï¼‰
 }SETTING;
 
 #include "struct_define.h"

@@ -1,4 +1,4 @@
-/*ƒtƒŒ[ƒ€ƒtƒbƒN‚Ì‘Šè‚ğ‚·‚é‚½‚ßê—p*/
+/*ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ•ãƒƒã‚¯ã®ç›¸æ‰‹ã‚’ã™ã‚‹ãŸã‚å°‚ç”¨*/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,7 +18,7 @@ typedef struct ContextInfo{
 } ContextInfo;
 
 /*
- * •K—v‚ÈŠÖ”‚Ğ‚Æ‚Â‚ßBÅ‰‚ÉŒÄ‚Î‚ê‚é‚æI
+ * å¿…è¦ãªé–¢æ•°ã²ã¨ã¤ã‚ã€‚æœ€åˆã«å‘¼ã°ã‚Œã‚‹ã‚ˆï¼
  *
  */
 int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version, int typeNicovideoE);
@@ -32,7 +32,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 		typeNicovideoE = FALSE;
 	}
 	int i;
-	//ƒƒO
+	//ãƒ­ã‚°
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
 	char *ver="1.67.8.06";
@@ -47,14 +47,14 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 		fputs("[framehook/init]initializing..\n",log);
 		fflush(log);
 	}
-	//•K—v‚Èİ’è‚ª‚ ‚é‚©‚ÌŠm”F
+	//å¿…è¦ãªè¨­å®šãŒã‚ã‚‹ã‹ã®ç¢ºèª
 	fprintf(log,"[framehook/init]called with argc = %d\n",argc);
 	fflush(log);
 	for(i=0;i<argc;i++){
 		fprintf(log,"[framehook/init]arg[%2d] = %s\n",i,argv[i]);
 		fflush(log);
 	}
-	//ƒZƒbƒeƒBƒ“ƒOæ“¾B
+	//ã‚»ãƒƒãƒ†ã‚£ãƒ³ã‚°å–å¾—ã€‚
 	SETTING setting;
 	if(init_setting(log,&setting,argc,argv,ver,typeNicovideoE)){
 		fputs("[framehook/init]initialized settings.\n",log);
@@ -65,7 +65,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 		return -2;
 	}
 	log = changelog(log, &setting);
-	//ƒ‰ƒCƒuƒ‰ƒŠ‚È‚Ç‚Ì‰Šú‰»
+	//ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãªã©ã®åˆæœŸåŒ–
 	if(init(log)){
 		fputs("[framehook/init]initialized libs.\n",log);
 		fflush(log);
@@ -74,7 +74,7 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 		fflush(log);
 		return -3;
 	}
-	/*ƒRƒ“ƒeƒLƒXƒg‚Ìİ’è*/
+	/*ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã®è¨­å®š*/
 	*ctxp = malloc(sizeof(ContextInfo));
 	if(*ctxp == NULL){
 		fputs("[framehook/init]failed to malloc for context.\n",log);
@@ -97,44 +97,44 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	}
 }
 /*
- * “à•”‚Å‚Ì‚İŒÄ‚Î‚ê‚éB
+ * å†…éƒ¨ã§ã®ã¿å‘¼ã°ã‚Œã‚‹ã€‚
  */
 
 /*
-	FILE* log		:ƒƒOƒtƒ@ƒCƒ‹ opened as "w"
+	FILE* log		:ãƒ­ã‚°ãƒ•ã‚¡ã‚¤ãƒ« opened as "w"
 	toolbox* tbox	:ffmpeg interface?
-	SETTING* setting:İ’èƒf[ƒ^\‘¢ o—Í
+	SETTING* setting:è¨­å®šãƒ‡ãƒ¼ã‚¿æ§‹é€  å‡ºåŠ›
 	int argc		: argv[] size
-	argv[0]:ƒvƒƒOƒ‰ƒ€@ic‚µ‚Ä‚¨‚­‚¯‚Çargv‚Ìà–¾‚ÍŒÃ‚¢j
+	argv[0]:ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã€€ï¼ˆæ®‹ã—ã¦ãŠãã‘ã©argvã®èª¬æ˜ã¯å¤ã„ï¼‰
 	argv[1]:vhook
-	argv[2]:ƒtƒHƒ“ƒg
-	argv[3]:ƒtƒHƒ“ƒgƒCƒ“ƒfƒbƒNƒX
-	argv[4]:ˆê‰æ–Ê
-	argv[5]:‰e‚Ìí—Ş
-	ˆÈ~ƒIƒvƒVƒ‡ƒ“
-	--enable-show-videoF•`‰æ’†‚É“®‰æ‚ğŒ©‚¹‚éB
-	--enable-fontsize-fixFƒtƒHƒ“ƒgƒTƒCƒY‚ğ©“®‚Å’²®‚·‚éB
-	--nico-width-wide : ƒƒCƒhƒvƒŒ[ƒ„[16:9‘Î‰
-	--font-height-fix-ratio:%d F ƒtƒHƒ“ƒg‚‚³©“®•ÏX‚Ì”{—¦i“j+ int
-	--disable-original-resize : ‚³‚«‚ã‚Î‚·“Æ©ƒŠƒTƒCƒY‚ğ–³Œø‚É‚·‚éiÀŒ±“Ij
-	--comment-speed: ƒRƒƒ“ƒg‘¬“x‚ğw’è‚·‚éê‡‚0
-	--debug-print : ƒfƒoƒbƒOo—Í‚ğ—LŒø‚É‚·‚é
+	argv[2]:ãƒ•ã‚©ãƒ³ãƒˆ
+	argv[3]:ãƒ•ã‚©ãƒ³ãƒˆã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	argv[4]:ä¸€ç”»é¢
+	argv[5]:å½±ã®ç¨®é¡
+	ä»¥é™ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	--enable-show-videoï¼šæç”»ä¸­ã«å‹•ç”»ã‚’è¦‹ã›ã‚‹ã€‚
+	--enable-fontsize-fixï¼šãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’è‡ªå‹•ã§èª¿æ•´ã™ã‚‹ã€‚
+	--nico-width-wide : ãƒ¯ã‚¤ãƒ‰ãƒ—ãƒ¬ãƒ¼ãƒ¤ãƒ¼16:9å¯¾å¿œ
+	--font-height-fix-ratio:%d ï¼š ãƒ•ã‚©ãƒ³ãƒˆé«˜ã•è‡ªå‹•å¤‰æ›´ã®å€ç‡ï¼ˆï¼…ï¼‰+ int
+	--disable-original-resize : ã•ãã‚…ã°ã™ç‹¬è‡ªãƒªã‚µã‚¤ã‚ºã‚’ç„¡åŠ¹ã«ã™ã‚‹ï¼ˆå®Ÿé¨“çš„ï¼‰
+	--comment-speed: ã‚³ãƒ¡ãƒ³ãƒˆé€Ÿåº¦ã‚’æŒ‡å®šã™ã‚‹å ´åˆâ‰ 0
+	--debug-print : ãƒ‡ãƒãƒƒã‚°å‡ºåŠ›ã‚’æœ‰åŠ¹ã«ã™ã‚‹
 */
 int extra_font(SETTING* setting,FILE* log);
 int parseFontList(SETTING* setting,FILE* log);
 
 int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version, int typeNicovideoE){
-	/* TOOLBOX‚Ìƒo[ƒWƒ‡ƒ“ƒ`ƒFƒbƒN */
+	/* TOOLBOXã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ãƒã‚§ãƒƒã‚¯ */
 	fprintf(log,"[framehook/init]type NicovideoE? %s.\n", typeNicovideoE ? "yes":"no");
 	setting->typeNicovideoE = typeNicovideoE;
 	fprintf(log,"[framehook/init]TOOLBOX version is DELETED.\n");
 	fflush(log);
-	/*video‚Ì’·‚³*/
+	/*videoã®é•·ã•*/
 	setting->video_length = 0; //(tbox->video_length * VPOS_FACTOR);
 	setting->version = version;	// 1.60
-	/*ˆÈ~ƒIƒvƒVƒ‡ƒ“*/
+	/*ä»¥é™ã‚ªãƒ—ã‚·ãƒ§ãƒ³*/
 
-	//ƒRƒƒ“ƒg‚ğŒ©‚¹‚é‚©”Û‚©H
+	//ã‚³ãƒ¡ãƒ³ãƒˆã‚’è¦‹ã›ã‚‹ã‹å¦ã‹ï¼Ÿ
 	setting->enable_user_comment = FALSE;
 	setting->enable_owner_comment = FALSE;
 	setting->enable_optional_comment = FALSE;
@@ -143,28 +143,28 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	setting->data_user_path = NULL;
 	setting->data_owner_path = NULL;
 	setting->data_optional_path = NULL;
-	//ˆê”Ê“I‚Èİ’è
+	//ä¸€èˆ¬çš„ãªè¨­å®š
 	setting->font_path = NULL;
 	setting->font_index = 0;
 	setting->user_slot_max = 30;	// 40 ?
 	setting->optional_slot_max = 30;
 	setting->owner_slot_max = 30;	// infinite ?
-	setting->shadow_kind = 1;//ƒfƒtƒHƒ‹ƒg‚ÍƒjƒRƒjƒR“®‰æ•—
+	setting->shadow_kind = 1;//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»é¢¨
 	setting->show_video = FALSE;
 	setting->fontsize_fix=FALSE;
 	setting->opaque_comment=FALSE;
-	setting->nico_width_now=NICO_WIDTH;	//ƒfƒtƒHƒ‹ƒg‚Í‹ŒƒvƒŒƒCƒ„[•
-	setting->optional_trunslucent=FALSE;	//ƒfƒtƒHƒ‹ƒg‚Í”¼“§–¾‚É‚µ‚È‚¢
-	setting->font_w_fix_r = 1.0f;	//ƒfƒtƒHƒ‹ƒg‚Í]—ˆ’Ê‚èiÅI’²®‚Å‡‚í‚¹‚é‚±‚Æj
-	setting->font_h_fix_r = 1.0f;	//ƒfƒtƒHƒ‹ƒg‚Í]—ˆ’Ê‚èiÅI’²®‚Å‡‚í‚¹‚é‚±‚Æj
-	setting->original_resize = TRUE;	//ƒfƒtƒHƒ‹ƒg‚Í—LŒøiÀŒ±“I‚É–³Œø‚É‚·‚é‘I‘ğ‚ğs‚¤j
+	setting->nico_width_now=NICO_WIDTH;	//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯æ—§ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å¹…
+	setting->optional_trunslucent=FALSE;	//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯åŠé€æ˜ã«ã—ãªã„
+	setting->font_w_fix_r = 1.0f;	//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯å¾“æ¥é€šã‚Šï¼ˆæœ€çµ‚èª¿æ•´ã§åˆã‚ã›ã‚‹ã“ã¨ï¼‰
+	setting->font_h_fix_r = 1.0f;	//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯å¾“æ¥é€šã‚Šï¼ˆæœ€çµ‚èª¿æ•´ã§åˆã‚ã›ã‚‹ã“ã¨ï¼‰
+	setting->original_resize = TRUE;	//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯æœ‰åŠ¹ï¼ˆå®Ÿé¨“çš„ã«ç„¡åŠ¹ã«ã™ã‚‹é¸æŠã‚’è¡Œã†ï¼‰
 	setting->comment_speed = 0;
 	setting->comment_duration = 0.0f;
 	setting->comment_ahead_vpos = TEXT_AHEAD_SEC;
 	setting->fixmode = FALSE;
 	setting->enableCA = FALSE;
 	setting->debug = FALSE;
-	setting->use_lineskip_as_fontsize = FALSE;	//ƒfƒtƒHƒ‹ƒg‚Í–³Œø Fonrsize‚ÉLineskip‚ğ‡‚í‚¹‚éiÀŒ±“Ij
+	setting->use_lineskip_as_fontsize = FALSE;	//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯ç„¡åŠ¹ Fonrsizeã«Lineskipã‚’åˆã‚ã›ã‚‹ï¼ˆå®Ÿé¨“çš„ï¼‰
 	setting->extra_mode = "";
 	setting->input_size = NULL;
 	setting->set_size = NULL;
@@ -184,19 +184,19 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 	setting->html5comment = FALSE;
 	setting->min_vpos_sec = -4.0;
 	setting->q_player = FALSE;
-	// CA—pƒtƒHƒ“ƒg
-	//  MS UI GOTHIC ‚Í msgothic.ttc ‚Ì index=2
+	// CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ
+	//  MS UI GOTHIC ã¯ msgothic.ttc ã® index=2
 	int f;
 	for(f=0;f<CA_FONT_PATH_MAX;f++){
 		setting->CAfont_path[f] = NULL;
 		setting->CAfont_index[f] = 0;
 	}
 	setting->fontdir = NULL;
-	// ÀŒ±“I’Ç‰ÁƒtƒHƒ“ƒg
+	// å®Ÿé¨“çš„è¿½åŠ ãƒ•ã‚©ãƒ³ãƒˆ
 	setting->extra_path = NULL;
 	//setting->extra_uc = NULL;
 	//setting->extra_fontindex = 0;
-	//ƒtƒHƒ“ƒgƒŠƒXƒg
+	//ãƒ•ã‚©ãƒ³ãƒˆãƒªã‚¹ãƒˆ
 	setting->fontlist = NULL;
 
 	int i;
@@ -299,9 +299,9 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 		} else if (strncmp(FRAMEHOOK_OPT_ASPECT_MODE, arg, FRAMEHOOK_OPT_ASPECT_MODE_LEN) == 0) {
 			int aspect_mode = MAX(0, atoi(arg + FRAMEHOOK_OPT_ASPECT_MODE_LEN));
 			/**
-			 * ƒAƒXƒyƒNƒg”ä‚Ìw’è. ƒRƒƒ“ƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚â‘¬“x‚É‰e‹¿‚·‚é.i‚¢‚ñ‚«‚ã‚Î‚·ŒİŠ·j
-			 * 0 -  4:3  ¨ 512
-			 * 1 - 16:9  ¨ 640
+			 * ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã®æŒ‡å®š. ã‚³ãƒ¡ãƒ³ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚„é€Ÿåº¦ã«å½±éŸ¿ã™ã‚‹.ï¼ˆã„ã‚“ãã‚…ã°ã™äº’æ›ï¼‰
+			 * 0 -  4:3  â†’ 512
+			 * 1 - 16:9  â†’ 640
 			 */
 			fprintf(log, "[framehook/init]aspect mode:%d\n", aspect_mode);
 			fflush(log);
@@ -323,7 +323,7 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 			setting->fixmode = TRUE;
 			int ahead_vpos = setting->comment_ahead_vpos;
 			if(com_speed_str[0]=='@'){
-				//•b”w’è
+				//ç§’æ•°æŒ‡å®š
 				float com_duration = (float)atof(com_speed_str+1);
 				if (com_duration != 0.0){
 					setting->comment_duration = com_duration;
@@ -455,7 +455,7 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 			fprintf(log,"[framehook/init]minimum vpos: %.2f\n",setting->min_vpos_sec);
 			fflush(log);
 		}
-		// CA—pƒtƒHƒ“ƒg
+		// CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ
 		else if(strncmp(FRAMEHOOK_OPT_FONT_DIR,arg,FRAMEHOOK_OPT_FONT_DIR_LEN)==0){
 			setting->fontdir = arg+FRAMEHOOK_OPT_FONT_DIR_LEN;
 			fprintf(log,"[framehook/init]font dir: %s\n",setting->fontdir);
@@ -592,8 +592,8 @@ int init_setting(FILE*log,SETTING* setting,int argc, char *argv[], char* version
 			fflush(log);
 		}
 	}
-	//ˆø”‚ğ³‚µ‚­“ü—Í‚µ‚½‚©”Û‚©‚Ìƒ`ƒFƒbƒN
-	//‚±‚±‚Åƒ`ƒFƒbƒN‚µ‚Ä‚¢‚é‚ÌˆÈŠO‚ÍAƒfƒtƒHƒ‹ƒgİ’è‚Å“¦‚°‚éB
+	//å¼•æ•°ã‚’æ­£ã—ãå…¥åŠ›ã—ãŸã‹å¦ã‹ã®ãƒã‚§ãƒƒã‚¯
+	//ã“ã“ã§ãƒã‚§ãƒƒã‚¯ã—ã¦ã„ã‚‹ã®ä»¥å¤–ã¯ã€ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆè¨­å®šã§é€ƒã’ã‚‹ã€‚
 	if(!setting->enableCA){
 		if(!setting->font_path){
 			fputs("[framehook/init]please set FONT PATH.\n",log);
@@ -760,7 +760,7 @@ int extra_font(SETTING* setting, FILE* log){
 	return TRUE;
 }
 
-// fontlist‚ğ•ÏŠ·‚·‚é
+// fontlistã‚’å¤‰æ›ã™ã‚‹
 // fontlist="999:fontname ..."->fontnames[999]
 // return succeeded?
 int parseFontList(SETTING* setting,FILE* log){
@@ -808,7 +808,7 @@ int parseFontList(SETTING* setting,FILE* log){
 }
 
 /*
- * •K—v‚ÈŠÖ”“ñ‚Â‚ßBƒtƒŒ[ƒ€‚²‚Æ‚ÉŒÄ‚Î‚ê‚é‚æI
+ * å¿…è¦ãªé–¢æ•°äºŒã¤ã‚ã€‚ãƒ•ãƒ¬ãƒ¼ãƒ ã”ã¨ã«å‘¼ã°ã‚Œã‚‹ã‚ˆï¼
  *
  */
 __declspec(dllexport) void ExtProcess(void *ctx,void* dummy, vhext_frame *pict){
@@ -819,11 +819,11 @@ __declspec(dllexport) void ExtProcess(void *ctx,void* dummy, vhext_frame *pict){
 		}
 
 	/* Note:
-	 * Saccubus 1.22ˆÈ~‚ÌŠg’£vhookƒtƒBƒ‹ƒ^‚Å‚ÍARGB24ƒtƒH[ƒ}ƒbƒg‚Å‚Ì‚İ
-	 * ‰æ‘œ‚ª’ñ‹Ÿ‚³‚ê‚Ü‚·B
+	 * Saccubus 1.22ä»¥é™ã®æ‹¡å¼µvhookãƒ•ã‚£ãƒ«ã‚¿ã§ã¯ã€RGB24ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã§ã®ã¿
+	 * ç”»åƒãŒæä¾›ã•ã‚Œã¾ã™ã€‚
 	 */
 
-		//SDL‚ÌƒT[ƒtƒFƒCƒX‚É•ÏŠ·
+		//SDLã®ã‚µãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã«å¤‰æ›
 		SDL_Surface* surf = SDL_CreateRGBSurfaceFrom(pict->data,
 												pict->w,pict->h,24,pict->linesize,
 											#if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -837,20 +837,20 @@ __declspec(dllexport) void ExtProcess(void *ctx,void* dummy, vhext_frame *pict){
 											#endif
 												0x00000000
 												);
-	//ƒtƒBƒ‹ƒ^
+	//ãƒ•ã‚£ãƒ«ã‚¿
 	int now_vpos = (pict->pts * VPOS_FACTOR);
 	if(!main_process(&ci->data,surf,now_vpos)){
 		fputs("[framehook/process]failed to process.\n",log);
 		fflush(log);
 		exit(1);
 	}
-	//ƒT[ƒtƒFƒCƒXŠJ•ú
+	//ã‚µãƒ¼ãƒ•ã‚§ã‚¤ã‚¹é–‹æ”¾
 	SDL_FreeSurface(surf);
 	fflush(log);
 }
 
 /*
- * •K—v‚ÈŠÖ”ÅŒãBI‚í‚Á‚½‚çŒÄ‚Î‚ê‚é‚æI
+ * å¿…è¦ãªé–¢æ•°æœ€å¾Œã€‚çµ‚ã‚ã£ãŸã‚‰å‘¼ã°ã‚Œã‚‹ã‚ˆï¼
  *
  */
 
@@ -863,9 +863,9 @@ __declspec(dllexport) void ExtRelease(void *ctx, void* dummy){
 			closeData(&ci->data);
 			fputs("[framehook/close]closed.\n",log);
 			fclose(log);
-			//ƒRƒ“ƒeƒLƒXƒg‘S‘Ì
+			//ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå…¨ä½“
 			free(ctx);
 		}
-		//ƒ‰ƒCƒuƒ‰ƒŠ‚ÌI—¹
+		//ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®çµ‚äº†
 		close();
 }

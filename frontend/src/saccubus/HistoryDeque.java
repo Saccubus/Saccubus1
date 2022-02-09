@@ -3,7 +3,7 @@ package saccubus;
 import java.util.LinkedList;
 
 /*
- * 1.66.2.7 next‚àæ‚ÉˆÚ“®‚µ‚ÄˆÚ“®æ‚ğ•Ô‚·‚±‚Æ‚É•ÏX 2016/12/11
+ * 1.66.2.7 nextã‚‚å…ˆã«ç§»å‹•ã—ã¦ç§»å‹•å…ˆã‚’è¿”ã™ã“ã¨ã«å¤‰æ›´ 2016/12/11
  */
 public class HistoryDeque<T> {
 	private final LinkedList<T> deque = new LinkedList<>();
@@ -25,8 +25,8 @@ public class HistoryDeque<T> {
 	}
 
 	/**
-	 *  ÅŒã”ö‚É’Ç‰Á
-	 *  Œ»İˆÊ’uindex‚ÍÅŒã”ö‚ÉˆÚ“®(t‚ğƒ|ƒCƒ“ƒg‚·‚é)
+	 *  æœ€å¾Œå°¾ã«è¿½åŠ 
+	 *  ç¾åœ¨ä½ç½®indexã¯æœ€å¾Œå°¾ã«ç§»å‹•(tã‚’ãƒã‚¤ãƒ³ãƒˆã™ã‚‹)
 	 */
 	public boolean add(T t){
 		synchronized(deque){
@@ -39,8 +39,8 @@ public class HistoryDeque<T> {
 		return add(t);
 	}
 	/**
-	 *  æ“ª‚É’Ç‰Á
-	 *  Œ»İˆÊ’uindex‚Íæ“ª‚ÉˆÚ“®(t‚ğƒ|ƒCƒ“ƒg‚·‚é)
+	 *  å…ˆé ­ã«è¿½åŠ 
+	 *  ç¾åœ¨ä½ç½®indexã¯å…ˆé ­ã«ç§»å‹•(tã‚’ãƒã‚¤ãƒ³ãƒˆã™ã‚‹)
 	 */
 	public void addFirst(T t) {
 		synchronized(deque) {
@@ -50,9 +50,9 @@ public class HistoryDeque<T> {
 		}
 	}
 	/**
-	 *  ÅŒã”ö‚É’Ç‰Á
-	 *  Œ»İˆÊ’uindex‚Í“®‚©‚È‚¢
-	 *  (‰Šúó‘Ô‚âƒGƒ‰[ó‘Ô‚ÍC³)
+	 *  æœ€å¾Œå°¾ã«è¿½åŠ 
+	 *  ç¾åœ¨ä½ç½®indexã¯å‹•ã‹ãªã„
+	 *  (åˆæœŸçŠ¶æ…‹ã‚„ã‚¨ãƒ©ãƒ¼çŠ¶æ…‹ã¯ä¿®æ­£)
 	 */
 	public boolean offer(T t) {
 		boolean b = false;
@@ -68,8 +68,8 @@ public class HistoryDeque<T> {
 		}
 	}
 	/**
-	 *  Œ»İ‚Ì’l‚ğ•Ô‚·
-	 *  Œ»İˆÊ’uindex‚Í“®‚©‚È‚¢(now‚ğƒ|ƒCƒ“ƒg‚·‚é)
+	 *  ç¾åœ¨ã®å€¤ã‚’è¿”ã™
+	 *  ç¾åœ¨ä½ç½®indexã¯å‹•ã‹ãªã„(nowã‚’ãƒã‚¤ãƒ³ãƒˆã™ã‚‹)
 	 */
 	public T getNow(){
 		synchronized(deque){
@@ -77,8 +77,8 @@ public class HistoryDeque<T> {
 		}
 	}
 	/**
-	 *  ÅŒã”ö‚ğ•Ô‚·
-	 *  Œ»İˆÊ’uindex‚ÍÅŒã”ö‚ÉˆÚ“®(now‚ğƒ|ƒCƒ“ƒg‚·‚é)
+	 *  æœ€å¾Œå°¾ã‚’è¿”ã™
+	 *  ç¾åœ¨ä½ç½®indexã¯æœ€å¾Œå°¾ã«ç§»å‹•(nowã‚’ãƒã‚¤ãƒ³ãƒˆã™ã‚‹)
 	 */
 	public T getLast(){
 		synchronized(deque){
@@ -91,9 +91,9 @@ public class HistoryDeque<T> {
 		}
 	}
 	/**
-	 *  index‚ÍŸ‚ÌˆÊ’u‚ÉˆÚ“®B
-	 *  wraparound‚Ìê‡: index‚ªÅŒã”ö‚È‚çæ“ª‚É–ß‚é
-	 *  Œ»İˆÊ’uindex‚Ì’l‚ğ•Ô‚·
+	 *  indexã¯æ¬¡ã®ä½ç½®ã«ç§»å‹•ã€‚
+	 *  wraparoundã®å ´åˆ: indexãŒæœ€å¾Œå°¾ãªã‚‰å…ˆé ­ã«æˆ»ã‚‹
+	 *  ç¾åœ¨ä½ç½®indexã®å€¤ã‚’è¿”ã™
 	 */
 	public T next(){
 		synchronized(deque){
@@ -114,9 +114,9 @@ public class HistoryDeque<T> {
 		}
 	}
 	/**
-	 *  index‚Í‘O‚ÌˆÊ’u‚ÉˆÚ“®B
-	 *  wraparound‚Ìê‡F@æ“ª‚È‚çÅŒã”ö‚ÉˆÚ“®B
-	 *  Œ»İˆÊ’uindex‚Ì’l‚ğ•Ô‚·
+	 *  indexã¯å‰ã®ä½ç½®ã«ç§»å‹•ã€‚
+	 *  wraparoundã®å ´åˆï¼šã€€å…ˆé ­ãªã‚‰æœ€å¾Œå°¾ã«ç§»å‹•ã€‚
+	 *  ç¾åœ¨ä½ç½®indexã®å€¤ã‚’è¿”ã™
 	 */
 	public T back(){
 		synchronized(deque){
@@ -135,8 +135,8 @@ public class HistoryDeque<T> {
 		}
 	}
 	/**
-	 *  æ“ª‚Ì’l‚ğíœ‚µ‚Ä•Ô‚·
-	 *  Œ»İˆÊ’uindex‚Í“®‚©‚È‚¢
+	 *  å…ˆé ­ã®å€¤ã‚’å‰Šé™¤ã—ã¦è¿”ã™
+	 *  ç¾åœ¨ä½ç½®indexã¯å‹•ã‹ãªã„
 	 */
 	public T poll() {
 		synchronized(deque){
@@ -148,8 +148,8 @@ public class HistoryDeque<T> {
 		}
 	}
 	/**
-	 *  æ“ª‚Ì’l‚ğ•Ô‚·
-	 *  Œ»İˆÊ’uindex‚Í“®‚©‚È‚¢
+	 *  å…ˆé ­ã®å€¤ã‚’è¿”ã™
+	 *  ç¾åœ¨ä½ç½®indexã¯å‹•ã‹ãªã„
 	 */
 	public T peek() {
 		synchronized(deque){
@@ -161,7 +161,7 @@ public class HistoryDeque<T> {
 		}
 	}
 	/**
-	 *  •¶š—ñ‚ğ•Ô‚·
+	 *  æ–‡å­—åˆ—ã‚’è¿”ã™
 	 */
 	public String getText() {
 		StringBuffer sb = new StringBuffer("");
@@ -178,13 +178,13 @@ public class HistoryDeque<T> {
 		}
 	}
 	/**
-	 *  ƒTƒCƒY‚ğ•Ô‚·
+	 *  ã‚µã‚¤ã‚ºã‚’è¿”ã™
 	 */
 	public int size() {
 		return deque.size();
 	}
 	/**
-	 *  index‚ğ•Ô‚·
+	 *  indexã‚’è¿”ã™
 	 */
 	public int getIndex() {
 		return index;

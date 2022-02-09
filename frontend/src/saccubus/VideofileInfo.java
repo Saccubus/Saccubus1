@@ -78,7 +78,7 @@ public class VideofileInfo {
 			@Override
 			public void doAbort(String e) {
 				synchronized (status) {
-					status.setText("ffmpeg‚ÌÀs‚ğ’†~‚µ‚Ü‚µ‚½B");
+					status.setText("ffmpegã®å®Ÿè¡Œã‚’ä¸­æ­¢ã—ã¾ã—ãŸã€‚");
 				}
 			}
 		}

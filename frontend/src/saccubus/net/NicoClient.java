@@ -47,22 +47,22 @@ import saccubus.util.Stopwatch;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * <p>
- * ’˜ìŒ : Copyright (c) 2007 PSI
+ * è‘—ä½œæ¨©: Copyright (c) 2007 PSI
  * </p>
  *
  * <p>
- * ‰ïĞ–¼:
+ * ä¼šç¤¾å:
  * </p>
  *
- * @author –¢“ü—Í
+ * @author æœªå…¥åŠ›
  * @version 1.0
  */
 public class NicoClient {
@@ -98,7 +98,7 @@ public class NicoClient {
 	static final String JSON_START2 = "{&quot;ads&quot;:";	// HTML5 2021.12.02
 
 	/**
-	 * ƒuƒ‰ƒEƒU‹¤—L‚µ‚È‚¢‚ÅƒƒOƒCƒ“
+	 * ãƒ–ãƒ©ã‚¦ã‚¶å…±æœ‰ã—ãªã„ã§ãƒ­ã‚°ã‚¤ãƒ³
 	 * @param user
 	 * @param pass
 	 * @param browser 
@@ -116,7 +116,7 @@ public class NicoClient {
 		ConProxy = conProxy(proxy, proxy_port);
 		isHtml5 = is_html5;
 		browserInfo = browser;
-		// ƒƒOƒCƒ“
+		// ãƒ­ã‚°ã‚¤ãƒ³
 		login();
 		setLoggedIn(loginCheck());
 	}
@@ -147,11 +147,11 @@ public class NicoClient {
 	}
 
 	/**
-	 * ƒuƒ‰ƒEƒU‹¤—Ló‘Ô‚ÅƒjƒRƒjƒR“®‰æ‚ÉƒAƒNƒZƒX‚·‚é<br/>
-	 * Šù‚ÉƒƒOƒCƒ“‚µ‚Ä‚¢‚È‚¯‚ê‚Î‚È‚ç‚È‚¢<br/>
-	 * ƒ†[ƒU[ƒZƒbƒVƒ‡ƒ“(Cookieî•ñ)‚ğƒuƒ‰ƒEƒU‚©‚çæ“¾‚·‚é‚Ì‚Å<br/>
-	 * ƒ[ƒ‹ƒAƒhƒŒƒXAƒpƒXƒ[ƒh‚Í•s–¾
-	 * @param browser_kind : ƒuƒ‰ƒEƒU‚Ìí—Ş : int
+	 * ãƒ–ãƒ©ã‚¦ã‚¶å…±æœ‰çŠ¶æ…‹ã§ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã«ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹<br/>
+	 * æ—¢ã«ãƒ­ã‚°ã‚¤ãƒ³ã—ã¦ã„ãªã‘ã‚Œã°ãªã‚‰ãªã„<br/>
+	 * ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚»ãƒƒã‚·ãƒ§ãƒ³(Cookieæƒ…å ±)ã‚’ãƒ–ãƒ©ã‚¦ã‚¶ã‹ã‚‰å–å¾—ã™ã‚‹ã®ã§<br/>
+	 * ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ã€ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¯ä¸æ˜
+	 * @param browser_kind : ãƒ–ãƒ©ã‚¦ã‚¶ã®ç¨®é¡ : int
 	 * @param user_session : String
 	 * @param proxy : String
 	 * @param proxy_port : int
@@ -171,7 +171,7 @@ public class NicoClient {
 		String user_session = browserInfo.getLastBrowserValue();
 		if (user_session == null || user_session.isEmpty()){
 			log.println("Invalid user session" + browserInfo.getName());
-			setExtraError("ƒZƒbƒVƒ‡ƒ“‚ğæ“¾o—ˆ‚Ü‚¹‚ñ");
+			setExtraError("ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚’å–å¾—å‡ºæ¥ã¾ã›ã‚“");
 		} else {
 			String[] sessions = user_session.split(" ");	// "user_session_12345..."+" "+...
 			for(String session: sessions){
@@ -187,14 +187,14 @@ public class NicoClient {
 						Cookie.addNormalCookie("watch_flash=1");
 					}
 					if(loginCheck()){
-						setLoggedIn(true);	// ƒƒOƒCƒ“Ï‚İ‚ÌƒnƒY
+						setLoggedIn(true);	// ãƒ­ã‚°ã‚¤ãƒ³æ¸ˆã¿ã®ãƒã‚º
 						setExtraError("");
 						return;
 					}
 					Cookie = new NicoCookie();
 					log.println("Fault user session " + browserInfo.getName());
 					browserInfo.addFaultUserSession(Cookie.getUsersession());
-					setExtraError("ƒZƒbƒVƒ‡ƒ“‚ª–³Œø‚Å‚·");
+					setExtraError("ã‚»ãƒƒã‚·ãƒ§ãƒ³ãŒç„¡åŠ¹ã§ã™");
 				}
 			}
 			setLoggedIn(false);
@@ -261,10 +261,10 @@ public class NicoClient {
 			boolean followRedirect){
 
 		try {
-			debug("\n¡URL<" + url + ">\n");
+			debug("\nâ– URL<" + url + ">\n");
 			if(url==null || url.isEmpty()){
 				log.println("url is null or empty.");
-				setExtraError("URL‚ªæ“¾‚Å‚«‚Ü‚¹‚ñB");
+				setExtraError("URLãŒå–å¾—ã§ãã¾ã›ã‚“ã€‚");
 				return null;
 			}
 			String host = "";
@@ -275,15 +275,15 @@ public class NicoClient {
 			else
 				host += "/";
 			host = host.substring(0,host.indexOf("/"));
-			debug("¡HOST<" + host + ">\n");
+			debug("â– HOST<" + host + ">\n");
 			if(host==null || host.isEmpty()){
 				log.println("host is null or empty.");
-				setExtraError("HOST‚ªæ“¾‚Å‚«‚Ü‚¹‚ñB");
+				setExtraError("HOSTãŒå–å¾—ã§ãã¾ã›ã‚“ã€‚");
 				return null;
 			}
 			HttpURLConnection con = (HttpURLConnection) (new URL(url))
 					.openConnection(ConProxy);
-			/* ƒŠƒNƒGƒXƒg‚Ìİ’è */
+			/* ãƒªã‚¯ã‚¨ã‚¹ãƒˆã®è¨­å®š */
 	// this is a successfull request header from waterfox to nmsg.nicovideo.jp/api/
 	//POST http://nmsg.nicovideo.jp/api/ HTTP/1.1
 	//Host: nmsg.nicovideo.jp
@@ -297,7 +297,7 @@ public class NicoClient {
 	//Referer: http://nmsg.nicovideo.jp/api/
 	//Content-Length: 292
 	//Content-Type: text/plain; charset=UTF-8
-	//Cookie: __utmc=8292653; nicosid=1440976771.UserID”š; nicorepo_filter=all;
+	//Cookie: __utmc=8292653; nicosid=1440976771.UserIDæ•°å­—; nicorepo_filter=all;
 	//Connection: keep-alive
 	//Range: bytes=0-1048576	// byte=1MB
 	// the following commented source code lines can be made valid in the future, and it would be ok (already tested).
@@ -321,7 +321,7 @@ public class NicoClient {
 		//	con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 			con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
 		//	con.setRequestProperty("Accept-Encoding", "deflate");
-		//	/* gzip deflate‚ğó•t‰Â”\‚É‚µ‚½‚çƒRƒƒ“ƒgæ“¾‚ª‘‚­‚È‚éH ÀÛ‚Édeflate‚Å—ˆ‚é‚©‚ÍŠm‚©‚ß‚Ä‚È‚¢ */
+		//	/* gzip deflateã‚’å—ä»˜å¯èƒ½ã«ã—ãŸã‚‰ã‚³ãƒ¡ãƒ³ãƒˆå–å¾—ãŒæ—©ããªã‚‹ï¼Ÿ å®Ÿéš›ã«deflateã§æ¥ã‚‹ã‹ã¯ç¢ºã‹ã‚ã¦ãªã„ */
 			con.setRequestProperty("DNT", "1");
 		//	con.setRequestProperty("Pragma", "no-cache");
 		//	con.setRequestProperty("Referer", "http://nmsg.nicovideo.jp/api/");
@@ -343,7 +343,7 @@ public class NicoClient {
 				con.addRequestProperty("Range", range);
 			}
 
-			debug("¡"+(isHtml5?"HTML5":"FLASH")+" Connect: " + method
+			debug("â– "+(isHtml5?"HTML5":"FLASH")+" Connect: " + method
 				+ (cookieProp==null? "" : ",Cookie<" + cookieProp.get(url) +">")
 				+ (doInput? ",DoInput" : "")
 				+ (doOutput? ",DoOutput" : "")
@@ -359,7 +359,7 @@ public class NicoClient {
 			int code = con.getResponseCode();
 			if (code >= HttpURLConnection.HTTP_OK
 					&& code < HttpURLConnection.HTTP_BAD_REQUEST) {
-				debug("¡Response:" + Integer.toString(code) + " " + con.getResponseMessage() + "\n");
+				debug("â– Response:" + Integer.toString(code) + " " + con.getResponseMessage() + "\n");
 				return con;
 			} else {
 				log.println("Error Response:" + Integer.toString(code) + " " + con.getResponseMessage());
@@ -370,12 +370,12 @@ public class NicoClient {
 			if(Debug)
 				log.printStackTrace(ex);
 			log.println("Connection error. Check proxy ?");
-			setExtraError("ƒRƒlƒNƒVƒ‡ƒ“ƒGƒ‰[BƒvƒƒLƒV‚ª•s³H");
+			setExtraError("ã‚³ãƒã‚¯ã‚·ãƒ§ãƒ³ã‚¨ãƒ©ãƒ¼ã€‚ãƒ—ãƒ­ã‚­ã‚·ãŒä¸æ­£ï¼Ÿ");
 		} catch(IllegalStateException ex){
 			if(Debug)
 				log.printStackTrace(ex);
 			log.println("Connection error. Check proxy ?");
-			setExtraError("ƒRƒlƒNƒVƒ‡ƒ“ƒGƒ‰[BƒvƒƒLƒV‚ª•s³H");
+			setExtraError("ã‚³ãƒã‚¯ã‚·ãƒ§ãƒ³ã‚¨ãƒ©ãƒ¼ã€‚ãƒ—ãƒ­ã‚­ã‚·ãŒä¸æ­£ï¼Ÿ");
 		}
 		return null;
 	}
@@ -392,7 +392,7 @@ public class NicoClient {
 					new InputStreamReader(con.getInputStream()));
 			String ret = br.readLine();
 			br.close();
-			debug("¡readLine:" + ret+ "\n");
+			debug("â– readLine:" + ret+ "\n");
 			con.disconnect();
 			return ret;
 		} catch(IOException ex){
@@ -405,7 +405,7 @@ public class NicoClient {
 		nicomap.putConnection(con, (Debug? log:null));
 		NicoCookie cookie = new NicoCookie();
 		nicomap.setCookie(cookie);
-	//	debug("¡<NicoCookie><" + cookie.toString() + ">\n");
+	//	debug("â– <NicoCookie><" + cookie.toString() + ">\n");
 		return cookie;
 	}
 
@@ -413,16 +413,16 @@ public class NicoClient {
 		try {
 			log.print("Trying login...");
 			String url = "https://account.nicovideo.jp/api/v1/login";
-			debug("\n¡HTTPS<" + url + ">\n");
+			debug("\nâ– HTTPS<" + url + ">\n");
 			HttpURLConnection con = (HttpsURLConnection) (new URL(url))
 				.openConnection(ConProxy);
-			/* o—Í‚Ì‚İ */
+			/* å‡ºåŠ›ã®ã¿ */
 			con.setDoOutput(true);
 			HttpURLConnection.setFollowRedirects(false);
 			con.setInstanceFollowRedirects(false);
 			con.setRequestMethod("POST");
 			con.addRequestProperty("Connection", "close");
-			debug("¡Connect: POST,DoOutput,Connection close\n");
+			debug("â– Connect: POST,DoOutput,Connection close\n");
 			connect(con);
 			StringBuffer sb = new StringBuffer(4096);
 			sb.append("mail_tel=");
@@ -431,7 +431,7 @@ public class NicoClient {
 			sb.append(URLEncoder.encode(Pass, "Shift_JIS"));
 			sb.append("&submit.x=103&submit.y=16");
 			String sbstr = sb.toString();
-			debug("¡write:" + sbstr + "\n");
+			debug("â– write:" + sbstr + "\n");
 			OutputStream os = con.getOutputStream();
 			os.write(sbstr.getBytes());
 			os.flush();
@@ -439,7 +439,7 @@ public class NicoClient {
 			//Stopwatch.show();
 			int code = con.getResponseCode();
 			String mes = con.getResponseMessage();
-			debug("¡Response:" + Integer.toString(code) + " " + mes + "\n");
+			debug("â– Response:" + Integer.toString(code) + " " + mes + "\n");
 			if (code < HttpURLConnection.HTTP_OK || code >= HttpURLConnection.HTTP_BAD_REQUEST) { // must 200 <= <400
 				log.println("Can't login:" + mes);
 				return false;
@@ -476,7 +476,7 @@ public class NicoClient {
 
 	private static Pattern safeFileName_SPACE = Pattern.compile(" {2}+");
 	public static String safeFileName(String str) {
-		//À‘ÌQÆ‚Ìƒp[ƒX
+		//å®Ÿä½“å‚ç…§ã®ãƒ‘ãƒ¼ã‚¹
 		Pattern p = Pattern.compile("&#([0-9]+);|&#(x[0-9a-fA-F]+);");
 		Matcher m = p.matcher(str);
 		StringBuffer sb = new StringBuffer();
@@ -491,15 +491,15 @@ public class NicoClient {
 			}
 			m.appendReplacement(sb, ch);
 		}
-		//ÅŒã‚É’Ç‰Á
+		//æœ€å¾Œã«è¿½åŠ 
 		m.appendTail(sb);
 		str = sb.toString();
-		//MS-DOSƒVƒXƒeƒ€(ffmpeg.exe)‚Åˆµ‚¦‚éŒ`‚É(UTF-8‚Ì‚Ü‚Ü)
+		//MS-DOSã‚·ã‚¹ãƒ†ãƒ (ffmpeg.exe)ã§æ‰±ãˆã‚‹å½¢ã«(UTF-8ã®ã¾ã¾)
 		str = toSafeWindowsName(str, "MS932");
 		return str;
 	}
 	public static String eRaseMultiByteMark(String str){
-		str = str.replaceAll("[^H–Fbgƒ„D•G]", "");
+		str = str.replaceAll("[ï¼ï¿¥ï¼Ÿï¼Šï¼šï½œâ€œï¼œï¼ï¼ï¼†ï¼›]", "");
 		if(str.isEmpty()) str = "null";
 		return str;
 	}
@@ -507,17 +507,17 @@ public class NicoClient {
 	public static String toSafeWindowsName(String str, String encoding){
 		if(!enableUnicode)
 			str = toSafeString(str, encoding);
-		//ƒtƒ@ƒCƒ‹ƒVƒXƒeƒ€‚Åˆµ‚¦‚éŒ`‚É
-		str = str.replace('/', '^');
-		str = str.replace('\\', '');
-		str = str.replace('?', 'H');
-		str = str.replace('*', '–');
-		str = str.replace(':', 'F');
-		str = str.replace('|', 'b');
-		str = str.replace('\"', 'h');
-		str = str.replace('<', 'ƒ');
-		str = str.replace('>', '„');
-		str = str.replace('.', 'D');
+		//ãƒ•ã‚¡ã‚¤ãƒ«ã‚·ã‚¹ãƒ†ãƒ ã§æ‰±ãˆã‚‹å½¢ã«
+		str = str.replace('/', 'ï¼');
+		str = str.replace('\\', 'ï¿¥');
+		str = str.replace('?', 'ï¼Ÿ');
+		str = str.replace('*', 'ï¼Š');
+		str = str.replace(':', 'ï¼š');
+		str = str.replace('|', 'ï½œ');
+		str = str.replace('\"', 'â€');
+		str = str.replace('<', 'ï¼œ');
+		str = str.replace('>', 'ï¼');
+		str = str.replace('.', 'ï¼');
 		str = safeFileName_SPACE.matcher(str).replaceAll(" ");
 		str = str.trim();
 		return str;
@@ -561,14 +561,14 @@ public class NicoClient {
 	private int VideoLength = -1;
 
 	private static final String TITLE_PARSE_STR_START = "<title>";
-	//RC2‚É‚È‚Á‚Äƒ^ƒCƒgƒ‹‚ª•ÏXAg‚í‚È‚­‚È‚Á‚½B
+	//RC2ã«ãªã£ã¦ã‚¿ã‚¤ãƒˆãƒ«ãŒå¤‰æ›´ã€ä½¿ã‚ãªããªã£ãŸã€‚
 	//private static final String TITLE_PARSE_STR_END = "</title>";
-	private static final String TITLE_END = "]";
-	private static final String TITLE_END2 = "- ƒjƒRƒjƒR“®‰æ";
+	private static final String TITLE_END = "â€";
+	private static final String TITLE_END2 = "- ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»";
 	private static final String TITLE_ZERO_DIV = "id=\"videoHeaderDetail\"";
-	private static final String TITLE_ZERO_DUMMY = "<title>ƒjƒRƒjƒR“®‰æ:Zero</title>";
+	private static final String TITLE_ZERO_DUMMY = "<title>ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»:Zero</title>";
 	private static final String TITLE_GINZA_DIV = "DataContainer\"";
-	private static final String TITLE_GINZA_DUMMY = "<title>ƒjƒRƒjƒR“®‰æ:GINZA</title>";
+	private static final String TITLE_GINZA_DUMMY = "<title>ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»:GINZA</title>";
 	private static final int SPLIT_TEST_SIZE = 4096;	//4k
 	private static final int SPLITS = 2;
 	public boolean getVideoHistoryAndTitle(String tag, String watchInfo, boolean saveWatchPage) {
@@ -673,7 +673,7 @@ public class NicoClient {
 					if (index2 >= 0){
 						title1 = title1.substring(index,index2);
 					}else{
-						String re = "[]-]\\h*ƒjƒRƒjƒR“®‰æ\\h*(:\\h*[\\w]+)?$";
+						String re = "[â€-]\\h*ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»\\h*(:\\h*[\\w]+)?$";
 						title1 = title1.replaceAll(re, "").trim();
 					}
 					if(getVideoTitle()==null){
@@ -705,7 +705,7 @@ public class NicoClient {
 					log.print(" Title not found.");
 				log.println(" <" + Path.toUnixPath(titleHtml) + "> saved.");
 			}
-			//Json‰ğÍ
+			//Jsonè§£æ
 			if(ss.contains(JSON_START2)){
 				if(extractDataApiDataJson(ss, encoding, url)!=null){
 					log.println("video history html5 ok.");
@@ -746,7 +746,7 @@ public class NicoClient {
 	private String optionalThreadID = "";	// normal Comment ID when Community DOUGA
 	private String nicosID = "";
 	private boolean economy = false;
-	private String ownerFilter;			// video owner filterireplacej
+	private String ownerFilter;			// video owner filterï¼ˆreplaceï¼‰
 	public boolean getVideoInfo(String tag, String watchInfo, String time, boolean saveWatchPage) {
 		if(videoTag==null)
 			videoTag = tag;
@@ -809,10 +809,10 @@ public class NicoClient {
 			if (optionalThreadID.isEmpty() && nicomap.containsKey("optional_thread_id")){
 				optionalThreadID = nicomap.get("optional_thread_id");
 				if(videoTag.equals(optionalThreadID)){
-					// html5‚Ìê‡‹t‚É‚È‚Á‚Ä‚¢‚é‚æ‚¤‚¾
-					// ThreadKey ‚ªˆø‚¯‚é‚Ì‚Í ƒƒCƒ“thread‚Ì•û‚¾‚¯
-					// chanel‚Ìê‡ ƒƒCƒ“=ƒ`ƒƒƒ“ƒlƒ‹=threadKey optional‚Í‰½‚à‚È‚¢
-					// community‚Ìê‡ ƒƒCƒ“=ƒRƒ~ƒ…ƒjƒeƒB=threadKey optional‚Ísm“®‰æ‚ÌƒRƒƒ“ƒg
+					// html5ã®å ´åˆé€†ã«ãªã£ã¦ã„ã‚‹ã‚ˆã†ã 
+					// ThreadKey ãŒå¼•ã‘ã‚‹ã®ã¯ ãƒ¡ã‚¤ãƒ³threadã®æ–¹ã ã‘
+					// chanelã®å ´åˆ ãƒ¡ã‚¤ãƒ³=ãƒãƒ£ãƒ³ãƒãƒ«=threadKey optionalã¯ä½•ã‚‚ãªã„
+					// communityã®å ´åˆ ãƒ¡ã‚¤ãƒ³=ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£=threadKey optionalã¯små‹•ç”»ã®ã‚³ãƒ¡ãƒ³ãƒˆ
 					optionalThreadID = ThreadID;
 					ThreadID = videoTag;
 					log.println("reset ThreadID: "+ThreadID);
@@ -935,12 +935,12 @@ public class NicoClient {
 				return null;
 			}
 			if(VideoUrl.contains("rtmp")||VideoUrl.contains("rtmpe")){
-				// rtmp(e) ‚Íƒ_ƒEƒ“ƒ[ƒh•s‰Â
+				// rtmp(e) ã¯ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ä¸å¯
 				log.println("Can't get video:" + VideoUrl);
-				setExtraError("@ƒXƒgƒŠ[ƒ~ƒ“ƒO“®‰æ‚Í•Û‘¶‚Å‚«‚Ü‚¹‚ñB");
+				setExtraError("ã€€ã‚¹ãƒˆãƒªãƒ¼ãƒŸãƒ³ã‚°å‹•ç”»ã¯ä¿å­˜ã§ãã¾ã›ã‚“ã€‚");
 				return null;
 			}
-			if (file.canRead() && file.delete()) { // ƒtƒ@ƒCƒ‹‚ª‚·‚Å‚É‘¶İ‚·‚é‚È‚çíœ‚·‚éB
+			if (file.canRead() && file.delete()) { // ãƒ•ã‚¡ã‚¤ãƒ«ãŒã™ã§ã«å­˜åœ¨ã™ã‚‹ãªã‚‰å‰Šé™¤ã™ã‚‹ã€‚
 				log.print("previous video deleted...");
 			}
 			long startTime = Stopwatch.getElapsedTime(0);
@@ -952,10 +952,10 @@ public class NicoClient {
 
 				}
 				else if (ecode.contains("403")){
-					setExtraError("=•s“KØ‚È“®‰æ‚Ì‰Â”\«BreadmeNew.txtQÆ");
+					setExtraError("=ä¸é©åˆ‡ãªå‹•ç”»ã®å¯èƒ½æ€§ã€‚readmeNew.txtå‚ç…§");
 				}
 				else if(ecode.contains("50")){
-					// 5•b‘Ò‹@
+					// 5ç§’å¾…æ©Ÿ
 					try {
 						Thread.sleep(5000);
 					} catch (InterruptedException e) {
@@ -989,7 +989,7 @@ public class NicoClient {
 				debugsAdd(read);
 				size += read;
 				os.write(buf, 0, read);
-				sendStatus(status, "“®‰æ", max_size, size, startTime);
+				sendStatus(status, "å‹•ç”»", max_size, size, startTime);
 				//Stopwatch.show();
 				if (flag.needStop()) {
 					log.println("\nStopped.");
@@ -1003,7 +1003,7 @@ public class NicoClient {
 					return null;
 				}
 			}
-			debugsOut("\n¡read+write statistics(bytes) ");
+			debugsOut("\nâ– read+write statistics(bytes) ");
 			log.println("ok.");
 			is.close();
 			os.flush();
@@ -1015,7 +1015,7 @@ public class NicoClient {
 		} catch (IOException ex) {
 			log.printStackTrace(ex);
 		} finally{
-		//	debug("¡read+write statistics(bytes) ");
+		//	debug("â– read+write statistics(bytes) ");
 		//	debugsOut();
 		}
 		return null;
@@ -1035,7 +1035,7 @@ public class NicoClient {
 		Path hbxml = null;
 		long min_size = limits[0];
 		try {
-		// “®‰æURL
+		// å‹•ç”»URL
 			log.print("Getting video url...");
 			if (apiSessionUrl == null || apiSessionUrl.isEmpty()) {
 				log.println("Video url(DMC) is not detected.");
@@ -1056,7 +1056,7 @@ public class NicoClient {
 			// DNT: 1
 			// Referer: http://res.nimg.jp/swf/player/nicoplayer.swf?ts=59e6229f239741dda87bff0f8ce2dfb7
 			// Connection: keep-alive
-		//ƒNƒƒXƒhƒƒCƒ“
+		//ã‚¯ãƒ­ã‚¹ãƒ‰ãƒ¡ã‚¤ãƒ³
 			log.print("Getting crossdomain.xml...");
 			url = host_url + "/crossdomain.xml";
 			con = urlConnect(url, "GET", null, true, false, null);
@@ -1096,9 +1096,9 @@ public class NicoClient {
 			//	Connection: keep-alive
 			//	Content-type: application/x-www-form-urlencoded
 			//
-		//ƒZƒbƒVƒ‡ƒ“
+		//ã‚»ãƒƒã‚·ãƒ§ãƒ³
 			url = apiSessionUrl + "?suppress_response_codes=true&_format=xml";
-			debug("\n¡URL<" + url + ">\n");
+			debug("\nâ– URL<" + url + ">\n");
 			//	con = urlConnect(url, "POST", null, true, true, "keep-alive", false);
 			con = (HttpURLConnection) (new URL(url)).openConnection(ConProxy);
 			con.setDoOutput(true);
@@ -1114,10 +1114,10 @@ public class NicoClient {
 			con.setRequestProperty("Content-Type", "application/xml");
 			con.addRequestProperty("DNT", "1");
 			con.addRequestProperty("Connection", "keep-alive");
-			debug("¡Connect: POST,DoOutput,Connection keep-alive\n");
+			debug("â– Connect: POST,DoOutput,Connection keep-alive\n");
 			connect(con);
 			String poststr = sessionData;
-			debug("¡write:" + poststr + "\n");
+			debug("â– write:" + poststr + "\n");
 			os = con.getOutputStream();
 			os.write(poststr.getBytes());
 			os.flush();
@@ -1125,7 +1125,7 @@ public class NicoClient {
 			//Stopwatch.show();
 			int code = con.getResponseCode();
 			String mes = con.getResponseMessage();
-			debug("¡Response:" + Integer.toString(code) + " " + mes + "\n");
+			debug("â– Response:" + Integer.toString(code) + " " + mes + "\n");
 			if (code < HttpURLConnection.HTTP_OK || code >= HttpURLConnection.HTTP_BAD_REQUEST) { // must 200 <= <400
 				log.println("Can't get DMC session:" + mes);
 				return null;
@@ -1141,9 +1141,9 @@ public class NicoClient {
 			pw.write(responseXmlData);
 			pw.flush();
 			pw.close();
-			debug("\n¡session response:\n"+responseXmlData+"\n");
+			debug("\nâ– session response:\n"+responseXmlData+"\n");
 			log.println("Refer dmc responseXml <"+responseXml.getPath()+">");
-		//“®‰æƒT[ƒo
+		//å‹•ç”»ã‚µãƒ¼ãƒ
 			contentUri = getXmlElement(responseXmlData, "content_uri");
 			if(contentUri==null){
 				String resStatus = getXmlElement(responseXmlData, "object");
@@ -1160,47 +1160,47 @@ public class NicoClient {
 			log.println(" video_src_ids:"+Arrays.asList(video_srcs));
 			log.println(" audio_src_ids:"+Arrays.asList(audio_srcs));
 			int max_size = 0;
-		//	•”•ªƒ_ƒEƒ“ƒ[ƒhİ’è
+		//	éƒ¨åˆ†ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰è¨­å®š
 			boolean isSplittable = canRangeReq;
 			int gaten = Gate.getNumGate();
 			int runn = Gate.getNumRun();
 			int threadn = ConvertManager.getNumThread();
 			int convn = ConvertManager.getNumRun();
 			if(runn >= gaten || convn >= threadn){
-				// “¯ƒ_ƒEƒ“ƒ[ƒh”•s‘«
+				// åŒæ™‚ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰æ•°ä¸è¶³
 				isSplittable = false;
 			}
-			// Rangeƒwƒbƒ_[ƒ`ƒFƒbƒN
+			// Rangeãƒ˜ãƒƒãƒ€ãƒ¼ãƒã‚§ãƒƒã‚¯
 			url = contentUri + "&starti=0&start=0";
 			con = urlConnect(url, "GET", null, true, false, null, "0-"+(SPLIT_TEST_SIZE-1));
 			if (con == null) {
-				// ƒRƒlƒNƒVƒ‡ƒ“ƒGƒ‰[
+				// ã‚³ãƒã‚¯ã‚·ãƒ§ãƒ³ã‚¨ãƒ©ãƒ¼
 				log.println("\nConnection Error. Can't get video(dmc):" + url);
 				return null;
 			}
 			int rcode = con.getResponseCode();
 			if (rcode == HttpURLConnection.HTTP_OK) {
-				// •”•ªƒ_ƒEƒ“ƒ[ƒh•s‰Â
+				// éƒ¨åˆ†ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ä¸å¯
 				debug("\ntest Response(dmc) HTTP_OK");
 				canRangeReq = false;
 				tryResume = false;
 			}
 			else{
 				if (rcode == HttpURLConnection.HTTP_PARTIAL){
-					// Rangeƒwƒbƒ_[ó—Ì@•”•ªƒ_ƒEƒ“ƒ[ƒh‰Â”\
+					// Rangeãƒ˜ãƒƒãƒ€ãƒ¼å—é ˜ã€€éƒ¨åˆ†ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰å¯èƒ½
 					debug("\ntest Response(dmc) HTTP_PARTIAL");
 					//isSplittable = true;
 				}
-				else { //ƒGƒ‰[
+				else { //ã‚¨ãƒ©ãƒ¼
 					log.println("\nCan't get video(dmc):" + url);
 					String ecode = getExtraError();
 					if(ecode==null){
 					}
 					else if (ecode.contains("403")){
-						setExtraError("=•s“KØ‚È“®‰æ‚Ì‰Â”\«BreadmeNew.txtQÆ");
+						setExtraError("=ä¸é©åˆ‡ãªå‹•ç”»ã®å¯èƒ½æ€§ã€‚readmeNew.txtå‚ç…§");
 					}
 					else if(ecode.contains("50")){
-						// 5•b‘Ò‹@
+						// 5ç§’å¾…æ©Ÿ
 						try {
 							Thread.sleep(5000);
 						} catch (InterruptedException e) {
@@ -1220,7 +1220,7 @@ public class NicoClient {
 			String contentRange = "";
 			int sizeRanged = 0;
 			int sizeAll = 0;
-			//ƒŒƒXƒ|ƒ“ƒXƒwƒbƒ_
+			//ãƒ¬ã‚¹ãƒãƒ³ã‚¹ãƒ˜ãƒƒãƒ€
 			// Accept-Ranges: bytes
 			// Content-Length: 100
 			// Content-Range: bytes 101-200/3024
@@ -1257,7 +1257,7 @@ public class NicoClient {
 				debug("\n");
 			}
 			max_size = con.getContentLength();	// -1 when invalid
-		//	ƒ_ƒ~[ƒŠ[ƒh
+		//	ãƒ€ãƒŸãƒ¼ãƒªãƒ¼ãƒ‰
 			int dummy = 0;
 			is = con.getInputStream();
 			File dummyfile = Path.mkTemp("dummy["+videoTag+"].flv");
@@ -1270,7 +1270,7 @@ public class NicoClient {
 			is.close();
 			os.flush();
 			os.close();
-			con.disconnect();	//ƒeƒXƒgI—¹
+			con.disconnect();	//ãƒ†ã‚¹ãƒˆçµ‚äº†
 			try {
 				if(sizeAll > max_size)
 					max_size = sizeAll;
@@ -1279,18 +1279,18 @@ public class NicoClient {
 				if(max_size > 0 && sizeDmc <= 0){
 					limits[1] = max_size;
 					if(max_size <= min_size){
-						setExtraError("97 Å¬ŒÀ“xƒTƒCƒY‚Æ“¯‚¶‚©¬‚³‚¢‚Ì‚Åƒ_ƒEƒ“ƒ[ƒh’†~");
+						setExtraError("97 æœ€å°é™åº¦ã‚µã‚¤ã‚ºã¨åŒã˜ã‹å°ã•ã„ã®ã§ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ä¸­æ­¢");
 						return null;
 					}
-					// ‘±s
+					// ç¶šè¡Œ
 					sizeDmc = max_size;
 					if(max_size == resume_size){
-						setExtraError("97 ƒ_ƒEƒ“ƒ[ƒhŠ®—¹Ï‚İ");
+						setExtraError("97 ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰å®Œäº†æ¸ˆã¿");
 						return video;
 					}
 				}
 				log.println("max_size="+(max_size/1000)+"Kbytes.");
-				// ƒ_ƒEƒ“ƒ[ƒhƒŠƒ~ƒbƒgİ’è
+				// ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ãƒªãƒŸãƒƒãƒˆè¨­å®š
 				int videolen = getDmcVideoLength();
 				if(videolen > 0){
 					byterate = (int)((double)max_size / videolen);
@@ -1314,21 +1314,21 @@ public class NicoClient {
 				else
 					log.println("\ncan't delete dummyfile:"+dummyfile.getPath());
 			}
-		// Šg’£q•ÏXƒ`ƒFƒbƒN
+		// æ‹¡å¼µå­å¤‰æ›´ãƒã‚§ãƒƒã‚¯
 			if(renameMp4){	// not check contenttype
 				video = Path.getReplacedExtFile(video,".mp4");
 				log.println("video will save to "+video.getPath());
 			}
-			// heartbeat thread ‚ğ‹N“®‚µ‚ÄƒoƒbƒNƒOƒ‰ƒ“ƒhÀs
+			// heartbeat thread ã‚’èµ·å‹•ã—ã¦ãƒãƒƒã‚¯ã‚°ãƒ©ãƒ³ãƒ‰å®Ÿè¡Œ
 			String hbUrl1 = apiSessionUrl + "/";
 			String hbUrl2 = "?suppress_response_codes=true&_format=xml&_method=PUT";
 			hbxml = Path.mkTemp(videoTag+"_HeartBeatPostData.xml");
 			TimerTask task = new HeartBeatDmc(hbUrl1, hbUrl2, hbxml);
-			timer = new Timer("ƒŠƒgƒ‰ƒC•ªŠÔŠuƒ^ƒCƒ}[");
+			timer = new Timer("ãƒªãƒˆãƒ©ã‚¤åˆ†é–“éš”ã‚¿ã‚¤ãƒãƒ¼");
 			timer.schedule(task, 10000, 10000);	// 10 seconds
 			log.println("heartbeat thread will start in "+10+" seconds.");
 			if(tryResume || resume_size > 0){
-			//	ƒV[ƒPƒ“ƒVƒƒƒ‹ƒŠƒWƒ…[ƒ€
+			//	ã‚·ãƒ¼ã‚±ãƒ³ã‚·ãƒ£ãƒ«ãƒªã‚¸ãƒ¥ãƒ¼ãƒ 
 				debugsInit((int)video.length());
 				long starttime = Stopwatch.getStartTime();
 				int resumed = (int)resume_size;
@@ -1373,7 +1373,7 @@ public class NicoClient {
 						debugsAdd(read);
 						resumed += read;
 						os.write(buf, 0, read);
-						sendStatus(status, "dmc“®‰æ(S)", max_size, resumed, starttime);
+						sendStatus(status, "dmcå‹•ç”»(S)", max_size, resumed, starttime);
 						//Stopwatch.show();
 						if (flag.needStop()) {
 							log.println("Stopped.");
@@ -1399,7 +1399,7 @@ public class NicoClient {
 							return video;
 						}
 					}
-					debugsOut("\n¡read+write statistics(bytes) \n");
+					debugsOut("\nâ– read+write statistics(bytes) \n");
 					debug("\nresumed size = "+resumed+", max_size="+max_size);
 					is.close();
 					os.flush();
@@ -1433,7 +1433,7 @@ public class NicoClient {
 				return video;
 			}
 			if(!canRangeReq || !isSplittable){
-			//	•”•ªƒ_ƒEƒ“ƒ[ƒh‚Å‚Í‚È‚¢‚È‚ç‚à‚¤ˆê“xƒ_ƒEƒ“ƒ[ƒh‚ğÀs‚·‚é
+			//	éƒ¨åˆ†ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã§ã¯ãªã„ãªã‚‰ã‚‚ã†ä¸€åº¦ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã‚’å®Ÿè¡Œã™ã‚‹
 			//	GET content_uri to download video
 				long starttime = Stopwatch.getStartTime();
 				url = contentUri + "&starti=0&start=0";
@@ -1444,10 +1444,10 @@ public class NicoClient {
 					if(ecode==null){
 					}
 					else if (ecode.contains("403")){
-						setExtraError("=•s“KØ‚È“®‰æ‚Ì‰Â”\«BreadmeNew.txtQÆ");
+						setExtraError("=ä¸é©åˆ‡ãªå‹•ç”»ã®å¯èƒ½æ€§ã€‚readmeNew.txtå‚ç…§");
 					}
 					else if(ecode.contains("50")){
-						// 5•b‘Ò‹@
+						// 5ç§’å¾…æ©Ÿ
 						try {
 							Thread.sleep(5000);
 						} catch (InterruptedException e) {
@@ -1456,7 +1456,7 @@ public class NicoClient {
 					}
 					return null;
 				}
-				// ƒtƒ@ƒCƒ‹‚ª‚·‚Å‚É‘¶İ‚·‚é‚È‚çíœ‚·‚éB
+				// ãƒ•ã‚¡ã‚¤ãƒ«ãŒã™ã§ã«å­˜åœ¨ã™ã‚‹ãªã‚‰å‰Šé™¤ã™ã‚‹ã€‚
 				if (video.canRead() && video.delete()) {
 					log.print("previous video("+video.getPath()+") deleted...");
 				}
@@ -1475,7 +1475,7 @@ public class NicoClient {
 					debugsAdd(read);
 					size += read;
 					os.write(buf, 0, read);
-					sendStatus(status, "dmc“®‰æ", max_size, size, starttime);
+					sendStatus(status, "dmcå‹•ç”»", max_size, size, starttime);
 					//Stopwatch.show();
 					if (flag.needStop()) {
 						log.println("\nStopped.");
@@ -1490,7 +1490,7 @@ public class NicoClient {
 						return null;
 					}
 				}
-				debugsOut("\n¡read+write statistics(bytes) ");
+				debugsOut("\nâ– read+write statistics(bytes) ");
 				timer.cancel();
 				log.println("heartbeat thread stopped.");
 				if(size < max_size){
@@ -1525,7 +1525,7 @@ public class NicoClient {
 				con.disconnect();
 				return video;
 			}
-		//	•”•ªƒ_ƒEƒ“ƒ[ƒh‚È‚çƒXƒŒƒbƒh2•ªŠ„‚µ‚ÄÀs
+		//	éƒ¨åˆ†ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ãªã‚‰ã‚¹ãƒ¬ãƒƒãƒ‰2åˆ†å‰²ã—ã¦å®Ÿè¡Œ
 			int subsize = (max_size + SPLITS - 1) / SPLITS;
 			log.println("subsize="+(subsize/1000)+"Kbytes.");
 			final int totalSize = max_size;
@@ -1590,7 +1590,7 @@ public class NicoClient {
 					while ((read = is.read(buf, offset, len)) > 0) {
 						os.write(buf, offset, read);
 						debugsAdd(read);
-						sendStatus(status, "dmc“®‰æ(R)", max_size, dsSum, started);
+						sendStatus(status, "dmcå‹•ç”»(R)", max_size, dsSum, started);
 						//Stopwatch.show();
 						if (flag.needStop()) {
 							dlog.println("Stopped.");
@@ -1604,7 +1604,7 @@ public class NicoClient {
 							return null;
 						}
 					}
-					debugsOut("\n¡sub read+write statistics(bytes) ");
+					debugsOut("\nâ– sub read+write statistics(bytes) ");
 				//	timer.cancel();
 					dlog.println("ok.");
 					is.close();
@@ -1625,18 +1625,18 @@ public class NicoClient {
 					File subvideo = new File(videoname + "_dmc_" + i);
 					videolist.add(subvideo);
 					Logger sublog = new Logger(videoTag+"_dmc", i, "sub_frontend.txt");
-					//ƒXƒŒƒbƒh¶¬@ÀsŠJn
+					//ã‚¹ãƒ¬ãƒƒãƒ‰ç”Ÿæˆã€€å®Ÿè¡Œé–‹å§‹
 					Future<File> future =
 						pool.submit(new SubDownload(i, subsize, subvideo, sublog));
 					log.println("submit subDownload("+i+"): "+subvideo.getName());
-					//ƒv[ƒ‹
+					//ãƒ—ãƒ¼ãƒ«
 					list.add(future);
 				}
-				// ƒtƒ@ƒCƒ‹‚ª‚·‚Å‚É‘¶İ‚·‚é‚È‚çíœ‚·‚éB
+				// ãƒ•ã‚¡ã‚¤ãƒ«ãŒã™ã§ã«å­˜åœ¨ã™ã‚‹ãªã‚‰å‰Šé™¤ã™ã‚‹ã€‚
 				if (video.canRead() && video.delete()) {
 					log.println("previous video("+video.getPath()+") deleted.");
 				}
-				// ƒtƒ@ƒCƒ‹‚ÌŒ‹‡
+				// ãƒ•ã‚¡ã‚¤ãƒ«ã®çµåˆ
 				log.println("Combining dmc(R) video.");
 				for(Future<File> future : list){
 					try {
@@ -1676,7 +1676,7 @@ public class NicoClient {
 			} finally {
 				pool.shutdown();
 			}
-			debugsOut("\n¡read+write statistics(bytes) ");
+			debugsOut("\nâ– read+write statistics(bytes) ");
 			timer.cancel();	// timer is single
 			log.println("heartbeat thread stopped.");
 			log.println("video.length="+video.length()+", sizeDmc="+sizeDmc+".");
@@ -1741,23 +1741,23 @@ public class NicoClient {
 	private static final long NEW_COMMENT_BEGIN_SECOND =
 		new WayBackDate("2010/12/22 18:00").getSecond();
 	// Refer to http://blog.nicovideo.jp/2010/12/post_261.php
-	// 2010”N12Œ22“ú 18:00 “®‰æ‚ÌƒRƒƒ“ƒg‚ªÁ‚¦‚É‚­‚­‚È‚é‘Î‰‚É‚Â‚¢‚Ä
+	// 2010å¹´12æœˆ22æ—¥ 18:00 å‹•ç”»ã®ã‚³ãƒ¡ãƒ³ãƒˆãŒæ¶ˆãˆã«ãããªã‚‹å¯¾å¿œã«ã¤ã„ã¦
 	public  enum CommentType {
 		USER{
 			@Override
-			public String dlmsg(){ return "ƒRƒƒ“ƒg"; }
+			public String dlmsg(){ return "ã‚³ãƒ¡ãƒ³ãƒˆ"; }
 		},
 		OWNER{
 			@Override
-			public String dlmsg(){ return "“ŠeÒƒRƒƒ“ƒg"; }
+			public String dlmsg(){ return "æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆ"; }
 		},
 		OPTIONAL{
 			@Override
-			public String dlmsg(){ return "ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh"; }
+			public String dlmsg(){ return "ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰"; }
 		},
 		NICOS{
 			@Override
-			public String dlmsg(){ return "ƒjƒRƒXƒRƒƒ“ƒg"; }
+			public String dlmsg(){ return "ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆ"; }
 		};
 		public abstract String dlmsg();
 	}
@@ -1838,7 +1838,7 @@ public class NicoClient {
 			final String back_comment, final String time, final ConvertStopFlag flag,
 			final int comment_mode, final boolean isAppend) {
 	 	Official = "";
-		// ‚±‚ÌŒã‚ÅOwnerComment‚ğæ“¾‚·‚é‚Æƒ†[ƒU[“®‰æ‚Ì“ŠeÒƒRƒƒ“ƒg‚ªæ“¾‚³‚ê‚éB
+		// ã“ã®å¾Œã§OwnerCommentã‚’å–å¾—ã™ã‚‹ã¨ãƒ¦ãƒ¼ã‚¶ãƒ¼å‹•ç”»ã®æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆãŒå–å¾—ã•ã‚Œã‚‹ã€‚
 		if (time != null && !time.isEmpty()){
 		 	WayBackKey = "0";
 			if (!getWayBackKey(time, optionalThreadID)) { // WayBackKey
@@ -1965,7 +1965,7 @@ public class NicoClient {
 			boolean useNewComment, boolean isAppend) {
 		log.print("Downloading " + commentType.toString().toLowerCase()
 				+" comment, size:" + back_comment + "...");
-		//String official = "";	/* Œö®“®‰æ—p‚Ìkey’Ç‰Á */
+		//String official = "";	/* å…¬å¼å‹•ç”»ç”¨ã®keyè¿½åŠ  */
 		Official = getOfficial(thread, needs_key);
 		if(Official==null){
 			return null;
@@ -1983,7 +1983,7 @@ public class NicoClient {
 						lastNo = ConvertWorker.getNoUserLastChat(file);
 				}
 				if(!isAppend){
-					if (file.delete()) {	//	ƒtƒ@ƒCƒ‹‚ª‚·‚Å‚É‘¶İ‚·‚é‚È‚çíœ‚·‚éB
+					if (file.delete()) {	//	ãƒ•ã‚¡ã‚¤ãƒ«ãŒã™ã§ã«å­˜åœ¨ã™ã‚‹ãªã‚‰å‰Šé™¤ã™ã‚‹ã€‚
 						log.print("previous " + commentType.toString().toLowerCase() + " comment deleted...");
 					}
 				}
@@ -1992,10 +1992,10 @@ public class NicoClient {
 			con = urlConnect(MsgUrl+"/api", "POST", Cookie, true, true, "keep-alive",true);	//2021.12.05
 			os = con.getOutputStream();
 			/*
-			 * “ŠeÒƒRƒƒ“ƒg‚Í2006version‚ğg—p‚·‚é‚ç‚µ‚¢Bu‚¢‚ñ‚«‚ã‚Î‚·1.7.0v
-			 * ‰ß‹ƒƒOV•\¦Aƒ`ƒƒƒ“ƒlƒ‹{ƒRƒ~ƒ…ƒjƒeƒBV•\¦Bucoroid@‚¢‚ñ‚«‚ã‚Î‚·1.7.2v
-			 * VƒRƒƒ“ƒg•\¦‚Æ‹Œ•\¦‚ğ‘I‘ğ‰Â”\‚É‚·‚éB
-			 * Šù’è‚Å‚Í2010”N12Œ22“ú 18:00ˆÈŒã‚ÍV•\¦‚É‚·‚éB
+			 * æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã¯2006versionã‚’ä½¿ç”¨ã™ã‚‹ã‚‰ã—ã„ã€‚ã€Œã„ã‚“ãã‚…ã°ã™1.7.0ã€
+			 * éå»ãƒ­ã‚°æ–°è¡¨ç¤ºã€ãƒãƒ£ãƒ³ãƒãƒ«ï¼‹ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£æ–°è¡¨ç¤ºã€‚ã€Œcoroidã€€ã„ã‚“ãã‚…ã°ã™1.7.2ã€
+			 * æ–°ã‚³ãƒ¡ãƒ³ãƒˆè¡¨ç¤ºã¨æ—§è¡¨ç¤ºã‚’é¸æŠå¯èƒ½ã«ã™ã‚‹ã€‚
+			 * æ—¢å®šã§ã¯2010å¹´12æœˆ22æ—¥ 18:00ä»¥å¾Œã¯æ–°è¡¨ç¤ºã«ã™ã‚‹ã€‚
 			 *		http://sourceforge.jp/projects/coroid/wiki/NicoApiSpec
 			 */
 			String req;
@@ -2009,11 +2009,11 @@ public class NicoClient {
 				req = commentCommand2006(commentType, back_comment);
 				log.print("Old comment mode...");
 			}
-			debug("\n¡write:" + req + "\n");
+			debug("\nâ– write:" + req + "\n");
 			os.write(req.getBytes());
 			os.flush();
 			os.close();
-			debug("¡Response:" + Integer.toString(con.getResponseCode()) + " " + con.getResponseMessage() + "\n");
+			debug("â– Response:" + Integer.toString(con.getResponseCode()) + " " + con.getResponseMessage() + "\n");
 			if (con.getResponseCode() != HttpURLConnection.HTTP_OK) {
 				log.println("ng.\nCan't download " + commentType.toString().toLowerCase() + " comment:" + MsgUrl);
 				return null;
@@ -2046,7 +2046,7 @@ public class NicoClient {
 					return null;
 				}
 			}
-			debugsOut("¡read+write statistics(bytes) ");
+			debugsOut("â– read+write statistics(bytes) ");
 			log.println("ok.");
 			is.close();
 			fos.flush();
@@ -2060,7 +2060,7 @@ public class NicoClient {
 		} catch (IOException ex) {
 			log.printStackTrace(ex);
 			if(ex.toString().contains("Unexpected")){	//"Unexpected end of file from server"
-				setExtraError("ƒT[ƒo[‚©‚çØ’f‚³‚ê‚Ü‚µ‚½Bƒ^ƒCƒ€ƒAƒEƒgH");
+				setExtraError("ã‚µãƒ¼ãƒãƒ¼ã‹ã‚‰åˆ‡æ–­ã•ã‚Œã¾ã—ãŸã€‚ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆï¼Ÿ");
 			}
 		} catch(NumberFormatException ex){
 			log.printStackTrace(ex);
@@ -2183,7 +2183,7 @@ public class NicoClient {
 			WayBackDate wayback = new WayBackDate(time);
 			if (!wayback.isValid()){
 				log.println("ng.\nCannot parse time.\"" + time + S_QUOTE2);
-				setExtraError("‰ß‹ƒƒOw’è•¶š—ñ‚ªˆá‚¢‚Ü‚·");
+				setExtraError("éå»ãƒ­ã‚°æŒ‡å®šæ–‡å­—åˆ—ãŒé•ã„ã¾ã™");
 				return false;
 			}
 			String waybacktime = wayback.getWayBackTime();
@@ -2205,7 +2205,7 @@ public class NicoClient {
 			if (waybackkey == null || waybackkey.isEmpty()) {
 				log.println("ng.\nCannot get wayback key. it's invalid");
 				if ("0".equals(Premium)){
-					setExtraError("ˆê”Ê‰ïˆõ‚Í‰ß‹ƒƒO•s‰Â‚Å‚·");
+					setExtraError("ä¸€èˆ¬ä¼šå“¡ã¯éå»ãƒ­ã‚°ä¸å¯ã§ã™");
 				}
 				return false;
 			}
@@ -2249,9 +2249,9 @@ public class NicoClient {
 			return false;
 		}
 		Cookie.update(new_cookie);
-		debug("\n¡Now Cookie is<" + Cookie.toString() + ">\n");
+		debug("\nâ– Now Cookie is<" + Cookie.toString() + ">\n");
 		BrowserInfo.setLastUsersession(Cookie.getUsersession());
-		debug("¡last_user_session is<" + BrowserInfo.getLastUsersession() + ">\n");
+		debug("â– last_user_session is<" + BrowserInfo.getLastUsersession() + ">\n");
 		log.println("loginCheck ok.");
 		setExtraError("");
 		return true;
@@ -2276,11 +2276,11 @@ public class NicoClient {
 		int p = 0;
 		sb.append("[{\"ping\":{\"content\":\"rs:0\"}}");
 		if(isWayback(time, thread)){
-			// ‰ß‹ƒƒO
+			// éå»ãƒ­ã‚°
 			String waybackkey = WayBackKey;
 			String optwaybackkey = null;
 			if(threadkey==null || threadkey.isEmpty()){
-				//ƒ†[ƒU[“®‰æ ‰ß‹ƒƒO
+				//ãƒ¦ãƒ¼ã‚¶ãƒ¼å‹•ç”» éå»ãƒ­ã‚°
 				//										isleaf, needs_key, isOwner, fork, wayback
 				sb.append(postJsonData(p++, thread, userKey, false, false, false, "0", waybackkey));
 				sb.append(postJsonData(p++, thread, userKey, true, false, false, "0", waybackkey));
@@ -2288,7 +2288,7 @@ public class NicoClient {
 				sb.append(postJsonData(p++, thread, userKey, true, false, false, "2", waybackkey));
 				sb.append(postJsonData(p++, thread, userKey, false, false, true, "1", waybackkey));
 			}else{
-				//ƒRƒ~ƒ…ƒjƒeƒB“®‰æ
+				//ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£å‹•ç”»
 				if(!thread.equals(succeededKeyThread)){
 					if(optional!=null && !optional.isEmpty()){
 						optional = thread;
@@ -2306,7 +2306,7 @@ public class NicoClient {
 				sb.append(postJsonData(p++, thread, threadkey, true, true, false, "2", waybackkey));
 				sb.append(postJsonData(p++, thread, threadkey, false, true, true, "1", waybackkey));
 				if(optional!=null && !optional.isEmpty()){
-					// ‰ß‹ƒƒO ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚ ‚è
+					// éå»ãƒ­ã‚° ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã‚ã‚Š
 					if(isWayback(time, optional)){
 						optwaybackkey = WayBackKey;
 					}
@@ -2317,7 +2317,7 @@ public class NicoClient {
 		}
 		else
 		if(threadkey==null || threadkey.isEmpty()){
-			//ƒ†[ƒU[“®‰æ
+			//ãƒ¦ãƒ¼ã‚¶ãƒ¼å‹•ç”»
 			//										isleaf, needs_key, isOwner, fork, wayback
 			sb.append(postJsonData(p++, thread, userKey, false, false, false, "0", null));
 			sb.append(postJsonData(p++, thread, userKey, true, false, false, "0", null));
@@ -2330,7 +2330,7 @@ public class NicoClient {
 				sb.append(postJsonData(p++, optional, userKey, true, false, false, "0", null));
 			}
 		}else{
-			//ƒRƒ~ƒ…ƒjƒeƒB“®‰æ
+			//ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£å‹•ç”»
 			if(!thread.equals(succeededKeyThread)){
 				if(optional!=null && !optional.isEmpty())
 					optional = thread;
@@ -2356,9 +2356,9 @@ public class NicoClient {
 		//int p = 0;
 		sb.append("[{\"ping\":{\"content\":\"rs:0\"}}");
 		if(isWayback(time, thread)){
-			// ‰ß‹ƒƒO
+			// éå»ãƒ­ã‚°
 			if(threadkey == null || threadkey.isEmpty()){
-				//ƒ†[ƒU[“®‰æ
+				//ãƒ¦ãƒ¼ã‚¶ãƒ¼å‹•ç”»
 				//															needs_key, isOwner, wayback
 				sb.append(postJson2006(0, thread, userKey, false, false, waybackkey));
 				sb.append(postJson2006(2, thread, userKey, false, true, waybackkey));
@@ -2366,12 +2366,12 @@ public class NicoClient {
 					sb.append(postJson2006(3, optional, userKey, false, false, waybackkey));
 				}
 			}else{
-				//ƒRƒ~ƒ…ƒjƒeƒB“®‰æ
+				//ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£å‹•ç”»
 				//															needs_key, isOwner, wayback
 				sb.append(postJson2006(0, thread, threadkey, true, false, waybackkey));
 				sb.append(postJson2006(2, thread, threadkey, true, true, waybackkey));
 				if(optional!=null && !optional.isEmpty()){
-					// ‰ß‹ƒƒO ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚ ‚è
+					// éå»ãƒ­ã‚° ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã‚ã‚Š
 					String optwaybackkey = null;
 					if(isWayback(time, optional)){
 						optwaybackkey = WayBackKey;
@@ -2381,7 +2381,7 @@ public class NicoClient {
 			}
 		}else{
 			if(threadkey == null || threadkey.isEmpty()){
-				//ƒ†[ƒU[“®‰æ
+				//ãƒ¦ãƒ¼ã‚¶ãƒ¼å‹•ç”»
 				//															needs_key, isOwner, wayback
 				sb.append(postJson2006(0, thread, userKey, false, false, null));
 				sb.append(postJson2006(2, thread, userKey, false, true, null));
@@ -2389,7 +2389,7 @@ public class NicoClient {
 					sb.append(postJson2006(3, optional, userKey, false, false, null));
 				}
 			}else{
-				//ƒRƒ~ƒ…ƒjƒeƒB“®‰æ
+				//ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£å‹•ç”»
 				//															needs_key, isOwner, wayback
 				sb.append(postJson2006(0, thread, threadkey, true, false, null));
 				sb.append(postJson2006(2, thread, threadkey, true, true, null));
@@ -2412,13 +2412,13 @@ public class NicoClient {
 		sb.append( "\"thread\":\""+thread+"\"");
 		sb.append(",\"version\":\"20061206\"");
 		if(isOwner){
-			sb.append(",\"fork\":\"1\"");	//“ŠƒRƒ‚Ì‚İ
+			sb.append(",\"fork\":\"1\"");	//æŠ•ã‚³ãƒ¡ã®ã¿
 			sb.append(",\"res_from\":-1000");
 		}else{
 			sb.append(",\"res_from\":-" + backcomment);
 		}
 		sb.append(",\"user_id\":\""+UserID+"\"");
-		sb.append(",\"scores\":1,\"nicoru\":1");	//nicoru:1ÀŒ±
+		sb.append(",\"scores\":1,\"nicoru\":1");	//nicoru:1å®Ÿé¨“
 		if(needs_key){
 			sb.append(",\"force_184\":\"1\"");
 			sb.append(",\"threadkey\":\""+key+"\"");
@@ -2439,15 +2439,15 @@ public class NicoClient {
 		else
 			sb.append(",{\"thread_leaves\":{");
 		sb.append("\"thread\":\""+thread+"\"");
-		if(isOwner){	//“ŠeÒƒRƒƒ“ƒg‚Í2006”Nƒo[ƒWƒ‡ƒ“
+		if(isOwner){	//æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã¯2006å¹´ãƒãƒ¼ã‚¸ãƒ§ãƒ³
 			sb.append(",\"version\":\"20061206\"");
-			sb.append(",\"fork\":\"1\"");	//“ŠƒRƒ‚Ì‚İ
+			sb.append(",\"fork\":\"1\"");	//æŠ•ã‚³ãƒ¡ã®ã¿
 		}else{
-			if(!isleaf){	//leaf‚Å‚È‚¯‚ê‚Î2009”Nƒo[ƒWƒ‡ƒ“,leaf‚É‚Íƒo[ƒWƒ‡ƒ“‚ğ•t‚¯‚È‚¢
+			if(!isleaf){	//leafã§ãªã‘ã‚Œã°2009å¹´ãƒãƒ¼ã‚¸ãƒ§ãƒ³,leafã«ã¯ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‚’ä»˜ã‘ãªã„
 				sb.append(",\"version\":\"20090904\"");
 			}
 			sb.append(",\"fork\":\""+fork+"\"");	//1
-			sb.append(",\"language\":0");	//ˆê”ÊƒRƒ‚Ì‚İ
+			sb.append(",\"language\":0");	//ä¸€èˆ¬ã‚³ãƒ¡ã®ã¿
 		}
 		if(waybackkey!=null){
 			sb.append(",\"when\":\""+WayBackTime+"\"");
@@ -2455,14 +2455,14 @@ public class NicoClient {
 		sb.append(",\"user_id\":\""+UserID+"\"");
 		if(needs_key)
 			sb.append(",\"force_184\":\"1\"");
-		if(isOwner){	//“ŠeÒƒRƒƒ“ƒg‚Í1000ƒRƒƒ“ƒg
+		if(isOwner){	//æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã¯1000ã‚³ãƒ¡ãƒ³ãƒˆ
 			sb.append(",\"res_from\":-1000");
 		}
 		if(!isleaf)
 			sb.append(",\"with_global\":1");
 		else
 			sb.append(",\"content\":\"0-"+((VideoLength+59)/60)+":100,"+backcomment+"\"");	//0-10:100,1000
-		sb.append(",\"scores\":1,\"nicoru\":3");	//nicoru:1ÀŒ± 3.2021/3`H
+		sb.append(",\"scores\":1,\"nicoru\":3");	//nicoru:1å®Ÿé¨“ 3.2021/3ï½ï¼Ÿ
 		if(waybackkey!=null){
 			if(key!=null && !key.isEmpty()){
 				if(needs_key){
@@ -2482,54 +2482,54 @@ public class NicoClient {
 		return sb.substring(0);
 	}
 	//	Req Post data =
-//		[	//ˆÈ‰º‚Å‚Í®Œ`‚µ‚½‚ªÀÛ‚Í‰üs‚à‹ó”’‚àƒCƒ“ƒfƒ“ƒg‚à–³‚¢
+//		[	//ä»¥ä¸‹ã§ã¯æ•´å½¢ã—ãŸãŒå®Ÿéš›ã¯æ”¹è¡Œã‚‚ç©ºç™½ã‚‚ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã‚‚ç„¡ã„
 //			{"ping":{"content":"rs:0"}},	//R start 0
 //			{"ping":{"content":"ps:0"}},	//  P start 0
 //			{"thread":{
-//				"thread":"9999999993",	//smƒXƒŒƒbƒh?ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh?
+//				"thread":"9999999993",	//smã‚¹ãƒ¬ãƒƒãƒ‰?ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰?
 //				"version":"20090904",
 //				"language":0,
-//				"user_id":ƒ†[ƒU[ID,
+//				"user_id":ãƒ¦ãƒ¼ã‚¶ãƒ¼ID,
 //				"with_global":1,
 //				"scores":1,
 //				"nicoru":0,
-//				"userkey":ƒ†[ƒU[ƒL[}
+//				"userkey":ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚­ãƒ¼}
 //			},
 //			{"ping":{"content":"pf:0"}},	//  P finish 0
 //			{"ping":{"content":"ps:1"}},	//  P start 1
 //		  	{"thread_leaves":{
 //				"thread":"999999993",
 //				"language":0,
-//				"user_id":ƒ†[ƒU[ID,
-//				"content":"0-3:100,250",	//3•ª‚Ì“®‰æ  250ƒRƒƒ“ƒg
+//				"user_id":ãƒ¦ãƒ¼ã‚¶ãƒ¼ID,
+//				"content":"0-3:100,250",	//3åˆ†ã®å‹•ç”»  250ã‚³ãƒ¡ãƒ³ãƒˆ
 //				"scores":1,
 //				"nicoru":0,
-//				"userkey":ƒ†[ƒU[ƒL[}
+//				"userkey":ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚­ãƒ¼}
 //			},
 //		  	{"ping":{"content":"pf:1"}},	//  P finish 1
 //		  	{"ping":{"content":"ps:2"}},	//  P start 2
 //		  	{"thread":{
-//				"thread":"9999999994",	//ƒRƒ~ƒ…ƒjƒeƒBthread
+//				"thread":"9999999994",	//ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£thread
 //				"version":"20090904",
 //				"language":0,
-//				"user_id":ƒ†[ƒU[ID,
+//				"user_id":ãƒ¦ãƒ¼ã‚¶ãƒ¼ID,
 //				"force_184":"1",
 //				"with_global":1,
 //				"scores":1,
 //				"nicoru":0,
-//				"threadkey":ƒXƒŒƒbƒhƒL[}
+//				"threadkey":ã‚¹ãƒ¬ãƒƒãƒ‰ã‚­ãƒ¼}
 //			},
 //			{"ping":{"content":"pf:2"}},	//  P finish 2
 //			{"ping":{"content":"ps:3"}},	//  P start 3
 //			{"thread_leaves":{
 //				"thread":"9999999994",
 //				"language":0,
-//				"user_id":ƒ†[ƒU[ID,
-//				"content":"0-3:100,250",	//3•ª‚Ì“®‰æ  250ƒRƒƒ“ƒg
+//				"user_id":ãƒ¦ãƒ¼ã‚¶ãƒ¼ID,
+//				"content":"0-3:100,250",	//3åˆ†ã®å‹•ç”»  250ã‚³ãƒ¡ãƒ³ãƒˆ
 //				"scores":1,
 //				"nicoru":0,
 //				"force_184":"1",
-//				"threadkey":ƒXƒŒƒbƒhƒL[}
+//				"threadkey":ã‚¹ãƒ¬ãƒƒãƒ‰ã‚­ãƒ¼}
 //			},
 //			{"ping":{"content":"pf:3"}},	//  P finish 3
 //			{"ping":{"content":"rf:0"}}		//R finish 0
@@ -2582,11 +2582,11 @@ public class NicoClient {
 //				"date": 1401116767,
 //				"premium": 1,
 //				"anonymity": 1,
-//				"user_id": ƒ†[ƒU[ID_4877,
+//				"user_id": ãƒ¦ãƒ¼ã‚¶ãƒ¼ID_4877,
 //				"mail": "184",
-//				"content": ’ÊíƒRƒƒ“ƒg4877}
+//				"content": é€šå¸¸ã‚³ãƒ¡ãƒ³ãƒˆ4877}
 //			},
-//			’†—ª
+//			ä¸­ç•¥
 //			{"chat": {
 //				"thread": "9999999993",
 //				"no": 7496,
@@ -2596,7 +2596,7 @@ public class NicoClient {
 //				"anonymity": 1,
 //				"user_id": "wyT4hdcnpRa5gKm7EiagcCsO20A",
 //				"mail": "184",
-//				"content": ’ÊíƒRƒƒ“ƒg7496}
+//				"content": é€šå¸¸ã‚³ãƒ¡ãƒ³ãƒˆ7496}
 //			},
 //			{"ping": {"content": "pf:1"}},
 //			{"ping": {"content": "ps:2"}},
@@ -2629,10 +2629,10 @@ public class NicoClient {
 //				"date": 1324739748,
 //				"premium": 1,
 //				"anonymity": 1,
-//				"user_id": ƒ†[ƒU[ID_1,
-//				"content": ƒRƒ~ƒ…ƒjƒeƒBƒRƒƒ“ƒg1}
+//				"user_id": ãƒ¦ãƒ¼ã‚¶ãƒ¼ID_1,
+//				"content": ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£ã‚³ãƒ¡ãƒ³ãƒˆ1}
 //			},
-//			’†—ª
+//			ä¸­ç•¥
 //			{"chat": {
 //				"thread": "9999999994",
 //				"no": 51,
@@ -2641,8 +2641,8 @@ public class NicoClient {
 //				"date_usec": 890564,
 //				"premium": 1,
 //				"anonymity": 1,
-//				"user_id": ƒ†[ƒU[ID_51,
-//				"content": ƒRƒ~ƒ…ƒjƒeƒBƒRƒƒ“ƒg51}
+//				"user_id": ãƒ¦ãƒ¼ã‚¶ãƒ¼ID_51,
+//				"content": ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£ã‚³ãƒ¡ãƒ³ãƒˆ51}
 //			},
 //			{"ping": {"content": "pf:3"}},
 //			{"ping": {"content": "rf:0"}}
@@ -2659,7 +2659,7 @@ public class NicoClient {
 //		Accept-Encoding: gzip, deflate
 //		Content-Type: text/plain;charset=UTF-8
 //		Origin: http://www.nicovideo.jp
-//		Referer: http://www.nicovideo.jp/watch/9999999994	//ƒRƒ~ƒ…ƒjƒeƒB“®‰æ(ƒXƒŒƒbƒh”Ô†)
+//		Referer: http://www.nicovideo.jp/watch/9999999994	//ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£å‹•ç”»(ã‚¹ãƒ¬ãƒƒãƒ‰ç•ªå·)
 //		Content-Length: 1051
 //		DNT: 1
 //		Connection: keep-alive
@@ -2679,17 +2679,17 @@ public class NicoClient {
 			long start0 = Stopwatch.getElapsedTime(0);
 			con = urlConnect(url, "POST", Cookie, true, true, "keep-alive", true);
 			os = con.getOutputStream();
-			debug("\n¡write:" + postdata + "\n");
+			debug("\nâ– write:" + postdata + "\n");
 			os.write(postdata.getBytes());
 			os.flush();
 			os.close();
 			int code = con.getResponseCode();
-			debug("¡Response:" + code + " " + con.getResponseMessage() + "\n");
+			debug("â– Response:" + code + " " + con.getResponseMessage() + "\n");
 			if (code != HttpURLConnection.HTTP_OK) {
 				log.println("ng.\nCan't download JSON comment:" + url);
 				return null;
 			}
-			debug("¡ResponseHeader:" + con.getHeaderFields() + "\n");
+			debug("â– ResponseHeader:" + con.getHeaderFields() + "\n");
 			is = con.getInputStream();
 			int max_size = 0;
 			try {
@@ -2713,7 +2713,7 @@ public class NicoClient {
 					return null;
 				}
 			}
-			//debugsOut("¡read+write statistics(bytes) ");
+			//debugsOut("â– read+write statistics(bytes) ");
 			log.println("JSON ok.");
 			fosb.flush();
 			fosb.close();
@@ -2799,7 +2799,7 @@ public class NicoClient {
 	}
 
 	/*
-	 * msg = "“®‰æ" ‚Ü‚½‚Í "ƒRƒƒ“ƒg" ‚Ü‚½‚Í "“ŠeÒƒRƒƒ“ƒg"
+	 * msg = "å‹•ç”»" ã¾ãŸã¯ "ã‚³ãƒ¡ãƒ³ãƒˆ" ã¾ãŸã¯ "æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆ"
 	 */
 	private void sendtext(final JLabel status, final String s){
 		if(!SwingUtilities.isEventDispatchThread()){
@@ -2819,14 +2819,14 @@ public class NicoClient {
 		if (max_size > 0) {
 			str = String.format("%.2f%%, ",((double)size * 100)/ max_size);
 		}
-		str += String.format("%.1fMiB", (size >> 10)/ 1024.0);	//ƒ_ƒEƒ“ƒ[ƒhƒTƒCƒY
+		str += String.format("%.1fMiB", (size >> 10)/ 1024.0);	//ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã‚µã‚¤ã‚º
 		if (max_size > 0){
-			str += String.format("/%.1fMiB", (max_size >> 10)/ 1024.0);	//“®‰æƒTƒCƒY
+			str += String.format("/%.1fMiB", (max_size >> 10)/ 1024.0);	//å‹•ç”»ã‚µã‚¤ã‚º
 		}
 		long milisec = Stopwatch.getElapsedTime(start_mili);
 		if(milisec<=0) milisec=1;
 		str += String.format(", %dKbps", (size - resume_start)/milisec*8);
-		sendtext(status, msg+"ƒ_ƒEƒ“ƒ[ƒhF" + str);
+		sendtext(status, msg+"ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ï¼š" + str);
 	}
 
 	public void setExtraError(String extraError) {
@@ -2963,7 +2963,7 @@ public class NicoClient {
 						return path;
 					}
 				}
-				// ‰Â”\‚È‚çthumbXml‚ğtitleHtml‚©‚ç\¬‚·‚é
+				// å¯èƒ½ãªã‚‰thumbXmlã‚’titleHtmlã‹ã‚‰æ§‹æˆã™ã‚‹
 				sb = new StringBuilder();
 				sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 				sb.append("<nicovideo_thumb_response status=\"ok\">\n");
@@ -2980,7 +2980,7 @@ public class NicoClient {
 					String description = m_video.getAsString("description");
 					if(description==null)
 						description = "";
-					description = description.replace("&quot;", "h")
+					description = description.replace("&quot;", "â€")
 						.replace("&lt;", "(").replace("&gt;", ")")
 						.replaceAll("\\(br ?/?\\)","\n");
 					sb.append(makeNewElement("description", description));
@@ -3004,7 +3004,7 @@ public class NicoClient {
 						for(int i=0; i< m_tags.getSize(); i++){
 							Mson m_hash = m_tags.get(i);
 							debug("\nhash="+m_hash);
-					// hash = {"name":"ƒjƒRƒjƒR‹Zp•”","isCategory":true,"isDictionaryExists":true,"isLocked":true}
+					// hash = {"name":"ãƒ‹ã‚³ãƒ‹ã‚³æŠ€è¡“éƒ¨","isCategory":true,"isDictionaryExists":true,"isLocked":true}
 							String t = m_hash.getAsString("name");
 							String cat = m_hash.getAsString("isCategory");
 							String lck = m_hash.getAsString("isLocked");
@@ -3040,7 +3040,7 @@ public class NicoClient {
 					if(description==null)
 						description = "";
 					else
-						description = description.replace("&quot;", "h")
+						description = description.replace("&quot;", "â€")
 							.replace("&lt;", "(").replace("&gt;", ")")
 							.replaceAll("\\(br ?/?\\)","\n");
 					sb.append(makeNewElement("description",description));
@@ -3067,7 +3067,7 @@ public class NicoClient {
 						for(int i = 0; i < m_tagList.getSize(); i++){
 							Mson m_hash = m_tagList.get(i);
 							debug("\ntagitem="+m_hash);
-							// hash = {"id":"120343647","tag":"ƒjƒRƒjƒR‹Zp•”","cat":true,"dic":true,"lck":"1"}
+							// hash = {"id":"120343647","tag":"ãƒ‹ã‚³ãƒ‹ã‚³æŠ€è¡“éƒ¨","cat":true,"dic":true,"lck":"1"}
 							String t = m_hash.getAsString("tag");
 							String cat = m_hash.getAsString("cat");
 							String lck = m_hash.getAsString("lck");
@@ -3163,8 +3163,8 @@ public class NicoClient {
 	}
 
 	private void extractDataJson(String json, String encoding) {
-		//Json‰ğÍ	html5
-		debug("\n¡{");
+		//Jsonè§£æ	html5
+		debug("\nâ– {");
 		if(json==null)
 			return;
 		try {
@@ -3178,9 +3178,9 @@ public class NicoClient {
 			isDmc = "0";
 			Mson m_dmcInfo = dataApiMson.get("urls");
 			if(!m_dmcInfo.isNull()){
-				debugPrettyPrint("¡m_dmcInfo: ",m_dmcInfo+"\n");
+				debugPrettyPrint("â– m_dmcInfo: ",m_dmcInfo+"\n");
 				dmcInfo = m_dmcInfo.getAsString();
-				debug("¡dmcInfo: "+dmcInfo+"\n");
+				debug("â– dmcInfo: "+dmcInfo+"\n");
 				isDmc = "1";
 			}
 			log.println("isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc());
@@ -3201,7 +3201,7 @@ public class NicoClient {
 				log.println("dmcToken: "+dmcToken);
 				dmcTokenUnEscape =
 					dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
-				debug("¡dmcTokenUnEscape:\n "+dmcTokenUnEscape+"\n");
+				debug("â– dmcTokenUnEscape:\n "+dmcTokenUnEscape+"\n");
 				//
 				setFromSessionApi(m_sessionApi);
 				debug("\n");
@@ -3216,10 +3216,10 @@ public class NicoClient {
 			if(!m_community.isNull() && m_ids.get(2).getAsString("label").equals("community")){
 				optionalThreadID = m_community.getAsString("id");
 				if(videoTag.equals(optionalThreadID)){
-					// html5‚Ìê‡‹t‚É‚È‚Á‚Ä‚¢‚é‚æ‚¤‚¾
-					// ThreadKey ‚ªˆø‚¯‚é‚Ì‚Í ƒƒCƒ“thread‚Ì•û‚¾‚¯
-					// chanel‚Ìê‡ ƒƒCƒ“=ƒ`ƒƒƒ“ƒlƒ‹=threadKey optional‚Í‰½‚à‚È‚¢
-					// community‚Ìê‡ ƒƒCƒ“=ƒRƒ~ƒ…ƒjƒeƒB=threadKey optional‚Ísm“®‰æ‚ÌƒRƒƒ“ƒg
+					// html5ã®å ´åˆé€†ã«ãªã£ã¦ã„ã‚‹ã‚ˆã†ã 
+					// ThreadKey ãŒå¼•ã‘ã‚‹ã®ã¯ ãƒ¡ã‚¤ãƒ³threadã®æ–¹ã ã‘
+					// chanelã®å ´åˆ ãƒ¡ã‚¤ãƒ³=ãƒãƒ£ãƒ³ãƒãƒ«=threadKey optionalã¯ä½•ã‚‚ãªã„
+					// communityã®å ´åˆ ãƒ¡ã‚¤ãƒ³=ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£=threadKey optionalã¯små‹•ç”»ã®ã‚³ãƒ¡ãƒ³ãƒˆ
 					optionalThreadID = ThreadID;
 					ThreadID = videoTag;
 					log.println("reset ThreadID: "+ThreadID);
@@ -3238,7 +3238,7 @@ public class NicoClient {
 
 			Mson m_viewer = dataApiMson.get2("viewer");
 			UserID = m_viewer.getAsString("id");
-			debug("¡UserID: "+UserID+"\n");
+			debug("â– UserID: "+UserID+"\n");
 			//Premium = m_viewer.getAsString("isPremium");
 			Premium = m_viewer.get("isPremium").getAsBoolean() ? "1" : "0";
 			log.println("Premium: "+Premium);
@@ -3251,12 +3251,12 @@ public class NicoClient {
 			debug("\n");
 			log.println("isMyMemory: "+m_context.getAsString("isMyMemory"));
 			/*
-				html5	"ownerNGFilters":[{"source":"b2","destination":"CM’†‚©I¡‚ªƒ`ƒƒƒ“ƒX‚¾I"},{
-				flash	ng_up:	b2=CM’†‚©I¡‚ªƒ`ƒƒƒ“ƒX‚¾I&
+				html5	"ownerNGFilters":[{"source":"b2","destination":"CMä¸­ã‹ï¼ä»ŠãŒãƒãƒ£ãƒ³ã‚¹ã ï¼"},{
+				flash	ng_up:	b2=CMä¸­ã‹ï¼ä»ŠãŒãƒãƒ£ãƒ³ã‚¹ã ï¼&
 						ownerFilter = nicomap.get("ng_up");
 				ownerNGFileters -> ownerFilter
-				source=destination& ‚Æ‚¢‚¤Œ`®‚É•ÏŠ·
-				<chat filter="1">@</chat>‚ÅˆÍ‚İ“ŠƒRƒxml‚É’Ç‰Á
+				source=destination& ã¨ã„ã†å½¢å¼ã«å¤‰æ›
+				<chat filter="1">ã€€</chat>ã§å›²ã¿æŠ•ã‚³ãƒ¡xmlã«è¿½åŠ 
 			*/
 			String ownerNGFilters;
 			Mson m_ownerNGFilters = m_context.get("ownerNGFilters");
@@ -3266,7 +3266,7 @@ public class NicoClient {
 				ownerNGFilters = m_ownerNGFilters.getAsString();
 			else
 				ownerNGFilters = "";
-			debug("¡ownerNGFilters: "+ownerNGFilters+"\n");
+			debug("â– ownerNGFilters: "+ownerNGFilters+"\n");
 			if(!ownerNGFilters.isEmpty()){
 				String[] keys = new String[]{"source","destination"};
 				ArrayList<String[]> list = Mson.getListString(m_ownerNGFilters, keys);
@@ -3274,13 +3274,13 @@ public class NicoClient {
 				for(String[] s: list){
 					if(s[0]==null || s[0].isEmpty())
 						continue;
-					debug("¡hash: "+s[0]+","+s[1]+"\n");
+					debug("â– hash: "+s[0]+","+s[1]+"\n");
 					String entry = unquote(s[0])+"="+unquote(s[1])+"&";
 					sb.append(entry);
-					debug("¡sb.append: "+entry+"\n");
+					debug("â– sb.append: "+entry+"\n");
 				}
 				ownerNGFilters = sb.substring(0).trim();
-				//%ƒGƒ“ƒR[ƒh‚Ì‚Ü‚ÜXMLˆ—‚ÉƒfƒR[ƒh‚³‚¹‚é
+				//%ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã®ã¾ã¾XMLå‡¦ç†ã«ãƒ‡ã‚³ãƒ¼ãƒ‰ã•ã›ã‚‹
 			}
 			if(!ownerNGFilters.isEmpty()){
 				if(ownerNGFilters.endsWith("&"))
@@ -3290,13 +3290,13 @@ public class NicoClient {
 				if(ownerFilter.isEmpty())
 					ownerFilter = null;
 			}
-			debug("¡}\n");
+			debug("â– }\n");
 			//economy = VideoUrl.toLowerCase().contains("low");
-			//ƒvƒŒƒ~ƒA‰ïˆõ‚È‚çí‚Éeconomy=false
-			//ˆê”Ê‰ïˆõ‚È‚çisPeakTime‚Å”»’è
-			//‚½‚¾‚µ—áŠO‚ª‚ ‚é‚Ì‚Å’ˆÓ(ˆÈ‰º)
-			//- Å‚‰æ¿‚ª360p‚Ì“®‰æ
-			//- ƒGƒRƒmƒ~[ƒ^ƒCƒ€‚Å‚àÅ‚‰æ¿æ“¾‚Å‚«‚é“®‰æ
+			//ãƒ—ãƒ¬ãƒŸã‚¢ä¼šå“¡ãªã‚‰å¸¸ã«economy=false
+			//ä¸€èˆ¬ä¼šå“¡ãªã‚‰isPeakTimeã§åˆ¤å®š
+			//ãŸã ã—ä¾‹å¤–ãŒã‚ã‚‹ã®ã§æ³¨æ„(ä»¥ä¸‹)
+			//- æœ€é«˜ç”»è³ªãŒ360pã®å‹•ç”»
+			//- ã‚¨ã‚³ãƒãƒŸãƒ¼ã‚¿ã‚¤ãƒ ã§ã‚‚æœ€é«˜ç”»è³ªå–å¾—ã§ãã‚‹å‹•ç”»
 			log.println("isPeakTime: "+dataApiMson.get("isPeakTime"));
 			Mson m_delivery = dataApiMson.get("delivery");
 			if ("1".equals(Premium)) {
@@ -3333,7 +3333,7 @@ public class NicoClient {
 		return dataApiJson;
 	}
 	private String getDataApiData(String text, String encoding, String comment){
-		// “®‰æƒy[ƒW‚ÌJSON‚ğæ‚èo‚·
+		// å‹•ç”»ãƒšãƒ¼ã‚¸ã®JSONã‚’å–ã‚Šå‡ºã™
 		text = getXmlElement1(text, "body");	//body
 		if(text==null)
 			return null;
@@ -3382,7 +3382,7 @@ public class NicoClient {
 		return watchApiJson;
 	}
 	private void extractJson(String text, String encoding) {
-		//Json‰ğÍ	flash
+		//Jsonè§£æ	flash
 		if(text==null)
 			return;
 		try {
@@ -3394,7 +3394,7 @@ public class NicoClient {
 					debug("Ooops. this is duplicated url "+nicomap.get("url"));
 				}
 				flvInfo = watchApiMson.getAsString("flvInfo");
-				debug("\n¡flvInfo:\n "+flvInfo);
+				debug("\nâ– flvInfo:\n "+flvInfo);
 				nicomap.put("flvInfo", flvInfo);
 				flvInfoArrays = URLDecoder.decode(flvInfo, encoding);
 				nicomap.putArrayURLDecode(flvInfoArrays, encoding);
@@ -3417,7 +3417,7 @@ public class NicoClient {
 				dmcInfo = watchApiMson.getAsString("dmcInfo");
 				dmcInfoDec = URLDecoder.decode(unquote(dmcInfo), encoding);
 				Mson m_dmcInfo = Mson.parse(dmcInfoDec);
-				debugPrettyPrint("\n¡m_dmcInfo:\n ",m_dmcInfo);
+				debugPrettyPrint("\nâ– m_dmcInfo:\n ",m_dmcInfo);
 				if(dmcInfoDec!=null){
 					String l = m_dmcInfo.getAsString("length_seconds");
 					try {
@@ -3425,14 +3425,14 @@ public class NicoClient {
 					} catch(NumberFormatException e){
 						dmcVideoLength = 0;
 					};
-					debug("\n¡dmcVideoLength: "+dmcVideoLength);
+					debug("\nâ– dmcVideoLength: "+dmcVideoLength);
 					dmcToken = m_dmcInfo.getAsString("token");
 					dmcTokenUnEscape = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
-					debug("\n¡dmcTokenUnEscape:\n "+dmcTokenUnEscape);
+					debug("\nâ– dmcTokenUnEscape:\n "+dmcTokenUnEscape);
 
 					Mson m_sessionApi = m_dmcInfo.get("session_api");
 					sessionApi = m_sessionApi.getAsString();
-					debug("\n¡session_api:\n "+sessionApi);
+					debug("\nâ– session_api:\n "+sessionApi);
 					setFromSessionApi(m_sessionApi);
 					debug("\n");
 				}
@@ -3448,27 +3448,27 @@ public class NicoClient {
 	private void setFromSessionApi(Mson m_sessionApi){
 		// flash html5 common
 		recipe_id = m_sessionApi.getAsString("recipeId");
-		debug("\n¡recipe_id: "+recipe_id);
+		debug("\nâ– recipe_id: "+recipe_id);
 		Mson m_videos = m_sessionApi.get("videos");
-		debug("\n¡videos: "+m_videos.getAsString());
+		debug("\nâ– videos: "+m_videos.getAsString());
 		videolist = new ArrayList<String>();
 		for(int i = 0; i < m_videos.getSize(); i++){
 			videolist.add(m_videos.getAsString(i));
 		}
-		debug("\n¡videolist: "+videolist);
+		debug("\nâ– videolist: "+videolist);
 		Mson m_audios = m_sessionApi.get("audios");
-		debug("\n¡audios: "+m_audios.getAsString());
+		debug("\nâ– audios: "+m_audios.getAsString());
 		audiolist = new ArrayList<String>();
 		for(int i = 0; i < m_audios.getSize(); i++){
 			audiolist.add(m_audios.getAsString(i));
 		}
-		debug("\n¡audiolist: "+audiolist);
+		debug("\nâ– audiolist: "+audiolist);
 		Mson m_apiUrls;
 		Mson m_apiUrls0;
 		m_apiUrls = m_sessionApi.get("urls");
 		if(!m_apiUrls.isNull()){
 			m_apiUrls0 = m_sessionApi.get("url");
-			debug("\n¡apiUrls[0]: "+m_apiUrls0);
+			debug("\nâ– apiUrls[0]: "+m_apiUrls0);
 			if(!m_apiUrls0.isNull()){
 				apiSessionUrl = m_apiUrls0.getAsString();
 			}
@@ -3478,19 +3478,19 @@ public class NicoClient {
 		  &&!apiSessionUrl.toLowerCase().contains("api"))){
 			apiSessionUrl = "https://api.dmc.nico/api/sessions";
 		}
-		debug("\n¡apiSessionUrl: "+apiSessionUrl);
+		debug("\nâ– apiSessionUrl: "+apiSessionUrl);
 		player_id = m_sessionApi.getAsString("playerId");
-		debug("\n¡player_id: "+player_id);
+		debug("\nâ– player_id: "+player_id);
 		service_user_id = m_sessionApi.getAsString("serviceUserId");
-		debug("\n¡service_user_id: "+service_user_id);
+		debug("\nâ– service_user_id: "+service_user_id);
 		priority = m_sessionApi.getAsString("priority");
-		debug("\n¡priority: "+priority);
+		debug("\nâ– priority: "+priority);
 		signature = m_sessionApi.getAsString("signature");
-		debug("\n¡signature: "+signature);
+		debug("\nâ– signature: "+signature);
 		heartbeat_lifetime = m_sessionApi.getAsString("heartbeatLifetime");
-		debug("\n¡lifetime: "+heartbeat_lifetime);
+		debug("\nâ– lifetime: "+heartbeat_lifetime);
 		content_key_timeout = m_sessionApi.getAsString("contentKeyTimeout");
-		debug("\n¡content_key_timeout: "+content_key_timeout);
+		debug("\nâ– content_key_timeout: "+content_key_timeout);
 	}
 	public static String unquote(String str) {
 		if(str==null) return null;
@@ -3575,7 +3575,7 @@ public class NicoClient {
 	}
 
 	private String getWatchApiData(String text, String encoding, String comment) {
-		// “®‰æƒy[ƒW‚ÌJSON‚ğæ‚èo‚· flash
+		// å‹•ç”»ãƒšãƒ¼ã‚¸ã®JSONã‚’å–ã‚Šå‡ºã™ flash
 		text = getXmlElement1(text, "body");	//body
 		if(text==null)
 			return null;
@@ -3815,7 +3815,7 @@ public class NicoClient {
 			try {
 				url = dmcHBUrl1+sessionID+dmcHBUrl2;
 				debug("\n");
-				debug("¡heartbeat URL<" + url + ">\n");
+				debug("â– heartbeat URL<" + url + ">\n");
 				//	con = urlConnect(url, "POST", null, true, true, "keep-alive", false);
 				con = (HttpURLConnection)(new URL(url)).openConnection(ConProxy);
 				con.setDoOutput(true);
@@ -3830,16 +3830,16 @@ public class NicoClient {
 				con.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
 				con.addRequestProperty("DNT", "1");
 				con.addRequestProperty("Connection", "keep-alive");
-				debug("¡heartbeat Connect: POST,DoOutput,Connection keep-alive\n");
+				debug("â– heartbeat Connect: POST,DoOutput,Connection keep-alive\n");
 				connect(con);
-				debug("¡heartbeat write: " + postXmlData.length()+"\n");
+				debug("â– heartbeat write: " + postXmlData.length()+"\n");
 				os = con.getOutputStream();
 				os.write(postXmlData.getBytes());
 				os.flush();
 				os.close();
 				int code = con.getResponseCode();
 				String mes = con.getResponseMessage();
-				debug("¡heartbeat Response: " + Integer.toString(code) + " " + mes+"\n");
+				debug("â– heartbeat Response: " + Integer.toString(code) + " " + mes+"\n");
 				if (code < HttpURLConnection.HTTP_OK || code >= HttpURLConnection.HTTP_BAD_REQUEST) { // must 200 <= <400
 					log.println("\nheartbeat Can't get HeartBeat response:" + mes);
 					throw new IOException("Heartbeat response error");
@@ -3858,14 +3858,14 @@ public class NicoClient {
 						setExtraError("98 dmc Token timeout");
 					}
 				}
-				debug("¡heartbeat sessionID: "+sessionID+"\n");
+				debug("â– heartbeat sessionID: "+sessionID+"\n");
 				// save all response
 				pw = new PrintWriter(response);
 				pw.write(responseXmlData);
 				pw.flush();
 				pw.close();
-				debug("¡heartbeat session response: "+responseXmlData.length()+"\n");
-				debug("¡heartbeat response write to: "+postXml.getPath()+"\n");
+				debug("â– heartbeat session response: "+responseXmlData.length()+"\n");
+				debug("â– heartbeat response write to: "+postXml.getPath()+"\n");
 			} catch (IOException e) {
 				log.printStackTrace(e);
 			}finally{

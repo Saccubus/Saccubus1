@@ -117,8 +117,8 @@ CHAT_ITEM* getChatPooled(DATA* data,CHAT_POOL* pool,int now_vpos){
 		pool->index += 1;
 		return ret_item;
 	}
-	//‚à‚µ vappear > now_vpos‚Ì‚à‚Ì‚ªæ“ª‚É‚ ‚ê‚Îæ“Ç‚İ‚³‚ê‚½‚¾‚¯‚¾‚©‚ç
-	//Ÿ‚Ì“Ç‚İ‚İ‚Ü‚Åƒv[ƒ‹‚µ‚Ä‚¨‚­
+	//ã‚‚ã— vappear > now_vposã®ã‚‚ã®ãŒå…ˆé ­ã«ã‚ã‚Œã°å…ˆèª­ã¿ã•ã‚ŒãŸã ã‘ã ã‹ã‚‰
+	//æ¬¡ã®èª­ã¿è¾¼ã¿æ™‚ã¾ã§ãƒ—ãƒ¼ãƒ«ã—ã¦ãŠã
 	//debug
 	//fprintf(data->log,"[chat_pool/get]last(index=%d,num=%d), return NULL\n",pool->index,pool->num_item);
 	return NULL;

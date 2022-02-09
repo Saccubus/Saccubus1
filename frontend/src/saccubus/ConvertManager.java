@@ -90,14 +90,14 @@ public class ConvertManager extends Thread {
 			queueCheckAndGo();
 		}
 		//sendTimeInfo();
-		return converter;	//Às‚µ‚½‚à‚Ì‚Å‚Í‚È‚­—v‹‚ğó‚¯•t‚¯‚½‚à‚Ì
+		return converter;	//å®Ÿè¡Œã—ãŸã‚‚ã®ã§ã¯ãªãè¦æ±‚ã‚’å—ã‘ä»˜ã‘ãŸã‚‚ã®
 	}
 
 	public void reqDone(String result, ConvertStopFlag flag, boolean isConverting){
 		int wid = -99;
 		if(flag!=null){
 			wid = flagTable.get(flag).getId();
-			//table ‚©‚çíœ
+			//table ã‹ã‚‰å‰Šé™¤
 			flagTable.remove(flag);
 		}
 		if(isConverting)
@@ -112,10 +112,10 @@ public class ConvertManager extends Thread {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					// log.printStackTrace(e);
-				}	//1•b ‘Ò‹@
+				}	//1ç§’ å¾…æ©Ÿ
 			}
 		}
-		// Ÿ‚Ì•ÏŠ·‚ğque‚©‚çæ‚èo‚µ‚ÄÀs
+		// æ¬¡ã®å¤‰æ›ã‚’queã‹ã‚‰å–ã‚Šå‡ºã—ã¦å®Ÿè¡Œ
 		numRun.decrementAndGet();
 		numFinish.incrementAndGet();
 		queueCheckAndGo();
@@ -123,7 +123,7 @@ public class ConvertManager extends Thread {
 //			Thread.sleep(500);
 //		} catch (InterruptedException e) {
 //			// log.printStackTrace(e);
-//		}	//500ms ‘Ò‹@
+//		}	//500ms å¾…æ©Ÿ
 	}
 
 	public int notice(Object num) {
@@ -164,7 +164,7 @@ public class ConvertManager extends Thread {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					// log.printStackTrace(e);
-				}	//100ms ‘Ò‹@
+				}	//100ms å¾…æ©Ÿ
 			}
 			setWaitManager(false);
 			doActivity();
@@ -354,7 +354,7 @@ public class ConvertManager extends Thread {
 			wait1 = true;
 			try {
 				while(wait1 && loop-->0){
-					lock.wait(30000);	//30•b‚Ü‚½‚Í‚Ç‚ê‚©‚Ìworker‚ªI‚í‚é‚Ü‚Å‘Ò‚Â
+					lock.wait(30000);	//30ç§’ã¾ãŸã¯ã©ã‚Œã‹ã®workerãŒçµ‚ã‚ã‚‹ã¾ã§å¾…ã¤
 					lock.notifyAll();
 				}
 			} catch (InterruptedException e) {

@@ -26,22 +26,22 @@ import javax.swing.event.HyperlinkListener;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * <p>
- * ’˜ìŒ : Copyright (c) 2007 PSI
+ * è‘—ä½œæ¨©: Copyright (c) 2007 PSI
  * </p>
  *
  * <p>
- * ‰ïĞ–¼:
+ * ä¼šç¤¾å:
  * </p>
  *
- * @author –¢“ü—Í
+ * @author æœªå…¥åŠ›
  * @version 1.0
  */
 public class MainFrame_AboutBox extends JDialog implements ActionListener {
@@ -58,30 +58,30 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 	String productHTML =
 		"<html>" +
 	//	"  <a href=\'http://www.ne.jp/asahi/mochiyama/my/file/Saccubus-1.22r3.zip\'>" +
-	//	"u‚³‚«‚ã‚Î‚· 1.22r3v</a><br/>" +
+	//	"ã€Œã•ãã‚…ã°ã™ 1.22r3ã€</a><br/>" +
 	//	"  <a href=\'http://sourceforge.jp/projects/coroid/downloads/48371/saccubus_nibr1.4.4.zip/\'>" +
-	//	"‚³‚«‚ã‚Î‚·NicoBrowserŠg’£1.4.4</a><br/>" +
-	//	"‚ğ‰ü‘¢‚µ‚½‚à‚Ì‚Å‚·B<br/>" +
+	//	"ã•ãã‚…ã°ã™NicoBrowseræ‹¡å¼µ1.4.4</a><br/>" +
+	//	"ã‚’æ”¹é€ ã—ãŸã‚‚ã®ã§ã™ã€‚<br/>" +
 	//	" orz " + rev + " " + modefied + "<br/>"+
-	//	"–{ƒvƒƒOƒ‰ƒ€‚ÌƒIƒŠƒWƒiƒ‹‚ÍˆÈ‰º‚Ì’Ê‚è‚Å‚·B<br/><br/>"+
+	//	"æœ¬ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®ã‚ªãƒªã‚¸ãƒŠãƒ«ã¯ä»¥ä¸‹ã®é€šã‚Šã§ã™ã€‚<br/><br/>"+
 		"<p><a href=\'https://github.com/Saccubus/Saccubus1.x/wiki\'>" +
-		"‚³‚«‚ã‚Î‚·</a> "+ rev + modefied +
+		"ã•ãã‚…ã°ã™</a> "+ rev + modefied +
 		" <a href=\'https://github.com/Saccubus/Saccubus1.x/releases/latest\'>" +
-		"ÅVcheck</a> <br/><br/>"+
+		"æœ€æ–°check</a> <br/><br/>"+
 		"<table border=0>" +
 		"<tr><td>Copyright (C) <td>2008 Saccubus Developers Team"+
 		"<tr><td><td>2007-2008 2012-2015(FFmpeg) PSI"+
 		"<tr><td><td>2011-2017 orz"+
 		"<tr><td><td>2021- nnn-revo2012" +
 		"</table>" +
-		"ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶</p>" +
-		"<p>–{ƒvƒƒOƒ‰ƒ€‚Í<br/>" +
+		"ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜</p>" +
+		"<p>æœ¬ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã¯<br/>" +
 		" <a href=\'http://osdn.jp/projects/coroid/wiki/Inqubus\'>"	+
-		"‚¢‚ñ‚«‚ã‚Î‚·</a>/inqubus1.7.2.zip<br/>‚ğQl‚É‚µ‚Ä‚¢‚Ü‚·B</p>" +
-		"<p>ŠÖ˜AƒŠƒ“ƒN<br/>" +
-		"‚³‚«‚ã‚Î‚· <a href=\'http://osdn.jp/projects/saccubus/\'>osdn.jp/projects/saccubus</a><br/>" +
-		"coroid ‚¢‚ñ‚«‚ã‚Î‚·<a href=\'http://osdn.jp/projects/coroid/\'>osdn.jp/projects/coroid</a>  á‰H<br/>" +
-		"<a href=\'https://egg.5ch.net/test/read.cgi/software/1554556329/l50\'>5ch‚³‚«‚ã‚Î‚·ƒXƒŒ ÅV50</a>" +
+		"ã„ã‚“ãã‚…ã°ã™</a>/inqubus1.7.2.zip<br/>ã‚’å‚è€ƒã«ã—ã¦ã„ã¾ã™ã€‚</p>" +
+		"<p>é–¢é€£ãƒªãƒ³ã‚¯<br/>" +
+		"ã•ãã‚…ã°ã™ <a href=\'http://osdn.jp/projects/saccubus/\'>osdn.jp/projects/saccubus</a><br/>" +
+		"coroid ã„ã‚“ãã‚…ã°ã™<a href=\'http://osdn.jp/projects/coroid/\'>osdn.jp/projects/coroid</a>  é›ªç¾½æ°<br/>" +
+		"<a href=\'https://egg.5ch.net/test/read.cgi/software/1554556329/l50\'>5chã•ãã‚…ã°ã™ã‚¹ãƒ¬ æœ€æ–°50</a>" +
 		"</p></html>";
 
 	JPanel panel1 = new JPanel();
@@ -127,14 +127,14 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì‰Šú‰»B
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®åˆæœŸåŒ–ã€‚
 	 *
 	 * @throws java.lang.Exception
 	 */
 	private void jbInit() throws Exception {
 		image1 = new ImageIcon(saccubus.MainFrame.class.getResource("icon.png"));
 		imageLabel.setIcon(image1);
-		setTitle("ƒo[ƒWƒ‡ƒ“î•ñ");
+		setTitle("ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±");
 		panel1.setLayout(borderLayout1);
 		panel2.setLayout(borderLayout2);
 		insetsPanel1.setLayout(flowLayout1);
@@ -178,7 +178,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * ƒ{ƒ^ƒ“ƒCƒxƒ“ƒg‚Åƒ_ƒCƒAƒƒO‚ğ•Â‚¶‚é
+	 * ãƒœã‚¿ãƒ³ã‚¤ãƒ™ãƒ³ãƒˆã§ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’é–‰ã˜ã‚‹
 	 *
 	 * @param actionEvent
 	 *            ActionEvent

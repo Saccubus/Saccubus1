@@ -13,7 +13,7 @@ import saccubus.util.Logger;
 
 /**
  * Map<String Key, String Value><br/>
- * Key ‚Í lowercase ‚Ì‰p”š
+ * Key ã¯ lowercase ã®è‹±æ•°å­—
  * @author orz
  *
  */
@@ -42,7 +42,7 @@ public class NicoMap {
 		map = new HashMap<String, String>();
 	}
 	/**
-	 * ‘Sƒ}ƒbƒsƒ“ƒO‚ğƒvƒŠƒ“ƒgƒAƒEƒg‚·‚é
+	 * å…¨ãƒãƒƒãƒ”ãƒ³ã‚°ã‚’ãƒ—ãƒªãƒ³ãƒˆã‚¢ã‚¦ãƒˆã™ã‚‹
 	 * @param log
 	 */
 	public void printAll(Logger log) {
@@ -55,17 +55,17 @@ public class NicoMap {
 	}
 	private void debugOut(Logger log, String key, String value){
 		if(log!=null)
-			log.println("¡map:<" + key + "> <" + value + ">");
+			log.println("â– map:<" + key + "> <" + value + ">");
 	}
 	/**
-	 * ƒjƒRƒ}ƒbƒv‚ª‹ó‚È‚çtrue
+	 * ãƒ‹ã‚³ãƒãƒƒãƒ—ãŒç©ºãªã‚‰true
 	 * @return
 	 */
 	public boolean isEmpty(){
 		return (map.isEmpty());
 	}
 	/**
-	 * key‚ğŠÜ‚ñ‚Å‚¢‚ê‚Îtrue
+	 * keyã‚’å«ã‚“ã§ã„ã‚Œã°true
 	 * @param key
 	 * @return
 	 */
@@ -73,7 +73,7 @@ public class NicoMap {
 		return map.containsKey(key.toLowerCase());
 	}
 	/**
-	 * key‚ğlowercase‚É’¼‚µ‚Ämap‚Éput
+	 * keyã‚’lowercaseã«ç›´ã—ã¦mapã«put
 	 * @param key
 	 * @param value
 	 */
@@ -81,7 +81,7 @@ public class NicoMap {
 		map.put(key.toLowerCase(), value);
 	}
 	/**
-	 * •¶š—ñ‚É•ÏŠ·
+	 * æ–‡å­—åˆ—ã«å¤‰æ›
 	 * @return String
 	 */
 	@Override
@@ -96,8 +96,8 @@ public class NicoMap {
 		return ret.substring(0, ret.lastIndexOf(";"));
 	}
 	/**
-	 * =‚Ì‘O‚ğkey, Œã‚ë‚ğvalue‚Æ‚µ‚Äput<br/>
-	 * =‚ª‚È‚¢ê‡‚Í‰½‚à‚µ‚È‚¢
+	 * =ã®å‰ã‚’key, å¾Œã‚ã‚’valueã¨ã—ã¦put<br/>
+	 * =ãŒãªã„å ´åˆã¯ä½•ã‚‚ã—ãªã„
 	 * @param str
 	 */
 	private void put(String str){
@@ -114,7 +114,7 @@ public class NicoMap {
 		this.put(key, value);
 	}
 	/**
-	 * key‚ğlowercase‚É’¼‚µ‚Ämap‚©‚ç•¶š—ñ‚ğget
+	 * keyã‚’lowercaseã«ç›´ã—ã¦mapã‹ã‚‰æ–‡å­—åˆ—ã‚’get
 	 * @param key
 	 * @return
 	 */
@@ -122,7 +122,7 @@ public class NicoMap {
 		return map.get(key.toLowerCase());
 	}
 	/**
-	 * •¶š—ñ”z—ñ‚ğput‚·‚éBŠe—v‘f‚Íkey=value‚Æ‚È‚Á‚Ä‚¢‚é‚±‚Æ
+	 * æ–‡å­—åˆ—é…åˆ—ã‚’putã™ã‚‹ã€‚å„è¦ç´ ã¯key=valueã¨ãªã£ã¦ã„ã‚‹ã“ã¨
 	 * @param array
 	 */
 	void putArray(String[] array){
@@ -131,8 +131,8 @@ public class NicoMap {
 		}
 	}
 	/**
-	 * •¶š—ñ‚ğ³‹K•\Œ»regx‚Å‹æØ‚Á‚Ä•ªŠ„‚µput‚·‚é<br/>
-	 * •ªŠ„Œã‚Ì•¶š—ñ‚Íkey=value‚Æ‚È‚Á‚Ä‚¢‚é‚±‚Æ
+	 * æ–‡å­—åˆ—ã‚’æ­£è¦è¡¨ç¾regxã§åŒºåˆ‡ã£ã¦åˆ†å‰²ã—putã™ã‚‹<br/>
+	 * åˆ†å‰²å¾Œã®æ–‡å­—åˆ—ã¯key=valueã¨ãªã£ã¦ã„ã‚‹ã“ã¨
 	 * @param string
 	 * @param regx
 	 */
@@ -140,7 +140,7 @@ public class NicoMap {
 		this.putArray(string.split(regx));
 	}
 	/**
-	 * key‚ğlowercase‚É’¼‚µ‚Ämap‚ÉputASet-Cookie‚Í‘O‚Ì’l‚É’Ç‰Á
+	 * keyã‚’lowercaseã«ç›´ã—ã¦mapã«putã€Set-Cookieã¯å‰ã®å€¤ã«è¿½åŠ 
 	 * @param key
 	 * @param value
 	 */
@@ -151,7 +151,7 @@ public class NicoMap {
 		this.put(key, value);
 	}
 	/**
-	 * key‚ğlowercase‚É’¼‚µ‚Ämap‚ÉputASet-Cookie‚Í‘O‚Ì’l‚É’Ç‰Á
+	 * keyã‚’lowercaseã«ç›´ã—ã¦mapã«putã€Set-Cookieã¯å‰ã®å€¤ã«è¿½åŠ 
 	 * @param key
 	 * @param value
 	 */
@@ -193,8 +193,8 @@ public class NicoMap {
 		}
 	}
 	/**
-	 * HttpURLConnection‚Ìƒwƒbƒ_[‚ğ‘S•”add‚µ out‚ªnull‚Å‚È‚¢‚È‚çprintln‚·‚éB
-	 * @param con@connectŒã‚ÌHttpURLConnection
+	 * HttpURLConnectionã®ãƒ˜ãƒƒãƒ€ãƒ¼ã‚’å…¨éƒ¨addã— outãŒnullã§ãªã„ãªã‚‰printlnã™ã‚‹ã€‚
+	 * @param conã€€connectå¾Œã®HttpURLConnection
 	 */
 	public void putConnection(HttpURLConnection con, Logger log){
 		String key;
@@ -214,8 +214,8 @@ public class NicoMap {
 		}
 	}
 	/**
-	 * •¶š—ñ‚ğ&‚Å‹æØ‚Á‚Ä•ªŠ„‚µURLDecode‚µ‚½‚Ì‚¿put‚·‚é<br/>
-	 * •ªŠ„Œã‚Ì•¶š—ñ‚Íkey=value‚Æ‚È‚Á‚Ä‚¢‚é‚±‚Æ
+	 * æ–‡å­—åˆ—ã‚’&ã§åŒºåˆ‡ã£ã¦åˆ†å‰²ã—URLDecodeã—ãŸã®ã¡putã™ã‚‹<br/>
+	 * åˆ†å‰²å¾Œã®æ–‡å­—åˆ—ã¯key=valueã¨ãªã£ã¦ã„ã‚‹ã“ã¨
 	 * @param string
 	 * @param encoding
 	 */

@@ -4,14 +4,14 @@
 #include <SDL/SDL.h>
 #include "../struct_define.h"
 
-//ƒjƒRƒXƒNƒŠƒvƒg‚Å‚ÌƒL[ ƒ[ƒhUnicode’è‹`
-#define UNICODE_GYAKU	0x00009006	/*‹t*/
-#define UNICODE_TOU		0x00006295	/*“Š@“ŠƒRƒ*/
-#define UNICODE_KO		0x000030b3	/*ƒR@ƒRƒ*/
-#define UNICODE_DE		0x000030c7	/*ƒf@ƒfƒtƒHƒ‹ƒg*/
-#define UNICODE_BO		0x000030dc	/*ƒ{@ƒ{ƒ^ƒ“ */
-#define UNICODE_KAKKO	0x0000300c	/*u@Š‡ŒÊ */
-//ƒjƒRƒXƒNƒŠƒvƒg@ ƒ[ƒh’è‹`
+//ãƒ‹ã‚³ã‚¹ã‚¯ãƒªãƒ—ãƒˆã§ã®ã‚­ãƒ¼ ãƒ¯ãƒ¼ãƒ‰Unicodeå®šç¾©
+#define UNICODE_GYAKU	0x00009006	/*é€†*/
+#define UNICODE_TOU		0x00006295	/*æŠ•ã€€æŠ•ã‚³ãƒ¡*/
+#define UNICODE_KO		0x000030b3	/*ã‚³ã€€ã‚³ãƒ¡*/
+#define UNICODE_DE		0x000030c7	/*ãƒ‡ã€€ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ*/
+#define UNICODE_BO		0x000030dc	/*ãƒœã€€ãƒœã‚¿ãƒ³ */
+#define UNICODE_KAKKO	0x0000300c	/*ã€Œã€€æ‹¬å¼§ */
+//ãƒ‹ã‚³ã‚¹ã‚¯ãƒªãƒ—ãƒˆã€€ ãƒ¯ãƒ¼ãƒ‰å®šç¾©
 #define SCRIPT_GYAKU	0x00010000
 #define SCRIPT_OWNER	0x0001
 #define SCRIPT_USER		0x0002
@@ -21,31 +21,31 @@
 #define SCRIPT_VOTE		0x00100000
 
 struct CHAT_ITEM{
-	//êŠ‚Ì“Á’è
+	//å ´æ‰€ã®ç‰¹å®š
 	int no;
 	int vpos;
 	int location;
-	int html5font;	//html5ƒtƒHƒ“ƒgƒRƒ}ƒ“ƒh
-		// 0	//ƒSƒVƒbƒN•W€
-		// 1	// 4096–¾’©‘Ì
-		// 2	//ŠÛƒSƒVƒbƒN‘Ì
-		// 3	//ƒŠƒU[ƒu
+	int html5font;	//html5ãƒ•ã‚©ãƒ³ãƒˆã‚³ãƒãƒ³ãƒ‰
+		// 0	//ã‚´ã‚·ãƒƒã‚¯æ¨™æº–
+		// 1	// 4096æ˜æœä½“
+		// 2	//ä¸¸ã‚´ã‚·ãƒƒã‚¯ä½“
+		// 3	//ãƒªã‚¶ãƒ¼ãƒ–
 	int full;	// whether full ommand?
-	int waku;	// ‰©˜g•t‰Á
+	int waku;	// é»„æ ä»˜åŠ 
 	int script;	// whether nico script?
 	int patissier;	//patissier command
 	int invisible;	//invisible command
 	int replace_user;	// /replace target:user
 	int replace_owner;	//	/replace target:owner
-	int is_button;	// ƒ{ƒ^ƒ“
-	int ender;	//enderƒRƒ}ƒ“ƒh ‰üsƒŠƒTƒCƒYƒLƒƒƒ“ƒZƒ‹
+	int is_button;	// ãƒœã‚¿ãƒ³
+	int ender;	//enderã‚³ãƒãƒ³ãƒ‰ æ”¹è¡Œãƒªã‚µã‚¤ã‚ºã‚­ãƒ£ãƒ³ã‚»ãƒ«
 	int itemfork;	//itemfork
-	//•¶š‚ÌCü
+	//æ–‡å­—ã®ä¿®é£¾
 	int size;
 	int color;
 	SDL_Color color24;
 	Uint16* str;
-	//“à•”ˆ—‚Åg‚¤
+	//å†…éƒ¨å‡¦ç†ã§ä½¿ã†
 	int vstart;		//begin vpos of check y
 	int vend;		//last vpos of check y
 	int vappear;	//start display of comment
@@ -53,36 +53,36 @@ struct CHAT_ITEM{
 	//int showed;			// whether checked y pos, 0: not showed, 1:showed and not finished, finished
 	int pooled;			// wheather item is pooled?
 	int duration;	// vend - vstart
-	  // —•b”‚Ìê‡  w’è’l
-	  // ue shita‚Ìê‡  300 vpos
-	  // 4:3‚Ìê‡  400 vpos
-	  // 16:9‚Ìê‡  400+ƒ¿ vpos
-	int nb_line;	//ƒRƒƒ“ƒgs”
-	int double_resized;	//“ñdƒŠƒTƒCƒY‚µ‚½‚©H
-	//ƒŠƒtƒ@ƒŒƒ“ƒX
+	  // ï¼ ç§’æ•°ã®å ´åˆ  æŒ‡å®šå€¤
+	  // ue shitaã®å ´åˆ  300 vpos
+	  // 4:3ã®å ´åˆ  400 vpos
+	  // 16:9ã®å ´åˆ  400+Î± vpos
+	int nb_line;	//ã‚³ãƒ¡ãƒ³ãƒˆè¡Œæ•°
+	int double_resized;	//äºŒé‡ãƒªã‚µã‚¤ã‚ºã—ãŸã‹ï¼Ÿ
+	//ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹
 	CHAT* chat;
 };
 
 struct CHAT{
-	// ƒRƒƒ“ƒgID	0:user, 1:owner, 2:oprional
+	// ã‚³ãƒ¡ãƒ³ãƒˆID	0:user, 1:owner, 2:oprional
 	int cid;
 	int max_no;
 	int min_no;
-	//ƒAƒCƒeƒ€
+	//ã‚¢ã‚¤ãƒ†ãƒ 
 	int max_item;
 	int iterator_index;
 	CHAT_ITEM* item;
-	//ƒŠƒtƒ@ƒŒƒ“ƒX
+	//ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹
 	CHAT_SLOT* slot;
-	//ƒv[ƒ‹
+	//ãƒ—ãƒ¼ãƒ«
 	CHAT_POOL* pool;
-	//ƒRƒƒ“ƒgƒ^ƒCƒv
+	//ã‚³ãƒ¡ãƒ³ãƒˆã‚¿ã‚¤ãƒ—
 	const char* com_type;
-	//—‹tƒtƒ‰ƒO
+	//ï¼ é€†ãƒ•ãƒ©ã‚°
 	int to_left;
 	int reverse_vpos;	// VPOS
 	int reverse_duration;	// VPOS
-	//patissierƒRƒ}ƒ“ƒh‚É‚æ‚é–³‹ƒRƒƒ“ƒg”Ô†Å‘å’l
+	//patissierã‚³ãƒãƒ³ãƒ‰ã«ã‚ˆã‚‹ç„¡è¦–ã‚³ãƒ¡ãƒ³ãƒˆç•ªå·æœ€å¤§å€¤
 	int patissier_ignore;
 	// /vote
 	CHAT_ITEM *vote_chatitem;
@@ -94,11 +94,11 @@ struct CHAT_SET{
 	CHAT_SLOT slot;
 };
 
-//‰Šú‰»
+//åˆæœŸåŒ–
 int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,
 	int cid,const char* com_type,int toLeft, int is_live,int vpos_shift,int ahead_vpos, int min_vpos);
 void closeChat();
-//ƒCƒeƒŒ[ƒ^
+//ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿
 void resetChatIterator(CHAT* chat);
 CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos,int ahead_vpos);
 SDL_Color convColor24(int c);

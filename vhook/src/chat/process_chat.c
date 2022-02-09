@@ -8,11 +8,11 @@
 #include "../mydef.h"
 #include "../comment/surf_util.h"
 
-//‚±‚Ìƒ\[ƒX“à‚Å‚µ‚©g‚í‚È‚¢ƒƒ\ƒbƒh
+//ã“ã®ã‚½ãƒ¼ã‚¹å†…ã§ã—ã‹ä½¿ã‚ãªã„ãƒ¡ã‚½ãƒƒãƒ‰
 void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos,int x,int y);
 
 /**
- * ƒRƒƒ“ƒg‚ğ•`‰æ‚·‚éB
+ * ã‚³ãƒ¡ãƒ³ãƒˆã‚’æç”»ã™ã‚‹ã€‚
  */
 int process_chat(DATA* data,CDATA* cdata,SDL_Surface* surf,const int now_vpos){
 	CHAT* chat;
@@ -23,27 +23,27 @@ int process_chat(DATA* data,CDATA* cdata,SDL_Surface* surf,const int now_vpos){
 	FILE* log = data->log;
 	char buf[16];
 	if (cdata->enable_comment){
-		/*Œ©‚¹‚È‚¢‚à‚Ì‚ğíœ */
+		/*è¦‹ã›ãªã„ã‚‚ã®ã‚’å‰Šé™¤ */
 		slot = &cdata->slot;
 		resetChatSlotIterator(slot);
 		while((slot_item = getChatSlotErased(slot,now_vpos,data->min_vpos)) != NULL){
 			deleteChatSlot(slot_item,data);
 		}
-		/*Œ©‚¹‚é‚à‚Ì‚ğƒZƒbƒg*/
+		/*è¦‹ã›ã‚‹ã‚‚ã®ã‚’ã‚»ãƒƒãƒˆ*/
 		chat = &cdata->chat;
 		resetChatIterator(chat);
-		//ƒv[ƒ‹‚ÍˆÈ‘O‚©‚ç‚Ì‚ªc‚Á‚Ä‚¢‚é‚Ì‚ÅƒŠƒZƒbƒg‚µ‚Ä‚Í‚¢‚¯‚È‚¢
+		//ãƒ—ãƒ¼ãƒ«ã¯ä»¥å‰ã‹ã‚‰ã®ãŒæ®‹ã£ã¦ã„ã‚‹ã®ã§ãƒªã‚»ãƒƒãƒˆã—ã¦ã¯ã„ã‘ãªã„
 		//resetPoolIterator(chat->pool);
-		// now_vpos‚ğ1•bæ“Ç‚İ‚µ‚Ävstart‚©‚çvend‚Ü‚Å‚ÌƒRƒƒ“ƒg‚ğƒv[ƒ‹
+		// now_vposã‚’1ç§’å…ˆèª­ã¿ã—ã¦vstartã‹ã‚‰vendã¾ã§ã®ã‚³ãƒ¡ãƒ³ãƒˆã‚’ãƒ—ãƒ¼ãƒ«
 		while((chat_item = getChatShowed(chat,now_vpos,ahead_vpos)) != NULL){
 			// debug
 			fprintf(log,"[process-chat/process]getChatShowed(chat,vpos=%d) comment %d.\n",now_vpos,chat_item->no);
 			addChatPool(data,chat->pool,chat_item);
 		}
-		// ƒv[ƒ‹‚ğvstart,no‚Åƒ\[ƒg‚µæ‚èo‚·
+		// ãƒ—ãƒ¼ãƒ«ã‚’vstart,noã§ã‚½ãƒ¼ãƒˆã—å–ã‚Šå‡ºã™
 		while((chat_item = getChatPooled(data,chat->pool,now_vpos)) != NULL){
 			if (addChatSlot(data,slot,chat_item,data->vout_width,data->vout_height) == 0)
-			{//•\¦‚µ‚È‚©‚Á‚½
+			{//è¡¨ç¤ºã—ãªã‹ã£ãŸ
 				char* item_kind = "IGNORE";
 				if(chat_item->patissier)
 					item_kind = "patissier";
@@ -77,7 +77,7 @@ int convSDLcolor(SDL_Color sc){
 }
 
 /*
- * ƒŒƒCƒ„‡‚É‚»‚Á‚Ä•`‰æ‚·‚é
+ * ãƒ¬ã‚¤ãƒ¤é †ã«ãã£ã¦æç”»ã™ã‚‹
  */
 
 void drawCommentA(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int x, int y, int loc){
@@ -130,20 +130,20 @@ void drawCommentA(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int
 
 void drawComment(DATA* data,SDL_Surface* surf,CHAT_SLOT* slot,int now_vpos, int x, int y){
 	if(data->layerctrl==1){
-		// ue shita ‚ğŒã‚Ì—Dæ•`‰æ
-		// naka -> shita -> ue‚Ì‡”Ô‚É•`‰æ‚·‚é
-		// ‚±‚Ì“_‚Å‚Íloc_def ‚Í–³‚¢
+		// ue shita ã‚’å¾Œã®å„ªå…ˆæç”»
+		// naka -> shita -> ueã®é †ç•ªã«æç”»ã™ã‚‹
+		// ã“ã®æ™‚ç‚¹ã§ã¯loc_def ã¯ç„¡ã„
 		drawCommentA(data, surf, slot, now_vpos, x, y, CMD_LOC_NAKA);
 		drawCommentA(data, surf, slot, now_vpos, x, y, CMD_LOC_BOTTOM);
 		drawCommentA(data, surf, slot, now_vpos, x, y, CMD_LOC_TOP);
 	}else{
-		// slot‡ ]—ˆ’Ê‚è
+		// sloté † å¾“æ¥é€šã‚Š
 		drawCommentA(data, surf, slot, now_vpos, x, y, CMD_LOC_ALL);
 	}
 }
 
 /*
- * ˆÊ’u‚ğ‹‚ß‚é
+ * ä½ç½®ã‚’æ±‚ã‚ã‚‹
  */
 double getX1(FILE* log,int vpos,CHAT_SLOT_ITEM* item,int video_width,double scale,int aspect_mode){
 	if(item->slot_location != CMD_LOC_NAKA){
@@ -151,9 +151,9 @@ double getX1(FILE* log,int vpos,CHAT_SLOT_ITEM* item,int video_width,double scal
 	}
 	//CMD_LOC_NAKA
 /*
- * naka ˆÊ’u‚ğ‹‚ß‚é
+ * naka ä½ç½®ã‚’æ±‚ã‚ã‚‹
  */
-	// Œ»now_vpos‚ÌƒRƒƒ“ƒgvstart‚©‚ç‚Ì‘Š‘Î’l
+	// ç¾æ™‚åˆ»now_vposã®ã‚³ãƒ¡ãƒ³ãƒˆvstartã‹ã‚‰ã®ç›¸å¯¾å€¤
 	// vpos - item->chat_item->vstart;
 	double progress = item->speed * (vpos-item->chat_item->vstart);
 	double xstart;
@@ -196,7 +196,7 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 	int location = item->location;
 	int ahead_vpos = data->ahead_vpos;
 	/*
-	 * default lcation •ÏX
+	 * default lcation å¤‰æ›´
 	 */
 	if(location == CMD_LOC_DEF){
 		location = data->deflocation;
@@ -221,9 +221,9 @@ void setspeed(DATA* data,CHAT_SLOT_ITEM* slot_item,int video_width,int nico_widt
 		int text_width = slot_item->surf->w;
 		double width = scale * (NICO_WIDTH + 32) + text_width;
 		double speed = width / (double)(duration + ahead_vpos);
-		//speed *= 1.006;	//“Á•Ê•â³¨ edge of video will be reached at vend-3
+		//speed *= 1.006;	//ç‰¹åˆ¥è£œæ­£â†’ edge of video will be reached at vend-3
 		if(comment_speed==0){
-			//speed = speed * 1.02 - 0.04;	//“Á•Ê•â³
+			//speed = speed * 1.02 - 0.04;	//ç‰¹åˆ¥è£œæ­£
 			slot_item->speed = (float)speed;
 		}
 		else if(comment_speed==-20080401){	//reverse

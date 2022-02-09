@@ -48,18 +48,18 @@ import saccubus.util.Stopwatch;
 import saccubus.util.Util;
 
 /**
- * <p>ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·</p>
+ * <p>ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™</p>
  *
- * <p>à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶</p>
+ * <p>èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜</p>
  *
- * <p>’˜ìŒ : Copyright (c) 2007 PSI</p>
+ * <p>è‘—ä½œæ¨©: Copyright (c) 2007 PSI</p>
  *
- * <p>‰ïĞ–¼: </p>
+ * <p>ä¼šç¤¾å: </p>
  *
- * @author –¢“ü—Í
+ * @author æœªå…¥åŠ›
  * @version 1.0
- *  ”ñEventDispatchThread‚Ì‚½‚ßGUI•`‰æ‚Í‚·‚×‚ÄinvokeLater()‚É‚Äs‚¤‚±‚Æ
- *  JLabel‚Ì•\¦‘‚«Š·‚¦‚È‚Ç
+ *  éEventDispatchThreadã®ãŸã‚GUIæç”»ã¯ã™ã¹ã¦invokeLater()ã«ã¦è¡Œã†ã“ã¨
+ *  JLabelã®è¡¨ç¤ºæ›¸ãæ›ãˆãªã©
  */
 public class ConvertWorker extends SwingWorker<String, String> {
 
@@ -84,7 +84,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		@Override
 		public void run() {
 
-			sendTimer(label, timerString + tick +"•b");
+			sendTimer(label, timerString + tick +"ç§’");
 			tick += up;
 		}
 		private void sendTimer(final JLabel l, final String s){
@@ -116,10 +116,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private static final String TMP_OWNERCOMMENT = "_vhookowner.tmp";
 	private static final String TMP_OPTIONALTHREAD = "_vhookoptional.tmp";
 //	private static final String VIDEO_URL_PARSER = "http://www.nicovideo.jp/watch/";
-	public static final String OWNER_EXT = "[Owner].xml";	// “ŠeÒƒRƒƒ“ƒgƒTƒtƒBƒbƒNƒX
-	public static final String OPTIONAL_EXT = "{Optional}.xml";	// ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒhƒTƒtƒBƒbƒNƒX
-	public static final String EASY_EXT = "{Easy}.xml";	// ‚©‚ñ‚½‚ñƒRƒƒ“ƒgƒTƒtƒBƒbƒNƒX
-	public static final String NICOS_EXT = "{Nicos}.xml";	//ƒjƒRƒXƒRƒƒ“ƒgƒTƒtƒBƒbƒNƒX
+	public static final String OWNER_EXT = "[Owner].xml";	// æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã‚µãƒ•ã‚£ãƒƒã‚¯ã‚¹
+	public static final String OPTIONAL_EXT = "{Optional}.xml";	// ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã‚µãƒ•ã‚£ãƒƒã‚¯ã‚¹
+	public static final String EASY_EXT = "{Easy}.xml";	// ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆã‚µãƒ•ã‚£ãƒƒã‚¯ã‚¹
+	public static final String NICOS_EXT = "{Nicos}.xml";	//ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã‚µãƒ•ã‚£ãƒƒã‚¯ã‚¹
 	static final String JSON_EXT = "_commentJSON.txt";
 	public static final String TMP_APPEND_EXT = "_all_comment.xml";
 	public static final String TMP_APPEND_EASY_EXT = "_all_easy.xml";
@@ -139,7 +139,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private InfoStack infoStack;
 	//private BrowserCookieKind BrowserKind = BrowserCookieKind.NONE;
 	private final BrowserInfo browserInfo;
-	//private String UserSession = "";	//ƒuƒ‰ƒEƒU‚©‚çæ“¾‚µ‚½ƒ†[ƒU[ƒZƒbƒVƒ‡ƒ“
+	//private String UserSession = "";	//ãƒ–ãƒ©ã‚¦ã‚¶ã‹ã‚‰å–å¾—ã—ãŸãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚»ãƒƒã‚·ãƒ§ãƒ³
 	private final Stopwatch stopwatch;
 	private File selectedVhook;
 	private Aspect videoAspect;
@@ -344,8 +344,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	protected void process(List<String> chunk){
 		while(!chunk.isEmpty()){
 			String text = chunk.remove(0);
-			// @vid : vid•\¦w¦
-			// low_•t‚«‚ÍF‚ğ•Ï‚¦‚é
+			// @vid : vidè¡¨ç¤ºæŒ‡ç¤º
+			// low_ä»˜ãæ™‚ã¯è‰²ã‚’å¤‰ãˆã‚‹
 			if(text.startsWith("@vid ")){
 				text = text.substring(5);
 				if(text.startsWith(ECO_PREFIX))
@@ -401,31 +401,31 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return Setting.isAppendComment();
 	}
 	private boolean checkOK() {
-		sendtext("ƒ`ƒFƒbƒN‚µ‚Ä‚¢‚Ü‚·");
+		sendtext("ãƒã‚§ãƒƒã‚¯ã—ã¦ã„ã¾ã™");
 		if (!isSaveConverted() && !isSaveVideo()
 			&& !isSaveComment() && !isSaveOwnerComment()
 			&& !Setting.isSaveThumbInfo()){
-			sendtext("‰½‚à‚·‚é‚±‚Æ‚ª‚ ‚è‚Ü‚¹‚ñ");
+			sendtext("ä½•ã‚‚ã™ã‚‹ã“ã¨ãŒã‚ã‚Šã¾ã›ã‚“");
 			result = "1";
 			return false;
 		}
 		if (isSaveConverted()) {
 			File a = new File(Setting.getFFmpegPath());
 			if (!a.canRead()) {
-				sendtext("FFmpeg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+				sendtext("FFmpegãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
 				result = "2";
 				return false;
 			}
 			this.ffmpeg = new FFmpeg(Setting.getFFmpegPath());
 			if (Setting.isZqPlayer()) {
 				if(Setting.getZqVhookPath().indexOf(' ') >= 0){
-					sendtext("‚·‚¢‚Ü‚¹‚ñBŒ»İvhookƒ‰ƒCƒuƒ‰ƒŠ‚É‚Í”¼Šp‹ó”’‚Íg‚¦‚Ü‚¹‚ñB");
+					sendtext("ã™ã„ã¾ã›ã‚“ã€‚ç¾åœ¨vhookãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«ã¯åŠè§’ç©ºç™½ã¯ä½¿ãˆã¾ã›ã‚“ã€‚");
 					result = "3";
 					return false;
 				}
 				VhookQ = new File(Setting.getZqVhookPath());
 				if(!VhookQ.canRead()){
-					sendtext("‹¤’ÊŠg’£Vhookƒ‰ƒCƒuƒ‰ƒŠ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+					sendtext("å…±é€šæ‹¡å¼µVhookãƒ©ã‚¤ãƒ–ãƒ©ãƒªãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
 					result = "4";
 					return false;
 				}
@@ -433,13 +433,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			} else {
 				if (Setting.isUseVhookNormal()){
 					if(Setting.getVhookPath().indexOf(' ') >= 0) {
-						sendtext("‚·‚¢‚Ü‚¹‚ñBŒ»İvhookƒ‰ƒCƒuƒ‰ƒŠ‚É‚Í”¼Šp‹ó”’‚Íg‚¦‚Ü‚¹‚ñB");
+						sendtext("ã™ã„ã¾ã›ã‚“ã€‚ç¾åœ¨vhookãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«ã¯åŠè§’ç©ºç™½ã¯ä½¿ãˆã¾ã›ã‚“ã€‚");
 						result = "3";
 						return false;
 					}
 					VhookNormal = new File(Setting.getVhookPath());
 					if (!VhookNormal.canRead()) {
-						sendtext("Vhookƒ‰ƒCƒuƒ‰ƒŠ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+						sendtext("Vhookãƒ©ã‚¤ãƒ–ãƒ©ãƒªãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
 						result = "4";
 						return false;
 					}
@@ -451,14 +451,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 					else {
 						if(Setting.getVhookWidePath().indexOf(' ') >= 0) {
-							sendtext("‚·‚¢‚Ü‚¹‚ñBŒ»İvhookƒtƒ@ƒCƒ‹–¼‚É‚Í”¼Šp‹ó”’‚Íg‚¦‚Ü‚¹‚ñB");
+							sendtext("ã™ã„ã¾ã›ã‚“ã€‚ç¾åœ¨vhookãƒ•ã‚¡ã‚¤ãƒ«åã«ã¯åŠè§’ç©ºç™½ã¯ä½¿ãˆã¾ã›ã‚“ã€‚");
 							result = "5";
 							return false;
 						}
 						VhookWide = new File(Setting.getVhookWidePath());
 					}
 					if (!VhookWide.canRead()) {
-						sendtext("Vhookƒ‰ƒCƒuƒ‰ƒŠiƒƒCƒhj‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+						sendtext("Vhookãƒ©ã‚¤ãƒ–ãƒ©ãƒªï¼ˆãƒ¯ã‚¤ãƒ‰ï¼‰ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
 						result = "6";
 						return false;
 					}
@@ -466,7 +466,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 			}
 			if (wayOfVhook == 0){
-				sendtext("g—p‚Å‚«‚éVhookƒ‰ƒCƒuƒ‰ƒŠ‚ª‚ ‚è‚Ü‚¹‚ñB");
+				sendtext("ä½¿ç”¨ã§ãã‚‹Vhookãƒ©ã‚¤ãƒ–ãƒ©ãƒªãŒã‚ã‚Šã¾ã›ã‚“ã€‚");
 				result = "7";
 				return false;
 			}
@@ -477,13 +477,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(Setting.isEnableCA()){
 				String windir = System.getenv("windir");
 				if(windir == null){
-					sendtext("WindowsƒtƒHƒ‹ƒ_‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+					sendtext("Windowsãƒ•ã‚©ãƒ«ãƒ€ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
 					result = "8";
 					return false;
 				}
 				fontDir = new File(windir, "Fonts");
 				if(!fontDir.isDirectory()){
-					sendtext("FontsƒtƒHƒ‹ƒ_‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+					sendtext("Fontsãƒ•ã‚©ãƒ«ãƒ€ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
 					result = "9";
 					return false;
 				}
@@ -494,35 +494,35 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					simsunFont = new File(fontDir, "SIMSUN.TTC");
 				}
 				if (!simsunFont.canRead()) {
-					sendtext("CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + simsunFont.getPath());
+					sendtext("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + simsunFont.getPath());
 					result = "10";
 					return false;
 				}
 				if(html5CommentMode){
-					gulimFont = new File(fontDir, "YuGothM.ttc");	//windows10ŠÛ•¶š
+					gulimFont = new File(fontDir, "YuGothM.ttc");	//windows10ä¸¸æ–‡å­—
 				}
 				if (gulimFont==null || !gulimFont.canRead()) {
-					gulimFont = new File(fontDir, "GULIM.TTC");	//windowsXP,7,8 ŠÛ•¶š
+					gulimFont = new File(fontDir, "GULIM.TTC");	//windowsXP,7,8 ä¸¸æ–‡å­—
 				}
 				File saveGulimFont = gulimFont;
 				if (!gulimFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + gulimFont.getPath());
-					gulimFont = new File(fontDir, "MALGUN.TTF");	//windows10 ƒnƒ“ƒOƒ‹
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + gulimFont.getPath());
+					gulimFont = new File(fontDir, "MALGUN.TTF");	//windows10 ãƒãƒ³ã‚°ãƒ«
 				}
 				if (!gulimFont.canRead()) {
-					gulimFont = simsunFont;	// –¾’©
+					gulimFont = simsunFont;	// æ˜æœ
 				}
 				if (!gulimFont.canRead()) {
-					sendtext("CA—pƒtƒHƒ“ƒg‚Ì‘ã‘Ö‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + gulimFont.getPath());
+					sendtext("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆã®ä»£æ›¿ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + gulimFont.getPath());
 					result = "11";
 					return false;
 				}
 				if(!gulimFont.equals(saveGulimFont)){
-					log.println("CA—pƒtƒHƒ“ƒg" + saveGulimFont.getPath() + "‚ğ" + gulimFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + saveGulimFont.getPath() + "ã‚’" + gulimFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 				}
 				arialFont = new File(fontDir, "ARIAL.TTF");
 				if(!arialFont.canRead()){
-					sendtext("CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + arialFont.getPath());
+					sendtext("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + arialFont.getPath());
 					result = "12";
 					return false;
 				}
@@ -530,16 +530,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if (Setting.getFontPath().length() > 0)
 					gothicFont = new File(Setting.getFontPath());
 				if (!gothicFont.canRead()) {
-					sendtext("CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + gothicFont.getPath());
+					sendtext("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + gothicFont.getPath());
 					result = "13";
 					return false;
 				}
 				georgiaFont  = new File(fontDir, "sylfaen.ttf");
 				if (!georgiaFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + georgiaFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + georgiaFont.getPath());
 					//retValue = "14";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + georgiaFont.getPath() + "‚ğ" + gothicFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + georgiaFont.getPath() + "ã‚’" + gothicFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					georgiaFont = gothicFont;
 				}
 				nirmalaFont = new File(fontDir,"Nirmala.ttf");
@@ -548,34 +548,34 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					devabagariFont = nirmalaFont;
 				}
 				if(!devabagariFont.canRead()){
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + devabagariFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + devabagariFont.getPath());
 					//retValue = "15";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + devabagariFont.getPath() + "‚ğ" + arialFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + devabagariFont.getPath() + "ã‚’" + arialFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					devabagariFont = arialFont;
 				}
 				tahomaFont = new File(fontDir, "tahoma.ttf");
 				if (!tahomaFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + tahomaFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + tahomaFont.getPath());
 					//retValue = "16";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + tahomaFont.getPath() + "‚ğ" + arialFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + tahomaFont.getPath() + "ã‚’" + arialFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					tahomaFont = arialFont;
 				}
 				mingliuFont = new File(fontDir, "mingliu.ttc");
 				if (!mingliuFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + mingliuFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + mingliuFont.getPath());
 					//retValue = "17";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + mingliuFont.getPath() + "‚ğ" + simsunFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + mingliuFont.getPath() + "ã‚’" + simsunFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					mingliuFont = simsunFont;
 				}
-				newMinchoFont = new File(fontDir, "SIMSUN.TTC");	//NGULIM.TTF‚ª–³‚©‚Á‚½
+				newMinchoFont = new File(fontDir, "SIMSUN.TTC");	//NGULIM.TTFãŒç„¡ã‹ã£ãŸ
 				if (!newMinchoFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + newMinchoFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + newMinchoFont.getPath());
 					//retValue = "18";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + newMinchoFont.getPath() + "‚ğ" + simsunFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + newMinchoFont.getPath() + "ã‚’" + simsunFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					newMinchoFont = simsunFont;
 				}
 				estrangeloEdessaFont = new File(fontDir, "estre.ttf");
@@ -583,18 +583,18 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					estrangeloEdessaFont = new File(fontDir, "seguihis.ttf");
 				}
 				if (!estrangeloEdessaFont.canRead()){
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + estrangeloEdessaFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + estrangeloEdessaFont.getPath());
 					//retValue = "19";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + estrangeloEdessaFont.getPath() + "‚ğ" + arialFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + estrangeloEdessaFont.getPath() + "ã‚’" + arialFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					estrangeloEdessaFont = arialFont;
 				}
 				arialUnicodeFont = new File(fontDir, "arialuni.ttf");
 				if (!arialUnicodeFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + arialUnicodeFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + arialUnicodeFont.getPath());
 					//retValue = "20";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + arialUnicodeFont.getPath() + "‚ğ" + arialFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + arialUnicodeFont.getPath() + "ã‚’" + arialFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					arialUnicodeFont = arialFont;
 				}
 				gujaratiFont = new File(fontDir, "shruti.ttf");
@@ -602,10 +602,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					gujaratiFont = nirmalaFont;
 				}
 				if (!gujaratiFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + gujaratiFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + gujaratiFont.getPath());
 					//retValue = "21";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + gujaratiFont.getPath() + "‚ğ" + arialUnicodeFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + gujaratiFont.getPath() + "ã‚’" + arialUnicodeFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					gujaratiFont = arialUnicodeFont;
 				}
 				bengalFont = new File(fontDir, "vrinda.ttf");
@@ -613,10 +613,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					bengalFont = nirmalaFont;
 				}
 				if(!bengalFont.canRead()){
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + bengalFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + bengalFont.getPath());
 					//retValue = "22";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + bengalFont.getPath() + "‚ğ" + arialUnicodeFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + bengalFont.getPath() + "ã‚’" + arialUnicodeFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					bengalFont = arialUnicodeFont;
 				}
 				tamilFont = new File(fontDir, "latha.ttf");
@@ -624,10 +624,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					tamilFont = nirmalaFont;
 				}
 				if (!tamilFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + tamilFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + tamilFont.getPath());
 					//retValue = "23";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + tamilFont.getPath() + "‚ğ" + arialUnicodeFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + tamilFont.getPath() + "ã‚’" + arialUnicodeFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					tamilFont = arialUnicodeFont;
 				}
 				laooFont = new File(fontDir, "laoui.ttf");
@@ -635,10 +635,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					laooFont = new File(fontDir, "LeelawUI.ttf");
 				}
 				if (!laooFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + laooFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + laooFont.getPath());
 					//retValue = "24";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + laooFont.getPath() + "‚ğ" + arialUnicodeFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + laooFont.getPath() + "ã‚’" + arialUnicodeFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					laooFont = arialUnicodeFont;
 				}
 				gurmukhiFont = new File(fontDir, "raavi.ttf");
@@ -646,10 +646,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					gurmukhiFont = nirmalaFont;
 				}
 				if (!gurmukhiFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + gurmukhiFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + gurmukhiFont.getPath());
 					//retValue = "25";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + gurmukhiFont.getPath() + "‚ğ" + arialUnicodeFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + gurmukhiFont.getPath() + "ã‚’" + arialUnicodeFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					gurmukhiFont = arialUnicodeFont;
 				}
 				kannadaFont = new File(fontDir, "tunga.ttf");
@@ -657,18 +657,18 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					kannadaFont = nirmalaFont;
 				}
 				if (!kannadaFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + kannadaFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + kannadaFont.getPath());
 					//retValue = "26";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + kannadaFont.getPath() + "‚ğ" + arialUnicodeFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + kannadaFont.getPath() + "ã‚’" + arialUnicodeFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					kannadaFont = arialUnicodeFont;
 				}
 				thaanaFont = new File(fontDir, "mvboli.ttf");
 				if (!thaanaFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + thaanaFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + thaanaFont.getPath());
 					//retValue = "27";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + thaanaFont.getPath() + "‚ğ" + arialUnicodeFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + thaanaFont.getPath() + "ã‚’" + arialUnicodeFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					thaanaFont = arialUnicodeFont;
 				}
 				malayalamFont = new File(fontDir, "kartika.ttf");
@@ -676,10 +676,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					malayalamFont = nirmalaFont;
 				}
 				if (!malayalamFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + malayalamFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + malayalamFont.getPath());
 					//retValue = "28";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + malayalamFont.getPath() + "‚ğ" + arialUnicodeFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + malayalamFont.getPath() + "ã‚’" + arialUnicodeFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					malayalamFont = arialUnicodeFont;
 				}
 				teluguFont = new File(fontDir, "gautami.ttf");
@@ -687,10 +687,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					teluguFont = nirmalaFont;
 				}
 				if (!teluguFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + teluguFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + teluguFont.getPath());
 					//retValue = "29";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + teluguFont.getPath() + "‚ğ" + arialUnicodeFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + teluguFont.getPath() + "ã‚’" + arialUnicodeFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					teluguFont = arialUnicodeFont;
 				}
 				segoeuisymFont = new File(fontDir, "seguisym.ttf");
@@ -698,28 +698,28 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					segoeuisymFont = nirmalaFont;
 				}
 				if (!segoeuisymFont.canRead()) {
-					sendtext("Œx@CA—pƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB" + segoeuisymFont.getPath());
+					sendtext("è­¦å‘Šã€€CAç”¨ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚" + segoeuisymFont.getPath());
 					//retValue = "29";
 					//return false;
-					log.println("CA—pƒtƒHƒ“ƒg" + segoeuisymFont.getPath() + "‚ğ" + arialUnicodeFont.getName() + "‚Å‘ã‘Ö‚µ‚Ü‚·B");
+					log.println("CAç”¨ãƒ•ã‚©ãƒ³ãƒˆ" + segoeuisymFont.getPath() + "ã‚’" + arialUnicodeFont.getName() + "ã§ä»£æ›¿ã—ã¾ã™ã€‚");
 					segoeuisymFont = arialUnicodeFont;
 				}
 			}else{
 				a = new File(Setting.getFontPath());
 				if (!a.canRead()) {
-					sendtext("ƒtƒHƒ“ƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+					sendtext("ãƒ•ã‚©ãƒ³ãƒˆãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
 					result = "30";
 					return false;
 				}
 			}
 		} else {
 			if (isDeleteVideoAfterConverting()) {
-				sendtext("•ÏŠ·‚µ‚È‚¢‚Ì‚ÉA“®‰æíœ‚µ‚¿‚á‚Á‚Ä—Ç‚¢‚ñ‚Å‚·‚©H");
+				sendtext("å¤‰æ›ã—ãªã„ã®ã«ã€å‹•ç”»å‰Šé™¤ã—ã¡ã‚ƒã£ã¦è‰¯ã„ã‚“ã§ã™ã‹ï¼Ÿ");
 				result = "31";
 				return false;
 			}
 			if (isDeleteCommentAfterConverting()) {
-				sendtext("•ÏŠ·‚µ‚È‚¢‚Ì‚ÉAƒRƒƒ“ƒgíœ‚µ‚¿‚á‚Á‚Ä—Ç‚¢‚ñ‚Å‚·‚©H");
+				sendtext("å¤‰æ›ã—ãªã„ã®ã«ã€ã‚³ãƒ¡ãƒ³ãƒˆå‰Šé™¤ã—ã¡ã‚ƒã£ã¦è‰¯ã„ã‚“ã§ã™ã‹ï¼Ÿ");
 				result = "32";
 				return false;
 			}
@@ -728,7 +728,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		proxy_port = Setting.getProxyPort();
 		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
 			|| Setting.isSaveThumbInfo()) {
-			// ƒuƒ‰ƒEƒUƒZƒbƒVƒ‡ƒ“‹¤—L‚Ìê‡‚Í‚±‚±‚ÅƒZƒbƒVƒ‡ƒ“‚ğ“Ç‚İ‚Ş
+			// ãƒ–ãƒ©ã‚¦ã‚¶ã‚»ãƒƒã‚·ãƒ§ãƒ³å…±æœ‰ã®å ´åˆã¯ã“ã“ã§ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚’èª­ã¿è¾¼ã‚€
 			browserInfo.checkUserSession(Setting);
 			//BrowserKind = browserInfo.getValidBrowser();
 			if (!BrowserInfo.isBrowser(Setting)){
@@ -736,19 +736,19 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				password = Setting.getPassword();
 				if (mailAddress == null || mailAddress.isEmpty()
 					|| password == null || password.isEmpty()) {
-					sendtext("ƒƒOƒCƒ“ƒZƒbƒVƒ‡ƒ“–³‚µAƒ[ƒ‹ƒAƒhƒŒƒX‚©ƒpƒXƒ[ƒh‚ª‹ó”’‚Å‚·B");
+					sendtext("ãƒ­ã‚°ã‚¤ãƒ³ã‚»ãƒƒã‚·ãƒ§ãƒ³ç„¡ã—ã€ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ã‹ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãŒç©ºç™½ã§ã™ã€‚");
 					result = "33";
 					return false;
 				}
 			} else if(!browserInfo.isValid()){
-				sendtext("ƒuƒ‰ƒEƒU" + browserInfo.getName() + "‚ÌƒZƒbƒVƒ‡ƒ“æ“¾‚É¸”s");
+				sendtext("ãƒ–ãƒ©ã‚¦ã‚¶" + browserInfo.getName() + "ã®ã‚»ãƒƒã‚·ãƒ§ãƒ³å–å¾—ã«å¤±æ•—");
 				result = "34";
 				return false;
 			}
 			if (useProxy()){
 				if (   proxy == null || proxy.isEmpty()
 					|| proxy_port < 0 || proxy_port > 65535   ){
-					sendtext("ƒvƒƒLƒV‚Ìİ’è‚ª•s³‚Å‚·B");
+					sendtext("ãƒ—ãƒ­ã‚­ã‚·ã®è¨­å®šãŒä¸æ­£ã§ã™ã€‚");
 					result = "35";
 					return false;
 				}
@@ -760,7 +760,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(proxy!=null)
 			isDebugNet = proxy.startsWith(NicoClient.DEBUG_PROXY);
 		resultBuffer = Setting.getReturnBuffer();
-		sendtext("ƒ`ƒFƒbƒNI—¹");
+		sendtext("ãƒã‚§ãƒƒã‚¯çµ‚äº†");
 		return true;
 	}
 
@@ -768,20 +768,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 		if (isSaveVideo() || isSaveComment() || isSaveOwnerComment()
 			|| Setting.isSaveThumbInfo()) {
-			sendtext("ƒƒOƒCƒ“’†");
+			sendtext("ãƒ­ã‚°ã‚¤ãƒ³ä¸­");
 			NicoClient client = null;
 			boolean is_html5 = Setting.isHtml5();
 			if (browser.isValid()){
-				// ƒZƒbƒVƒ‡ƒ“‹¤—LAƒƒOƒCƒ“Ï‚İ‚ÌNicoClient‚ğclient‚É•Ô‚·
+				// ã‚»ãƒƒã‚·ãƒ§ãƒ³å…±æœ‰ã€ãƒ­ã‚°ã‚¤ãƒ³æ¸ˆã¿ã®NicoClientã‚’clientã«è¿”ã™
 				client = new NicoClient(browser, proxy, proxy_port, stopwatch, log, is_html5);
 			} else {
 				client = new NicoClient(mailAddress, password, browser, proxy, proxy_port, stopwatch, log, is_html5);
 			}
 			if (!client.isLoggedIn()) {
-				sendtext("ƒƒOƒCƒ“¸”s " + browser.getName() + " " + client.getExtraError());
+				sendtext("ãƒ­ã‚°ã‚¤ãƒ³å¤±æ•— " + browser.getName() + " " + client.getExtraError());
 				if(parent!=null) parent.sendLoginStatus(" ");
 			} else {
-				sendtext("ƒƒOƒCƒ“¬Œ÷ " + browser.getName());
+				sendtext("ãƒ­ã‚°ã‚¤ãƒ³æˆåŠŸ " + browser.getName());
 			}
 			return client;
 		} else {
@@ -794,12 +794,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		File dmcLowVideoFile = null;
 		File lowVideoFile;
 		File folder = Setting.getVideoFixFileNameFolder();
-		sendtext("“®‰æ‚Ì•Û‘¶");
-		/*“®‰æ‚Ì•Û‘¶*/
+		sendtext("å‹•ç”»ã®ä¿å­˜");
+		/*å‹•ç”»ã®ä¿å­˜*/
 		try {
 			if (isSaveVideo()) {
 				if (client == null){
-					sendtext("ƒƒOƒCƒ“‚µ‚Ä‚È‚¢‚Ì‚É“®‰æ‚Ì•Û‘¶‚É‚È‚è‚Ü‚µ‚½");
+					sendtext("ãƒ­ã‚°ã‚¤ãƒ³ã—ã¦ãªã„ã®ã«å‹•ç”»ã®ä¿å­˜ã«ãªã‚Šã¾ã—ãŸ");
 					result = "41";
 					return false;
 				}
@@ -807,7 +807,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				boolean renameMp4 = Setting.isChangeMp4Ext();
 				if(client.isEco()){
 					if(Setting.isDisableEco()){
-						sendtext("ƒGƒRƒmƒ~[ƒ‚[ƒh‚È‚Ì‚Å’†~‚µ‚Ü‚·");
+						sendtext("ã‚¨ã‚³ãƒãƒŸãƒ¼ãƒ¢ãƒ¼ãƒ‰ãªã®ã§ä¸­æ­¢ã—ã¾ã™");
 						result = "42";
 						return false;
 					}else{
@@ -819,7 +819,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						log.println("Folder created: " + folder.getPath());
 					}
 					if (!folder.isDirectory()) {
-						sendtext("“®‰æ‚Ì•Û‘¶æƒtƒHƒ‹ƒ_‚ªì¬‚Å‚«‚Ü‚¹‚ñB");
+						sendtext("å‹•ç”»ã®ä¿å­˜å…ˆãƒ•ã‚©ãƒ«ãƒ€ãŒä½œæˆã§ãã¾ã›ã‚“ã€‚");
 						result = "40";
 						return false;
 					}
@@ -833,19 +833,19 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					dmcVideoFile = new File(folder, name.replace(VideoID, dmcVideoID));
 					resumeDmcFile = Path.getReplacedExtFile(dmcVideoFile, ".flv_dmc");	// suspended video
 				} else {
-					File file = Setting.getVideoFile();	//’uŠ·‘O
-					//%LOW%ˆÈŠO‚Ì’uŠ·
-					VideoFile = replaceFilenamePattern(file, false, false);	//’uŠ·Œã
-					String name = VideoFile.getName();	//’uŠ·Œã
+					File file = Setting.getVideoFile();	//ç½®æ›å‰
+					//%LOW%ä»¥å¤–ã®ç½®æ›
+					VideoFile = replaceFilenamePattern(file, false, false);	//ç½®æ›å¾Œ
+					String name = VideoFile.getName();	//ç½®æ›å¾Œ
 					File dir = VideoFile.getParentFile();
 					if(isEcoVideo){
 						lowVideoFile = replaceFilenamePattern(file, true, false);
-						// %LOW%‚Í’uŠ·Ï‚İ
+						// %LOW%ã¯ç½®æ›æ¸ˆã¿
 						if(!Path.contains(lowVideoFile, LOW_PREFIX)){
 							log.println("MACRO doesn't contain %LOW%. "+lowVideoFile.getPath());
 							// ID->IDlow_ , [ID]->[ID]low_
 							if(name.contains(lowVideoID)){
-								//’Êí‚Í‚È‚¢
+								//é€šå¸¸ã¯ãªã„
 								lowVideoFile = VideoFile;
 							}else if(name.contains(VideoID)){
 								lowVideoFile = new File(dir,name.replace(VideoID, lowVideoID));
@@ -890,48 +890,48 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						log.println("bug? can't get smile size");
 					int size_dmc = client.getSizeDmc();
 					if(existVideoFile(VideoFile, ".flv", ".mp4")){
-						sendtext("ƒGƒRƒmƒ~[ƒ‚[ƒh‚Å’Êí“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·");
+						sendtext("ã‚¨ã‚³ãƒãƒŸãƒ¼ãƒ¢ãƒ¼ãƒ‰ã§é€šå¸¸å‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™");
 						if(!Setting.isEnableCheckSize()
 							|| (size_smile_high>0 && existVideo.length()==size_smile_high)
 							|| (size_smile_low>0 && existVideo.length()==size_smile_low)){
-							log.println("ƒGƒRƒmƒ~[ƒ‚[ƒh‚Å’Êí“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·Bƒ_ƒEƒ“ƒ[ƒh‚ğƒXƒLƒbƒv‚µ‚Ü‚·");
+							log.println("ã‚¨ã‚³ãƒãƒŸãƒ¼ãƒ¢ãƒ¼ãƒ‰ã§é€šå¸¸å‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™ã€‚ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã‚’ã‚¹ã‚­ãƒƒãƒ—ã—ã¾ã™");
 							VideoFile = existVideo;
 							return true;
 						}
-						sendtext("’Êí“®‰æ‚ÌƒTƒCƒY‚ªˆê’v‚µ‚Ü‚¹‚ñB");
-						log.println("’Êí“®‰æ‚ÌƒTƒCƒY‚ªˆê’v‚µ‚Ü‚¹‚ñB");
+						sendtext("é€šå¸¸å‹•ç”»ã®ã‚µã‚¤ã‚ºãŒä¸€è‡´ã—ã¾ã›ã‚“ã€‚");
+						log.println("é€šå¸¸å‹•ç”»ã®ã‚µã‚¤ã‚ºãŒä¸€è‡´ã—ã¾ã›ã‚“ã€‚");
 						log.println("smile="+size_smile_high+"bytes, exist="+existVideo.length()+"bytes.");
 					}
 					if(existVideoFile(dmcVideoFile, ".flv", ".mp4")){
-						sendtext("ƒGƒRƒmƒ~[ƒ‚[ƒh‚Ådmc“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·");
+						sendtext("ã‚¨ã‚³ãƒãƒŸãƒ¼ãƒ¢ãƒ¼ãƒ‰ã§dmcå‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™");
 						if(!Setting.isEnableCheckSize()
 						 || (size_dmc>0 && existVideo.length()==size_dmc)){
-							log.println("ƒGƒRƒmƒ~[ƒ‚[ƒh‚Ådmc“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·Bƒ_ƒEƒ“ƒ[ƒh‚ğƒXƒLƒbƒv‚µ‚Ü‚·");
+							log.println("ã‚¨ã‚³ãƒãƒŸãƒ¼ãƒ¢ãƒ¼ãƒ‰ã§dmcå‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™ã€‚ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã‚’ã‚¹ã‚­ãƒƒãƒ—ã—ã¾ã™");
 							dmcVideoFile = existVideo;
 							VideoFile = dmcVideoFile;
 							return true;
 						}
-						sendtext("dmc“®‰æ‚ÌƒTƒCƒY‚ªˆê’v‚µ‚Ü‚¹‚ñB");
-						log.println("dmc“®‰æ‚ÌƒTƒCƒY‚ªˆê’v‚µ‚Ü‚¹‚ñB");
+						sendtext("dmcå‹•ç”»ã®ã‚µã‚¤ã‚ºãŒä¸€è‡´ã—ã¾ã›ã‚“ã€‚");
+						log.println("dmcå‹•ç”»ã®ã‚µã‚¤ã‚ºãŒä¸€è‡´ã—ã¾ã›ã‚“ã€‚");
 						log.println("dmc="+size_dmc+"bytes, exist="+existVideo.length()+"bytes.");
 					}
 					if(existVideoFile(lowVideoFile,".flv",".mp4")){
-						sendtext("ƒGƒRƒmƒ~[ƒ‚[ƒh‚ÅƒGƒR“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·");
+						sendtext("ã‚¨ã‚³ãƒãƒŸãƒ¼ãƒ¢ãƒ¼ãƒ‰ã§ã‚¨ã‚³å‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™");
 						if(!Setting.isEnableCheckSize()
 							|| (size_smile_low>0 && existVideo.length()==size_smile_low)
 							|| (size_smile_high>0 && existVideo.length()==size_smile_high)
 							|| (size_dmc>0 && existVideo.length()==size_dmc)){
-							log.println("ƒGƒRƒmƒ~[ƒ‚[ƒh‚Å“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·Bƒ_ƒEƒ“ƒ[ƒh‚ğƒXƒLƒbƒv‚µ‚Ü‚·");
+							log.println("ã‚¨ã‚³ãƒãƒŸãƒ¼ãƒ¢ãƒ¼ãƒ‰ã§å‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™ã€‚ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã‚’ã‚¹ã‚­ãƒƒãƒ—ã—ã¾ã™");
 							lowVideoFile = existVideo;
 							VideoFile = lowVideoFile;
 							return true;
 						}
-						sendtext("ƒGƒR“®‰æ‚ÌƒTƒCƒY‚ªˆê’v‚µ‚Ü‚¹‚ñB");
-						log.println("ƒGƒR“®‰æ‚ÌƒTƒCƒY‚ªˆê’v‚µ‚Ü‚¹‚ñB");
+						sendtext("ã‚¨ã‚³å‹•ç”»ã®ã‚µã‚¤ã‚ºãŒä¸€è‡´ã—ã¾ã›ã‚“ã€‚");
+						log.println("ã‚¨ã‚³å‹•ç”»ã®ã‚µã‚¤ã‚ºãŒä¸€è‡´ã—ã¾ã›ã‚“ã€‚");
 						log.println("low="+existVideo.length()+"bytes.");
 					}
 				}
-				sendtext("“®‰æ‚Ìƒ_ƒEƒ“ƒ[ƒhŠJn’†");
+				sendtext("å‹•ç”»ã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰é–‹å§‹ä¸­");
 				log.println("serverIsDmc: "+client.serverIsDmc()
 					+", preferSmile: "+Setting.isSmilePreferable()
 					+", forceDMC:" + Setting.doesDmcforceDl()
@@ -947,17 +947,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 //						if(client.getSizeVideo() > size_smile)
 //							size_smile = client.getSizeVideo();
 					}
-					// ’ÊíƒT[ƒo
+					// é€šå¸¸ã‚µãƒ¼ãƒ
 					if(existVideoFile(VideoFile,".flv",".mp4")){
-						sendtext("“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·");
+						sendtext("å‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™");
 						if(!Setting.isEnableCheckSize()
 							|| (size_smile_high>0 && existVideo.length()==size_smile_high)){
-							log.println("“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·Bƒ_ƒEƒ“ƒ[ƒh‚ğƒXƒLƒbƒv‚µ‚Ü‚·");
+							log.println("å‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™ã€‚ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã‚’ã‚¹ã‚­ãƒƒãƒ—ã—ã¾ã™");
 							VideoFile = existVideo;
 							return true;
 						}
-						sendtext("“®‰æ‚ÌƒTƒCƒY‚ªˆê’v‚µ‚Ü‚¹‚ñB");
-						log.println("“®‰æ‚ÌƒTƒCƒY‚ªˆê’v‚µ‚Ü‚¹‚ñB");
+						sendtext("å‹•ç”»ã®ã‚µã‚¤ã‚ºãŒä¸€è‡´ã—ã¾ã›ã‚“ã€‚");
+						log.println("å‹•ç”»ã®ã‚µã‚¤ã‚ºãŒä¸€è‡´ã—ã¾ã›ã‚“ã€‚");
 						log.println("smile="+size_smile_high+"bytes, exist="+existVideo.length()+"bytes.");
 					}
 					if(lowVideoFile==null)
@@ -968,7 +968,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						return false;
 					}
 					if (VideoFile == null) {
-						sendtext("“®‰æ‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s" + client.getExtraError());
+						sendtext("å‹•ç”»ã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•—" + client.getExtraError());
 						result = "44";
 						return false;
 					}
@@ -1003,28 +1003,28 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						log.println("bug? can't get smile size");
 					if(existVideoFile(VideoFile, ".flv", ".mp4")){
 						if(!Setting.isEnableCheckSize()){
-							sendtext("“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·");
-							log.println("“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·B");
+							sendtext("å‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™");
+							log.println("å‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™ã€‚");
 							VideoFile = existVideo;
 							video_size = VideoFile.length();
 							log.println("video size: "+(video_size>>20)+"MiB");
 						}else{
 							if(long_size_smile>0){
 								if(existVideo.length()==long_size_smile){
-									sendtext("“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·");
-									log.println("“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·B");
+									sendtext("å‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™");
+									log.println("å‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™ã€‚");
 									VideoFile = existVideo;
 									video_size = VideoFile.length();
 									log.println("video size: "+(video_size>>20)+"MiB");
 								}else{
-									sendtext("“®‰æ‚ÌƒTƒCƒY‚ªˆê’v‚µ‚Ü‚¹‚ñB");
-									log.println("“®‰æ‚ÌƒTƒCƒY‚ªˆê’v‚µ‚Ü‚¹‚ñB");
+									sendtext("å‹•ç”»ã®ã‚µã‚¤ã‚ºãŒä¸€è‡´ã—ã¾ã›ã‚“ã€‚");
+									log.println("å‹•ç”»ã®ã‚µã‚¤ã‚ºãŒä¸€è‡´ã—ã¾ã›ã‚“ã€‚");
 									log.println("high="+long_size_smile+"bytes, exist="+existVideo.length()+"bytes.");
 									video_size = 0;
 								}
 							}else{
-								sendtext("“®‰æ‚ÌƒTƒCƒY‚ªæ“¾‚Å‚«‚Ü‚¹‚ñB");
-								log.println("“®‰æ‚ÌƒTƒCƒY‚ªæ“¾‚Å‚«‚Ü‚¹‚ñB");
+								sendtext("å‹•ç”»ã®ã‚µã‚¤ã‚ºãŒå–å¾—ã§ãã¾ã›ã‚“ã€‚");
+								log.println("å‹•ç”»ã®ã‚µã‚¤ã‚ºãŒå–å¾—ã§ãã¾ã›ã‚“ã€‚");
 								log.println("exist="+existVideo.length()+"bytes.");
 								video_size = 0;
 							}
@@ -1035,9 +1035,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					File video_exist = null;
 					File dmcVideoFileTmp = null;
 					if(existVideoFile(dmcVideoFile, ".flv", ".mp4")){
-						sendtext("dmc“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·");
+						sendtext("dmcå‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™");
 						if(!Setting.isEnableCheckSize()){
-							log.println("dmc“®‰æ‚ÍŠù‚É‘¶İ‚µ‚Ü‚·Bƒ_ƒEƒ“ƒ[ƒh‚ğƒXƒLƒbƒv‚µ‚Ü‚·");
+							log.println("dmcå‹•ç”»ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™ã€‚ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã‚’ã‚¹ã‚­ãƒƒãƒ—ã—ã¾ã™");
 							skip = true;
 							dmcVideoFile = existVideo;
 							dmc_size = dmcVideoFile.length();
@@ -1053,8 +1053,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								dmc_size = dmcVideoFile.length();
 								dmcVideoFileTmp = new File(dmcVideoFile.getPath()+".tmp");
 								if(dmcVideoFile.renameTo(dmcVideoFileTmp)){
-									log.println("“Ç‚İ‚İÏ‚İdmc“®‰æ‚ğ"+dmcVideoFileTmp.getPath()+"‚Érename‚µ‚Ü‚·B");
-									log.println("dmcƒT[ƒo“®‰æ‚ÌƒTƒCƒY‚ğƒ`ƒFƒbƒN‚µ‚Ü‚·B");
+									log.println("èª­ã¿è¾¼ã¿æ¸ˆã¿dmcå‹•ç”»ã‚’"+dmcVideoFileTmp.getPath()+"ã«renameã—ã¾ã™ã€‚");
+									log.println("dmcã‚µãƒ¼ãƒå‹•ç”»ã®ã‚µã‚¤ã‚ºã‚’ãƒã‚§ãƒƒã‚¯ã—ã¾ã™ã€‚");
 								}
 							}
 						}
@@ -1063,15 +1063,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						long min_size = Math.max(Math.max(video_size, long_size_smile),size_exist);
 						long[] limits = {min_size, 0, 0};	// limits[1] is return value
 						if(Setting.doesDmcforceDl())
-							limits[0] = 0;	//“r’†‚Å’†~‚µ‚È‚¢
+							limits[0] = 0;	//é€”ä¸­ã§ä¸­æ­¢ã—ãªã„
 						if(Setting.canSeqResume()){
 							if(resumeDmcFile.isFile() && resumeDmcFile.canRead()){
 								if(Setting.isEnableCheckSize()){
 									resumeDmcFile.delete();
 								}else{
 									if(resumeDmcFile.renameTo(dmcVideoFile)){
-										log.println("’†’f‚µ‚½dmc“®‰æ‚ğresume‚µ‚Ü‚·B");
-										sendtext("’†’f‚µ‚½dmc“®‰æresume‚µ‚Ü‚·");
+										log.println("ä¸­æ–­ã—ãŸdmcå‹•ç”»ã‚’resumeã—ã¾ã™ã€‚");
+										sendtext("ä¸­æ–­ã—ãŸdmcå‹•ç”»resumeã—ã¾ã™");
 										resume_size = dmcVideoFile.length();
 										log.println("resumed size: "+(resume_size>>20)+"MiB");
 									}
@@ -1108,8 +1108,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 										sendtext(ecode);
 										break;
 									} else {
-										log.println("dmc“®‰æƒT[ƒo‚©‚ç‚Ì(S)ƒ_ƒEƒ“ƒ[ƒh‚É¸”s‚µ‚Ü‚µ‚½B");
-										sendtext("dmc“®‰æ‚Ì(S)ƒ_ƒEƒ“ƒ[ƒh‚É¸”sB" + ecode);
+										log.println("dmcå‹•ç”»ã‚µãƒ¼ãƒã‹ã‚‰ã®(S)ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•—ã—ã¾ã—ãŸã€‚");
+										sendtext("dmcå‹•ç”»ã®(S)ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•—ã€‚" + ecode);
 										if(dmcVideoFile.canRead()){
 											if(Setting.isEnableCheckSize()){
 												dmcVideoFile.delete();
@@ -1140,16 +1140,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								} catch (InterruptedException e) {
 									log.printStackTrace(e);
 								}
-								// watchƒy[ƒWXVƒ`ƒFƒbƒN
+								// watchãƒšãƒ¼ã‚¸æ›´æ–°ãƒã‚§ãƒƒã‚¯
 								if(!client.getVideoInfo(Tag, WatchInfo, Time, Setting.isSaveWatchPage())){
-									log.println("dmc(S) watchƒy[ƒWƒGƒ‰[");
-									sendtext("dmc(S) watchƒy[ƒWƒGƒ‰[@"+client.getExtraError());
+									log.println("dmc(S) watchãƒšãƒ¼ã‚¸ã‚¨ãƒ©ãƒ¼");
+									sendtext("dmc(S) watchãƒšãƒ¼ã‚¸ã‚¨ãƒ©ãƒ¼ã€€"+client.getExtraError());
 									try {
 										Thread.sleep(1000);
 									} catch (InterruptedException e) {
 										log.printStackTrace(e);
 									}
-									client.setExtraError("98 dmc(S)ƒGƒ‰[ƒŠƒgƒ‰ƒCB");
+									client.setExtraError("98 dmc(S)ã‚¨ãƒ©ãƒ¼ãƒªãƒˆãƒ©ã‚¤ã€‚");
 									result = "98";
 									if(dmcVideoFile.canRead()){
 										if(dmcVideoFile.renameTo(resumeDmcFile))
@@ -1158,7 +1158,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									for(int l=60; l>0; l--){
 										try{
 											Thread.sleep(1000);
-											sendtext("dmc(S)ƒGƒ‰[ƒŠƒgƒ‰ƒC‘Ò‚¿ "+l+"•b");
+											sendtext("dmc(S)ã‚¨ãƒ©ãƒ¼ãƒªãƒˆãƒ©ã‚¤å¾…ã¡ "+l+"ç§’");
 											//stopwatch.show();
 											if(stopFlagReturn()){
 												result = "43";
@@ -1168,30 +1168,30 @@ public class ConvertWorker extends SwingWorker<String, String> {
 											break;
 										}
 									}
-									sendtext("98 dmc(S)ƒGƒ‰[ƒŠƒgƒ‰ƒC@");
+									sendtext("98 dmc(S)ã‚¨ãƒ©ãƒ¼ãƒªãƒˆãƒ©ã‚¤ã€€");
 									return false;
 								}
 							} while(resume_size < dmc_high);
 							if(dmc_high == 0){
-								log.println("dmc(S) getsize¸”s!(dmc_high == 0)");
-								sendtext("dmc(S) getsize¸”s!");
+								log.println("dmc(S) getsizeå¤±æ•—!(dmc_high == 0)");
+								sendtext("dmc(S) getsizeå¤±æ•—!");
 							}else if(video_size == dmc_high){
-								log.println("dmc(S) ƒ_ƒEƒ“ƒ[ƒhÏ(video_size == dmc_high)");
-								sendtext("dmc(S) ƒ_ƒEƒ“ƒ[ƒhÏ");
+								log.println("dmc(S) ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰æ¸ˆ(video_size == dmc_high)");
+								sendtext("dmc(S) ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰æ¸ˆ");
 								dmcVideoFile = VideoFile;
 								dmc_size = video_size;
 							}else if(size_exist == dmc_high){
-								log.println("dmc(S) ƒ_ƒEƒ“ƒ[ƒhÏ(size_eixst == dmc_high)");
-								sendtext("dmc(S) ƒ_ƒEƒ“ƒ[ƒhÏ");
+								log.println("dmc(S) ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰æ¸ˆ(size_eixst == dmc_high)");
+								sendtext("dmc(S) ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰æ¸ˆ");
 								if(!video_exist.canRead()){
 									if(dmcVideoFileTmp.canRead()){
 										if(dmcVideoFileTmp.renameTo(video_exist)){
-											log.println("renamedƒtƒ@ƒCƒ‹‚ğ"+video_exist.getPath()+"‚É–ß‚µ‚Ü‚·B");
+											log.println("renamedãƒ•ã‚¡ã‚¤ãƒ«ã‚’"+video_exist.getPath()+"ã«æˆ»ã—ã¾ã™ã€‚");
 										}
 									}
 								}
 								if(!video_exist.canRead()){
-									log.println("dmc(S) rename¸”s!(!video_exist.canRead())");
+									log.println("dmc(S) renameå¤±æ•—!(!video_exist.canRead())");
 									dmcVideoFile = null;
 									dmc_size = 0;
 								}else{
@@ -1199,20 +1199,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									dmc_size = video_exist.length();
 								}
 							}else if(min_size >= resume_size){
-								log.println("dmc(S) ƒ_ƒEƒ“ƒ[ƒh’†~(min_size >= resume_size)");
-								sendtext("dmc(S) ƒ_ƒEƒ“ƒ[ƒh’†~");
+								log.println("dmc(S) ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ä¸­æ­¢(min_size >= resume_size)");
+								sendtext("dmc(S) ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ä¸­æ­¢");
 								dmcVideoFile = null;
 								dmc_size = 0;
 							}else if(dmc_size == 0){
-								log.println("dmc(S) download¸”s!(dmc_size == 0)");
-								sendtext("dmc(S) download¸”s!");
+								log.println("dmc(S) downloadå¤±æ•—!(dmc_size == 0)");
+								sendtext("dmc(S) downloadå¤±æ•—!");
 							}else if(resume_size != dmc_high){
-								log.println("dmc(S) resume¸”s!(resume_size != dmc_size)");
-								sendtext("dmc(S) resume¸”s!");
+								log.println("dmc(S) resumeå¤±æ•—!(resume_size != dmc_size)");
+								sendtext("dmc(S) resumeå¤±æ•—!");
 								log.println("dmc size: "+(dmc_size>>20)+"MiB, resumed size: "+(resume_size>>20)+"MiB");
 								dmc_size = 0;
 							}else{
-							//	ƒRƒ“ƒeƒi•ÏŠ·•s—v
+							//	ã‚³ãƒ³ãƒ†ãƒŠå¤‰æ›ä¸è¦
 							//	if(Setting.isAutoFlvToMp4())
 							//		dmcVideoFile = dmcFlvToMp4Convert(dmcVideoFile);
 							}
@@ -1240,8 +1240,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									sendtext(ecode);
 									log.println("dmc size: "+(dmc_size>>20)+"MiB");
 								}else{
-									log.println("dmc“®‰æƒT[ƒo‚©‚ç‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s‚µ‚Ü‚µ‚½B");
-									sendtext("dmc“®‰æ‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s" + ecode);
+									log.println("dmcå‹•ç”»ã‚µãƒ¼ãƒã‹ã‚‰ã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•—ã—ã¾ã—ãŸã€‚");
+									sendtext("dmcå‹•ç”»ã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•—" + ecode);
 								}
 							}
 							if(dmcVideoFile!=null && existVideoFile(dmcVideoFile, ".flv", ".mp4")){
@@ -1251,7 +1251,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								log.println("video ContentType: "+videoContentType);
 								dmc_size = dmcVideoFile.length();
 								log.println("dmc size: "+(dmc_size>>20)+"MiB");
-							//	ƒRƒ“ƒeƒi•ÏŠ·•s—v
+							//	ã‚³ãƒ³ãƒ†ãƒŠå¤‰æ›ä¸è¦
 							//	if(Setting.isAutoFlvToMp4())
 							//		dmcVideoFile = dmcFlvToMp4Convert(dmcVideoFile);
 							}
@@ -1260,7 +1260,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					// video_size , dmc_size should be real size of a file which exists now or has been loaded
 					if ( (long_size_smile > video_size && long_size_smile > dmc_size && !Setting.isInhibitSmaller())
 						||(long_size_smile != video_size && long_size_smile != dmc_size && Setting.isSmilePreferable())){
-						// smile“®‰æ‚ğƒ_ƒEƒ“ƒ[ƒh
+						// smileå‹•ç”»ã‚’ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰
 						log.println("Smile download start.");
 						if(lowVideoFile==null)
 							lowVideoFile = VideoFile;
@@ -1270,8 +1270,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							return false;
 						}
 						if (VideoFile == null) {
-							log.println("smile“®‰æƒT[ƒo‚©‚ç‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s‚µ‚Ü‚µ‚½B");
-							sendtext("smile“®‰æ‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s@" + client.getExtraError());
+							log.println("smileå‹•ç”»ã‚µãƒ¼ãƒã‹ã‚‰ã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•—ã—ã¾ã—ãŸã€‚");
+							sendtext("smileå‹•ç”»ã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•—ã€€" + client.getExtraError());
 							video_size = 0;
 						}else{
 							videoLength = client.getVideoLength();
@@ -1281,7 +1281,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 					}
 					if(dmc_size==0 && video_size==0){
-						sendtext("“®‰æ‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s@" + client.getExtraError());
+						sendtext("å‹•ç”»ã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•—ã€€" + client.getExtraError());
 						result = "44";
 						return false;
 					}
@@ -1291,7 +1291,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							&&(lowVideoFile==null
 							 ||!lowVideoFile.canRead()
 							 ||(dmcLowVideoFile.length()>lowVideoFile.length()))){
-							// dmcLowÌ—p
+							// dmcLowæ¡ç”¨
 							lowVideoFile.delete();
 							dmcLowVideoFile.renameTo(lowVideoFile);
 						//	lowVideoFile = dmcLowVideoFile; //bug fix
@@ -1301,7 +1301,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							}
 							dmcLowVideoFile = null;
 						}else{
-							// lowÌ—p
+							// lowæ¡ç”¨
 							if(dmcLowVideoFile!=null){
 								dmcLowVideoFile.delete();
 								dmcLowVideoFile = null;
@@ -1313,15 +1313,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					if(video_size!=0)
 						log.println("video size: "+(video_size>>20)+"MiB");
 					if(dmc_size > video_size){
-						log.println("•ÏŠ·‚É‚Ídmc“®‰æ‚ğg‚¢‚Ü‚·");
-						sendtext("•ÏŠ·‚É‚Ídmc“®‰æ‚ğg‚¢‚Ü‚·");
+						log.println("å¤‰æ›ã«ã¯dmcå‹•ç”»ã‚’ä½¿ã„ã¾ã™");
+						sendtext("å¤‰æ›ã«ã¯dmcå‹•ç”»ã‚’ä½¿ã„ã¾ã™");
 						VideoFile = dmcVideoFile;
 					}
 					if (optionalThreadID == null || optionalThreadID.isEmpty()) {
 						optionalThreadID = client.getOptionalThreadID();
 					}
 					resultBuffer.append("video: "+VideoFile.getName()+"\n");
-					if(!Setting.isOnlyMp4AutoPlay()||Path.hasExt(VideoFile, ".mp4")){	//mp4Šg’£q‚Ì“®‰æ‚Ì‚İğŒ‚ ‚è
+					if(!Setting.isOnlyMp4AutoPlay()||Path.hasExt(VideoFile, ".mp4")){	//mp4æ‹¡å¼µå­ã®å‹•ç”»ã®ã¿æ¡ä»¶ã‚ã‚Š
 						autoPlay.offer(VideoFile,true);
 						if(autoPlay.isPlayDownload())
 							autoPlay.playAuto();
@@ -1333,10 +1333,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						String videoFilename;
 						if((videoFilename = detectTitleFromVideo(folder)) == null){
 							if (OtherVideo == null){
-								sendtext("“®‰æƒtƒ@ƒCƒ‹‚ªƒtƒHƒ‹ƒ_‚É‘¶İ‚µ‚Ü‚¹‚ñB");
+								sendtext("å‹•ç”»ãƒ•ã‚¡ã‚¤ãƒ«ãŒãƒ•ã‚©ãƒ«ãƒ€ã«å­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 								result = "45";
 							} else {
-								sendtext("“®‰æƒtƒ@ƒCƒ‹‚ª.flv‚â.mp4‚Å‚ ‚è‚Ü‚¹‚ñF" + OtherVideo);
+								sendtext("å‹•ç”»ãƒ•ã‚¡ã‚¤ãƒ«ãŒ.flvã‚„.mp4ã§ã‚ã‚Šã¾ã›ã‚“ï¼š" + OtherVideo);
 								result = "46";
 							}
 							return false;
@@ -1354,7 +1354,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					if (!existVideoFile(VideoFile, ".flv", ".mp4")
 					 && !existVideoFile(lowVideoFile, ".flv", ".mp4")
 					 && !existVideoFile(dmcVideoFile, ".flv", ".mp4")) {
-						sendtext("“®‰æƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+						sendtext("å‹•ç”»ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 						result = "47";
 						return false;
 					}
@@ -1362,7 +1362,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					setVidTitile(tid, Tag, VideoTitle, client.isEco());
 				}
 			}
-			sendtext("“®‰æ‚Ì•Û‘¶‚ğI—¹");
+			sendtext("å‹•ç”»ã®ä¿å­˜ã‚’çµ‚äº†");
 		}catch(NullPointerException e){
 			log.printStackTrace(e);
 		}
@@ -1397,14 +1397,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return false;
 	}
 	private boolean setupCommentFile0(){
-		// CommentFile CommentJsonİ’è
+		// CommentFile CommentJsonè¨­å®š
 		File folder = Setting.getCommentFixFileNameFolder();
 		if (isCommentFixFileName()) {
 			if (folder.mkdir()) {
 				log.println("Folder created: " + folder.getPath());
 			}
 			if (!folder.isDirectory()) {
-				sendtext("ƒRƒƒ“ƒg‚Ì•Û‘¶æƒtƒHƒ‹ƒ_‚ªì¬‚Å‚«‚Ü‚¹‚ñB");
+				sendtext("ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜å…ˆãƒ•ã‚©ãƒ«ãƒ€ãŒä½œæˆã§ãã¾ã›ã‚“ã€‚");
 				result = "50";
 				return false;
 			}
@@ -1433,7 +1433,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(!setupCommentFile0())
 			return false;
 		if (client == null){
-			sendtext("ƒƒOƒCƒ“‚µ‚Ä‚È‚¢‚Ì‚ÉƒRƒƒ“ƒg‚Ì•Û‘¶‚É‚È‚è‚Ü‚µ‚½");
+			sendtext("ãƒ­ã‚°ã‚¤ãƒ³ã—ã¦ãªã„ã®ã«ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜ã«ãªã‚Šã¾ã—ãŸ");
 			result = "51";
 			return false;
 		}
@@ -1444,16 +1444,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return true;
 	}
 	private boolean saveComment(NicoClient client) {
-		sendtext("ƒRƒƒ“ƒg‚Ì•Û‘¶");
+		sendtext("ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜");
 		ArrayList<File> filelist = new ArrayList<>();
 		boolean backup = false;
 		if (isSaveComment()) {
-			// ƒtƒ@ƒCƒ‹–¼İ’è
+			// ãƒ•ã‚¡ã‚¤ãƒ«åè¨­å®š
 			if(!setupCommentFile(client)){
 				return false;
 			}
-			sendtext("ƒRƒƒ“ƒg‚Ìƒ_ƒEƒ“ƒ[ƒhŠJn’†");
-			// ‘Oˆ—
+			sendtext("ã‚³ãƒ¡ãƒ³ãƒˆã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰é–‹å§‹ä¸­");
+			// å‰å‡¦ç†
 			appendCommentFile = mkTemp("_"+tid+TMP_APPEND_EXT);
 			if(CommentFile.exists()){
 				backup = Path.fileCopy(CommentFile,appendCommentFile);
@@ -1467,61 +1467,61 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					return false;
 				}
 				if (target == null){
-					sendtext("ƒRƒƒ“ƒg‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s " + client.getExtraError());
+					sendtext("ã‚³ãƒ¡ãƒ³ãƒˆã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•— " + client.getExtraError());
 				}
-				// thread key ‚ÍgetComment‚Åæ“¾Ï‚İ
+				// thread key ã¯getCommentã§å–å¾—æ¸ˆã¿
 			}else{
-				// thread key æ“¾
+				// thread key å–å¾—
 				if(!client.getThreadKey()){
 					return false;
 				}
 			}
 			if(Setting.enableCommentJson() || target == null){
-				// JSON‚Íˆê”ÊƒRƒƒ“ƒgEƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‹¤’Ê(“¯DL)
+				// JSONã¯ä¸€èˆ¬ã‚³ãƒ¡ãƒ³ãƒˆãƒ»ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰å…±é€š(åŒæ™‚DL)
 				commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag,
 						Setting.getCommentIndex());
 				if(commentJson == null)
-					sendtext("ƒRƒƒ“ƒgJSON‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s " + client.getExtraError());
+					sendtext("ã‚³ãƒ¡ãƒ³ãƒˆJSONã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•— " + client.getExtraError());
 			}
 			if(target == null && commentJson!=null){
 				if(getJsonParser().commentJson2xml(commentJson, CommentFile, "user", isAppendComment()))
 					target = CommentFile;
-				log.println("•ÏŠ· userƒRƒƒ“ƒgJSON: "+getJsonParser().getChatCount());
+				log.println("å¤‰æ› userã‚³ãƒ¡ãƒ³ãƒˆJSON: "+getJsonParser().getChatCount());
 			}
 			if(target == null){
-				sendtext("ƒRƒƒ“ƒg‚Ìæ“¾‚É¸”s " + client.getExtraError());
+				sendtext("ã‚³ãƒ¡ãƒ³ãƒˆã®å–å¾—ã«å¤±æ•— " + client.getExtraError());
 				if(backup)
 					Path.move(appendCommentFile, CommentFile);
 				result = "53";
 				return false;
 			}
-			// ƒtƒ@ƒCƒ‹“àƒ_ƒuƒŠ‚ğ®—
+			// ãƒ•ã‚¡ã‚¤ãƒ«å†…ãƒ€ãƒ–ãƒªã‚’æ•´ç†
 			backup = Path.fileCopy(CommentFile,appendCommentFile);
 			filelist.add(CommentFile);
-			sendtext("ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹®—’†");
+			sendtext("ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«æ•´ç†ä¸­");
 			if (!CombineXML.combineXML(filelist, CommentFile, log)){
-				sendtext("ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ª®—o—ˆ‚Ü‚¹‚ñ‚Å‚µ‚½");
+				sendtext("ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãŒæ•´ç†å‡ºæ¥ã¾ã›ã‚“ã§ã—ãŸ");
 				if(backup)
-					Path.move(appendCommentFile, CommentFile);	// ¸”s‚µ‚½‚çƒoƒbƒNƒAƒbƒv‚ğ–ß‚·
+					Path.move(appendCommentFile, CommentFile);	// å¤±æ•—ã—ãŸã‚‰ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚’æˆ»ã™
 				result = "5A";
 				return false;
 			}
-			//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+			//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 			dateUserFirst = getDateUserFirst(CommentFile);
-			sendtext("ƒRƒƒ“ƒg‚Ìƒ_ƒEƒ“ƒ[ƒhI—¹");
+			sendtext("ã‚³ãƒ¡ãƒ³ãƒˆã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰çµ‚äº†");
 
-			sendtext("‚©‚ñ‚½‚ñƒRƒƒ“ƒg‚Ì•Û‘¶");
+			sendtext("ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜");
 			if (CommentFile!=null){
 				EasyCommentFile = Path.getReplacedExtFile(CommentFile, EASY_EXT);
 				backup = false;
 				appendEasyFile = mkTemp(TMP_APPEND_EASY_EXT);
-				// ‘Oˆ—
+				// å‰å‡¦ç†
 				if(EasyCommentFile.exists()){
 					backup = Path.fileCopy(EasyCommentFile, appendEasyFile);
 				}
 				target = null;
 				if(Setting.enableCommentXml()){
-					sendtext("‚©‚ñ‚½‚ñƒRƒƒ“ƒg‚Ìƒ_ƒEƒ“ƒ[ƒhŠJn’†");
+					sendtext("ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰é–‹å§‹ä¸­");
 					//target = client.getOptionalThread(
 					//	OptionalThreadFile, Status, optionalThreadID, back_comment, Time, StopFlag,
 					//	Setting.getCommentIndex(),isAppendComment());
@@ -1530,16 +1530,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					//	return false;
 					//}
 					//if (target == null)
-					//	sendtext("‚©‚ñ‚½‚ñƒRƒƒ“ƒg‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s " + client.getExtraError());
+					//	sendtext("ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•— " + client.getExtraError());
 				}
-				// commentJson‚Íƒ_ƒEƒ“ƒ[ƒhÏ‚İ
+				// commentJsonã¯ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰æ¸ˆã¿
 				if(target == null && commentJson != null){
 					if(getJsonParser().commentJson2xml(commentJson, EasyCommentFile, "easy", isAppendComment()))
 						target = EasyCommentFile;
-					log.println("•ÏŠ· easyƒRƒƒ“ƒgJSON: "+getJsonParser().getChatCount());
+					log.println("å¤‰æ› easyã‚³ãƒ¡ãƒ³ãƒˆJSON: "+getJsonParser().getChatCount());
 				}
 				if(target == null){
-					sendtext("‚©‚ñ‚½‚ñƒRƒƒ“ƒg‚Ìæ“¾‚É¸”s " + client.getExtraError());
+					sendtext("ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆã®å–å¾—ã«å¤±æ•— " + client.getExtraError());
 					if(backup)
 						Path.move(appendEasyFile, EasyCommentFile);
 					result = "55";
@@ -1548,34 +1548,34 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				backup = Path.fileCopy(EasyCommentFile, appendEasyFile);
 				filelist.clear();
 				filelist.add(EasyCommentFile);
-				sendtext("‚©‚ñ‚½‚ñƒRƒƒ“ƒg®—’†");
+				sendtext("ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆæ•´ç†ä¸­");
 				if (!CombineXML.combineXML(filelist, EasyCommentFile, log)){
-					sendtext("‚©‚ñ‚½‚ñƒRƒƒ“ƒg‚ª®—o—ˆ‚Ü‚¹‚ñ‚Å‚µ‚½");
+					sendtext("ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆãŒæ•´ç†å‡ºæ¥ã¾ã›ã‚“ã§ã—ãŸ");
 					if(backup)
 						Path.move(appendEasyFile, EasyCommentFile);
 					result = "5B";
 					return false;
 				}
 				if (dateUserFirst.isEmpty()) {
-					//ƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+					//ãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 					dateUserFirst = getDateUserFirst(EasyCommentFile);
 				}
-				sendtext("‚©‚ñ‚½‚ñƒRƒƒ“ƒg‚Ì•Û‘¶I—¹");
+				sendtext("ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜çµ‚äº†");
 			}
 
 			optionalThreadID = client.getOptionalThreadID();
-			sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚Ì•Û‘¶");
+			sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã®ä¿å­˜");
 			if (optionalThreadID != null && !optionalThreadID.isEmpty() && CommentFile!=null ){
 				OptionalThreadFile = Path.getReplacedExtFile(CommentFile, OPTIONAL_EXT);
 				backup = false;
 				appendOptionalFile = mkTemp(TMP_APPEND_OPTIONAL_EXT);
-				// ‘Oˆ—
+				// å‰å‡¦ç†
 				if(OptionalThreadFile.exists()){
 					backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
 				}
 				target = null;
 				if(Setting.enableCommentXml()){
-					sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚Ìƒ_ƒEƒ“ƒ[ƒhŠJn’†");
+					sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰é–‹å§‹ä¸­");
 					target = client.getOptionalThread(
 						OptionalThreadFile, Status, optionalThreadID, back_comment, Time, StopFlag,
 						Setting.getCommentIndex(),isAppendComment());
@@ -1584,16 +1584,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						return false;
 					}
 					if (target == null)
-						sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s " + client.getExtraError());
+						sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•— " + client.getExtraError());
 				}
-				// commentJson‚Íƒ_ƒEƒ“ƒ[ƒhÏ‚İ
+				// commentJsonã¯ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰æ¸ˆã¿
 				if(target == null && commentJson != null){
 					if(getJsonParser().commentJson2xml(commentJson, OptionalThreadFile, "optional", isAppendComment()))
 						target = OptionalThreadFile;
-					log.println("•ÏŠ· optional thread JSON: "+getJsonParser().getChatCount());
+					log.println("å¤‰æ› optional thread JSON: "+getJsonParser().getChatCount());
 				}
 				if(target == null){
-					sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚Ìæ“¾‚É¸”s " + client.getExtraError());
+					sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã®å–å¾—ã«å¤±æ•— " + client.getExtraError());
 					if(backup)
 						Path.move(appendOptionalFile, OptionalThreadFile);
 					result = "55";
@@ -1602,27 +1602,27 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
 				filelist.clear();
 				filelist.add(OptionalThreadFile);
-				sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh®—’†");
+				sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰æ•´ç†ä¸­");
 				if (!CombineXML.combineXML(filelist, OptionalThreadFile, log)){
-					sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚ª®—o—ˆ‚Ü‚¹‚ñ‚Å‚µ‚½");
+					sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ãŒæ•´ç†å‡ºæ¥ã¾ã›ã‚“ã§ã—ãŸ");
 					if(backup)
 						Path.move(appendOptionalFile, OptionalThreadFile);
 					result = "5B";
 					return false;
 				}
 				if (dateUserFirst.isEmpty()) {
-					//ƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+					//ãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 					dateUserFirst = getDateUserFirst(OptionalThreadFile);
 				}
-				sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚Ì•Û‘¶I—¹");
+				sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã®ä¿å­˜çµ‚äº†");
 			}
-			//ƒjƒRƒXƒRƒƒ“ƒg
+			//ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆ
 			nicos_id = client.getNicosID();
-			sendtext("ƒjƒRƒXƒRƒƒ“ƒg‚Ì•Û‘¶");
+			sendtext("ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜");
 			if(nicos_id!=null && !nicos_id.isEmpty() && CommentFile!=null){
 				isNicos = true;
 				nicosCommentFile = Path.getReplacedExtFile(CommentFile, NICOS_EXT);
-				// ‘Oˆ—
+				// å‰å‡¦ç†
 				backup = false;
 				File appendNicosFile = mkTemp(TMP_APPEND_NICOS_EXT);
 				if(nicosCommentFile.exists()){
@@ -1630,7 +1630,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				target = null;
 				if(Setting.enableCommentXml()){
-					sendtext("ƒjƒRƒXƒRƒƒ“ƒg‚Ì•Û‘¶ŠJn’†");
+					sendtext("ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜é–‹å§‹ä¸­");
 					target = client.getNicosComment(
 						nicosCommentFile, Status, nicos_id, back_comment, Time,
 							StopFlag, Setting.getCommentIndex(), isAppendComment());
@@ -1639,7 +1639,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						return false;
 					}
 					if (target == null)
-						sendtext("ƒjƒRƒXƒRƒƒ“ƒg‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s " + client.getExtraError());
+						sendtext("ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•— " + client.getExtraError());
 				}
 				File nicosCommentJson = null;
 				if(Setting.enableCommentJson() || target == null){
@@ -1647,37 +1647,37 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					nicosCommentJson = client.getNicosCommentJson(nicosCommentJson, Status, back_comment,
 							Time, StopFlag, Setting.getCommentIndex());
 					if(nicosCommentJson == null)
-						sendtext("ƒjƒRƒXƒRƒƒ“ƒgJSON‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s " + client.getExtraError());
+						sendtext("ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆJSONã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•— " + client.getExtraError());
 				}
 				if(target == null && nicosCommentJson != null){
 					if(getJsonParser().commentJson2xml(nicosCommentJson, nicosCommentFile, "nicos", isAppendComment()))
 						target = nicosCommentFile;
-					log.println("•ÏŠ· nicos JSON: "+getJsonParser().getChatCount());
+					log.println("å¤‰æ› nicos JSON: "+getJsonParser().getChatCount());
 				}
 				if(target == null){
-					sendtext("ƒjƒRƒXƒRƒƒ“ƒg‚Ìæ“¾‚É¸”s " + client.getExtraError());
+					sendtext("ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã®å–å¾—ã«å¤±æ•— " + client.getExtraError());
 					if(backup)
 						Path.move(appendNicosFile, nicosCommentFile);
 					result = "55";
 					return false;
 				}
-				// ƒ_ƒuƒŠ®—
+				// ãƒ€ãƒ–ãƒªæ•´ç†
 				backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
 				filelist.clear();
 				filelist.add(nicosCommentFile);
-				sendtext("ƒjƒRƒXƒRƒƒ“ƒg®—’†");
+				sendtext("ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆæ•´ç†ä¸­");
 				if (!CombineXML.combineXML(filelist, nicosCommentFile, log)){
-					sendtext("ƒjƒRƒXƒRƒƒ“ƒg‚ª®—o—ˆ‚Ü‚¹‚ñ‚Å‚µ‚½");
+					sendtext("ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆãŒæ•´ç†å‡ºæ¥ã¾ã›ã‚“ã§ã—ãŸ");
 					if(backup)
 						Path.move(appendNicosFile, nicosCommentFile);
 					result = "5B";
 					return false;
 				}
-				sendtext("ƒjƒRƒXƒRƒƒ“ƒg‚Ì•Û‘¶I—¹");
+				sendtext("ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜çµ‚äº†");
 			}
 			resultBuffer.append("comment: "+CommentFile.getName()+"\n");
 		}
-		sendtext("ƒRƒƒ“ƒg‚Ì•Û‘¶I—¹");
+		sendtext("ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜çµ‚äº†");
 		return true;
 	}
 
@@ -1688,7 +1688,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 //		return Path.getReplacedExtFile(file, OPTIONAL_EXT);
 //	}
 	private String getDateUserFirst(File comfile){
-		//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+		//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 		String text = Path.readAllText(comfile, "UTF-8");
 		Pattern p = Pattern.compile("<chat [^>]+>");
 		Matcher m = p.matcher(text);
@@ -1703,7 +1703,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return ret;
 	}
 	private static String getLastChat(File comfile){
-		//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅŒã‚Ì<chat thread="..." > ‚Ì•¶š—ñ‚ğ•Ô‚·
+		//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€å¾Œã®<chat thread="..." > ã®æ–‡å­—åˆ—ã‚’è¿”ã™
 		String text = Path.readAllText(comfile, "UTF-8");
 		Pattern p = Pattern.compile("<chat [^>]+>");
 		Matcher m = p.matcher(text);
@@ -1729,15 +1729,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean saveOwnerComment(NicoClient client){
-		sendtext("“ŠeÒƒRƒƒ“ƒg‚Ì•Û‘¶");
+		sendtext("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜");
 		if (isSaveOwnerComment()) {
-			// ƒtƒ@ƒCƒ‹–¼‚Ìİ’è
+			// ãƒ•ã‚¡ã‚¤ãƒ«åã®è¨­å®š
 			if(!setupCommentFile(client)){
 				return false;
 			}
 			String basename = CommentFile.getPath().replace(prefix, "");
 			OwnerCommentFile = Path.getReplacedExtFile(new File(basename), OWNER_EXT);
-			sendtext("“ŠeÒƒRƒƒ“ƒg‚Ìƒ_ƒEƒ“ƒ[ƒhŠJn’†");
+			sendtext("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰é–‹å§‹ä¸­");
 			File target = null;
 			if(Setting.enableCommentXml()){
 				target = client.getOwnerComment(OwnerCommentFile, Status, StopFlag);
@@ -1746,8 +1746,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					return false;
 				}
 				if (target == null) {
-					sendtext("“ŠeÒƒRƒƒ“ƒg‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s");
-					log.println("“ŠeÒƒRƒƒ“ƒg‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s");
+					sendtext("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•—");
+					log.println("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•—");
 					//result = "63";
 					//return true;
 				}
@@ -1756,15 +1756,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag,
 						Setting.getCommentIndex());
 				if(commentJson == null)
-					sendtext("ƒRƒƒ“ƒgJSON‚Ìƒ_ƒEƒ“ƒ[ƒh‚É¸”s " + client.getExtraError());
+					sendtext("ã‚³ãƒ¡ãƒ³ãƒˆJSONã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•— " + client.getExtraError());
 			}
 			if(target == null && commentJson != null){
 				if(getJsonParser().commentJson2xml(commentJson, OwnerCommentFile, "owner", false))
 					target = OwnerCommentFile;
-				log.println("•ÏŠ· ownerƒRƒƒ“ƒgJSON: "+getJsonParser().getChatCount());
+				log.println("å¤‰æ› ownerã‚³ãƒ¡ãƒ³ãƒˆJSON: "+getJsonParser().getChatCount());
 			}
 			if(target == null || !target.canRead()){
-				sendtext("“ŠeÒƒRƒƒ“ƒg‚Ìæ“¾‚É¸”s " + client.getExtraError());
+				sendtext("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã®å–å¾—ã«å¤±æ•— " + client.getExtraError());
 				//result = "63";
 				return true;
 			}
@@ -1775,13 +1775,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (nicos_id == null || nicos_id.isEmpty())
 				nicos_id = client.getNicosID();
 		}
-		sendtext("“ŠeÒƒRƒƒ“ƒg‚Ì•Û‘¶I—¹");
+		sendtext("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜çµ‚äº†");
 		return true;
 	}
 
 	private boolean saveThumbInfo0(NicoClient client,String vtag) {
-		sendtext("“®‰æî•ñ‚Ì•Û‘¶");
-		/*ƒy[ƒW‚Ì•Û‘¶*/
+		sendtext("å‹•ç”»æƒ…å ±ã®ä¿å­˜");
+		/*ãƒšãƒ¼ã‚¸ã®ä¿å­˜*/
 		String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
 		File folder = Setting.getVideoFixFileNameFolder();
 		if (isVideoFixFileName()) {
@@ -1789,7 +1789,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				log.println("Folder created: " + folder.getPath());
 			}
 			if (!folder.isDirectory()) {
-				sendtext("“®‰æî•ñ‚Ì•Û‘¶æƒtƒHƒ‹ƒ_‚ªì¬‚Å‚«‚Ü‚¹‚ñB");
+				sendtext("å‹•ç”»æƒ…å ±ã®ä¿å­˜å…ˆãƒ•ã‚©ãƒ«ãƒ€ãŒä½œæˆã§ãã¾ã›ã‚“ã€‚");
 				result = "A0";
 				return false;
 			}
@@ -1799,13 +1799,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			thumbInfoFile = replaceFilenamePattern(thumbInfoFile, false, false);
 		}
 		if(thumbInfoFile==null){
-			sendtext("“®‰æî•ñƒtƒ@ƒCƒ‹‚ªnull‚Å‚·");
+			sendtext("å‹•ç”»æƒ…å ±ãƒ•ã‚¡ã‚¤ãƒ«ãŒnullã§ã™");
 			result = "A1";
 			return false;
 		}
-		sendtext("“®‰æî•ñ‚Ì•Û‘¶’†");
+		sendtext("å‹•ç”»æƒ…å ±ã®ä¿å­˜ä¸­");
 		if (client == null){
-			sendtext("ƒƒOƒCƒ“‚µ‚Ä‚È‚¢‚Ì‚É“®‰æî•ñ‚Ì•Û‘¶‚É‚È‚è‚Ü‚µ‚½");
+			sendtext("ãƒ­ã‚°ã‚¤ãƒ³ã—ã¦ãªã„ã®ã«å‹•ç”»æƒ…å ±ã®ä¿å­˜ã«ãªã‚Šã¾ã—ãŸ");
 			result = "A2";
 			return false;
 		}
@@ -1815,20 +1815,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			return false;
 		}
 		if (thumbInfo == null) {
-			sendtext("“®‰æî•ñ‚Ìæ“¾‚É¸”s" + client.getExtraError());
+			sendtext("å‹•ç”»æƒ…å ±ã®å–å¾—ã«å¤±æ•—" + client.getExtraError());
 			result = "A4";
 			return false;
 		}
 		log.println("reading:" + thumbInfo);
 		boolean isOK = true;
 		if(!saveThumbUser(thumbInfo, client)){
-			sendtext("“ŠeÒî•ñ‚Ìæ“¾‚É¸”s");
-			log.println("“ŠeÒî•ñ‚Ìæ“¾‚É¸”s");
+			sendtext("æŠ•ç¨¿è€…æƒ…å ±ã®å–å¾—ã«å¤±æ•—");
+			log.println("æŠ•ç¨¿è€…æƒ…å ±ã®å–å¾—ã«å¤±æ•—");
 			isOK = false;
 		}
 		if(!saveThumbnailJpg(thumbInfo, client)){
-			sendtext("ƒTƒ€ƒlƒCƒ‹‰æ‘œ‚Ìæ“¾‚É¸”s");
-			log.println("ƒTƒ€ƒlƒCƒ‹‰æ‘œ‚Ìæ“¾‚É¸”s");
+			sendtext("ã‚µãƒ ãƒã‚¤ãƒ«ç”»åƒã®å–å¾—ã«å¤±æ•—");
+			log.println("ã‚µãƒ ãƒã‚¤ãƒ«ç”»åƒã®å–å¾—ã«å¤±æ•—");
 			isOK = false;
 		}
 		if(Path.fileCopy(thumbInfo, thumbInfoFile)){
@@ -1839,7 +1839,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		else
 			isOK = false;
 		if(isOK)
-			sendtext("“®‰æî•ñ‚Ì•Û‘¶I—¹");
+			sendtext("å‹•ç”»æƒ…å ±ã®ä¿å­˜çµ‚äº†");
 		return isOK;
 	}
 
@@ -1848,7 +1848,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			return true;
 		if(saveThumbInfo0(client, vtag))
 			return true;
-		// ƒRƒ~ƒ…ƒjƒeƒB“®‰æ‚Íthumbinfo‚ªæ‚ê‚È‚¢‚Ì‚ÅsmID‚ğg‚¤
+		// ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£å‹•ç”»ã¯thumbinfoãŒå–ã‚Œãªã„ã®ã§smIDã‚’ä½¿ã†
 		if(alternativeTag.isEmpty())
 			alternativeTag = client.getAlternativeTag();
 		if(alternativeTag.isEmpty() || alternativeTag.equals(Tag))
@@ -1858,7 +1858,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private boolean saveThumbUser(Path infoFile, NicoClient client) {
 		if(Setting.isSaveThumbUser()){
-			sendtext("“ŠeÒî•ñ‚Ì•Û‘¶");
+			sendtext("æŠ•ç¨¿è€…æƒ…å ±ã®ä¿å­˜");
 			Path userThumbFile = null;
 			boolean isUser = true;
 			String ownerName = null;
@@ -1875,17 +1875,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					isUser = true;
 			}
 			if(userID==null || userID.isEmpty() || userID.equals("none")){
-				sendtext("“ŠeÒ‚Ìî•ñ‚ª‚ ‚è‚Ü‚¹‚ñ");
+				sendtext("æŠ•ç¨¿è€…ã®æƒ…å ±ãŒã‚ã‚Šã¾ã›ã‚“");
 				result = "A5";
 				return false;
 			}
-			log.println("“ŠeÒ:"+userID);
+			log.println("æŠ•ç¨¿è€…:"+userID);
 			File userFolder = new File(Setting.getUserFolder());
 			if (userFolder.mkdirs()){
 				log.println("Folder created: " + userFolder.getPath());
 			}
 			if(!userFolder.isDirectory()){
-				sendtext("ƒ†[ƒU[ƒtƒHƒ‹ƒ_‚ªì¬‚Å‚«‚Ü‚¹‚ñ");
+				sendtext("ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ•ã‚©ãƒ«ãƒ€ãŒä½œæˆã§ãã¾ã›ã‚“");
 				result = "A6";
 				return false;
 			}
@@ -1899,7 +1899,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					html = Path.readAllText(userThumbFile.getPath(), "UTF-8");
 					ownerName = client.getXmlElement(html, "title");
 				}
-				if(ownerName == null || ownerName.contains("”ñŒöŠJƒvƒƒtƒB[ƒ‹")){
+				if(ownerName == null || ownerName.contains("éå…¬é–‹ãƒ—ãƒ­ãƒ•ã‚£ãƒ¼ãƒ«")){
 					ownerName = null;
 					userThumbFile = client.getUserInfoFile(userID, userFolder);
 					if(userThumbFile != null && userThumbFile.canRead()){
@@ -1907,22 +1907,22 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						ownerName = client.getXmlElement(html, "title");
 					}
 					if(ownerName==null){
-						sendtext("“ŠeÒ‚Ìî•ñ‚Ì“üè‚É¸”s");
+						sendtext("æŠ•ç¨¿è€…ã®æƒ…å ±ã®å…¥æ‰‹ã«å¤±æ•—");
 						result = "A7";
 						if(ownerName==null || ownerName.isEmpty())
 							ownerName = user_nickname;
 						if(ownerName==null || ownerName.isEmpty())
-							ownerName = "“ŠeÒ‚Ìî•ñ‚Ì“üè‚É¸”s";
+							ownerName = "æŠ•ç¨¿è€…ã®æƒ…å ±ã®å…¥æ‰‹ã«å¤±æ•—";
 					//	return false;
 					}
 				}
-				int index = ownerName.lastIndexOf("‚³‚ñ‚ÌƒvƒƒtƒB[ƒ‹]");
+				int index = ownerName.lastIndexOf("ã•ã‚“ã®ãƒ—ãƒ­ãƒ•ã‚£ãƒ¼ãƒ«â€");
 				if(index > 0){
 					ownerName = ownerName.substring(0,index);
 				}
-				index = ownerName.lastIndexOf("‚³‚ñ‚Ìƒ†[ƒU[ƒy[ƒW ]");
+				index = ownerName.lastIndexOf("ã•ã‚“ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒšãƒ¼ã‚¸ â€");
 				if(index > 0){
-					ownerName = ownerName.substring(0,index) + "(ƒjƒRƒŒƒ|”ñŒöŠJ)";
+					ownerName = ownerName.substring(0,index) + "(ãƒ‹ã‚³ãƒ¬ãƒéå…¬é–‹)";
 				}
 				if(user_nickname==null || user_nickname.isEmpty())
 					infoXml = infoXml.replace("</user_id>",
@@ -1937,7 +1937,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				log.printStackTrace(e);
 				return false;
 			}
-			sendtext("“ŠeÒî•ñ‚Ì•Û‘¶I—¹");
+			sendtext("æŠ•ç¨¿è€…æƒ…å ±ã®ä¿å­˜çµ‚äº†");
 		}
 		return true;
 	}
@@ -1949,7 +1949,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				log.println("Folder created: " + folder.getPath());
 			}
 			if (!folder.isDirectory()) {
-				sendtext("ƒTƒ€ƒlƒCƒ‹‰æ‘œ‚Ì•Û‘¶æƒtƒHƒ‹ƒ_‚ªì¬‚Å‚«‚Ü‚¹‚ñB");
+				sendtext("ã‚µãƒ ãƒã‚¤ãƒ«ç”»åƒã®ä¿å­˜å…ˆãƒ•ã‚©ãƒ«ãƒ€ãŒä½œæˆã§ãã¾ã›ã‚“ã€‚");
 				result = "A9";
 				return false;
 			}
@@ -1969,25 +1969,25 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private boolean saveThumbnailJpg(Path infoFile, NicoClient client) {
 		if(Setting.isSaveThumbnailJpg() || Setting.isShowThumbnail()){
-			sendtext("ƒTƒ€ƒlƒCƒ‹‰æ‘œ‚Ì•Û‘¶");
+			sendtext("ã‚µãƒ ãƒã‚¤ãƒ«ç”»åƒã®ä¿å­˜");
 			thumbnailJpg = null;
 			String infoXml = Path.readAllText(infoFile.getPath(), "UTF-8");
 			String url = client.getXmlElement(infoXml, "thumbnail_url");
 			if(url==null || url.isEmpty() || !url.startsWith("http")){
-				sendtext("ƒTƒ€ƒlƒCƒ‹‰æ‘œ‚Ìî•ñ‚ª‚ ‚è‚Ü‚¹‚ñ");
+				sendtext("ã‚µãƒ ãƒã‚¤ãƒ«ç”»åƒã®æƒ…å ±ãŒã‚ã‚Šã¾ã›ã‚“");
 				result = "A8";
 				return false;
 			}
 			if(!setThumbnailJpg())
 				return false;
-			sendtext("ƒTƒ€ƒlƒCƒ‹‰æ‘œ‚Ì•Û‘¶’†");
+			sendtext("ã‚µãƒ ãƒã‚¤ãƒ«ç”»åƒã®ä¿å­˜ä¸­");
 			if (!client.getThumbnailJpg(url+".L", thumbnailJpg)
 				&& !client.getThumbnailJpg(url, thumbnailJpg)) {
-				sendtext("ƒTƒ€ƒlƒCƒ‹‰æ‘œ‚Ìæ“¾‚É¸”s" + client.getExtraError());
+				sendtext("ã‚µãƒ ãƒã‚¤ãƒ«ç”»åƒã®å–å¾—ã«å¤±æ•—" + client.getExtraError());
 				result = "AA";
 				return false;
 			}
-			sendtext("ƒTƒ€ƒlƒCƒ‹‰æ‘œ‚Ì•Û‘¶I—¹");
+			sendtext("ã‚µãƒ ãƒã‚¤ãƒ«ç”»åƒã®ä¿å­˜çµ‚äº†");
 		}
 		return true;
 	}
@@ -2000,7 +2000,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean makeNGPattern(boolean enableML) {
-		sendtext("NGƒpƒ^[ƒ“ì¬’†");
+		sendtext("NGãƒ‘ã‚¿ãƒ¼ãƒ³ä½œæˆä¸­");
 		try{
 			String all_regex = "/((docomo|iPhone|softbank|device:3DS) (white )?)?.* 18[46]|18[46]( (iPhone|device:3DS))? .*/";
 			String def_regex = "/((docomo|iPhone|softbank|device:3DS) (white )?)?18[46]|18[46]( (iPhone|device:3DS))?/";
@@ -2010,11 +2010,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			ngIDPat = NicoXMLReader.makePattern(Setting.getNG_ID(), log, enableML);
 			ngCmd = new CommandReplace(Setting.getNGCommand(), Setting.getReplaceCommand());
 		}catch (Exception e) {
-			sendtext("NGƒpƒ^[ƒ“ì¬‚É¸”sB‚¨‚»‚ç‚­³‹K•\Œ»‚ÌŠÔˆá‚¢H");
+			sendtext("NGãƒ‘ã‚¿ãƒ¼ãƒ³ä½œæˆã«å¤±æ•—ã€‚ãŠãã‚‰ãæ­£è¦è¡¨ç¾ã®é–“é•ã„ï¼Ÿ");
 			result = "70";
 			return false;
 		}
-		sendtext("NGƒpƒ^[ƒ“ì¬I—¹");
+		sendtext("NGãƒ‘ã‚¿ãƒ¼ãƒ³ä½œæˆçµ‚äº†");
 		return true;
 	}
 
@@ -2023,8 +2023,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean convertCommentJson(){
-		//Json‚ª‚ ‚Á‚ÄXML‚ª‚È‚¯‚ê‚ÎJson‚ğƒ[ƒJƒ‹‚É•ÏŠ·‚·‚éB
-		sendtext("ƒRƒƒ“ƒgJson‚ğxml‚Ö‚Ì•ÏŠ·");
+		//JsonãŒã‚ã£ã¦XMLãŒãªã‘ã‚Œã°Jsonã‚’ãƒ­ãƒ¼ã‚«ãƒ«ã«å¤‰æ›ã™ã‚‹ã€‚
+		sendtext("ã‚³ãƒ¡ãƒ³ãƒˆJsonã‚’xmlã¸ã®å¤‰æ›");
 		File folder = Setting.getCommentFixFileNameFolder();
 		if(isConvertWithComment()){
 			if(Setting.isCommentFixFileName()){
@@ -2033,7 +2033,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(commentJson==null){
 					String jsonname = detectTitleFromCommentJson(folder);
 					if(jsonname == null){
-					//	ƒRƒƒ“ƒgJsonƒtƒ@ƒCƒ‹‚ªƒtƒHƒ‹ƒ_‚É‘¶İ‚µ‚Ü‚¹‚ñ
+					//	ã‚³ãƒ¡ãƒ³ãƒˆJsonãƒ•ã‚¡ã‚¤ãƒ«ãŒãƒ•ã‚©ãƒ«ãƒ€ã«å­˜åœ¨ã—ã¾ã›ã‚“
 						return true;
 					}
 					commentJson = new File(folder, jsonname);
@@ -2044,23 +2044,23 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				commentJson = Path.getReplacedExtFile(CommentFile, JSON_EXT);
 			}
 			if (!commentJson.canRead()) {
-				sendtext("ƒRƒƒ“ƒgJsonƒtƒ@ƒCƒ‹‚ª“Ç‚İ‚ß‚Ü‚¹‚ñB");
-				log.println("ƒRƒƒ“ƒgJsonƒtƒ@ƒCƒ‹‚ª“Ç‚ß‚Ü‚¹‚ñB"+commentJson.getPath());
+				sendtext("ã‚³ãƒ¡ãƒ³ãƒˆJsonãƒ•ã‚¡ã‚¤ãƒ«ãŒèª­ã¿è¾¼ã‚ã¾ã›ã‚“ã€‚");
+				log.println("ã‚³ãƒ¡ãƒ³ãƒˆJsonãƒ•ã‚¡ã‚¤ãƒ«ãŒèª­ã‚ã¾ã›ã‚“ã€‚"+commentJson.getPath());
 				return true;
 			}
-			// commentJson‚Í“Ç‚ß‚½B
+			// commentJsonã¯èª­ã‚ãŸã€‚
 			if(isConvertWithOwnerComment()){
-				//“ŠeÒƒRƒƒ“ƒgì¬
+				//æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆä½œæˆ
 				if(OwnerCommentFile==null){
 					String basename = CommentFile.getPath().replace(prefix, "");
 					OwnerCommentFile = Path.getReplacedExtFile(new File(basename), OWNER_EXT);
-					// ƒtƒ@ƒCƒ‹–¼İ’è
+					// ãƒ•ã‚¡ã‚¤ãƒ«åè¨­å®š
 				}
 				if(!OwnerCommentFile.canRead()){
 					if(getJsonParser().commentJson2xml(commentJson, OwnerCommentFile,
 							"owner", false, true)){
 						int cnt = getJsonParser().getChatCount();
-						log.println("•ÏŠ· owner JSON: "+cnt);
+						log.println("å¤‰æ› owner JSON: "+cnt);
 						if(cnt==0)
 							OwnerCommentFile.delete();
 					}
@@ -2077,14 +2077,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					if(cnt==0)
 						CommentFile.delete();
 					else {
-						log.println("•ÏŠ· user JSON: "+cnt);
+						log.println("å¤‰æ› user JSON: "+cnt);
 						appendCommentFile = mkTemp("_"+tid+TMP_APPEND_EXT);
 						backup = Path.fileCopy(CommentFile,appendCommentFile);
 						filelist.clear();
 						filelist.add(CommentFile);
 						if (!CombineXML.combineXML(filelist, CommentFile, log)){
 							if(backup)
-								Path.move(appendCommentFile, CommentFile);	// ¸”s‚µ‚½‚çƒoƒbƒNƒAƒbƒv‚ğ–ß‚·
+								Path.move(appendCommentFile, CommentFile);	// å¤±æ•—ã—ãŸã‚‰ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‚’æˆ»ã™
 						}
 					}
 				}
@@ -2094,7 +2094,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(getJsonParser().commentJson2xml(commentJson, OptionalThreadFile,
 						"optional", isAppendComment())){
 					int cnt = getJsonParser().getChatCount();
-					log.println("•ÏŠ· optional thread JSON: "+cnt);
+					log.println("å¤‰æ› optional thread JSON: "+cnt);
 					if(cnt == 0)
 						OptionalThreadFile.delete();
 					else{
@@ -2115,7 +2115,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(getJsonParser().commentJson2xml(nicosCommentJson, nicosCommentFile,
 						"nicos", isAppendComment())){
 					int cnt = getJsonParser().getChatCount();
-					log.println("•ÏŠ· nicos JSON: "+cnt);
+					log.println("å¤‰æ› nicos JSON: "+cnt);
 					if(cnt==0)
 						nicosCommentFile.delete();
 					else{
@@ -2142,83 +2142,83 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean convertComment(){
-		sendtext("ƒRƒƒ“ƒg‚Ì’†ŠÔƒtƒ@ƒCƒ‹‚Ö‚Ì•ÏŠ·’†");
+		sendtext("ã‚³ãƒ¡ãƒ³ãƒˆã®ä¸­é–“ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®å¤‰æ›ä¸­");
 		File folder = Setting.getCommentFixFileNameFolder();
 		ArrayList<File> filelist = new ArrayList<File>();
 		if (isConvertWithComment()) {
 			if (Setting.isAddTimeStamp() && isCommentFixFileName() && !isAppendComment()) {
-				// •¡”‚ÌƒRƒƒ“ƒgƒtƒ@ƒCƒ‹i‰ß‹ƒƒOj‚ª‚ ‚é‚©‚à
+				// è¤‡æ•°ã®ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ï¼ˆéå»ãƒ­ã‚°ï¼‰ãŒã‚ã‚‹ã‹ã‚‚
 				ArrayList<String> pathlist = detectFilelistFromComment(folder);
 				if (pathlist == null || pathlist.isEmpty()){
-					sendtext(Tag + ": ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹E‰ß‹ƒƒO‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+					sendtext(Tag + ": ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãƒ»éå»ãƒ­ã‚°ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 					result = "71";
 					return false;
 				}
-				// VideoTitle ‚ÍŒ©‚Â‚©‚Á‚½B
+				// VideoTitle ã¯è¦‹ã¤ã‹ã£ãŸã€‚
 				if (pathlist.size() > 0) {			// 0 1.22r3e8, for NP4 comment ver 2009
 					for (String path: pathlist){
 						filelist.add(new File(folder, path));
 					}
 					CommentFile = mkTemp(TMP_COMBINED_XML);
-					sendtext("ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹Œ‹‡’†");
-					log.println("ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹Œ‹‡’†");
+					sendtext("ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«çµåˆä¸­");
+					log.println("ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«çµåˆä¸­");
 					if (!CombineXML.combineXML(filelist, CommentFile, log)){
-						sendtext("ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ªŒ‹‡o—ˆ‚Ü‚¹‚ñ‚Å‚µ‚½iƒoƒOHj");
+						sendtext("ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãŒçµåˆå‡ºæ¥ã¾ã›ã‚“ã§ã—ãŸï¼ˆãƒã‚°ï¼Ÿï¼‰");
 						result = "72";
 						return false;
 					}
 					if (dateUserFirst.isEmpty()) {
-						//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+						//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 						dateUserFirst = getDateUserFirst(CommentFile);
 					}
 					listOfCommentFile = filelist;
 				} else {
-					// ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚Í‚Ğ‚Æ‚Â‚¾‚¯Œ©‚Â‚©‚Á‚½
-					// ‚±‚±‚É‚Í—ˆ‚È‚¢ 1.22r3e8, for NP4 comment ver 2009
+					// ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã¯ã²ã¨ã¤ã ã‘è¦‹ã¤ã‹ã£ãŸ
+					// ã“ã“ã«ã¯æ¥ãªã„ 1.22r3e8, for NP4 comment ver 2009
 				}
 			}
 			if (!isSaveComment()) {
 				if (isCommentFixFileName()) {
 					if (!Setting.isAddTimeStamp()){
-						// ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚Í‚Ğ‚Æ‚Â
+						// ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã¯ã²ã¨ã¤
 						String commentfilename = detectTitleFromComment(folder);
 						if(commentfilename == null){
-							sendtext("ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ªƒtƒHƒ‹ƒ_‚É‘¶İ‚µ‚Ü‚¹‚ñB");
+							sendtext("ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãŒãƒ•ã‚©ãƒ«ãƒ€ã«å­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 							result = "73";
 							return false;
 						}
-						// VideoTitle ‚ÍŒ©‚Â‚©‚Á‚½B
+						// VideoTitle ã¯è¦‹ã¤ã‹ã£ãŸã€‚
 						CommentFile = new File(folder, commentfilename);
 						if (!CommentFile.canRead()) {
-							sendtext("ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ª“Ç‚İ‚ß‚Ü‚¹‚ñB");
+							sendtext("ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãŒèª­ã¿è¾¼ã‚ã¾ã›ã‚“ã€‚");
 							result = "74";
 							return false;
 						}
 						if (dateUserFirst.isEmpty()) {
-							//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+							//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 							dateUserFirst = getDateUserFirst(CommentFile);
 						}
 					} else {
-						// ˆ—Ï‚İ
+						// å‡¦ç†æ¸ˆã¿
 					}
 				} else {
 					CommentFile = Setting.getCommentFile();
 					if (!CommentFile.exists()) {
-						sendtext("ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+						sendtext("ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 						result = "75";
 						return false;
 					}
 					if (dateUserFirst.isEmpty()) {
-						//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+						//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 						dateUserFirst = getDateUserFirst(CommentFile);
 					}
 				}
 			}
-			//alternativeVideoIDæ“¾
+			//alternativeVideoIDå–å¾—
 			if(alternativeTag.isEmpty()){
 				alternativeTag = getViewCounterVideoTag(CommentFile);
 			}
-			//combine ƒtƒ@ƒCƒ‹“àƒ_ƒuƒŠ‚àíœ
+			//combine ãƒ•ã‚¡ã‚¤ãƒ«å†…ãƒ€ãƒ–ãƒªã‚‚å‰Šé™¤
 			filelist.clear();
 			if(!CommentFile.canRead()||CommentFile.length()==0){
 				CommentMiddleFile = null;
@@ -2227,16 +2227,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			filelist.add(CommentFile);
 			CombinedCommentFile = mkTemp(TMP_COMBINED_XML3);
-			sendtext("ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹ƒ}[ƒW’†");
-			log.println("ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹ƒ}[ƒW’†");
+			sendtext("ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ¼ã‚¸ä¸­");
+			log.println("ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ¼ã‚¸ä¸­");
 			if (!CombineXML.combineXML(filelist, CombinedCommentFile, log)){
-				sendtext("ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ªƒ}[ƒWo—ˆ‚Ü‚¹‚ñ‚Å‚µ‚½");
+				sendtext("ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãŒãƒãƒ¼ã‚¸å‡ºæ¥ã¾ã›ã‚“ã§ã—ãŸ");
 				result = "72";
 				return false;
 			}
 			CommentMiddleFile = mkTemp(TMP_COMMENT);
 			if(!convertToCommentMiddle(CombinedCommentFile, CommentMiddleFile, isNicos)){
-				sendtext("ƒRƒƒ“ƒg•ÏŠ·‚É¸”s");
+				sendtext("ã‚³ãƒ¡ãƒ³ãƒˆå¤‰æ›ã«å¤±æ•—");
 				CommentMiddleFile = null;
 				result = "76";
 				return false;
@@ -2250,7 +2250,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private String getViewCounterVideoTag(File comfile) {
-		//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ì<view_counter id="..." > ‚Ì•¶š—ñ‚ğ•Ô‚·
+		//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®<view_counter id="..." > ã®æ–‡å­—åˆ—ã‚’è¿”ã™
 		String text = Path.readAllText(comfile, "UTF-8");
 		Pattern p = Pattern.compile("<view_counter [^>]+>");
 		Matcher m = p.matcher(text);
@@ -2266,7 +2266,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean convertOprionalThread(){
-		sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚Ì’†ŠÔƒtƒ@ƒCƒ‹‚Ö‚Ì•ÏŠ·’†");
+		sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã®ä¸­é–“ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®å¤‰æ›ä¸­");
 		log.println(gettext());
 		File folder = Setting.getCommentFixFileNameFolder();
 		ArrayList<File> filelist = new ArrayList<File>();
@@ -2274,45 +2274,45 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (isConvertWithComment()) {
 			if (isCommentFixFileName()) {
 				if (Setting.isAddTimeStamp() && !isAppendComment()) {
-					// ƒtƒHƒ‹ƒ_w’èA•¡”‚ÌƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒhi‰ß‹ƒƒOj‚ª‚ ‚é‚©‚à
+					// ãƒ•ã‚©ãƒ«ãƒ€æŒ‡å®šæ™‚ã€è¤‡æ•°ã®ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ï¼ˆéå»ãƒ­ã‚°ï¼‰ãŒã‚ã‚‹ã‹ã‚‚
 					optext = OPTIONAL_EXT;
 					ArrayList<String> pathlist = detectFilelistFromOptionalThread(folder, optext);
 					if (pathlist == null || pathlist.isEmpty()){
-						sendtext(Tag + ": ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒhE‰ß‹ƒƒO‚ª‘¶İ‚µ‚Ü‚¹‚ñBƒjƒRƒXƒRƒƒ“ƒg‚ÅƒŠƒgƒ‰ƒC");
+						sendtext(Tag + ": ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ãƒ»éå»ãƒ­ã‚°ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã§ãƒªãƒˆãƒ©ã‚¤");
 						log.println(gettext());
-						// ƒjƒRƒXƒRƒƒ“ƒg‚ÅƒŠƒgƒ‰ƒC
+						// ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã§ãƒªãƒˆãƒ©ã‚¤
 						optext = NICOS_EXT;
 						isOptionalTranslucent = false;
 						pathlist = detectFilelistFromOptionalThread(folder, optext);
 						if(pathlist == null || pathlist.isEmpty()){
-							sendtext(Tag + ": ƒjƒRƒXƒRƒƒ“ƒgE‰ß‹ƒƒO‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+							sendtext(Tag + ": ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆãƒ»éå»ãƒ­ã‚°ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 							log.println(gettext());
 							log.println("No optional thread.");
 							OptionalThreadFile = null;
 							return true;
 						}
 					}
-					// VideoTitle ‚ÍŒ©‚Â‚©‚Á‚½B
+					// VideoTitle ã¯è¦‹ã¤ã‹ã£ãŸã€‚
 					for (String path: pathlist){
 						filelist.add(new File(folder, path));
 					}
 					OptionalThreadFile = mkTemp(TMP_COMBINED_XML2);
-					sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒhŒ‹‡’†");
+					sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰çµåˆä¸­");
 					log.println(gettext());
 					if (!CombineXML.combineXML(filelist, OptionalThreadFile, log)){
-						sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚ªŒ‹‡o—ˆ‚Ü‚¹‚ñ‚Å‚µ‚½iƒoƒOHj");
+						sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ãŒçµåˆå‡ºæ¥ã¾ã›ã‚“ã§ã—ãŸï¼ˆãƒã‚°ï¼Ÿï¼‰");
 						result = "77";
 						//return false;
 						OptionalThreadFile = null;
 						return true;
 					}
 					if (dateUserFirst.isEmpty()) {
-						//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+						//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 						dateUserFirst = getDateUserFirst(OptionalThreadFile);
 					}
 					listOfCommentFile.addAll(filelist);
 				} else {
-					// ƒtƒHƒ‹ƒ_w’èAƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚Í‚P‚Â
+					// ãƒ•ã‚©ãƒ«ãƒ€æŒ‡å®šæ™‚ã€ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã¯ï¼‘ã¤
 					if(isSaveComment()){
 						if(OptionalThreadFile==null){
 							OptionalThreadFile = nicosCommentFile;
@@ -2322,17 +2322,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							isOptionalTranslucent = false;
 						}
 					}else{
-						// ƒtƒHƒ‹ƒ_w’èAƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚ğŒŸõ
+						// ãƒ•ã‚©ãƒ«ãƒ€æŒ‡å®šæ™‚ã€ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’æ¤œç´¢
 						optext = OPTIONAL_EXT;
 						String filename = detectTitleFromOptionalThread(folder, optext);
 						if (filename == null || filename.isEmpty()){
-							sendtext(Tag + ": ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚ªƒtƒHƒ‹ƒ_‚É‘¶İ‚µ‚Ü‚¹‚ñBƒjƒRƒXƒRƒƒ“ƒg‚ÅƒŠƒgƒ‰ƒC");
+							sendtext(Tag + ": ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ãŒãƒ•ã‚©ãƒ«ãƒ€ã«å­˜åœ¨ã—ã¾ã›ã‚“ã€‚ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã§ãƒªãƒˆãƒ©ã‚¤");
 							log.println(gettext());
-							// ƒjƒRƒXƒRƒƒ“ƒg‚ÅƒŠƒgƒ‰ƒC
+							// ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã§ãƒªãƒˆãƒ©ã‚¤
 							optext = NICOS_EXT;
 							filename = detectTitleFromOptionalThread(folder, optext);
 							if(filename == null || filename.isEmpty()){
-								sendtext(Tag + ": ƒjƒRƒXƒRƒƒ“ƒg‚ªƒtƒHƒ‹ƒ_‚É‘¶İ‚µ‚Ü‚¹‚ñB");
+								sendtext(Tag + ": ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆãŒãƒ•ã‚©ãƒ«ãƒ€ã«å­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 								log.println(gettext());
 								log.println("No optional thread.");
 								OptionalThreadFile = null;
@@ -2344,13 +2344,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						OptionalThreadFile = new File(folder, filename);
 					}
 					if (dateUserFirst.isEmpty()) {
-						//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+						//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 						dateUserFirst = getDateUserFirst(OptionalThreadFile);
 					}
 				}
 			} else {
 				if(isSaveComment()){
-					// ƒtƒ@ƒCƒ‹w’è‚ÌAƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚Í‚P‚Â
+					// ãƒ•ã‚¡ã‚¤ãƒ«æŒ‡å®šã®æ™‚ã€ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã¯ï¼‘ã¤
 					if(OptionalThreadFile==null){
 						OptionalThreadFile = nicosCommentFile;
 						if(OptionalThreadFile==null){
@@ -2359,17 +2359,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						isOptionalTranslucent = false;
 					}
 				}else{
-					// ƒtƒ@ƒCƒ‹w’è‚ÌŒŸõ
+					// ãƒ•ã‚¡ã‚¤ãƒ«æŒ‡å®šã®æ™‚æ¤œç´¢
 					optext = OPTIONAL_EXT;
 					OptionalThreadFile = Path.getReplacedExtFile(CommentFile, optext);
 					if (!OptionalThreadFile.exists()){
-						sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚ª‘¶İ‚µ‚Ü‚¹‚ñBƒjƒRƒXƒRƒƒ“ƒg‚ÅƒŠƒgƒ‰ƒC");
+						sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã§ãƒªãƒˆãƒ©ã‚¤");
 						log.println(gettext());
-						// ƒjƒRƒXƒRƒƒ“ƒg‚ÅƒŠƒgƒ‰ƒC
+						// ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã§ãƒªãƒˆãƒ©ã‚¤
 						optext = NICOS_EXT;
 						OptionalThreadFile = Path.getReplacedExtFile(CommentFile, optext);
 						if(!OptionalThreadFile.exists()){
-							sendtext("ƒjƒRƒXƒRƒƒ“ƒg‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+							sendtext("ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 							log.println(gettext());
 							log.println("No optional thread.");
 							OptionalThreadFile = null;
@@ -2380,11 +2380,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 				}
 				if (dateUserFirst.isEmpty()) {
-					//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+					//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 					dateUserFirst = getDateUserFirst(OptionalThreadFile);
 				}
 			}
-			//combine ƒtƒ@ƒCƒ‹“àƒ_ƒuƒŠ‚àíœ
+			//combine ãƒ•ã‚¡ã‚¤ãƒ«å†…ãƒ€ãƒ–ãƒªã‚‚å‰Šé™¤
 			filelist.clear();
 			if(!OptionalThreadFile.canRead()||OptionalThreadFile.length()==0){
 				OptionalMiddleFile = null;
@@ -2393,10 +2393,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			filelist.add(OptionalThreadFile);
 			CombinedOptionalFile = mkTemp(TMP_COMBINED_XML4);
-			sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒhƒ}[ƒW’†");
+			sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ãƒãƒ¼ã‚¸ä¸­");
 			log.println(gettext());
 			if (!CombineXML.combineXML(filelist, CombinedOptionalFile, log)){
-				sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚ªƒ}[ƒWo—ˆ‚Ü‚¹‚ñ‚Å‚µ‚½");
+				sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ãŒãƒãƒ¼ã‚¸å‡ºæ¥ã¾ã›ã‚“ã§ã—ãŸ");
 				result = "77";
 			//	return false;
 				OptionalMiddleFile = null;
@@ -2404,7 +2404,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			OptionalMiddleFile = mkTemp(TMP_OPTIONALTHREAD);
 			if(!convertToCommentMiddle(CombinedOptionalFile, OptionalMiddleFile, isNicos)){
-				sendtext("ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh•ÏŠ·‚É¸”s");
+				sendtext("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰å¤‰æ›ã«å¤±æ•—");
 				log.println(gettext());
 				OptionalMiddleFile = null;
 				result = "78";
@@ -2412,7 +2412,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				OptionalMiddleFile = null;
 				return true;
 			}
-			//ƒRƒƒ“ƒg”‚ğŒŸ¸
+			//ã‚³ãƒ¡ãƒ³ãƒˆæ•°ã‚’æ¤œæŸ»
 			if(!OptionalMiddleFile.canRead()){
 				OptionalMiddleFile = null;
 				// But OK!
@@ -2422,7 +2422,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean convertEasyComment(){
-		sendtext("‚©‚ñ‚½‚ñƒRƒƒ“ƒg‚Ì’†ŠÔƒtƒ@ƒCƒ‹‚Ö‚Ì•ÏŠ·’†");
+		sendtext("ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆã®ä¸­é–“ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®å¤‰æ›ä¸­");
 		log.println(gettext());
 		File folder = Setting.getCommentFixFileNameFolder();
 		ArrayList<File> filelist = new ArrayList<File>();
@@ -2430,47 +2430,47 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (isConvertWithComment()) {
 			if (isCommentFixFileName()) {
 				if (Setting.isAddTimeStamp() && !isAppendComment()) {
-					// ƒtƒHƒ‹ƒ_w’èA•¡”‚ÌƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒhi‰ß‹ƒƒOj‚ª‚ ‚é‚©‚à
+					// ãƒ•ã‚©ãƒ«ãƒ€æŒ‡å®šæ™‚ã€è¤‡æ•°ã®ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ï¼ˆéå»ãƒ­ã‚°ï¼‰ãŒã‚ã‚‹ã‹ã‚‚
 					optext = EASY_EXT;
 					ArrayList<String> pathlist = detectFilelistFromOptionalThread(folder, optext);
 					if (pathlist == null || pathlist.isEmpty()){
-						sendtext(Tag + ": ‚©‚ñ‚½‚ñƒRƒƒ“ƒgE‰ß‹ƒƒO‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+						sendtext(Tag + ": ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆãƒ»éå»ãƒ­ã‚°ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 						log.println(gettext());
 						log.println("No easy comment.");
 						EasyCommentFile = null;
 						return true;
 					}
-					// VideoTitle ‚ÍŒ©‚Â‚©‚Á‚½B
+					// VideoTitle ã¯è¦‹ã¤ã‹ã£ãŸã€‚
 					for (String path: pathlist){
 						filelist.add(new File(folder, path));
 					}
 					EasyCommentFile = mkTemp(TMP_COMBINED_XML5);
-					sendtext("‚©‚ñ‚½‚ñƒRƒƒ“ƒgŒ‹‡’†");
+					sendtext("ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆçµåˆä¸­");
 					log.println(gettext());
 					if (!CombineXML.combineXML(filelist, EasyCommentFile, log)){
-						sendtext("‚©‚ñ‚½‚ñƒRƒƒ“ƒg‚ªŒ‹‡o—ˆ‚Ü‚¹‚ñ‚Å‚µ‚½iƒoƒOHj");
+						sendtext("ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆãŒçµåˆå‡ºæ¥ã¾ã›ã‚“ã§ã—ãŸï¼ˆãƒã‚°ï¼Ÿï¼‰");
 						result = "77";
 						//return false;
 						EasyCommentFile = null;
 						return true;
 					}
 					if (dateUserFirst.isEmpty()) {
-						//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+						//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 						dateUserFirst = getDateUserFirst(EasyCommentFile);
 					}
 					listOfCommentFile.addAll(filelist);
 				} else {
-					// ƒtƒHƒ‹ƒ_w’èAƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚Í‚P‚Â
+					// ãƒ•ã‚©ãƒ«ãƒ€æŒ‡å®šæ™‚ã€ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã¯ï¼‘ã¤
 					if(isSaveComment()){
 						if(EasyCommentFile==null){
 							return true;
 						}
 					}else{
-						// ƒtƒHƒ‹ƒ_w’èAƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚ğŒŸõ
+						// ãƒ•ã‚©ãƒ«ãƒ€æŒ‡å®šæ™‚ã€ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’æ¤œç´¢
 						optext = EASY_EXT;
 						String filename = detectTitleFromOptionalThread(folder, optext);
 						if (filename == null || filename.isEmpty()){
-							sendtext(Tag + ": ‚©‚ñ‚½‚ñƒRƒƒ“ƒg‚ªƒtƒHƒ‹ƒ_‚É‘¶İ‚µ‚Ü‚¹‚ñB");
+							sendtext(Tag + ": ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆãŒãƒ•ã‚©ãƒ«ãƒ€ã«å­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 							log.println(gettext());
 							log.println("No easy comment.");
 							EasyCommentFile = null;
@@ -2479,22 +2479,22 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						EasyCommentFile = new File(folder, filename);
 					}
 					if (dateUserFirst.isEmpty()) {
-						//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+						//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 						dateUserFirst = getDateUserFirst(EasyCommentFile);
 					}
 				}
 			} else {
 				if(isSaveComment()){
-					// ƒtƒ@ƒCƒ‹w’è‚ÌAƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚Í‚P‚Â
+					// ãƒ•ã‚¡ã‚¤ãƒ«æŒ‡å®šã®æ™‚ã€ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã¯ï¼‘ã¤
 					if(EasyCommentFile==null){
 						return true;
 					}
 				}else{
-					// ƒtƒ@ƒCƒ‹w’è‚ÌŒŸõ
+					// ãƒ•ã‚¡ã‚¤ãƒ«æŒ‡å®šã®æ™‚æ¤œç´¢
 					optext = EASY_EXT;
 					EasyCommentFile = Path.getReplacedExtFile(CommentFile, optext);
 					if (!EasyCommentFile.exists()){
-						sendtext("‚©‚ñ‚½‚ñƒRƒƒ“ƒg‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+						sendtext("ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 						log.println(gettext());
 						log.println("No easy comment.");
 						EasyCommentFile = null;
@@ -2502,11 +2502,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 				}
 				if (dateUserFirst.isEmpty()) {
-					//ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ÌÅ‰‚Ìdate="integer"‚ğ’T‚µ‚Ä dateUserFirst ‚ÉƒZƒbƒg
+					//ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€åˆã®date="integer"ã‚’æ¢ã—ã¦ dateUserFirst ã«ã‚»ãƒƒãƒˆ
 					dateUserFirst = getDateUserFirst(EasyCommentFile);
 				}
 			}
-			//combine ƒtƒ@ƒCƒ‹“àƒ_ƒuƒŠ‚àíœ
+			//combine ãƒ•ã‚¡ã‚¤ãƒ«å†…ãƒ€ãƒ–ãƒªã‚‚å‰Šé™¤
 			filelist.clear();
 			if(!EasyCommentFile.canRead()||EasyCommentFile.length()==0){
 				// But OK!
@@ -2515,17 +2515,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			filelist.add(EasyCommentFile);
 			filelist.add(CombinedCommentFile);
 			CombinedEasyFile = mkTemp(TMP_COMBINED_XML6);
-			sendtext("ƒRƒƒ“ƒgE‚©‚ñ‚½‚ñƒRƒƒ“ƒgƒ}[ƒW’†");
+			sendtext("ã‚³ãƒ¡ãƒ³ãƒˆãƒ»ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆãƒãƒ¼ã‚¸ä¸­");
 			log.println(gettext());
 			if (!CombineXML.combineXML(filelist, CombinedEasyFile, log)){
-				sendtext("ƒRƒƒ“ƒgE‚©‚ñ‚½‚ñƒRƒƒ“ƒg‚ªƒ}[ƒWo—ˆ‚Ü‚¹‚ñ‚Å‚µ‚½");
+				sendtext("ã‚³ãƒ¡ãƒ³ãƒˆãƒ»ã‹ã‚“ãŸã‚“ã‚³ãƒ¡ãƒ³ãƒˆãŒãƒãƒ¼ã‚¸å‡ºæ¥ã¾ã›ã‚“ã§ã—ãŸ");
 				result = "77";
 			//	return false;
 				return true;
 			}
 			CommentMiddleFile = mkTemp(TMP_COMMENT);
 			if(!convertToCommentMiddle(CombinedEasyFile, CommentMiddleFile, isNicos)){
-				sendtext("ƒRƒƒ“ƒg•ÏŠ·‚É¸”s");
+				sendtext("ã‚³ãƒ¡ãƒ³ãƒˆå¤‰æ›ã«å¤±æ•—");
 				CommentMiddleFile = null;
 				result = "76";
 				return false;
@@ -2539,55 +2539,55 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean convertOwnerComment(){
-		sendtext("“ŠeÒƒRƒƒ“ƒg‚Ì’†ŠÔƒtƒ@ƒCƒ‹‚Ö‚Ì•ÏŠ·’†");
+		sendtext("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã®ä¸­é–“ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®å¤‰æ›ä¸­");
 		File folder = Setting.getCommentFixFileNameFolder();
 		if (isConvertWithOwnerComment()){
 			if (!isSaveOwnerComment()) {
 				if (isCommentFixFileName()) {
 					String ownerfilename = detectTitleFromOwnerComment(folder);
 					if(ownerfilename == null){
-						sendtext("“ŠeÒƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ªƒtƒHƒ‹ƒ_‚É‘¶İ‚µ‚Ü‚¹‚ñB");
+						sendtext("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãŒãƒ•ã‚©ãƒ«ãƒ€ã«å­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 					//	retValue = "80";
 					//	return false;
-						log.println("“ŠeÒƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ªƒtƒHƒ‹ƒ_‚É‘¶İ‚µ‚Ü‚¹‚ñB");
+						log.println("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãŒãƒ•ã‚©ãƒ«ãƒ€ã«å­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 						OwnerCommentFile = null;
 						return true;
 					}
-					// VideoTitle ‚ÍŒ©‚Â‚©‚Á‚½B
+					// VideoTitle ã¯è¦‹ã¤ã‹ã£ãŸã€‚
 					OwnerCommentFile = new File(folder, ownerfilename);
 					if (!OwnerCommentFile.canRead()) {
-						sendtext("“ŠeÒƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ª“Ç‚İ‚ß‚Ü‚¹‚ñB");
+						sendtext("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãŒèª­ã¿è¾¼ã‚ã¾ã›ã‚“ã€‚");
 						result = "81";
 						return false;
 					}
 				} else {
 					OwnerCommentFile = Setting.getOwnerCommentFile();
 					if (!OwnerCommentFile.exists()) {
-						sendtext("“ŠeÒƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+						sendtext("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 					//	retValue = "82";
 					//	return false;
-						log.println("“ŠeÒƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+						log.println("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 						OwnerCommentFile = null;
 						return true;
 					}
 				}
 			}
-			//alternativeVideoIDæ“¾
+			//alternativeVideoIDå–å¾—
 			if(alternativeTag.isEmpty()){
 				alternativeTag = getViewCounterVideoTag(OwnerCommentFile);
 			}
 			OwnerMiddleFile = mkTemp(TMP_OWNERCOMMENT);
-			//‚±‚±‚Å commentReplace‚ªì‚ç‚ê‚é
-			log.println("“ŠeÒƒRƒƒ“ƒg•ÏŠ·");
+			//ã“ã“ã§ commentReplaceãŒä½œã‚‰ã‚Œã‚‹
+			log.println("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆå¤‰æ›");
 			if(OwnerCommentFile!=null && OwnerCommentFile.canRead()){
 				if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile, isNicos)){
-					sendtext("“ŠeÒƒRƒƒ“ƒg•ÏŠ·‚É¸”s");
+					sendtext("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆå¤‰æ›ã«å¤±æ•—");
 					OwnerMiddleFile = null;
 					result = "83";
 					return false;
 				}
 			}
-			//ƒRƒƒ“ƒg”‚ğŒŸ¸
+			//ã‚³ãƒ¡ãƒ³ãƒˆæ•°ã‚’æ¤œæŸ»
 			if(!OwnerMiddleFile.canRead()){
 				OwnerMiddleFile = null;
 				ownerCommentNum = 0;
@@ -2625,7 +2625,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		String duration = "";
 		if(Setting.changedLiveOperationDuration())
 			duration = Setting.getLiveOperationDuration();
-		// ƒjƒRƒXƒRƒƒ“ƒg‚Í premium "2" or "3"‚İ‚½‚¢‚È‚Ì‚ÅƒjƒRƒXƒRƒƒ“ƒg‚Ì‚Í‰^‰cƒRƒƒ“ƒg•ÏŠ·‚µ‚È‚¢‚æ‚¤‚É‚·‚é
+		// ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã¯ premium "2" or "3"ã¿ãŸã„ãªã®ã§ãƒ‹ã‚³ã‚¹ã‚³ãƒ¡ãƒ³ãƒˆã®æ™‚ã¯é‹å–¶ã‚³ãƒ¡ãƒ³ãƒˆå¤‰æ›ã—ãªã„ã‚ˆã†ã«ã™ã‚‹
 		boolean live_op = Setting.isLiveOperationConversion() && !is_nicos;
 		boolean html5 = html5CommentMode;
 		if(is_nicos)
@@ -2636,7 +2636,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				live_op, Setting.isPremiumColorCheck(), duration, log, isDebugNet, html5)){
 			return false;
 		}
-		//ƒRƒƒ“ƒg”‚ª0‚Ìíœ‚·‚é
+		//ã‚³ãƒ¡ãƒ³ãƒˆæ•°ãŒ0ã®æ™‚å‰Šé™¤ã™ã‚‹
 		try{
 			FileInputStream fis = new FileInputStream(middlefile);
 			int comment_num = Util.readInt(fis);
@@ -2655,15 +2655,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	private boolean convertVideo() throws IOException {
-		sendtext("“®‰æ‚Ì•ÏŠ·‚ğŠJn");
+		sendtext("å‹•ç”»ã®å¤‰æ›ã‚’é–‹å§‹");
 		video_vhext = Path.mkTemp(Tag+"[log]vhext.txt");
 		stopwatch.start();
 		if(!VideoFile.canRead()){
-			sendtext("“®‰æ‚ª“Ç‚İ‚ß‚Ü‚¹‚ñ");
+			sendtext("å‹•ç”»ãŒèª­ã¿è¾¼ã‚ã¾ã›ã‚“");
 			result = "90";
 			return false;
 		}
-		/*ƒrƒfƒI–¼‚ÌŠm’è*/
+		/*ãƒ“ãƒ‡ã‚ªåã®ç¢ºå®š*/
 		File folder = Setting.getConvFixFileNameFolder();
 		if (!chekAspectVhookOption(VideoFile, wayOfVhook)){
 			result = "91";
@@ -2674,7 +2674,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				log.println("Created folder: " + folder.getPath());
 			}
 			if (!folder.isDirectory()) {
-				sendtext("•ÏŠ·Œã‚Ì•Û‘¶æƒtƒHƒ‹ƒ_‚ªì¬‚Å‚«‚Ü‚¹‚ñB");
+				sendtext("å¤‰æ›å¾Œã®ä¿å­˜å…ˆãƒ•ã‚©ãƒ«ãƒ€ãŒä½œæˆã§ãã¾ã›ã‚“ã€‚");
 				result = "92";
 				return false;
 			}
@@ -2682,12 +2682,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (conv_name == null){
 				conv_name = "null";
 			}
-			if (!Setting.isNotAddVideoID_Conv()||conv_name.isEmpty()) {//•t‰Á‚·‚é‚È‚ç
+			if (!Setting.isNotAddVideoID_Conv()||conv_name.isEmpty()) {//ä»˜åŠ ã™ã‚‹ãªã‚‰
 				conv_name = Setting.isChangeTitleId()?
 						VideoTitle + VideoID : VideoID + VideoTitle;
 			}
 			if (conv_name.isEmpty()) {
-				sendtext("•ÏŠ·Œã‚Ìƒ^ƒCƒgƒ‹‚ª‚ ‚è‚Ü‚¹‚ñ(ƒrƒfƒIƒtƒ@ƒCƒ‹–¼‚ªŠm’è‚Å‚«‚Ü‚¹‚ñ)B");
+				sendtext("å¤‰æ›å¾Œã®ã‚¿ã‚¤ãƒˆãƒ«ãŒã‚ã‚Šã¾ã›ã‚“(ãƒ“ãƒ‡ã‚ªãƒ•ã‚¡ã‚¤ãƒ«åãŒç¢ºå®šã§ãã¾ã›ã‚“)ã€‚");
 				result = "93";
 				return false;
 			}
@@ -2695,7 +2695,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (Setting.isAddOption_ConvVideoFile()){
 				byte[] dirName = new File(folder, conv_name)
 					.getAbsolutePath().getBytes("Shift_JIS");
-				// ƒtƒHƒ‹ƒ_–¼‚ª’·‚·‚¬‚éê‡
+				// ãƒ•ã‚©ãƒ«ãƒ€åãŒé•·ã™ãã‚‹å ´åˆ
 				if (dirName.length > (255-12)){
 					conv_name = VideoID;
 				}
@@ -2705,7 +2705,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					log.println("Created folder: " + folder.getPath());
 				}
 				if (!folder.isDirectory()) {
-					sendtext("“®‰æ(FFmpegİ’è–¼)ƒtƒ@ƒCƒ‹‚Ì•Û‘¶æƒtƒHƒ‹ƒ_‚ªì¬‚Å‚«‚Ü‚¹‚ñB");
+					sendtext("å‹•ç”»(FFmpegè¨­å®šå)ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¿å­˜å…ˆãƒ•ã‚©ãƒ«ãƒ€ãŒä½œæˆã§ãã¾ã›ã‚“ã€‚");
 					result = "94";
 					return false;
 				}
@@ -2715,11 +2715,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				conv_name = getFFmpegOptionName() + safeAsciiFileName(conv_name);
 				dirName = new File(folder, conv_name).getAbsolutePath().getBytes("Shift_JIS");
-				// ƒtƒ@ƒCƒ‹–¼‚ª’·‚·‚¬‚éê‡
+				// ãƒ•ã‚¡ã‚¤ãƒ«åãŒé•·ã™ãã‚‹å ´åˆ
 				if (dirName.length > (255 - 3)){
 					int len = conv_name.length() - (dirName.length - (255 - 3));
 					if (len < 1){
-						sendtext("ì¬‚·‚éƒrƒfƒIƒtƒ@ƒCƒ‹–¼‚ª’·‚·‚¬‚Ü‚·B");
+						sendtext("ä½œæˆã™ã‚‹ãƒ“ãƒ‡ã‚ªãƒ•ã‚¡ã‚¤ãƒ«åãŒé•·ã™ãã¾ã™ã€‚");
 						result = "95";
 						return false;
 					}
@@ -2759,25 +2759,25 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			ConvertedVideoFile = new File(folder, convfilename);
 		}
 		if (ConvertedVideoFile.getAbsolutePath().equals(VideoFile.getAbsolutePath())){
-			sendtext("•ÏŠ·Œã‚Ìƒtƒ@ƒCƒ‹–¼‚ª•ÏŠ·‘O‚Æ“¯‚¶‚Å‚·");
+			sendtext("å¤‰æ›å¾Œã®ãƒ•ã‚¡ã‚¤ãƒ«åãŒå¤‰æ›å‰ã¨åŒã˜ã§ã™");
 			result = "96";
 			return false;
 		}
 		if(ConvertedVideoFile.isFile() && ConvertedVideoFile.canRead()){
-			sendtext("•ÏŠ·Œã‚Ìƒtƒ@ƒCƒ‹‚ÍŠù‚É‘¶İ‚µ‚Ü‚·");
-			log.println("•ÏŠ·Œã‚Ìƒtƒ@ƒCƒ‹‚ÍŠù‚É‘¶İ‚µ‚Ü‚·");
+			sendtext("å¤‰æ›å¾Œã®ãƒ•ã‚¡ã‚¤ãƒ«ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™");
+			log.println("å¤‰æ›å¾Œã®ãƒ•ã‚¡ã‚¤ãƒ«ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™");
 			String otherFilename = "1"+ ConvertedVideoFile.getName();
 			if(ConvertedVideoFile.renameTo(new File(ConvertedVideoFile.getParentFile(),otherFilename))){
-				sendtext("“¯–¼‚Ìƒtƒ@ƒCƒ‹‚ğƒŠƒl[ƒ€‚µ‚Ü‚µ‚½");
-				log.println("“¯–¼‚Ìƒtƒ@ƒCƒ‹‚ğƒŠƒl[ƒ€‚µ‚Ü‚µ‚½"+otherFilename);
+				sendtext("åŒåã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒªãƒãƒ¼ãƒ ã—ã¾ã—ãŸ");
+				log.println("åŒåã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒªãƒãƒ¼ãƒ ã—ã¾ã—ãŸ"+otherFilename);
 			}else{
-				sendtext("“¯–¼‚Ìƒtƒ@ƒCƒ‹‚ğƒŠƒl[ƒ€o—ˆ‚Ü‚¹‚ñ‚Å‚µ‚½Bã‘‚«‚µ‚Ü‚·");
-				log.println("“¯–¼‚Ìƒtƒ@ƒCƒ‹‚ğƒŠƒl[ƒ€o—ˆ‚Ü‚¹‚ñ‚Å‚µ‚½Bã‘‚«‚µ‚Ü‚·");
+				sendtext("åŒåã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒªãƒãƒ¼ãƒ å‡ºæ¥ã¾ã›ã‚“ã§ã—ãŸã€‚ä¸Šæ›¸ãã—ã¾ã™");
+				log.println("åŒåã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒªãƒãƒ¼ãƒ å‡ºæ¥ã¾ã›ã‚“ã§ã—ãŸã€‚ä¸Šæ›¸ãã—ã¾ã™");
 			}
 		}
 		int code = converting_video();
 		//stopwatch.stop();
-		//vhext(nicovideoƒƒO)‚ğƒRƒs[‚·‚é
+		//vhext(nicovideoãƒ­ã‚°)ã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹
 		if(video_vhext != null){
 			log_vhext = new File(".","[log]vhext.txt");
 			try{
@@ -2788,23 +2788,23 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						Path.fileCopy(video_vhext, log_vhext);
 					}
 					else
-						log.println(video_vhext.getPath()+" ‚ª—L‚è‚Ü‚¹‚ñ.");
+						log.println(video_vhext.getPath()+" ãŒæœ‰ã‚Šã¾ã›ã‚“.");
 				}
 			}catch(Exception e){
-				log.println(video_vhext.getPath()+" ‚É‘‚¯‚Ü‚¹‚ñ.");
+				log.println(video_vhext.getPath()+" ã«æ›¸ã‘ã¾ã›ã‚“.");
 			}
 		}
 		if (code == 0) {
-			sendtext("•ÏŠ·‚ª³í‚ÉI—¹‚µ‚Ü‚µ‚½B");
+			sendtext("å¤‰æ›ãŒæ­£å¸¸ã«çµ‚äº†ã—ã¾ã—ãŸã€‚");
 			log.println(lastFrame);
 			return true;
-		} else if (code == CODE_CONVERTING_ABORTED) { /*’†’f*/
+		} else if (code == CODE_CONVERTING_ABORTED) { /*ä¸­æ–­*/
 			result = "97";
 		} else {
 			if(errorLog==null||errorLog.isEmpty())
 				if(ffmpeg!=null)
 					errorLog = ffmpeg.getLastError().toString();
-			sendtext("•ÏŠ·ƒGƒ‰[F(" + code + ") "+ getLastError());
+			sendtext("å¤‰æ›ã‚¨ãƒ©ãƒ¼ï¼š(" + code + ") "+ getLastError());
 			result = ""+code;
 		}
 		return false;
@@ -2822,9 +2822,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	 * replaceFilenamePattern(File source)
 	 * @param file
 	 * @return
-	 *  %ID% -> Tag, %id% -> [Tag](VideoID‚Æ“¯‚¶) %TITLE% -> VideoTitle,
-	 *  %CAT% -> ‚à‚µ‚ ‚ê‚ÎƒJƒeƒSƒŠ[ƒ^ƒO, %TAG1% ->‚Q”Ô‚ß‚Ì“®‰æƒ^ƒO
-	 *  %TAGn% (n=2,3,...10) n+1”Ô–Ú‚Ìƒ^ƒO
+	 *  %ID% -> Tag, %id% -> [Tag](VideoIDã¨åŒã˜) %TITLE% -> VideoTitle,
+	 *  %CAT% -> ã‚‚ã—ã‚ã‚Œã°ã‚«ãƒ†ã‚´ãƒªãƒ¼ã‚¿ã‚°, %TAG1% ->ï¼’ç•ªã‚ã®å‹•ç”»ã‚¿ã‚°
+	 *  %TAGn% (n=2,3,...10) n+1ç•ªç›®ã®ã‚¿ã‚°
 	 */
 	private File replaceFilenamePattern(File file, boolean economy, boolean dmc) {
 		String videoFilename = file.getPath();
@@ -2837,18 +2837,18 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(nicoCategory==null)
 			nicoCategory = "";
 		String canonical =
-			VideoTitle.replace("@", " ").replaceAll(" +", " ").trim()
-			.replace("D", ".");
+			VideoTitle.replace("ã€€", " ").replaceAll(" +", " ").trim()
+			.replace("ï¼", ".");
 		String lowString = economy? LOW_PREFIX:(dmc?DMC_PREFIX:"");
 		String surfix = videoFilename.contains("%LOW%")? "":lowString;
 		videoFilename =
-			videoFilename.replace("%ID%", Tag+surfix) 	// %ID% -> “®‰æID
-			.replace("%id%", VideoID+surfix)	// %id% -> [“®‰æID]
-			.replace("%LOW%", lowString)	// %LOW% -> economy low_
-			.replace("%TITLE%",VideoTitle)	// %TITLE% -> “®‰æƒ^ƒCƒgƒ‹
-			.replace("%title%", canonical)	// %title% -> “®‰æƒ^ƒCƒgƒ‹i‹ó”’‘å•¶š‚ğ‹ó”’¬•¶š‚Éj
-			.replace("%CAT%", nicoCategory)		// %CAT% -> ‚à‚µ‚ ‚ê‚ÎƒJƒeƒSƒŠ[ƒ^ƒO
-			.replace("%cat%", NicoClient.eRaseMultiByteMark(nicoCategory))		// %cat% -> ‘SŠp‹L†íœ
+			videoFilename.replace("%ID%", Tag+surfix) 	// %ID% -> å‹•ç”»ID
+			.replace("%id%", VideoID+surfix)	// %id% -> [å‹•ç”»ID]
+			.replace("%LOW%", lowString)	// %LOW% -> economyæ™‚ low_
+			.replace("%TITLE%",VideoTitle)	// %TITLE% -> å‹•ç”»ã‚¿ã‚¤ãƒˆãƒ«
+			.replace("%title%", canonical)	// %title% -> å‹•ç”»ã‚¿ã‚¤ãƒˆãƒ«ï¼ˆç©ºç™½å¤§æ–‡å­—ã‚’ç©ºç™½å°æ–‡å­—ã«ï¼‰
+			.replace("%CAT%", nicoCategory)		// %CAT% -> ã‚‚ã—ã‚ã‚Œã°ã‚«ãƒ†ã‚´ãƒªãƒ¼ã‚¿ã‚°
+			.replace("%cat%", NicoClient.eRaseMultiByteMark(nicoCategory))		// %cat% -> å…¨è§’è¨˜å·å‰Šé™¤
 			;
 		for(int i = 1; i < numTag; i++){
 			String tag = nicoTagList.get(i);
@@ -2862,8 +2862,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				log.println("folder created: "+parent.getPath());
 			}
 			if(!parent.isDirectory()){
-				log.println("ƒtƒHƒ‹ƒ_‚ªì¬‚Å‚«‚Ü‚¹‚ñ:"+parent.getPath());
-				log.println("’uŠ·¸”s "+videoFilename);
+				log.println("ãƒ•ã‚©ãƒ«ãƒ€ãŒä½œæˆã§ãã¾ã›ã‚“:"+parent.getPath());
+				log.println("ç½®æ›å¤±æ•— "+videoFilename);
 				target = file;
 			}
 		}
@@ -2876,7 +2876,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private boolean canRetry(NicoClient client, Gate gate){
 
-		//ƒQ[ƒg§ŒÀ’´‚¦‚È‚¢‚È‚çƒŠƒgƒ‰ƒC‰Â”\
+		//ã‚²ãƒ¼ãƒˆåˆ¶é™è¶…ãˆãªã„ãªã‚‰ãƒªãƒˆãƒ©ã‚¤å¯èƒ½
 		String ecode;
 		if(client==null) return false;
 		gate.setError();
@@ -2887,11 +2887,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 		if((ecode.contains("503") || ecode.contains("504"))){
 			//	HTTP_UNAVAILABLE  HTTP_GATEWAY_TIMEOUT
-			//  ƒT[ƒrƒX‚ªˆê“I‚É‰ß•‰‰× ƒQ[ƒgƒEƒFƒCƒ^ƒCƒ€ƒAƒEƒg
+			//  ã‚µãƒ¼ãƒ“ã‚¹ãŒä¸€æ™‚çš„ã«éè² è· ã‚²ãƒ¼ãƒˆã‚¦ã‚§ã‚¤ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆ
 			// retry count check
-			sendtext("ƒŠƒgƒ‰ƒC‘Ò‚¿’†");
-			TimerTask task = new Tick(Status, "ƒŠƒgƒ‰ƒC‘Ò‚¿@");
-			Timer timer = new Timer("ƒŠƒgƒ‰ƒC•bŠÔŠuƒ^ƒCƒ}[");
+			sendtext("ãƒªãƒˆãƒ©ã‚¤å¾…ã¡ä¸­");
+			TimerTask task = new Tick(Status, "ãƒªãƒˆãƒ©ã‚¤å¾…ã¡ã€€");
+			Timer timer = new Timer("ãƒªãƒˆãƒ©ã‚¤ç§’é–“éš”ã‚¿ã‚¤ãƒãƒ¼");
 			timer.schedule(task, 0, 1000);	// 1000 miliseconds
 			if(gate.notExceedLimiterGate()){
 				// can retry
@@ -2900,7 +2900,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return true;
 			}
 			timer.cancel();
-			sendtext("ƒŠƒgƒ‰ƒC¸”s");
+			sendtext("ãƒªãƒˆãƒ©ã‚¤å¤±æ•—");
 		}
 		// not error or other error,cannnot retry
 		return false;
@@ -2969,12 +2969,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}while (!success && canRetry(client, gate));
 				if (!success) {
 					if(Tag==null || Tag.isEmpty()){
-						sendtext("URL/ID‚Ìw’è‚ª‚ ‚è‚Ü‚¹‚ñ " + client.getExtraError());
+						sendtext("URL/IDã®æŒ‡å®šãŒã‚ã‚Šã¾ã›ã‚“ " + client.getExtraError());
 					}else if(!client.loginCheck()){
-						sendtext("ƒƒOƒCƒ“¸”s " + browserInfo.getName() + " " + client.getExtraError());
+						sendtext("ãƒ­ã‚°ã‚¤ãƒ³å¤±æ•— " + browserInfo.getName() + " " + client.getExtraError());
 						if(parent!=null) parent.sendLoginStatus(" ");
 					}else{
-						sendtext(Tag + "‚Ìî•ñ‚Ìæ“¾‚É¸”s " + client.getExtraError());
+						sendtext(Tag + "ã®æƒ…å ±ã®å–å¾—ã«å¤±æ•— " + client.getExtraError());
 					}
 					result = "-3";
 					return result;
@@ -3005,20 +3005,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				nicoTagList.add(0, "");
 				numTag = nicoTagList.size();
 				setVidTitile(tid, Tag, VideoTitle, client==null? false: client.isEco());
-				sendtext(Tag + "‚Ìî•ñ‚Ìæ“¾‚É¬Œ÷");
+				sendtext(Tag + "ã®æƒ…å ±ã®å–å¾—ã«æˆåŠŸ");
 				if(alternativeTag.isEmpty()){
 					alternativeTag = client.getAlternativeTag();
 				}
 			}
 
-			//thumbnail iconƒZƒbƒg
+			//thumbnail iconã‚»ãƒƒãƒˆ
 			if(Setting.isShowThumbnail()){
 				saveThumbInfo(client, Tag);
 				if(thumbnailJpg!=null && thumbnailJpg.canRead()){
 					ImageIcon icon = new ImageIcon(thumbnailJpg.getPath());
 					thumbIcon = new ImageIcon(icon.getImage()
 						.getScaledInstance(32,32,Image.SCALE_FAST));
-					//thumbnail•\¦
+					//thumbnailè¡¨ç¤º
 					StopFlag.getButton().setIcon(thumbIcon);
 				}
 			}
@@ -3050,16 +3050,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			//stopwatch.show();
 			if(Setting.isSaveThumbInfo() && !saveThumbInfo(client, Tag)){
 				if(isSaveConverted())
-					log.println("’Ç‰Áî•ñ‚Ìæ“¾‚É¸”s‚µ‚Ü‚µ‚½‚ª‘±s‚µ‚Ü‚·B");
+					log.println("è¿½åŠ æƒ…å ±ã®å–å¾—ã«å¤±æ•—ã—ã¾ã—ãŸãŒç¶šè¡Œã—ã¾ã™ã€‚");
 				else {
 					String tstr = gettext();
 					if(isSaveComment()) {
-						tstr = "ƒRƒƒ“ƒgæ“¾¬Œ÷@" + tstr;
+						tstr = "ã‚³ãƒ¡ãƒ³ãƒˆå–å¾—æˆåŠŸã€€" + tstr;
 					}
 					if(isSaveVideo()) {
-						tstr = "“®‰ææ“¾¬Œ÷@" + tstr;
+						tstr = "å‹•ç”»å–å¾—æˆåŠŸã€€" + tstr;
 					}
-					tstr = "[Œx]" + tstr;
+					tstr = "[è­¦å‘Š]" + tstr;
 					sendtext(tstr);
 					log.println(tstr);
 					return result;
@@ -3071,13 +3071,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 			//stopwatch.show();
 			String before = stopwatch.formatElapsedTime();
-			log.println("•ÏŠ·‘OŠÔ@" + before);
-			stopwatch.setTrailer("A•ÏŠ·‘O "+before);
+			log.println("å¤‰æ›å‰æ™‚é–“ã€€" + before);
+			stopwatch.setTrailer("ã€å¤‰æ›å‰ "+before);
 
 			gate.exit(result);
 			//manager.sendTimeInfo();
 			if (!isSaveConverted()) {
-				sendtext("“®‰æEƒRƒƒ“ƒg‚ğ•Û‘¶‚µA•ÏŠ·‚Ís‚¢‚Ü‚¹‚ñ‚Å‚µ‚½B");
+				sendtext("å‹•ç”»ãƒ»ã‚³ãƒ¡ãƒ³ãƒˆã‚’ä¿å­˜ã—ã€å¤‰æ›ã¯è¡Œã„ã¾ã›ã‚“ã§ã—ãŸã€‚");
 				result = "0";
 				return result;
 			}
@@ -3115,7 +3115,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return result;
 			}
 
-			//ƒ[ƒJƒ‹‚ÌthumbInfoDataƒZƒbƒg
+			//ãƒ­ãƒ¼ã‚«ãƒ«æ™‚ã®thumbInfoDataã‚»ãƒƒãƒˆ
 			if(thumbInfoData==null){
 				String ext = Setting.isSaveThumbInfoAsText()? ".txt":".xml";
 				if(thumbInfoFile==null)
@@ -3124,15 +3124,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					thumbInfoData = Path.readAllText(thumbInfoFile, "UTF-8");
 				if(thumbInfoData!=null
 				  && !thumbInfoData.contains("status=\"ok\"")){
-					// ¶•ú‘—‚Å‚Í‚È‚­thumbinfoƒ[ƒh¸”s‚Ü‚½‚Ícommentfile‚¾‚Á‚½‚ç
-					// “®‰æ‚Ìƒƒ^ƒf[ƒ^‚ğ“ü‚ê‚Ä‚¨‚­
+					// ç”Ÿæ”¾é€ã§ã¯ãªãthumbinfoãƒ­ãƒ¼ãƒ‰å¤±æ•—ã¾ãŸã¯commentfileã ã£ãŸã‚‰
+					// å‹•ç”»ã®ãƒ¡ã‚¿ãƒ‡ãƒ¼ã‚¿ã‚’å…¥ã‚Œã¦ãŠã
 					thumbInfoData=null;
 				}
 			}
 
 			//stopwatch.show();
 			if (convertVideo()) {
-				// •ÏŠ·¬Œ÷
+				// å¤‰æ›æˆåŠŸ
 				result = "0";
 				autoPlay.offer(ConvertedVideoFile, false);
 				if(!autoPlay.isPlayDownload())
@@ -3170,20 +3170,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			String url = Tag.contains(WatchInfo)? Tag : Tag+WatchInfo;
 			if(result.equals("97"))
-				errorControl.setError(result,url,"’†~‚µ‚Ü‚µ‚½",VideoTitle);
+				errorControl.setError(result,url,"ä¸­æ­¢ã—ã¾ã—ãŸ",VideoTitle);
 			else if(result.equals("98")){
-				StringBuffer sb = new StringBuffer(Tag+"\tƒŠƒgƒ‰ƒC\t"+WatchInfo);
+				StringBuffer sb = new StringBuffer(Tag+"\tãƒªãƒˆãƒ©ã‚¤\t"+WatchInfo);
 				if(parent!=null){
 					parent.myListGetterDone(sb, log);
 				}else{
-					errorControl.setError(result,url,"ƒTƒXƒyƒ“ƒh\t"+resumeDmcFile,VideoTitle);
+					errorControl.setError(result,url,"ã‚µã‚¹ãƒšãƒ³ãƒ‰\t"+resumeDmcFile,VideoTitle);
 				}
 			}
 			else
 			if(!result.equals("0"))
 				errorControl.setError(result,url,gettext(),VideoTitle);
 			else if(isEcoVideo){
-				errorControl.setEco("eco", url, "ƒGƒRƒmƒ~[¬Œ÷" ,VideoTitle);
+				errorControl.setEco("eco", url, "ã‚¨ã‚³ãƒãƒŸãƒ¼æˆåŠŸ" ,VideoTitle);
  			}
 			synchronized(StopFlag){
 				StopFlag.finish();
@@ -3192,7 +3192,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			//stopwatch.show();
 			stopwatch.stop();
 			stopwatch.cancel();
-			log.println("•ÏŠ·ŠÔ@" + stopwatch.formatLatency());
+			log.println("å¤‰æ›æ™‚é–“ã€€" + stopwatch.formatLatency());
 			log.println("LastStatus:[" + result + "]" + gettext());
 			log.println("VideoInfo: " + MovieInfo.getText());
 			log.println("LastFrame: "+ lastFrame);
@@ -3212,11 +3212,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 //			File exe = new File("end.exe");
 //			File bat = new File("end.bat");
 //			if(bat.exists()){
-//				// batch file Às
+//				// batch file å®Ÿè¡Œ
 //				CmdExec cmdexec = new CmdExec(bat,ConvertedVideoFile.getAbsolutePath());
 //				cmdexec.start();
 //			}else if (exe.exists()){
-//				// exe file Às
+//				// exe file å®Ÿè¡Œ
 //				CmdExec cmdexec = new CmdExec(exe,ConvertedVideoFile.getAbsolutePath());
 //				cmdexec.start();
 //			}
@@ -3257,8 +3257,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	/**
-	 * CWS‚È‚çFWS‚É•ÏŠ·‚·‚é<br/>
-	 * ‚»‚ÌŒãAƒAƒXƒyƒNƒg”ä‚ğ”»’è‚µVhook‚ğ‘I‘ğAƒIƒvƒVƒ‡ƒ“‚ğ“Ç‚İ‚İİ’è‚·‚é
+	 * CWSãªã‚‰FWSã«å¤‰æ›ã™ã‚‹<br/>
+	 * ãã®å¾Œã€ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã‚’åˆ¤å®šã—Vhookã‚’é¸æŠã€ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’èª­ã¿è¾¼ã¿è¨­å®šã™ã‚‹
 	 * @param video : File
 	 * @param way : int  1 or 2
 	 * Output videoAspect : Aspect
@@ -3278,7 +3278,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			video = fwsFile;
 		}else{
 			if (Cws2Fws.isCws(video)){
-				sendtext("SWF‚ÌFWS•ÏŠ·‚É¸”s‚µ‚Ü‚µ‚½");
+				sendtext("SWFã®FWSå¤‰æ›ã«å¤±æ•—ã—ã¾ã—ãŸ");
 				//return false;
 			}
 		}
@@ -3337,12 +3337,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (way == 1){
 				if (VhookNormal == null){
 					if (!isPlayerWide){
-						str = "‚" + str;
+						str = "â‰ " + str;
 					}
 					isPlayerWide = true;
 				} else {
 					if (isPlayerWide){
-						str = "‚" + str;
+						str = "â‰ " + str;
 					}
 					isPlayerWide = false;
 				}
@@ -3350,10 +3350,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 		String auto = "";
 		if (way==3){
-			auto = "‹¤’Ê";
+			auto = "å…±é€š";
 		}
 		if (way==2) {
-			auto = "©“®‘I‘ğ ";
+			auto = "è‡ªå‹•é¸æŠ ";
 		}
 		if (Setting.isZqPlayer()){
 			selectedVhook = VhookQ;
@@ -3363,14 +3363,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			selectedVhook = VhookNormal;
 		}
 		if (!detectOption(isPlayerWide,Setting.isZqPlayer())){
-			sendtext("•ÏŠ·ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½B");
+			sendtext("å¤‰æ›ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿ã«å¤±æ•—ã—ã¾ã—ãŸã€‚");
 			return false;
 		}
 		if(!addAdditionalOption(isPlayerWide,Setting.isZqPlayer())){
-			sendtext("’Ç‰ÁƒIƒvƒVƒ‡ƒ“‚Ìİ’è‚É¸”s‚µ‚Ü‚µ‚½B");
+			sendtext("è¿½åŠ ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã®è¨­å®šã«å¤±æ•—ã—ã¾ã—ãŸã€‚");
 			return false;
 		}
-		// ffmpeg‚ÌŠÂ‹«•Ï”PATH‚Ìİ’è
+		// ffmpegã®ç’°å¢ƒå¤‰æ•°PATHã®è¨­å®š
 		String dllPath = selectedVhook.getParentFile().getAbsolutePath();
 		Saccubus.pathenv = "."+File.pathSeparator + dllPath;
 		String exePath = new File(ffmpeg.getExePath()).getParentFile().getAbsolutePath();
@@ -3379,7 +3379,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 		log.println("FFmpeg env PATH: "+Saccubus.pathenv);
 
-		//replaceƒ`ƒFƒbƒN
+		//replaceãƒã‚§ãƒƒã‚¯
 		if(Setting.getReplaceOptions()!=null){
 			replace3option(Setting.getReplaceOptions());
 		}
@@ -3453,14 +3453,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 		str = videoAspect.explain() + "  ";
 		if (html5CommentMode){
-			MovieInfo.setText(auto + "Html5ƒvƒŒƒCƒ„[ " + str);
+			MovieInfo.setText(auto + "Html5ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ " + str);
 		}else
 		if (Setting.isZqPlayer()){
-			MovieInfo.setText(auto + "Šg’£Vhook Q " + str);
+			MovieInfo.setText(auto + "æ‹¡å¼µVhook Q " + str);
 		} else if (isPlayerWide){
-			MovieInfo.setText(auto + "Šg’£Vhook ƒƒCƒh " + str);
+			MovieInfo.setText(auto + "æ‹¡å¼µVhook ãƒ¯ã‚¤ãƒ‰ " + str);
 		} else {
-			MovieInfo.setText(auto + "Šg’£Vhook ]—ˆ " + str);
+			MovieInfo.setText(auto + "æ‹¡å¼µVhook å¾“æ¥ " + str);
 		}
 		double video_aspect = videoAspect.getValue();
 		double out_aspect = outAspect.getValue();
@@ -3476,17 +3476,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				int minw = minAspect.getWidth();
 				int minh = minAspect.getHeight();
 				if(min_aspect <= out_aspect){
-					// §ŒÀc’·¨cŠî€
+					// åˆ¶é™ç¸¦é•·â†’ç¸¦åŸºæº–
 					if(minh > outh){
-						// ow / oh < w / h -> ow ‚ğ•ÏX
+						// ow / oh < w / h -> ow ã‚’å¤‰æ›´
 						minw = toMod2(minh * out_aspect);
 						outAspect = new Aspect(minw, minh);
 						fixedsize = true;
 					}
 				}else if(min_aspect > out_aspect){
-					// §ŒÀ‰¡’·¨‰¡Šî€
+					// åˆ¶é™æ¨ªé•·â†’æ¨ªåŸºæº–
 					if(minw > outw){
-						// ow / oh < w / h -> oh ‚ğ•ÏX
+						// ow / oh < w / h -> oh ã‚’å¤‰æ›´
 						minh = toMod4(minw / out_aspect);
 						outAspect = new Aspect(minw, minh);
 						fixedsize = true;
@@ -3512,17 +3512,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				int maxw = maxAspect.getWidth();
 				int maxh = maxAspect.getHeight();
 				if(max_aspect <= out_aspect){
-					// §ŒÀ‰¡’Z¨‰¡Šî€
+					// åˆ¶é™æ¨ªçŸ­â†’æ¨ªåŸºæº–
 					if(maxw < outw){
-						// ow / oh < w / h -> oh ‚ğ•ÏX
+						// ow / oh < w / h -> oh ã‚’å¤‰æ›´
 						maxh = toMod4(maxw / out_aspect);
 						outAspect = new Aspect(maxw, maxh);
 						fixedsize = true;
 					}
 				}else if(max_aspect > out_aspect){
-					// §ŒÀc’Z¨cŠî€
+					// åˆ¶é™ç¸¦çŸ­â†’ç¸¦åŸºæº–
 					if(maxh < outh){
-						// ow / oh < w / h -> ow ‚ğ•ÏX
+						// ow / oh < w / h -> ow ã‚’å¤‰æ›´
 						maxw = toMod2(maxh * out_aspect);
 						outAspect = new Aspect(maxw, maxh);
 						fixedsize = true;
@@ -3544,10 +3544,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				outw = outAspect.getWidth();
 				outh = outAspect.getHeight();
 				if(out_aspect < video_aspect){
-					// ow / oh < w / h -> oh ‚ğ•ÏX
+					// ow / oh < w / h -> oh ã‚’å¤‰æ›´
 					outh = toMod4(outw / video_aspect);
 				}else if(out_aspect > video_aspect){
-					// ow / oh > w / h -> ow ‚ğ•ÏX
+					// ow / oh > w / h -> ow ã‚’å¤‰æ›´
 					outw = toMod2(outh * video_aspect);
 				}
 				outAspect = new Aspect(outw, outh);
@@ -3578,10 +3578,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	void printOutputSize(String sizestr, Aspect aspect){
-		int commentWidth = 640;		//Œ´h
-		int commentHeight = 384;	//Œ´h
+		int commentWidth = 640;		//åŸå®¿
+		int commentHeight = 384;	//åŸå®¿
 		if(Setting.isZqPlayer()){
-			commentWidth = 800;		//Qwatch‘å‰æ–Ê
+			commentWidth = 800;		//Qwatchå¤§ç”»é¢
 			commentHeight = 480;
 		}
 		if(html5CommentMode){
@@ -3592,7 +3592,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		int width = aspect.getWidth();
 		int height = aspect.getHeight();
 		log.println("Output Video Area " + width + ":" + height);
-		//width height‚Ío—Í“®‰æ‚Ì‘å‚«‚³(outsw’è‚Í‚»‚ÌƒTƒCƒY)
+		//width heightã¯å‡ºåŠ›å‹•ç”»ã®å¤§ãã•(outsæŒ‡å®šæ™‚ã¯ãã®ã‚µã‚¤ã‚º)
 		log.println("Video "+aspect.getSize());
 		double rate;
 		if (Setting.isZqPlayer()){
@@ -3613,7 +3613,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 		}
 		log.println("Output Commetnt Area " + width + ":" + height + " Wide? " + isPlayerWide);
-		//width height‚Ío—ÍƒRƒƒ“ƒg‚Ì‘å‚«‚³i“®‰æ‚ğ‚Í‚İo‚³‚È‚¢j
+		//width heightã¯å‡ºåŠ›ã‚³ãƒ¡ãƒ³ãƒˆã®å¤§ãã•ï¼ˆå‹•ç”»ã‚’ã¯ã¿å‡ºã•ãªã„ï¼‰
 		return;
 	}
 
@@ -3743,7 +3743,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			return true;
 		}
 		setOptionMap(addOption, addOptionMap);
-//		d—l•ÏX MainOpt InOpt‚Í’u‚«Š·‚¦‚È‚¢
+//		ä»•æ§˜å¤‰æ›´ MainOpt InOptã¯ç½®ãæ›ãˆãªã„
 		for(String key : addOptionMap.keySet())
 			outputOptionMap.put(key, addOptionMap.get(key));
 		return true;
@@ -3868,28 +3868,28 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 		code = execOption();
 		if(code==0){
-			// -itsoffsetíœ ÀsÏ‚İ
+			// -itsoffsetå‰Šé™¤ å®Ÿè¡Œæ¸ˆã¿
 			inputOptionMap.remove("-itsoffset");
 			mainOptionMap.remove("-itsoffset");
-			// -ssíœ  ÀsÏ‚İ
+			// -sså‰Šé™¤  å®Ÿè¡Œæ¸ˆã¿
 			inputOptionMap.remove("-ss");
 			mainOptionMap.remove("-ss");
-			// out‚Ì -ss ‚Í‚»‚Ì‚Ü‚Üc‚·
+			// outã® -ss ã¯ãã®ã¾ã¾æ®‹ã™
 			out_option_ss = outputOptionMap.get("-ss");
 			if(out_option_ss!=null){
-				// o—Í‚Ì-itsoffset‚Í -ss‚É‚æ‚é
+				// å‡ºåŠ›ã®-itsoffsetã¯ -ssã«ã‚ˆã‚‹
 				inputOptionMap.put("-itsoffset", out_option_ss);
 			}
-			// -t ‚Í‚»‚Ì‚Ü‚Üc‚µ‚Ä—Ç‚¢
+			// -t ã¯ãã®ã¾ã¾æ®‹ã—ã¦è‰¯ã„
 		}
 		return code;
 	}
 
 	private int convSWF_JPG(File videoin, File videoout){
 		int code = -1;
-		//o—Í
+		//å‡ºåŠ›
 		//ffmpeg.setCmd("-y -analyzeduration 10M -i ");
-		ffmpeg.setCmd("-y -i ");	//swf‚Ìê‡A‰ğÍŠÔ‚Í‚à‚Æ‚Ì‚Ü‚Ü‚É‚·‚é
+		ffmpeg.setCmd("-y -i ");	//swfã®å ´åˆã€è§£ææ™‚é–“ã¯ã‚‚ã¨ã®ã¾ã¾ã«ã™ã‚‹
 		ffmpeg.addFile(videoin);
 		ffmpeg.addCmd(ConvertingSetting.getDefOptsSwfJpeg());
 		// -an -vcodec copy -r 1 -f image2
@@ -3903,7 +3903,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		//
 		// frame check
 		//
-		// JPGØ‘Ö‘¬“xw’è‚·‚é?
+		// JPGåˆ‡æ›¿é€Ÿåº¦æŒ‡å®šã™ã‚‹?
 		String frames = ffmpeg.getLastFrame();
 		int frame = 0;
 		int index = frames.indexOf("frame=");
@@ -3938,7 +3938,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			tl = t0;
 		else if(t0 != 0.0)
 			tl = Math.min(t0, tl);
-		// tl==0(î•ñ‚È‚µ) ‚Ü‚½‚Í tl‚ÍÅ¬’·
+		// tl==0(æƒ…å ±ãªã—) ã¾ãŸã¯ tlã¯æœ€å°é•·
 		double length_frame = 1.0 /rate;
 		log.printf("Frame= %.2f(sec/frame), Rate= %.5f(fps)\n", length_frame, rate);
 	//	if(tl != 0.0){
@@ -3968,12 +3968,12 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			fps = fpsUp;
 		}
 		/*
-		 * ‰¹º‚ğ‡¬
+		 * éŸ³å£°ã‚’åˆæˆ
 		 * ffmpeg.exe -shortest -y -i fws_tmp.swf -itsoffset 1.0 -i avi4.avi
 		 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 		 */
 		//ffmpeg.setCmd("-y -analyzeduration 10M -i ");
-		ffmpeg.setCmd("-y -i ");	//swf‚Ìê‡A‰ğÍŠÔ‚Í‚à‚Æ‚Ì‚Ü‚Ü‚É‚·‚é
+		ffmpeg.setCmd("-y -i ");	//swfã®å ´åˆã€è§£ææ™‚é–“ã¯ã‚‚ã¨ã®ã¾ã¾ã«ã™ã‚‹
 		ffmpeg.addFile(audioin);	// audio, must be FWS_SWF
 		ffmpeg.addCmd(" -i ");
 		ffmpeg.addFile(videoin);	// visual
@@ -3997,7 +3997,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		int code = -1;
 		File thumbfile;
 		if(thumbname==null||thumbname.isEmpty()||thumbname.equals(MainFrame.THUMB_DEFALT_STRING)){
-			//ƒTƒ€ƒlƒCƒ‹‘I‘ğ,ŒŸõ
+			//ã‚µãƒ ãƒã‚¤ãƒ«é¸æŠ,æ¤œç´¢
 			thumbfile = new File(Setting.getVideoFixFileNameFolder(),getVideoBaseName()+".jpg");
 			if(!thumbfile.isFile()){
 				if(setThumbnailJpg()){
@@ -4021,11 +4021,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			thumbfile = new File(currect_dir, thumbname);
 		}
 		if(!thumbfile.canRead()){
-			log.println("ƒTƒ€ƒlƒCƒ‹‚ª“Ç‚ß‚Ü‚¹‚ñF"+thumbfile.getPath());
-			sendtext("ƒTƒ€ƒlƒCƒ‹‚ª“Ç‚ß‚Ü‚¹‚ñ");
+			log.println("ã‚µãƒ ãƒã‚¤ãƒ«ãŒèª­ã‚ã¾ã›ã‚“ï¼š"+thumbfile.getPath());
+			sendtext("ã‚µãƒ ãƒã‚¤ãƒ«ãŒèª­ã‚ã¾ã›ã‚“");
 			thumbfile = new Path(".\\bin\\b32.jpg");
 		}else{
-			// ƒTƒ€ƒlƒCƒ‹‚ğƒeƒ“ƒ|ƒ‰ƒŠ[‚ÉƒRƒs[ijava‚Í“Ç‚ß‚é‚Ì‚É‚È‚º‚©ffmpeg‚ª“Ç‚ß‚È‚¢‚Ì‚Åj
+			// ã‚µãƒ ãƒã‚¤ãƒ«ã‚’ãƒ†ãƒ³ãƒãƒ©ãƒªãƒ¼ã«ã‚³ãƒ”ãƒ¼ï¼ˆjavaã¯èª­ã‚ã‚‹ã®ã«ãªãœã‹ffmpegãŒèª­ã‚ãªã„ã®ã§ï¼‰
 			File tempthumb = Path.mkTemp("t.jpg");
 			FileInputStream fis = null;
 			FileOutputStream fos = null;
@@ -4059,10 +4059,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 		}
 		if(!thumbfile.canRead()){
-			//‚Ç‚¤‚µ‚Ä‚à“Ç‚ß‚È‚¢ê‡
-			log.println("ƒTƒ€ƒlƒCƒ‹‚ª“Ç‚ß‚Ü‚¹‚ñF"+thumbfile.getPath());
-			sendtext("‘ã‘ÖƒTƒ€ƒlƒCƒ‹‚ª“Ç‚ß‚Ü‚¹‚ñ");
-			errorLog = "‘ã‘ÖƒTƒ€ƒlƒCƒ‹‚ª“Ç‚ß‚Ü‚¹‚ñ";
+			//ã©ã†ã—ã¦ã‚‚èª­ã‚ãªã„å ´åˆ
+			log.println("ã‚µãƒ ãƒã‚¤ãƒ«ãŒèª­ã‚ã¾ã›ã‚“ï¼š"+thumbfile.getPath());
+			sendtext("ä»£æ›¿ã‚µãƒ ãƒã‚¤ãƒ«ãŒèª­ã‚ã¾ã›ã‚“");
+			errorLog = "ä»£æ›¿ã‚µãƒ ãƒã‚¤ãƒ«ãŒèª­ã‚ã¾ã›ã‚“";
 			code = 198;
 			return code;
 		}
@@ -4072,7 +4072,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private int convFLV_thumbaudio(File thumbin, File audioin, File videoout){
 		int code = -1;
-		// ƒTƒ€ƒlƒCƒ‹‚ÌƒAƒXƒyƒNƒg”ä‚Í–³‹
+		// ã‚µãƒ ãƒã‚¤ãƒ«ã®ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã¯ç„¡è¦–
 		/*
 		 * ffmpeg -y mainoption -loop 1 -shortest -i thmbnail_picture -i input
 		 * outoption -map 0:0 -map 1:a [vhookOption]  output
@@ -4107,16 +4107,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(fwsFile!=null)
 			input = fwsFile;
 		if (!Cws2Fws.isFws(input) && !Cws2Fws.isCws(input)) {
-			//’Êí‚ÌFLV
+			//é€šå¸¸ã®FLV
 			// fps up check
 			if(checkFps && frameRate < fpsMin){
-				//FPS•ÏŠ·•K—v
+				//FPSå¤‰æ›å¿…è¦
 				if(Setting.isUseFpsFilter()){
-					//FPS Filter‘I‘ğ
+					//FPS Filteré¸æŠ
 					log.println("FPS filter");
 					String vfoptsave = getFFmpegVfOption();
 					String vfopt = "fps=fps="+fpsUp
-						+ ",scale="+outAspect.getSize();	// -s ƒIƒvƒVƒ‡ƒ“‚ğ -vf scale=w:h ‚Æ‚µ‚Äæ‚É’Ç‰Á
+						+ ",scale="+outAspect.getSize();	// -s ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’ -vf scale=w:h ã¨ã—ã¦å…ˆã«è¿½åŠ 
 					if(!vfoptsave.isEmpty()){
 						vfopt += "," + vfoptsave;
 					}
@@ -4132,15 +4132,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						return code;
 					}
 					if (code == 0){
-						//fpsfilter•ÏŠ·¬Œ÷
+						//fpsfilterå¤‰æ›æˆåŠŸ
 						return code;
 					}
-					log.println("("+code+")fps filter‚É¸”s ");
-					errorLog += "\nfps filter‚É¸”s "+ getLastError();
-					log.println("‘±s\n");	//‘±sƒ‚[ƒh
+					log.println("("+code+")fps filterã«å¤±æ•— ");
+					errorLog += "\nfps filterã«å¤±æ•— "+ getLastError();
+					log.println("ç¶šè¡Œ\n");	//ç¶šè¡Œãƒ¢ãƒ¼ãƒ‰
 				}
 
-				// 2ƒpƒXFPS•ÏŠ·
+				// 2ãƒ‘ã‚¹FPSå¤‰æ›
 				File outputFps = Path.mkTemp("fpsUp"+ConvertedVideoFile.getName());
 				log.println("FLV Up "+fpsUp+"fps");
 				infoStack.pushText("FLV "+fpsUp);
@@ -4151,10 +4151,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				if(code != 0){
 					//error
-					log.println("("+code+")fps•ÏŠ·‚É¸”s ");
-					errorLog += "\nfps•ÏŠ·‚É¸”s "+ getLastError();
+					log.println("("+code+")fpså¤‰æ›ã«å¤±æ•— ");
+					errorLog += "\nfpså¤‰æ›ã«å¤±æ•— "+ getLastError();
 					if(Setting.canSoundOnly()){
-						log.println("ƒRƒƒ“ƒg‚Æ‰¹º‚¾‚¯‚ğ‡¬‚µ‚Ü‚·");
+						log.println("ã‚³ãƒ¡ãƒ³ãƒˆã¨éŸ³å£°ã ã‘ã‚’åˆæˆã—ã¾ã™");
 						infoStack.pushText("SoundOnly");
 						code = convFLV_audio(input, ConvertedVideoFile, Setting.getDefaultThumbnail());
 						infoStack.popText();
@@ -4162,16 +4162,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					return code;
 				}
 				if (code == 0){
-					//fps•ÏŠ·¬Œ÷
+					//fpså¤‰æ›æˆåŠŸ
 					input = outputFps;
 				}
 			}
 
-			//FPS•ÏŠ·‚È‚µ
+			//FPSå¤‰æ›ãªã—
 			/*
 			 * ffmpeg.exe -y mainoption inoption -i infile outoptiont [vhookOption] outfile
 			 */
-			log.println("FLV ]—ˆ’Ê‚è");
+			log.println("FLV å¾“æ¥é€šã‚Š");
 			String vfoptsave = getFFmpegVfOption();
 			if(checkFps && Setting.isUseFpsFilter()){
 				String vfopt = "";
@@ -4179,7 +4179,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				if(ropt != null && !ropt.isEmpty()){
 					vfopt = "fps=fps="+ropt
 						+ ",scale="+outAspect.getSize();
-					// -s ƒIƒvƒVƒ‡ƒ“‚à -vf scale=w:h ‚Æ‚µ‚Äæ‚É’Ç‰Á
+					// -s ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚‚ -vf scale=w:h ã¨ã—ã¦å…ˆã«è¿½åŠ 
 					log.println("FPS filter -r "+ropt);
 					if(!vfoptsave.isEmpty()){
 						vfopt += "," + vfoptsave;
@@ -4192,9 +4192,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			setFfmpegVfOption(vfoptsave);
 		}
 		else {
-			// nm“®‰æ FWS“ü—Í
+			// nmå‹•ç”» FWSå…¥åŠ›
 			if(!Setting.isSwfTo3Path()){
-				// nm‘Î‰‚µ‚È‚¢
+				// nmå¯¾å¿œã—ãªã„
 				if(checkFps && frameRate < fpsMin){
 					/*
 					 * ffmpeg -r 25.0
@@ -4208,17 +4208,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						return code;
 					}
 					if (code != 0){
-						log.println("("+code+")fps•ÏŠ·‚É¸”s ");
-						errorLog += "\nfps•ÏŠ·‚É¸”s "+ getLastError();
+						log.println("("+code+")fpså¤‰æ›ã«å¤±æ•— ");
+						errorLog += "\nfpså¤‰æ›ã«å¤±æ•— "+ getLastError();
 						if(Setting.canSoundOnly()){
-							log.println("ƒRƒƒ“ƒg‚Æ‰¹º‚¾‚¯‚ğ‡¬‚µ‚Ü‚·");
+							log.println("ã‚³ãƒ¡ãƒ³ãƒˆã¨éŸ³å£°ã ã‘ã‚’åˆæˆã—ã¾ã™");
 							infoStack.pushText("SoundOnly");
 							code = convFLV_audio(input, ConvertedVideoFile, Setting.getDefaultThumbnail());
 							infoStack.popText();
 						}
 						return code;
 					}else{
-						//fps•ÏŠ·¬Œ÷
+						//fpså¤‰æ›æˆåŠŸ
 						input = outputFps;
 					}
 				}
@@ -4226,7 +4226,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				/*
 				 * ffmpeg.exe -y mainoption inoption -i infile outoptiont [vhookOption] outfile
 				 */
-				log.println("FWS ]—ˆ’Ê‚è");
+				log.println("FWS å¾“æ¥é€šã‚Š");
 				infoStack.pushText("FWS");
 				code = convFLV(input, ConvertedVideoFile);
 				infoStack.popText();
@@ -4235,10 +4235,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				log.println("FWS 3path");
 				// try 3 path
 				/*
-				 * SWFƒtƒ@ƒCƒ‹‚ğJPEGŒ`®‚É‡¬
+				 * SWFãƒ•ã‚¡ã‚¤ãƒ«ã‚’JPEGå½¢å¼ã«åˆæˆ
 				 * ffmpeg.exe -y -i fws_tmp.swf -an -vcodec copy -f image2 %03d.jpg
 				 */
-				//o—Íæ‚ğì‚é
+				//å‡ºåŠ›å…ˆã‚’ä½œã‚‹
 				imgDir = Path.mkTemp("IMG"+VideoID);
 				if(imgDir.mkdir())
 					log.println("Created folder - " + imgDir);
@@ -4253,13 +4253,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				if(code!=0){
 					if (Setting.canSoundOnly()){
-						// jpeg‚É•ÏŠ·‚Å‚«‚È‚¢ê‡‚Í‰¹º‚Ì‚İ‚É‚·‚é
+						// jpegã«å¤‰æ›ã§ããªã„å ´åˆã¯éŸ³å£°ã®ã¿ã«ã™ã‚‹
 						code = convFLV_audio(input, ConvertedVideoFile);
 					}
 					return code;
 				}
 				/*
-				 * video length‚ª0‚Ì‚É‚Í‰¹º‚ğæ‚É’Šo‚·‚éB
+				 * video lengthãŒ0ã®æ™‚ã«ã¯éŸ³å£°ã‚’å…ˆã«æŠ½å‡ºã™ã‚‹ã€‚
 				 */
 				if(videoLength==0){
 					File tempAudio = new File(imgDir,"audio.m4a");
@@ -4288,10 +4288,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}
 				}
 				/*
-				 * JPEGƒtƒ@ƒCƒ‹‚ğMP4Œ`®‚É‡¬
+				 * JPEGãƒ•ã‚¡ã‚¤ãƒ«ã‚’MP4å½¢å¼ã«åˆæˆ
 				 * ffmpeg.exe -r 1/4 -y -i %03d.jpg -an -vcodec huffyuv -f avi huffjpg.avi
 				 */
-				//o—Í
+				//å‡ºåŠ›
 				File outputAvi = new File(imgDir,"huffyuv.mp4");
 				log.println("outputImg="+outputImg);
 				log.println("outputAvi="+outputAvi);
@@ -4304,13 +4304,13 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}
 				if(code!=0){
 					if (Setting.canSoundOnly()){
-						// jpeg‚ªmp4‚É•ÏŠ·‚Å‚«‚È‚¢ê‡‚Í‰¹º‚Ì‚İ‚É‚·‚é
+						// jpegãŒmp4ã«å¤‰æ›ã§ããªã„å ´åˆã¯éŸ³å£°ã®ã¿ã«ã™ã‚‹
 						code = convFLV_audio(input, ConvertedVideoFile);
 					}
 					return code;
 				}
 				/*
-				 * ‰¹º‚ğ‡¬
+				 * éŸ³å£°ã‚’åˆæˆ
 				 * ffmpeg.exe -y -i fws_tmp.swf -itsoffset 1.0 -i avi4.avi
 				 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 				 */
@@ -4329,7 +4329,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					return code;
 				}
 				/*
-				 * ƒRƒƒ“ƒg‚ğ‡¬
+				 * ã‚³ãƒ¡ãƒ³ãƒˆã‚’åˆæˆ
 				 * ffmpeg.exe -y -i fws_tmp.swf -itsoffset 1.0 -i avi4.avi
 				 *  -vcodec libxvid -acodec libmp3lame -ab 128k -ar 44100 -ac 2 fwsmp4.avi
 				 */
@@ -4358,32 +4358,32 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			return false;
 		}
 		Iterator<String> it = ffmpeg1.getCmdArrayList().iterator();
-		// ffmpeg1‚Éİ’è‚³‚ê‚½•¶š—ñ‚ğæ‚èo‚·iterator
+		// ffmpeg1ã«è¨­å®šã•ã‚ŒãŸæ–‡å­—åˆ—ã‚’å–ã‚Šå‡ºã™iterator
 		StringBuilder sb = new StringBuilder();
 		String s = "";
-		it.next();	//Å‰‚Í“Ç‚İ”ò‚Î‚·
+		it.next();	//æœ€åˆã¯èª­ã¿é£›ã°ã™
 		while(it.hasNext()){
 			s = it.next();
 			s = s.replaceAll(VFILTER_FLAG, VFILTER_FLAG2);
 			if(s.equals(VFILTER_FLAG2)){
 				sb.append(" "+vfilter_flag+" ");
 				s = it.next();
-				// s‚Í@-vf ‚Ìƒpƒ‰ƒ[ƒ^, ‚±‚±‚Å‚Í""‚ÅˆÍ‚Ü‚ê‚Ä‚¢‚é‚Í‚¸(saccubus‚Ìd—l)
+				// sã¯ã€€-vf ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿, ã“ã“ã§ã¯""ã§å›²ã¾ã‚Œã¦ã„ã‚‹ã¯ãš(saccubusã®ä»•æ§˜)
 				s = unquote(s);
 				sb.append("\"");
-				String s2 = "";	// vhext=‚ÌŒã‚ë‚ÉˆÚ“®‚·‚é•¶š—ñ
-				// vhext=‚Ís‚ÌÅŒã‚É‚Â‚¢‚Ä‚¢‚é(saccubus‚Ìd—l)
-				// @‚ÌˆÊ’u‚Évhext‚ÌˆÊ’u‚ğ•ÏX
+				String s2 = "";	// vhext=ã®å¾Œã‚ã«ç§»å‹•ã™ã‚‹æ–‡å­—åˆ—
+				// vhext=ã¯sã®æœ€å¾Œã«ã¤ã„ã¦ã„ã‚‹(saccubusã®ä»•æ§˜)
+				// @ã®ä½ç½®ã«vhextã®ä½ç½®ã‚’å¤‰æ›´
 				int index = s.indexOf("@=");
 				if(index >= 0){
-					// @=‚ª‚ ‚Á‚½
+					// @=ãŒã‚ã£ãŸ
 					sb.append(s.substring(0, index));
-					s = s.substring(index+2); // @=“Ç‚İ”ò‚Î‚µ
+					s = s.substring(index+2); // @=èª­ã¿é£›ã°ã—
 					index = s.indexOf(",");
 					if(index < 0)
 						return false;
 					if(index > 0)
-						vhspeedrate = s.substring(0, index);	// @=‚Ìƒpƒ‰ƒ[ƒ^
+						vhspeedrate = s.substring(0, index);	// @=ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿
 					s = s.substring(index+1);
 					index = s.indexOf("vhext=");
 					if(index < 0)
@@ -4393,9 +4393,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				}else{
 					index = s.indexOf("@,");
 					if(index >= 0){
-						// @,‚ª‚ ‚Á‚½
+						// @,ãŒã‚ã£ãŸ
 						sb.append(s.substring(0, index));
-						s = s.substring(index+2);	// @,“Ç‚İ”ò‚Î‚µ
+						s = s.substring(index+2);	// @,èª­ã¿é£›ã°ã—
 						index = s.indexOf("vhext=");
 						if(index < 0)
 							return false;
@@ -4408,14 +4408,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						sb.append(s.substring(0, index));
 					}
 				}
-				// vhext‚æ‚è‘O‚Ìvf‚Í’Ç‰ÁÏ‚İ
+				// vhextã‚ˆã‚Šå‰ã®vfã¯è¿½åŠ æ¸ˆã¿
 				sb.append("vhext=");
 				index += "vhext=".length();
 				s = s.substring(index);
 				if(vhspeedrate!=null && !vhspeedrate.isEmpty())
 					s = s.replace(END_OF_ARGUMENT,
 						"|--vfspeedrate:"+vhspeedrate+END_OF_ARGUMENT);
-				s = vf_quote(s);	// vhext= ‚ÌƒIƒvƒVƒ‡ƒ“‚Í video filter—p‚É quote‚·‚é
+				s = vf_quote(s);	// vhext= ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯ video filterç”¨ã« quoteã™ã‚‹
 				sb.append(s);
 				if(!s2.isEmpty()){
 					sb.append(",");
@@ -4460,42 +4460,42 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			String vfopt = getFFmpegVfOption();
 			if(!outAspect.isInvalid()){
 				if(vfopt.isEmpty()){
-					// vfopt‚È‚µ
-					// -s ƒIƒvƒVƒ‡ƒ“‚ğ -vf scale=w:h ‚Æ‚µ‚Äæ‚É’Ç‰Á
+					// vfoptãªã—
+					// -s ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’ -vf scale=w:h ã¨ã—ã¦å…ˆã«è¿½åŠ 
 					ffmpeg.addCmd("scale="+outAspect.getSize());
 					ffmpeg.addCmd(",");
 				}else{
 					if(vfopt.contains("scale=")){
-						// vfopt‚Éscale‚ª‚ ‚éê‡‚Í•ÏX‚µ‚È‚¢B
+						// vfoptã«scaleãŒã‚ã‚‹å ´åˆã¯å¤‰æ›´ã—ãªã„ã€‚
 						ffmpeg.addCmd(vfopt);
 						ffmpeg.addCmd(",");
 					}else{
-						// vfopt‚Éscale‚È‚µ
+						// vfoptã«scaleãªã—
 						int index = vfopt.indexOf("@");
 						if(index >= 0){
-							// vfopt‚É@‚ ‚è
+							// vfoptã«@ã‚ã‚Š
 							if(index > 0){
-								// @‚æ‚è‘O‚Í,‚ğŠÜ‚ñ‚Å‚¢‚é
+								// @ã‚ˆã‚Šå‰ã¯,ã‚’å«ã‚“ã§ã„ã‚‹
 								ffmpeg.addCmd(vfopt.substring(0, index));
 							}
-							// -s ƒIƒvƒVƒ‡ƒ“‚ğ -vf scale=w:h ‚Æ‚µ‚Äæ‚É’Ç‰Á
+							// -s ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’ -vf scale=w:h ã¨ã—ã¦å…ˆã«è¿½åŠ 
 							ffmpeg.addCmd("scale="+outAspect.getSize());
 							ffmpeg.addCmd(",");
 							ffmpeg.addCmd(vfopt.substring(index));
-							// @‚æ‚èŒã‚ë‚ÌÅŒã‚É‚Í,‚ğŠÜ‚ñ‚Å‚¢‚È‚¢
+							// @ã‚ˆã‚Šå¾Œã‚ã®æœ€å¾Œã«ã¯,ã‚’å«ã‚“ã§ã„ãªã„
 							ffmpeg.addCmd(",");
 						}else{
-							// vfopt‚É@‚È‚µ
+							// vfoptã«@ãªã—
 							ffmpeg.addCmd(vfopt);
 							ffmpeg.addCmd(",");
-							// -s ƒIƒvƒVƒ‡ƒ“‚ğ -vf scale=w:h ‚Æ‚µ‚Äæ‚É’Ç‰Á
+							// -s ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’ -vf scale=w:h ã¨ã—ã¦å…ˆã«è¿½åŠ 
 							ffmpeg.addCmd("scale="+outAspect.getSize());
 							ffmpeg.addCmd(",");
 						}
 					}
 				}
 			}else{
-				// outAspect‚ª•s³‚Èê‡
+				// outAspectãŒä¸æ­£ãªå ´åˆ
 				if(!vfopt.isEmpty()){
 					ffmpeg.addCmd(vfopt);
 					ffmpeg.addCmd(",");
@@ -4632,7 +4632,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ffmpeg.addCmd("|--april-fool:" + aprilFool);
 			}
 			if(extra.contains("-wakuiro=")){
-				//˜gFw’èF“Áê@=‚©‚ç”¼ŠpƒXƒy[ƒX‚Ü‚Å‚ğˆø”‚Æ‚·‚é
+				//æ è‰²æŒ‡å®šï¼šç‰¹æ®Šã€€=ã‹ã‚‰åŠè§’ã‚¹ãƒšãƒ¼ã‚¹ã¾ã§ã‚’å¼•æ•°ã¨ã™ã‚‹
 				int index = extra.indexOf("-wakuiro=");
 				wakuiro = extra.substring(index + "-wakuiro=".length());
 				index = (wakuiro + " ").indexOf(" ");
@@ -4725,7 +4725,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (Setting.isDisableOriginalResize()){
 				ffmpeg.addCmd("|--disable-original-resize");
 			}
-			// flashƒRƒƒ“ƒgƒ‚[ƒh=Šù’è
+			// flashã‚³ãƒ¡ãƒ³ãƒˆãƒ¢ãƒ¼ãƒ‰=æ—¢å®š
 			//ffmpeg.addCmd("|--flash-comment");
 			if (html5CommentMode){
 				ffmpeg.addCmd("|--html5-comment");
@@ -4745,15 +4745,15 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private boolean convertIsLive() {
 		if(Setting.isLive()){
-			// ƒ[ƒJƒ‹•ÏŠ·‚Å
-			if(Pattern.matches("sm[0-8]|(sm[0-8]_)?lv.*", Tag))		// Tag‚ª sm9‚æ‚è¬‚³‚¢ê‡ lv‚ğŠÜ‚Şê‡
+			// ãƒ­ãƒ¼ã‚«ãƒ«å¤‰æ›ã§
+			if(Pattern.matches("sm[0-8]|(sm[0-8]_)?lv.*", Tag))		// TagãŒ sm9ã‚ˆã‚Šå°ã•ã„å ´åˆ lvã‚’å«ã‚€å ´åˆ
 				isLive = true;
-			if(Tag.length() <= 2 || !Character.isDigit(Tag.charAt(2)))	// 3•¶š–Ú‚ª”š‚Å‚Í‚È‚¢ê‡
+			if(Tag.length() <= 2 || !Character.isDigit(Tag.charAt(2)))	// 3æ–‡å­—ç›®ãŒæ•°å­—ã§ã¯ãªã„å ´åˆ
 				isLive = true;
-			if(Pattern.matches("[a-zA-Z][0-9].*", Tag))	// ‰pš1•¶š+”š‚Ìê‡
+			if(Pattern.matches("[a-zA-Z][0-9].*", Tag))	// è‹±å­—1æ–‡å­—+æ•°å­—ã®å ´åˆ
 				isLive = true;
 		}
-		else if(!MainFrame.idcheck(Tag))	// ID‚Å‚Í‚È‚¢•¶š‚ªİ’è‚³‚ê‚½ê‡(ƒGƒ‰[‚É‚È‚é?)
+		else if(!MainFrame.idcheck(Tag))	// IDã§ã¯ãªã„æ–‡å­—ãŒè¨­å®šã•ã‚ŒãŸå ´åˆ(ã‚¨ãƒ©ãƒ¼ã«ãªã‚‹?)
 			isLive = true;
 		return isLive;
 	}
@@ -4771,7 +4771,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private boolean stopFlagReturn() {
 		if (StopFlag.needStop()) {
-			sendtext("’†~‚µ‚Ü‚µ‚½B");
+			sendtext("ä¸­æ­¢ã—ã¾ã—ãŸã€‚");
 			result = "97";
 			return true;
 		}
@@ -4805,7 +4805,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private boolean isSingleKeyword(String keyword){
 		for(String s:SINGLE_KEYWORD){
-			//‘O‚ÌƒL[ƒ[ƒhˆ—
+			//å‰ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å‡¦ç†
 			if(keyword.equals(s))
 				return true;
 		}
@@ -4835,29 +4835,29 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			w = option.substring(start, end);	//w is word
 			c = w.charAt(0);
 			if(processing_quote){
-				// ""ƒXƒLƒbƒv’†
+				// ""ã‚¹ã‚­ãƒƒãƒ—ä¸­
 				if(start < end_quote)
 					continue;
 				processing_quote = false;
 				end_quote = 0;
 			}
 			if(c=='"'){
-				//quote‚ÌÅŒã‚Ü‚ÅÀs‚µ‚ÄƒXƒLƒbƒv‚³‚¹‚é
+				//quoteã®æœ€å¾Œã¾ã§å®Ÿè¡Œã—ã¦ã‚¹ã‚­ãƒƒãƒ—ã•ã›ã‚‹
 				begin_quote = start;
 				end_quote = option.indexOf("\" ", begin_quote+1);
 				if(end_quote<0){
-					end_quote = option.length();	//•¶š—ñ‚ÌI‚í‚è‚Ü‚Å
+					end_quote = option.length();	//æ–‡å­—åˆ—ã®çµ‚ã‚ã‚Šã¾ã§
 				}
 				w = option.substring(begin_quote, end_quote);
 				if(w.charAt(w.length()-1)!='"'){
-					w += "\"";	//parameter‚Í""‚ğŠÜ‚Ş
+					w += "\"";	//parameterã¯""ã‚’å«ã‚€
 				}
 				processing_quote = true;
 			}
 			switch(flag){
 			case 0:
 				if(c!='-'){
-					log.print("Œx@ƒL[ƒ[ƒh‚Å‚Í‚ ‚è‚Ü‚¹‚ñ:"+w);
+					log.print("è­¦å‘Šã€€ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã§ã¯ã‚ã‚Šã¾ã›ã‚“:"+w);
 					non_keyword += w + " ";
 					continue;
 				}
@@ -4867,24 +4867,24 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				continue;
 			case 1:
 				if(c=='-'){
-					//‘O‚ÌƒL[ƒ[ƒhƒ`ƒFƒbƒN
+					//å‰ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒã‚§ãƒƒã‚¯
 					if(isSingleKeyword(keyword)){
-						//‘O‚ÌƒL[ƒ[ƒhˆ—
+						//å‰ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å‡¦ç†
 						optionMap.put(keyword, "");
 						keyword = w;
 						parameter = "";
 						flag = 1;
 						continue;
 					}
-					log.print("Œx@'-'g‚Á‚Ä‚¢‚Ü‚·:"+w);
+					log.print("è­¦å‘Šã€€'-'ä½¿ã£ã¦ã„ã¾ã™:"+w);
 				}
 				parameter = w + " ";
 				flag = 2;
 				continue;
 			case 2:
 				if(c=='-'){
-					//Ÿ‚ÌƒL[ƒ[ƒh?
-					//‘O‚Ìƒpƒ‰ƒ[ƒ^ˆ—
+					//æ¬¡ã®ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰?
+					//å‰ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿å‡¦ç†
 					if(keyword.equals("-map"))
 						optionMap.put(keyword+" "+parameter.trim(), "");
 					else
@@ -4898,9 +4898,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				flag = 2;
 				continue;
 			}
-			log.println("ƒoƒO‚Á‚Ä‚é");
+			log.println("ãƒã‚°ã£ã¦ã‚‹");
 		}
-		//parameter‚ªc‚Á‚Ä‚¢‚½‚ç“o˜^(o—Íƒtƒ@ƒCƒ‹?)
+		//parameterãŒæ®‹ã£ã¦ã„ãŸã‚‰ç™»éŒ²(å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«?)
 		if(parameter!=null){
 			optionMap.put(keyword, parameter.trim());
 		}
@@ -4912,7 +4912,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	boolean detectOption(boolean isWide, boolean isQ) {
 		File option_file = null;
-		ffmpegOptionName = "’¼Ú“ü—Í";
+		ffmpegOptionName = "ç›´æ¥å…¥åŠ›";
 		if(isQ){
 			option_file = Setting.getZqOptionFile();
 			if(option_file == null){
@@ -4956,7 +4956,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return false;
 			}
 		}
-		//ƒIƒvƒVƒ‡ƒ“‚ÉŠg’£q‚ğŠÜ‚ñ‚Å‚µ‚Ü‚Á‚½ê‡‚É‚à‘Î‰™
+		//ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã«æ‹¡å¼µå­ã‚’å«ã‚“ã§ã—ã¾ã£ãŸå ´åˆã«ã‚‚å¯¾å¿œâ˜†
 		if(ExtOption != null && !ExtOption.startsWith(".")){
 			ExtOption = "."+ExtOption;
 		}
@@ -4985,7 +4985,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			if(!replaced){
 				LinkedHashMap<String,String> newoptionmap = new LinkedHashMap<String, String>(40);
-				// V‚µ‚¢key‚Í OuOption‚Ìæ“ª‚É’Ç‰Á
+				// æ–°ã—ã„keyã¯ OuOptionã®å…ˆé ­ã«è¿½åŠ 
 				newoptionmap.put(key, value);
 				newoptionmap.putAll(outputOptionMap);
 				outputOptionMap.clear();
@@ -5084,11 +5084,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		String videoTitle = VideoTitle;
 		if (videoTitle == null){
 			videoTitle = getTitleFromPath(path, VideoID, Tag);
-			// ‰ß‹ƒƒO‚ğíœ
+			// éå»ãƒ­ã‚°æ™‚åˆ»ã‚’å‰Šé™¤
 			String regex = "\\[" + WayBackDate.STR_FMT_REGEX + "\\]";
 			videoTitle = videoTitle.replaceAll(regex, "");
 		//	int index = videoTitle.lastIndexOf("[");
-		//		//‰ß‹ƒƒO‚Í[YYYY/MM/DD_HH:MM:SS]‚ªÅŒã‚É•t‚­
+		//		//éå»ãƒ­ã‚°ã¯[YYYY/MM/DD_HH:MM:SS]ãŒæœ€å¾Œã«ä»˜ã
 		//	if (index >= 0){
 		//		videoTitle = videoTitle.substring(0, index);
 		//	}
@@ -5238,42 +5238,42 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	}
 
 	/*
-	 * 	“ŠeÒƒRƒƒ“ƒg‚ÉŠÖ‚·‚éƒtƒ@ƒCƒ‹–¼ƒ^ƒO‚ÆŠg’£q‚ğˆµ‚¤
-	 * @@	‡@Ver.1.25ˆÈ~‚Ì‚³‚«‚ã‚Î‚· ‡A‚ÉˆÈ‰º‚ğ’Ç‰Á
-	 * 			ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh VideoID + VideoTitile + "{Optional}.xml"
-	 * 			ª‚Ì‰ß‹ƒƒO VideoID + VideoTitile + "[YYYY^MM^DD_HHFmmFss]{Optional}.xml"
-	 * 		‡A¡‰ñ‚Ì‚³‚«‚ã‚Î‚·
-	 * 			ƒ†[ƒUƒRƒƒ“ƒg = VideoID + VideoTitle + ".xml"
-	 * 			‰ß‹ƒƒO       = VideoID + VideoTitle + "[YYYY^MM^DD_HHFmmFss].xml"
-	 * 			“ŠeÒƒRƒƒ“ƒg = VideoID + VideoTitle + "[Owner].xml"
-	 * 		‡B NicoBrowserŠg’£1.4.4‚Ìê‡
-	 * 			ƒ†[ƒUƒRƒƒ“ƒg = VideiID + VideoTitle + ".xml"
-	 * 			“ŠeÒƒRƒƒ“ƒg = VideoID + VideoTitle + ".txml"
-	 * 		‡CNNDD‚È‚Ç
-	 * 			ƒ†[ƒUƒRƒƒ“ƒg = VideoTitle + VideoID + ".xml"
-	 * 			“ŠeÒƒRƒƒ“ƒg = VideoTitle + VideoID + "[Owner].xml"
-	 * 		‡CNicoPlayer‚È‚Ç
-	 * 			ƒ†[ƒUƒRƒƒ“ƒg = VideoTitle + "(" + Tag + ")" + ".xml"
-	 * 			‰ß‹ƒƒO       = VideoTitie + "(" + Tag + ")[" + YYYY”NMMŒDD“úHHMM•ªSS•b + "}.xml"
-	 * 			“ŠeÒƒRƒƒ“ƒg = VideoTitle + "(" + Tag + "){Owner].xml"
+	 * 	æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã«é–¢ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«åã‚¿ã‚°ã¨æ‹¡å¼µå­ã‚’æ‰±ã†
+	 * ã€€ã€€	â‘ Ver.1.25ä»¥é™ã®ã•ãã‚…ã°ã™ â‘¡ã«ä»¥ä¸‹ã‚’è¿½åŠ 
+	 * 			ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ï¼ VideoID + VideoTitile + "{Optional}.xml"
+	 * 			â†‘ã®éå»ãƒ­ã‚°ï¼ VideoID + VideoTitile + "[YYYYï¼MMï¼DD_HHï¼šmmï¼šss]{Optional}.xml"
+	 * 		â‘¡ä»Šå›ã®ã•ãã‚…ã°ã™
+	 * 			ãƒ¦ãƒ¼ã‚¶ã‚³ãƒ¡ãƒ³ãƒˆ = VideoID + VideoTitle + ".xml"
+	 * 			éå»ãƒ­ã‚°       = VideoID + VideoTitle + "[YYYYï¼MMï¼DD_HHï¼šmmï¼šss].xml"
+	 * 			æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆ = VideoID + VideoTitle + "[Owner].xml"
+	 * 		â‘¢ NicoBrowseræ‹¡å¼µ1.4.4ã®å ´åˆ
+	 * 			ãƒ¦ãƒ¼ã‚¶ã‚³ãƒ¡ãƒ³ãƒˆ = VideiID + VideoTitle + ".xml"
+	 * 			æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆ = VideoID + VideoTitle + ".txml"
+	 * 		â‘£NNDDãªã©
+	 * 			ãƒ¦ãƒ¼ã‚¶ã‚³ãƒ¡ãƒ³ãƒˆ = VideoTitle + VideoID + ".xml"
+	 * 			æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆ = VideoTitle + VideoID + "[Owner].xml"
+	 * 		â‘£NicoPlayerãªã©
+	 * 			ãƒ¦ãƒ¼ã‚¶ã‚³ãƒ¡ãƒ³ãƒˆ = VideoTitle + "(" + Tag + ")" + ".xml"
+	 * 			éå»ãƒ­ã‚°       = VideoTitie + "(" + Tag + ")[" + YYYYå¹´MMæœˆDDæ—¥HHæ™‚MMåˆ†SSç§’ + "}.xml"
+	 * 			æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆ = VideoTitle + "(" + Tag + "){Owner].xml"
 	 *
 	 *
 	 */
 
 	/*
-	 * videoID‚ÌˆÊ’u‚Í–³ŠÖŒW‚Éíœ
-	 * Šg’£q‚ª‚ ‚ê‚Î‚»‚Ì‘O‚Ü‚Å
+	 * videoIDã®ä½ç½®ã¯ç„¡é–¢ä¿‚ã«å‰Šé™¤
+	 * æ‹¡å¼µå­ãŒã‚ã‚Œã°ãã®å‰ã¾ã§
 	 */
 	private String getTitleFromPath(String path, String videoID, String Tag){
 		if (path.contains(videoID)){
-			path = path.replace(videoID, "");	// videoID‚ÌˆÊ’u‚Í–³ŠÖŒW‚Éíœ
+			path = path.replace(videoID, "");	// videoIDã®ä½ç½®ã¯ç„¡é–¢ä¿‚ã«å‰Šé™¤
 		} else if(path.contains(Tag)){
 			path = path.replace(Tag, "");
 			if(path.startsWith("_")){
 				path = path.substring(1);
 			}
 		}
-		// Šg’£q‚ª‚ ‚ê‚Î‚»‚Ì‘O‚Ü‚Å
+		// æ‹¡å¼µå­ãŒã‚ã‚Œã°ãã®å‰ã¾ã§
 		if (path.lastIndexOf(".") > path.lastIndexOf(File.separator)){
 			path = path.substring(0, path.lastIndexOf("."));
 		}

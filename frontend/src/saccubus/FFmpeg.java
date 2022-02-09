@@ -57,7 +57,7 @@ public class FFmpeg {
 
 	public void addFile(File file) {
 		String path = file.getPath().replace(File.separator, "/");
-		if (path.indexOf(' ') >= 0 || path.indexOf("@") >= 0){
+		if (path.indexOf(' ') >= 0 || path.indexOf("ã€€") >= 0){
 			sb.append(" \"");
 			sb.append(path);
 			sb.append("\"");
@@ -76,7 +76,7 @@ public class FFmpeg {
 	}
 
 	private ArrayList<String> parse(String cmd) {
-		// ˆø—p•„‚ÅˆÍ‚Ü‚ê‚½•¶š—ñ‚©ƒXƒy[ƒX‚Å‹æØ‚ç‚ê‚½ƒg[ƒNƒ“‚²‚Æ‚ÉArrayList—v‘f‚É‚·‚é
+		// å¼•ç”¨ç¬¦ã§å›²ã¾ã‚ŒãŸæ–‡å­—åˆ—ã‹ã‚¹ãƒšãƒ¼ã‚¹ã§åŒºåˆ‡ã‚‰ã‚ŒãŸãƒˆãƒ¼ã‚¯ãƒ³ã”ã¨ã«ArrayListè¦ç´ ã«ã™ã‚‹
 		String reg = "(\"[^\"]*[^\\\\]\")|([^ ]+)";
 		Pattern p = Pattern.compile(reg);
 		Matcher m = p.matcher(cmd);
@@ -154,7 +154,7 @@ public class FFmpeg {
 			@Override
 			public void doAbort(String e) {
 				synchronized (status) {
-					status.setText("ffmpeg‚ÌÀs‚ğ’†~‚µ‚Ü‚µ‚½B");
+					status.setText("ffmpegã®å®Ÿè¡Œã‚’ä¸­æ­¢ã—ã¾ã—ãŸã€‚");
 				}
 			}
 			@Override
@@ -175,7 +175,7 @@ public class FFmpeg {
 			}
 		}
 
-		LastError = "ƒGƒ‰[î•ñ‚ª‚ ‚è‚Ü‚¹‚ñ";
+		LastError = "ã‚¨ãƒ©ãƒ¼æƒ…å ±ãŒã‚ã‚Šã¾ã›ã‚“";
 		LastFrame = "";
 		errorLogging = new StringBuffer();
 		log.println("\n\n----\nProcessing FFmpeg...\n----\n\n");
@@ -199,7 +199,7 @@ public class FFmpeg {
 	}
 
 	/**
-	 * ffmpeg ‚ğÀs‚·‚é@ƒAƒ{[ƒgo—ˆ‚È‚¢B
+	 * ffmpeg ã‚’å®Ÿè¡Œã™ã‚‹ã€€ã‚¢ãƒœãƒ¼ãƒˆå‡ºæ¥ãªã„ã€‚
 	 * @param callback
 	 * @return
 	 */

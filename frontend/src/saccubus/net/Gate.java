@@ -23,9 +23,9 @@ public class Gate extends Thread {
 		netInit(MAX_GATE, Logger.MainLog);
 	}
 	private final static AtomicBoolean waitSetNumGate = new AtomicBoolean(false);
-	public final static int RETRY_WAIT_MILISECOND = 5000;	//5•b
-	public final static int ERROR_WAIT_MILISECOND = 1000;	//1•b
-	private final static int MAX_RETRY_WAIT_MILISECOND = 120000;	//2•ªŠÔ
+	public final static int RETRY_WAIT_MILISECOND = 5000;	//5ç§’
+	public final static int ERROR_WAIT_MILISECOND = 1000;	//1ç§’
+	private final static int MAX_RETRY_WAIT_MILISECOND = 120000;	//2åˆ†é–“
 	private Logger log;
 	private static Date lastErrorDate = new Date();
 	private static int lastErrorWaittime = ERROR_WAIT_MILISECOND;
@@ -106,13 +106,13 @@ public class Gate extends Thread {
 
 	/**
 	 * exit(miliseconds)
-	 * @param miliseconds Ÿ‚Ì enter‚ğ‘Ò‚½‚¹‚éƒ~ƒŠ•b”AƒGƒ‰[I—¹Œã‚Í‘Ò‚Â‚±‚Æ
+	 * @param miliseconds æ¬¡ã® enterã‚’å¾…ãŸã›ã‚‹ãƒŸãƒªç§’æ•°ã€ã‚¨ãƒ©ãƒ¼çµ‚äº†å¾Œã¯å¾…ã¤ã“ã¨
 	 */
 	private void exit(int miliseconds){
 		if(entered){
 			entered = false;
 			if(miliseconds > 0){
-				// ƒGƒ‰[I—¹Œã‚ÍŸ‚Ìenter‚³‚¹‚È‚¢Bticket‚Á‚½‚Ü‚Ü
+				// ã‚¨ãƒ©ãƒ¼çµ‚äº†å¾Œã¯æ¬¡ã®enterã•ã›ãªã„ã€‚ticketæŒã£ãŸã¾ã¾
 				try{
 					Thread.sleep(miliseconds);
 				}catch(InterruptedException e){
@@ -137,8 +137,8 @@ public class Gate extends Thread {
 			return false;
 
 		log.println("Gate#notExceedLimitterGate("+id+") waiting");
-		exit(getErrorRetryWait());		//@‘Ò‹@ŒãAƒƒbƒNŠJ•ú
-		if(count++ > limitter){	//retry”’´‚¦‚½‚ç false
+		exit(getErrorRetryWait());		//ã€€å¾…æ©Ÿå¾Œã€ãƒ­ãƒƒã‚¯é–‹æ”¾
+		if(count++ > limitter){	//retryæ•°è¶…ãˆãŸã‚‰ false
 			log.println("Gate#notExceedLimitterGate("+id+") limmiter("+limitter
 					+") over, wait: "+lastErrorWaittime/1000+"sec.");
 			count = 0;
@@ -159,7 +159,7 @@ public class Gate extends Thread {
 					return (int)Math.max(0, waitend - now) + RETRY_WAIT_MILISECOND;
 				}else{
 					isLastError = true;
-					return lastErrorWaittime;	//5•b‘Ò‹@
+					return lastErrorWaittime;	//5ç§’å¾…æ©Ÿ
 				}
 			} finally {
 				lastErrorDate = new Date();

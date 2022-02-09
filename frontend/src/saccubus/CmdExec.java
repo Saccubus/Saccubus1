@@ -38,7 +38,7 @@ public class CmdExec extends Thread {
 			String lastout = ebr.readLine();
 			ret = process.exitValue();
 			if(ret!=0)
-				return "(" + ret + ")ÉGÉâÅ[:" + lastout;
+				return "(" + ret + ")„Ç®„É©„Éº:" + lastout;
 			return "okay";
 		} catch(NullPointerException ex){
 			ex.printStackTrace();
@@ -48,7 +48,7 @@ public class CmdExec extends Thread {
 			return "Interrupt";
 		} catch (IOException ex) {
 			ex.printStackTrace();
-			return "IOó·äO"+ex.getMessage();
+			return "IO‰æãÂ§ñ"+ex.getMessage();
 		} finally {
 			try {
 				if(process!=null){

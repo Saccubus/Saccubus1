@@ -30,7 +30,7 @@ public class Stopwatch {
 		out = lbl;
 		out.setVisible(false);
 		started = false;
-		header = "Œo‰ßŠÔ@";
+		header = "çµŒéæ™‚é–“ã€€";
 		trailer = "";
 		timertask = new TimerTask() {
 			@Override
@@ -119,12 +119,12 @@ public class Stopwatch {
 		return new Date().getTime() - startMilisec;
 	}
 
-	//	private static String FMT1 = "s•bSSSƒ~ƒŠ";
-	private static String FMT1 = "%d•b%03dƒ~ƒŠ";
-//	private static String FMT2 = "m•ªss•bSSSƒ~ƒŠ";
-	private static String FMT2 = "%d•ª%02d•b%03dƒ~ƒŠ";
-//	private static String FMT3 = "HŠÔmm•ªss•bSSSƒ~ƒŠ";
-	private static String FMT3 = "%dŠÔ%02d•ª%02d•b%03dƒ~ƒŠ";
+	//	private static String FMT1 = "sç§’SSSãƒŸãƒª";
+	private static String FMT1 = "%dç§’%03dãƒŸãƒª";
+//	private static String FMT2 = "måˆ†ssç§’SSSãƒŸãƒª";
+	private static String FMT2 = "%dåˆ†%02dç§’%03dãƒŸãƒª";
+//	private static String FMT3 = "Hæ™‚é–“mmåˆ†ssç§’SSSãƒŸãƒª";
+	private static String FMT3 = "%dæ™‚é–“%02dåˆ†%02dç§’%03dãƒŸãƒª";
 //	maybe ok since synchronized fixed
 //	oops NOT ok There was a mistake between JST and UTC
 	private static long LONG_SEC = 1000L;

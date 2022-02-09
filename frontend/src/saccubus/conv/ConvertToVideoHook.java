@@ -16,22 +16,22 @@ import saccubus.util.Logger;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * <p>
- * ’˜ìŒ : Copyright (c) 2007 PSI
+ * è‘—ä½œæ¨©: Copyright (c) 2007 PSI
  * </p>
  *
  * <p>
- * ‰ïĞ–¼:
+ * ä¼šç¤¾å:
  * </p>
  *
- * @author –¢“ü—Í
+ * @author æœªå…¥åŠ›
  * @version 1.0
  */
 public class ConvertToVideoHook {
@@ -40,11 +40,11 @@ public class ConvertToVideoHook {
 			boolean premium_color_check, String duration, Logger log, boolean is_debug, boolean is_html5comment) {
 		try {
 			Packet packet = new Packet(list, log, is_debug);
-			// SAXƒp[ƒT[ƒtƒ@ƒNƒgƒŠ‚ğ¶¬
+			// SAXãƒ‘ãƒ¼ã‚µãƒ¼ãƒ•ã‚¡ã‚¯ãƒˆãƒªã‚’ç”Ÿæˆ
 			SAXParserFactory spfactory = SAXParserFactory.newInstance();
-			// SAXƒp[ƒT[‚ğ¶¬
+			// SAXãƒ‘ãƒ¼ã‚µãƒ¼ã‚’ç”Ÿæˆ
 			SAXParser parser = spfactory.newSAXParser();
-			// XMLƒtƒ@ƒCƒ‹‚ğw’è‚³‚ê‚½ƒfƒtƒHƒ‹ƒgƒnƒ“ƒhƒ‰[‚Åˆ—‚µ‚Ü‚·
+			// XMLãƒ•ã‚¡ã‚¤ãƒ«ã‚’æŒ‡å®šã•ã‚ŒãŸãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒãƒ³ãƒ‰ãƒ©ãƒ¼ã§å‡¦ç†ã—ã¾ã™
 			NicoXMLReader nico_reader = null;
 			try {
 				nico_reader = new NicoXMLReader(packet, ng_id, ng_word, ng_cmd, score_limit,
@@ -56,7 +56,7 @@ public class ConvertToVideoHook {
 			if (nico_reader != null) {
 				parser.parse(file, nico_reader);
 			}
-			// •ÏŠ·Œ‹‰Ê‚Ì‘‚«‚İ
+			// å¤‰æ›çµæœã®æ›¸ãè¾¼ã¿
 			FileOutputStream fos = new FileOutputStream(out);
 			packet.write(fos);
 			fos.flush();

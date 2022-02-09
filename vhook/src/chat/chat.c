@@ -10,8 +10,8 @@
 
 SDL_Color convColor24(int color);
 /*
- * o—Í CHAT chat —ÌˆæŠm•ÛA€–Úİ’è
- * o—Í CHAT_SLOT chat->slot © slot ƒ|ƒCƒ“ƒ^İ’è‚Ì‚İ
+ * å‡ºåŠ› CHAT chat é ˜åŸŸç¢ºä¿ã€é …ç›®è¨­å®š
+ * å‡ºåŠ› CHAT_SLOT chat->slot â† slot ãƒã‚¤ãƒ³ã‚¿è¨­å®šã®ã¿
  */
 int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int video_length,int nico_width,
 		int cid,const char* com_type,int toLeft,int is_live,int vpos_shift,int ahead_vpos, int minvpos){
@@ -26,7 +26,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		fputs("[chat/init]failed to open comment file.\n",log);
 		return FALSE;
 	}
-	/*—v‘f”‚Ìæ“¾*/
+	/*è¦ç´ æ•°ã®å–å¾—*/
 	if(fread(&max_item,sizeof(max_item),1,com_f) <= 0){
 		fputs("[chat/init]failed to read the number of comments.\n",log);
 		return FALSE;
@@ -38,7 +38,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	if (max_item == 0){
 		return TRUE;
 	}
-	//ƒAƒCƒeƒ€”z—ñ‚ÌŠm•Û
+	//ã‚¢ã‚¤ãƒ†ãƒ é…åˆ—ã®ç¢ºä¿
 	chat->item = malloc(sizeof(CHAT_ITEM) * max_item);
 	if(chat->item == NULL){
 		fputs("[chat/init]failed to malloc for comment.\n",log);
@@ -47,7 +47,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	if (video_length == 0){
 		fprintf(log,"[chat/fix]cannot adjust end time since video_length UNKOWN\n");
 	}
-	// patissierƒRƒ}ƒ“ƒhƒ`ƒFƒbƒN
+	// patissierã‚³ãƒãƒ³ãƒ‰ãƒã‚§ãƒƒã‚¯
 	int patissier_num = 1000;
 	if (video_length > 0){
 		if(video_length < (60 * VPOS_FACTOR))
@@ -57,7 +57,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		else if(video_length < (600 * VPOS_FACTOR))
 			patissier_num = 500;
 	}
-	/*ŒÂ•Ê—v‘f‚Ì‰Šú‰»*/
+	/*å€‹åˆ¥è¦ç´ ã®åˆæœŸåŒ–*/
 	CHAT_ITEM* item;
 	int no;
 	int vpos;
@@ -77,14 +77,14 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		//item->showed = FALSE;
 		item->pooled = FALSE;
 		/*
-		 * +00 :32bit :no      :ƒRƒƒ“ƒg”Ô†
-		 * +04 :32bit :vpos    :Vodeo Position? (Ä¶ˆÊ’u)
-		 * +08 :32bit :location:ˆÊ’u(ƒRƒ}ƒ“ƒh ue shita nakaA‹y‚ÑfullƒRƒ}ƒ“ƒh‚©‚Ç‚¤‚©)
-		 * +0C :32bit :size    :‘å‚«‚³(big small medium)
-		 * +10 :32bit :color   :F(0~15=ƒJƒ‰[–¼,-1`-2^24:24bitƒJƒ‰[ƒR[ƒg‚Ì•â”)
-		 * +14 :32bit :str_len :•¶šƒoƒCƒg”(\0‚ğŠÜ‚ŞƒoƒCƒg”)
+		 * +00 :32bit :no      :ã‚³ãƒ¡ãƒ³ãƒˆç•ªå·
+		 * +04 :32bit :vpos    :Vodeo Position? (å†ç”Ÿä½ç½®)
+		 * +08 :32bit :location:ä½ç½®(ã‚³ãƒãƒ³ãƒ‰ ue shita nakaã€åŠã³fullã‚³ãƒãƒ³ãƒ‰ã‹ã©ã†ã‹)
+		 * +0C :32bit :size    :å¤§ãã•(big small medium)
+		 * +10 :32bit :color   :è‰²(0~15=ã‚«ãƒ©ãƒ¼å,-1ï½-2^24:24bitã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒˆã®è£œæ•°)
+		 * +14 :32bit :str_len :æ–‡å­—ãƒã‚¤ãƒˆæ•°(\0ã‚’å«ã‚€ãƒã‚¤ãƒˆæ•°)
 		 */
-		//ƒRƒƒ“ƒg”Ô†
+		//ã‚³ãƒ¡ãƒ³ãƒˆç•ªå·
 		if(fread(&no,sizeof(no),1,com_f) <= 0){
 			fputs("[chat/init]failed to read comment number.\n",log);
 			return FALSE;
@@ -98,31 +98,31 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			return FALSE;
 		}
 		vpos = SDL_SwapLE32(vpos);
-		//•¶š‚ÌêŠ
+		//æ–‡å­—ã®å ´æ‰€
 		if(fread(&location,sizeof(location),1,com_f) <= 0){
 			fputs("[chat/init]failed to read comment location.\n",log);
 			return FALSE;
 		}
 		location = SDL_SwapLE32(location);
-		//ƒTƒCƒY
+		//ã‚µã‚¤ã‚º
 		if(fread(&size,sizeof(size),1,com_f) <= 0){
 			fputs("[chat/init]failed to read comment size.\n",log);
 			return FALSE;
 		}
 		size = SDL_SwapLE32(size);
-		//F
+		//è‰²
 		if(fread(&color,sizeof(color),1,com_f) <= 0){
 			fputs("[chat/init]failed to read comment color.\n",log);
 			return FALSE;
 		}
 		color = SDL_SwapLE32(color);
-		//•¶š”
+		//æ–‡å­—æ•°
 		if(fread(&str_length,sizeof(str_length),1,com_f) <= 0){
 			fputs("[chat/init]failed to read comment length.\n",log);
 			return FALSE;
 		}
 		str_length = SDL_SwapLE32(str_length);
-		//•¶š—ñ
+		//æ–‡å­—åˆ—
 		str = malloc(str_length);
 		if(str == NULL){
 			fputs("[chat/init]failed to malloc for comment text.\n",log);
@@ -132,29 +132,29 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			fputs("[chat/init]failed to read comment text.\n",log);
 			return FALSE;
 		}
-		// full ƒRƒ}ƒ“ƒh
+		// full ã‚³ãƒãƒ³ãƒ‰
 		item->full = GET_CMD_FULL(location)!= 0;
-		// waku ƒRƒ}ƒ“ƒh
+		// waku ã‚³ãƒãƒ³ãƒ‰
 		item->waku = GET_CMD_WAKU(location)!= 0;
-		// patissier ƒRƒ}ƒ“ƒh
+		// patissier ã‚³ãƒãƒ³ãƒ‰
 		item->patissier = GET_CMD_PATISSIER(location)!= 0;
-		// invisible ƒRƒ}ƒ“ƒh
+		// invisible ã‚³ãƒãƒ³ãƒ‰
 		item->invisible = GET_CMD_INVISIBLE(location)!= 0;
-		// replace target:user saccubus1.39ˆÈ~
+		// replace target:user saccubus1.39ä»¥é™
 		item->replace_user = GET_CMD_REPLACE_USER(location)!=0;
-		// replace target:user saccubus1.39ˆÈ~
+		// replace target:user saccubus1.39ä»¥é™
 		item->replace_owner = GET_CMD_REPLACE_OWNER(location)!=0;
-		// is_button ƒRƒ}ƒ“ƒh
+		// is_button ã‚³ãƒãƒ³ãƒ‰
 		item->is_button = GET_CMD_IS_BUTTON(location)!=0;
-		// ender ƒRƒ}ƒ“ƒh
+		// ender ã‚³ãƒãƒ³ãƒ‰
 		item->ender = GET_CMD_ENDER(location)!=0;
 		// itemfork
 		item->itemfork = GET_CMD_ITEMFORK(location)!=0;
 		// color24bit
 		color24 = getSDL_color(color);
-		// bit 31-16 ‚ğ—•b”+1‚Æ‚İ‚È‚·@saccubus1.37ˆÈ~
+		// bit 31-16 ã‚’ï¼ ç§’æ•°+1ã¨ã¿ãªã™ã€€saccubus1.37ä»¥é™
 		duration = GET_CMD_DURATION(location);
-		// bit 13-12@ƒtƒHƒ“ƒg
+		// bit 13-12ã€€ãƒ•ã‚©ãƒ³ãƒˆ
 		html5font = GET_CMD_FONT(location);
 		// nico script & niwango
 		script = GET_CMD_SCRIPT(location);
@@ -162,7 +162,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			//check str
 			int c1 = str[1];
 			if(c1 == UNICODE_GYAKU){
-				// @‹t
+				// @é€†
 				int c3 = str[3];
 				if(c3 == UNICODE_TOU){
 					script = SCRIPT_GYAKU|SCRIPT_OWNER;
@@ -172,10 +172,10 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 					script = SCRIPT_GYAKU|SCRIPT_OWNER|SCRIPT_USER;
 				}
 				if(duration == 0){
-					duration = 30+1;	//ƒfƒtƒHƒ‹ƒg‚Í30•b
+					duration = 30+1;	//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯30ç§’
 				}
 			}else if(c1 == UNICODE_DE){
-				// @ƒfƒtƒHƒ‹ƒg
+				// @ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ
 				script = SCRIPT_DEFAULT;
 				if(duration == 0){
 					duration = INTEGER_MAX;
@@ -194,14 +194,14 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 				}
 			}
 			if(item->is_button){
-				// @ƒ{ƒ^ƒ“
+				// @ãƒœã‚¿ãƒ³
 				script = SCRIPT_BUTTON;
 			}
 		}
 		location = GET_CMD_LOC(location);
 		vpos += vpos_shift;
 
-		//•Ï”ƒZƒbƒg
+		//å¤‰æ•°ã‚»ãƒƒãƒˆ
 		item->no = no;
 		item->vpos = vpos;
 		item->location = location;
@@ -210,12 +210,12 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		item->color = color;
 		//removeZeroWidth(str,str_length/sizeof(Uint16));
 		item->str = str;
-		/*“à•”ˆ—‚æ‚è*/
+		/*å†…éƒ¨å‡¦ç†ã‚ˆã‚Š*/
 		//upto here duration is seconds, item->duration is VPOS
 		if(duration==0){
 			duration = TEXT_SHOW_SEC_S;
 		}else if(duration != INTEGER_MAX){
-			duration = (duration-1)*VPOS_FACTOR;	//duration field = @•b” + 1
+			duration = (duration-1)*VPOS_FACTOR;	//duration field = @ç§’æ•° + 1
 		}
 		if(location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM){
 			//ue shita
@@ -225,19 +225,19 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 			item->vappear = vpos;
 		}else{
 			//naka
-			if(is_live){	// vpos‚æ‚è‘‚­•\¦‚Å‚«‚È‚¢‚Ì‚Åvpos‚ğ1•b’x‚­‚·‚é
+			if(is_live){	// vposã‚ˆã‚Šæ—©ãè¡¨ç¤ºã§ããªã„ã®ã§vposã‚’1ç§’é…ãã™ã‚‹
 				vpos = item->vpos += TEXT_AHEAD_SEC;
 			}
 			if(ahead_vpos > TEXT_AHEAD_SEC){
-				// ƒRƒƒ“ƒg‘¬“x‚ª’x‚¢İ’è‚Ìê‡‚Ívstart,vappear‚ğ‘‚­,vend‚ğ’x‚­‚·‚éB
+				// ã‚³ãƒ¡ãƒ³ãƒˆé€Ÿåº¦ãŒé…ã„è¨­å®šã®å ´åˆã¯vstart,vappearã‚’æ—©ã,vendã‚’é…ãã™ã‚‹ã€‚
 				item->vstart = vpos - ahead_vpos;
 				item->vend = vpos + duration - 1 + ahead_vpos;
 				item->vappear = item->vstart - ahead_vpos;
 			}else{
-				item->vstart = vpos - TEXT_AHEAD_SEC;	//‚P•b‘O‚©‚ç
+				item->vstart = vpos - TEXT_AHEAD_SEC;	//ï¼‘ç§’å‰ã‹ã‚‰
 				// item->vend = vpos + TEXT_SHOW_SEC_S - 1;
-				item->vend = vpos + duration - 1 + TEXT_AHEAD_SEC;	//‚P•bŒã‚Ü‚Å•\¦;
-				item->vappear = vpos - TEXT_AHEAD_SEC - TEXT_AHEAD_SEC;	//•\¦‚Í‚Q•b‘O‚©‚ç
+				item->vend = vpos + duration - 1 + TEXT_AHEAD_SEC;	//ï¼‘ç§’å¾Œã¾ã§è¡¨ç¤º;
+				item->vappear = vpos - TEXT_AHEAD_SEC - TEXT_AHEAD_SEC;	//è¡¨ç¤ºã¯ï¼’ç§’å‰ã‹ã‚‰
 			}
 		}
 		item->duration = duration;
@@ -245,7 +245,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 		if(duration == INTEGER_MAX)
 			item->vend = INTEGER_MAX;
 		if(item->vpos < minvpos){
-			//ƒRƒƒ“ƒgŠJn
+			//ã‚³ãƒ¡ãƒ³ãƒˆé–‹å§‹æ™‚åˆ»
 			item->invisible = true;
 		}
 		if(script==SCRIPT_VOTE){
@@ -269,7 +269,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 				fprintf(log,"[chat/fix]comment %d<index:%d> time adjusted : %5.2f Sec.\n",no,i,(double)fix/(double)VPOS_FACTOR);
 			}
 		}
-		/*“à•”ˆ—‚æ‚è@‚¨‚í‚è*/
+		/*å†…éƒ¨å‡¦ç†ã‚ˆã‚Šã€€ãŠã‚ã‚Š*/
 	}
 	fclose(com_f);
 	chat->max_no = max_no;
@@ -284,7 +284,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	chat->vote_chatitem = NULL;
 	chat->patissier_ignore = max_no - patissier_num;
 	fprintf(log,"[main/init]patissier ignore no <= %d.\n",chat->patissier_ignore);
-	//ƒRƒƒ“ƒgƒv[ƒ‹ivpos‚ªXV‚³‚ê‚½‚Éæ‚èo‚µ‚½chat_item‚ğˆê•ÛŠÇj
+	//ã‚³ãƒ¡ãƒ³ãƒˆãƒ—ãƒ¼ãƒ«ï¼ˆvposãŒæ›´æ–°ã•ã‚ŒãŸæ™‚ã«å–ã‚Šå‡ºã—ãŸchat_itemã‚’ä¸€æ™‚ä¿ç®¡ï¼‰
 	if (chat->max_item > 0){
 		if(initChatPool(log, chat, chat->max_item)){
 			fprintf(log,"[main/init]initialized %s comment pool %d.\n",com_type,chat->max_item);
@@ -296,7 +296,7 @@ int initChat(FILE* log,CHAT* chat,const char* file_path,CHAT_SLOT* slot,int vide
 	}
 	return TRUE;
 }
-//BE,LE‹¤’Ê
+//BE,LEå…±é€š
 SDL_Color convColor24(int c){
 	SDL_Color sc;
 	sc.r = (c & 0x00ff0000) >> 16;
@@ -325,13 +325,13 @@ void closeChat(CHAT* chat){
 }
 
 /*
- * ƒCƒeƒŒ[ƒ^‚ğƒŠƒZƒbƒg‚·‚éB
+ * ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹ã€‚
  */
 void resetChatIterator(CHAT* chat){
 	chat->iterator_index = 0;
 }
 /*
- * ƒCƒeƒŒ[ƒ^‚ğ“¾‚é
+ * ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’å¾—ã‚‹
  */
 CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos,int ahead_vpos){
 	//int *i = &chat->iterator_index;
@@ -339,7 +339,7 @@ CHAT_ITEM* getChatShowed(CHAT* chat,int now_vpos,int ahead_vpos){
 	CHAT_ITEM* item;
 	for(;chat->iterator_index<chat->max_item;chat->iterator_index++){
 		item = &chat->item[chat->iterator_index];
-		//1•bæ“Ç‚İ
+		//1ç§’å…ˆèª­ã¿
 		if((now_vpos+ahead_vpos)>= item->vstart && now_vpos <= item->vend && !item->pooled){
 			return item;
 		}

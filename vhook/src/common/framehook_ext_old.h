@@ -1,22 +1,22 @@
 /*
- * �g��Vhook�t�B���^
- * copyright (c) 2008 �Ձi�v�T�C�j
+ * 拡張Vhookフィルタ
+ * copyright (c) 2008 ψ（プサイ）
  *
- * ������΂��p�Ɋg�����ꂽVhook���C�u������
- * �r���h���邽�߂̃w�b�_�ł��B
+ * さきゅばす用に拡張されたVhookライブラリを
+ * ビルドするためのヘッダです。
  *
- * ���̃t�@�C���́u������΂��v�̈ꕔ�ł���A
- * ���̃\�[�X�R�[�h��GPL���C�Z���X�Ŕz�z����܂��ł��B
+ * このファイルは「さきゅばす」の一部であり、
+ * このソースコードはGPLライセンスで配布されますです。
  */
 #ifndef SACCUBUS_VF_VHEXT_H
 #define SACCUBUS_VF_VHEXT_H
 
 /*
- * �Ă΂��Ƃ��Ɉꏏ�ɂ��Ă���toolbox.
- * �������瓮��̏��Ȃ񂩂��擾�ł���B
+ * 呼ばれるときに一緒についてくるtoolbox.
+ * ここから動画の情報なんかも取得できる。
  */
 typedef struct toolbox{
-	//�o�[�W����
+	//バージョン
 	int version;
 	double video_length;
 } toolbox;
@@ -31,20 +31,20 @@ typedef struct vhext_frame{
 
 
 /*
- * �g��vhook���C�u�����p�֐��Q��`
+ * 拡張vhookライブラリ用関数群定義
  */
 
-//configure�p
+//configure用
 typedef int (FrameHookExtConfigure)(void **ctxp,void *tbox, int argc, char *argv[]);
 typedef FrameHookExtConfigure *FrameHookExtConfigureFn;
 extern FrameHookExtConfigure ExtConfigure;
 
-//�t���[���p
+//フレーム用
 typedef void (FrameHookExtProcess)(void *ctx,void *tbox,vhext_frame *pict);
 typedef FrameHookExtProcess *FrameHookExtProcessFn;
 extern FrameHookExtProcess ExtProcess;
 
-//�I�����ɌĂ�
+//終了時に呼ぶ
 typedef void (FrameHookExtRelease)(void *ctx,void *tbox);
 typedef FrameHookExtRelease *FrameHookExtReleaseFn;
 extern FrameHookExtRelease ExtRelease;

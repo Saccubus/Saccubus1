@@ -74,7 +74,7 @@ public class HtmlView extends JDialog implements ActionListener {
 		setSize(dim);
 		Point pt = parent.getLocation();
 		setLocation(pt.x+20, pt.y+20);
-		editorPane.setCaretPosition(0);	//テキスト先頭を表示
+		editorPane.setCaretPosition(0);	//繝�繧ｭ繧ｹ繝亥�磯ｭ繧定｡ｨ遉ｺ
 
 		setVisible(true);
 		setResizable(true);

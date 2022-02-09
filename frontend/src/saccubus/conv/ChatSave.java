@@ -5,22 +5,22 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ðƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜Ž: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * <p>
- * ’˜ìŒ : Copyright (c) 2007 PSI
+ * è‘—ä½œæ¨©: Copyright (c) 2007 PSI
  * </p>
  *
  * <p>
- * ‰ïŽÐ–¼:
+ * ä¼šç¤¾å:
  * </p>
  *
- * @author –¢“ü—Í
+ * @author æœªå…¥åŠ›
  * @version 1.0
  */
 public class ChatSave {
@@ -72,14 +72,14 @@ public class ChatSave {
 	}
 
 	/*
-		•¶ŽšŽÀ‘ÌŽQÆ	”’l•¶ŽšŽQÆ	à–¾
-		<	&lt;	<	&#60;	¬‚È‚è
-		>	&gt;	>	&#62;	‘å‚È‚è
-		&	&amp;	&	&#38;	ƒAƒ“ƒpƒTƒ“ƒh
-		"	&quot;	"	&#34;	“ñdˆø—p•„
-			&nbsp;	 	&#160;	ƒXƒy[ƒX ( ‰üs‹ÖŽ~ƒXƒy[ƒX )
-		H	&copy;	H	&#169;	’˜ìŒ 
-		H	&reg;	H	&#174;	“o˜^¤•W
+		æ–‡å­—å®Ÿä½“å‚ç…§	æ•°å€¤æ–‡å­—å‚ç…§	èª¬æ˜Ž
+		<	&lt;	<	&#60;	å°ãªã‚Š
+		>	&gt;	>	&#62;	å¤§ãªã‚Š
+		&	&amp;	&	&#38;	ã‚¢ãƒ³ãƒ‘ã‚µãƒ³ãƒ‰
+		"	&quot;	"	&#34;	äºŒé‡å¼•ç”¨ç¬¦
+			&nbsp;	 	&#160;	ã‚¹ãƒšãƒ¼ã‚¹ ( æ”¹è¡Œç¦æ­¢ã‚¹ãƒšãƒ¼ã‚¹ )
+		ï¼Ÿ	&copy;	ï¼Ÿ	&#169;	è‘—ä½œæ¨©
+		ï¼Ÿ	&reg;	ï¼Ÿ	&#174;	ç™»éŒ²å•†æ¨™
 	*/
 
 	public static String safeReference(String str){

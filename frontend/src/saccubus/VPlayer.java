@@ -22,17 +22,17 @@ public class VPlayer extends Thread {
 
 	public String play(){
 		String videoPath = playVideo.getAbsolutePath();
-		//”¼ŠpƒXƒy[ƒX‚Ìê‡‚ÍƒVƒXƒeƒ€‚ªˆ—‚·‚é‚ª‘SŠpƒXƒy[ƒX‚Í‚±‚Á‚¿‚Åˆ—‚µ‚È‚¢‚Æƒ_ƒ
-		//ˆø—p•„‚ÅˆÍ‚Ş
-		if((videoPath.contains("@") && !videoPath.contains(" "))
+		//åŠè§’ã‚¹ãƒšãƒ¼ã‚¹ã®å ´åˆã¯ã‚·ã‚¹ãƒ†ãƒ ãŒå‡¦ç†ã™ã‚‹ãŒå…¨è§’ã‚¹ãƒšãƒ¼ã‚¹ã¯ã“ã£ã¡ã§å‡¦ç†ã—ãªã„ã¨ãƒ€ãƒ¡
+		//å¼•ç”¨ç¬¦ã§å›²ã‚€
+		if((videoPath.contains("ã€€") && !videoPath.contains(" "))
 			&& !videoPath.startsWith("\"")){
 			videoPath = "\"" + videoPath + "\"";
 		}
-		//Windowsƒtƒ@ƒCƒ‹–¼‚Ég‚¦‚é‚ªƒRƒ}ƒ“ƒhƒvƒƒ“ƒvƒg‚Å‚ÍƒGƒXƒP[ƒv‚µ‚È‚¢‚Æƒ_ƒ‚È•¶š()^&;,‹y‚Ñ‘SŠp”¼ŠpƒXƒy[ƒX	"()^&;, @"
-		//ƒRƒ}ƒ“ƒhƒvƒƒ“ƒvƒg‚ÌƒGƒXƒP[ƒv‚Í^‚Å‚ ‚é				"()^&;, @" -> "^(^)^^^&^;^,^ ^@"
-		//()^‚Í³‹K•\Œ»“à‚Å\‚ÅƒGƒXƒP[ƒv‚µ‚È‚¢‚Æ‚¾‚ß			"([\(\)\^&;, @])" -> "^$1"
-		//\‚ÍJava‚ÌƒŠƒeƒ‰ƒ‹‚Å‚Í\\‚Æ‘‚©‚È‚¢‚Æƒ_ƒA–Ê“|‚¢‚—		"([\\(\\)\\^&;, @])" -> "^$1"
-		videoPath = videoPath.replaceAll("([\\(\\)\\^&;, @=])","^$1");
+		//Windowsãƒ•ã‚¡ã‚¤ãƒ«åã«ä½¿ãˆã‚‹ãŒã‚³ãƒãƒ³ãƒ‰ãƒ—ãƒ­ãƒ³ãƒ—ãƒˆã§ã¯ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã—ãªã„ã¨ãƒ€ãƒ¡ãªæ–‡å­—()^&;,åŠã³å…¨è§’åŠè§’ã‚¹ãƒšãƒ¼ã‚¹	"()^&;, ã€€"
+		//ã‚³ãƒãƒ³ãƒ‰ãƒ—ãƒ­ãƒ³ãƒ—ãƒˆã®ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã¯^ã§ã‚ã‚‹				"()^&;, ã€€" -> "^(^)^^^&^;^,^ ^ã€€"
+		//()^ã¯æ­£è¦è¡¨ç¾å†…ã§\ã§ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—ã—ãªã„ã¨ã ã‚			"([\(\)\^&;, ã€€])" -> "^$1"
+		//\ã¯Javaã®ãƒªãƒ†ãƒ©ãƒ«ã§ã¯\\ã¨æ›¸ã‹ãªã„ã¨ãƒ€ãƒ¡ã€é¢å€’ã„ï½—		"([\\(\\)\\^&;, ã€€])" -> "^$1"
+		videoPath = videoPath.replaceAll("([\\(\\)\\^&;, ã€€=])","^$1");
 		ArrayList<String> cmd = new ArrayList<String>();
 		cmd.add("cmd.exe");
 		cmd.add("/C");
@@ -51,17 +51,17 @@ public class VPlayer extends Thread {
 			String lastout = ebr.readLine();
 			ret = process.exitValue();
 			if(ret!=0)
-				return "(" + ret + ")Ä¶ƒGƒ‰[:" + lastout;
+				return "(" + ret + ")å†ç”Ÿã‚¨ãƒ©ãƒ¼:" + lastout;
 			return "okay";
 		} catch(NullPointerException ex){
 			ex.printStackTrace();
-			return "(LÍM)ƒ‚Ê‚é‚Û\nƒKƒb\n";
+			return "(Â´âˆ€ï½€)ï¼œã¬ã‚‹ã½\nã‚¬ãƒƒ\n";
 		} catch (InterruptedException ex) {
 			//ex.printStackTrace();
-			return "Ä¶’†’f";
+			return "å†ç”Ÿä¸­æ–­";
 		} catch (IOException ex) {
 			ex.printStackTrace();
-			return "IO—áŠO"+ex.getMessage();
+			return "IOä¾‹å¤–"+ex.getMessage();
 		} finally {
 			try {
 				if(process!=null){
@@ -78,7 +78,7 @@ public class VPlayer extends Thread {
 	@Override
 	public void run(){
 		playCount.incrementAndGet();
-		sendtext("Ä¶:"+playVideo.getName());
+		sendtext("å†ç”Ÿ:"+playVideo.getName());
 		String msg = play();
 //		synchronized (playCount) {
 			int ct = playCount.decrementAndGet();

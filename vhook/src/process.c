@@ -4,20 +4,20 @@
 #include "chat/chat.h"
 #include "chat/chat_slot.h"
 
-//ƒvƒƒZƒX
+//ãƒ—ãƒ­ã‚»ã‚¹
 int process(DATA* data,SDL_Surface* surf,const int now_vpos){
 	FILE* log = data->log;
-	//ƒ†[ƒUƒRƒƒ“ƒg
+	//ãƒ¦ãƒ¼ã‚¶ã‚³ãƒ¡ãƒ³ãƒˆ
 	if(!process_chat(data,&data->user, surf,now_vpos)){
 		fprintf(log,"[process/process]failed to process %s comment.\n", "User");
 		return FALSE;
 	}
-	//ƒIƒvƒVƒ‡ƒiƒ‹ƒRƒƒ“ƒg
+	//ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚³ãƒ¡ãƒ³ãƒˆ
 	if(!process_chat(data, &data->optional, surf, now_vpos)){
 		fprintf(log,"[process/process]failed to process %s comment.\n", "Optional");
 		return FALSE;
 	}
-	//ƒI[ƒiƒRƒƒ“ƒg
+	//ã‚ªãƒ¼ãƒŠã‚³ãƒ¡ãƒ³ãƒˆ
 	if(!process_chat(data,&data->owner, surf,now_vpos)){
 		fprintf(log,"[process/process]failed to process %s comment.\n", "Owner");
 		return FALSE;

@@ -6,19 +6,19 @@ import javax.swing.text.*;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ƒ|ƒPƒ‚ƒ“ƒZ[ƒuƒf[ƒ^ƒGƒfƒBƒ^ for GBA
+ * ã‚¿ã‚¤ãƒˆãƒ«: ãƒã‚±ãƒ¢ãƒ³ã‚»ãƒ¼ãƒ–ãƒ‡ãƒ¼ã‚¿ã‚¨ãƒ‡ã‚£ã‚¿ for GBA
  * </p>
  * 
  * <p>
- * à–¾:
+ * èª¬æ˜:
  * </p>
  * 
  * <p>
- * ’˜ìŒ : Copyright (c) 2005 PSI
+ * è‘—ä½œæ¨©: Copyright (c) 2005 PSI
  * </p>
  * 
  * <p>
- * ‰ïĞ–¼: ƒÕiƒvƒTƒCj‚Ì‹»–¡ŠÖS‹óŠÔ
+ * ä¼šç¤¾å: Ïˆï¼ˆãƒ—ã‚µã‚¤ï¼‰ã®èˆˆå‘³é–¢å¿ƒç©ºé–“
  * </p>
  * 
  * @author PSI
@@ -45,18 +45,18 @@ public class PopupRightClick implements MouseListener, ActionListener {
 
 	public PopupRightClick(JTextComponent owner) {
 		this.Owner = owner;
-		popup = new JPopupMenu("ƒƒjƒ…[");
-		CopyMenu = new JMenuItem("ƒRƒs[(CTRL + C)");
+		popup = new JPopupMenu("ãƒ¡ãƒ‹ãƒ¥ãƒ¼");
+		CopyMenu = new JMenuItem("ã‚³ãƒ”ãƒ¼(CTRL + C)");
 		CopyMenu.setActionCommand(Actin_Copy);
 		CopyMenu.addActionListener(this);
 		popup.add(CopyMenu);
 
-		CutMenu = new JMenuItem("Ø‚èæ‚è(CTRL + X)");
+		CutMenu = new JMenuItem("åˆ‡ã‚Šå–ã‚Š(CTRL + X)");
 		CutMenu.setActionCommand(Actin_Cut);
 		CutMenu.addActionListener(this);
 		popup.add(CutMenu);
 
-		PasteMenu = new JMenuItem("“\‚è•t‚¯(CTRL + V)");
+		PasteMenu = new JMenuItem("è²¼ã‚Šä»˜ã‘(CTRL + V)");
 		PasteMenu.setActionCommand(Actin_Paste);
 		PasteMenu.addActionListener(this);
 		popup.add(PasteMenu);
@@ -68,7 +68,7 @@ public class PopupRightClick implements MouseListener, ActionListener {
 	 * 
 	 * @param e
 	 *            MouseEvent
-	 * @todo ‚±‚Ì java.awt.event.MouseListener ƒƒ\ƒbƒh‚ğÀ‘•
+	 * @todo ã“ã® java.awt.event.MouseListener ãƒ¡ã‚½ãƒƒãƒ‰ã‚’å®Ÿè£…
 	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -79,7 +79,7 @@ public class PopupRightClick implements MouseListener, ActionListener {
 	 * 
 	 * @param e
 	 *            MouseEvent
-	 * @todo ‚±‚Ì java.awt.event.MouseListener ƒƒ\ƒbƒh‚ğÀ‘•
+	 * @todo ã“ã® java.awt.event.MouseListener ãƒ¡ã‚½ãƒƒãƒ‰ã‚’å®Ÿè£…
 	 */
 	@Override
 	public void mouseEntered(MouseEvent e) {
@@ -90,7 +90,7 @@ public class PopupRightClick implements MouseListener, ActionListener {
 	 * 
 	 * @param e
 	 *            MouseEvent
-	 * @todo ‚±‚Ì java.awt.event.MouseListener ƒƒ\ƒbƒh‚ğÀ‘•
+	 * @todo ã“ã® java.awt.event.MouseListener ãƒ¡ã‚½ãƒƒãƒ‰ã‚’å®Ÿè£…
 	 */
 	@Override
 	public void mouseExited(MouseEvent e) {
@@ -102,7 +102,7 @@ public class PopupRightClick implements MouseListener, ActionListener {
 	 * 
 	 * @param e
 	 *            MouseEvent
-	 * @todo ‚±‚Ì java.awt.event.MouseListener ƒƒ\ƒbƒh‚ğÀ‘•
+	 * @todo ã“ã® java.awt.event.MouseListener ãƒ¡ã‚½ãƒƒãƒ‰ã‚’å®Ÿè£…
 	 */
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -114,11 +114,11 @@ public class PopupRightClick implements MouseListener, ActionListener {
 	 * 
 	 * @param e
 	 *            MouseEvent
-	 * @todo ‚±‚Ì java.awt.event.MouseListener ƒƒ\ƒbƒh‚ğÀ‘•
+	 * @todo ã“ã® java.awt.event.MouseListener ãƒ¡ã‚½ãƒƒãƒ‰ã‚’å®Ÿè£…
 	 */
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// ‰EƒNƒŠƒbƒN‚Ì‚¾‚¯‚Ì˜b
+		// å³ã‚¯ãƒªãƒƒã‚¯ã®æ™‚ã ã‘ã®è©±
 		if (pressed && SwingUtilities.isRightMouseButton(e)) {
 			popup.show(e.getComponent(), e.getX(), e.getY());
 		}
@@ -126,20 +126,20 @@ public class PopupRightClick implements MouseListener, ActionListener {
 	}
 
 	/**
-	 * ‚±‚Á‚¿‚ÍPopupMenu
+	 * ã“ã£ã¡ã¯PopupMenu
 	 * 
 	 * @param e
 	 *            ActionEvent
-	 * @todo ‚±‚Ì java.awt.event.ActionListener ƒƒ\ƒbƒh‚ğÀ‘•
+	 * @todo ã“ã® java.awt.event.ActionListener ãƒ¡ã‚½ãƒƒãƒ‰ã‚’å®Ÿè£…
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String ActionCommand = e.getActionCommand();
-		if (ActionCommand.equals(Actin_Cut)) { // ƒJƒbƒg
+		if (ActionCommand.equals(Actin_Cut)) { // ã‚«ãƒƒãƒˆ
 			Owner.cut();
-		} else if (ActionCommand.equals(Actin_Copy)) { // ƒRƒs[
+		} else if (ActionCommand.equals(Actin_Copy)) { // ã‚³ãƒ”ãƒ¼
 			Owner.copy();
-		} else if (ActionCommand.equals(Actin_Paste)) { // “\‚è•t‚¯
+		} else if (ActionCommand.equals(Actin_Paste)) { // è²¼ã‚Šä»˜ã‘
 			Owner.paste();
 		}
 	}

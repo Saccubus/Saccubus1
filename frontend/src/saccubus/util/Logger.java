@@ -10,7 +10,7 @@ import saccubus.TextView;
 import saccubus.net.Path;
 
 /**
- * Logger ログ出力クラス
+ * Logger 繝ｭ繧ｰ蜃ｺ蜉帙け繝ｩ繧ｹ
  * @author orz_e
  *
  */
@@ -86,9 +86,9 @@ public class Logger {
 
 	private static boolean existLogview(){
 		if(logview==null && enableLogview && MainFrame.getMaster()!=null){
-			logview = new TextView(MainFrame.getMaster(), "ログView", false, false);
+			logview = new TextView(MainFrame.getMaster(), "繝ｭ繧ｰView", false, false);
 			if(logview==null){
-				System.out.print("ログViewが作れません");
+				System.out.print("繝ｭ繧ｰView縺御ｽ懊ｌ縺ｾ縺帙ｓ");
 			}
 		}
 		return logview!=null;

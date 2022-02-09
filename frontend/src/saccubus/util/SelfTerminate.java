@@ -23,8 +23,8 @@ import javax.swing.JTextField;
 import saccubus.MainFrame;
 
 /*
- * ÀsƒXƒŒƒbƒh‚â‘€ì‚ª‚È‚¢ó‘Ô‚Å
- * ˆê’èŠÔ‚ª‚«‚½‚çSaccubus‚ğI—¹‚·‚é
+ * å®Ÿè¡Œã‚¹ãƒ¬ãƒƒãƒ‰ã‚„æ“ä½œãŒãªã„çŠ¶æ…‹ã§
+ * ä¸€å®šæ™‚é–“ãŒããŸã‚‰Saccubusã‚’çµ‚äº†ã™ã‚‹
  */
 public class SelfTerminate {
 	private long timeout;
@@ -61,7 +61,7 @@ public class SelfTerminate {
 		timertask2 = new TimerTask() {
 			@Override
 			public void run() {
-				restTimeMenu.setText("©“®I—¹‚Ü‚Å"+restsec+"•b");
+				restTimeMenu.setText("è‡ªå‹•çµ‚äº†ã¾ã§"+restsec+"ç§’");
 				if(!started){
 					if(restartFlag.getAndSet(false))
 						started = true;
@@ -86,7 +86,7 @@ public class SelfTerminate {
 		timer2.schedule(timertask2, SECOND_IN_MILIS, SECOND_IN_MILIS);
 	}
 	private void doTerminate(){
-		log.println("SelfTerminate: ‚·‚Å‚ÉŠÔØ‚ê.\n"+new Date());
+		log.println("SelfTerminate: æ™‚ã™ã§ã«æ™‚é–“åˆ‡ã‚Œ.\n"+new Date());
 		if(timer!=null) timer.cancel();
 		if(timer2!=null) timer2.cancel();
 		parent.jMenuFileExit_actionPerformed(null);
@@ -111,15 +111,15 @@ public class SelfTerminate {
 	boolean choice = false;
 	JTextField inputArea = new JTextField();
 	String inputValue;
-	String[] units = {"•b","•ª","ŠÔ "};
+	String[] units = {"ç§’","åˆ†","æ™‚é–“ "};
 	JComboBox<String> cBox = new JComboBox<>(units);
 	public void setUp(long timedef, boolean enable) {
 		if(enable){
-			final JDialog dialog = new JDialog(parent,"ŠÔ§ŒÀİ’è",true);
+			final JDialog dialog = new JDialog(parent,"æ™‚é–“åˆ¶é™è¨­å®š",true);
 			dialog.setBounds(parent.getX()+64, parent.getY()+164, 168, 110);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setLayout(new BorderLayout(10, 5));
-			dialog.add(new JLabel("ŠÔ§ŒÀ’l‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢"),
+			dialog.add(new JLabel("æ™‚é–“åˆ¶é™å€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„"),
 					BorderLayout.NORTH);
 			JPanel inputPanel = new JPanel();
 			inputPanel.setLayout(new BorderLayout());
@@ -136,7 +136,7 @@ public class SelfTerminate {
 					dialog.dispose();
 				}
 			});
-			JButton cancel = new JButton("ƒLƒƒƒ“ƒZƒ‹");
+			JButton cancel = new JButton("ã‚­ãƒ£ãƒ³ã‚»ãƒ«");
 			cancel.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -168,9 +168,9 @@ public class SelfTerminate {
 			if(timeval>0){
 				ans = JOptionPane.showConfirmDialog(
 					parent,
-					"İ’è’l‚Í "+inputValue+units[unitsel]
-						+"("+timeval+"ƒ~ƒŠ•b) ‚Å‚æ‚ë‚µ‚¢‚Å‚·‚©?",
-					"Šm”F",
+					"è¨­å®šå€¤ã¯ "+inputValue+units[unitsel]
+						+"("+timeval+"ãƒŸãƒªç§’) ã§ã‚ˆã‚ã—ã„ã§ã™ã‹?",
+					"ç¢ºèª",
 					JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE);
 			}
@@ -196,8 +196,8 @@ public class SelfTerminate {
 
 	JCheckBoxMenuItem jMenuSelfTerminate = new JCheckBoxMenuItem();
 	public JMenuItem initMenu(final long timeval) {
-		jMenuSelfTerminate.setText("©“®I—¹ ŠÔ§ŒÀİ’è");
-		jMenuSelfTerminate.setToolTipText("•ÏŠ·Às‚ª‚È‚­GUI‘€ì‚à‚È‚¢ó‘Ô‚ÅŠÔ§ŒÀˆÈãŒo‚Â‚ÆI—¹‚·‚é");
+		jMenuSelfTerminate.setText("è‡ªå‹•çµ‚äº† æ™‚é–“åˆ¶é™è¨­å®š");
+		jMenuSelfTerminate.setToolTipText("å¤‰æ›å®Ÿè¡ŒãŒãªãGUIæ“ä½œã‚‚ãªã„çŠ¶æ…‹ã§æ™‚é–“åˆ¶é™ä»¥ä¸ŠçµŒã¤ã¨çµ‚äº†ã™ã‚‹");
 		jMenuSelfTerminate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

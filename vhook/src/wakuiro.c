@@ -13,7 +13,7 @@ void set_wakuiro(const char* str,DATA* data){
 		tmp = strstr(tmp+1,"/");
 		n++;
 	}
-	//ƒf[ƒ^—ÌˆæŠm•Û
+	//ãƒ‡ãƒ¼ã‚¿é ˜åŸŸç¢ºä¿
 	data->wakuiro_dat = (unsigned int*)malloc(n * sizeof(unsigned int) * 2);
 	if(data->wakuiro_dat == NULL){
 		fprintf(data->log,"[set_wakuiro]failed to alloc wakuiro_dat.\n");
@@ -26,9 +26,9 @@ void set_wakuiro(const char* str,DATA* data){
 		waku[0] = 1;
 		color = strtol(str,NULL,0);
 		if(strcmp(str,"0x")==0){
-			color = SET_WAKUIRO(WAKUIRO_COLORCODE,color);	//24ƒrƒbƒgƒJƒ‰[ƒR[ƒh
+			color = SET_WAKUIRO(WAKUIRO_COLORCODE,color);	//24ãƒ“ãƒƒãƒˆã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 		}else{
-			color = SET_WAKUIRO(WAKUIRO_COLORNAME,color);	//ƒJƒ‰[–¼
+			color = SET_WAKUIRO(WAKUIRO_COLORNAME,color);	//ã‚«ãƒ©ãƒ¼å
 		}
 		waku[1] = color;
 		if(data->debug)
@@ -44,20 +44,20 @@ void set_wakuiro(const char* str,DATA* data){
 	char* nptr;
 	n <<= 1;
 	for(i = 2; i < n; i+=2){
-		//waku[i]@@F@ƒRƒƒ“ƒg”Ô†(0)‚Ü‚½‚Í•¶ŽšFŽw’è(ƒJƒ‰[–¼,ƒJƒ‰[ƒR[ƒh)
-		//waku[i+1]F@˜gFŽw’è
+		//waku[i]ã€€ã€€ï¼šã€€ã‚³ãƒ¡ãƒ³ãƒˆç•ªå·(0)ã¾ãŸã¯æ–‡å­—è‰²æŒ‡å®š(ã‚«ãƒ©ãƒ¼å,ã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰)
+		//waku[i+1]ï¼šã€€æž è‰²æŒ‡å®š
 		if(tmp[0]=='_'){
-			// tmp[0] •¶ŽšFŽw’è
+			// tmp[0] æ–‡å­—è‰²æŒ‡å®š
 			tmp++;
 			color = strtol(tmp,&nptr,0);
 			if(strncmp(tmp,"0x",2)==0){
-				color = SET_WAKUIRO(WAKUIRO_COLORCODE,color);	//24ƒrƒbƒgƒJƒ‰[ƒR[ƒh
+				color = SET_WAKUIRO(WAKUIRO_COLORCODE,color);	//24ãƒ“ãƒƒãƒˆã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 			}else{
-				color = SET_WAKUIRO(WAKUIRO_COLORNAME,color);	//ƒJƒ‰[–¼
+				color = SET_WAKUIRO(WAKUIRO_COLORNAME,color);	//ã‚«ãƒ©ãƒ¼å
 			}
 			waku[i] = color;
 		}else{
-			// tmp[0] ƒRƒƒ“ƒg”Ô†
+			// tmp[0] ã‚³ãƒ¡ãƒ³ãƒˆç•ªå·
 			com_no = strtol(tmp,&nptr,10);
 			int waku_type = WAKUIRO_OWNER;
 			if(*nptr=='u'){
@@ -71,12 +71,12 @@ void set_wakuiro(const char* str,DATA* data){
 			waku[i] = com_no;
 		}
 		tmp = nptr + 1;		//skip '_'
-		// ˜gFŽw’è
+		// æž è‰²æŒ‡å®š
 		color = strtol(tmp,&nptr,0);
 		if(strncmp(tmp,"0x",2)==0){
-			color = SET_WAKUIRO(WAKUIRO_COLORCODE,color);	//24ƒrƒbƒgƒJƒ‰[ƒR[ƒh
+			color = SET_WAKUIRO(WAKUIRO_COLORCODE,color);	//24ãƒ“ãƒƒãƒˆã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 		}else{
-			color = SET_WAKUIRO(WAKUIRO_COLORNAME,color);	//ƒJƒ‰[–¼
+			color = SET_WAKUIRO(WAKUIRO_COLORNAME,color);	//ã‚«ãƒ©ãƒ¼å
 		}
 		waku[i+1] = color;
 		tmp = nptr + 1;		//skip '/'

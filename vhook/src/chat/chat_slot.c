@@ -12,8 +12,8 @@
 #include <math.h>
 
 /*
- * o—Í CHAT_SLOT slot €–Úİ’è
- * o—Í CHAT_ITEM slot->item —ÌˆæŠm•ÛA€–Úİ’è
+ * å‡ºåŠ› CHAT_SLOT slot é …ç›®è¨­å®š
+ * å‡ºåŠ› CHAT_ITEM slot->item é ˜åŸŸç¢ºä¿ã€é …ç›®è¨­å®š
  */
 int initChatSlot(FILE* log,CHAT_SLOT* slot,int max_slot,CHAT* chat){
 	slot->max_item=max_slot;
@@ -42,7 +42,7 @@ void closeChatSlot(CHAT_SLOT* slot){
 		if(item->used && item->surf!=NULL)
 			SDL_FreeSurface(item->surf);
 	}
-	//ƒAƒCƒeƒ€‚ğÁ‹B
+	//ã‚¢ã‚¤ãƒ†ãƒ ã‚’æ¶ˆå»ã€‚
 	free(slot->item);
 }
 
@@ -88,15 +88,15 @@ void deleteChatSlotFromIndex(CHAT_SLOT* slot,int index){
 }
 */
 /*
- * ƒXƒƒbƒg‚É’Ç‰Á‚·‚éB
+ * ã‚¹ãƒ­ãƒƒãƒˆã«è¿½åŠ ã™ã‚‹ã€‚
  */
 int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int video_height){
-	//‚à‚¤Œ©‚¹‚ç‚ê‚½B
+	//ã‚‚ã†è¦‹ã›ã‚‰ã‚ŒãŸã€‚
 	//item->showed = TRUE;
 	if(slot->max_item <= 0){
 		return 0;
 	}
-	//patissierƒRƒ}ƒ“ƒh
+	//patissierã‚³ãƒãƒ³ãƒ‰
 	if(item->patissier && item->no <= item->chat->patissier_ignore){
 		fprintf(data->log,"[chat_slot/add]comment %d %s patissier vanish.\n",
 			item->no,item->chat->com_type);
@@ -108,19 +108,19 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			item->no,item->chat->com_type, data->min_vpos);
 		return 0;
 	}
-	//invisibleƒRƒ}ƒ“ƒh
+	//invisibleã‚³ãƒãƒ³ãƒ‰
 	if(item->invisible){
 		fprintf(data->log,"[chat_slot/add]comment %d %s invisible.\n",
 			item->no,item->chat->com_type);
 		return 0;
 	}
-	//ƒRƒƒ“ƒg•`‰æ size color Äİ’è
+	//ã‚³ãƒ¡ãƒ³ãƒˆæç”» size color å†è¨­å®š
 	SDL_Surface* surf = makeCommentSurface(data,item,video_width,video_height);
 	if((surf == NULL) && ((surf = getErrFont(data)) == NULL)){
 			return 0;
 	}
 	int size = (item->size == CMD_FONT_DEF)? data->defsize : item->size;
-	/*ŠJ‚«ƒXƒƒbƒgƒ‹ŒŸõ*/
+	/*é–‹ãã‚¹ãƒ­ãƒƒãƒˆãƒ«æ¤œç´¢*/
 	int i;
 	int cnt = 0;
 	int slot_max = slot->max_item;
@@ -130,7 +130,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			cnt = i;
 			break;
 		}
-//		if(slot->item[i].chat_item->vend < item->vstart){	//˜AŒ‹ (used=false‚Ì”¤‚¾‚ª)
+//		if(slot->item[i].chat_item->vend < item->vstart){	//é€£çµ (used=falseã®ç­ˆã ãŒ)
 //			cnt = i;
 //			break;
 //		}
@@ -139,15 +139,15 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			min_vstart = slot->item[i].chat_item->vstart;
 		}
 	}
-	CHAT_SLOT_ITEM* slot_item = &slot->item[cnt];	//‚±‚ÌƒXƒƒbƒg‚É’Ç‰Á
-	/*‹ó‚«‚ª–³‚¯‚ê‚Î‹­§“I‚Éì‚éB*/
+	CHAT_SLOT_ITEM* slot_item = &slot->item[cnt];	//ã“ã®ã‚¹ãƒ­ãƒƒãƒˆã«è¿½åŠ 
+	/*ç©ºããŒç„¡ã‘ã‚Œã°å¼·åˆ¶çš„ã«ä½œã‚‹ã€‚*/
 	if(slot_item->used){
-		// ‹ó‚«‚ª–³‚¢ê‡
-		if(data->comment_erase_type==0){	//]—ˆ’Ê‚èæ‚ÌƒRƒƒ“ƒgchat‚ğÁ‚·
+		// ç©ºããŒç„¡ã„å ´åˆ
+		if(data->comment_erase_type==0){	//å¾“æ¥é€šã‚Šå…ˆã®ã‚³ãƒ¡ãƒ³ãƒˆchatã‚’æ¶ˆã™
 			deleteChatSlot(slot_item,data);
 			//slot_item->used == FALSE;
-		}else if(data->comment_erase_type==1){	//V‚µ‚¢ƒRƒƒ“ƒgchat‚ğ–³‹‚·‚é
-			//ƒRƒƒ“ƒgsurf‚ğ‰ğ•ú
+		}else if(data->comment_erase_type==1){	//æ–°ã—ã„ã‚³ãƒ¡ãƒ³ãƒˆchatã‚’ç„¡è¦–ã™ã‚‹
+			//ã‚³ãƒ¡ãƒ³ãƒˆsurfã‚’è§£æ”¾
 			if(surf!=null) SDL_FreeSurface(surf);
 			if(data->debug){
 				fprintf(data->log,"[chat_slot/add]comment %d %s ignored. no free slot.\n",
@@ -156,23 +156,23 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			return 0;
 		}
 	}
-	//‚±‚Ì“_‚Å’Ç‰Á
+	//ã“ã®æ™‚ç‚¹ã§è¿½åŠ 
 	slot_item->chat_item = item;
 	slot_item->surf = surf;
-	//speed vstart vend location Äİ’è
+	//speed vstart vend location å†è¨­å®š
 	double scale = data->width_scale;
 	setspeed(data,slot_item,video_width,data->nico_width_now,scale);
 	if(data->debug){
 		fprintf(data->log,"[chat_slot/add speed]comment=%d vpos %d..%d(%d) duration(%d)\n",
 			item->no,item->vstart,item->vend,item->vpos,(item->vend+1-item->vstart));
 	}
-	//location æ“¾
+	//location å–å¾—
 	int location = slot_item->slot_location;
 	if(location==CMD_LOC_DEF){
 		fprintf(data->log,"[chat_slot/add]***BUG*** comment %d vpos %d location %d def %d\n",
 			item->no,item->vpos,item->location,data->deflocation);
 	}
-	/*ƒƒP[ƒVƒ‡ƒ“‚Å•ªŠò*/
+	/*ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã§åˆ†å²*/
 	int y;
 	int y_min = data->y_min;
 	int y_max = data->y_max;
@@ -209,8 +209,8 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	}
 	if(data->debug)
 		fprintf(data->log,"range (%.0f,%.0f)\n",range[0],range[1]);
-	// ƒRƒƒ“ƒgƒIƒt
-	int off_h = 0;		//ƒIƒt‚Ì‚‚³
+	// ã‚³ãƒ¡ãƒ³ãƒˆã‚ªãƒ•
+	int off_h = 0;		//ã‚ªãƒ•ã®é«˜ã•
 	int off_min = y_min;
 	int off_max = y_max;
 	int off_kind = 0;
@@ -226,30 +226,30 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			off_kind = data->comment_off_kind;
 			off_sign = data->comment_off_sign;
 			off_h = data->comment_off_y;
-			// pixel’l‚É•ÏŠ·
+			// pixelå€¤ã«å¤‰æ›
 			if(off_kind==4){
-				// %w’è
+				// %æŒ‡å®š
 				off_h = (int)(0.01 * off_h * video_height);
 			} else if(off_kind != 0){
-				// •¶šƒTƒCƒYw’è
+				// æ–‡å­—ã‚µã‚¤ã‚ºæŒ‡å®š
 				off_h = (int)(scale * off_h * FONT_PIXEL_SIZE[off_kind]);
 			}
-			// •ûŒü
+			// æ–¹å‘
 			if(off_sign == 0){
-				// ’†‰›‚©‚ç‚Í–¢À‘•
+				// ä¸­å¤®ã‹ã‚‰ã¯æœªå®Ÿè£…
 				comment_off = FALSE;
 			}else if(off_sign > 0){
-				//ã‚©‚çƒ}ƒXƒN
+				//ä¸Šã‹ã‚‰ãƒã‚¹ã‚¯
 				off_min += off_h;
 				if(location==CMD_LOC_NAKA)
 					y = y_min = off_min;
-				// !off_naka‚Ì‚ÍueƒRƒƒ“ƒg‚Í’e–‹‰»¨Á‹‚É‚È‚é
+				// !off_nakaã®æ™‚ã¯ueã‚³ãƒ¡ãƒ³ãƒˆã¯å¼¾å¹•åŒ–â†’æ¶ˆå»ã«ãªã‚‹
 			}else{
-				//‰º‚©‚çƒ}ƒXƒN
+				//ä¸‹ã‹ã‚‰ãƒã‚¹ã‚¯
 				off_max -= off_h;
 				if(location==CMD_LOC_NAKA)
 					y_max = off_max;
-				// !off_naka‚Ì‚ÍshitaƒRƒƒ“ƒg‚Í’e–‹‰»¨Á‹‚É‚È‚é
+				// !off_nakaã®æ™‚ã¯shitaã‚³ãƒ¡ãƒ³ãƒˆã¯å¼¾å¹•åŒ–â†’æ¶ˆå»ã«ãªã‚‹
 			}
 			if(data->debug)
 				fprintf(data->log,"[chat_slot/add]comment_off %s, min=%d, max=%d\n"
@@ -269,11 +269,11 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			const CHAT_ITEM* other_item = other_slot->chat_item;
 			int other_y = other_slot->y;
 			int other_y_bottom = other_y + other_slot->surf->h;
-			/*–³‹‚·‚éğŒ*/
-			if(other_slot->slot_location != location){	//•ÊƒƒP[ƒVƒ‡ƒ“
+			/*ç„¡è¦–ã™ã‚‹æ¡ä»¶*/
+			if(other_slot->slot_location != location){	//åˆ¥ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³
 				continue;
 			}
-			//ƒ`ƒFƒbƒN‚ÌŠJn‚ÆI—¹
+			//ãƒã‚§ãƒƒã‚¯ã®é–‹å§‹ã¨çµ‚äº†
 			if(!fixmode){
 				start = MAX(other_item->vstart,item->vstart);
 			}else{
@@ -281,24 +281,24 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			}
 			end = MIN(other_item->vend,item->vend);
 			if(location != CMD_LOC_NAKA){
-				//vend‚ÍÅŒã‚Ì”vpos‚Í—h‚ç‚®
-				end -= 12;	// 12vpos ‚Íd‚È‚Á‚Ä‚à‚¢‚¢?
+				//vendã¯æœ€å¾Œã®æ•°vposã¯æºã‚‰ã
+				end -= 12;	// 12vpos ã¯é‡ãªã£ã¦ã‚‚ã„ã„?
 			}else{
-				//nakaƒRƒƒ“ƒg‚Ìê‡‚Í5sec¨4sec‚É’¼‚·
+				//nakaã‚³ãƒ¡ãƒ³ãƒˆã®å ´åˆã¯5secâ†’4secã«ç›´ã™
 				end -= data->ahead_vpos;
 				//end -= 3;
 			}
 			if(start > end){
 				continue;
 			}
-			//“¯ˆêƒƒP[ƒVƒ‡ƒ“”­Œ©¨‘æ1ƒRƒƒ“ƒg‚Å‚Í‚È‚¢
+			//åŒä¸€ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³ç™ºè¦‹â†’ç¬¬1ã‚³ãƒ¡ãƒ³ãƒˆã§ã¯ãªã„
 			first_comment=FALSE;
-			//‘æ2ƒRƒƒ“ƒgˆÈŒã‚Å‰æ–ÊˆÈã‚Ì‚‚³‚Í’²‚×‚é‚Ü‚Å‚à‚È‚­’e–‹‰»
+			//ç¬¬2ã‚³ãƒ¡ãƒ³ãƒˆä»¥å¾Œã§ç”»é¢ä»¥ä¸Šã®é«˜ã•ã¯èª¿ã¹ã‚‹ã¾ã§ã‚‚ãªãå¼¾å¹•åŒ–
 			if(surf_h >= limit_height){
 				y = other_y_bottom;
 				break;
 			}
-			//‚‚³‚Ì”»’è
+			//é«˜ã•ã®åˆ¤å®š
 			if(other_y_bottom <= y){
 				continue;
 			}
@@ -306,7 +306,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 				continue;
 			}
 			if(location != CMD_LOC_NAKA){
-				//ue shita ‚Í X ‚ğ’²‚×‚é•K—v‚È‚­d‚È‚é
+				//ue shita ã¯ X ã‚’èª¿ã¹ã‚‹å¿…è¦ãªãé‡ãªã‚‹
 				if(location == CMD_LOC_BOTTOM){
 					y = other_y - surf_h;
 				}else{
@@ -327,7 +327,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			double o_dxstart[2] = {o_x_t1, o_x_t1 + other_w};
 			double o_dxend[2] = {o_x_t2, o_x_t2 + other_w};
 			double dtmp[2];
-			//“–‚½‚è”»’è@’Ç‚¢‰z‚µ–³‚µ‘O’ñ
+			//å½“ãŸã‚Šåˆ¤å®šã€€è¿½ã„è¶Šã—ç„¡ã—å‰æ
 			if(data->debug)
 				fprintf(data->log,"at %d(end) check [%.1f,%.1f] [%.1f,%.1f]y[%d] item %d\n",
 					end,dxend[0],dxend[1],o_dxend[0],o_dxend[1],other_y,other_item->no);
@@ -369,17 +369,17 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 				}
 			}
 			if(fixmode){
-				//“–‚½‚è”»’è@’Ç‚¢‰z‚µƒ`ƒFƒbƒN—L‚è
+				//å½“ãŸã‚Šåˆ¤å®šã€€è¿½ã„è¶Šã—ãƒã‚§ãƒƒã‚¯æœ‰ã‚Š
 				double range_xpos;
 				int check_vpos;
 				int other_xpos;
 				if(surf_w >= other_w){
-					// item‚ªŒã‚ÅƒXƒs[ƒh‚ª‘¬‚¢ê‡
-					// “®‰æ‚Ì¶’[‚É“’B‚·‚é
+					// itemãŒå¾Œã§ã‚¹ãƒ”ãƒ¼ãƒ‰ãŒé€Ÿã„å ´åˆ
+					// å‹•ç”»ã®å·¦ç«¯ã«åˆ°é”ã™ã‚‹æ™‚åˆ»
 					range_xpos = range[0];
 				}else{
-					// item‚ªŒã‚ÅƒXƒs[ƒh‚ª’x‚¢ê‡
-					// “®‰æ‚Ì‰E’[‚É•\¦‚³‚ê‚é
+					// itemãŒå¾Œã§ã‚¹ãƒ”ãƒ¼ãƒ‰ãŒé…ã„å ´åˆ
+					// å‹•ç”»ã®å³ç«¯ã«è¡¨ç¤ºã•ã‚Œã‚‹æ™‚åˆ»
 					range_xpos = range[1];
 				}
 				check_vpos = getVposItem(data,slot_item,range_xpos,0);
@@ -404,9 +404,9 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	}while(running);
 	y_bottom = y+surf_h;
 	if(data->comment_lf_control > 1 && data->html5comment==0){
-		// lfsŠÔ•â³ ver2
-		// lf_control = 0:‚È‚µ @1: rev1.67.1.2 ‚Ì‚Í‚µ‚È‚¢
-		// lf§Œä ƒRƒƒ“ƒg‚‚³‚Ì•â³‚Írender‚ÉÏ
+		// lfè¡Œé–“è£œæ­£ ver2
+		// lf_control = 0:ãªã— ã€€1: rev1.67.1.2 ã®æ™‚ã¯ã—ãªã„
+		// lfåˆ¶å¾¡ ã‚³ãƒ¡ãƒ³ãƒˆé«˜ã•ã®è£œæ­£ã¯renderæ™‚ã«æ¸ˆ
 		int h = (int)((data->comment_linefeed_ratio - 1.0) * surf_h);
 		int gap[4] = {3, 5, 2, 3};
 		int gaph = (int)(scale * gap[size] + 0.5);
@@ -415,7 +415,7 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 				,data->comment_linefeed_ratio, h, gaph);
 		if(h < 0 && data->shadow_kind!=0
 			&& y > y_min && y > off_min && y_bottom < y_max && y_bottom < off_max){
-			// sŠÔ‚ğ¬‚³‚­‚·‚é‚ÍŠù’è‚ÌsŠÔ‚ğ•â³‚·‚é
+			// è¡Œé–“ã‚’å°ã•ãã™ã‚‹æ™‚ã¯æ—¢å®šã®è¡Œé–“ã‚’è£œæ­£ã™ã‚‹
 			if(location==CMD_LOC_BOTTOM){
 				y_bottom += gaph;
 				if(y_bottom > y_max) y_bottom = y_max;
@@ -430,13 +430,13 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			fprintf(data->log,"[chat_slot/add]lf-control-fixed y=%d, line_feed %d\n", y, -gaph);
 		}
 	}
-	/*‚»‚à‚»‚à‰æ–Ê“à‚É–³‚¯‚ê‚Î–³ˆÓ–¡B*/
+	/*ãã‚‚ãã‚‚ç”»é¢å†…ã«ç„¡ã‘ã‚Œã°ç„¡æ„å‘³ã€‚*/
 	if(comment_off){
 		if(y < off_min || y_bottom > off_max){
-			// ƒRƒƒ“ƒgƒIƒt
-			//ƒRƒƒ“ƒgsurf‚ğ‰ğ•ú
+			// ã‚³ãƒ¡ãƒ³ãƒˆã‚ªãƒ•
+			//ã‚³ãƒ¡ãƒ³ãƒˆsurfã‚’è§£æ”¾
 			if(surf!=null) SDL_FreeSurface(surf);
-			// Šù‚É’Ç‰Á‚µ‚Ä‚¢‚é‚Ì‚ÅÁ‹
+			// æ—¢ã«è¿½åŠ ã—ã¦ã„ã‚‹ã®ã§æ¶ˆå»
 			slot_item->chat_item = NULL;
 			slot_item->surf = NULL;
 			slot_item->used = FALSE;
@@ -446,37 +446,37 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 		}
 	}
 	if(first_comment){
-		//‘æ1ƒRƒƒ“ƒg‚Í‰æ–ÊŠO‚Å‚à’e–‹‰»‚µ‚È‚¢
+		//ç¬¬1ã‚³ãƒ¡ãƒ³ãƒˆã¯ç”»é¢å¤–ã§ã‚‚å¼¾å¹•åŒ–ã—ãªã„
 		fprintf(data->log,"[chat_slot/add first]comment %d %s %s y=%d\n",
 			item->no,COM_LOC_NAME[location],COM_FONTSIZE_NAME[size],y);
 	}else
-	if(y < y_min || y_bottom > y_max){	// ”ÍˆÍ‚ğ’´‚¦‚Ä‚é‚Ì‚ÅAƒ‰ƒ“ƒ_ƒ€‚É”z’uB
+	if(y < y_min || y_bottom > y_max){	// ç¯„å›²ã‚’è¶…ãˆã¦ã‚‹ã®ã§ã€ãƒ©ãƒ³ãƒ€ãƒ ã«é…ç½®ã€‚
 		fprintf(data->log,"[chat_slot/add random]comment %d %s %s y=%d -> random\n",
 			item->no,COM_LOC_NAME[location],COM_FONTSIZE_NAME[size],y);
-		//big16‚ÍŒÅ’è
+		//big16ã¯å›ºå®š
 		if(item->nb_line==16 && size==CMD_FONT_BIG){
 			y = y_min;
 		}
 		else
-		//naka’e–‹‚ÍŒÅ’è
+		//nakaå¼¾å¹•ã¯å›ºå®š
 		if(surf_h>limit_height && location==CMD_LOC_NAKA){
 			if(data->html5comment){
-				//html5 naka’e–‹‚Íã‰º’†‰›”z’u
+				//html5 nakaå¼¾å¹•ã¯ä¸Šä¸‹ä¸­å¤®é…ç½®
 				y = (y_min + y_max - surf_h)>>1;
 			}
 			else{
-				//flash naka’e–‹‚Íã0ŒÅ’è
+				//flash nakaå¼¾å¹•ã¯ä¸Š0å›ºå®š
 				y = y_min;
 			}
 		}
 		else
-		//DR’e–‹‚àŒÅ’è
+		//DRå¼¾å¹•ã‚‚å›ºå®š
 		if(item->double_resized){
 			y = location==CMD_LOC_BOTTOM? (y_max - surf_h) : y_min;
 		}
 		else
-		//big16‚Å‚àDR‚Å‚ànaka‚Å‚à‚È‚¢
-		//HTML5‚Ì‚Í‚‚³‚ª‰æ–Ê‚æ‚è‘å‚«‚¢ƒRƒƒ“ƒg‚ÍŒÅ’è
+		//big16ã§ã‚‚DRã§ã‚‚nakaã§ã‚‚ãªã„
+		//HTML5ã®æ™‚ã¯é«˜ã•ãŒç”»é¢ã‚ˆã‚Šå¤§ãã„ã‚³ãƒ¡ãƒ³ãƒˆã¯å›ºå®š
 		if(data->html5comment && surf_h>=limit_height){
 			y = location==CMD_LOC_BOTTOM? (y_max - surf_h) : y_min;
 		}
@@ -484,10 +484,10 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 			y = y_min + ((rnd() & 0xffff) * (limit_height - surf_h)) / 0xffff;
 		}
 	}
-	//’Ç‰Á
+	//è¿½åŠ 
 	slot_item->used = TRUE;
 	if(data->html5comment){
-		// html5‚Ì‰©˜g‚Íd‚È‚é‚±‚Æ‚ª‘½‚¢
+		// html5ã®é»„æ ã¯é‡ãªã‚‹ã“ã¨ãŒå¤šã„
 		if(location==CMD_LOC_BOTTOM){
 			if(y < y_max) y++;
 		}else{
@@ -510,13 +510,13 @@ int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int v
 	return 1;
 }
 /*
- * ƒCƒeƒŒ[ƒ^‚ğƒŠƒZƒbƒg‚·‚éB
+ * ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹ã€‚
  */
 void resetChatSlotIterator(CHAT_SLOT* slot){
 	slot->iterator_index = 0;
 }
 /*
- * ƒCƒeƒŒ[ƒ^‚ğ“¾‚é
+ * ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’å¾—ã‚‹
  */
 CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos,int min_vpos){
 	int *i = &slot->iterator_index;
@@ -538,13 +538,13 @@ CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos,int min_vpos){
 	}
 	return NULL;
 }
-//Œã‚ë‚Q‚Â‚Ìpair‚Ìd‚È‚è‚ğÅ‰‚Ìpair‚Éİ’è‚·‚éB
+//å¾Œã‚ï¼’ã¤ã®pairã®é‡ãªã‚Šã‚’æœ€åˆã®pairã«è¨­å®šã™ã‚‹ã€‚
 int set_crossed(double ret[2],double pair1[2],double pair2[2]){
 	ret[0] = MAX(pair1[0],pair2[0]);
 	ret[1] = MIN(pair1[1],pair2[1]);
 	return (int)(ret[1] - ret[0]) >= 0;
 }
-//•
+//å¹…
 double d_width(double pair[2]){
 	return pair[1]-pair[0];
 }

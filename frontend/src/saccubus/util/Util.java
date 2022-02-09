@@ -6,10 +6,10 @@ import java.io.OutputStream;
 
 public class Util {
 	/*
-	 * OutputStream‚Öƒf[ƒ^‚ğ‘‚«‚Ş
+	 * OutputStreamã¸ãƒ‡ãƒ¼ã‚¿ã‚’æ›¸ãè¾¼ã‚€
 	 */
 	public static void writeInt(OutputStream os, int i) throws IOException {
-		// ƒŠƒgƒ‹ƒGƒ“ƒfƒBƒAƒ“
+		// ãƒªãƒˆãƒ«ã‚¨ãƒ³ãƒ‡ã‚£ã‚¢ãƒ³
 		os.write((i >> 0) & 0xff);
 		os.write((i >> 8) & 0xff);
 		os.write((i >> 16) & 0xff);
@@ -23,7 +23,7 @@ public class Util {
 		return num;
 	}
 
-	//ƒTƒƒQ[ƒgƒyƒA•(Œ‹‡•¶š) ŒŸo••¶šœ‹
+	//ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢ï¼†(çµåˆæ–‡å­—) æ¤œå‡ºï¼†æ–‡å­—é™¤å»
 	public static String DelEmoji(String str, String t)
 	{
 		if (!IsSurrogatePair(str)) return str;
@@ -42,7 +42,7 @@ public class Util {
 		return sb.toString();
 	}
 
-	//ƒTƒƒQ[ƒgƒyƒA•(Œ‹‡•¶š) •¶š’u‚«Š·‚¦
+	//ã‚µãƒ­ã‚²ãƒ¼ãƒˆãƒšã‚¢ï¼†(çµåˆæ–‡å­—) æ–‡å­—ç½®ãæ›ãˆ
 	public static String ReplaceEmoji(String str, char hs, char ls, String t)
 	{
 		if (str.length() <= 0) return str;

@@ -25,11 +25,11 @@ THANKS for Comment Artisan! A.K.A. SHOKUNIN!
   (resized?)  7    10n+3   17n+5
   (resized)   > 8  10n+3    9n+3
  *
- * html5ƒRƒƒ“ƒg‚Ì•¡”s‚‚³@ ƒqƒƒX‚³‚ñ‚Ìƒuƒƒ}ƒK‚æ‚è
+ * html5ã‚³ãƒ¡ãƒ³ãƒˆã®è¤‡æ•°è¡Œé«˜ã•ã€€ ãƒ’ãƒ­ã‚¹ã•ã‚“ã®ãƒ–ãƒ­ãƒã‚¬ã‚ˆã‚Š
  * http://ch.nicovideo.jp/883797/blomaga/ar1149544
  *
- * Å¬“ñæ–@@ not resized       Line resized
- * ’è”+•â³@big   medium small  big    medium  small
+ * æœ€å°äºŒä¹—æ³•ã€€ not resized       Line resized
+ * å®šæ•°+è£œæ­£ã€€big   medium small  big    medium  small
  *  a       42.452 27.143 16.95  22.356 14.094  9.4058
  *  b        4.05   5.076  4.9    2.6     2.748 3.138
  */

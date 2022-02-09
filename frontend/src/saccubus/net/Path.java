@@ -17,11 +17,11 @@ import java.util.Properties;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * @version 1.22r3e
@@ -33,8 +33,8 @@ public class Path extends File{
 
 	public Path(String path){
 		super(path);
-		// ’ˆÓ@path‚ª‘Š‘ÎƒpƒX–¼‚Å‚àâ‘ÎƒpƒX–¼‚Å‚à‚È‚¢‚Í
-		// ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚É‚ ‚éƒtƒ@ƒCƒ‹‚ğˆÓ–¡‚·‚é
+		// æ³¨æ„ã€€pathãŒç›¸å¯¾ãƒ‘ã‚¹åã§ã‚‚çµ¶å¯¾ãƒ‘ã‚¹åã§ã‚‚ãªã„æ™‚ã¯
+		// ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«ã‚ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ„å‘³ã™ã‚‹
 	}
 	public Path(File file){
 		super(file.getAbsolutePath());
@@ -215,7 +215,7 @@ public class Path extends File{
 	 */
 	public String search(String name){
 		Path[] childs = this.listPath();
-		//Path namePath = new Path(name); ©NG
+		//Path namePath = new Path(name); â†NG
 		if(childs==null)
 			return "";
 		for (Path p : childs){
@@ -524,7 +524,7 @@ public class Path extends File{
 	static String getRemovedExtName(String path) {
 		int index = path.lastIndexOf(".");
 		if (index > path.lastIndexOf(File.separator)) {
-			path = path.substring(0, index);		// Šg’£q‚ğíœ
+			path = path.substring(0, index);		// æ‹¡å¼µå­ã‚’å‰Šé™¤
 		}
 		return path;
 	}

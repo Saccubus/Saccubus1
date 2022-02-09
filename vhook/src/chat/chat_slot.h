@@ -15,7 +15,7 @@ struct CHAT_SLOT_ITEM{
 	float speed;
 	//int vappear;		//start display when wide(640x360)
 	//int vvanish;		//end display when wide
-	//ƒŠƒtƒ@ƒŒƒ“ƒX
+	//ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹
 	CHAT_SLOT* slot;
 };
 
@@ -23,23 +23,23 @@ struct CHAT_SLOT{
 	int max_item;
 	int iterator_index;
 	CHAT_SLOT_ITEM* item;
-	//ƒŠƒtƒ@ƒŒƒ“ƒX
+	//ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹
 	CHAT* chat;
-	//ƒRƒƒ“ƒgƒ^ƒCƒv
+	//ã‚³ãƒ¡ãƒ³ãƒˆã‚¿ã‚¤ãƒ—
 	//const char* com_type;	//user owner optional
 };
 #include "../main.h"
-//‰Šú‰»
+//åˆæœŸåŒ–
 int initChatSlot(FILE* log,CHAT_SLOT* slot,int max_slot,CHAT* chat);
 void closeChatSlot(CHAT_SLOT* slot);
-//’Ç‰ÁAíœ
+//è¿½åŠ ã€å‰Šé™¤
 int addChatSlot(DATA* data,CHAT_SLOT* slot,CHAT_ITEM* item,int video_width,int video_height);
 void deleteChatSlot(CHAT_SLOT_ITEM* item,DATA* log);
 void deleteChatSlotFromIndex(CHAT_SLOT* slot,int index);
-//ƒCƒeƒŒ[ƒ^
+//ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿
 void resetChatSlotIterator(CHAT_SLOT* slot);
 CHAT_SLOT_ITEM* getChatSlotErased(CHAT_SLOT* slot,int now_vpos,int min_vpos);
-//pairŒvZ
+//pairè¨ˆç®—
 int set_crossed(double ret[2],double pair1[2],double pair2[2]);
 double d_width(double pair[2]);
 

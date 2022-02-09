@@ -7,22 +7,22 @@ import javax.swing.UIManager;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * <p>
- * ’˜ìŒ : Copyright (c) 2007 PSI
+ * è‘—ä½œæ¨©: Copyright (c) 2007 PSI
  * </p>
  *
  * <p>
- * ‰ïĞ–¼:
+ * ä¼šç¤¾å:
  * </p>
  *
- * @author –¢“ü—Í
+ * @author æœªå…¥åŠ›
  * @version 1.0
  */
 public class Saccubus {
@@ -30,25 +30,25 @@ public class Saccubus {
 	boolean packFrame = false;
 
 	/**
-	 * ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Ì\’z‚Æ•\¦B
+	 * ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®æ§‹ç¯‰ã¨è¡¨ç¤ºã€‚
 	 */
 	public Saccubus() {
-		// ƒƒCƒ“ƒtƒŒ[ƒ€‚Ì€”õ
+		// ãƒ¡ã‚¤ãƒ³ãƒ•ãƒ¬ãƒ¼ãƒ ã®æº–å‚™
 		MainFrame frame = new MainFrame();
 		MainFrame.setMaster(frame);
-		// validate() ‚ÍƒTƒCƒY‚ğ’²®‚·‚é
-		// pack() ‚Í—LŒø‚ÈƒTƒCƒYî•ñ‚ğƒŒƒCƒAƒEƒg‚È‚Ç‚©‚çæ“¾‚·‚é
+		// validate() ã¯ã‚µã‚¤ã‚ºã‚’èª¿æ•´ã™ã‚‹
+		// pack() ã¯æœ‰åŠ¹ãªã‚µã‚¤ã‚ºæƒ…å ±ã‚’ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆãªã©ã‹ã‚‰å–å¾—ã™ã‚‹
 		if (packFrame) {
 			frame.pack();
 		} else {
 			frame.validate();
 		}
 
-		// ƒEƒBƒ“ƒhƒE‚ğ’†‰›‚É”z’u
+		// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ä¸­å¤®ã«é…ç½®
 		frame.setLocationByPlatform(true);
 
-		// ƒXƒvƒ‰ƒbƒVƒ…‚Í‰B‚·
-		// ƒƒCƒ“ƒtƒŒ[ƒ€•\¦
+		// ã‚¹ãƒ—ãƒ©ãƒƒã‚·ãƒ¥ã¯éš ã™
+		// ãƒ¡ã‚¤ãƒ³ãƒ•ãƒ¬ãƒ¼ãƒ è¡¨ç¤º
 		frame.setVisible(true);
 	}
 	public static void initEnv(){
@@ -62,7 +62,7 @@ public class Saccubus {
 	}
 
 	/**
-	 * ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒGƒ“ƒgƒŠƒ|ƒCƒ“ƒgB
+	 * ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¨ãƒ³ãƒˆãƒªãƒã‚¤ãƒ³ãƒˆã€‚
 	 *
 	 * @param args
 	 *            String[]

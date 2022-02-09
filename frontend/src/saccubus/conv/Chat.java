@@ -10,22 +10,22 @@ import saccubus.util.Util;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * <p>
- * ’˜ìŒ : Copyright (c) 2007 PSI
+ * è‘—ä½œæ¨©: Copyright (c) 2007 PSI
  * </p>
  *
  * <p>
- * ‰ïĞ–¼:
+ * ä¼šç¤¾å:
  * </p>
  *
- * @author –¢“ü—Í
+ * @author æœªå…¥åŠ›
  * @version 1.0
  */
 public class Chat {
@@ -55,14 +55,14 @@ public class Chat {
 	//bit 11
 	private static final int CMD_EX_ITEMFORK = 2048;
 	// bit 13-12 HTML5 font command
-	private static final int CMD_FONT_DEFONT = 0*4096;	//ƒSƒVƒbƒN•W€
-	private static final int CMD_FONT_MINCHO = 1*4096;	// 4096–¾’©‘Ì
-	private static final int CMD_FONT_GOTHIC = 2*4096;	//ŠÛƒSƒVƒbƒN‘Ì
-	//private static final int CMD_FONT_OTHER = 3*4096;	//ƒŠƒU[ƒu
+	private static final int CMD_FONT_DEFONT = 0*4096;	//ã‚´ã‚·ãƒƒã‚¯æ¨™æº–
+	private static final int CMD_FONT_MINCHO = 1*4096;	// 4096æ˜æœä½“
+	private static final int CMD_FONT_GOTHIC = 2*4096;	//ä¸¸ã‚´ã‚·ãƒƒã‚¯ä½“
+	//private static final int CMD_FONT_OTHER = 3*4096;	//ãƒªã‚¶ãƒ¼ãƒ–
 
 	/**
-	 * Location bit 31-16 ’Ç‰Á
-	 * 0: ]—ˆ(Šù’è’l)A1`65535: —•b” (”’l=•b”+1)
+	 * Location bit 31-16 è¿½åŠ 
+	 * 0: å¾“æ¥(æ—¢å®šå€¤)ã€1ï½65535: ï¼ ç§’æ•° (æ•°å€¤=ç§’æ•°+1)
 	 */
 	private static final int CMD_MAX_SECONDS = 0x0000ffff;
 	private static final int CMD_DUR_SECONDS_BITS = 16;
@@ -214,7 +214,7 @@ public class Chat {
 		String element[] = mail_str.split(" +");
 		for (int i = 0; i < element.length; i++) {
 			String str = element[i].toLowerCase();
-			/* ƒƒP[ƒVƒ‡ƒ“ */
+			/* ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³ */
 			if (str.equals("ue") && !isLocationAssigned) {
 				Location = CMD_LOC_TOP;
 				isLocationAssigned = true;
@@ -237,43 +237,43 @@ public class Chat {
 				html5Font = CMD_FONT_GOTHIC;
 				isFontAssigned = true;
 			}
-			// —•b”
-			else if ((str.startsWith("@") || str.startsWith("—")) && strsec.isEmpty()) {
+			// ï¼ ç§’æ•°
+			else if ((str.startsWith("@") || str.startsWith("ï¼ ")) && strsec.isEmpty()) {
 				strsec = str.substring(1);
 				if (!strsec.isEmpty()){
 					try {
 						sec = Integer.parseInt(strsec) + 1;	// @0 -> 1
 					} catch(NumberFormatException e){
 						// log.printStackTrace(e);
-						log.println("\nChat: •ÏŠ·ƒGƒ‰[ @"+strsec+" at No:"+No);
+						log.println("\nChat: å¤‰æ›ã‚¨ãƒ©ãƒ¼ @"+strsec+" at No:"+No);
 					}
 				}
 			}
-			// ƒtƒ‹ƒRƒ}ƒ“ƒh
+			// ãƒ•ãƒ«ã‚³ãƒãƒ³ãƒ‰
 			else if (str.equals("full")){
 				extend |= CMD_EX_FULL;
 			}
-			// ˜gƒRƒ}ƒ“ƒh
+			// æ ã‚³ãƒãƒ³ãƒ‰
 			else if (str.equals("waku")){
 				extend |= CMD_EX_WAKU;
 			}
-			// ‰ÙqElƒRƒ}ƒ“ƒh
+			// è“å­è·äººã‚³ãƒãƒ³ãƒ‰
 			else if (str.equals("patissier")){
 				extend |= CMD_EX_PATISSIER;
 			}
-			// invisibleƒRƒ}ƒ“ƒh
+			// invisibleã‚³ãƒãƒ³ãƒ‰
 			else if (str.equals("invisible")){
 				extend |= CMD_EX_INVISIBLE;
 			}
-			// is_buttonƒRƒ}ƒ“ƒh
+			// is_buttonã‚³ãƒãƒ³ãƒ‰
 			else if (str.equals("is_button")){
 				extend |= CMD_EX_IS_BUTTON;		//setButton(true)
 			}
-			// enderƒRƒ}ƒ“ƒh
+			// enderã‚³ãƒãƒ³ãƒ‰
 			else if (str.equals("ender")){
 				extend |= CMD_EX_ENDER;
 			}
-			// ƒTƒCƒY
+			// ã‚µã‚¤ã‚º
 			else if (str.equals("big") && !isSizeAssigned) {
 				Size = CMD_SIZE_BIG;
 				isSizeAssigned = true;
@@ -347,7 +347,7 @@ public class Chat {
 	public void setComment(String com_str) {
 		// log.println("Comment[" + com_str.length() + "]:" + com_str);
 		//Comment += com_str.replace("\t", "\u2001\u2001");
-		//Comment += com_str.replace("\t", "      ");	//0x20 6•¶š
+		//Comment += com_str.replace("\t", "      ");	//0x20 6æ–‡å­—
 		Comment += com_str;
 	}
 
@@ -397,12 +397,12 @@ public class Chat {
 		extend |= CMD_EX_SCRIPT_FOR_OWNER;
 	}
 	public static String makeWakuiro(String wakuiro) {
-		//•¶šF[=:]˜gF[,_;]ZZŒJ‚è•Ô‚µ@‚Åw’è‚·‚éB
-		//‰pšF–¼‚ğF”Ô†‚ÉFƒR[ƒh‚Í‚»‚Ì‚Ü‚Üw’è‚·‚éB
-		//ˆê‰def‚Æwhite‚Í‹æ•Ê‚·‚éBŠù’è‚Íudef=yellowv
+		//æ–‡å­—è‰²[=:]æ è‰²[,_;]ã€‡ã€‡ç¹°ã‚Šè¿”ã—ã€€ã§æŒ‡å®šã™ã‚‹ã€‚
+		//è‹±å­—è‰²åã‚’è‰²ç•ªå·ã«è‰²ã‚³ãƒ¼ãƒ‰ã¯ãã®ã¾ã¾æŒ‡å®šã™ã‚‹ã€‚
+		//ä¸€å¿œdefã¨whiteã¯åŒºåˆ¥ã™ã‚‹ã€‚æ—¢å®šã¯ã€Œdef=yellowã€
 		int color;
 		if(!wakuiro.replaceAll("[=:,;]+", "-").contains("-")){
-			//‘S‚Ä‚Ì˜gF‚ğw’è
+			//å…¨ã¦ã®æ è‰²ã‚’æŒ‡å®š
 			color = getColorNumber(wakuiro);
 			if(color < 0){
 				color -= Integer.MIN_VALUE;
@@ -410,7 +410,7 @@ public class Chat {
 			}
 			return Integer.toString(color);
 		}
-		//•¶šF‚Æ˜gF‚ÌƒyƒA‚ğo—Í
+		//æ–‡å­—è‰²ã¨æ è‰²ã®ãƒšã‚¢ã‚’å‡ºåŠ›
 		StringBuilder sb = new StringBuilder();
 		String[] list = wakuiro.split("[,;]+");
 		for (String pairstr : list){
@@ -418,10 +418,10 @@ public class Chat {
 			if(pair.length < 2)
 				continue;
 			if(Character.isDigit(pair[0].charAt(0))){
-				//‘æ1ˆø”‚ÍƒRƒƒ“ƒg”Ô†
+				//ç¬¬1å¼•æ•°ã¯ã‚³ãƒ¡ãƒ³ãƒˆç•ªå·
 				sb.append(pair[0]);
 			}else{
-				//‘æ1ˆø”‚ÍFw’è
+				//ç¬¬1å¼•æ•°ã¯è‰²æŒ‡å®š
 				sb.append("_");
 				color = getColorNumber(pair[0]);
 				if(color < 0){
@@ -449,9 +449,9 @@ public class Chat {
 	}
 
 	static String getColorName(int col){
-		//ƒJƒ‰[ƒR[ƒh®”’l‚ğF–¼‚É•ÏŠ·‚µ‚Ä•Ô‚·
-		//ƒ}ƒCƒiƒX‚Ì”‚Í#rrggbb‚É‚µ‚Ä•Ô‚·
-		// F
+		//ã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰æ•´æ•°å€¤ã‚’è‰²åã«å¤‰æ›ã—ã¦è¿”ã™
+		//ãƒã‚¤ãƒŠã‚¹ã®æ•°ã¯#rrggbbã«ã—ã¦è¿”ã™
+		// è‰²
 		if(col < 0)
 			return String.format("#%06d", -col);
 		if(col<=CMD_COLOR_BLACK2)
@@ -466,9 +466,9 @@ public class Chat {
 		return Color;
 	}
 	static int getColorNumber(String str) {
-		//F–¼‚ğƒJƒ‰[ƒR[ƒh®”’l‚É•ÏŠ·‚µ‚Ä•Ô‚·
-		//#rrggbb‚Íƒ}ƒCƒiƒX‚Ì”‚É‚µ‚Ä•Ô‚·
-		// F
+		//è‰²åã‚’ã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰æ•´æ•°å€¤ã«å¤‰æ›ã—ã¦è¿”ã™
+		//#rrggbbã¯ãƒã‚¤ãƒŠã‚¹ã®æ•°ã«ã—ã¦è¿”ã™
+		// è‰²
 		Integer colorNum = ColorNumberMap.get(str);
 		if(colorNum!=null)
 			return colorNum.intValue();
@@ -502,7 +502,7 @@ public class Chat {
 	void process(int rcolor, int rsize, int rlocation, String rcom){
 		if(!rcom.equals(Comment)){
 			Comment = rcom;
-			//•¶š—ñ‚ª’uŠ·‚³‚ê‚½‚È‚çƒJƒ‰[EƒTƒCƒYEƒƒP[ƒVƒ‡ƒ“‚à’uŠ·
+			//æ–‡å­—åˆ—ãŒç½®æ›ã•ã‚ŒãŸãªã‚‰ã‚«ãƒ©ãƒ¼ãƒ»ã‚µã‚¤ã‚ºãƒ»ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚‚ç½®æ›
 			if(rcolor != CMD_COLOR_DEF)
 				Color = rcolor;
 			if(rsize != CMD_SIZE_DEF)

@@ -9,10 +9,10 @@
 #define UNITABLE_H_
 
 /*
- ˆÈ‰º‚Ìƒe[ƒuƒ‹‚Ì•¶š‚ÌˆÓ–¡‚ÍŸ‚Ì’Ê‚è
+ ä»¥ä¸‹ã®ãƒ†ãƒ¼ãƒ–ãƒ«ã®æ–‡å­—ã®æ„å‘³ã¯æ¬¡ã®é€šã‚Š
  - USUAL_FONT 	usually gothic, may change simsun or gulim
  U MS UI GOTHIC
- g GOTHIC_FONT    	protect gothic	30fb E’†“_ ff61-ff9f ”¼ŠpƒJƒi
+ g GOTHIC_FONT    	protect gothic	30fb ãƒ»ä¸­ç‚¹ ff61-ff9f åŠè§’ã‚«ãƒŠ
  G GOTHIC_FONT    	gothic Not Change
  w SIMSUN_FONT    	weaker than GULIM, change simsun
  s SIMSUN_FONT    	change simsun
@@ -23,28 +23,28 @@
  J GEORGIA_FONT   	(win=sylfaen.ttf)
  D DEVANAGARI		(win=mangal.ttf) India
  T TAHOMA_FONT		(win=Tahoma) Thai etc.
- L MINGLIU_FONT		(win=MingLiU) ”Éš‘ÌA•Ï‰»‚È‚µ
- N N_MINCHO_FONT	(win=SIMSUN XP=NGULIM) –¾’©A•Ï‰»‚È‚µ
- E ESTRANGELO_EDESSA	ƒVƒŠƒA
+ L MINGLIU_FONT		(win=MingLiU) ç¹å­—ä½“ã€å¤‰åŒ–ãªã—
+ N N_MINCHO_FONT	(win=SIMSUN XP=NGULIM) æ˜æœã€å¤‰åŒ–ãªã—
+ E ESTRANGELO_EDESSA	ã‚·ãƒªã‚¢
  B BENGAL_FONT   	(vrinda.ttf)Bangla lipi
  C TAMIL_FONT 	 	(latha.ttf)Tamil
  e LAOO_FONT		(laoui.ttf)laoo
  f GURMKHI_FONT		(raavi.ttf)Gurmkhi
- k KANNADA_FONT		(tunga.ttf)ƒJƒiƒ‰
- h THAANA_FONT		(mvboli.ttf)ƒ^[ƒi
- i MALAYALAM_FONT	(kartika.ttf)ƒ}ƒ‰ƒ„ƒ‰ƒ€
- I TELUGU_CHAR		(gautami.ttf)ƒeƒ‹ƒO
- K SEGOEUI_SYM		(segoeuisym.ttf)Segoe UI Symbol(ƒV[ƒS[) 2022/01/22’Ç‰Á
+ k KANNADA_FONT		(tunga.ttf)ã‚«ãƒŠãƒ©
+ h THAANA_FONT		(mvboli.ttf)ã‚¿ãƒ¼ãƒŠ
+ i MALAYALAM_FONT	(kartika.ttf)ãƒãƒ©ãƒ¤ãƒ©ãƒ 
+ I TELUGU_CHAR		(gautami.ttf)ãƒ†ãƒ«ã‚°
+ K SEGOEUI_SYM		(segoeuisym.ttf)Segoe UI Symbol(ã‚·ãƒ¼ã‚´ãƒ¼) 2022/01/22è¿½åŠ 
  Z ZERO_WIDTH     	(200b-200f)2000series 2028-202f (No Font Griph)
 
- Ql‘—¿iWindows Vista‚ÉŠî‚Ã‚­j
+ å‚è€ƒè³‡æ–™ï¼ˆWindows Vistaã«åŸºã¥ãï¼‰
  http://haraise.web.fc2.com/hyou.htm
  http://haraise.web.fc2.com/hyou_t.htm
  http://haraise.web.fc2.com/hyou_kanji1.htm
  http://haraise.web.fc2.com/hyou_kanji2.htm
  http://haraise.web.fc2.com/hyou_kanji3.htm
  http://haraise.web.fc2.com/hyou_kanji4.htm
- C³ (Win7‚ÉŠî‚Ã‚­) Using WpfFontViewer 1.0.0.0 by mikeo_410‚³‚ñ
+ ä¿®æ­£ (Win7ã«åŸºã¥ã) Using WpfFontViewer 1.0.0.0 by mikeo_410ã•ã‚“
 
 */
 
@@ -76,7 +76,7 @@
 #define SEGOEUI_SYM_CHAR 'K'
 #define ZERO_WIDTH_CHAR 'Z'
 
-/* ƒRƒƒ“ƒgƒAƒEƒg‚ÍQl‘—¿‚É‚æ‚é’è‹` */
+/* ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆã¯å‚è€ƒè³‡æ–™ã«ã‚ˆã‚‹å®šç¾© */
 static const Uint8 UNITABLE[] =
 /*       "0               1               2               3               4               5               6               7               8               9               a               b               c               d               e               f               "*/
 /*       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"*/
@@ -370,74 +370,74 @@ static const Uint8 UNITABLE[] =
 /*       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"*/
 ;
 /*
-0000-001f §Œä
-0020-007f Šî–{ƒ‰ƒeƒ“
-0080-00ff ƒ‰ƒeƒ“‚P•â•
-0100-024f ƒ‰ƒeƒ“Šg’£A,B IPAŠg’£ ƒXƒy[ƒX’²®
-0300-036f Œ‹‡•ª‰¹‹L†		¡check¡ 0304,0320,0323‚Íƒ[ƒ••¶šˆµ‚¢ib’èj
-0370-03ff ƒMƒŠƒVƒƒƒRƒvƒg	(arial)
-0400-052f ƒLƒŠƒ‹        	¡check¡
-0530-058f ƒAƒ‹ƒƒjƒA   (tahoma.ttf)
-0590-05ff ƒwƒuƒ‰ƒC    (arial.ttf)
-0600-06ff ƒAƒ‰ƒrƒA     (arial.ttf) 0655‚Íƒ[ƒ••¶šˆµ‚¢
-0700-077f ƒVƒŠƒA        estrangelo edessa estre.ttf ‚Ü‚½‚Í seguihis.ttf
-0780-08ff ƒ^[ƒi    mvboli.ttf
-0900-097f ƒeƒoƒiƒKƒŠ    mangal.ttf ‚Ü‚½‚Í nirmala.ttf
-0980-09ff ƒxƒ“ƒKƒ‹      vrinda.ttf ‚Ü‚½‚Í@shonar.ttf ‚Ü‚½‚Í nirmala.ttf
-0a00-0a7f ƒOƒ‹ƒ€ƒL[   raavi.ttf ‚Ü‚½‚Í nirmala.ttf
-0a80-0aff ƒNƒWƒƒƒ‰[ƒg  shruti.ttf ‚Ü‚½‚Í nirmala.ttf
-0b00-0b7f ƒIƒŠƒ„[      	¡check¡
-0b80-0bff ƒ^ƒ~[ƒ‹     latha.ttf ‚Ü‚½‚Í nirmala.ttf
-0c00-0c7f ƒeƒ‹ƒO      gautami.ttf ‚Ü‚½‚Í nirmala.ttf
-0c80-0cff ƒJƒiƒ‰      tunga.ttf ‚Ü‚½‚Í nirmala.ttf
-0d00-0d7f ƒ}ƒ‰ƒ„ƒ‰ƒ€    kartika.ttf ‚Ü‚½‚Í nirmala.ttf
-0d80-0dff ƒVƒ“ƒnƒ‰      	¡check¡
-0e00-0e7f ƒ^ƒC          tahoma.ttf
-0e80-0eff ƒ‰ƒIƒX       laoui.ttf ‚Ü‚½‚Í LeelawUI.ttf
-0f00-0fff ƒ`ƒxƒbƒg      	¡check¡
-1000-109f ƒ~ƒƒƒ“ƒ}[MSƒSƒVƒbƒN•s‰Â	¡check¡
-10a0-10ff ƒOƒ‹ƒWƒA		sylfaen.ttf
-1100-11ff ƒnƒ“ƒOƒ‹š•ê  	‚à‚µ‚©‚µ‚ÄGulimŠÛ•¶šH	¡check¡
-1200-139f ƒGƒ`ƒIƒsƒA    	¡check¡
-13a0-13ff ƒ`ƒ‡ƒƒL[    	¡check¡
-1400-167f ƒJƒiƒ_æZ–¯‰¹ß	¡check¡
-1680-169f ƒIƒKƒ€        	¡check¡
-16a0-16ff ƒ‹[ƒ“        	¡check¡
-1700-171f ƒ^ƒKƒƒO      	¡check¡
-1720-173f ƒnƒkƒmƒI      	¡check¡
-1740-175f ƒuƒqƒbƒh      	¡check¡
-1760-177f ƒ^ƒOƒoƒkƒA    	¡check¡
-1780-17ff ƒNƒ[ƒ‹      	¡check¡
-1800-18ff ƒ‚ƒ“ƒSƒ‹      	¡check¡
-1900-194f ƒŠƒ“ƒu        	¡check¡
-1950-19ef ƒ^ƒCƒŒ        	¡check¡
-19e0-1cff ƒNƒ[ƒ‹‹L†  	¡check¡
-1d00-1dff ‚Ó‚è‚ª‚ÈŠg’£  	Arial
-1e00-1eff ƒ‰ƒeƒ“Šg’£’Ç‰Á	Arial
-1f00-1fff ƒMƒŠƒVƒƒŠg’£  	Arial
-2000-33ff ˆê”Ê‹å“Ç“_
-3400-4dbf CJK“‡Š¿šŠg`
-4e00-629f	CJK“‡Š¿š`	simsun‚©undef undef‚ÆŒë–‚‰»‚·
-62a0-773f	CJK“‡Š¿š`	simsun‚©undef undef‚ÆŒë–‚‰»‚·
-7740-8b9f	CJK“‡Š¿š`	simsun‚©undef undef‚ÆŒë–‚‰»‚·
-8ba0-8bdf	CJK“‡Š¿š` 	's'
-8be0-9fbf	CJK“‡Š¿š`
+0000-001f åˆ¶å¾¡
+0020-007f åŸºæœ¬ãƒ©ãƒ†ãƒ³
+0080-00ff ãƒ©ãƒ†ãƒ³ï¼‘è£œåŠ©
+0100-024f ãƒ©ãƒ†ãƒ³æ‹¡å¼µA,B IPAæ‹¡å¼µ ã‚¹ãƒšãƒ¼ã‚¹èª¿æ•´
+0300-036f çµåˆåˆ†éŸ³è¨˜å·		â– checkâ–  0304,0320,0323ã¯ã‚¼ãƒ­å¹…æ–‡å­—æ‰±ã„ï¼ˆæš«å®šï¼‰
+0370-03ff ã‚®ãƒªã‚·ãƒ£ã‚³ãƒ—ãƒˆ	(arial)
+0400-052f ã‚­ãƒªãƒ«        	â– checkâ– 
+0530-058f ã‚¢ãƒ«ãƒ¡ãƒ‹ã‚¢   (tahoma.ttf)
+0590-05ff ãƒ˜ãƒ–ãƒ©ã‚¤    (arial.ttf)
+0600-06ff ã‚¢ãƒ©ãƒ“ã‚¢     (arial.ttf) 0655ã¯ã‚¼ãƒ­å¹…æ–‡å­—æ‰±ã„
+0700-077f ã‚·ãƒªã‚¢        estrangelo edessa estre.ttf ã¾ãŸã¯ seguihis.ttf
+0780-08ff ã‚¿ãƒ¼ãƒŠ    mvboli.ttf
+0900-097f ãƒ†ãƒãƒŠã‚¬ãƒª    mangal.ttf ã¾ãŸã¯ nirmala.ttf
+0980-09ff ãƒ™ãƒ³ã‚¬ãƒ«      vrinda.ttf ã¾ãŸã¯ã€€shonar.ttf ã¾ãŸã¯ nirmala.ttf
+0a00-0a7f ã‚°ãƒ«ãƒ ã‚­ãƒ¼   raavi.ttf ã¾ãŸã¯ nirmala.ttf
+0a80-0aff ã‚¯ã‚¸ãƒ£ãƒ©ãƒ¼ãƒˆ  shruti.ttf ã¾ãŸã¯ nirmala.ttf
+0b00-0b7f ã‚ªãƒªãƒ¤ãƒ¼      	â– checkâ– 
+0b80-0bff ã‚¿ãƒŸãƒ¼ãƒ«     latha.ttf ã¾ãŸã¯ nirmala.ttf
+0c00-0c7f ãƒ†ãƒ«ã‚°      gautami.ttf ã¾ãŸã¯ nirmala.ttf
+0c80-0cff ã‚«ãƒŠãƒ©      tunga.ttf ã¾ãŸã¯ nirmala.ttf
+0d00-0d7f ãƒãƒ©ãƒ¤ãƒ©ãƒ     kartika.ttf ã¾ãŸã¯ nirmala.ttf
+0d80-0dff ã‚·ãƒ³ãƒãƒ©      	â– checkâ– 
+0e00-0e7f ã‚¿ã‚¤          tahoma.ttf
+0e80-0eff ãƒ©ã‚ªã‚¹       laoui.ttf ã¾ãŸã¯ LeelawUI.ttf
+0f00-0fff ãƒãƒ™ãƒƒãƒˆ      	â– checkâ– 
+1000-109f ãƒŸãƒ£ãƒ³ãƒãƒ¼MSã‚´ã‚·ãƒƒã‚¯ä¸å¯	â– checkâ– 
+10a0-10ff ã‚°ãƒ«ã‚¸ã‚¢		sylfaen.ttf
+1100-11ff ãƒãƒ³ã‚°ãƒ«å­—æ¯  	ã‚‚ã—ã‹ã—ã¦Gulimä¸¸æ–‡å­—ï¼Ÿ	â– checkâ– 
+1200-139f ã‚¨ãƒã‚ªãƒ”ã‚¢    	â– checkâ– 
+13a0-13ff ãƒãƒ§ãƒ­ã‚­ãƒ¼    	â– checkâ– 
+1400-167f ã‚«ãƒŠãƒ€å…ˆä½æ°‘éŸ³ç¯€	â– checkâ– 
+1680-169f ã‚ªã‚¬ãƒ         	â– checkâ– 
+16a0-16ff ãƒ«ãƒ¼ãƒ³        	â– checkâ– 
+1700-171f ã‚¿ã‚¬ãƒ­ã‚°      	â– checkâ– 
+1720-173f ãƒãƒŒãƒã‚ª      	â– checkâ– 
+1740-175f ãƒ–ãƒ’ãƒƒãƒ‰      	â– checkâ– 
+1760-177f ã‚¿ã‚°ãƒãƒŒã‚¢    	â– checkâ– 
+1780-17ff ã‚¯ãƒ¡ãƒ¼ãƒ«      	â– checkâ– 
+1800-18ff ãƒ¢ãƒ³ã‚´ãƒ«      	â– checkâ– 
+1900-194f ãƒªãƒ³ãƒ–        	â– checkâ– 
+1950-19ef ã‚¿ã‚¤ãƒ¬        	â– checkâ– 
+19e0-1cff ã‚¯ãƒ¡ãƒ¼ãƒ«è¨˜å·  	â– checkâ– 
+1d00-1dff ãµã‚ŠãŒãªæ‹¡å¼µ  	Arial
+1e00-1eff ãƒ©ãƒ†ãƒ³æ‹¡å¼µè¿½åŠ 	Arial
+1f00-1fff ã‚®ãƒªã‚·ãƒ£æ‹¡å¼µ  	Arial
+2000-33ff ä¸€èˆ¬å¥èª­ç‚¹
+3400-4dbf CJKçµ±åˆæ¼¢å­—æ‹¡ï½
+4e00-629f	CJKçµ±åˆæ¼¢å­—ï½	simsunã‹undef undefã¨èª¤é­”åŒ–ã™
+62a0-773f	CJKçµ±åˆæ¼¢å­—ï½	simsunã‹undef undefã¨èª¤é­”åŒ–ã™
+7740-8b9f	CJKçµ±åˆæ¼¢å­—ï½	simsunã‹undef undefã¨èª¤é­”åŒ–ã™
+8ba0-8bdf	CJKçµ±åˆæ¼¢å­—ï½ 	's'
+8be0-9fbf	CJKçµ±åˆæ¼¢å­—ï½
 9fc0-9fff ?
-a000-a48f ƒC‰¹ß
-a490-abff ƒC•”ñ
-ac00-d7af ƒnƒ“ƒOƒ‹
-d800-e74f •sg—pH
-e750-f8ff „—p—Ìˆæ
-f900-faff CJKŒİŠ·Š¿š
-fb00-fb4f ƒAƒtƒtƒ@ƒxƒbƒg•\¦Œ`
-fb50-fe1f ƒAƒ‰ƒrƒA•\¦Œ`A
-fe20-fe2f Œ‹‡”¼Šp‹L†
-fe30-fe6f CJKŒİŠ·Œ`
-fe70-feff ƒAƒ‰ƒrƒA•\¦Œ`B
-ff00-ff5f ”¼ŠpŒ`^‘SŠpŒ`1
-ff60-ff9f ”¼ŠpƒJƒi
-ffa0-ffdf ”¼ŠpŒ`^‘SŠpŒ`2
-ffe0-ffff “Áê•¶š
+a000-a48f ã‚¤éŸ³ç¯€
+a490-abff ã‚¤éƒ¨é¦–
+ac00-d7af ãƒãƒ³ã‚°ãƒ«
+d800-e74f ä¸ä½¿ç”¨ï¼Ÿ
+e750-f8ff ç§ç”¨é ˜åŸŸ
+f900-faff CJKäº’æ›æ¼¢å­—
+fb00-fb4f ã‚¢ãƒ•ãƒ•ã‚¡ãƒ™ãƒƒãƒˆè¡¨ç¤ºå½¢
+fb50-fe1f ã‚¢ãƒ©ãƒ“ã‚¢è¡¨ç¤ºå½¢A
+fe20-fe2f çµåˆåŠè§’è¨˜å·
+fe30-fe6f CJKäº’æ›å½¢
+fe70-feff ã‚¢ãƒ©ãƒ“ã‚¢è¡¨ç¤ºå½¢B
+ff00-ff5f åŠè§’å½¢ï¼å…¨è§’å½¢1
+ff60-ff9f åŠè§’ã‚«ãƒŠ
+ffa0-ffdf åŠè§’å½¢ï¼å…¨è§’å½¢2
+ffe0-ffff ç‰¹æ®Šæ–‡å­—
 */
 // CA Font Set Index
 #define GOTHIC_FONT	0

@@ -1,7 +1,7 @@
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·<br/>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶<br/>
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™<br/>
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜<br/>
  * </p>
  */
 package saccubus.net;
@@ -97,11 +97,11 @@ public class Loader {
 			password = setting.getPassword();
 			if (mailAddress == null || mailAddress.isEmpty()
 				|| password == null || password.isEmpty()) {
-				sendtext("ƒ[ƒ‹ƒAƒhƒŒƒX‚©ƒpƒXƒ[ƒh‚ª‹ó”’‚Å‚·B");
+				sendtext("ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ã‹ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãŒç©ºç™½ã§ã™ã€‚");
 				return false;
 			}
 		} else if (!browserInfo.isValid()){
-			sendtext("ƒuƒ‰ƒEƒU" + browserInfo.getName() + "‚ÌƒZƒbƒVƒ‡ƒ“æ“¾‚É¸”s");
+			sendtext("ãƒ–ãƒ©ã‚¦ã‚¶" + browserInfo.getName() + "ã®ã‚»ãƒƒã‚·ãƒ§ãƒ³å–å¾—ã«å¤±æ•—");
 			return false;
 		}
 		if (setting.useProxy()){
@@ -109,7 +109,7 @@ public class Loader {
 			proxyPort = setting.getProxyPort();
 			if (   proxy == null || proxy.isEmpty()
 				|| proxyPort < 0 || proxyPort > 65535   ){
-				sendtext("ƒvƒƒLƒV‚Ìİ’è‚ª•s³‚Å‚·B");
+				sendtext("ãƒ—ãƒ­ã‚­ã‚·ã®è¨­å®šãŒä¸æ­£ã§ã™ã€‚");
 				return false;
 			}
 		} else {
@@ -120,21 +120,21 @@ public class Loader {
 	}
 
 	private NicoClient getNicoClient(Logger log){
-		sendtext("ƒƒOƒCƒ“’†");
+		sendtext("ãƒ­ã‚°ã‚¤ãƒ³ä¸­");
 		NicoClient client = null;
 		isHtml5 = setting.isHtml5();
 		if (browserInfo.isValid()){
-			// ƒZƒbƒVƒ‡ƒ“‹¤—LAƒƒOƒCƒ“Ï‚İ‚ÌNicoClient‚ğclient‚É•Ô‚·
+			// ã‚»ãƒƒã‚·ãƒ§ãƒ³å…±æœ‰ã€ãƒ­ã‚°ã‚¤ãƒ³æ¸ˆã¿ã®NicoClientã‚’clientã«è¿”ã™
 			client = new NicoClient(browserInfo, proxy, proxyPort, stopwatch, log, isHtml5);
 		} else {
 			client = new NicoClient(mailAddress, password, browserInfo, proxy, proxyPort, stopwatch, log, isHtml5);
 		}
 		if (!client.isLoggedIn()) {
-			sendtext("ƒƒOƒCƒ“¸”s " + browserInfo.getName() + " " + client.getExtraError());
+			sendtext("ãƒ­ã‚°ã‚¤ãƒ³å¤±æ•— " + browserInfo.getName() + " " + client.getExtraError());
 			log.println("\nLogin failed.");
 			return null;
 		} else {
-			sendtext("ƒƒOƒCƒ“¬Œ÷ " + browserInfo.getName());
+			sendtext("ãƒ­ã‚°ã‚¤ãƒ³æˆåŠŸ " + browserInfo.getName());
 			return client;
 		}
 	}
@@ -186,17 +186,17 @@ public class Loader {
 	public NicoMap loadHttpsUrl(String url){
 		NicoMap map = new NicoMap();
 		try {
-			debug("\n¥HTTPS<" + url + ">\n");
+			debug("\nâ–¼HTTPS<" + url + ">\n");
 			HttpURLConnection con = (HttpsURLConnection)(new URL(url)).openConnection(Proxy.NO_PROXY);
 			con.setDoInput(true);
 			con.setInstanceFollowRedirects(false);
 			con.setRequestMethod("GET");
 			con.addRequestProperty("Connection", "close");
-			debug("¥Connect: GET,DoInput,Connection close\n");
+			debug("â–¼Connect: GET,DoInput,Connection close\n");
 			con.connect();
 			int code = con.getResponseCode();
 			String mes = con.getResponseMessage();
-			debug("¥Response:" + Integer.toString(code) + " " + mes + "\n");
+			debug("â–¼Response:" + Integer.toString(code) + " " + mes + "\n");
 			if (code < HttpURLConnection.HTTP_OK || code >= HttpURLConnection.HTTP_BAD_REQUEST) { // must 200 <= <400
 				log.println("Can't access:" + mes + " to <"+url+">");
 				map.put("_RESPONSE_", mes);
@@ -214,7 +214,7 @@ public class Loader {
 			String ret;
 			while((ret = br.readLine())!=null){
 				sb.append(ret+"\n");
-				debug(" ¥"+ret+"\n");
+				debug(" â–¼"+ret+"\n");
 			}
 			map.put("_RESPONSE_", sb.substring(0));
 			br.close();

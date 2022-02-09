@@ -108,7 +108,7 @@ public class ListInfo extends JComponent {
 		gc.gridwidth = 1;
 		gc.gridheight = 1;
 		gc.fill = GridBagConstraints.HORIZONTAL;
-		add(new JLabel("Å@Å@"), gc);
+		add(new JLabel("„ÄÄ„ÄÄ"), gc);
 
 		gc = new GridBagConstraints();
 		if(oneLine) {

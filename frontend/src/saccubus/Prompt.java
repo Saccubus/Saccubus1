@@ -22,22 +22,22 @@ import saccubus.util.Logger;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * <p>
- * ’˜ìŒ : Copyright (c) 2007 PSI
+ * è‘—ä½œæ¨©: Copyright (c) 2007 PSI
  * </p>
  *
  * <p>
- * ‰ïĞ–¼:
+ * ä¼šç¤¾å:
  * </p>
  *
- * @author –¢“ü—Í
+ * @author æœªå…¥åŠ›
  * @version 1.0
  */
 public class Prompt {
@@ -154,7 +154,7 @@ public class Prompt {
 				continue;
 			}
 			if(arg.startsWith("-") && arg.contains("=")){
-				//ffmpeg•ÏŠ·ƒIƒvƒVƒ‡ƒ“
+				//ffmpegå¤‰æ›ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 				index = arg.indexOf('=');
 				key = arg.substring(0, index);
 				value = arg.substring(index+1);
@@ -162,7 +162,7 @@ public class Prompt {
 				continue;
 			}
 			if(arg.contains("=")){
-				//saccubus.xmlƒvƒƒpƒeƒB
+				//saccubus.xmlãƒ—ãƒ­ãƒ‘ãƒ†ã‚£
 				index = arg.indexOf('=');
 				key = arg.substring(0, index);
 				value = arg.substring(index+1);
@@ -170,7 +170,7 @@ public class Prompt {
 				continue;
 			}
 			if(arg.contains(":")){
-				//‰ß‹ƒƒO‚Ìˆø—p•„"yyyy/mm/dd hh:MM"‚È‚µ
+				//éå»ãƒ­ã‚°æ™‚åˆ»ã®å¼•ç”¨ç¬¦"yyyy/mm/dd hh:MM"ãªã—
 				if(time.contains("/")){
 					time = time.trim() + " " + arg.trim();
 				}
@@ -184,7 +184,7 @@ public class Prompt {
 			log.println("Undefined Argument: <" + arg + ">");
 		}
 		prop = ConvertingSetting.loadProperty(propFile, true);
-		//option prefix İ’è
+		//option prefix è¨­å®š
 		if(!optionFilePrefix.isEmpty()){
 			prop.setProperty(ConvertingSetting.PROP_OPTION_FILE,
 				optionFilePrefix+ConvertingSetting.PROP_OPTION_FILE);
@@ -193,21 +193,21 @@ public class Prompt {
 			prop.setProperty(ConvertingSetting.PROP_ZQ_OPTION_FILE,
 				optionFilePrefix + ConvertingSetting.PROP_ZQ_OPTION_FILE);
 		}
-		//settingMap İ’è
+		//settingMap è¨­å®š
 		for(Entry<String, String> e : settingMap.entrySet()){
 			prop.setProperty(e.getKey(), e.getValue());
 		}
-		//downloadMap İ’è
+		//downloadMap è¨­å®š
 		for(Entry<String, String> e : downloadMap.entrySet()){
 			prop.setProperty(e.getKey(), e.getValue());
 		}
 		setting = ConvertingSetting.loadSetting(mail, pass, prop);
-		//@ADDİ’è
+		//@ADDè¨­å®š
 		if(!addPropFile.isEmpty()){
 			ConvertingSetting.addSetting(setting, addPropFile);
 		}
 	//	setting.override(optionFilePrefix, settingMap, optionMap);
-		//optionMap İ’è
+		//optionMap è¨­å®š
 		if(!optionMap.isEmpty()){
 			setting.setReplaceOptions(optionMap);
 		}
@@ -217,7 +217,7 @@ public class Prompt {
 		JLabel watch = new JLabel();
 		status3 = new JLabel[]{status, info, watch, new JLabel()};
 		stopButton = new JButton();
-		cuiStop = new ConvertStopFlag(stopButton, "’â~", "‘Ò‹@", "I—¹", "•ÏŠ·", false);
+		cuiStop = new ConvertStopFlag(stopButton, "åœæ­¢", "å¾…æ©Ÿ", "çµ‚äº†", "å¤‰æ›", false);
 		stopButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -335,7 +335,7 @@ public class Prompt {
 			return exit(code);
 		}else{
 			if (isMylist){
-				// "http://www/nicovideo.jp/mylist/1234567?watch_harmful=1" ‚È‚Ç
+				// "http://www/nicovideo.jp/mylist/1234567?watch_harmful=1" ãªã©
 				MylistGetter mylistGetter = new MylistGetter(
 					-1,
 					tag,
@@ -347,7 +347,7 @@ public class Prompt {
 					sbReturn,
 					log);
 				mylistGetter.execute();
-				cuiStop.go();		//mylistGetter‚Í–³ğŒ‚ÉÀs
+				cuiStop.go();		//mylistGetterã¯ç„¡æ¡ä»¶ã«å®Ÿè¡Œ
 				int count = 0;
 				while(mylistGetter!=null && !mylistGetter.isDone()){
 					try {
@@ -356,7 +356,7 @@ public class Prompt {
 						// e.printStackTrace();
 					}
 					if(++count > 120){
-						log.println("Error: ƒ}ƒCƒŠƒXƒg‚ªæ“¾‚Å‚«‚Ü‚¹‚ñ(‚P•ªŒo‰ß)");
+						log.println("Error: ãƒã‚¤ãƒªã‚¹ãƒˆãŒå–å¾—ã§ãã¾ã›ã‚“(ï¼‘åˆ†çµŒé)");
 						return exit(251);
 					}
 				}
@@ -370,12 +370,12 @@ public class Prompt {
 				// auto
 				localListFile= new File( tag + ".txt");
 				if(!localListFile.exists()){
-					log.println("Error: "+localListFile.getAbsolutePath()+"‚ª‚ ‚è‚Ü‚¹‚ñ .");
+					log.println("Error: "+localListFile.getAbsolutePath()+"ãŒã‚ã‚Šã¾ã›ã‚“ .");
 					return exit(253);
 				}
 				text = Path.readAllText(localListFile, "MS932");
 				if(text.isEmpty()){
-					log.println("Error: "+localListFile.getAbsolutePath()+"‚É“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñ. ‘®‚ªˆá‚Á‚Ä‚¢‚È‚¢‚©Šm”F‚µ‚Ä‰º‚³‚¢");
+					log.println("Error: "+localListFile.getAbsolutePath()+"ã«å‹•ç”»ãŒã‚ã‚Šã¾ã›ã‚“. æ›¸å¼ãŒé•ã£ã¦ã„ãªã„ã‹ç¢ºèªã—ã¦ä¸‹ã•ã„");
 					return exit(254);
 				}
 			}
@@ -395,15 +395,15 @@ public class Prompt {
 				String[] ss = id_title.split("\\t");
 				String vid = MainFrame.treatUrlHttp(ss[0]);
 				if(vid.trim().isEmpty()||vid.charAt(0)==':') continue;
-				// id‚ğ“o˜^
+				// idã‚’ç™»éŒ²
 				int indexNow = convNo++;
 				JButton jbutton = new JButton();
-				final ConvertStopFlag autoStop = new ConvertStopFlag(jbutton, "’â~", "‘Ò‹@", "I—¹", "•ÏŠ·", false);
+				final ConvertStopFlag autoStop = new ConvertStopFlag(jbutton, "åœæ­¢", "å¾…æ©Ÿ", "çµ‚äº†", "å¤‰æ›", false);
 				ListInfo listInfo = new ListInfo(vid+"\tauto", true, indexNow,
 					jbutton, autoStop);
 				activities.add(listInfo);
 				log.println(">"+indexNow+" "+vid+watchinfo);
-				// ConverManagerˆ—‚ğ—v‹
+				// ConverManagerå‡¦ç†ã‚’è¦æ±‚
 				StringBuffer sbRet = new StringBuffer();
 				converter = manager.request(
 					indexNow,
@@ -445,7 +445,7 @@ public class Prompt {
 							log.println("Finished. ("+j+") "+conv.getVid());
 							StringBuffer sbRet = conv.getSbRet();
 							if(sbRet==null){
-								log.println("ƒGƒ‰[Fret=null");
+								log.println("ã‚¨ãƒ©ãƒ¼ï¼šret=null");
 								code = -1;
 								result = "-1";
 							}else{
@@ -471,9 +471,9 @@ public class Prompt {
 							result = "-999";
 							e1.printStackTrace();
 						}finally{
-							if(code!=0 && codes==0) codes = code;	//Å‰‚ÌƒGƒ‰[ƒR[ƒh
+							if(code!=0 && codes==0) codes = code;	//æœ€åˆã®ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 							if(code==0x98){
-								// ƒŠƒgƒ‰ƒCƒŠƒXƒg‚Évid“o˜^
+								// ãƒªãƒˆãƒ©ã‚¤ãƒªã‚¹ãƒˆã«vidç™»éŒ²
 								retryList.add(vid);
 							}
 							if(results.isEmpty() && !result.equals("0"))
@@ -485,7 +485,7 @@ public class Prompt {
 				converterList.removeAll(doneList);
 				if(converterList.isEmpty())
 					break;
-				// manager‘Ò‚¿
+				// managerå¾…ã¡
 				manager.waitActivity(1);
 				if(manager.getNumReq() > 0)
 					continue;
@@ -502,32 +502,32 @@ public class Prompt {
 			if(aborted){
 				codes = 255;
 				results = "FF";
-				log.println("’†~\nRESULTS="+results);
+				log.println("ä¸­æ­¢\nRESULTS="+results);
 			}else if(!retryList.isEmpty()){
-				//ƒŠƒgƒ‰ƒC—v‹‚ª—L‚é
+				//ãƒªãƒˆãƒ©ã‚¤è¦æ±‚ãŒæœ‰ã‚‹
 				codes = 0x98;
 				results = "98";
-				log.println("ƒTƒXƒyƒ“ƒh\nRESULTS="+results);
+				log.println("ã‚µã‚¹ãƒšãƒ³ãƒ‰\nRESULTS="+results);
 			}else {
 				if(results.isEmpty())
 					results = "0";
-				log.println("I—¹\nRESULTS="+results);
+				log.println("çµ‚äº†\nRESULTS="+results);
 			}
 			if(codes!=0)
-				log.println("ƒGƒ‰[‚ª‚ ‚è‚Ü‚µ‚½");
+				log.println("ã‚¨ãƒ©ãƒ¼ãŒã‚ã‚Šã¾ã—ãŸ");
 			if(isEcos)
-				log.println("ƒGƒRƒmƒ~[“®‰æ‚ª‚ ‚è‚Ü‚µ‚½");
+				log.println("ã‚¨ã‚³ãƒãƒŸãƒ¼å‹•ç”»ãŒã‚ã‚Šã¾ã—ãŸ");
 			if(codes!=0 || isEcos){
 				if(errorControl.save())
-					log.println("ƒGƒ‰[ƒŠƒXƒg‚ğ•Û‘¶‚µ‚Ü‚µ‚½");
+					log.println("ã‚¨ãƒ©ãƒ¼ãƒªã‚¹ãƒˆã‚’ä¿å­˜ã—ã¾ã—ãŸ");
 				else
-					log.println("ƒGƒ‰[ƒŠƒXƒg‚ğ•Û‘¶¸”s");
+					log.println("ã‚¨ãƒ©ãƒ¼ãƒªã‚¹ãƒˆã‚’ä¿å­˜å¤±æ•—");
 			}
 			if(!retryList.isEmpty()){
 				codes = 0x98;
-				log.println("ƒTƒXƒyƒ“ƒh‚µ‚½“®‰æ‚ğƒŠƒgƒ‰ƒC‚µ‚Ü‚·");
+				log.println("ã‚µã‚¹ãƒšãƒ³ãƒ‰ã—ãŸå‹•ç”»ã‚’ãƒªãƒˆãƒ©ã‚¤ã—ã¾ã™");
 				if(localListFile.renameTo(new File(localListFile.getPath()+"_sav")))
-					log.println("autolist‚ğƒŠƒl[ƒ€‚µ‚Ü‚µ‚½B");
+					log.println("autolistã‚’ãƒªãƒãƒ¼ãƒ ã—ã¾ã—ãŸã€‚");
 				PrintWriter pw = null;
 				try {
 					pw = new PrintWriter(localListFile);

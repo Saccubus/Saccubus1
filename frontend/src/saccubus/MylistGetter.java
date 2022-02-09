@@ -30,7 +30,7 @@ import saccubus.util.Stopwatch;
 //import saccubus.util.Stopwatch;
 
 /**
- * MylistGetter url‚Ìƒ}ƒCƒŠƒXƒg‚ğƒlƒbƒg‚©‚ç“Ç‚İ‚ñ‚Å “®‰æID_title<‰üs> ‚ÌƒŠƒXƒg•¶š—ñ‚ğ•Ô‚·
+ * MylistGetter urlã®ãƒã‚¤ãƒªã‚¹ãƒˆã‚’ãƒãƒƒãƒˆã‹ã‚‰èª­ã¿è¾¼ã‚“ã§ å‹•ç”»ID_title<æ”¹è¡Œ> ã®ãƒªã‚¹ãƒˆæ–‡å­—åˆ—ã‚’è¿”ã™
  * extends SwingWorker<String,String>
  * @author orz
  *
@@ -126,21 +126,21 @@ public class MylistGetter extends SwingWorker<String, String> {
 		Loader loader = new Loader(Setting, status3, log, Setting.isHtml5());
 		gate = Gate.open(id,log);
 		if(!loader.load(url+watchInfo,file)){
-			addError("E1",url,"mylist load¸”s");
-			sendtext("[E1]load¸”s "+url);
+			addError("E1",url,"mylist loadå¤±æ•—");
+			sendtext("[E1]loadå¤±æ•— "+url);
 			gate.exit("E1");
 			return "E1";
 		}
 		gate.exit("0");
 		String text = Path.readAllText(file.getPath(), "UTF-8");
-		sendtext("•Û‘¶‚µ‚Ü‚µ‚½B" + file.getRelativePath());
+		sendtext("ä¿å­˜ã—ã¾ã—ãŸã€‚" + file.getRelativePath());
 		log.println(gettext());
 		if(StopFlag.needStop()) {
 			return "FF";
 		}
 //		if(MYLIST_DEBUG && parent!=null){
 //			resultText = HtmlView.markupHtml(text);
-//			final HtmlView hv = new HtmlView(parent, "ƒ}ƒCƒŠƒXƒg", url);
+//			final HtmlView hv = new HtmlView(parent, "ãƒã‚¤ãƒªã‚¹ãƒˆ", url);
 //			SwingUtilities.invokeLater(new Runnable() {
 //
 //				@Override
@@ -153,16 +153,16 @@ public class MylistGetter extends SwingWorker<String, String> {
 			return "FF";
 		}
 		if(url.contains("api/deflist")) {
-			//mylist apiˆ—
+			//mylist apiå‡¦ç†
 			mylistID = "deflist";
 		}else
 		if(url.contains("api/mylist/list?group_id=")){
-			//mylist apiˆ—
+			//mylist apiå‡¦ç†
 			int start = url.indexOf("id=")+3;
 			mylistID = url.substring(start);
 		}else
 		if(url.contains("mylist")) {
-			//mylistˆ—
+			//mylistå‡¦ç†
 			String json_start = "Mylist.preload(";
 			int start = text.indexOf(json_start);
 			if(start < 0){
@@ -180,12 +180,12 @@ public class MylistGetter extends SwingWorker<String, String> {
 			mylistID = "0";	//other page
 			HashSet<String> errorSet = new HashSet<>();
 			// it would be better that here would come XML parser, but just scraping
-			// watch/(sm|nm|so)?9999 ‚ğ’Šo‚µ‚Äautolist0.txt‚Éo—Í‚·‚é
+			// watch/(sm|nm|so)?9999 ã‚’æŠ½å‡ºã—ã¦autolist0.txtã«å‡ºåŠ›ã™ã‚‹
 			HashMap<String,String> map = new LinkedHashMap<>();
-			String regex = "watch/((s[a-z]|n[a-z])?[1-9][0-9]*)";	//’ŠoID
+			String regex = "watch/((s[a-z]|n[a-z])?[1-9][0-9]*)";	//æŠ½å‡ºID
 			Pattern p = Pattern.compile(regex);
 			Matcher m = p.matcher(text);
-			String titleRe = "(title|alt)=\"([^\"]+)\"";	//’Šoƒ^ƒCƒgƒ‹
+			String titleRe = "(title|alt)=\"([^\"]+)\"";	//æŠ½å‡ºã‚¿ã‚¤ãƒˆãƒ«
 			Pattern p2 = Pattern.compile(titleRe);	//title pattern
 			int i1 = 0;	//last index of last match key
 			String key = "";
@@ -194,43 +194,43 @@ public class MylistGetter extends SwingWorker<String, String> {
 			while(m.find()){
 				if(i1 > 0){
 					Matcher m2 = p2.matcher(text.substring(i1, m.start()));	// title matcher
-					String title = map.get(key);		// “o˜^Ï‚İƒ^ƒCƒgƒ‹
+					String title = map.get(key);		// ç™»éŒ²æ¸ˆã¿ã‚¿ã‚¤ãƒˆãƒ«
 					val = "";
 					while(m2.find()) {
 						String val2 = m2.group(2);
 						if(val2==null)
 							val2 = "";
-						else if("1—ñ".equals(val2) || "2—ñ".equals(val2) || "4—ñ".equals(val2))
+						else if("1åˆ—".equals(val2) || "2åˆ—".equals(val2) || "4åˆ—".equals(val2))
 							val2 = "";
-						else if("ƒLƒƒƒbƒVƒ…".equals(val2)||"ƒ}ƒCƒŠƒXƒgƒRƒƒ“ƒgˆê——".equals(val2))
+						else if("ã‚­ãƒ£ãƒƒã‚·ãƒ¥".equals(val2)||"ãƒã‚¤ãƒªã‚¹ãƒˆã‚³ãƒ¡ãƒ³ãƒˆä¸€è¦§".equals(val2))
 							val2 = "";
 						else if(val2.contains(" -"))
 							val2 = val2.substring(val2.indexOf(" -")+(" -").length());
-						val2 = val2.replace("&nbsp;", " ").replace("&amp;", "•");
+						val2 = val2.replace("&nbsp;", " ").replace("&amp;", "ï¼†");
 						val2 = val2.trim();
 						if(!val2.isEmpty() && (val.isEmpty() || val.length() < val2.length())){
 							val = val2;
 						}
 					}
 					if(val.isEmpty()){
-						// title’Šo¸”s
+						// titleæŠ½å‡ºå¤±æ•—
 						if(title.isEmpty()){
-							//key‚Ì‚İ“o˜^Ï‚İ¨íœ
+							//keyã®ã¿ç™»éŒ²æ¸ˆã¿â†’å‰Šé™¤
 							map.remove(key);
 							log.println("title isEmpty() ERROR map.remove("+key+")");
-							errorSet.add(key);	//error“o˜^
+							errorSet.add(key);	//errorç™»éŒ²
 						}else{
-							//ƒ^ƒCƒgƒ‹“o˜^Ï‚İ
+							//ã‚¿ã‚¤ãƒˆãƒ«ç™»éŒ²æ¸ˆã¿
 							//log.println("title isEmpty() title("+key+","+map.get(key)+") duplicated key");
 						}
 					}else{
-						// ƒ^ƒCƒgƒ‹’Šook
+						// ã‚¿ã‚¤ãƒˆãƒ«æŠ½å‡ºok
 						if(title.isEmpty()){
-							//ƒ^ƒCƒgƒ‹–¢“o˜^
+							//ã‚¿ã‚¤ãƒˆãƒ«æœªç™»éŒ²
 							map.put(key, val);
 							log.println("map.put("+key+",\""+val+"\")");
 						}else if(!title.equals(val)){
-							//ƒ^ƒCƒgƒ‹“o˜^Ï‚İ
+							//ã‚¿ã‚¤ãƒˆãƒ«ç™»éŒ²æ¸ˆã¿
 							if(title.length()<val.length() && val.length()<36){
 								map.put(key, val);
 								log.println("map.put("+key+",\""+val+"\")");
@@ -251,21 +251,21 @@ public class MylistGetter extends SwingWorker<String, String> {
 				key = m.group(1);
 				//log.println("key= "+key);
 				if(key==null || key.isEmpty()){
-					// key‚ÍŒ©‚Â‚©‚ç‚È‚¢
+					// keyã¯è¦‹ã¤ã‹ã‚‰ãªã„
 					log.println("key is empty ");
 					i1 = 0;
 				}else if(!MainFrame.idcheck(key)){
-					// key‚Í“®‰æID‚Å‚Í‚È‚¢
+					// keyã¯å‹•ç”»IDã§ã¯ãªã„
 					log.println("key idcheck() ERROR "+key);
 					i1 = 0;
-					//errorSet.add(key);	//error“o˜^
+					//errorSet.add(key);	//errorç™»éŒ²
 				}else{
 					if(map.containsKey(key)){
-						// key“o˜^Ï‚İ
+						// keyç™»éŒ²æ¸ˆã¿
 						//String ttl = map.get(key);
 						//log.println("key map.containsKey("+key+","+ttl+")");
 					}else{
-						// key“o˜^
+						// keyç™»éŒ²
 						map.put(key, "");
 					}
 					//log.println("key map.put( "+key+")");
@@ -275,11 +275,11 @@ public class MylistGetter extends SwingWorker<String, String> {
 			map.remove("1");	//delete sentinel
 			errorSet.remove("1");
 			text = text.substring(0,text.lastIndexOf("watch/1"));
-			// ‚¤‚Ü‚­æ‚ê‚È‚¢ê‡‚É•Ê‚ÌŒŸõ‚ğs‚¤
+			// ã†ã¾ãå–ã‚Œãªã„å ´åˆã«åˆ¥ã®æ¤œç´¢ã‚’è¡Œã†
 			if(errorSet.size()>map.size()){
 				log.println("Retry title check: "+url);
-				//•Ê‚Ì’Šo
-				// <a href="watch/sm999999">ƒ^ƒCƒgƒ‹</a>
+				//åˆ¥ã®æŠ½å‡º
+				// <a href="watch/sm999999">ã‚¿ã‚¤ãƒˆãƒ«</a>
 				map.clear();
 				regex = "<a +href=\"(https://www.nicovideo.jp/)?watch/((s[a-z]|n[a-z])?[1-9][0-9]*)\"[^>]*>([^<]+)</a>";
 				p = Pattern.compile(regex);
@@ -301,10 +301,10 @@ public class MylistGetter extends SwingWorker<String, String> {
 					errorSet.clear();
 				}
 			}
-			sendtext("’Šo¬Œ÷ @"+map.size()+"ŒÂ@"+ url);
+			sendtext("æŠ½å‡ºæˆåŠŸ ã€€"+map.size()+"å€‹ã€€"+ url);
 			if(map.isEmpty()){
 				//addError(url);
-				sendtext("[E5]“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñAƒŠƒgƒ‰ƒC");
+				sendtext("[E5]å‹•ç”»ãŒã‚ã‚Šã¾ã›ã‚“ã€ãƒªãƒˆãƒ©ã‚¤");
 				//return "E5";
 				String json_start = "first_data: ";
 				int start = text.indexOf(json_start);
@@ -322,7 +322,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				text = text.substring(start).trim();
 			}
 			if(!errorSet.isEmpty()){
-				// ƒ^ƒCƒgƒ‹’Šo¸”s‚Ü‚½‚ÍidcheckƒGƒ‰[
+				// ã‚¿ã‚¤ãƒˆãƒ«æŠ½å‡ºå¤±æ•—ã¾ãŸã¯idcheckã‚¨ãƒ©ãƒ¼
 				StringBuffer sb = new StringBuffer();
 				for(String es:errorSet){
 					if(!watchInfo.isEmpty() && !es.contains(watchInfo.substring(1)))
@@ -341,7 +341,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				errorList.append(url+"\n");
 				if(parent!=null)
 					parent.setErrorUrl(errorList);
-				sendtext("[E5]“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñ");
+				sendtext("[E5]å‹•ç”»ãŒã‚ã‚Šã¾ã›ã‚“");
 				return "E5";
 			}
 		 	*/
@@ -352,7 +352,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				autolist = "autolist0";
 			}else{
 				autolist = "autolist";
-				//Json‰ğÍ text
+				//Jsonè§£æ text
 //				file = new Path(file.getRelativePath().replace(".html", ".xml"));
 //				Path.unescapeStoreXml(file, text, url);		//xml is property key:json val:JSON
 //				Properties prop = new Properties();
@@ -362,7 +362,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 				//
 //				if(MYLIST_DEBUG && parent!=null){
 //					resultText = HtmlView.markupHtml(text);
-//					final HtmlView hv2 = new HtmlView(parent, "ƒ}ƒCƒŠƒXƒg mson", "mson");
+//					final HtmlView hv2 = new HtmlView(parent, "ãƒã‚¤ãƒªã‚¹ãƒˆ mson", "mson");
 //					SwingUtilities.invokeLater(new Runnable() {
 //						@Override
 //						public void run() {
@@ -377,7 +377,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 					return "FF";
 				}
 				// parse mson
-				sendtext("ƒp[ƒXÀs’†");
+				sendtext("ãƒ‘ãƒ¼ã‚¹å®Ÿè¡Œä¸­");
 				Mson mson = null;
 				try{
 					mson = Mson.parse(text);
@@ -385,18 +385,18 @@ public class MylistGetter extends SwingWorker<String, String> {
 					log.printStackTrace(e);
 				}
 				if(mson==null){
-					addError("E3",url,"ƒp[ƒX¸”s");
-					sendtext("[E3]ƒp[ƒX¸”s");
+					addError("E3",url,"ãƒ‘ãƒ¼ã‚¹å¤±æ•—");
+					sendtext("[E3]ãƒ‘ãƒ¼ã‚¹å¤±æ•—");
 					return "E3";
 				}
-				sendtext("ƒp[ƒX¬Œ÷ "+mylistID);
+				sendtext("ãƒ‘ãƒ¼ã‚¹æˆåŠŸ "+mylistID);
 				if(StopFlag.needStop()) {
 					return "FF";
 				}
 				//rename to .txt
 				file = new Path(file.getRelativePath().replace(".xml", ".txt"));
 				mson.prettyPrint(new PrintStream(file));	//pretty print
-				sendtext("ƒŠƒXƒg¬Œ÷ "+mylistID);
+				sendtext("ãƒªã‚¹ãƒˆæˆåŠŸ "+mylistID);
 				if(StopFlag.needStop()) {
 					return "FF";
 				}
@@ -408,11 +408,11 @@ public class MylistGetter extends SwingWorker<String, String> {
 				}
 
 				int sz = plist.size();
-				sendtext("’Šo¬Œ÷ "+mylistID + "@"+sz+"ŒÂ@"+ url);
+				sendtext("æŠ½å‡ºæˆåŠŸ "+mylistID + "ã€€"+sz+"å€‹ã€€"+ url);
 				log.println("Success mylist/"+mylistID+" item:"+sz);
 				if(sz == 0){
-					addError("E4",url,"“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñB"+mylistID);
-					sendtext("[E4]“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñB"+mylistID);
+					addError("E4",url,"å‹•ç”»ãŒã‚ã‚Šã¾ã›ã‚“ã€‚"+mylistID);
+					sendtext("[E4]å‹•ç”»ãŒã‚ã‚Šã¾ã›ã‚“ã€‚"+mylistID);
 					//return "E4";
 					keys[0] = "id";
 					keys[1] = "title_short";
@@ -424,11 +424,11 @@ public class MylistGetter extends SwingWorker<String, String> {
 					}
 
 					sz = plist.size();
-					sendtext("’Šo¬Œ÷ "+mylistID + "@"+sz+"ŒÂ@"+ url);
+					sendtext("æŠ½å‡ºæˆåŠŸ "+mylistID + "ã€€"+sz+"å€‹ã€€"+ url);
 					log.println("Success mylist/"+mylistID+" item:"+sz);
 					if(sz == 0){
-						addError("E4",url,"“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñB"+mylistID);
-						sendtext("[E4]“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñB"+mylistID);
+						addError("E4",url,"å‹•ç”»ãŒã‚ã‚Šã¾ã›ã‚“ã€‚"+mylistID);
+						sendtext("[E4]å‹•ç”»ãŒã‚ã‚Šã¾ã›ã‚“ã€‚"+mylistID);
 						return "E4";
 					}
 				}
@@ -455,17 +455,17 @@ public class MylistGetter extends SwingWorker<String, String> {
 			}
 			if(Setting.isSaveAutoList()){
 				if(saveAutoList(autolist,plist)){
-					//o—Í¬Œ÷
-					sendtext("[00]"+autolist+".bat o—Í¬Œ÷");
+					//å‡ºåŠ›æˆåŠŸ
+					sendtext("[00]"+autolist+".bat å‡ºåŠ›æˆåŠŸ");
 					return "00";
 				}else{
-					//o—Í¸”s
-					addError("E6",url,autolist+".bat o—Í¸”s");
-					sendtext("[E6]"+autolist+".bat o—Í¸”s");
+					//å‡ºåŠ›å¤±æ•—
+					addError("E6",url,autolist+".bat å‡ºåŠ›å¤±æ•—");
+					sendtext("[E6]"+autolist+".bat å‡ºåŠ›å¤±æ•—");
 					return "E6";
 				}
 			} else {
-				//Œ‹‰Êƒf[ƒ^
+				//çµæœãƒ‡ãƒ¼ã‚¿
 				for(String[] vals:plist){
 					if(vals.length>1)
 						ret.append(vals[0]+watchInfo+"\t"+vals[1]+"\n");
@@ -482,8 +482,8 @@ public class MylistGetter extends SwingWorker<String, String> {
 			stopwatch.stop();
 			stopwatch.cancel();
 		}
-		addError("EX",url,"—áŠO”­¶?");
-		sendtext("[EX]—áŠO”­¶?");
+		addError("EX",url,"ä¾‹å¤–ç™ºç”Ÿ?");
+		sendtext("[EX]ä¾‹å¤–ç™ºç”Ÿ?");
 		return "EX";
 	}
 
@@ -493,7 +493,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		errorControl.setError(code,errorID,gettext(),title);
 	}
 
-	//I—¹EDT‚Å©“®Às‚³‚ê‚é
+	//çµ‚äº†æ™‚EDTã§è‡ªå‹•å®Ÿè¡Œã•ã‚Œã‚‹
 	public void done(){
 		String result = null;
 		try {
@@ -504,7 +504,7 @@ public class MylistGetter extends SwingWorker<String, String> {
 		StopFlag.finish();
 		StopFlag.setButtonEnabled(false);
 		if (result==null){
-			log.println("done#get()==null ƒoƒO?");
+			log.println("done#get()==null ãƒã‚°?");
 		}else{
 			log.println("done#get() "+result);
 		}
@@ -518,8 +518,8 @@ public class MylistGetter extends SwingWorker<String, String> {
 		final String CMD_LINE = "%CMD% ";
 		File autolist = new File(".\\"+autoname+".bat");
 		if(!autobat.canRead()){
-			log.println("auto.bat‚ª‚È‚¢‚Ì‚Å"+autoname+".bat‚ªo—Í‚Å‚«‚Ü‚¹‚ñ:"+mylistID);
-			sendtext("o—Í¸”s "+autoname+".bat:"+mylistID);
+			log.println("auto.batãŒãªã„ã®ã§"+autoname+".batãŒå‡ºåŠ›ã§ãã¾ã›ã‚“:"+mylistID);
+			sendtext("å‡ºåŠ›å¤±æ•— "+autoname+".bat:"+mylistID);
 			return false;
 		}
 		//
@@ -532,27 +532,27 @@ public class MylistGetter extends SwingWorker<String, String> {
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(autobat), "MS932"));
 			pw = new PrintWriter(autolist, "MS932");
-			pw.println(":©“®¶¬ "+autoname+".bat for mylist/" + mylistID);
+			pw.println(":è‡ªå‹•ç”Ÿæˆ "+autoname+".bat for mylist/" + mylistID);
 			pw.println(": produced by Saccubus" + MainFrame_AboutBox.rev + " " + new Date());
-			pw.println(":\\\\\\\\\\\\\\\\\\");
+			pw.println(":â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•");
 			while((s = br.readLine())!=null){
 				if(s.startsWith("set MAILADDR=doremi@mahodo.co.jp") && user!=null){
-					// ƒ[ƒ‹ƒAƒhƒŒƒX’uŠ·
+					// ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ç½®æ›
 					pw.println("set MAILADDR="+user);
 					continue;
 				}
 				if(s.startsWith("set PASSWORD=steeki_tabetai") && user!=null){
-					// ƒpƒXƒ[ƒh’uŠ·
+					// ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ç½®æ›
 					pw.println("set PASSWORD=!");
 					continue;
 				}
 				if(!s.startsWith(CMD_LINE)){
-					// %CMD%s‚ªŒ»‚ê‚é‚Ü‚ÅƒRƒs[
+					// %CMD%è¡ŒãŒç¾ã‚Œã‚‹ã¾ã§ã‚³ãƒ”ãƒ¼
 					pw.println(s);
 				}else{
-					// ƒ}ƒCƒŠƒXƒg‚Ì%CMD%o—Í
-					pw.println(":\\\\\\\\\\\\\\\\\\");
-					pw.println(":set OPTION=‰ß‹ƒƒO“ú ‘¼‚ÌƒIƒvƒVƒ‡ƒ“ ‚È‚Ç‚ğ•K—v‚É‰‚¶w’è(readmeNew.txtQÆ)");
+					// ãƒã‚¤ãƒªã‚¹ãƒˆã®%CMD%å‡ºåŠ›
+					pw.println(":â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•");
+					pw.println(":set OPTION=éå»ãƒ­ã‚°æ—¥æ™‚ ä»–ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ ãªã©ã‚’å¿…è¦ã«å¿œã˜æŒ‡å®š(readmeNew.txtå‚ç…§)");
 					pw.println("set OPTION=");
 					if(watchInfo.isEmpty())
 						watchInfo = "?" + WATCH_HARMFUL;
@@ -560,16 +560,16 @@ public class MylistGetter extends SwingWorker<String, String> {
 						watchInfo = "?" + WATCH_HARMFUL + watchInfo.replace('?', '&');
 					}
 					if(!s.contains("auto")){
-						// ƒ}ƒCƒŠƒXƒg‚Ì%CMD%o—Í(‹Lq–@1)
-						pw.println(":•Û‘¶•ÏŠ·‚µ‚È‚¢s‚Ííœ‚µ‚Ä‚­‚¾‚³‚¢");
+						// ãƒã‚¤ãƒªã‚¹ãƒˆã®%CMD%å‡ºåŠ›(è¨˜è¿°æ³•1)
+						pw.println(":ä¿å­˜å¤‰æ›ã—ãªã„è¡Œã¯å‰Šé™¤ã—ã¦ãã ã•ã„");
 						for(String[] ds: mylist){
 							if(ds.length>1){
-								pw.println(":ƒ^ƒCƒgƒ‹ " + ds[1]);
+								pw.println(":ã‚¿ã‚¤ãƒˆãƒ« " + ds[1]);
 							}
 							pw.println("%CMD% "+ ds[0] + watchInfo+" %OPTION% @PUP");
 						}
 					}else{
-						// ƒ}ƒCƒŠƒXƒg‚Ì%CMD%o—Í(‹Lq–@2)
+						// ãƒã‚¤ãƒªã‚¹ãƒˆã®%CMD%å‡ºåŠ›(è¨˜è¿°æ³•2)
 						flag2nd = true;
 						pw.print("%CMD% "+autoname + watchInfo+" %OPTION% @PUP");
 					}
@@ -578,12 +578,12 @@ public class MylistGetter extends SwingWorker<String, String> {
 			}
 			while((s = br.readLine())!=null){
 				if(!s.startsWith(CMD_LINE)){
-					// %CMD%sˆÈŠO‚ğo—Í
+					// %CMD%è¡Œä»¥å¤–ã‚’å‡ºåŠ›
 					pw.println(s);
 					continue;
 				}
 			}
-			sendtext("o—Í¬Œ÷ "+autoname+".bat:"+mylistID);
+			sendtext("å‡ºåŠ›æˆåŠŸ "+autoname+".bat:"+mylistID);
 			if(!flag2nd)
 				return true;
 			else
@@ -603,21 +603,21 @@ public class MylistGetter extends SwingWorker<String, String> {
 	}
 
 	boolean saveListtxt(String autoname,List<String[]> dl){
-		// ‹Lq–@2 autolist.txto—Í
+		// è¨˜è¿°æ³•2 autolist.txtå‡ºåŠ›
 		File autolisttxt = new File(".\\"+autoname+".txt");
 		PrintWriter pw = null;
 		try {
 			pw = new PrintWriter(autolisttxt, "MS932");
-			pw.println(":©“®¶¬ "+autoname+".txt for mylist/" + mylistID);
+			pw.println(":è‡ªå‹•ç”Ÿæˆ "+autoname+".txt for mylist/" + mylistID);
 			pw.println(": produced by Saccubus" + MainFrame_AboutBox.rev + " " + new Date());
-			pw.println(":•Û‘¶•ÏŠ·‚µ‚È‚¢s‚Ííœ‚µ‚Ä‚­‚¾‚³‚¢");
+			pw.println(":ä¿å­˜å¤‰æ›ã—ãªã„è¡Œã¯å‰Šé™¤ã—ã¦ãã ã•ã„");
 			for(String[] ds: dl){
 				if(ds.length>1)
-					pw.println(ds[0] + "\tƒ^ƒCƒgƒ‹ :" + ds[1]);
+					pw.println(ds[0] + "\tã‚¿ã‚¤ãƒˆãƒ« :" + ds[1]);
 				else
 					pw.println(ds[0]);
 			}
-			sendtext("o—Í¬Œ÷ "+autoname+".txt:"+mylistID);
+			sendtext("å‡ºåŠ›æˆåŠŸ "+autoname+".txt:"+mylistID);
 			return true;
 		} catch (IOException e) {
 			log.printStackTrace(e);

@@ -38,13 +38,13 @@ int is_blank(Uint16* up, DATA* data){
 			case STRONG_SIMSUN_CHAR:
 				if(0xE758<=u && u<=0xE864){	//Simsun
 					if(isGlyphExist(data,SIMSUN_FONT,u))
-						return FALSE;	//ƒOƒŠƒt‚ª‚ ‚é
+						return FALSE;	//ã‚°ãƒªãƒ•ãŒã‚ã‚‹
 				}
 				continue;
 			case MINGLIU_CHAR:
 				if(0xE865<=u && u<=0xF8FF){	//MingLiu
 					if(isGlyphExist(data,MINGLIU_FONT,u))
-						return FALSE;	//ƒOƒŠƒt‚ª‚ ‚é
+						return FALSE;	//ã‚°ãƒªãƒ•ãŒã‚ã‚‹
 				}
 				continue;
 		}
@@ -70,7 +70,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	int is_owner = item->chat->cid == CID_OWNER;
 	int lf_control = data->comment_lf_control;
 	int fontcmd = HTML5_FONT_DEFONT;
-	//“®‰æ‚È‚çcolor=10 ("blue2","marinebule")‚Íblue2N(=21)(V‚µ‚¢blue2)‚É•ÏX
+	//å‹•ç”»ãªã‚‰color=10 ("blue2","marinebule")ã¯blue2N(=21)(æ–°ã—ã„blue2)ã«å¤‰æ›´
 	if(color==10 && !data->is_live){
 		color = 21;	//blue2N(#3366ff)
 		SdlColor = item->color24 = getSDL_color(color);
@@ -80,12 +80,12 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	if(html5)
 		fontcmd = item->html5font;
 
-	//Scriptˆ—
+	//Scriptå‡¦ç†
 	if(item->script){
 		int cmd = item->script & 0xffff0000;
 		fprintf(log,"[comsurface/make script]%04x vpos:%d vstart:%d vend%d\n",
 			cmd>>16, item->vpos, item->vstart, item->vend);
-		if(cmd == SCRIPT_DEFAULT){		//—ƒfƒtƒHƒ‹ƒg
+		if(cmd == SCRIPT_DEFAULT){		//ï¼ ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ
 			if(color != CMD_COLOR_DEF)
 				data->defcolor = color;
 			if(location != CMD_LOC_DEF)
@@ -94,10 +94,10 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				data->defsize = size;
 			fprintf(log,"[comsurface/make script]@DEFAULT(color:%d location:%d size:%d) done\n",
 				color,location,size);
-			//nullƒRƒƒ“ƒg‚ğ•\¦
+			//nullã‚³ãƒ¡ãƒ³ãƒˆã‚’è¡¨ç¤º
 			return nullSurf();
 		}
-		if(cmd == SCRIPT_GYAKU){	//—‹t
+		if(cmd == SCRIPT_GYAKU){	//ï¼ é€†
 			int bits = item->script & 3;
 			int vpos = item->vpos;
 			int duration = item->duration;
@@ -124,7 +124,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			return nullSurf();
 		}
 		if(cmd == SCRIPT_BUTTON){
-			//@ƒ{ƒ^ƒ“
+			//@ãƒœã‚¿ãƒ³
 			is_button = 1;
 			fprintf(log,"[comsurface/make script]@BUTTON rendering...\n");
 		}
@@ -152,7 +152,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		}
 	}
 	/*
-	 * default color•ÏX
+	 * default colorå¤‰æ›´
 	 */
 	if(data->defcolor>401){	//401 means April 01, i.e. force april fool
 		color = data->defcolor - 401;
@@ -162,18 +162,18 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		SdlColor = getSDL_color(color);
 	}
 	/*
-	 * default size •ÏX
+	 * default size å¤‰æ›´
 	 */
 	if(size == CMD_FONT_DEF){
 		size = data->defsize;
 	}
 	/*
-	 * default lcation •ÏX
+	 * default lcation å¤‰æ›´
 	 */
 	if(location == CMD_LOC_DEF){
 		location = data->deflocation;
 	}
-	// ‰eİ’è
+	// å½±è¨­å®š
 	int shadow = data->shadow_kind;
 	if(shadow >= SHADOW_MAX){
 		if(data->shadow_data.slide == 0)
@@ -186,7 +186,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		is_black = 2;	//SHADOW COLOR is FONT
 	}
 	/*
-	 * ‰e‚Í’u‚¢‚Ä‚¨‚¢‚ÄA‚Æ‚è‚ ‚¦‚¸•¶š‚Ì•`‰æ
+	 * å½±ã¯ç½®ã„ã¦ãŠã„ã¦ã€ã¨ã‚Šã‚ãˆãšæ–‡å­—ã®æç”»
 	 */
 	h_Surface* surf = NULL;
 	h_Surface* before_button = NULL;
@@ -200,16 +200,16 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	int fixh = 0;
 	while(*index != '\0'){
 		if(*index=='[' && is_button==1){
-			*index = '\0';//‚±‚±‚Åˆê’UØ‚é
+			*index = '\0';//ã“ã“ã§ä¸€æ—¦åˆ‡ã‚‹
 			surf = drawText2s(data,size,SdlColor,last,0,is_black,shadow,fontcmd);
 			if(surf!=NULL && debug)
 				fprintf(log,"[comsurface/make.0]drawText2 surf(%d, %d) %s\n",surf->s->w,surf->h,COM_FONTSIZE_NAME[size]);
 			if(is_vote){
-				// surf ‚Í–³‹
+				// surf ã¯ç„¡è¦–
 				h_FreeSurface(surf);
 				surf = NULL;
 				if(before_button!=NULL){
-					// ¶‰E‚É‚­‚Á‚Â‚¯‚é
+					// å·¦å³ã«ãã£ã¤ã‘ã‚‹
 					ret = arrangeSurface(before_button,ret);
 					nb_line = MAX(button_nline,nb_line);
 					if(ret!=NULL && debug)
@@ -219,15 +219,15 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				button_nline = 0;
 				if(index!=NULL && index[-1]=='\n'){
 					vote_nline += nb_line;
-					// '\n'‚ÌŸ‚ª'['‚Ìê‡‚Í
-					// ret‚Íã‚Ì’ibefore_vote‚É‚·‚é
+					// '\n'ã®æ¬¡ãŒ'['ã®å ´åˆã¯
+					// retã¯ä¸Šã®æ®µbefore_voteã«ã™ã‚‹
 					if(html5)
 						fixh = adjustHeight(vote_nline,size,FALSE,fontdoubled,html5);
 					before_vote = connectSurface(before_vote,ret,fixh);
 					if(before_vote!=NULL && debug)
 						fprintf(log,"[comsurface/make.02]connect before_vote(%d, %d) line %d\n",before_vote->s->w,before_vote->h,vote_nline);
 				}else{
-					// ret‚Í‘O‚Ì—ñbefore_button‚É‚·‚é
+					// retã¯å‰ã®åˆ—before_buttonã«ã™ã‚‹
 					before_button = ret;
 					button_nline = nb_line;
 				}
@@ -240,7 +240,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 					button_nline = nb_line;
 				}else{
 					button_nline += nb_line;
-					//‰üsŒã‚Ìƒ{ƒ^ƒ“ŠJn
+					//æ”¹è¡Œå¾Œã®ãƒœã‚¿ãƒ³é–‹å§‹
 					if(html5)
 						fixh = adjustHeight(button_nline,size,FALSE,fontdoubled,html5);
 					before_button = connectSurface(ret,surf,fixh);
@@ -250,35 +250,35 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				ret = NULL;
 				nb_line = 1;
 			}
-			*index = '[';//‚±‚±‚Åˆê’UØ‚é
+			*index = '[';//ã“ã“ã§ä¸€æ—¦åˆ‡ã‚‹
 			last = index+1;
 			is_button = 2;
 		}
 		else if(*index==']' && is_button==2){
-			*index = '\0';//‚±‚±‚Åˆê’UØ‚é
+			*index = '\0';//ã“ã“ã§ä¸€æ—¦åˆ‡ã‚‹
 			surf = drawText2s(data,size,SdlColor,last,0,is_black,shadow,fontcmd);
 			if(ret==NULL){
 				if(surf!=NULL && debug)
 					fprintf(log,"[comsurface/make.10]drawText2 surf(%d, %d)\n",surf->w,surf->h);
 			}else{
 				nb_line++;
-				//•¡”s‚Ìƒ{ƒ^ƒ“I—¹
+				//è¤‡æ•°è¡Œã®ãƒœã‚¿ãƒ³çµ‚äº†
 				if(html5)
 					fixh = adjustHeight(nb_line,size,FALSE,fontdoubled,html5);
 				surf = connectSurface(ret,surf,fixh);
 				if(surf!=NULL && debug)
 					fprintf(log,"[comsurface/make.11]connectSurface surf(%d, %d) line %d\n",surf->w,surf->h,nb_line);
 			}
-			//ƒ{ƒ^ƒ“‚ğ“h‚é
+			//ãƒœã‚¿ãƒ³ã‚’å¡—ã‚‹
 			ret = drawButton(data,surf,SdlColor,is_owner);
 			h_FreeSurface(surf);
 			if(ret!=NULL && debug)
 				fprintf(log,"[comsurface/make.12]drawButton surf(%d, %d) button %d\n",ret->w,ret->h,nb_line);
-			*index = ']';//‚±‚±‚Åˆê’UØ‚é
+			*index = ']';//ã“ã“ã§ä¸€æ—¦åˆ‡ã‚‹
 			last = index+1;
-			// ƒ{ƒ^ƒ“•`‰æI—¹ ƒ{ƒ^ƒ“‘O‚Æƒ{ƒ^ƒ“Œã‚ğ‚Â‚È‚°‚é
+			// ãƒœã‚¿ãƒ³æç”»çµ‚äº† ãƒœã‚¿ãƒ³å‰ã¨ãƒœã‚¿ãƒ³å¾Œã‚’ã¤ãªã’ã‚‹
 			if(before_button!=NULL){
-				// ¶‰E‚É‚­‚Á‚Â‚¯‚é
+				// å·¦å³ã«ãã£ã¤ã‘ã‚‹
 				ret = arrangeSurface(before_button,ret);
 				before_button = NULL;
 				nb_line = MAX(button_nline,nb_line);
@@ -292,9 +292,9 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			is_button = is_vote ? 1 : 3;
 		}
 		else if(*index == '\n'){
-			*index = '\0';//‚±‚±‚Åˆê’UØ‚é
+			*index = '\0';//ã“ã“ã§ä¸€æ—¦åˆ‡ã‚‹
 			//int fill_bg = is_owner && is_button==2;
-			// /vote start/showresult ‚¾‚Á‚½‚çlast‚Ìƒ|ƒCƒ“ƒ^‚ğ2‚Â‚ßƒXƒy[ƒX‚ÌŸ‚É‚·‚é
+			// /vote start/showresult ã ã£ãŸã‚‰lastã®ãƒã‚¤ãƒ³ã‚¿ã‚’2ã¤ã‚ã‚¹ãƒšãƒ¼ã‚¹ã®æ¬¡ã«ã™ã‚‹
 			int cmd = item->script & 0xffff0000;
 			if(cmd == SCRIPT_VOTE){
 				if (last[8]=='a') {
@@ -305,11 +305,11 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				}
 			}
 			surf = drawText2s(data,size,SdlColor,last,0,is_black,shadow,fontcmd);
-			if(ret == null){//Å‰‚Ì‰üs
+			if(ret == null){//æœ€åˆã®æ”¹è¡Œ
 				ret = surf;
 				if(ret!=NULL && debug)
 					fprintf(log,"[comsurface/make.20]drawText2 surf(%d, %d) %s\n",ret->w,ret->h,COM_FONTSIZE_NAME[size]);
-			}else{/*‰üs‚ ‚è*/
+			}else{/*æ”¹è¡Œã‚ã‚Š*/
 				nb_line++;
 				if(html5)
 					fixh = adjustHeight(nb_line,size,FALSE,fontdoubled,html5);
@@ -317,18 +317,18 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				if(ret!=NULL && debug)
 					fprintf(log,"[comsurface/make.21]connectSurface surf(%d, %d) %s line %d\n",ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
 			}
-			*index = '\n';//‚±‚±‚Åˆê’UØ‚é
+			*index = '\n';//ã“ã“ã§ä¸€æ—¦åˆ‡ã‚‹
 			last = index+1;
 		}
 		index++;
 	}
 	//int fill_bg = is_owner && is_button!=0;
 	surf = drawText2s(data,size,SdlColor,last,0,is_black,shadow,fontcmd);
-	if(ret == null){//Œ‹‹Ç‰üs‚Í–³‚¢
+	if(ret == null){//çµå±€æ”¹è¡Œã¯ç„¡ã„
 		ret = surf;
 		if(debug && ret!=NULL)
 			fprintf(log,"[comsurface/make.30]drawText2 surf(%d, %d) %s\n",ret->w,ret->h,COM_FONTSIZE_NAME[size]);
-	}else{/*‰üs‚ ‚è*/
+	}else{/*æ”¹è¡Œã‚ã‚Š*/
 		nb_line++;
 		if(html5)
 			fixh = adjustHeight(nb_line,size,FALSE,fontdoubled,html5);
@@ -349,7 +349,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		}
 		if(before_vote!=NULL){
 			nb_line += vote_nline;
-			// before_vote‚Í¡‚Ì’iret‚É‚·‚é
+			// before_voteã¯ä»Šã®æ®µretã«ã™ã‚‹
 			if(html5)
 				fixh = adjustHeight(nb_line,size,FALSE,fontdoubled,html5);
 			ret = connectSurface(before_vote,ret,fixh);
@@ -362,8 +362,8 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	}
 	else if(is_button){
 		if(is_button==1 || is_button==2){
-			// 1.[‚Í—ˆ‚È‚©‚Á‚½ ret‘S‘Ì‚ªƒ{ƒ^ƒ“
-			// 2.[—ˆ‚½Œã‚Å]‚Ì‘O‚ÉI—¹
+			// 1.[ã¯æ¥ãªã‹ã£ãŸ retå…¨ä½“ãŒãƒœã‚¿ãƒ³
+			// 2.[æ¥ãŸå¾Œã§]ã®å‰ã«çµ‚äº†
 			surf = ret;
 			ret = drawButton(data,surf,SdlColor,is_owner);
 			h_FreeSurface(surf);
@@ -371,7 +371,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				fprintf(log,"[comsurface/make.35]drawButton surf(%d, %d) button %d\n",ret->w,ret->h,nb_line);
 		}
 		if(before_button!=NULL){
-			//1‚Â‘O‚ªc‚Á‚Ä‚é
+			//1ã¤å‰ãŒæ®‹ã£ã¦ã‚‹
 			ret = arrangeSurface(before_button,ret);
 			nb_line = MAX(nb_line,button_nline);
 			if(ret!=NULL && debug)
@@ -397,7 +397,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		(data->original_resize ? "": " dev"),(data->enableCA?" CA":""),(data->fontsize_fix?" fix":""));
 
 //	/*
-//	 * ‰eˆ—
+//	 * å½±å‡¦ç†
 //	 */
 //	int shadow = data->shadow_kind;
 //	if(shadow >= SHADOW_MAX){
@@ -412,18 +412,18 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 //	fprintf(log,"[comsurface/make1]ShadowFunc:%d (%d, %d) %s %d line\n",shadow,ret->w,ret->h,COM_FONTSIZE_NAME[size],nb_line);
 
 	/*
-	 * ƒAƒ‹ƒtƒ@’l‚Ìİ’è
+	 * ã‚¢ãƒ«ãƒ•ã‚¡å€¤ã®è¨­å®š
 	 */
 	float alpha_t = 1.0;
 	if(data->opaque_rate > 0.0){
 		alpha_t = data->opaque_rate;
 	}else
-	if(item->no > 0			// item->no <=0 ‚Ì‚Íalpha‚ğ•ÏX‚µ‚È‚¢
-		&& !html5)	// html5ƒRƒƒ“ƒgƒ‚[ƒh‚Íalpha‚ª•Ï‚í‚ç‚È‚¢B
+	if(item->no > 0			// item->no <=0 ã®æ™‚ã¯alphaã‚’å¤‰æ›´ã—ãªã„
+		&& !html5)	// html5ã‚³ãƒ¡ãƒ³ãƒˆãƒ¢ãƒ¼ãƒ‰ã¯alphaãŒå¤‰ã‚ã‚‰ãªã„ã€‚
 	{
 		alpha_t = (((float)(item->no)/(item->chat->max_no)) * 0.4) + 0.6;
 		if(item->chat->cid == CID_OPTIONAL && data->optional_trunslucent){
-			if(alpha_t>0.3) alpha_t = 0.3;			// ‚±‚ê‚Å‚¢‚¢‚Ì‚©‚ÈH“K“–‚È‚ñ‚¾‚ªB
+			if(alpha_t>0.3) alpha_t = 0.3;			// ã“ã‚Œã§ã„ã„ã®ã‹ãªï¼Ÿé©å½“ãªã‚“ã ãŒã€‚
 		}
 	}
 	if(alpha_t<1.0){
@@ -432,15 +432,15 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		setAlpha(ret->s,alpha_t);
 	}
 
-	// ƒŠƒTƒCƒY—¦‚É–³ŠÖŒW‚ÈƒXƒP[ƒ‹ŒvZ
+	// ãƒªã‚µã‚¤ã‚ºç‡ã«ç„¡é–¢ä¿‚ãªã‚¹ã‚±ãƒ¼ãƒ«è¨ˆç®—
 	double autoscale = data->width_scale;
 	int auto_scaled = FALSE;
 	int linefeed_resized = FALSE;
 	int limit_width_resized = FALSE;
 	int double_resized = FALSE;
 	/*
-	 * —ÕŠE•‚Í“¯”{—¦‚Ì“®‰æ‚Å544(512`600)px  “®‰æ‚ª4:3‚©16:9‚É–³ŠÖŒW
-	 *  fullƒRƒ}ƒ“ƒh‚Å672(640`?)
+	 * è‡¨ç•Œå¹…ã¯åŒå€ç‡ã®å‹•ç”»ã§544(512ï½600)px  å‹•ç”»ãŒ4:3ã‹16:9ã«ç„¡é–¢ä¿‚
+	 *  fullã‚³ãƒãƒ³ãƒ‰ã§672(640ï½?)
 	 */
 	double nicolimit_width = (double)NICO_WIDTH;
 	if(item->full){
@@ -452,16 +452,16 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 
 	if (data->original_resize){
 		/*
-		 * ‚³‚«‚ã‚Î‚·]—ˆ
+		 * ã•ãã‚…ã°ã™å¾“æ¥
 		 *
-		 * ƒXƒP[ƒ‹İ’è
-		 * ‰¡• zoomx
-		 * ‚‚³ zoomy	ÀŒ±“I‚Ératio(%)‚ğw’è‚·‚é
+		 * ã‚¹ã‚±ãƒ¼ãƒ«è¨­å®š
+		 * æ¨ªå¹… zoomx
+		 * é«˜ã• zoomy	å®Ÿé¨“çš„ã«ratio(%)ã‚’æŒ‡å®šã™ã‚‹
 		 */
 
 		double zoomx = font_width_rate;
 		double zoomy;
-		//k¬
+		//ç¸®å°
 
 		//if(data->fontsize_fix || data->enableCA){
 		if(data->fontsize_fix){
@@ -477,9 +477,9 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			}
 		}
 
-		/*ƒXƒP[ƒ‹‚Ì’²®*/
+		/*ã‚¹ã‚±ãƒ¼ãƒ«ã®èª¿æ•´*/
 		nicolimit_width *= autoscale;
-		//	ƒRƒƒ“ƒg‚‚³•â³
+		//	ã‚³ãƒ¡ãƒ³ãƒˆé«˜ã•è£œæ­£
 		if(!html5 && lf_control==0){
 			int h = adjustHeight(nb_line,size,FALSE,FALSE,html5);
 			if(h!=ret->h){
@@ -489,40 +489,40 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 					item->no,ret->w,ret->h,(data->fontsize_fix?" fix":""));
 			}
 		}
-		// ‰üsƒŠƒTƒCƒY
-		// ƒRƒƒ“ƒg‚Ì‰æ‘œ‚Ì‚‚³‚ªƒjƒRƒjƒR“®‰æŠî€‚Ì‚‚³‚Ì‚P^‚R‚æ‚è‘å‚«‚¢‚Æ”{—¦‚ğ‚P^‚Q‚É‚·‚é
-		// ƒRƒ}ƒ“ƒhender‚Å‚Í‰üsƒŠƒTƒCƒY‚È‚µ
+		// æ”¹è¡Œãƒªã‚µã‚¤ã‚º
+		// ã‚³ãƒ¡ãƒ³ãƒˆã®ç”»åƒã®é«˜ã•ãŒãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»åŸºæº–ã®é«˜ã•ã®ï¼‘ï¼ï¼“ã‚ˆã‚Šå¤§ãã„ã¨å€ç‡ã‚’ï¼‘ï¼ï¼’ã«ã™ã‚‹
+		// ã‚³ãƒãƒ³ãƒ‰enderã§ã¯æ”¹è¡Œãƒªã‚µã‚¤ã‚ºãªã—
 		if(zoomx * 3 * ret->h > autoscale * NICO_HEIGHT && !item->ender){
-			// ƒ_ƒuƒ‹ƒŠƒTƒCƒYŒŸ¸
-			// ‰üsƒŠƒTƒCƒY•‰üsŒã‚Ì”{—¦‚Å—ÕŠE•‚ğ’´‚¦‚½ê‡ ¨ ‰üsƒŠƒTƒCƒYƒLƒƒƒ“ƒZƒ‹
+			// ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºæ¤œæŸ»
+			// æ”¹è¡Œãƒªã‚µã‚¤ã‚ºï¼†æ”¹è¡Œå¾Œã®å€ç‡ã§è‡¨ç•Œå¹…ã‚’è¶…ãˆãŸå ´åˆ â†’ æ”¹è¡Œãƒªã‚µã‚¤ã‚ºã‚­ãƒ£ãƒ³ã‚»ãƒ«
 			double linefeed_zoom = linefeedResizeScale(size,nb_line,fontdoubled,html5);
 			double resized_w = linefeed_zoom * zoomx * ret->w;
 			if((location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM)
 				&& isDoubleResize(resized_w, nicolimit_width, size, nb_line, log, item->full)){
-				//  ƒ_ƒuƒ‹ƒŠƒTƒCƒY‚ ‚è ¨ ‰üsƒŠƒTƒCƒYƒLƒƒƒ“ƒZƒ‹
+				//  ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºã‚ã‚Š â†’ æ”¹è¡Œãƒªã‚µã‚¤ã‚ºã‚­ãƒ£ãƒ³ã‚»ãƒ«
 				nicolimit_width /= linefeed_zoom;	//*= 2.0;
 				double_resized = TRUE;
 			} else{
-				// ƒ_ƒuƒ‹ƒŠƒTƒCƒY‚È‚µ
+				// ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºãªã—
 				zoomx *= linefeed_zoom;	// *= 0.5
 				linefeed_resized =TRUE;
 			}
 		}
 
 		if(location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM){
-			/* ue shitaƒRƒ}ƒ“ƒh‚Ì‚İƒŠƒTƒCƒY‚ ‚è */
+			/* ue shitaã‚³ãƒãƒ³ãƒ‰ã®ã¿ãƒªã‚µã‚¤ã‚ºã‚ã‚Š */
 			/*
-			 * —ÕŠE•ƒŠƒTƒCƒY
-			 * —ÕŠE•‚Í“¯”{—¦‚Ì“®‰æ‚Å544(512`600)px  “®‰æ‚ª4:3‚©16:9‚É–³ŠÖŒW
-			 *  fullƒRƒ}ƒ“ƒh‚Å672(640`?)
-			 * •¶š‚Ì‘å‚«‚³‚Å—ÕŠE•‚Í•Ï“®‚·‚é©³Šm‚É‡‚í‚¹‚é‚Ì‚ÍŒ»ó‚Å‚Í–³—H
+			 * è‡¨ç•Œå¹…ãƒªã‚µã‚¤ã‚º
+			 * è‡¨ç•Œå¹…ã¯åŒå€ç‡ã®å‹•ç”»ã§544(512ï½600)px  å‹•ç”»ãŒ4:3ã‹16:9ã«ç„¡é–¢ä¿‚
+			 *  fullã‚³ãƒãƒ³ãƒ‰ã§672(640ï½?)
+			 * æ–‡å­—ã®å¤§ãã•ã§è‡¨ç•Œå¹…ã¯å¤‰å‹•ã™ã‚‹â†æ­£ç¢ºã«åˆã‚ã›ã‚‹ã®ã¯ç¾çŠ¶ã§ã¯ç„¡ç†ï¼Ÿ
 			 *  dFS=(15,24,39),LW=(512,640)
-			 *  rFS=round(LW/width*dFS) ‚É‚æ‚Á‚ÄV‚µ‚¢ƒtƒHƒ“ƒgƒTƒCƒY‚ªŒˆ‚Ü‚éB
-			 *  ’A‚µWindows‚Å‚ÍwFS=rFS+1iŠ¿š‚Ìê‡j‚Å‚ ‚éB
-			 * ƒRƒƒ“ƒg‚Ì•‚ª“®‰æ‚Ì•‚Éû‚Ü‚é‚æ‚¤‚É”{—¦‚ğ’²®
-			 * ƒ_ƒuƒ‹ƒŠƒTƒCƒY@¨@–³ğŒ‚ÉƒŠƒTƒCƒYi”»’èÏ‚İj
-			 * ‰üsƒŠƒTƒCƒY@¨@–³ğŒ‚É‚È‚µiÄ”»’è¨ƒtƒHƒ“ƒg•‚ğk¬j
-			 * —¼•û‚È‚µ@¨@¡‰ñ”»’è
+			 *  rFS=round(LW/width*dFS) ã«ã‚ˆã£ã¦æ–°ã—ã„ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºãŒæ±ºã¾ã‚‹ã€‚
+			 *  ä½†ã—Windowsã§ã¯wFS=rFS+1ï¼ˆæ¼¢å­—ã®å ´åˆï¼‰ã§ã‚ã‚‹ã€‚
+			 * ã‚³ãƒ¡ãƒ³ãƒˆã®å¹…ãŒå‹•ç”»ã®å¹…ã«åã¾ã‚‹ã‚ˆã†ã«å€ç‡ã‚’èª¿æ•´
+			 * ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºã€€â†’ã€€ç„¡æ¡ä»¶ã«ãƒªã‚µã‚¤ã‚ºï¼ˆåˆ¤å®šæ¸ˆã¿ï¼‰
+			 * æ”¹è¡Œãƒªã‚µã‚¤ã‚ºã€€â†’ã€€ç„¡æ¡ä»¶ã«ãªã—ï¼ˆå†åˆ¤å®šâ†’ãƒ•ã‚©ãƒ³ãƒˆå¹…ã‚’ç¸®å°ï¼‰
+			 * ä¸¡æ–¹ãªã—ã€€â†’ã€€ä»Šå›åˆ¤å®š
 			 */
 			double rate = nicolimit_width / (double)ret->w;
 			if(linefeed_resized && zoomx > rate){
@@ -533,20 +533,20 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				zoomx = rate;
 			}else
 			if(!linefeed_resized && (double)ret->w * zoomx > nicolimit_width){
-				//ƒ_ƒuƒ‹ƒŠƒTƒCƒY‚É‚Í—ÕŠE•‚Í‚Q”{Ï
-				// k¬
+				//ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºæ™‚ã«ã¯è‡¨ç•Œå¹…ã¯ï¼’å€æ¸ˆ
+				// ç¸®å°
 				zoomx = nicolimit_width / (double)ret->w;
 				limit_width_resized = TRUE;
 			}
 		}
 
-		// ƒ†[ƒU[•â³’Ç‰Á
+		// ãƒ¦ãƒ¼ã‚¶ãƒ¼è£œæ­£è¿½åŠ 
 		zoomx *= data->comment_resize_adjust;
 
-		// ue shitaƒRƒ}ƒ“ƒh‚Ì‚İƒŠƒTƒCƒYI‚í‚è
+		// ue shitaã‚³ãƒãƒ³ãƒ‰ã®ã¿ãƒªã‚µã‚¤ã‚ºçµ‚ã‚ã‚Š
 		zoomy = (zoomx / font_width_rate) * font_height_rate;
 
-		// ‰æ–ÊƒTƒCƒY‚É‡‚í‚¹‚Ä•ÏX
+		// ç”»é¢ã‚µã‚¤ã‚ºã«åˆã‚ã›ã¦å¤‰æ›´
 		if(zoomx != 1.0f || zoomy != 1.0f){
 			int w = ret->w * zoomx;
 			int h = ret->h * zoomy;
@@ -585,7 +585,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		fflush(log);
 
 		/*
-		 * ˜g‚ğ‚Â‚¯‚éH
+		 * æ ã‚’ã¤ã‘ã‚‹ï¼Ÿ
 		 */
 		if(data->drawframe||item->waku){
 			h_Surface* tmp = ret;
@@ -597,7 +597,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		return h_SDLSurf(ret);
 	 }
 
-	/*ÀŒ±AƒXƒP[ƒ‹İ’è‚ÍƒŠƒTƒCƒYŒã‚Ì’l‚ğg‚¤*/
+	/*å®Ÿé¨“ã€ã‚¹ã‚±ãƒ¼ãƒ«è¨­å®šã¯ãƒªã‚µã‚¤ã‚ºå¾Œã®å€¤ã‚’ä½¿ã†*/
 	double zoomx = 1.0f;
 	double zoomy = 1.0f;
 	double zoom_w = (double)ret->w;
@@ -605,10 +605,10 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	zoom_w *= font_width_rate;
 	zoom_h *= font_height_rate;
 	/*
-	 * —ÕŠE•‚Í“¯”{—¦‚Ì“®‰æ‚Å544(512`600)px  “®‰æ‚ª4:3‚©16:9‚É–³ŠÖŒW
-	 * @@@@fullƒRƒ}ƒ“ƒh‚Å672(640`?)
-	 * •¶š‚Ì‘å‚«‚³‚Å—ÕŠE•‚Í•Ï“®‚·‚é©ƒjƒR“®‚É‡‚í‚¹‚é‚Ì‚ÍŒ»ó‚Å‚Í–³—H
-	 * ÀŒ±“I‚Éw’è‚µ‚Ä‚İ‚é
+	 * è‡¨ç•Œå¹…ã¯åŒå€ç‡ã®å‹•ç”»ã§544(512ï½600)px  å‹•ç”»ãŒ4:3ã‹16:9ã«ç„¡é–¢ä¿‚
+	 * ã€€ã€€ã€€ã€€fullã‚³ãƒãƒ³ãƒ‰ã§672(640ï½?)
+	 * æ–‡å­—ã®å¤§ãã•ã§è‡¨ç•Œå¹…ã¯å¤‰å‹•ã™ã‚‹â†ãƒ‹ã‚³å‹•ã«åˆã‚ã›ã‚‹ã®ã¯ç¾çŠ¶ã§ã¯ç„¡ç†ï¼Ÿ
+	 * å®Ÿé¨“çš„ã«æŒ‡å®šã—ã¦ã¿ã‚‹
 	 */
 	if(fontdoubled){
 		// nicolimit_width *= 2.0;
@@ -618,7 +618,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	}
 	//nico_width += 32;	// 512->544, 640->672
 
-	//	ƒRƒƒ“ƒg‚‚³•â³
+	//	ã‚³ãƒ¡ãƒ³ãƒˆé«˜ã•è£œæ­£
 	if(!html5 && lf_control==0){
 		int h = adjustHeight(nb_line,size,FALSE,fontdoubled,html5);
 		if(h!=ret->h){
@@ -628,12 +628,12 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				item->no,ret->w,ret->h,(data->fontsize_fix?" fix":""));
 		}
 	}
-	// ƒRƒ}ƒ“ƒhender‚Å‚Í‰üsƒŠƒTƒCƒY‚È‚µ
+	// ã‚³ãƒãƒ³ãƒ‰enderã§ã¯æ”¹è¡Œãƒªã‚µã‚¤ã‚ºãªã—
 	double resized_w;
 	if (nb_line >= LINEFEED_RESIZE_LIMIT[size] && !item->ender){
 		/*
-		 * ‰üsƒŠƒTƒCƒY‚ ‚è ƒ_ƒuƒ‹ƒŠƒTƒCƒYŒŸ¸
-		 * ‰üsƒŠƒTƒCƒY‚©‚Â‰üsŒã‚Ì”{—¦‚Å‰üs—ÕŠE•(nicolimit_width)‚ğ’´‚¦‚½ê‡ ¨ ‰üsƒŠƒTƒCƒYƒLƒƒƒ“ƒZƒ‹
+		 * æ”¹è¡Œãƒªã‚µã‚¤ã‚ºã‚ã‚Š ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºæ¤œæŸ»
+		 * æ”¹è¡Œãƒªã‚µã‚¤ã‚ºã‹ã¤æ”¹è¡Œå¾Œã®å€ç‡ã§æ”¹è¡Œè‡¨ç•Œå¹…(nicolimit_width)ã‚’è¶…ãˆãŸå ´åˆ â†’ æ”¹è¡Œãƒªã‚µã‚¤ã‚ºã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		 */
 		double linefeed_zoom = LINEFEED_RESIZE_SCALE[html5][size];
 		int dfs = COMMENT_FONT_SIZE[size];
@@ -651,21 +651,21 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			item->no,linefeed_zoom*100.0,rsRate*100.0,COM_FONTSIZE_NAME[size],resized_w);
 		if((location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM)
 			&& isDoubleResize(resized_w, nicolimit_width, size, nb_line, log, item->full)){
-			// ƒ_ƒuƒ‹ƒŠƒTƒCƒY‚ ‚è
+			// ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºã‚ã‚Š
 			double_resized = TRUE;
-			//ƒ_ƒuƒ‹ƒŠƒTƒCƒY‚É‚Í“®‰æ•‚Ì‚Q”{‚ÉƒŠƒTƒCƒY‚³‚ê‚é”¤
+			//ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºæ™‚ã«ã¯å‹•ç”»å¹…ã®ï¼’å€ã«ãƒªã‚µã‚¤ã‚ºã•ã‚Œã‚‹ç­ˆ
 			double double_limit_width = nicolimit_width / resize;	//*= 2.0;
 
 			/*
-			 * ƒ_ƒuƒ‹ƒŠƒTƒCƒY‚Ì—ÕŠE•ƒŠƒTƒCƒY
-			 * •¶š‚Ì‘å‚«‚³‚Å—ÕŠE•‚Í•Ï“®‚·‚é
-			 * ƒRƒƒ“ƒg‚Ì•‚ª—ÕŠE•‚Ì2”{‚Éû‚Ü‚é‚æ‚¤‚É”{—¦‚ğ’²®
+			 * ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºã®è‡¨ç•Œå¹…ãƒªã‚µã‚¤ã‚º
+			 * æ–‡å­—ã®å¤§ãã•ã§è‡¨ç•Œå¹…ã¯å¤‰å‹•ã™ã‚‹
+			 * ã‚³ãƒ¡ãƒ³ãƒˆã®å¹…ãŒè‡¨ç•Œå¹…ã®2å€ã«åã¾ã‚‹ã‚ˆã†ã«å€ç‡ã‚’èª¿æ•´
 			 */
 			if(resized_w > nicolimit_width){
 				/*
 				 *  dFS=(15,24,39),LW=(512,640)
-				 *  rFS=round(LW/width*dFS) ‚É‚æ‚Á‚ÄV‚µ‚¢ƒtƒHƒ“ƒgƒTƒCƒY‚ªŒˆ‚Ü‚éB
-				 *  ’A‚µWindows‚Å‚ÍwFS=rFS+1iŠ¿š‚Ìê‡j‚Å‚ ‚éB
+				 *  rFS=round(LW/width*dFS) ã«ã‚ˆã£ã¦æ–°ã—ã„ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºãŒæ±ºã¾ã‚‹ã€‚
+				 *  ä½†ã—Windowsã§ã¯wFS=rFS+1ï¼ˆæ¼¢å­—ã®å ´åˆï¼‰ã§ã‚ã‚‹ã€‚
 				 */
 				rfs = (int)round(nicolimit_width/resized_w*(double)dfs);
 				if(html5)
@@ -684,24 +684,24 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				//zoomy = zoom_h/(double)ret->h;
 			}
 
-			//ˆÓ}‚µ‚½ƒ_ƒuƒ‹ƒŠƒTƒCƒY‚È‚ç‚Î‚‚³Šî€‚ÅƒŠƒTƒCƒY‚µ‚½•û‚ª—Ç‚¢H
-			//ÀÛ‚É‚Í‚‚³‚ğ1s‚‚­‚µ‚ÄŒ©‚¦‚È‚¢s‚ğì‚é‚±‚Æ‚à‚ ‚é
+			//æ„å›³ã—ãŸãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºãªã‚‰ã°é«˜ã•åŸºæº–ã§ãƒªã‚µã‚¤ã‚ºã—ãŸæ–¹ãŒè‰¯ã„ï¼Ÿ
+			//å®Ÿéš›ã«ã¯é«˜ã•ã‚’1è¡Œé«˜ãã—ã¦è¦‹ãˆãªã„è¡Œã‚’ä½œã‚‹ã“ã¨ã‚‚ã‚ã‚‹
 			double wrate = double_limit_width / zoom_w;
 			double hrate = (double)NICO_HEIGHT / zoom_h;
 			if(debug)
 			fprintf(log,"[comsurface/DR detail]comment %d w %.1f%% h %.1f%%%s\n",
 				item->no,wrate*100.0,hrate*100.0,(data->fontsize_fix?" fix":""));
 			if(strstr(data->extra_mode,"-old")!=NULL){
-				//ˆÓ}‚µ‚½ƒ_ƒuƒ‹ƒŠƒTƒCƒY‚È‚ç‚Î‚‚³Šî€‚ÅƒŠƒTƒCƒY -oldƒ‚[ƒh
+				//æ„å›³ã—ãŸãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºãªã‚‰ã°é«˜ã•åŸºæº–ã§ãƒªã‚µã‚¤ã‚º -oldãƒ¢ãƒ¼ãƒ‰
 				if(size == CMD_FONT_BIG && 8 < nb_line && nb_line < 16){
-					//ƒRƒƒ“ƒgs”‚É‚æ‚è‹¸³
+					//ã‚³ãƒ¡ãƒ³ãƒˆè¡Œæ•°ã«ã‚ˆã‚ŠçŸ¯æ­£
 					double resized_h = COMMENT_BIG_DR_HEIGHT[nb_line];
 					hrate = (double)resized_h / zoom_h;
 					resized_w = zoom_w * hrate;
 					if(debug)
 					fprintf(log,"[comsurface/DR AdjByWiki]comment %d maybe(%.0f,%.0f) w %.2f%% h %.2f%% font_width %.2f%%\n",
 						item->no,resized_w,resized_h,wrate*100.0,hrate*100.0,font_width_rate*100.0);
-					//ƒ_ƒuƒ‹ƒŠƒTƒCƒY‚µ‚Ä‰æ–Ê“à‚É•\¦‚ªo‚é‚Æ‚Ív‚¦‚È‚¢‚Æ‚·‚é
+					//ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºã—ã¦ç”»é¢å†…ã«è¡¨ç¤ºãŒå‡ºã‚‹ã¨ã¯æ€ãˆãªã„ã¨ã™ã‚‹
 					if(resized_w > nicolimit_width ){
 						zoom_w = resized_w;
 					}
@@ -709,16 +709,16 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				else {
 					double h2 = wrate / hrate;
 					if(385 < zoom_h && zoom_h < 768){
-						//ƒRƒƒ“ƒg‚‚ª“®‰æˆÈã‚Å‚ ‚èƒ_ƒuƒ‹ƒŠƒTƒCƒY‚É‚æ‚è“®‰æ‚‚É‡‚í‚¹‚½‚ÆŒ©‚éB?
+						//ã‚³ãƒ¡ãƒ³ãƒˆé«˜ãŒå‹•ç”»ä»¥ä¸Šã§ã‚ã‚Šãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºã«ã‚ˆã‚Šå‹•ç”»é«˜ã«åˆã‚ã›ãŸã¨è¦‹ã‚‹ã€‚?
 						resized_w = zoom_w * hrate;
 						if(resized_w > nicolimit_width && resized_w > zoom_w){
-							//‰¡•‚ª‘å‚«‚¢‚È‚ç•â³
+							//æ¨ªå¹…ãŒå¤§ãã„ãªã‚‰è£œæ­£
 							if(debug)
 							fprintf(log,"[comsurface/DR hrate1]comment %d resized_width %.0f %.2f%% font_width %.2f%%\n",
 								item->no,resized_w,hrate*100.0,font_width_rate*100.0);
 							zoom_w = resized_w;
 						}else{
-							//Œ³‚Ìƒ}ƒ}
+							//å…ƒã®ãƒãƒ
 							if(debug)
 							fprintf(log,"[comsurface/DR hrate0]comment %d resized_width %.0f %.2f%% font_width %.2f%%\n",
 									item->no,resized_w,hrate*100.0,font_width_rate*100.0);
@@ -726,15 +726,15 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 						}
 					}else
 					if(zoom_h <= 385){
-						//ƒRƒƒ“ƒg‚‚ª“®‰æˆÈ‰º‚Å‚ ‚è‰¡•‚ÅŒˆ‚ß‚é‚µ‚©è‚ª‚È‚¢‚ª‚±‚ê‚ÍŠù‚ÉŒvZ‚µ‚½‚Í‚¸B
+						//ã‚³ãƒ¡ãƒ³ãƒˆé«˜ãŒå‹•ç”»ä»¥ä¸‹ã§ã‚ã‚Šæ¨ªå¹…ã§æ±ºã‚ã‚‹ã—ã‹æ‰‹ãŒãªã„ãŒã“ã‚Œã¯æ—¢ã«è¨ˆç®—ã—ãŸã¯ãšã€‚
 						if(debug)
 						fprintf(log,"[comsurface/DR wrate]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
 							item->no,zoom_w,wrate*100.0,font_width_rate*100.0);
 					}
-					//ˆÈ‰º‚Í“®‰æ‚æ‚èƒRƒƒ“ƒg‚‚ª¦‚­‚‚¢
+					//ä»¥ä¸‹ã¯å‹•ç”»ã‚ˆã‚Šã‚³ãƒ¡ãƒ³ãƒˆé«˜ãŒå‡„ãé«˜ã„
 					else
 					if(0.9 <= h2 && h2 <= 1.1){
-						//‰¡•Šî€‚Å‚‚³‚ª“®‰æ‚æ‚è”÷–­‚É‚È‚é‚È‚ç“®‰æ‚‚É‡‚í‚¹‚é ¡‚Í‚â‚ç‚È‚¢
+						//æ¨ªå¹…åŸºæº–ã§é«˜ã•ãŒå‹•ç”»ã‚ˆã‚Šå¾®å¦™ã«ãªã‚‹ãªã‚‰å‹•ç”»é«˜ã«åˆã‚ã›ã‚‹ ä»Šã¯ã‚„ã‚‰ãªã„
 						//zoom_w *= hrate;
 						if(debug)
 						fprintf(log,"[comsurface/DR hrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
@@ -742,7 +742,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 					}
 					else
 					{
-						//‚‚³‚ÆƒAƒX”ä‚ª“®‰æ‚Æ‘S‘Rˆá‚¤‚Ì‚Å‡‚í‚¹‚ç‚ê‚È‚¢
+						//é«˜ã•ã¨ã‚¢ã‚¹æ¯”ãŒå‹•ç”»ã¨å…¨ç„¶é•ã†ã®ã§åˆã‚ã›ã‚‰ã‚Œãªã„
 						//zoom_w *= hrate;
 						if(debug)
 						fprintf(log,"[comsurface/DR wrate2]comment %d  width %.0f %.2f%% font_width %.2f%%\n",
@@ -752,7 +752,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 			}
 
 		}else{
-			// ƒ_ƒuƒ‹ƒŠƒTƒCƒY‚È‚µ
+			// ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºãªã—
 			linefeed_resized = TRUE;
 			zoom_w = resized_w;	// *= 0.5
 			//zoom_h *= linefeed_zoom;
@@ -761,15 +761,15 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	}
 
 	if(location == CMD_LOC_TOP||location == CMD_LOC_BOTTOM){
-		// ue shitaƒRƒ}ƒ“ƒh‚Ì‚İƒŠƒTƒCƒY‚ ‚è
+		// ue shitaã‚³ãƒãƒ³ãƒ‰ã®ã¿ãƒªã‚µã‚¤ã‚ºã‚ã‚Š
 
 		/*
-		 * —ÕŠE•ƒŠƒTƒCƒY
-		 * •¶š‚Ì‘å‚«‚³‚Å—ÕŠE•‚Í•Ï“®‚·‚é
-		 * ƒRƒƒ“ƒg‚Ì•‚ª—ÕŠE•(‚Ü‚½‚Í2”{)‚Éû‚Ü‚é‚æ‚¤‚É”{—¦‚ğ’²®
-		 * ‰üsƒŠƒTƒCƒY@¨@‚È‚µi”»’èÏ‚İj‚¾‚ªAÀŒ±“I‚É‚à‚¤ˆê“xk¬
-		 * ƒ_ƒuƒ‹ƒŠƒTƒCƒY@¨@nicolimit_width‚Í2”{Ï ‚Å”»’è
-		 * —¼•û‚È‚µ@¨@¡‰ñ”»’è
+		 * è‡¨ç•Œå¹…ãƒªã‚µã‚¤ã‚º
+		 * æ–‡å­—ã®å¤§ãã•ã§è‡¨ç•Œå¹…ã¯å¤‰å‹•ã™ã‚‹
+		 * ã‚³ãƒ¡ãƒ³ãƒˆã®å¹…ãŒè‡¨ç•Œå¹…(ã¾ãŸã¯2å€)ã«åã¾ã‚‹ã‚ˆã†ã«å€ç‡ã‚’èª¿æ•´
+		 * æ”¹è¡Œãƒªã‚µã‚¤ã‚ºã€€â†’ã€€ãªã—ï¼ˆåˆ¤å®šæ¸ˆã¿ï¼‰ã ãŒã€å®Ÿé¨“çš„ã«ã‚‚ã†ä¸€åº¦ç¸®å°
+		 * ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºã€€â†’ã€€nicolimit_widthã¯2å€æ¸ˆ ã§åˆ¤å®š
+		 * ä¸¡æ–¹ãªã—ã€€â†’ã€€ä»Šå›åˆ¤å®š
 		 */
 		if(linefeed_resized && zoom_w > nicolimit_width){
 			if(debug)
@@ -780,8 +780,8 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		if(!linefeed_resized && !double_resized && zoom_w > nicolimit_width){
 			/*
 			 *  dFS=(15,24,39),LW=(512,640)
-			 *  rFS=round(LW/width*dFS) ‚É‚æ‚Á‚ÄV‚µ‚¢ƒtƒHƒ“ƒgƒTƒCƒY‚ªŒˆ‚Ü‚éB
-			 *  ’A‚µWindows‚Å‚ÍwFS=rFS+1iŠ¿š‚Ìê‡j‚Å‚ ‚éB
+			 *  rFS=round(LW/width*dFS) ã«ã‚ˆã£ã¦æ–°ã—ã„ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºãŒæ±ºã¾ã‚‹ã€‚
+			 *  ä½†ã—Windowsã§ã¯wFS=rFS+1ï¼ˆæ¼¢å­—ã®å ´åˆï¼‰ã§ã‚ã‚‹ã€‚
 			 *
 			 */
 			int dfs = COMMENT_FONT_SIZE[size];
@@ -805,11 +805,11 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 				item->no,zoom_w,dfs,rsRate*100.0);
 		}
 	}
-	// ue shitaƒRƒ}ƒ“ƒh‚Ì‚İƒŠƒTƒCƒYI‚í‚è
+	// ue shitaã‚³ãƒãƒ³ãƒ‰ã®ã¿ãƒªã‚µã‚¤ã‚ºçµ‚ã‚ã‚Š
 
 	/*
-	 * ƒtƒHƒ“ƒgƒTƒCƒY©“®’²®
-	 * “®‰æ•‚ÆƒjƒRƒjƒR“®‰æ‚Ì•‚ÌƒXƒP[ƒ‹
+	 * ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºè‡ªå‹•èª¿æ•´
+	 * å‹•ç”»å¹…ã¨ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å¹…ã®ã‚¹ã‚±ãƒ¼ãƒ«
 	 */
 	//if(data->fontsize_fix || data->enableCA){
 	if(data->fontsize_fix){
@@ -819,16 +819,16 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 		}
 	}
 
-	// ÀŒ±FƒtƒHƒ“ƒg•E‚‚³‚Ì’²®
+	// å®Ÿé¨“ï¼šãƒ•ã‚©ãƒ³ãƒˆå¹…ãƒ»é«˜ã•ã®èª¿æ•´
 	zoomx = zoom_w/(double)ret->w;
 
-	// ƒ†[ƒU[•â³’Ç‰Á
+	// ãƒ¦ãƒ¼ã‚¶ãƒ¼è£œæ­£è¿½åŠ 
 	zoomx *= data->comment_resize_adjust;
 
 	//zoomy = zoom_h/(double)ret->h;
 	zoomy = (zoomx / font_width_rate) * font_height_rate;
 
-	//İ’èƒŠƒTƒCƒY‚É‡‚í‚¹‚Ä•ÏX
+	//è¨­å®šãƒªã‚µã‚¤ã‚ºã«åˆã‚ã›ã¦å¤‰æ›´
 	if(zoomx!=1.0 || zoomy!=1.0){
 		int w = zoomx * ret->w;
 		int h = zoomy * ret->h;
@@ -865,7 +865,7 @@ SDL_Surface* makeCommentSurface(DATA* data,CHAT_ITEM* item,int video_width,int v
 	fflush(log);
 
 	/*
-	 * ˜g‚ğ‚Â‚¯‚é
+	 * æ ã‚’ã¤ã‘ã‚‹
 	 */
 	if(data->drawframe||item->waku){
 		h_Surface* tmp = ret;
@@ -896,7 +896,7 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 	if(html5)
 		basefont = HTML5_CA_FONT[fontcmd];
 	else
-		basefont = getFirstFont(last,UNDEFINED_FONT);	//‘æˆêŠî€ƒtƒHƒ“ƒg
+		basefont = getFirstFont(last,UNDEFINED_FONT);	//ç¬¬ä¸€åŸºæº–ãƒ•ã‚©ãƒ³ãƒˆ
 	int secondBase = UNDEFINED_FONT;
 	if(html5)
 		secondBase = basefont;
@@ -932,7 +932,7 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 				isKanji?" Kanji":"",isKanji!=wasKanji?" change_Kanji_width":"");
 		if((newfont != fonttype)
 			|| (fonttype!=SIMSUN_FONT && isKanji != wasKanji))
-		{	//•Ê‚ÌƒtƒHƒ“ƒgoŒ»A–”‚ÍŠ¿š•ƒ`ƒFƒbƒN•Ï‰»
+		{	//åˆ¥ã®ãƒ•ã‚©ãƒ³ãƒˆå‡ºç¾ã€åˆã¯æ¼¢å­—å¹…ãƒã‚§ãƒƒã‚¯å¤‰åŒ–
 			if(index!=last){
 				ret = arrangeSurface(ret,drawText3(data,size,SdlColor,fonttype,last,index,fill_bg));
 				if(debug && ret!=NULL){
@@ -940,11 +940,11 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 						ret->w,ret->h,COM_FONTSIZE_NAME[size],index-str);
 				}
 			}
-			fonttype = newfont;	//Spaced-char or GOTHIC, SMSUN. GULIM, ARIAL, GEORGIA,c
+			fonttype = newfont;	//Spaced-char or GOTHIC, SMSUN. GULIM, ARIAL, GEORGIA,â€¦
 			last = index;
 		}
 		newfont &= CA_TYPE_MASK;	//here drop spaced attribute
-		//‘æ‚QŠî€ƒtƒHƒ“ƒg‚ÌŒŸ¸
+		//ç¬¬ï¼’åŸºæº–ãƒ•ã‚©ãƒ³ãƒˆã®æ¤œæŸ»
 		if(secondBase==UNDEFINED_FONT){
 			if((foundAscii && !wasAscii && basefont<=GOTHIC_FONT)||
 				(basefont==GOTHIC_FONT &&(newfont==SIMSUN_FONT || newfont==GULIM_FONT || newfont==MINGLIU_FONT))){
@@ -957,10 +957,10 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 							getfontname(secondBase));
 			}
 		}
-		//—×ÚƒtƒHƒ“ƒg‚ÌŒŸ¸
+		//éš£æ¥ãƒ•ã‚©ãƒ³ãƒˆã®æ¤œæŸ»
 		saved = nextfont;
 		if(stable_font){
-			// html5 mincho ‚Ü‚½‚Íhtml5 gothic
+			// html5 mincho ã¾ãŸã¯html5 gothic
 		}
 		else
 		if(foundAscii && !wasAscii){	//when HANKAKU showed first
@@ -1029,23 +1029,23 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 h_Surface* drawText2s(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill_bg, int is_black, int shadow,int fontcmd){
 	h_Surface* surf = drawText2(data,size,SdlColor,str,fill_bg,fontcmd);
 	if(surf!=null){
-		// ‰e‚Ì•`‰æ(‚Ps•ª)
+		// å½±ã®æç”»(ï¼‘è¡Œåˆ†)
 		if(!is_blank(str, data)){
-			// ‹ó”’s‚Å‚È‚¯‚ê‚Î
+			// ç©ºç™½è¡Œã§ãªã‘ã‚Œã°
 			SDL_Surface* s;
 			s = (*ShadowFunc[shadow])(surf->s,is_black,SdlColor,data);
 			if(s==NULL){
 				surf = null;
 			} else {
 				surf->s = s;
-				// surf->w = s->w;	•ÏX‚µ‚È‚¢
-				// surf->h = s->h;	•ÏX‚µ‚È‚¢
+				// surf->w = s->w;	å¤‰æ›´ã—ãªã„
+				// surf->h = s->h;	å¤‰æ›´ã—ãªã„
 			}
 		}
 		if(data->debug && surf!=null)
 			fprintf(data->log,"[comsurface/shadow]ShadowFunc:%d (%d, %d) %s\n",
 				shadow,surf->w,surf->h,COM_FONTSIZE_NAME[size]);
-		//	ƒRƒƒ“ƒg1s‚‚³•â³(html5)
+		//	ã‚³ãƒ¡ãƒ³ãƒˆ1è¡Œé«˜ã•è£œæ­£(html5)
 		if(data->html5comment && surf!=NULL){
 			int h = data->font_pixel_size[size];
 			if(surf->h!=h){
@@ -1067,7 +1067,7 @@ h_Surface* drawText3(DATA* data,int size,SDL_Color SdlColor,FontType fonttype,Ui
 	int fontsel = GET_TYPE(fonttype);	//get fonttype
 	int html5 = data->html5comment;
 
-	//UI‚©‚ç‚Ìs‘—‚è§Œä
+	//UIã‹ã‚‰ã®è¡Œé€ã‚Šåˆ¶å¾¡
 	if(data->comment_lf_control!=0){
 		h = (int)(data->comment_linefeed_ratio * h);
 		if(h < 1)
@@ -1234,7 +1234,7 @@ h_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint1
 	if(debug)
 		fprintf(log,"[comsurface/drawText4]TTF_RenderUNICODE surf(%d, %d) %s %d chars\n",
 			surf->w,surf->h,COM_FONTSIZE_NAME[size],uint16len(str));
-	//UI‚©‚ç‚Ìs‘—‚è§Œä
+	//UIã‹ã‚‰ã®è¡Œé€ã‚Šåˆ¶å¾¡
 	int fontpixsize = data->font_pixel_size[size];	//pixel
 	if(data->comment_lf_control!=0){
 		fontpixsize = (int)(data->comment_linefeed_ratio * fontpixsize);
@@ -1243,7 +1243,7 @@ h_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint1
 	}
 	if(debug)
 		fprintf(log,"[comsurface/drawText4]line feed size=%d\n",fontpixsize);
-	//‚‚³•â³
+	//é«˜ã•è£œæ­£
 	h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
 	int difh = fontpixsize - surf->h;
 	if(difh==0){
@@ -1281,7 +1281,7 @@ int isDoubleResize(double width, double limit_width, int size, int line, FILE* l
 		return width > limit_width;	//10% is abviously ok
 	if(size==CMD_FONT_BIG){
 		if(8<=line && line<=14){
-			//ƒ_ƒuƒ‹ƒŠƒTƒCƒY‚Ì‰Â”\«
+			//ãƒ€ãƒ–ãƒ«ãƒªã‚µã‚¤ã‚ºã®å¯èƒ½æ€§
 			if(!is_full && width > limit_width * 0.99){
 				if(width < limit_width)
 					fprintf(log,"[isDoubleResize]found NotFull and shorter then DR but ok. line:%d width:%.1f\n",line,width);
@@ -1291,7 +1291,7 @@ int isDoubleResize(double width, double limit_width, int size, int line, FILE* l
 		if(width <= limit_width)
 			return FALSE;
 		if(line>=16){
-			//‚‚³ŒÅ’è,big16‚Ì‰Â”\«
+			//é«˜ã•å›ºå®š,big16ã®å¯èƒ½æ€§
 			if(width * 0.95 < limit_width){
 				if(limit_width<width)
 					fprintf(log,"[isDoubleResize]found a little wider then big16 but ok. line:%d width:%.1f %s\n",
@@ -1320,14 +1320,14 @@ int isDoubleResize(double width, double limit_width, int size, int line, FILE* l
 	if(width <= limit_width)
 		return FALSE;
 	if((size==CMD_FONT_DEF || size==CMD_FONT_MEDIUM) && line>=25){
-		//‚‚³ŒÅ’è‚Ì‰Â”\«
+		//é«˜ã•å›ºå®šã®å¯èƒ½æ€§
 		if(width * 0.95 < limit_width){
 			fprintf(log,"[isDoubleResize]found wider then medium25 but ok.\n");
 			return FALSE;
 		}
 	}
 	if(size==CMD_FONT_SMALL && line>=38){
-		//‚‚³ŒÅ’è‚Ì‰Â”\«
+		//é«˜ã•å›ºå®šã®å¯èƒ½æ€§
 		if(width * 0.95 < limit_width){
 			fprintf(log,"[isDoubleResize]found wider then small38 but ok.\n");
 			return FALSE;

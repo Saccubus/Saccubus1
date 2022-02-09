@@ -11,8 +11,8 @@ import saccubus.net.Path;
 /**
  *
  * @author orz
- * ÉfÅ[É^ StringBuffer, JLabel
- * ÉÅÉ\ÉbÉhappend, getString
+ * „Éá„Éº„Çø StringBuffer, JLabel
+ * „É°„ÇΩ„ÉÉ„Éâappend, getString
  */
 public class ErrorControl {
 	private StringBuffer errList;
@@ -84,8 +84,8 @@ public class ErrorControl {
 	}
 
 	private synchronized void setText(){	//to jlabel display
-		final String text = errList.toString().replace("\n", "Å@").replace("\t", "_");
-		final String text2 = ecoList.toString().replace("\n", "Å@").replace("\t", "_");
+		final String text = errList.toString().replace("\n", "„ÄÄ").replace("\t", "_");
+		final String text2 = ecoList.toString().replace("\n", "„ÄÄ").replace("\t", "_");
 		sendtext(text, text2);
 	}
 
@@ -147,8 +147,8 @@ public class ErrorControl {
 	}
 
 	public boolean save() {
-		Path errlistSave = new Path("ÉGÉâÅ["+WayBackDate.formatNow()+".txt");
-		Path ecolistSave = new Path("ÉGÉRÉmÉ~Å["+WayBackDate.formatNow()+".txt");
+		Path errlistSave = new Path("„Ç®„É©„Éº"+WayBackDate.formatNow()+".txt");
+		Path ecolistSave = new Path("„Ç®„Ç≥„Éé„Éü„Éº"+WayBackDate.formatNow()+".txt");
 		String text = null;
 		PrintWriter pw = null;
 		StringBuffer sb = null;
@@ -159,12 +159,12 @@ public class ErrorControl {
 				String[] tt2 = text.split("\n");
 				pw = new PrintWriter(errlistSave);
 				for(String t:tt2){
-					if(t.contains("42 ÉGÉRÉmÉ~Å[")){
+					if(t.contains("42 „Ç®„Ç≥„Éé„Éü„Éº")){
 						sb.append(t+"\n");
 					}else if(!t.trim().isEmpty()){
 						pw.print(t+"\n");
 					}else{
-						// ãÛîíçs
+						// Á©∫ÁôΩË°å
 					}
 				}
 				pw.flush();

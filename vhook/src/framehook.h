@@ -3,7 +3,7 @@
 
 void exitExtProcess();
 
-/*Framehookに渡されるオプション用の定義*/
+/*Framehook縺ｫ貂｡縺輔ｌ繧九が繝励す繝ｧ繝ｳ逕ｨ縺ｮ螳夂ｾｩ*/
 #define FRAMEHOOK_OPT_TITLE		"--data-title:"
 #define FRAMEHOOK_OPT_TITLE_LEN	strlen(FRAMEHOOK_OPT_TITLE)
 

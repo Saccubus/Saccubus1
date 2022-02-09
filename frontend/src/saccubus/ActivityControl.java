@@ -28,9 +28,9 @@ import javax.swing.text.JTextComponent;
 import saccubus.util.FileDropTarget;
 
 public class ActivityControl {
-	final private JPanel activityStatusPanel;	//eƒRƒ“ƒeƒiƒpƒlƒ‹
-	final private JPanel activityPane;				//ƒXƒNƒ[ƒ‹“à•”ƒf[ƒ^
-	final private JScrollPane activityScroll;	//ƒXƒNƒ[ƒ‹˜g
+	final private JPanel activityStatusPanel;	//è¦ªã‚³ãƒ³ãƒ†ãƒŠãƒ‘ãƒãƒ«
+	final private JPanel activityPane;				//ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«å†…éƒ¨ãƒ‡ãƒ¼ã‚¿
+	final private JScrollPane activityScroll;	//ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æ 
 	private ConcurrentSkipListMap<Integer, ListInfo> listInfoMap;
 	private JTextComponent copyTarget;
 	private int max_n = 0;
@@ -40,7 +40,7 @@ public class ActivityControl {
 		activityPane.setLayout(new BoxLayout(activityPane, BoxLayout.Y_AXIS));
 		activityPane.setMaximumSize(new Dimension(200, Short.MAX_VALUE));
 		activityScroll = new JScrollPane(activityPane);
-		//ó‹µ•\¦ƒXƒNƒ[ƒ‹—Êİ’è
+		//çŠ¶æ³è¡¨ç¤ºã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«é‡è¨­å®š
 		activityScroll.getVerticalScrollBar().setBlockIncrement(0);	//=Block=Unit
 		activityScroll.getVerticalScrollBar().setUnitIncrement(26);	//=jButton.Height()?
 		activityStatusPanel = new JPanel();
@@ -48,7 +48,7 @@ public class ActivityControl {
 		activityStatusPanel.add(activityScroll,BorderLayout.CENTER);
 		activityStatusPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"ó‹µ•\¦", TitledBorder.LEADING, TitledBorder.TOP,
+				"çŠ¶æ³è¡¨ç¤º", TitledBorder.LEADING, TitledBorder.TOP,
 				new JLabel().getFont(), Color.red));
 		listInfoMap = new ConcurrentSkipListMap<>();
 	}
@@ -91,7 +91,7 @@ public class ActivityControl {
 		activityPane.setVisible(false);
 		activityPane.removeAll();
 		activityPane.setVisible(true);
-		//Ä“o˜^
+		//å†ç™»éŒ²
 		for(Entry<Integer, ListInfo> e: copyMap.entrySet()){
 			ListInfo l = e.getValue();
 			if(l!=null && !l.isDeleted()){
@@ -104,7 +104,7 @@ public class ActivityControl {
 	private void deleteAction(ListInfo s) {
 		if(s!=null){
 			ConvertStopFlag flag = s.getStopFlag();
-			// “®‚¢‚Ä‚¢‚½‚ç‰½‚à‚µ‚È‚¢
+			// å‹•ã„ã¦ã„ãŸã‚‰ä½•ã‚‚ã—ãªã„
 			if(flag!=null && flag.isFinished()){
 				s.setDelete();
 				remakeListView();
@@ -142,8 +142,8 @@ public class ActivityControl {
 			}
 		}
 	}
-	static final String ACTION_COPY_VID = "ƒRƒsƒyID";
-	static final String ACTION_DELETE_ITEM = "íœƒAƒCƒeƒ€";
+	static final String ACTION_COPY_VID = "ã‚³ãƒ”ãƒšID";
+	static final String ACTION_DELETE_ITEM = "å‰Šé™¤ã‚¢ã‚¤ãƒ†ãƒ ";
 	class ActivityRightClickMenu implements MouseListener {
 		JTextComponent target;
 		ListInfo source;
@@ -184,9 +184,9 @@ public class ActivityControl {
 			popup.add(deleteItem);
 			popup.add(copyItem);
 			deleteItem.setText(ACTION_DELETE_ITEM);
-			deleteItem.setToolTipText("I—¹‘O‚Ííœo—ˆ‚È‚¢i’â~‚µ‚Ä‚©‚çƒNƒŠƒbƒNj");
+			deleteItem.setToolTipText("çµ‚äº†å‰ã¯å‰Šé™¤å‡ºæ¥ãªã„ï¼ˆåœæ­¢ã—ã¦ã‹ã‚‰ã‚¯ãƒªãƒƒã‚¯ï¼‰");
 			copyItem.setText(ACTION_COPY_VID);
-			copyItem.setToolTipText("“®‰æID‚ğURL/ID—“‚Éƒy[ƒXƒg");
+			copyItem.setToolTipText("å‹•ç”»IDã‚’URL/IDæ¬„ã«ãƒšãƒ¼ã‚¹ãƒˆ");
 			popup.show(s, x, y);
 		}
 	}

@@ -28,9 +28,9 @@ public class Cws2Fws {
 	public Cws2Fws(){
 	}
 	/**
-	 * ˆ³kSWF‚©‚Ç‚¤‚©”»’è‚·‚é.
-	 * @param file ”»’è‘ÎÛ.
-	 * @return ˆ³kSWF‚Å‚ ‚ê‚Îtrue.
+	 * åœ§ç¸®SWFã‹ã©ã†ã‹åˆ¤å®šã™ã‚‹.
+	 * @param file åˆ¤å®šå¯¾è±¡.
+	 * @return åœ§ç¸®SWFã§ã‚ã‚Œã°true.
 	 */
 	public static boolean isCws(File file) {
 		BufferedInputStream bis = null;
@@ -61,9 +61,9 @@ public class Cws2Fws {
 	}
 
 	/**
-	 * ˆ³kSWF‚ğ“WŠJ‚·‚é.
-	 * @param in “WŠJ‘ÎÛ.
-	 * @return “WŠJŒã‚Ìƒtƒ@ƒCƒ‹. ‘ÎÛ‚ªˆ³kSWF‚Å‚È‚¯‚ê‚Înull.
+	 * åœ§ç¸®SWFã‚’å±•é–‹ã™ã‚‹.
+	 * @param in å±•é–‹å¯¾è±¡.
+	 * @return å±•é–‹å¾Œã®ãƒ•ã‚¡ã‚¤ãƒ«. å¯¾è±¡ãŒåœ§ç¸®SWFã§ãªã‘ã‚Œã°null.
 	 */
 	public static File createFws(File in) {
 		boolean wasCws = false;
@@ -82,7 +82,7 @@ public class Cws2Fws {
 			while (size < headerSize) {
 				int read = is.read(header, size, headerSize);
 				if (read < 0) {
-					throw new IOException("ƒtƒ@ƒCƒ‹ƒtƒH[ƒ}ƒbƒg•s³");
+					throw new IOException("ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆä¸æ­£");
 				}
 				size += read;
 			}

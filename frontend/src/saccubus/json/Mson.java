@@ -123,8 +123,8 @@ public class Mson {
 		if(isArray()){
 			JsonArray ja = json.getAsJsonArray();
 			for(JsonElement jae : ja){
-				Mson sj = new Mson(jae);	//”z—ñ‚Ì1—v‘f
-				Mson sje = sj.get(key);	//—v‘f‚ÌgetŒ‹‰Ê
+				Mson sj = new Mson(jae);	//é…åˆ—ã®1è¦ç´ 
+				Mson sje = sj.get(key);	//è¦ç´ ã®getçµæœ
 				if(!sje.isNull())
 					return sje;
 			}
@@ -132,7 +132,7 @@ public class Mson {
 		}
 		return MSON_NULL;
 	}
-	public Mson get2(String key) { // Å‰‚Ì1ŠK‘w‚¾‚¯’²‚×‚é
+	public Mson get2(String key) { // æœ€åˆã®1éšå±¤ã ã‘èª¿ã¹ã‚‹
 		if(isObject()) {
 			if (json.getAsJsonObject().has(key))
 				return new Mson(json.getAsJsonObject().get(key));

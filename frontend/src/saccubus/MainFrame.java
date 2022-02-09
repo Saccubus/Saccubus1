@@ -80,22 +80,22 @@ import saccubus.util.SelfTerminate;
 
 /**
  * <p>
- * ƒ^ƒCƒgƒ‹: ‚³‚«‚ã‚Î‚·
+ * ã‚¿ã‚¤ãƒˆãƒ«: ã•ãã‚…ã°ã™
  * </p>
  *
  * <p>
- * à–¾: ƒjƒRƒjƒR“®‰æ‚Ì“®‰æ‚ğƒRƒƒ“ƒg‚Â‚«‚Å•Û‘¶
+ * èª¬æ˜: ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®å‹•ç”»ã‚’ã‚³ãƒ¡ãƒ³ãƒˆã¤ãã§ä¿å­˜
  * </p>
  *
  * <p>
- * ’˜ìŒ : Copyright (c) 2007 PSI
+ * è‘—ä½œæ¨©: Copyright (c) 2007 PSI
  * </p>
  *
  * <p>
- * ‰ïĞ–¼:
+ * ä¼šç¤¾å:
  * </p>
  *
- * @author –¢“ü—Í
+ * @author æœªå…¥åŠ›
  * @version 1.0
  */
 public class MainFrame extends JFrame {
@@ -180,10 +180,10 @@ public class MainFrame extends JFrame {
 	JButton historyForwardButton = new BasicArrowButton(SwingConstants.EAST);
 	JButton historyReplaceButton = new BasicArrowButton(SwingConstants.NORTH);
 	JButton DoButton = new JButton();
-	public static final String DoButtonDefString = "•ÏŠ·";
-	public static final String DoButtonStopString = "’â~";
-	public static final String DoButtonWaitString = "‘Ò‹@";
-	public static final String DoButtonDoneString = "I—¹";
+	public static final String DoButtonDefString = "å¤‰æ›";
+	public static final String DoButtonStopString = "åœæ­¢";
+	public static final String DoButtonWaitString = "å¾…æ©Ÿ";
+	public static final String DoButtonDoneString = "çµ‚äº†";
 	GridBagLayout gridBagLayout2 = new GridBagLayout();
 	JPanel loginCheckPanel = new JPanel();
 	JButton loginCheckButton = new JButton();
@@ -341,8 +341,8 @@ public class MainFrame extends JFrame {
 	private String initialPanelHideMapping;
 	private JCheckBox ngEnableMultilinesCheckBox = new JCheckBox();
 	private static final String[] ngEnableMLToolchipTexts = {
-			"ƒIƒtF•¡”sE‰^‰cƒRƒŠÈˆÕ•ÏXŒã‚É‚ÍNG“K—p‚µ‚È‚¢",
-			"ƒIƒ“F•¡”sE‰^‰cƒRƒŠÈˆÕ•ÏXŒã‚É‚àNG“K—p‚·‚é",
+			"ã‚ªãƒ•ï¼šè¤‡æ•°è¡Œãƒ»é‹å–¶ã‚³ãƒ¡ç°¡æ˜“å¤‰æ›´å¾Œã«ã¯NGé©ç”¨ã—ãªã„",
+			"ã‚ªãƒ³ï¼šè¤‡æ•°è¡Œãƒ»é‹å–¶ã‚³ãƒ¡ç°¡æ˜“å¤‰æ›´å¾Œã«ã‚‚NGé©ç”¨ã™ã‚‹",
 	};
 	final String DEBUG_NET_FLAG = "debug/";
 	final String DEBUG_COMMENT_FLAG = "-debug";
@@ -371,26 +371,26 @@ public class MainFrame extends JFrame {
 	private static final Insets INSETS_0_25_0_5 = new Insets(0, 25, 0, 5);
 	private static final Insets INSETS_0_50_0_5 = new Insets(0, 50, 0, 5);
 	private static final String[] commentModeArray = {
-		"0FƒRƒƒ“ƒg•\¦©“®‘I‘ği2010”N12Œ22“úˆÈŒã‚ÍV•\¦j",
-		"1FVƒRƒƒ“ƒg•\¦i–ˆ•ªÅV100ƒRƒƒ“ƒg{‹Œ•\¦j",
-		"2F‹ŒƒRƒƒ“ƒg•\¦iÅ‘å10•ªˆÈã‚Å1000ƒRƒƒ“ƒg•\¦j",
+		"0ï¼šã‚³ãƒ¡ãƒ³ãƒˆè¡¨ç¤ºè‡ªå‹•é¸æŠï¼ˆ2010å¹´12æœˆ22æ—¥ä»¥å¾Œã¯æ–°è¡¨ç¤ºï¼‰",
+		"1ï¼šæ–°ã‚³ãƒ¡ãƒ³ãƒˆè¡¨ç¤ºï¼ˆæ¯åˆ†æœ€æ–°100ã‚³ãƒ¡ãƒ³ãƒˆï¼‹æ—§è¡¨ç¤ºï¼‰",
+		"2ï¼šæ—§ã‚³ãƒ¡ãƒ³ãƒˆè¡¨ç¤ºï¼ˆæœ€å¤§10åˆ†ä»¥ä¸Šã§1000ã‚³ãƒ¡ãƒ³ãƒˆè¡¨ç¤ºï¼‰",
 	};
 
-	public static final String THUMB_DEFALT_STRING = "<©“®>";
+	public static final String THUMB_DEFALT_STRING = "<è‡ªå‹•>";
 	private static final String MY_MYLIST = "my/mylist";
 	private static final String VIDEO_URL_PARSER = "https://www.nicovideo.jp/watch/";
 	static final Logger log = Logger.MainLog;
 	static MainFrame MasterMainFrame = null;
-	static final String renameFileMacro = "ƒtƒ@ƒCƒ‹–¼’uŠ·ƒ}ƒNƒ";
+	static final String renameFileMacro = "ãƒ•ã‚¡ã‚¤ãƒ«åç½®æ›ãƒã‚¯ãƒ­";
 	static final String renameFileMacroDescription =
-		"ƒpƒX(ƒtƒHƒ‹ƒ_–¼‚¨‚æ‚Ñƒtƒ@ƒCƒ‹–¼)‚Ì’†‚ÌˆÈ‰º‚Ì•”•ª‚ª’uŠ·‚³‚ê‚Ü‚·B\n"
-		+"%LOW%@¨economy@low_\n"
-		+"%ID%@¨“®‰æID(%LOW%‚ª‚È‚­economy@“®‰æIDlow_)\n"
-		+"%id%@¨[“®‰æID](%LOW%‚ª‚È‚­economy@[“®‰æID]low_)\n"
-		+"%TITLE%@¨“®‰æƒ^ƒCƒgƒ‹\n"
-		+"%title%@¨‘SŠp‹ó”’‚ğ”¼Šp‹ó”’‚É•Ï‚¦‚½“®‰æƒ^ƒCƒgƒ‹\n"
-		+"%CAT%@¨‚à‚µ‚ ‚ê‚ÎƒJƒeƒSƒŠ[ƒ^ƒO\n"
-		+"%TAGn%@n=1,2,...10@¨(n+1)”Ô‚ß‚Ìƒ^ƒO\n"
+		"ãƒ‘ã‚¹(ãƒ•ã‚©ãƒ«ãƒ€åãŠã‚ˆã³ãƒ•ã‚¡ã‚¤ãƒ«å)ã®ä¸­ã®ä»¥ä¸‹ã®éƒ¨åˆ†ãŒç½®æ›ã•ã‚Œã¾ã™ã€‚\n"
+		+"%LOW%ã€€â†’economyæ™‚ã€€low_\n"
+		+"%ID%ã€€â†’å‹•ç”»ID(%LOW%ãŒãªãeconomyæ™‚ã€€å‹•ç”»IDlow_)\n"
+		+"%id%ã€€â†’[å‹•ç”»ID](%LOW%ãŒãªãeconomyæ™‚ã€€[å‹•ç”»ID]low_)\n"
+		+"%TITLE%ã€€â†’å‹•ç”»ã‚¿ã‚¤ãƒˆãƒ«\n"
+		+"%title%ã€€â†’å…¨è§’ç©ºç™½ã‚’åŠè§’ç©ºç™½ã«å¤‰ãˆãŸå‹•ç”»ã‚¿ã‚¤ãƒˆãƒ«\n"
+		+"%CAT%ã€€â†’ã‚‚ã—ã‚ã‚Œã°ã‚«ãƒ†ã‚´ãƒªãƒ¼ã‚¿ã‚°\n"
+		+"%TAGn%ã€€n=1,2,...10ã€€â†’(n+1)ç•ªã‚ã®ã‚¿ã‚°\n"
 		;
 
 	private String input_url;
@@ -449,7 +449,7 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì‰Šú‰»B
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®åˆæœŸåŒ–ã€‚
 	 *
 	 * @throws java.lang.Exception
 	 */
@@ -533,7 +533,7 @@ public class MainFrame extends JFrame {
 		grid9_x0_y2_56.insets = INSETS_0_5_0_5;
 		grid9_x0_y2_56.anchor = GridBagConstraints.WEST;
 		grid9_x0_y2_56.gridy = 2;
-		ExtOptionLabel = new JLabel("o—Í‚ÌŠg’£q");
+		ExtOptionLabel = new JLabel("å‡ºåŠ›ã®æ‹¡å¼µå­");
 		GridBagConstraints grid9_x0_y1_55 = new GridBagConstraints();
 		grid9_x0_y1_55.gridx = 0;
 		grid9_x0_y1_55.fill = GridBagConstraints.HORIZONTAL;
@@ -773,7 +773,7 @@ public class MainFrame extends JFrame {
 		contentPane.setLayout(borderLayout1);
 		setSize(new Dimension(400, 625));
 		/* setBounds(0, 50, 400, 620); */
-		setTitle("‚³‚«‚ã‚Î‚· " + saccubus.MainFrame_AboutBox.rev );
+		setTitle("ã•ãã‚…ã°ã™ " + saccubus.MainFrame_AboutBox.rev );
 		this.addWindowListener(new MainFrame_this_windowAdapter());
 		statusBar.setText(" ");
 		elapsedTimeBar.setText(" ");
@@ -781,105 +781,105 @@ public class MainFrame extends JFrame {
 		vhookInfoBar.setText(" ");
 		vhookInfoBar.setForeground(Color.blue);
 		infoBar.setText(" ");
-		jMenuFile.setText("ƒtƒ@ƒCƒ‹");
-		jMenuFileExit.setText("I—¹");
+		jMenuFile.setText("ãƒ•ã‚¡ã‚¤ãƒ«");
+		jMenuFileExit.setText("çµ‚äº†");
 		jMenuFileExit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				jMenuFileExit_actionPerformed(e);
 			}
 		});
-		jMenuHelp.setText("ƒwƒ‹ƒv");
-		jMenuHelpAbout.setText("ƒo[ƒWƒ‡ƒ“î•ñ");
+		jMenuHelp.setText("ãƒ˜ãƒ«ãƒ—");
+		jMenuHelpAbout.setText("ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±");
 		jMenuHelpAbout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				jMenuHelpAbout_actionPerformed(e);
 			}
 		});
-		jMenuHelpUpdate.setText("XV—š—ğ");
+		jMenuHelpUpdate.setText("æ›´æ–°å±¥æ­´");
 		jMenuHelpUpdate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("XV—š—ğ.txt", "UTF-8");
+				showReadme_actionPerformed("æ›´æ–°å±¥æ­´.txt", "UTF-8");
 			}
 		});
-		jMenuHelpReadme.setText("@readme(ƒIƒŠƒWƒiƒ‹)•\¦");
+		jMenuHelpReadme.setText("ã€€readme(ã‚ªãƒªã‚¸ãƒŠãƒ«)è¡¨ç¤º");
 		jMenuHelpReadme.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				showReadme_actionPerformed("readme.txt", "MS932");
 			}
 		});
-		jMenuHelpReadmeNew.setText("readmeNew(ÅV)•\¦");
+		jMenuHelpReadmeNew.setText("readmeNew(æœ€æ–°)è¡¨ç¤º");
 		jMenuHelpReadmeNew.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				showReadme_actionPerformed("readmeNew.txt", "UTF-8");
 			}
 		});
-		jMenuHelpReadmePlus.setText("@readme+•\¦");
+		jMenuHelpReadmePlus.setText("ã€€readme+è¡¨ç¤º");
 		jMenuHelpReadmePlus.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				showReadme_actionPerformed("readme+.txt","MS932");
 			}
 		});
-		jMenuHelpReadmeFirst.setText("@Å‰‚É•K‚¸“Ç‚ñ‚Å@•\¦");
+		jMenuHelpReadmeFirst.setText("ã€€æœ€åˆã«å¿…ãšèª­ã‚“ã§ã€€è¡¨ç¤º");
 		jMenuHelpReadmeFirst.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("Å‰‚É•K‚¸“Ç‚ñ‚Å.txt","UTF-8");
+				showReadme_actionPerformed("æœ€åˆã«å¿…ãšèª­ã‚“ã§.txt","UTF-8");
 			}
 		});
-		jMenuHelpErrorTable.setText("ƒGƒ‰[ƒR[ƒh•\@•\¦");
+		jMenuHelpErrorTable.setText("ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰è¡¨ã€€è¡¨ç¤º");
 		jMenuHelpErrorTable.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showReadme_actionPerformed("ƒGƒ‰[ƒR[ƒh.txt","MS932");
+				showReadme_actionPerformed("ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰.txt","MS932");
 			}
 		});
-		jMenuHelpFF.setText("FFmpegƒwƒ‹ƒv•\¦");
+		jMenuHelpFF.setText("FFmpegãƒ˜ãƒ«ãƒ—è¡¨ç¤º");
 		jMenuHelpFF.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){ FFhelp_actionPerformed("-h"); }
 		});
-		jMenuHelpFormats.setText("@FFmpegƒtƒH[ƒ}ƒbƒg");
+		jMenuHelpFormats.setText("ã€€FFmpegãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ");
 		jMenuHelpFormats.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){ FFhelp_actionPerformed("-formats"); }
 		});
-		jMenuHelpCodecs.setText("@FFmpegƒR[ƒfƒbƒN");
+		jMenuHelpCodecs.setText("ã€€FFmpegã‚³ãƒ¼ãƒ‡ãƒƒã‚¯");
 		jMenuHelpCodecs.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){ FFhelp_actionPerformed("-codecs"); }
 		});
-		jMenuHelpProtocols.setText("@FFmpegƒvƒƒgƒRƒ‹");
+		jMenuHelpProtocols.setText("ã€€FFmpegãƒ—ãƒ­ãƒˆã‚³ãƒ«");
 		jMenuHelpProtocols.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){ FFhelp_actionPerformed("-protocols"); }
 		});
-		jMenuHelpFilters.setText("@FFmpegƒtƒBƒ‹ƒ^[");
+		jMenuHelpFilters.setText("ã€€FFmpegãƒ•ã‚£ãƒ«ã‚¿ãƒ¼");
 		jMenuHelpFilters.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){ FFhelp_actionPerformed("-filters"); }
 		});
-		jMenuHelpEncoders.setText("@FFmpegƒGƒ“ƒR[ƒ_");
+		jMenuHelpEncoders.setText("ã€€FFmpegã‚¨ãƒ³ã‚³ãƒ¼ãƒ€");
 		jMenuHelpEncoders.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) { FFhelp_actionPerformed("-encoders"); }
 		});
-		jMenuHelpPixformats.setText("@FFmpegƒsƒNƒZƒ‹ƒtƒH[ƒ}ƒbƒg");
+		jMenuHelpPixformats.setText("ã€€FFmpegãƒ”ã‚¯ã‚»ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ");
 		jMenuHelpPixformats.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) { FFhelp_actionPerformed("-pix_fmts"); }
 		});
-		jMenuHelpHwaccels.setText("@FFmpegHWx‰‡");
+		jMenuHelpHwaccels.setText("ã€€FFmpegHWæ”¯æ´");
 		jMenuHelpHwaccels.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) { FFhelp_actionPerformed("-hwaccels"); }
 		});
-		jMenuAction.setText("ƒAƒNƒVƒ‡ƒ“");
-		jMenuLogview.setText("ƒƒOView On");
+		jMenuAction.setText("ã‚¢ã‚¯ã‚·ãƒ§ãƒ³");
+		jMenuLogview.setText("ãƒ­ã‚°View On");
 		jMenuLogview.setSelected(Logger.isViewVisible());
 		jMenuLogview.addActionListener(new ActionListener() {
 			@Override
@@ -888,7 +888,7 @@ public class MainFrame extends JFrame {
 				jMenuLogview.setSelected(Logger.isViewVisible());
 			}
 		});
-		jMenuLatestCheck.setText("ÅVƒo[ƒWƒ‡ƒ“ƒ`ƒFƒbƒN");
+		jMenuLatestCheck.setText("æœ€æ–°ãƒãƒ¼ã‚¸ãƒ§ãƒ³ãƒã‚§ãƒƒã‚¯");
 		jMenuLatestCheck.addActionListener(new ActionListener() {
 
 			@Override
@@ -913,18 +913,18 @@ public class MainFrame extends JFrame {
 					String rev = MainFrame_AboutBox.rev;
 					String buf;
 					if(rev.equals(latest)){
-						buf = "Rev."+rev+"‚ÍÅV‚Å‚·";
+						buf = "Rev."+rev+"ã¯æœ€æ–°ã§ã™";
 						log.println(buf);
 						JOptionPane.showMessageDialog(self, buf);
 					}
 					else {
-						buf = "Œ»İRev."+rev+"‚Å‚·BÅV‚ÍRev."+latest+"‚Å‚·";
+						buf = "ç¾åœ¨Rev."+rev+"ã§ã™ã€‚æœ€æ–°ã¯Rev."+latest+"ã§ã™";
 						log.println(buf);
 						if(latest.isEmpty()){
 							JOptionPane.showMessageDialog(self, buf);
 						}else{
 							int rc = JOptionPane.showConfirmDialog(
-								self,buf+"\nƒy[ƒW‚ğ•\¦‚µ‚Ü‚·‚©?","‘I‘ğ",JOptionPane.YES_NO_OPTION);
+								self,buf+"\nãƒšãƒ¼ã‚¸ã‚’è¡¨ç¤ºã—ã¾ã™ã‹?","é¸æŠ",JOptionPane.YES_NO_OPTION);
 							if(rc == 0){
 								Desktop.getDesktop().browse(URI.create(url));
 							}
@@ -935,58 +935,58 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
-		jMenuPanelShowAll.setText("€–Ú‘S•\¦");
+		jMenuPanelShowAll.setText("é …ç›®å…¨è¡¨ç¤º");
 		jMenuPanelShowAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JPanelHideable.showPanelAll();
 			}
 		});
-		jMenuPanelHideAll.setText("€–ÚÅ¬•\¦");
+		jMenuPanelHideAll.setText("é …ç›®æœ€å°è¡¨ç¤º");
 		jMenuPanelHideAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JPanelHideable.hidePanelAll();
 			}
 		});
-		jMenuPanelInit.setText("€–Ú‹N“®‚É–ß‚·");
+		jMenuPanelInit.setText("é …ç›®èµ·å‹•æ™‚ã«æˆ»ã™");
 		jMenuPanelInit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JPanelHideable.setHideMap(initialPanelHideMapping);
 			}
 		});
-		jMenuPanelUpdate.setText("€–Ú•\¦Œ»İ‚Ìó‘Ô‚ÅXV");
+		jMenuPanelUpdate.setText("é …ç›®è¡¨ç¤ºç¾åœ¨ã®çŠ¶æ…‹ã§æ›´æ–°");
 		jMenuPanelUpdate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				initialPanelHideMapping = JPanelHideable.getHideMap();
 			}
 		});
-		jMenuFolderOpen.setText("‚³‚«‚ã‚Î‚·ƒtƒHƒ‹ƒ_‚ğŠJ‚­");
+		jMenuFolderOpen.setText("ã•ãã‚…ã°ã™ãƒ•ã‚©ãƒ«ãƒ€ã‚’é–‹ã");
 		jMenuFolderOpen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				openFolder(getFile("."));
 			}
 		});
-		jMenuDetail.setText("Ú×İ’è");
-		jMenuNGConfig.setText("ƒjƒRƒjƒR“®‰æ‚ÌNGİ’è•Û‘¶");
+		jMenuDetail.setText("è©³ç´°è¨­å®š");
+		jMenuNGConfig.setText("ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®NGè¨­å®šä¿å­˜");
 		jMenuNGConfig.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				sendtext("ƒjƒRƒjƒR“®‰æ‚ÌNGİ’è•Û‘¶");
+				sendtext("ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®NGè¨­å®šä¿å­˜");
 				Loader loader = new Loader(getSetting(),
 					new JLabel[]{statusBar, elapsedTimeBar, new JLabel()},
 					log,html5CheckBox.isSelected());
 				Path file = new Path("configNG.xml");
 				String url = "https://ext.nicovideo.jp/api/configurengclient?mode=get";
 				if (loader.load(url, file)){
-					sendtext("ƒjƒRƒjƒR“®‰æ‚ÌNGİ’è‚ğ•Û‘¶‚µ‚Ü‚µ‚½F" + file.getRelativePath());
+					sendtext("ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»ã®NGè¨­å®šã‚’ä¿å­˜ã—ã¾ã—ãŸï¼š" + file.getRelativePath());
 				}
 			}
 		});
-		jMenuAprilFool.setText("AprilFoolÄŒ»");
+		jMenuAprilFool.setText("AprilFoolå†ç¾");
 		jMenuAprilFool.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -995,9 +995,9 @@ public class MainFrame extends JFrame {
 				dialog.setVisible(true);
 			}
 		});
-		jMenuTips.setText("İ’èTIPS");
+		jMenuTips.setText("è¨­å®šTIPS");
 		jTips1 = new JMenuItem();
-		jTips1.setText("’e–‹‰»‚µ‚È‚¢ƒ‚[ƒh");
+		jTips1.setText("å¼¾å¹•åŒ–ã—ãªã„ãƒ¢ãƒ¼ãƒ‰");
 		jTips1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1009,9 +1009,9 @@ public class MainFrame extends JFrame {
 				Color bc = commentOffField.getBackground();
 				commentOffField.setBackground(Color.yellow);
 				int ret = JOptionPane.showConfirmDialog(MainFrame.getMaster(),
-					" [•ÏŠ·İ’è][ƒRƒƒ“ƒgƒIƒtƒGƒŠƒA]‚ğƒIƒ“‚É‚µ‚Ä\nw’è—“‚É‰½‚à“ü‚ê‚È‚¢\n"
-					+"\nİ’è‚µ‚Ü‚·‚©H(No‚ÍƒŠƒZƒbƒg)");
-				//İ’è
+					" [å¤‰æ›è¨­å®š][ã‚³ãƒ¡ãƒ³ãƒˆã‚ªãƒ•ã‚¨ãƒªã‚¢]ã‚’ã‚ªãƒ³ã«ã—ã¦\næŒ‡å®šæ¬„ã«ä½•ã‚‚å…¥ã‚Œãªã„\n"
+					+"\nè¨­å®šã—ã¾ã™ã‹ï¼Ÿ(Noã¯ãƒªã‚»ãƒƒãƒˆ)");
+				//è¨­å®š
 				if(ret==JOptionPane.YES_OPTION){
 					commentOffCheckbox.setSelected(true);
 					commentOffField.setText("");
@@ -1026,7 +1026,7 @@ public class MainFrame extends JFrame {
 		});
 		jMenuTips.add(jTips1);
 		jTips2 = new JMenuItem();
-		jTips2.setText("‰E’[‚Å”ñ•\¦‰ñ”ğA“®‰æ•‚ÅÕ“Ë”»’è");
+		jTips2.setText("å³ç«¯ã§éè¡¨ç¤ºå›é¿ã€å‹•ç”»å¹…ã§è¡çªåˆ¤å®š");
 		jTips2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1040,10 +1040,10 @@ public class MainFrame extends JFrame {
 				Color bc = commentSpeedTextField.getBackground();
 				commentSpeedTextField.setBackground(Color.yellow);
 				int ret = JOptionPane.showConfirmDialog(MainFrame.getMaster(),
-					" [•ÏŠ·İ’è][ƒRƒƒ“ƒg‘¬“x]‚ğƒIƒ“‚É‚µ‚Ä\nw’è—“‚É‰½‚à“ü‚ê‚È‚¢\n"
-					+"\nİ’è‚µ‚Ü‚·‚©H(No‚ÍƒŠƒZƒbƒg)");
+					" [å¤‰æ›è¨­å®š][ã‚³ãƒ¡ãƒ³ãƒˆé€Ÿåº¦]ã‚’ã‚ªãƒ³ã«ã—ã¦\næŒ‡å®šæ¬„ã«ä½•ã‚‚å…¥ã‚Œãªã„\n"
+					+"\nè¨­å®šã—ã¾ã™ã‹ï¼Ÿ(Noã¯ãƒªã‚»ãƒƒãƒˆ)");
 				if(ret==JOptionPane.YES_OPTION){
-					//İ’è
+					//è¨­å®š
 					commentSpeedCheckBox.setSelected(true);
 					commentSpeedTextField.setText("");
 				}else if(ret==JOptionPane.NO_OPTION){
@@ -1059,7 +1059,7 @@ public class MainFrame extends JFrame {
 		});
 		jMenuTips.add(jTips2);
 		jTips3 = new JMenuItem();
-		jTips3.setText("“r’†‚ÅƒRƒƒ“ƒg‚ªÁ‚¦‚È‚¢ƒ‚[ƒh‚É‚·‚é");
+		jTips3.setText("é€”ä¸­ã§ã‚³ãƒ¡ãƒ³ãƒˆãŒæ¶ˆãˆãªã„ãƒ¢ãƒ¼ãƒ‰ã«ã™ã‚‹");
 		jTips3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1073,10 +1073,10 @@ public class MainFrame extends JFrame {
 				Color bc = commentEraseTypeComboBox.getBackground();
 				commentEraseTypeComboBox.setBackground(Color.yellow);
 				int ret = JOptionPane.showConfirmDialog(MainFrame.getMaster(),
-					"  [•ÏŠ·İ’è][•\¦”’´‰ß]‚ğ 1 ‚É‚·‚é\n"
-					+"\nİ’è‚µ‚Ü‚·‚©H(No‚ÍƒŠƒZƒbƒg)");
+					"  [å¤‰æ›è¨­å®š][è¡¨ç¤ºæ•°è¶…é]ã‚’ 1 ã«ã™ã‚‹\n"
+					+"\nè¨­å®šã—ã¾ã™ã‹ï¼Ÿ(Noã¯ãƒªã‚»ãƒƒãƒˆ)");
 				if(ret==JOptionPane.YES_OPTION){
-					//İ’è
+					//è¨­å®š
 					commentEraseTypeComboBox.setSelectedIndex(1);
 				}else if(ret==JOptionPane.NO_OPTION){
 					commentEraseTypeComboBox.setSelectedIndex(0);
@@ -1090,26 +1090,26 @@ public class MainFrame extends JFrame {
 			}
 		});
 		jMenuTips.add(jTips3);
-		jMenuCheckSize.setText("“Ç‚İ‚İÏ‚İ“®‰æ‚ÌƒTƒCƒYƒ`ƒFƒbƒN‚ğs‚¤");
+		jMenuCheckSize.setText("èª­ã¿è¾¼ã¿æ¸ˆã¿å‹•ç”»ã®ã‚µã‚¤ã‚ºãƒã‚§ãƒƒã‚¯ã‚’è¡Œã†");
 		jMenuCheckSize.setToolTipText(
-			"<html>ƒT[ƒo‚Ìƒtƒ@ƒCƒ‹ƒTƒCƒYî•ñ‚Æˆê’v‚µ‚È‚¢ê‡Ä“Ç‚µ‚Ü‚·B<BR>"
-			+"“®‰æ·‚µ‘Ö‚¦‚Ìê‡‚Íƒ[ƒJƒ‹•ÏŠ·–”‚ÍƒIƒt‚É‚µ‚Ä‰º‚³‚¢B</html>");
-		jMenuClearErrorAtEnd.setText("I—¹ƒGƒ‰[ƒŠƒXƒg•Û‘¶&ƒNƒŠƒA");
+			"<html>ã‚µãƒ¼ãƒã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºæƒ…å ±ã¨ä¸€è‡´ã—ãªã„å ´åˆå†èª­è¾¼ã—ã¾ã™ã€‚<BR>"
+			+"å‹•ç”»å·®ã—æ›¿ãˆã®å ´åˆã¯ãƒ­ãƒ¼ã‚«ãƒ«å¤‰æ›åˆã¯ã‚ªãƒ•ã«ã—ã¦ä¸‹ã•ã„ã€‚</html>");
+		jMenuClearErrorAtEnd.setText("çµ‚äº†æ™‚ã‚¨ãƒ©ãƒ¼ãƒªã‚¹ãƒˆä¿å­˜&ã‚¯ãƒªã‚¢");
 		selfTerminateSetting = new SelfTerminate(log, this);
 		jMenuSelfTerminate = selfTerminateSetting.initMenu(getTerminateTimeout());
 		jRestTimeMenu = selfTerminateSetting.getRestTimeMenu();
-		jMenuEnableUnicode.setText("Unicode•\¦‚ğ—LŒø‚É‚·‚éB(]—ˆ‚Íshift-jis)");
+		jMenuEnableUnicode.setText("Unicodeè¡¨ç¤ºã‚’æœ‰åŠ¹ã«ã™ã‚‹ã€‚(å¾“æ¥ã¯shift-jis)");
 		jMenuEnableUnicode.setForeground(Color.blue);
-		jMenuEnableUnicode.setToolTipText("ƒtƒ@ƒCƒ‹ƒ^ƒCƒgƒ‹‚âƒƒO•\¦‚ÅUnicode‚Ì‚Ü‚Ü‚É‚·‚éB");
-		jMenuOpen.setText("ŠJ‚­(Open)...");
+		jMenuEnableUnicode.setToolTipText("ãƒ•ã‚¡ã‚¤ãƒ«ã‚¿ã‚¤ãƒˆãƒ«ã‚„ãƒ­ã‚°è¡¨ç¤ºã§Unicodeã®ã¾ã¾ã«ã™ã‚‹ã€‚");
+		jMenuOpen.setText("é–‹ã(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JTextField propFileField = new JTextField("");
-				if(showSaveDialog("İ’èƒtƒ@ƒCƒ‹‚ÌƒpƒX", propFileField, false, false)
+				if(showSaveDialog("è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹", propFileField, false, false)
 						!= DIALOG_OK){
-					sendtext("ƒLƒƒƒ“ƒZƒ‹");
+					sendtext("ã‚­ãƒ£ãƒ³ã‚»ãƒ«");
 					return;
 				}
 				String filename = propFileField.getText();
@@ -1118,28 +1118,28 @@ public class MainFrame extends JFrame {
 					setSetting(ConvertingSetting.loadSetting(null, null, filename));
 				}
 				else
-					sendtext("İ’èƒtƒ@ƒCƒ‹“Ç‚İ‚İƒGƒ‰[");
+					sendtext("è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼");
 			}
 		});
-		jMenuAdd.setText("’Ç‰Á (Add)...");
+		jMenuAdd.setText("è¿½åŠ  (Add)...");
 		jMenuAdd.setForeground(Color.blue);
 		jMenuAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JTextField propFileField = new JTextField("");
-				if(showSaveDialog("’Ç‰Á—pİ’èƒtƒ@ƒCƒ‹‚ÌƒpƒX", propFileField, false, false)
+				if(showSaveDialog("è¿½åŠ ç”¨è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹", propFileField, false, false)
 						!= DIALOG_OK){
-					sendtext("ƒLƒƒƒ“ƒZƒ‹");
+					sendtext("ã‚­ãƒ£ãƒ³ã‚»ãƒ«");
 					return;
 				}
 				String filename = propFileField.getText();
 				if(filename!=null && !filename.isEmpty() && Path.isFile(filename))
 					setSetting(ConvertingSetting.addSetting(getSetting(), filename));
 				else
-					sendtext("İ’èƒtƒ@ƒCƒ‹’Ç‰ÁƒGƒ‰[");
+					sendtext("è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«è¿½åŠ ã‚¨ãƒ©ãƒ¼");
 			}
 		});
-		jMenuSave.setText("ã‘‚«•Û‘¶ (Save saccubus.xml)");
+		jMenuSave.setText("ä¸Šæ›¸ãä¿å­˜ (Save saccubus.xml)");
 		jMenuSave.setForeground(Color.blue);
 		jMenuSave.addActionListener(new ActionListener() {
 			@Override
@@ -1147,25 +1147,25 @@ public class MainFrame extends JFrame {
 				ConvertingSetting.saveSetting(getSetting());
 			}
 		});
-		jMenuSaveAs.setText("–¼‘O‚ğ•t‚¯‚Ä•Û‘¶ (saveAs)...");
+		jMenuSaveAs.setText("åå‰ã‚’ä»˜ã‘ã¦ä¿å­˜ (saveAs)...");
 		jMenuSaveAs.setForeground(Color.blue);
 		jMenuSaveAs.addActionListener(new ActionListener() {
 			JTextField propFileField = new JTextField(ConvertingSetting.PROP_FILE);
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(showSaveDialog("İ’èƒtƒ@ƒCƒ‹‚ÌƒpƒX", propFileField,	true, false)
+				if(showSaveDialog("è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹", propFileField,	true, false)
 						!= DIALOG_OK){
-					sendtext("ƒLƒƒƒ“ƒZƒ‹");
+					sendtext("ã‚­ãƒ£ãƒ³ã‚»ãƒ«");
 					return;
 				}
 				String filename = propFileField.getText();
 				if(filename!=null && !filename.isEmpty())
 					ConvertingSetting.saveSetting(getSetting(), filename);
 				else
-					sendtext("İ’èƒtƒ@ƒCƒ‹•Û‘¶ƒGƒ‰[");
+					sendtext("è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ä¿å­˜ã‚¨ãƒ©ãƒ¼");
 			}
 		});
-		jMenuOpenSet1.setText("İ’è1‚ğŠJ‚­");
+		jMenuOpenSet1.setText("è¨­å®š1ã‚’é–‹ã");
 		jMenuOpenSet1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1175,10 +1175,10 @@ public class MainFrame extends JFrame {
 					setSetting(ConvertingSetting.loadSetting(null, null, file.getPath()));
 				}
 				else
-					sendtext("İ’è1“Ç‚İ‚İƒGƒ‰[");
+					sendtext("è¨­å®š1èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼");
 			}
 		});
-		jMenuOpenSet2.setText("İ’è2‚ğŠJ‚­");
+		jMenuOpenSet2.setText("è¨­å®š2ã‚’é–‹ã");
 		jMenuOpenSet2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1188,10 +1188,10 @@ public class MainFrame extends JFrame {
 					setSetting(ConvertingSetting.loadSetting(null, null, file.getPath()));
 				}
 				else
-					sendtext("İ’è2“Ç‚İ‚İƒGƒ‰[");
+					sendtext("è¨­å®š2èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼");
 			}
 		});
-		jMenuSaveSet1.setText("İ’è1‚ÉŒ»İ‚Ìİ’è‚ğ•Û‘¶");
+		jMenuSaveSet1.setText("è¨­å®š1ã«ç¾åœ¨ã®è¨­å®šã‚’ä¿å­˜");
 		jMenuSaveSet1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1199,7 +1199,7 @@ public class MainFrame extends JFrame {
 				ConvertingSetting.saveSetting(getSetting(), PROPERTY_SET1_XML.getPath());
 			}
 		});
-		jMenuSaveSet2.setText("İ’è2‚ÉŒ»İ‚Ìİ’è‚ğ•Û‘¶");
+		jMenuSaveSet2.setText("è¨­å®š2ã«ç¾åœ¨ã®è¨­å®šã‚’ä¿å­˜");
 		jMenuSaveSet2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1207,7 +1207,7 @@ public class MainFrame extends JFrame {
 				ConvertingSetting.saveSetting(getSetting(), PROPERTY_SET2_XML.getPath());
 			}
 		});
-		jMenuDebug.setText("ƒfƒoƒbƒOƒ‚[ƒh");
+		jMenuDebug.setText("ãƒ‡ãƒãƒƒã‚°ãƒ¢ãƒ¼ãƒ‰");
 		jMenuDebug.setForeground(Color.blue);
 		jMenuDebug.addActionListener(new ActionListener() {
 			@Override
@@ -1216,7 +1216,7 @@ public class MainFrame extends JFrame {
 				debugModeSet(is_debug);
 			}
 		});
-		jMenuInit.setText("‰Šú‰» (Init)");
+		jMenuInit.setText("åˆæœŸåŒ– (Init)");
 		jMenuInit.setForeground(Color.blue);
 		jMenuInit.addActionListener(new ActionListener() {
 			@Override
@@ -1234,7 +1234,7 @@ public class MainFrame extends JFrame {
 				setSetting(ConvertingSetting.loadSetting(mlad, pswd, ConvertingSetting.INI_FILE, false));
 			}
 		});
-		jMenuReset.setText("‹N“®‚Ìİ’è‚É–ß‚·");
+		jMenuReset.setText("èµ·å‹•æ™‚ã®è¨­å®šã«æˆ»ã™");
 		jMenuReset.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1243,24 +1243,24 @@ public class MainFrame extends JFrame {
 		});
 		VideoInfoPanel.setLayout(gridBagLayout1);
 		VideoID_TextField.setText("https://www.nicovideo.jp/watch/");
-		requestHistory = new HistoryDeque<String>(" [ƒŠƒNƒGƒXƒg—š—ğI‚è] ", true);
+		requestHistory = new HistoryDeque<String>(" [ãƒªã‚¯ã‚¨ã‚¹ãƒˆå±¥æ­´çµ‚ã‚Š] ", true);
 		histories[0] = requestHistory;
-		mylistHistory = new HistoryDeque<String>(" [ƒ}ƒCƒŠƒXƒg—š—ğI‚è] ", true);
+		mylistHistory = new HistoryDeque<String>(" [ãƒã‚¤ãƒªã‚¹ãƒˆå±¥æ­´çµ‚ã‚Š] ", true);
 		histories[1] = mylistHistory;
-		requestTemplete = new HistoryDeque<String>("[ƒeƒ“ƒvƒŒ[ƒg]", true);
+		requestTemplete = new HistoryDeque<String>("[ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆ]", true);
 		String[] REQ_TEMPLETE = {
-			"watch/“®‰æID",
-			"mylist/ƒ}ƒCƒŠƒXƒgID",
-			"user/ƒ†[ƒUID/video",
+			"watch/å‹•ç”»ID",
+			"mylist/ãƒã‚¤ãƒªã‚¹ãƒˆID",
+			"user/ãƒ¦ãƒ¼ã‚¶ID/video",
 			"my/video",
 			"my/mylist",
 			"my/history",
-			"search/ƒL[ƒ[ƒhƒT[ƒ`?&ƒIƒvƒVƒ‡ƒ“",
-			"tag/ƒ^ƒOƒT[ƒ`?&ƒIƒvƒVƒ‡ƒ“",
-			"ƒIƒvƒVƒ‡ƒ“sort &n:ƒRƒ,&v:Ä¶”,&f:“Še“ú,&m:ƒ}ƒCƒŠƒX”,&r:ƒRƒ”,&l:’·‚³,&h:l‹C",
-			"ƒIƒvƒVƒ‡ƒ“order ‰p¬•¶š:~‡(order=d),‰p‘å•¶š:¸‡(order=a)",
-			"ƒIƒvƒVƒ‡ƒ“page –³‚µ,”š:ŠJnƒy[ƒW”",
-			"tag/VOCALOID?&f1 ƒIƒvƒVƒ‡ƒ“À—á",
+			"search/ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚µãƒ¼ãƒ?&ã‚ªãƒ—ã‚·ãƒ§ãƒ³",
+			"tag/ã‚¿ã‚°ã‚µãƒ¼ãƒ?&ã‚ªãƒ—ã‚·ãƒ§ãƒ³",
+			"ã‚ªãƒ—ã‚·ãƒ§ãƒ³sort &n:ã‚³ãƒ¡æ™‚,&v:å†ç”Ÿæ•°,&f:æŠ•ç¨¿æ—¥,&m:ãƒã‚¤ãƒªã‚¹æ•°,&r:ã‚³ãƒ¡æ•°,&l:é•·ã•,&h:äººæ°—",
+			"ã‚ªãƒ—ã‚·ãƒ§ãƒ³order è‹±å°æ–‡å­—:é™é †(order=d),è‹±å¤§æ–‡å­—:æ˜‡é †(order=a)",
+			"ã‚ªãƒ—ã‚·ãƒ§ãƒ³page ç„¡ã—,æ•°å­—:é–‹å§‹ãƒšãƒ¼ã‚¸æ•°",
+			"tag/VOCALOID?&f1 ã‚ªãƒ—ã‚·ãƒ§ãƒ³å®Ÿä¾‹",
 		};
 		for(String s: REQ_TEMPLETE)
 			requestTemplete.offer(s);
@@ -1274,7 +1274,7 @@ public class MainFrame extends JFrame {
 		});
 		SavingInfoTabPanel.setLayout(gridBagLayout2);
 		loginCheckPanel.setLayout(new GridBagLayout());
-		loginCheckButton.setText("ƒƒOƒCƒ“ƒ`ƒFƒbƒN");
+		loginCheckButton.setText("ãƒ­ã‚°ã‚¤ãƒ³ãƒã‚§ãƒƒã‚¯");
 		loginCheckButton.setForeground(Color.blue);
 		loginCheckButton.addActionListener(new ActionListener() {
 			@Override
@@ -1338,7 +1338,7 @@ public class MainFrame extends JFrame {
 		});
 		html5CheckBox.setSelected(false);
 		html5CheckBox.setText("html5");
-		html5CheckBox.setToolTipText("html5ƒvƒŒ[ƒ„[g—p‚ğ—v‹");
+		html5CheckBox.setToolTipText("html5ãƒ—ãƒ¬ãƒ¼ãƒ¤ãƒ¼ä½¿ç”¨ã‚’è¦æ±‚");
 		html5CheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1355,9 +1355,9 @@ public class MainFrame extends JFrame {
 			0, 0);
 		loginCheckPanel.add(html5CheckBox,loginGBC);
 		enableAutoHtml5CheckBox = new JCheckBox();
-		enableAutoHtml5CheckBox.setText("©");
+		enableAutoHtml5CheckBox.setText("è‡ª");
 		enableAutoHtml5CheckBox.setForeground(Color.blue);
-		enableAutoHtml5CheckBox.setToolTipText("©“®html5Ø‘Ö:ƒRƒƒ“ƒg,‰e‚ğhtml5ƒvƒŒ[ƒ„[g—p‚É‡‚í‚¹‚é");
+		enableAutoHtml5CheckBox.setToolTipText("è‡ªå‹•html5åˆ‡æ›¿:ã‚³ãƒ¡ãƒ³ãƒˆ,å½±ã‚’html5ãƒ—ãƒ¬ãƒ¼ãƒ¤ãƒ¼ä½¿ç”¨ã«åˆã‚ã›ã‚‹");
 		enableAutoHtml5CheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1374,19 +1374,19 @@ public class MainFrame extends JFrame {
 			0, 0);
 		loginCheckPanel.add(enableAutoHtml5CheckBox,loginGBC);
 		UserInfoPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
-				.createEtchedBorder(), "ƒ†[ƒUİ’è"));
+				.createEtchedBorder(), "ãƒ¦ãƒ¼ã‚¶è¨­å®š"));
 		UserInfoPanel.setLayout(gridBagLayout3);
-		MailAddrLabel.setText("ƒ[ƒ‹ƒAƒhƒŒƒX");
-		PasswordLabel.setText("ƒpƒXƒ[ƒh");
+		MailAddrLabel.setText("ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹");
+		PasswordLabel.setText("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰");
 		GridBagLayout gridBagLayout13 = new GridBagLayout();
 		BrowserInfoPanel.setLayout(gridBagLayout13);
 		BrowserInfoPanel.setBorder(BorderFactory.createTitledBorder(
 				CREATE_ETCHED_BORDER,
-				"ƒuƒ‰ƒEƒUî•ñ‹¤—Lİ’è", TitledBorder.LEADING, TitledBorder.TOP,
+				"ãƒ–ãƒ©ã‚¦ã‚¶æƒ…å ±å…±æœ‰è¨­å®š", TitledBorder.LEADING, TitledBorder.TOP,
 				getFont(), Color.blue));
-		BrowserInfoLabel.setText("ƒƒOƒCƒ“Ï‚İƒuƒ‰ƒEƒU‚©‚çƒZƒbƒVƒ‡ƒ“‚ğæ“¾‚·‚éiƒuƒ‰ƒEƒU‚ÍƒƒOƒAƒEƒg‚³‚ê‚È‚¢j");
+		BrowserInfoLabel.setText("ãƒ­ã‚°ã‚¤ãƒ³æ¸ˆã¿ãƒ–ãƒ©ã‚¦ã‚¶ã‹ã‚‰ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚’å–å¾—ã™ã‚‹ï¼ˆãƒ–ãƒ©ã‚¦ã‚¶ã¯ãƒ­ã‚°ã‚¢ã‚¦ãƒˆã•ã‚Œãªã„ï¼‰");
 		BrowserInfoLabel.setForeground(Color.blue);
-		BrowserInfoLabel.setToolTipText("ƒ[ƒ‹ƒAƒhƒŒƒXAƒpƒXƒ[ƒh‚Í“ü—Í•s—viw’èƒuƒ‰ƒEƒU‚ªƒƒOƒCƒ“‚µ‚Ä‚¢‚È‚¢‚ÆƒGƒ‰[j");
+		BrowserInfoLabel.setToolTipText("ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ã€ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¯å…¥åŠ›ä¸è¦ï¼ˆæŒ‡å®šãƒ–ãƒ©ã‚¦ã‚¶ãŒãƒ­ã‚°ã‚¤ãƒ³ã—ã¦ã„ãªã„ã¨ã‚¨ãƒ©ãƒ¼ï¼‰");
 		GridBagConstraints grid13_x0_y0_96 = new GridBagConstraints();
 		grid13_x0_y0_96.gridx = 0;
 		grid13_x0_y0_96.gridy = 0;
@@ -1396,7 +1396,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y0_96.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y0_96.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserInfoLabel, grid13_x0_y0_96);
-		BrowserIECheckBox.setText("Interner Eplorer (IE7/IE8/IE9`11)");
+		BrowserIECheckBox.setText("Interner Eplorer (IE7/IE8/IE9ï½11)");
 		BrowserIECheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y1_97 = new GridBagConstraints();
 		grid13_x0_y1_97.gridx = 0;
@@ -1407,7 +1407,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y1_97.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y1_97.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserIECheckBox, grid13_x0_y1_97);
-		BrowserFFCheckBox.setText("Firefox (FF3/FF4`50)");
+		BrowserFFCheckBox.setText("Firefox (FF3/FF4ï½50)");
 		BrowserFFCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y2_98 = new GridBagConstraints();
 		grid13_x0_y2_98.gridx = 0;
@@ -1418,7 +1418,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y2_98.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y2_98.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserFFCheckBox, grid13_x0_y2_98);
-		BrowserChromeCheckBox.setText("Google Chrome(ver 33.0.x.xˆÈ~‚ÍˆÃ†‰»‚Ì‚½‚ß•s‰Â)");
+		BrowserChromeCheckBox.setText("Google Chrome(ver 33.0.x.xä»¥é™ã¯æš—å·åŒ–ã®ãŸã‚ä¸å¯)");
 		BrowserChromeCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y3_99 = new GridBagConstraints();
 		grid13_x0_y3_99.gridx = 0;
@@ -1429,7 +1429,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y3_99.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y3_99.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserChromeCheckBox, grid13_x0_y3_99);
-		BrowserOperaCheckBox.setText("Opera(ver 20.0ˆÈ~‚ÍˆÃ†‰»‚Ì‚½‚ß•s‰Â)");
+		BrowserOperaCheckBox.setText("Opera(ver 20.0ä»¥é™ã¯æš—å·åŒ–ã®ãŸã‚ä¸å¯)");
 		BrowserOperaCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y4_100 = new GridBagConstraints();
 		grid13_x0_y4_100.gridx = 0;
@@ -1440,7 +1440,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y4_100.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y4_100.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserOperaCheckBox, grid13_x0_y4_100);
-		BrowserChromiumCheckBox.setText("Chromium”h¶ (SRware Iron‚È‚Ç)");
+		BrowserChromiumCheckBox.setText("Chromiumæ´¾ç”Ÿ (SRware Ironãªã©)");
 		BrowserChromiumCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y5_101 = new GridBagConstraints();
 		grid13_x0_y5_101.gridx = 0;
@@ -1462,7 +1462,7 @@ public class MainFrame extends JFrame {
 		grid13_x0_y6_102.fill = GridBagConstraints.NONE;
 		grid13_x0_y6_102.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserOtherCheckBox, grid13_x0_y6_102);
-		BrowserCookieField.setText("‘¼‚Ìƒuƒ‰ƒEƒUCookie‚Ìƒtƒ@ƒCƒ‹/ƒtƒHƒ‹ƒ_‚ğw’è");
+		BrowserCookieField.setText("ä»–ã®ãƒ–ãƒ©ã‚¦ã‚¶Cookieã®ãƒ•ã‚¡ã‚¤ãƒ«/ãƒ•ã‚©ãƒ«ãƒ€ã‚’æŒ‡å®š");
 		BrowserCookieField.setForeground(Color.blue);
 		GridBagConstraints grid13_x0_y7_103 = new GridBagConstraints();
 		grid13_x0_y7_103.gridx = 1;
@@ -1473,14 +1473,14 @@ public class MainFrame extends JFrame {
 		grid13_x0_y7_103.fill = GridBagConstraints.HORIZONTAL;
 		grid13_x0_y7_103.insets = INSETS_0_5_0_5;
 		BrowserInfoPanel.add(BrowserCookieField, grid13_x0_y7_103);
-		BrowserCookieDialogButton.setText("QÆ");
+		BrowserCookieDialogButton.setText("å‚ç…§");
 		BrowserCookieDialogButton.setForeground(Color.blue);
 		BrowserCookieDialogButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if(showSaveDialog("‘¼‚Ìƒuƒ‰ƒEƒU‚ÌCookie‚Ö‚ÌƒpƒX", BrowserCookieField)
+					if(showSaveDialog("ä»–ã®ãƒ–ãƒ©ã‚¦ã‚¶ã®Cookieã¸ã®ãƒ‘ã‚¹", BrowserCookieField)
 							!= DIALOG_OK)
-						sendtext("ƒLƒƒƒ“ƒZƒ‹");
+						sendtext("ã‚­ãƒ£ãƒ³ã‚»ãƒ«");
 				}
 			});
 		GridBagConstraints grid13_x1_y7_104 = new GridBagConstraints();
@@ -1493,32 +1493,32 @@ public class MainFrame extends JFrame {
 		grid13_x1_y7_104.insets = INSETS_0_0_0_5;
 		BrowserInfoPanel.add(BrowserCookieDialogButton, grid13_x1_y7_104);
 
-		SavingVideoCheckBox.setText("“®‰æ•Û‘¶");
-		disableEcoCheckBox.setText("eco’†~");
+		SavingVideoCheckBox.setText("å‹•ç”»ä¿å­˜");
+		disableEcoCheckBox.setText("ecoä¸­æ­¢");
 		disableEcoCheckBox.setForeground(Color.blue);
-		ShowSavingVideoFileDialogButton.setText("QÆ");
+		ShowSavingVideoFileDialogButton.setText("å‚ç…§");
 		ShowSavingVideoFileDialogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ShowSavingVideoDialogButton_actionPerformed(e);
 			}
 		});
-		Video_SaveFolderRadioButton.setText("•Û‘¶‚·‚éƒtƒHƒ‹ƒ_‚ğw’è‚µAƒtƒ@ƒCƒ‹–¼‚Í©“®‚ÅŒˆ’è‚·‚é");
+		Video_SaveFolderRadioButton.setText("ä¿å­˜ã™ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã‚’æŒ‡å®šã—ã€ãƒ•ã‚¡ã‚¤ãƒ«åã¯è‡ªå‹•ã§æ±ºå®šã™ã‚‹");
 		openVideoSaveFolderButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 				{openFolder(getFile(VideoSavedFolderField.getText()));}
 		});
-		ShowSavingVideoFolderDialogButton.setText("QÆ");
+		ShowSavingVideoFolderDialogButton.setText("å‚ç…§");
 		ShowSavingVideoFolderDialogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ShowSavingVideoFolderDialogButton_actionPerformed(e);
 			}
 		});
-		Video_SaveFileRadioButton.setText("•Û‘¶‚·‚éƒtƒ@ƒCƒ‹–¼‚ğw’è‚·‚é(’uŠ·ƒ}ƒNƒ—L‚è)->");
+		Video_SaveFileRadioButton.setText("ä¿å­˜ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«åã‚’æŒ‡å®šã™ã‚‹(ç½®æ›ãƒã‚¯ãƒ­æœ‰ã‚Š)->");
 		Video_SaveFileRadioButton.setForeground(Color.blue);
-		videoFileMacroLabel.setText("à–¾");
+		videoFileMacroLabel.setText("èª¬æ˜");
 		videoFileMacroLabel.setForeground(Color.red);
 		videoFileMacroLabel.addMouseListener(
 				new ForcusedPopupBoard(this, renameFileMacro, renameFileMacroDescription));
@@ -1529,68 +1529,68 @@ public class MainFrame extends JFrame {
 		});
 		CommentSaveInfoPanel.setBorder(BorderFactory.createTitledBorder(
 				CREATE_ETCHED_BORDER,
-				"ƒRƒƒ“ƒg•Û‘¶İ’è"
+				"ã‚³ãƒ¡ãƒ³ãƒˆä¿å­˜è¨­å®š"
 			));
 			//	,TitledBorder.LEADING, TitledBorder.TOP,
 			//	new Font("MS UI Gothic", Font.PLAIN, 12), Color.black));
 		CommentSaveInfoPanel.setLayout(gridBagLayout4);
-		SavingCommentCheckBox.setText("ƒRƒƒ“ƒg‚ğƒ_ƒEƒ“ƒ[ƒh");
-		appendCommentCheckBox.setText("ƒRƒƒ“ƒg’Ç‰Á");
+		SavingCommentCheckBox.setText("ã‚³ãƒ¡ãƒ³ãƒˆã‚’ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰");
+		appendCommentCheckBox.setText("ã‚³ãƒ¡ãƒ³ãƒˆè¿½åŠ ");
 		appendCommentCheckBox.addActionListener(new MainFrame_noticePop(this));
 		//enableCommentJsonCheckBox.setText("Json");
 		//enableCommentJsonCheckBox.setForeground(Color.blue);
-		//enableCommentJsonCheckBox.setToolTipText("ƒRƒƒ“ƒg‚ğJson‚ÅƒAƒNƒZƒX‚·‚é");
+		//enableCommentJsonCheckBox.setToolTipText("ã‚³ãƒ¡ãƒ³ãƒˆã‚’Jsonã§ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹");
 		//enableCommentJsonCheckBox.setEnabled(false);
 		//enableCommentXmlCheckBox.setText("xml");
 		//enableCommentXmlCheckBox.setForeground(Color.black);
-		//enableCommentXmlCheckBox.setToolTipText("ƒRƒƒ“ƒg‚ğXml‚ÅƒAƒNƒZƒX‚·‚é(‹Œd—l)");
+		//enableCommentXmlCheckBox.setToolTipText("ã‚³ãƒ¡ãƒ³ãƒˆã‚’Xmlã§ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹(æ—§ä»•æ§˜)");
 		//enableCommentXmlCheckBox.setEnabled(false);
-		AddTimeStampToCommentCheckBox.setText("ƒRƒƒ“ƒgƒtƒ@ƒCƒ‹–¼‚É“ú•t‰ÁiƒtƒHƒ‹ƒ_w’èj");
+		AddTimeStampToCommentCheckBox.setText("ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«åã«æ—¥æ™‚ä»˜åŠ ï¼ˆãƒ•ã‚©ãƒ«ãƒ€æŒ‡å®šæ™‚ï¼‰");
 		AddTimeStampToCommentCheckBox.setForeground(Color.blue);
-		AddTimeStampToCommentCheckBox.setToolTipText("‰ß‹ƒƒO‚É‚àŒ»İ‚ÌƒRƒƒ“ƒg‚É‚à“ú‚ª•t‚­");
-		ShowSavingCommentFileDialogButton.setText("QÆ");
+		AddTimeStampToCommentCheckBox.setToolTipText("éå»ãƒ­ã‚°ã«ã‚‚ç¾åœ¨ã®ã‚³ãƒ¡ãƒ³ãƒˆã«ã‚‚æ—¥æ™‚ãŒä»˜ã");
+		ShowSavingCommentFileDialogButton.setText("å‚ç…§");
 		ShowSavingCommentFileDialogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ShowSavingCommentDialogButton_actionPerformed(e);
 			}
 		});
-		Comment_SaveFolderRadioButton.setText("•Û‘¶‚·‚éƒtƒHƒ‹ƒ_‚ğw’è‚µAƒtƒ@ƒCƒ‹–¼‚Í©“®‚ÅŒˆ’è‚·‚é");
+		Comment_SaveFolderRadioButton.setText("ä¿å­˜ã™ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã‚’æŒ‡å®šã—ã€ãƒ•ã‚¡ã‚¤ãƒ«åã¯è‡ªå‹•ã§æ±ºå®šã™ã‚‹");
 		openCommentSaveFolderButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 				{openFolder(getFile(CommentSavedFolderField.getText()));}
 		});
-		ShowSavingCommentFolderDialogButton.setText("QÆ");
+		ShowSavingCommentFolderDialogButton.setText("å‚ç…§");
 		ShowSavingCommentFolderDialogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ShowSavingCommentFolderDialogButton_actionPerformed(e);
 			}
 		});
-		Comment_SaveFileRadioButton.setText("•Û‘¶‚·‚éƒtƒ@ƒCƒ‹–¼‚ğw’è‚·‚é");
+		Comment_SaveFileRadioButton.setText("ä¿å­˜ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«åã‚’æŒ‡å®šã™ã‚‹");
 		openCommentSaveFileButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
 				{openFileParent(getFile(CommentSavedFileField.getText()));}
 		});
-		OldCommentModePanel = new JPanelHideable("OldCommentMode","“ŠeÒƒRƒƒ“ƒg•Û‘¶à–¾EƒRƒƒ“ƒg•\¦ƒ‚[ƒhİ’è",Color.blue);
+		OldCommentModePanel = new JPanelHideable("OldCommentMode","æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆä¿å­˜èª¬æ˜ãƒ»ã‚³ãƒ¡ãƒ³ãƒˆè¡¨ç¤ºãƒ¢ãƒ¼ãƒ‰è¨­å®š",Color.blue);
  		commentModeComboBox.setForeground(Color.blue);
-		OwnerCommentNoticeLabel1.setText("“ŠeÒƒRƒƒ“ƒg•Û‘¶@æ“¾”‚P‚O‚O‚O @ƒtƒHƒ‹ƒ_w’è‚Í’ÊíƒRƒƒ“ƒg‚Ìİ’è’Ê‚è");
+		OwnerCommentNoticeLabel1.setText("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆä¿å­˜ã€€å–å¾—æ•°ï¼‘ï¼ï¼ï¼ ã€€ãƒ•ã‚©ãƒ«ãƒ€æŒ‡å®šã¯é€šå¸¸ã‚³ãƒ¡ãƒ³ãƒˆã®è¨­å®šé€šã‚Š");
 		OwnerCommentNoticeLabel1.setForeground(Color.blue);
-		OwnerCommentNoticeLabel1.setToolTipText("ƒtƒ@ƒCƒ‹–¼‚ÍAƒ^ƒCƒgƒ‹{m‚n‚—‚‚…‚’nD‚˜‚‚Œ");
+		OwnerCommentNoticeLabel1.setToolTipText("ãƒ•ã‚¡ã‚¤ãƒ«åã¯ã€ã‚¿ã‚¤ãƒˆãƒ«ï¼‹ï¼»ï¼¯ï½—ï½ï½…ï½’ï¼½ï¼ï½˜ï½ï½Œ");
 
 		ConvertedVideoSavingInfoPanel.setBorder(BorderFactory
 				.createTitledBorder(BorderFactory.createEtchedBorder(),
-						"ƒRƒƒ“ƒg•t‚«“®‰æ•Û‘¶İ’è"));
+						"ã‚³ãƒ¡ãƒ³ãƒˆä»˜ãå‹•ç”»ä¿å­˜è¨­å®š"));
 		ConvertedVideoSavingInfoPanel.setLayout(gridBagLayout5);
-		SavingConvertedVideoCheckBox.setText("“®‰æ‚ğ•ÏŠ·‚·‚é");
-		ConvertWithCommentCheckBox.setText("ƒRƒƒ“ƒg‚ğ•t‰Á‚·‚é");
-		ConvertWithOwnerCommentCheckBox.setText("“ŠeÒƒRƒƒ“ƒg‚ğ•t‰Á‚·‚é");
+		SavingConvertedVideoCheckBox.setText("å‹•ç”»ã‚’å¤‰æ›ã™ã‚‹");
+		ConvertWithCommentCheckBox.setText("ã‚³ãƒ¡ãƒ³ãƒˆã‚’ä»˜åŠ ã™ã‚‹");
+		ConvertWithOwnerCommentCheckBox.setText("æŠ•ç¨¿è€…ã‚³ãƒ¡ãƒ³ãƒˆã‚’ä»˜åŠ ã™ã‚‹");
 		ConvertWithOwnerCommentCheckBox.setForeground(Color.blue);
-		AddOption_ConvVideoFileCheckBox.setText("ƒTƒuƒtƒHƒ‹ƒ_‚ğì‚èFFmpegİ’è‚ğƒtƒ@ƒCƒ‹–¼‚ÉiƒfƒoƒbƒO—pj");
+		AddOption_ConvVideoFileCheckBox.setText("ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‚’ä½œã‚ŠFFmpegè¨­å®šã‚’ãƒ•ã‚¡ã‚¤ãƒ«åã«ï¼ˆãƒ‡ãƒãƒƒã‚°ç”¨ï¼‰");
 		AddOption_ConvVideoFileCheckBox.setForeground(Color.blue);
-		AddOption_ConvVideoFileCheckBox.setToolTipText("ƒTƒuƒtƒHƒ‹ƒ_–¼‚ÍƒrƒfƒIƒ^ƒCƒgƒ‹");
+		AddOption_ConvVideoFileCheckBox.setToolTipText("ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€åã¯ãƒ“ãƒ‡ã‚ªã‚¿ã‚¤ãƒˆãƒ«");
 		openConvSaveFileButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -1601,15 +1601,15 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e)
 				{openFolder(getFile(ConvertedVideoSavedFolderField.getText()));}
 		});
-		ShowSavingConvertedVideoFileDialogButton.setText("QÆ");
+		ShowSavingConvertedVideoFileDialogButton.setText("å‚ç…§");
 		ShowSavingConvertedVideoFileDialogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ShowSavingConvertedVideoDialogButton_actionPerformed(e);
 			}
 		});
-		autoPlayCheckBox.setText("•ÏŠ·Œã©“®Ä¶(Šg’£q‚ÌŠù’è’l)");
-		autoPlay2CheckBox.setText("©“®Ä¶");
+		autoPlayCheckBox.setText("å¤‰æ›å¾Œè‡ªå‹•å†ç”Ÿ(æ‹¡å¼µå­ã®æ—¢å®šå€¤)");
+		autoPlay2CheckBox.setText("è‡ªå‹•å†ç”Ÿ");
 		autoPlayCheckBox.setForeground(Color.blue);
 		autoPlay2CheckBox.setForeground(Color.blue);
 		autoPlay2CheckBox.addActionListener(new ActionListener() {
@@ -1620,27 +1620,27 @@ public class MainFrame extends JFrame {
 				autoPlay.setSelected(autoPlay2CheckBox.isSelected());
 			}
 		});
-		OptionalThreadInfoPanel = new JPanelHideable("OptionalThreadInfo","ƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒhİ’è",Color.blue);
-		OptionalthreadLabel.setText("ƒRƒ~ƒ…ƒjƒeƒB“®‰æ‚Å’ÊíƒRƒƒ“ƒg‚ğƒIƒvƒVƒ‡ƒiƒ‹ƒXƒŒƒbƒh‚Å“Ç‚İ‚İ‚Ü‚·");
+		OptionalThreadInfoPanel = new JPanelHideable("OptionalThreadInfo","ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰è¨­å®š",Color.blue);
+		OptionalthreadLabel.setText("ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£å‹•ç”»ã§é€šå¸¸ã‚³ãƒ¡ãƒ³ãƒˆã‚’ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ã‚¹ãƒ¬ãƒƒãƒ‰ã§èª­ã¿è¾¼ã¿ã¾ã™");
 		OptionalthreadLabel.setForeground(Color.blue);
-		OptionalTranslucentCheckBox.setText("’ÊíƒRƒƒ“ƒg‚ğ”¼“§–¾‚É‚·‚é");
+		OptionalTranslucentCheckBox.setText("é€šå¸¸ã‚³ãƒ¡ãƒ³ãƒˆã‚’åŠé€æ˜ã«ã™ã‚‹");
 		OptionalTranslucentCheckBox.setForeground(Color.blue);
 		FFMpegTabPanel.setLayout(gridBagLayout6);
 		FFMpegTab2Panel.setLayout(new GridBagLayout());
 		PathSettingPanel.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(), "ƒIƒvƒVƒ‡ƒ“ƒtƒHƒ‹ƒ_‚ÌˆÊ’u‚Ìİ’è",
+				BorderFactory.createEtchedBorder(), "ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚©ãƒ«ãƒ€ã®ä½ç½®ã®è¨­å®š",
 				TitledBorder.LEADING, TitledBorder.TOP,
 				getFont(), Color.blue));
 		PathSettingPanel.setLayout(new GridBagLayout());
-		VhookPathSettingPanel = new JPanelHideable("VhookPath","Šg’£VhookƒpƒX‚Ìİ’è",Color.black);
+		VhookPathSettingPanel = new JPanelHideable("VhookPath","æ‹¡å¼µVhookãƒ‘ã‚¹ã®è¨­å®š",Color.black);
 		FFmpegPathSettingPanel.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(), "FFmpeg‚ÌˆÊ’u‚Ìİ’è"));
+				BorderFactory.createEtchedBorder(), "FFmpegã®ä½ç½®ã®è¨­å®š"));
 		FFmpegPathSettingPanel.setLayout(new GridBagLayout());
 //		FFmpegPathLabel.setText("FFmpeg");
-		CheckFFmpegVersionLabel.setText("FFmpegƒo[ƒWƒ‡ƒ“•\¦");
+		CheckFFmpegVersionLabel.setText("FFmpegãƒãƒ¼ã‚¸ãƒ§ãƒ³è¡¨ç¤º");
 		CheckFFmpegVersionLabel.setForeground(Color.blue);
-		CheckFFmpegVersionButton.setText("•\");
-		CheckFFmpegVersionButton.setToolTipText("w’è‚³‚ê‚½FFmpeg‚Ìƒo[ƒWƒ‡ƒ“‚ğ•\¦‚·‚é");
+		CheckFFmpegVersionButton.setText("è¡¨");
+		CheckFFmpegVersionButton.setToolTipText("æŒ‡å®šã•ã‚ŒãŸFFmpegã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‚’è¡¨ç¤ºã™ã‚‹");
 		CheckFFmpegVersionButton.setForeground(Color.blue);
 		CheckFFmpegVersionButton.addActionListener(new ActionListener(){
 			@Override
@@ -1648,39 +1648,39 @@ public class MainFrame extends JFrame {
 				FFVersionButton_actionPerformed(e);
 			}
 		});
-		SettingFFmpegPathButton.setText("QÆ");
+		SettingFFmpegPathButton.setText("å‚ç…§");
 		SettingFFmpegPathButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SettingFFmpegPathButton_actionPerformed(e);
 			}
 		});
-		SettingOptionPathButton.setText("QÆ");
+		SettingOptionPathButton.setText("å‚ç…§");
 		SettingOptionPathButton.setForeground(Color.blue);
 		SettingOptionPathButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) { SettingOptionPathButton_actionPerformed(e); }
 		});
-		VhookSettingLabel.setText("Šg’£Vhook‚ÌˆÊ’u‚Ìİ’è‚Æ©“®”»’è‚Ì‘I‘ğ‚ğ‚·‚é");
+		VhookSettingLabel.setText("æ‹¡å¼µVhookã®ä½ç½®ã®è¨­å®šã¨è‡ªå‹•åˆ¤å®šã®é¸æŠã‚’ã™ã‚‹");
 		VhookSettingLabel.setForeground(Color.blue);
-		VhookSettingLabel.setToolTipText("]—ˆ4:3‚ÆƒƒCƒh16:9‚ğ—¼•ûƒ`ƒFƒbƒN‚·‚é‚Æ©“®”»’è‚ğs‚¤");
-		VhookPathLabel.setText("Šg’£vhook ]—ˆ ");
-		UseVhookCheckBox.setText("g—p‚·‚éiƒfƒtƒHƒ‹ƒg ‹y‚Ñ 4:3—pj");
+		VhookSettingLabel.setToolTipText("å¾“æ¥4:3ã¨ãƒ¯ã‚¤ãƒ‰16:9ã‚’ä¸¡æ–¹ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã¨è‡ªå‹•åˆ¤å®šã‚’è¡Œã†");
+		VhookPathLabel.setText("æ‹¡å¼µvhook å¾“æ¥ ");
+		UseVhookCheckBox.setText("ä½¿ç”¨ã™ã‚‹ï¼ˆãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ åŠã³ 4:3ç”¨ï¼‰");
 		UseVhookCheckBox.setForeground(Color.blue);
-		UseVhookCheckBox.setToolTipText("FFmpeg‚Ìİ’è‚P‚ğQÆ‚·‚é");
-		SettingVhookPathButton.setText("QÆ");
+		UseVhookCheckBox.setToolTipText("FFmpegã®è¨­å®šï¼‘ã‚’å‚ç…§ã™ã‚‹");
+		SettingVhookPathButton.setText("å‚ç…§");
 		SettingVhookPathButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SettingVhookPathButton_actionPerformed(e);
 			}
 		});
-		VhookWidePathLabel.setText("Šg’£vhook ƒƒCƒh ");
+		VhookWidePathLabel.setText("æ‹¡å¼µvhook ãƒ¯ã‚¤ãƒ‰ ");
 		VhookWidePathLabel.setForeground(Color.blue);
-		UseVhookWideCheckBox.setText("g—p‚·‚éi16:9—pj");
+		UseVhookWideCheckBox.setText("ä½¿ç”¨ã™ã‚‹ï¼ˆ16:9ç”¨ï¼‰");
 		UseVhookWideCheckBox.setForeground(Color.blue);
-		UseVhookWideCheckBox.setToolTipText("FFmpeg‚Ìİ’è‚Q‚ğQÆ‚·‚é");
-		SettingVhookWidePathButton.setText("QÆ");
+		UseVhookWideCheckBox.setToolTipText("FFmpegã®è¨­å®šï¼’ã‚’å‚ç…§ã™ã‚‹");
+		SettingVhookWidePathButton.setText("å‚ç…§");
 		SettingVhookWidePathButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1688,44 +1688,44 @@ public class MainFrame extends JFrame {
 		});
 		FFmpegSettingPanel.setBorder(BorderFactory.createTitledBorder(
 				CREATE_ETCHED_BORDER,
-				"FFmpeg‚Ìİ’è‚P iŠg’£Vhook ]—ˆ‚ğ‘I‘ğ‚µ‚½j"));
+				"FFmpegã®è¨­å®šï¼‘ ï¼ˆæ‹¡å¼µVhook å¾“æ¥ã‚’é¸æŠã—ãŸæ™‚ï¼‰"));
 		FFmpegSettingPanel.setLayout(new GridBagLayout());
 		WideFFmpegSettingPanel.setBorder(BorderFactory.createTitledBorder(
 			CREATE_ETCHED_BORDER,
-			"FFmpeg‚Ìİ’è‚Q iŠg’£Vhook ƒƒCƒh‚ğ‘I‘ğ‚µ‚½j",
+			"FFmpegã®è¨­å®šï¼’ ï¼ˆæ‹¡å¼µVhook ãƒ¯ã‚¤ãƒ‰ã‚’é¸æŠã—ãŸæ™‚ï¼‰",
 			TitledBorder.LEADING, TitledBorder.TOP, getFont(), Color.blue));
 		WideFFmpegSettingPanel.setLayout(new GridBagLayout());
 		additionalOptionPanel.setBorder(BorderFactory.createTitledBorder(
 			CREATE_ETCHED_BORDER,
-			"FFmpeg’Ç‰Áİ’è (ƒIƒvƒVƒ‡ƒ“‚ğã‘‚«/’Ç‰Á‚µ‚Ü‚·)",
+			"FFmpegè¿½åŠ è¨­å®š (ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’ä¸Šæ›¸ã/è¿½åŠ ã—ã¾ã™)",
 			TitledBorder.LEADING, TitledBorder.TOP, getFont(), Color.blue));
-		SettingFontPathButton.setText("QÆ");
+		SettingFontPathButton.setText("å‚ç…§");
 		SettingFontPathButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SettingFontPathButton_actionPerformed(e);
 			}
 		});
-		InLabel.setText("“ü—ÍƒIƒvƒVƒ‡ƒ“");
-		OutLabel.setText("o—ÍƒIƒvƒVƒ‡ƒ“");
-		CommentNumLabel.setText("æ“¾ƒRƒƒ“ƒg”");
-		MainOptionLabel.setText("ƒƒCƒ“ƒIƒvƒVƒ‡ƒ“");
+		InLabel.setText("å…¥åŠ›ã‚ªãƒ—ã‚·ãƒ§ãƒ³");
+		OutLabel.setText("å‡ºåŠ›ã‚ªãƒ—ã‚·ãƒ§ãƒ³");
+		CommentNumLabel.setText("å–å¾—ã‚³ãƒ¡ãƒ³ãƒˆæ•°");
+		MainOptionLabel.setText("ãƒ¡ã‚¤ãƒ³ã‚ªãƒ—ã‚·ãƒ§ãƒ³");
 		VideoID_Label.setText("URL/ID");
-		WayBackLabel.setText("‰ß‹ƒƒO");
+		WayBackLabel.setText("éå»ãƒ­ã‚°");
 		dateUserFirstCheckBox.setText("");
-		dateUserFirstCheckBox.setToolTipText("‰ß‹ƒƒO“ú‚ğ©“®İ’è‚·‚é");
+		dateUserFirstCheckBox.setToolTipText("éå»ãƒ­ã‚°æ—¥æ™‚ã‚’è‡ªå‹•è¨­å®šã™ã‚‹");
 		OpPanel.setLayout(gridBagLayout10);
-		Conv_SaveFolderRadioButton.setText("•Û‘¶‚·‚éƒtƒHƒ‹ƒ_‚ğw’è‚µAƒtƒ@ƒCƒ‹–¼‚Í©“®‚ÅŒˆ’è‚·‚é");
-		ShowSavingConvertedVideoFolderDialogButton.setText("QÆ");
+		Conv_SaveFolderRadioButton.setText("ä¿å­˜ã™ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã‚’æŒ‡å®šã—ã€ãƒ•ã‚¡ã‚¤ãƒ«åã¯è‡ªå‹•ã§æ±ºå®šã™ã‚‹");
+		ShowSavingConvertedVideoFolderDialogButton.setText("å‚ç…§");
 		ShowSavingConvertedVideoFolderDialogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ShowSavingConvertedVideoFolderDialogButton_actionPerformed(e);
 			}
 		});
-		Conv_SaveFileRadioButton.setText("•Û‘¶‚·‚éƒtƒ@ƒCƒ‹–¼‚ğw’è‚·‚é(’uŠ·ƒ}ƒNƒ—L‚è)->");
+		Conv_SaveFileRadioButton.setText("ä¿å­˜ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«åã‚’æŒ‡å®šã™ã‚‹(ç½®æ›ãƒã‚¯ãƒ­æœ‰ã‚Š)->");
 		Conv_SaveFileRadioButton.setForeground(Color.blue);
-		convFileMacroLabel.setText("à–¾");
+		convFileMacroLabel.setText("èª¬æ˜");
 		convFileMacroLabel.setForeground(Color.red);
 		convFileMacroLabel.addMouseListener(
 			new ForcusedPopupBoard(this, renameFileMacro, renameFileMacroDescription));
@@ -1778,7 +1778,7 @@ public class MainFrame extends JFrame {
 		jMenuHelp.add(jMenuHelpPixformats);
 		jMenuHelp.add(jMenuHelpHwaccels);
 		setJMenuBar(jMenuBar1);
-		/* ƒrƒfƒIƒOƒ‹[ƒv */
+		/* ãƒ“ãƒ‡ã‚ªã‚°ãƒ«ãƒ¼ãƒ— */
 		VideoSaveButtonGroup.add(Video_SaveFileRadioButton);
 		VideoSaveButtonGroup.add(Video_SaveFolderRadioButton);
 
@@ -1935,7 +1935,7 @@ public class MainFrame extends JFrame {
 		grid90_x0_y0_.gridy = 0;
 		grid90_x0_y0_.anchor = GridBagConstraints.WEST;
 		grid90_x0_y0_.insets = INSETS_0_5_0_5;
-		additionalOptionPanel.add(new JLabel("İ’è‚P‚É’Ç‰Á"), grid90_x0_y0_);
+		additionalOptionPanel.add(new JLabel("è¨­å®šï¼‘ã«è¿½åŠ "), grid90_x0_y0_);
 		GridBagConstraints grid90_x1_y0_ = new GridBagConstraints();
 		grid90_x1_y0_.gridx = 1;
 		grid90_x1_y0_.gridy = 0;
@@ -1948,7 +1948,7 @@ public class MainFrame extends JFrame {
 		grid90_x0_y1_.gridy = 1;
 		grid90_x0_y1_.anchor = GridBagConstraints.WEST;
 		grid90_x0_y1_.insets = INSETS_0_5_0_5;
-		additionalOptionPanel.add(new JLabel("İ’è‚Q‚É’Ç‰Á"), grid90_x0_y1_);
+		additionalOptionPanel.add(new JLabel("è¨­å®šï¼’ã«è¿½åŠ "), grid90_x0_y1_);
 		GridBagConstraints grid90_x1_y1_ = new GridBagConstraints();
 		grid90_x1_y1_.gridx = 1;
 		grid90_x1_y1_.gridy = 1;
@@ -2004,13 +2004,13 @@ public class MainFrame extends JFrame {
 				historyID = (historyID+1)%3;
 				switch(historyID){
 				case 0:
-					VideoID_TextField.setText(" [ƒŠƒNƒGƒXƒg—š—ğ] ");
+					VideoID_TextField.setText(" [ãƒªã‚¯ã‚¨ã‚¹ãƒˆå±¥æ­´] ");
 					break;
 				case 1:
-					VideoID_TextField.setText(" [ƒ}ƒCƒŠƒXƒg—š—ğ] ");
+					VideoID_TextField.setText(" [ãƒã‚¤ãƒªã‚¹ãƒˆå±¥æ­´] ");
 					break;
 				case 2:
-					VideoID_TextField.setText(" [ƒeƒ“ƒvƒŒ[ƒg] ");
+					VideoID_TextField.setText(" [ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆ] ");
 				}
 			}
 		});
@@ -2018,14 +2018,14 @@ public class MainFrame extends JFrame {
 		OpPanel.add(WayBackField, grid10_x1_y1_70);
 		OpPanel.add(dateUserFirstCheckBox, grid10_x2_y1_70b);
 		OpPanel.add(nicoLabel, grid10_x3_y1_70c);
-		MainTabbedPane.add(BasicInfoTabPanel, "Šî–{İ’è");
-		MainTabbedPane.add(SavingInfoTabPanel, "•Û‘¶İ’è");
-		MainTabbedPane.add(FFMpegInfoTabPanel, "“®‰æİ’è");
-		MainTabbedPane.addTab("•ÏŠ·İ’è", null, getConvertingSettingPanel(), null);
-		MainTabbedPane.addTab("ŠÇ—", getManagentPanel());
+		MainTabbedPane.add(BasicInfoTabPanel, "åŸºæœ¬è¨­å®š");
+		MainTabbedPane.add(SavingInfoTabPanel, "ä¿å­˜è¨­å®š");
+		MainTabbedPane.add(FFMpegInfoTabPanel, "å‹•ç”»è¨­å®š");
+		MainTabbedPane.addTab("å¤‰æ›è¨­å®š", null, getConvertingSettingPanel(), null);
+		MainTabbedPane.addTab("ç®¡ç†", getManagentPanel());
 		SavingInfoTabPanel.add(getSaveInfoTabPaneEach(), grid2_x__y__35);
-		FFmpegInfoTabPaneEach.addTab("•ÏŠ·ƒIƒvƒVƒ‡ƒ“İ’è(‹¤’Ê)", null, FFMpegTab2Panel, null);
-		FFmpegInfoTabPaneEach.addTab("•ÏŠ·ƒIƒvƒVƒ‡ƒ“İ’è(]—ˆ)", null, FFMpegTabPanel, null);
+		FFmpegInfoTabPaneEach.addTab("å¤‰æ›ã‚ªãƒ—ã‚·ãƒ§ãƒ³è¨­å®š(å…±é€š)", null, FFMpegTab2Panel, null);
+		FFmpegInfoTabPaneEach.addTab("å¤‰æ›ã‚ªãƒ—ã‚·ãƒ§ãƒ³è¨­å®š(å¾“æ¥)", null, FFMpegTabPanel, null);
 		FFMpegInfoTabPanel.setLayout(new GridBagLayout());
 		GridBagConstraints grid__x__y__105 = new GridBagConstraints();
 		grid__x__y__105.fill = GridBagConstraints.BOTH;
@@ -2052,9 +2052,9 @@ public class MainFrame extends JFrame {
 	//	CommentSaveInfoPanel.add(enableCommentXmlCheckBox, grid4_x3_y6_);
 	//	CommentSaveInfoPanel.add(dateUserFirstCheckBox, grid4_x2_y6_2);
 		CommentSaveInfoPanel.add(AddTimeStampToCommentCheckBox, grid4_x0_y7_86);
-		DelCommentCheckBox.setText("•ÏŠ·Œã‚ÉƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ğíœ‚·‚é");
+		DelCommentCheckBox.setText("å¤‰æ›å¾Œã«ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤ã™ã‚‹");
 		CommentSaveInfoPanel.add(DelCommentCheckBox, grid4_x0_y8_25);
-		FixCommentNumCheckBox.setText("ƒRƒƒ“ƒgæ“¾”‚Í©“®‚Å’²®‚·‚é");
+		FixCommentNumCheckBox.setText("ã‚³ãƒ¡ãƒ³ãƒˆå–å¾—æ•°ã¯è‡ªå‹•ã§èª¿æ•´ã™ã‚‹");
 		CommentSaveInfoPanel.add(FixCommentNumCheckBox,grid4_x0_y9_26);
 		CommentSaveInfoPanel.add(CommentNumLabel, grid4_x0_y10_17);
 		CommentSaveInfoPanel.add(CommentNumField, grid4_x1_y10_22);
@@ -2081,7 +2081,7 @@ public class MainFrame extends JFrame {
 				grid5_x0_y2_81);
 		ConvertedVideoSavingInfoPanel.add(Conv_SaveFolderRadioButton,
 				grid5_x0_y3_40);
-		NotAddVideoID_ConvVideoCheckBox.setText("ƒtƒ@ƒCƒ‹–¼‚É“®‰æID‚ğ•t‰Á‚µ‚È‚¢");
+		NotAddVideoID_ConvVideoCheckBox.setText("ãƒ•ã‚¡ã‚¤ãƒ«åã«å‹•ç”»IDã‚’ä»˜åŠ ã—ãªã„");
 		ConvertedVideoSavingInfoPanel.add(NotAddVideoID_ConvVideoCheckBox,
 			grid5_x0_y4_39);
 		ConvertedVideoSavingInfoPanel.add(AddOption_ConvVideoFileCheckBox,
@@ -2173,14 +2173,14 @@ public class MainFrame extends JFrame {
 		grid__x0_y0_109.insets = INSETS_0_5_0_5;
 		FFMpegTab2Panel.add(FFmpegPathSettingPanel, grid__x0_y0_109);
 		zqPlayerModePanel.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(), "Šg’£VhookƒpƒX‚Ìİ’è",
+				BorderFactory.createEtchedBorder(), "æ‹¡å¼µVhookãƒ‘ã‚¹ã®è¨­å®š",
 				TitledBorder.LEADING, TitledBorder.TOP,
 				getFont(), Color.blue));
 		zqPlayerModePanel.setForeground(Color.blue);
 		zqPlayerModePanel.setLayout(new GridBagLayout());
 		zqPlayerModePanel.setToolTipText("");
-		zqPlayerModeCheckBox.setText("ƒAƒXƒyƒNƒg”ä‹¤’Ê‰æ–Ê‚ğg‚¤@(g‚í‚È‚¢¨]—ˆ‰æ–Ê‚ğg‚¤)");
-		//zqPlayerModeCheckBox.setToolTipText("ˆÈ‰º‚Ìİ’è‚ª4:3‚Æ16:9‚ª‹¤’Ê‚Ég‚¦‚Ü‚·B");
+		zqPlayerModeCheckBox.setText("ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”å…±é€šç”»é¢ã‚’ä½¿ã†ã€€(ä½¿ã‚ãªã„â†’å¾“æ¥ç”»é¢ã‚’ä½¿ã†)");
+		//zqPlayerModeCheckBox.setToolTipText("ä»¥ä¸‹ã®è¨­å®šãŒ4:3ã¨16:9ãŒå…±é€šã«ä½¿ãˆã¾ã™ã€‚");
 		zqPlayerModeCheckBox.setForeground(Color.blue);
 		GridBagConstraints grid_x0_y2_0 = new GridBagConstraints();
 		grid_x0_y2_0 = new GridBagConstraints();
@@ -2202,7 +2202,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
 		grid_x0_y2_0.insets = INSETS_0_5_0_5;
 	//	zqPlayerModePanel.add(
-	//		new JLabel("Šg’£Vhook‚ÌˆÊ’u‚ğİ’è‚·‚é(ƒAƒXƒyƒNƒg”ä‹¤’Ê)"),gird_x0_y2_0);
+	//		new JLabel("æ‹¡å¼µVhookã®ä½ç½®ã‚’è¨­å®šã™ã‚‹(ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”å…±é€š)"),gird_x0_y2_0);
 		grid_x0_y2_0 = new GridBagConstraints();
 		grid_x0_y2_0.gridx = 0;
 		grid_x0_y2_0.gridy = 2;
@@ -2212,7 +2212,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
 		grid_x0_y2_0.insets = INSETS_0_5_0_5;
 		zqPlayerModePanel.add(zqVhookPathField, grid_x0_y2_0);
-		zqSettingVhookPathButton.setText("QÆ");
+		zqSettingVhookPathButton.setText("å‚ç…§");
 		zqSettingVhookPathButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -2239,7 +2239,7 @@ public class MainFrame extends JFrame {
 // option Q
 		zqFFmpegSettingPanel.setBorder(BorderFactory.createTitledBorder(
 			CREATE_ETCHED_BORDER,
-			"‹¤’ÊFFmpeg‚Ìİ’è",TitledBorder.LEADING,
+			"å…±é€šFFmpegã®è¨­å®š",TitledBorder.LEADING,
 			TitledBorder.TOP, getFont(), Color.blue));
 		zqFFmpegSettingPanel.setLayout(new GridBagLayout());
 		zqFFmpegSettingPanel.add(getZqFFmpegOptionComboBoxPanel(),grid9_x0_y1_55);
@@ -2260,7 +2260,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
 		grid_x0_y2_0.insets = INSETS_0_5_0_5;
-		zqFFmpegSettingPanel.add(new JLabel("’Ç‰ÁƒIƒvƒVƒ‡ƒ“"), grid_x0_y2_0);
+		zqFFmpegSettingPanel.add(new JLabel("è¿½åŠ ã‚ªãƒ—ã‚·ãƒ§ãƒ³"), grid_x0_y2_0);
 		grid_x0_y2_0 = new GridBagConstraints();
 		grid_x0_y2_0.gridx = 1;
 		grid_x0_y2_0.gridy = 6;
@@ -2279,9 +2279,9 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
 		grid_x0_y2_0.insets = INSETS_0_0_0_5;
-		zqSizeMinLabel.setText("Å¬ƒTƒCƒY");
+		zqSizeMinLabel.setText("æœ€å°ã‚µã‚¤ã‚º");
 		zqSizeMinLabel.setForeground(Color.blue);
-		zqSizeMinLabel.setToolTipText("ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹w’è");
+		zqSizeMinLabel.setToolTipText("ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«æŒ‡å®š");
 		zqLimitOptionPanel.add(zqSizeMinLabel, grid_x0_y2_0);
 		grid_x0_y2_0 = new GridBagConstraints();
 		grid_x0_y2_0.gridx = 1;
@@ -2289,7 +2289,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
 		grid_x0_y2_0.insets = INSETS_0_0_0_5;
-		zqSizeMinField.setToolTipText("Å¬‰¡:c");
+		zqSizeMinField.setToolTipText("æœ€å°æ¨ª:ç¸¦");
 		zqLimitOptionPanel.add(zqSizeMinField, grid_x0_y2_0);
 
 		grid_x0_y2_0 = new GridBagConstraints();
@@ -2297,9 +2297,9 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
 		grid_x0_y2_0.insets = INSETS_0_0_0_5;
-		zqSizeMaxLabel.setText("Å‘åƒTƒCƒY");
+		zqSizeMaxLabel.setText("æœ€å¤§ã‚µã‚¤ã‚º");
 		zqSizeMaxLabel.setForeground(Color.blue);
-		zqSizeMaxLabel.setToolTipText("ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹w’è");
+		zqSizeMaxLabel.setToolTipText("ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«æŒ‡å®š");
 		zqLimitOptionPanel.add(zqSizeMaxLabel, grid_x0_y2_0);
 		grid_x0_y2_0 = new GridBagConstraints();
 		grid_x0_y2_0.gridx = 3;
@@ -2307,7 +2307,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
 		grid_x0_y2_0.insets = INSETS_0_0_0_5;
-		zqSizeMaxField.setToolTipText("Å‘å‰¡:c");
+		zqSizeMaxField.setToolTipText("æœ€å¤§æ¨ª:ç¸¦");
 		zqLimitOptionPanel.add(zqSizeMaxField, grid_x0_y2_0);
 
 		grid_x0_y2_0 = new GridBagConstraints();
@@ -2315,9 +2315,9 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
 		grid_x0_y2_0.insets = INSETS_0_0_0_5;
-		zqFpsRangeLabel.setText("Å¬fps");
+		zqFpsRangeLabel.setText("æœ€å°fps");
 		zqFpsRangeLabel.setForeground(Color.blue);
-		zqFpsRangeLabel.setToolTipText("ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹w’è");
+		zqFpsRangeLabel.setToolTipText("ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«æŒ‡å®š");
 		zqLimitOptionPanel.add(zqFpsRangeLabel, grid_x0_y2_0);
 		grid_x0_y2_0 = new GridBagConstraints();
 		grid_x0_y2_0.gridx = 5;
@@ -2325,7 +2325,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
 		grid_x0_y2_0.insets = INSETS_0_0_0_5;
-		zqFpsRangeField.setToolTipText("Šù’è:w’è’l‚ÉÅ‚à‹ß‚¢“®‰æfps‚Ì®””{AJ•t‚«‚Í”’l’š“x");
+		zqFpsRangeField.setToolTipText("æ—¢å®š:æŒ‡å®šå€¤ã«æœ€ã‚‚è¿‘ã„å‹•ç”»fpsã®æ•´æ•°å€ã€Jä»˜ãã¯æ•°å€¤ä¸åº¦");
 		zqLimitOptionPanel.add(zqFpsRangeField, grid_x0_y2_0);
 
 		grid_x0_y2_0 = new GridBagConstraints();
@@ -2346,7 +2346,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y2_0.anchor = GridBagConstraints.NORTH;
 		grid_x0_y2_0.fill = GridBagConstraints.BOTH;
 		grid_x0_y2_0.insets = INSETS_0_0_0_5;
-		zqMetadataCheckBox.setText("ƒƒ^ƒf[ƒ^");
+		zqMetadataCheckBox.setText("ãƒ¡ã‚¿ãƒ‡ãƒ¼ã‚¿");
 		zqFFmpegSettingPanel.add(zqMetadataCheckBox, grid_x0_y2_0);
 		grid_x0_y2_0 = new GridBagConstraints();
 		grid_x0_y2_0.gridx = 1;
@@ -2371,7 +2371,7 @@ public class MainFrame extends JFrame {
 		FFMpegTab2Panel.add(zqFFmpegSettingPanel,grid_x0_y2_0);
 
 		CheckFFmpegFunctionPanel = new JPanelHideable(
-			"FFmpegFunction", "FFmpeg‹@”\ƒ`ƒFƒbƒN", Color.blue);
+			"FFmpegFunction", "FFmpegæ©Ÿèƒ½ãƒã‚§ãƒƒã‚¯", Color.blue);
 		GridBagConstraints grid__x0_y0_107 = new GridBagConstraints();
 		grid__x0_y0_107.gridx = 0;
 		grid__x0_y0_107.gridy = 0;
@@ -2390,9 +2390,9 @@ public class MainFrame extends JFrame {
 		grid__x1_y0_106.fill = GridBagConstraints.HORIZONTAL;
 		grid__x1_y0_106.insets = INSETS_0_0_0_0;
 		CheckFFmpegFunctionPanel.add(CheckFFmpegVersionLabel, grid__x1_y0_106);
-		CheckDownloadVideoButton.setText("•\");
+		CheckDownloadVideoButton.setText("è¡¨");
 		CheckDownloadVideoButton.setToolTipText(
-			"ƒ_ƒEƒ“ƒ[ƒh“®‰æ‚ğƒ`ƒFƒbƒNF•x‚‚³@fps@‰f‘œcodec@‰¹ºcodec");
+			"ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰å‹•ç”»ã‚’ãƒã‚§ãƒƒã‚¯ï¼šå¹…xé«˜ã•ã€€fpsã€€æ˜ åƒcodecã€€éŸ³å£°codec");
 		CheckDownloadVideoButton.setForeground(Color.blue);
 		CheckDownloadVideoButton.addActionListener(
 				new ActionListener(){
@@ -2410,7 +2410,7 @@ public class MainFrame extends JFrame {
 		grid_x0_y1_85.fill = GridBagConstraints.NONE;
 		grid_x0_y1_85.insets = INSETS_0_0_0_0;
 		CheckFFmpegFunctionPanel.add(CheckDownloadVideoButton, grid_x0_y1_85);
-		CheckDownloadVideoLabel.setText("•Û‘¶“®‰æƒ`ƒFƒbƒN");
+		CheckDownloadVideoLabel.setText("ä¿å­˜å‹•ç”»ãƒã‚§ãƒƒã‚¯");
 		CheckDownloadVideoLabel.setForeground(Color.blue);
 		GridBagConstraints grid_x1_y1_88 = new GridBagConstraints();
 		grid_x1_y1_88.gridx = 3;
@@ -2421,7 +2421,7 @@ public class MainFrame extends JFrame {
 		grid_x1_y1_88.fill = GridBagConstraints.HORIZONTAL;
 		grid_x1_y1_88.insets = INSETS_0_0_0_0;
 		CheckFFmpegFunctionPanel.add(CheckDownloadVideoLabel,grid_x1_y1_88);
-		showDownloadListButton.setText("•\");
+		showDownloadListButton.setText("è¡¨");
 		showDownloadListButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -2437,7 +2437,7 @@ public class MainFrame extends JFrame {
 		grid_x1_y3_x.fill = GridBagConstraints.NONE;
 		grid_x1_y3_x.insets = INSETS_0_0_0_0;
 		CheckFFmpegFunctionPanel.add(showDownloadListButton, grid_x1_y3_x);
-		showDownloadListLabel.setText("ƒ_ƒEƒ“ƒ[ƒhƒŠƒXƒg•\¦");
+		showDownloadListLabel.setText("ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ãƒªã‚¹ãƒˆè¡¨ç¤º");
 		grid_x1_y3_x = new GridBagConstraints();
 		grid_x1_y3_x.gridx = 1;
 		grid_x1_y3_x.gridy = 3;
@@ -2447,7 +2447,7 @@ public class MainFrame extends JFrame {
 		grid_x1_y3_x.fill = GridBagConstraints.HORIZONTAL;
 		grid_x1_y3_x.insets = INSETS_0_0_0_0;
 		CheckFFmpegFunctionPanel.add(showDownloadListLabel, grid_x1_y3_x);
-		playConvertedVideoButton.setText("Ä");
+		playConvertedVideoButton.setText("å†");
 		playConvertedVideoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -2464,7 +2464,7 @@ public class MainFrame extends JFrame {
 		grid_x1_y4_x.fill = GridBagConstraints.NONE;
 		grid_x1_y4_x.insets = INSETS_0_0_0_0;
 		CheckFFmpegFunctionPanel.add(playConvertedVideoButton, grid_x1_y4_x);
-		playConvertedVideoLabel.setText("•ÏŠ·Œã“®‰æÄ¶");
+		playConvertedVideoLabel.setText("å¤‰æ›å¾Œå‹•ç”»å†ç”Ÿ");
 		playConvertedVideoLabel.setForeground(Color.blue);
 		grid_x1_y4_x = new GridBagConstraints();
 		grid_x1_y4_x.gridx = 3;
@@ -2617,7 +2617,7 @@ public class MainFrame extends JFrame {
 	private JPanel getVhookSettingPanel()
 	{
 		if (VhookSettingPanel==null) {
-			VhookSettingPanel = new JPanelHideable("VhookSetting","Šg’£vhookƒ‰ƒCƒuƒ‰ƒŠ‚Ìİ’è",Color.black);
+			VhookSettingPanel = new JPanelHideable("VhookSetting","æ‹¡å¼µvhookãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®è¨­å®š",Color.black);
 			GridBagConstraints grid8_y11_x0_w3 = new GridBagConstraints();
 			grid8_y11_x0_w3.gridy = 11;
 			grid8_y11_x0_w3.gridx = 0;
@@ -2808,7 +2808,7 @@ public class MainFrame extends JFrame {
 			grid8_y0_x5_w1.anchor = GridBagConstraints.WEST;
 			grid8_y0_x5_w1.fill = GridBagConstraints.HORIZONTAL;
 			grid8_y0_x5_w1.insets = INSETS_0_0_0_0;
-			NotUseVhookCheckBox.setText("Šg’£vhook–³Œø(ƒfƒoƒbƒO—p)");
+			NotUseVhookCheckBox.setText("æ‹¡å¼µvhookç„¡åŠ¹(ãƒ‡ãƒãƒƒã‚°ç”¨)");
 			NotUseVhookCheckBox.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -2820,25 +2820,25 @@ public class MainFrame extends JFrame {
 				}
 			});
 			VhookSettingPanel.add(NotUseVhookCheckBox, grid8_y0_x0_w2);
-			ShowConvVideoCheckBox.setText("•ÏŠ·’†‰æ‘œ•\¦");
+			ShowConvVideoCheckBox.setText("å¤‰æ›ä¸­ç”»åƒè¡¨ç¤º");
 			VhookSettingPanel.add(ShowConvVideoCheckBox, grid8_y0_x2_w3);
 			videoThumbnailSizeCheckBox.setForeground(Color.blue);
-			videoThumbnailSizeCheckBox.setText("¬‰æ–Ê");
-			videoThumbnailSizeCheckBox.setToolTipText("•ÏŠ·ƒTƒCƒY‚Æ‚ÍŠÖŒW‚È‚­•\¦‚¾‚¯‚ğ¬‚³‚­‚µ‚Ü‚·");
+			videoThumbnailSizeCheckBox.setText("å°ç”»é¢");
+			videoThumbnailSizeCheckBox.setToolTipText("å¤‰æ›ã‚µã‚¤ã‚ºã¨ã¯é–¢ä¿‚ãªãè¡¨ç¤ºã ã‘ã‚’å°ã•ãã—ã¾ã™");
 			VhookSettingPanel.add(videoThumbnailSizeCheckBox, grid8_y0_x5_w1);
-			VhookSettingPanel.add(new JLabel("•\¦ƒRƒƒ“ƒg”"), grid8_y1_x0_w1);
+			VhookSettingPanel.add(new JLabel("è¡¨ç¤ºã‚³ãƒ¡ãƒ³ãƒˆæ•°"), grid8_y1_x0_w1);
 			VhookSettingPanel.add(ViewCommentField, grid8_y1_x1_w5);
-			commentEraseTypeLabel.setText("•\¦”’´‰ß");
+			commentEraseTypeLabel.setText("è¡¨ç¤ºæ•°è¶…é");
 			VhookSettingPanel.add(commentEraseTypeLabel, grid8_y2_x0_w1);
 			commentEraseTypeComboBox = new JComboBox<String>(CommentEraseTypeArray);
 			VhookSettingPanel.add(commentEraseTypeComboBox,grid8_y2_x1_w5);
-			VhookSettingPanel.add(new JLabel("ƒtƒHƒ“ƒgƒpƒX"), grid8_y3_x0_w1);
+			VhookSettingPanel.add(new JLabel("ãƒ•ã‚©ãƒ³ãƒˆãƒ‘ã‚¹"), grid8_y3_x0_w1);
 			VhookSettingPanel.add(getFontPathPanel(), grid8_y3_x1_w5);
-			VhookSettingPanel.add(new JLabel("ƒtƒHƒ“ƒg”Ô†"), grid8_y5_x0_w1);
+			VhookSettingPanel.add(new JLabel("ãƒ•ã‚©ãƒ³ãƒˆç•ªå·"), grid8_y5_x0_w1);
 			VhookSettingPanel.add(FontIndexField, grid8_y5_x1_w2);
-			normalFontCheckBox.setText("×");
+			normalFontCheckBox.setText("ç´°");
 			normalFontCheckBox.setForeground(Color.blue);
-			normalFontCheckBox.setToolTipText("‰Â”\‚È‚çboldƒtƒHƒ“ƒg‚ğg‚¢‚Ü‚¹‚ñ(’Ç‰Áƒ‚[ƒhİ’è)");
+			normalFontCheckBox.setToolTipText("å¯èƒ½ãªã‚‰boldãƒ•ã‚©ãƒ³ãƒˆã‚’ä½¿ã„ã¾ã›ã‚“(è¿½åŠ ãƒ¢ãƒ¼ãƒ‰è¨­å®š)");
 			normalFontCheckBox.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -2847,14 +2847,14 @@ public class MainFrame extends JFrame {
 				}
 			});
 			VhookSettingPanel.add(normalFontCheckBox, grid8_y5_x3_w2);
-			shadowAutoSettingButton.setText("‰eŠù’è");
-			shadowAutoSettingButton.setToolTipText("©“®html5Ø‘Ö‚Ì‰e‚Ìİ’èB");
+			shadowAutoSettingButton.setText("å½±æ—¢å®š");
+			shadowAutoSettingButton.setToolTipText("è‡ªå‹•html5åˆ‡æ›¿æ™‚ã®å½±ã®è¨­å®šã€‚");
 			VhookSettingPanel.add(shadowAutoSettingButton, grid8_y6_x4_w2);
 			shadowAutoSettingButton.addActionListener(new ActionListener() {
-				JLabel label1 = new JLabel("‚±‚Ì‰e‚ğŒ»İ‚ÌƒvƒŒ[ƒ„[‚ÌŠù’è’l‚Æ‚µ‚Ü‚·B");
+				JLabel label1 = new JLabel("ã“ã®å½±ã‚’ç¾åœ¨ã®ãƒ—ãƒ¬ãƒ¼ãƒ¤ãƒ¼ã®æ—¢å®šå€¤ã¨ã—ã¾ã™ã€‚");
 				JLabel label2 = new JLabel();
 				JLabel label3 = new JLabel();
-				JLabel label4 = new JLabel("©“®html5ØŠ·ƒIƒt‚ÍŠù’è’l‚Í–³Œø");
+				JLabel label4 = new JLabel("è‡ªå‹•html5åˆ‡æ›ã‚ªãƒ•æ™‚ã¯æ—¢å®šå€¤ã¯ç„¡åŠ¹");
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					int player = html5CheckBox.isSelected()? 1 : 0;
@@ -2862,10 +2862,10 @@ public class MainFrame extends JFrame {
 					String extraShadow = getExtraShadowText();
 					String extraShadow2 = "";
 					if(!extraShadow.isEmpty())
-						extraShadow2 = "A@"+extraShadow;
-					label2.setText("ƒvƒŒ[ƒ„[F@"+html5PlayerArray[player]);
+						extraShadow2 = "ã€ã€€"+extraShadow;
+					label2.setText("ãƒ—ãƒ¬ãƒ¼ãƒ¤ãƒ¼ï¼šã€€"+html5PlayerArray[player]);
 					label2.setForeground(Color.blue);
-					label3.setText("Šù’è‚Ì‰e@"+ShadowComboBox.getItemAt(shadowIndex)+extraShadow2);
+					label3.setText("æ—¢å®šã®å½±ã€€"+ShadowComboBox.getItemAt(shadowIndex)+extraShadow2);
 					label3.setForeground(Color.blue);
 					Box message = Box.createVerticalBox();
 					message.add(label1);
@@ -2879,19 +2879,19 @@ public class MainFrame extends JFrame {
 					JOptionPane.showConfirmDialog(
 						MainFrame.getMaster(),
 						message,
-						"‰eØ‘Ö©“®İ’è", JOptionPane.OK_CANCEL_OPTION
+						"å½±åˆ‡æ›¿è‡ªå‹•è¨­å®š", JOptionPane.OK_CANCEL_OPTION
 					);
 					if(shadowNotice==JOptionPane.OK_OPTION){
 						shadowDefaultSetting[player] = Integer.toString(shadowIndex)+" "+extraShadow;
 					}
 				}
 			});
-			VhookSettingPanel.add(new JLabel("‰e‚Ìí—Ş"), grid8_y6_x0_w1);
+			VhookSettingPanel.add(new JLabel("å½±ã®ç¨®é¡"), grid8_y6_x0_w1);
 			ShadowComboBox = new JComboBox<String>(ConvertingSetting.ShadowKindArray);
 			VhookSettingPanel.add(ShadowComboBox, grid8_y6_x1_w3);
-			FixFontSizeCheckBox.setText("ƒtƒHƒ“ƒgƒTƒCƒY‚ğ©“®’²®");
+			FixFontSizeCheckBox.setText("ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’è‡ªå‹•èª¿æ•´");
 			VhookSettingPanel.add(FixFontSizeCheckBox, grid8_y7_x0_w2);
-			resizeAdjustCheckBox.setText("•â³%");
+			resizeAdjustCheckBox.setText("è£œæ­£%");
 			resizeAdjustCheckBox.setForeground(Color.blue);
 			VhookSettingPanel.add(resizeAdjustCheckBox, grid8_y7_x2_w1);
 			resizeAdjustField.setText("100");
@@ -2911,24 +2911,24 @@ public class MainFrame extends JFrame {
 					resizeAdjustAction(resizeAdjustCheckBox.isSelected());
 				}
 			});
-			OpaqueCommentCheckBox.setText("‘S‚Ä‚ÌƒRƒƒ“ƒg‚ğ•s“§–¾‚É(0.0`1.0)");
+			OpaqueCommentCheckBox.setText("å…¨ã¦ã®ã‚³ãƒ¡ãƒ³ãƒˆã‚’ä¸é€æ˜ã«(0.0ï½1.0)");
 			VhookSettingPanel.add(OpaqueCommentCheckBox, grid8_y9_x0_w3);
 			opaqueRateTextField.setForeground(Color.blue);
-			opaqueRateTextField.setToolTipText("•s“§–¾“xiŠù’è ƒIƒt 0.0-0.3/ƒIƒ“ 1.0j");
+			opaqueRateTextField.setToolTipText("ä¸é€æ˜åº¦ï¼ˆæ—¢å®š ã‚ªãƒ• 0.0-0.3/ã‚ªãƒ³ 1.0ï¼‰");
 			VhookSettingPanel.add(opaqueRateTextField, grid8_y9_x3_w3);
-			//VhookSettingPanel.add(new JLabel("İ’è 0`1"), grid8_x3_y9_103);
-			commentSpeedCheckBox.setText("ƒRƒƒ“ƒg‘¬“xiPixel/Sec–”‚Í@•b”)");
+			//VhookSettingPanel.add(new JLabel("è¨­å®š 0ï½1"), grid8_x3_y9_103);
+			commentSpeedCheckBox.setText("ã‚³ãƒ¡ãƒ³ãƒˆé€Ÿåº¦ï¼ˆPixel/Secåˆã¯@ç§’æ•°)");
 			commentSpeedCheckBox.setForeground(Color.blue);
 			VhookSettingPanel.add(commentSpeedCheckBox, grid8_y10_x0_w3);
 			commentSpeedTextField.setForeground(Color.blue);
-			commentSpeedTextField.setToolTipText("Œö®‚ÌÅ¬’l‚Í–ñ138Pixel/Sec,–ñ4•b");
+			commentSpeedTextField.setToolTipText("å…¬å¼ã®æœ€å°å€¤ã¯ç´„138Pixel/Sec,ç´„4ç§’");
 			VhookSettingPanel.add(commentSpeedTextField, grid8_y10_x3_w3);
-			commentLineFeedCheckBox.setText("ƒRƒƒ“ƒgs‘—‚è(ƒtƒHƒ“ƒgƒTƒCƒY‚É‘Î‚·‚é%’l)");
+			commentLineFeedCheckBox.setText("ã‚³ãƒ¡ãƒ³ãƒˆè¡Œé€ã‚Š(ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã«å¯¾ã™ã‚‹%å€¤)");
 			commentLineFeedCheckBox.setForeground(Color.blue);
-			commentLineFeedCheckBox.setToolTipText("ver.2: ƒ}ƒCƒiƒX’l‚Ì‰e•t‚Å‚àsŠÔk‚İˆÕ‚­‚µ‚½");
+			commentLineFeedCheckBox.setToolTipText("ver.2: ãƒã‚¤ãƒŠã‚¹å€¤ã®æ™‚å½±ä»˜ã§ã‚‚è¡Œé–“ç¸®ã¿æ˜“ãã—ãŸ");
 			VhookSettingPanel.add(commentLineFeedCheckBox, grid8_y11_x0_w3);
 			commentLineFeedTextField.setForeground(Color.blue);
-			commentLineFeedTextField.setToolTipText("®”’l[,ver](ver=1‚Í1.67.1.12)");
+			commentLineFeedTextField.setToolTipText("æ•´æ•°å€¤[,ver](ver=1ã¯1.67.1.12)");
 			VhookSettingPanel.add(commentLineFeedTextField, grid8_y11_x3_w3);
 			GridBagConstraints c = new GridBagConstraints();
 			c.gridy = 11;
@@ -2987,8 +2987,8 @@ public class MainFrame extends JFrame {
 
 	private JPanel getExperimentPanel(){
 		if(experimentPanel==null){
-			experimentPanel = new JPanelHideable("experimental","ÀŒ±“Iİ’èi‰¼j", Color.blue);
-			fontWidthFixCheckBox.setText("ƒtƒHƒ“ƒg’²®@•“");
+			experimentPanel = new JPanelHideable("experimental","å®Ÿé¨“çš„è¨­å®šï¼ˆä»®ï¼‰", Color.blue);
+			fontWidthFixCheckBox.setText("ãƒ•ã‚©ãƒ³ãƒˆèª¿æ•´ã€€å¹…ï¼…");
 			fontWidthFixCheckBox.setForeground(Color.blue);
 			GridBagConstraints grid20_x0_y0 = new GridBagConstraints();
 			grid20_x0_y0.gridx = 0;
@@ -3012,9 +3012,9 @@ public class MainFrame extends JFrame {
 			grid20_x1_y0.fill = GridBagConstraints.HORIZONTAL;
 			grid20_x1_y0.insets = INSETS_0_0_0_0;
 			experimentPanel.add(fontWidthRatioTextField, grid20_x1_y0);
-			//fontHeightRatioLabel.setText("”{—¦i“j");
+			//fontHeightRatioLabel.setText("å€ç‡ï¼ˆï¼…ï¼‰");
 			//fontHeightRatioLabel.setForeground(Color.blue);
-			fontHeightFixCheckBox.setText("‚“");
+			fontHeightFixCheckBox.setText("é«˜ï¼…");
 			fontHeightFixCheckBox.setForeground(Color.blue);
 			GridBagConstraints grid20_x0_y1 = new GridBagConstraints();
 			grid20_x0_y1.gridx = 2;
@@ -3036,9 +3036,9 @@ public class MainFrame extends JFrame {
 			grid20_x1_y1.gridwidth = 2;
 			grid20_x1_y1.insets = INSETS_0_0_0_5;
 			experimentPanel.add(fontHeightRatioTextField,grid20_x1_y1);
-			disableOriginalResizeCheckBox.setText("ŠJ”­”Å‚ğ—LŒø");
+			disableOriginalResizeCheckBox.setText("é–‹ç™ºç‰ˆã‚’æœ‰åŠ¹");
 			disableOriginalResizeCheckBox.setForeground(Color.blue);
-			disableOriginalResizeCheckBox.setToolTipText("Windows7Šî€");
+			disableOriginalResizeCheckBox.setToolTipText("Windows7åŸºæº–");
 			GridBagConstraints grid20_x0_y7 = new GridBagConstraints();
 			grid20_x0_y7.gridx = 0;
 			grid20_x0_y7.gridy = 7;
@@ -3050,9 +3050,9 @@ public class MainFrame extends JFrame {
 			grid20_x0_y7.fill = GridBagConstraints.HORIZONTAL;
 			grid20_x0_y7.insets = INSETS_0_0_0_0;
 			experimentPanel.add(disableOriginalResizeCheckBox, grid20_x0_y7);
-			enableHtml5CommentCheckBox.setText("html5ƒ‚[ƒh");
+			enableHtml5CommentCheckBox.setText("html5ãƒ¢ãƒ¼ãƒ‰");
 			enableHtml5CommentCheckBox.setForeground(Color.blue);
-			enableHtml5CommentCheckBox.setToolTipText("ƒtƒHƒ“ƒgƒTƒCƒY/ƒtƒHƒ“ƒgƒRƒ}ƒ“ƒh‘Î‰BWindows10Šî€B’²®’†");
+			enableHtml5CommentCheckBox.setToolTipText("ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º/ãƒ•ã‚©ãƒ³ãƒˆã‚³ãƒãƒ³ãƒ‰å¯¾å¿œã€‚Windows10åŸºæº–ã€‚èª¿æ•´ä¸­");
 			GridBagConstraints grid20_x1_y7 = new GridBagConstraints();
 			grid20_x1_y7.gridx = 1;
 			grid20_x1_y7.gridy = 7;
@@ -3063,9 +3063,9 @@ public class MainFrame extends JFrame {
 			grid20_x1_y7.insets = INSETS_0_0_0_0;
 			experimentPanel.add(enableHtml5CommentCheckBox, grid20_x1_y7);
 
-			enableCA_CheckBox.setText("‚b‚`ƒtƒHƒ“ƒg‘Î‰");
+			enableCA_CheckBox.setText("ï¼£ï¼¡ãƒ•ã‚©ãƒ³ãƒˆå¯¾å¿œ");
 			enableCA_CheckBox.setForeground(Color.blue);
-			enableCA_CheckBox.setToolTipText("‘½í—Ş‚ÌƒtƒHƒ“ƒg‚ğg‚Á‚ÄƒtƒHƒ“ƒg•Ï‰»‚ğ‹­§“I‚Ég—p‚·‚é‚æ‚¤‚É‚È‚è‚Ü‚·");
+			enableCA_CheckBox.setToolTipText("å¤šç¨®é¡ã®ãƒ•ã‚©ãƒ³ãƒˆã‚’ä½¿ã£ã¦ãƒ•ã‚©ãƒ³ãƒˆå¤‰åŒ–ã‚’å¼·åˆ¶çš„ã«ä½¿ç”¨ã™ã‚‹ã‚ˆã†ã«ãªã‚Šã¾ã™");
 			GridBagConstraints drid20_x0_y8 = new GridBagConstraints();
 			drid20_x0_y8.gridx = 0;
 			drid20_x0_y8.gridy = 8;
@@ -3075,7 +3075,7 @@ public class MainFrame extends JFrame {
 			drid20_x0_y8.fill = GridBagConstraints.HORIZONTAL;
 			drid20_x0_y8.insets = INSETS_0_0_0_5;
 			experimentPanel.add(enableCA_CheckBox, drid20_x0_y8);
-		//	useLineskipAsFontsizeCheckBox.setText("LineSkip‚ğFontSize‚Æ‚·‚éiƒfƒoƒbƒO—pj");
+		//	useLineskipAsFontsizeCheckBox.setText("LineSkipã‚’FontSizeã¨ã™ã‚‹ï¼ˆãƒ‡ãƒãƒƒã‚°ç”¨ï¼‰");
 		//	useLineskipAsFontsizeCheckBox.setForeground(Color.blue);
 		//	GridBagConstraints grid20_x0_y9 = new GridBagConstraints();
 		//	grid20_x0_y9.gridx = 0;
@@ -3086,9 +3086,9 @@ public class MainFrame extends JFrame {
 		//	grid20_x0_y9.fill = GridBagConstraints.HORIZONTAL;
 		//	grid20_x0_y9.insets = INSETS_0_5_0_5;
 		//	experimentPanel.add(useLineskipAsFontsizeCheckBox, grid20_x0_y9);
-			useExtraFontCheckBox.setText("’Ç‰ÁƒtƒHƒ“ƒg");
+			useExtraFontCheckBox.setText("è¿½åŠ ãƒ•ã‚©ãƒ³ãƒˆ");
 			useExtraFontCheckBox.setForeground(Color.blue);
-			useExtraFontCheckBox.setToolTipText("’Ç‰ÁƒtƒHƒ“ƒgƒpƒX ƒtƒHƒ“ƒg”Ô† ŠJnunicode16i4Œ…-I—¹16i4Œ…@‚Æw’è‚µ‚Ä‰º‚³‚¢");
+			useExtraFontCheckBox.setToolTipText("è¿½åŠ ãƒ•ã‚©ãƒ³ãƒˆãƒ‘ã‚¹ ãƒ•ã‚©ãƒ³ãƒˆç•ªå· é–‹å§‹unicode16é€²4æ¡-çµ‚äº†16é€²4æ¡ã€€ã¨æŒ‡å®šã—ã¦ä¸‹ã•ã„");
 			GridBagConstraints grid20_x2_y8 = new GridBagConstraints();
 			grid20_x2_y8.gridx = 1;
 			grid20_x2_y8.gridy = 8;
@@ -3106,9 +3106,9 @@ public class MainFrame extends JFrame {
 			grid20_x4_y8.fill = GridBagConstraints.HORIZONTAL;
 			grid20_x4_y8.insets = INSETS_0_5_0_5;
 			experimentPanel.add(extraFontTextField, grid20_x4_y8);
-			extraModeLabel.setText("’Ç‰Áƒ‚[ƒh");
+			extraModeLabel.setText("è¿½åŠ ãƒ¢ãƒ¼ãƒ‰");
 			extraModeLabel.setForeground(Color.blue);
-			extraModeLabel.setToolTipText("‰©˜gƒ‚[ƒh‘¼‚Ì’Ç‰Á‚Ì“®ì‚ğw’è‚µ‚Ü‚·");
+			extraModeLabel.setToolTipText("é»„æ ãƒ¢ãƒ¼ãƒ‰ä»–ã®è¿½åŠ ã®å‹•ä½œã‚’æŒ‡å®šã—ã¾ã™");
 			GridBagConstraints grid20_x0_y12 = new GridBagConstraints();
 			grid20_x0_y12.gridx = 0;
 			grid20_x0_y12.gridy = 12;
@@ -3139,7 +3139,7 @@ public class MainFrame extends JFrame {
 	 */
 	private JPanel getUpdateInfoPanel() {
 		if(updateInfoPanel==null) {
-			updateInfoPanel = new JPanelHideable("updateInfo","V‹@”\î•ñ", Color.blue);
+			updateInfoPanel = new JPanelHideable("updateInfo","æ–°æ©Ÿèƒ½æƒ…å ±", Color.blue);
 
 			GridBagConstraints grid14_x1_y0 = new GridBagConstraints();
 			grid14_x1_y0.gridx = 0;
@@ -3149,12 +3149,12 @@ public class MainFrame extends JFrame {
 			grid14_x1_y0.fill = GridBagConstraints.HORIZONTAL;
 			grid14_x1_y0.insets = INSETS_0_5_0_5;
 			updateInfoPanel.add(
-				new JLabel("V‹@”\‚ğ‘S‚ÄƒIƒt‚É‚·‚é‚ÆˆÈ‘O‚Æ“¯‚¶B’·ŠÔƒ[ƒJƒ‹•ÏŠ·“™‚ÍƒIƒt‚Å‚µ‚Ä‰º‚³‚¢"),
+				new JLabel("æ–°æ©Ÿèƒ½ã‚’å…¨ã¦ã‚ªãƒ•ã«ã™ã‚‹ã¨ä»¥å‰ã¨åŒã˜ã€‚é•·æ™‚é–“ãƒ­ãƒ¼ã‚«ãƒ«å¤‰æ›ç­‰ã¯ã‚ªãƒ•ã§è©¦ã—ã¦ä¸‹ã•ã„"),
 				grid14_x1_y0);
 
-			nmmNewEnableCheckBox.setText("NM“®‰æ‚É­‚µ‘Î‰");
+			nmmNewEnableCheckBox.setText("NMå‹•ç”»ã«å°‘ã—å¯¾å¿œ");
 			nmmNewEnableCheckBox.setForeground(Color.blue);
-			nmmNewEnableCheckBox.setToolTipText("ƒtƒHƒ“ƒgAƒrƒfƒIƒNƒŠƒbƒvAƒeƒLƒXƒgAƒAƒNƒVƒ‡ƒ“ƒXƒNƒŠƒvƒg–¢‘Î‰");
+			nmmNewEnableCheckBox.setToolTipText("ãƒ•ã‚©ãƒ³ãƒˆã€ãƒ“ãƒ‡ã‚ªã‚¯ãƒªãƒƒãƒ—ã€ãƒ†ã‚­ã‚¹ãƒˆã€ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã‚¹ã‚¯ãƒªãƒ—ãƒˆæœªå¯¾å¿œ");
 			nmmNewEnableCheckBox.setEnabled(true);
 			GridBagConstraints grid14_x0_y1 = new GridBagConstraints();
 			grid14_x0_y1.gridx = 0;
@@ -3165,9 +3165,9 @@ public class MainFrame extends JFrame {
 			grid14_x0_y1.insets = INSETS_0_5_0_5;
 			updateInfoPanel.add(nmmNewEnableCheckBox, grid14_x0_y1);
 
-			updateInfoLabel.setText("iå‚É1–‡ŠGB‰æ–Ê‚ÌØ‘Ö‚ÍƒYƒŒ‚ª—L‚éj");
+			updateInfoLabel.setText("ï¼ˆä¸»ã«1æšçµµã€‚ç”»é¢ã®åˆ‡æ›¿ã¯ã‚ºãƒ¬ãŒæœ‰ã‚‹ï¼‰");
 			updateInfoLabel.setForeground(Color.blue);
-			updateInfoLabel.setToolTipText("è‘‚«–Ÿ‰æ‚Ì“®‰æ‚È‚Ç‚Í‰æ–Ê‚©‰¹º‚©‚ªƒlƒ^ƒoƒŒ‚É‚È‚é‚Ì‚Å’ˆÓB");
+			updateInfoLabel.setToolTipText("æ‰‹æ›¸ãæ¼«ç”»ã®å‹•ç”»ãªã©ã¯ç”»é¢ã‹éŸ³å£°ã‹ãŒãƒã‚¿ãƒãƒ¬ã«ãªã‚‹ã®ã§æ³¨æ„ã€‚");
 			GridBagConstraints grid14_x1_y1 = new GridBagConstraints();
 			grid14_x1_y1.gridx = 1;
 			grid14_x1_y1.gridy = 1;
@@ -3180,10 +3180,10 @@ public class MainFrame extends JFrame {
 
 			fpsFixPanel = new JPanel();
 			fpsFixPanel.setLayout(new GridBagLayout());
-			fpsUpCheckBox.setText("fps•ÏX");
+			fpsUpCheckBox.setText("fpså¤‰æ›´");
 			fpsUpCheckBox.setForeground(Color.blue);
 			fpsUpCheckBox.setEnabled(true);
-			fpsUpCheckBox.setToolTipText("ƒtƒŒ[ƒ€ƒŒ[ƒg‚ª’á‚¢“®‰æ‚Ìfps•ÏXB");
+			fpsUpCheckBox.setToolTipText("ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¬ãƒ¼ãƒˆãŒä½ã„å‹•ç”»ã®fpså¤‰æ›´ã€‚");
 			GridBagConstraints grid14_x0_y3 = new GridBagConstraints();
 			grid14_x0_y3.gridx = 0;
 			grid14_x0_y3.anchor = GridBagConstraints.NORTH;
@@ -3196,7 +3196,7 @@ public class MainFrame extends JFrame {
 			grid14_x1_y3.anchor = GridBagConstraints.CENTER;
 			grid14_x1_y3.fill = GridBagConstraints.HORIZONTAL;
 			grid14_x1_y3.insets = INSETS_0_0_0_0;
-			fpsFixPanel.add(new JLabel("Å¬(fps)"), grid14_x1_y3);
+			fpsFixPanel.add(new JLabel("æœ€å°(fps)"), grid14_x1_y3);
 
 			fpsMinTextField = new JTextField();
 			fpsMinTextField.setText("23");
@@ -3214,7 +3214,7 @@ public class MainFrame extends JFrame {
 			grid14_x3_y3.anchor = GridBagConstraints.CENTER;
 			grid14_x3_y3.fill = GridBagConstraints.HORIZONTAL;
 			grid14_x3_y3.insets = INSETS_0_0_0_0;
-			fpsFixPanel.add(new JLabel("•ÏŠ·(fps)"), grid14_x3_y3);
+			fpsFixPanel.add(new JLabel("å¤‰æ›(fps)"), grid14_x3_y3);
 
 			fpsUpTextFiled = new JTextField();
 			fpsUpTextFiled.setText("25");
@@ -3227,9 +3227,9 @@ public class MainFrame extends JFrame {
 			grid14_x4_y3.insets = INSETS_0_0_0_0;
 			fpsFixPanel.add(fpsUpTextFiled, grid14_x4_y3);
 
-			fpsIntegralMultipleCheckBox.setText("®””{");
+			fpsIntegralMultipleCheckBox.setText("æ•´æ•°å€");
 			fpsIntegralMultipleCheckBox.setForeground(Color.blue);
-			fpsIntegralMultipleCheckBox.setToolTipText("•ÏXŒã‚Ìfps‚ğŒ³“®‰æ‚Ìfps‚Ì®””{‚É•â³‚·‚éB");
+			fpsIntegralMultipleCheckBox.setToolTipText("å¤‰æ›´å¾Œã®fpsã‚’å…ƒå‹•ç”»ã®fpsã®æ•´æ•°å€ã«è£œæ­£ã™ã‚‹ã€‚");
 			GridBagConstraints grid14_x5_y3 = new GridBagConstraints();
 			grid14_x5_y3.gridx = 5;
 			grid14_x5_y3.anchor = GridBagConstraints.CENTER;
@@ -3247,10 +3247,10 @@ public class MainFrame extends JFrame {
 			grid14_x0_y3_2.insets = INSETS_0_0_0_5;
 			updateInfoPanel.add(fpsFixPanel,grid14_x0_y3_2);
 
-			fpsFilterRadioButton.setText("fpsƒtƒBƒ‹ƒ^[g—p");
+			fpsFilterRadioButton.setText("fpsãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ä½¿ç”¨");
 			fpsFilterRadioButton.setForeground(Color.blue);
 			fpsFilterRadioButton.setSelected(true);
-			fpsFilterRadioButton.setToolTipText("ffmpeg“àfpsƒtƒBƒ‹ƒ^[‚ğg‚¤");
+			fpsFilterRadioButton.setToolTipText("ffmpegå†…fpsãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ã‚’ä½¿ã†");
 			GridBagConstraints grid14_x0_y4 = new GridBagConstraints();
 			grid14_x0_y4.gridx = 0;
 			grid14_x0_y4.gridy = 4;
@@ -3260,9 +3260,9 @@ public class MainFrame extends JFrame {
 			grid14_x0_y4.insets = INSETS_0_5_0_5;
 			updateInfoPanel.add(fpsFilterRadioButton, grid14_x0_y4);
 
-			fpsConvRadioButton.setText("2path-fps•ÏŠ·(1.50ŒİŠ·)");
+			fpsConvRadioButton.setText("2path-fpså¤‰æ›(1.50äº’æ›)");
 			fpsConvRadioButton.setSelected(false);
-			fpsConvRadioButton.setToolTipText("2‰ñ•ÏŠ·‚ğg‚¤");
+			fpsConvRadioButton.setToolTipText("2å›å¤‰æ›ã‚’ä½¿ã†");
 			GridBagConstraints grid14_x1_y4 = new GridBagConstraints();
 			grid14_x1_y4.gridx = 1;
 			grid14_x1_y4.gridy = 4;
@@ -3272,9 +3272,9 @@ public class MainFrame extends JFrame {
 			grid14_x1_y4.insets = INSETS_0_5_0_5;
 			updateInfoPanel.add(fpsConvRadioButton, grid14_x1_y4);
 
-			soundOnlyCheckBox.setText("‰f‘œ‚È‚µ‹–‰Â");
+			soundOnlyCheckBox.setText("æ˜ åƒãªã—è¨±å¯");
 			soundOnlyCheckBox.setForeground(Color.blue);
-			soundOnlyCheckBox.setToolTipText("‰f‘œ‚ª”F¯‚Å‚«‚È‚¢‰¹º‚Ì‚İƒRƒƒ“ƒg•t‚«‚É•ÏŠ·‚·‚é");
+			soundOnlyCheckBox.setToolTipText("æ˜ åƒãŒèªè­˜ã§ããªã„æ™‚éŸ³å£°ã®ã¿ã‚³ãƒ¡ãƒ³ãƒˆä»˜ãã«å¤‰æ›ã™ã‚‹");
 			GridBagConstraints grid14_x0_y5 = new GridBagConstraints();
 			grid14_x0_y5.gridx = 0;
 			grid14_x0_y5.gridy = 5;
@@ -3292,7 +3292,7 @@ public class MainFrame extends JFrame {
 			grid14_x1_y5.anchor = GridBagConstraints.CENTER;
 			grid14_x1_y5.fill = GridBagConstraints.HORIZONTAL;
 			grid14_x1_y5.insets = INSETS_0_5_0_5;
-			updateInfoPanel.add(new JLabel("‘ã‘ÖƒTƒ€ƒl"), grid14_x1_y5);
+			updateInfoPanel.add(new JLabel("ä»£æ›¿ã‚µãƒ ãƒ"), grid14_x1_y5);
 
 			thumbTextFiled = new JTextField();
 			thumbTextFiled.setText(THUMB_DEFALT_STRING);
@@ -3309,9 +3309,9 @@ public class MainFrame extends JFrame {
 
 			JPanel liveOperationPanel0 = new JPanel();
 			liveOperationPanel0.setLayout(new BorderLayout());
-			liveOperationLabel.setText("‰^‰cƒRƒŠÈˆÕ•ÏX");
+			liveOperationLabel.setText("é‹å–¶ã‚³ãƒ¡ç°¡æ˜“å¤‰æ›´");
 			liveOperationLabel.setForeground(Color.blue);
-			liveOperationLabel.setToolTipText("ƒRƒƒ“ƒg•t‚«“®‰æİ’èƒ^ƒu‚ÉˆÚ“®‚µ‚Ü‚µ‚½");
+			liveOperationLabel.setToolTipText("ã‚³ãƒ¡ãƒ³ãƒˆä»˜ãå‹•ç”»è¨­å®šã‚¿ãƒ–ã«ç§»å‹•ã—ã¾ã—ãŸ");
 			liveOperationPanel0.add(liveOperationLabel, BorderLayout.CENTER);
 
 			BasicArrowButton liveOperationArrow = new BasicArrowButton(SwingConstants.SOUTH);
@@ -3333,9 +3333,9 @@ public class MainFrame extends JFrame {
 			grid14_x0_y6.insets = INSETS_0_5_0_5;
 			updateInfoPanel.add(liveOperationPanel0, grid14_x0_y6);
 
-			premiumColorCheckBox.setText("ƒvƒŒƒ~ƒAƒ€ƒJƒ‰[ƒ`ƒFƒbƒN—LŒø");
+			premiumColorCheckBox.setText("ãƒ—ãƒ¬ãƒŸã‚¢ãƒ ã‚«ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯æœ‰åŠ¹");
 			premiumColorCheckBox.setForeground(Color.blue);
-			premiumColorCheckBox.setToolTipText("ˆê”Ê‰ïˆõ‚ÌƒvƒŒƒ~ƒAƒ€ƒJƒ‰[g—p‚ğ–³Œø‚É‚µ‚Ü‚·B(1.60ˆÈ‰º‚ÌƒoƒOC³)");
+			premiumColorCheckBox.setToolTipText("ä¸€èˆ¬ä¼šå“¡ã®ãƒ—ãƒ¬ãƒŸã‚¢ãƒ ã‚«ãƒ©ãƒ¼ä½¿ç”¨ã‚’ç„¡åŠ¹ã«ã—ã¾ã™ã€‚(1.60ä»¥ä¸‹ã®ãƒã‚°ä¿®æ­£)");
 			GridBagConstraints grid14_x2_y6 = new GridBagConstraints();
 			grid14_x2_y6.gridx = 1;
 			grid14_x2_y6.gridy = 6;
@@ -3355,19 +3355,19 @@ public class MainFrame extends JFrame {
 	}
 
 	private void mainFrame_loginCheck(JLabel status) {
-		sendLoginStatus(status, "ƒƒOƒCƒ“ƒ`ƒFƒbƒN’†");
+		sendLoginStatus(status, "ãƒ­ã‚°ã‚¤ãƒ³ãƒã‚§ãƒƒã‚¯ä¸­");
 		BrowserInfo.resetBrowserInfo();
 		Path file = Path.mkTemp("mytop");
 		String url = "https://www.nicovideo.jp/my/top";
 		Loader loader = new Loader(getSetting(),
 			new JLabel[]{status, elapsedTimeBar, new JLabel()},log,html5CheckBox.isSelected());
 		if (loader.load(url, file) || loader.isLoggedIn()){
-			appendLoginStatus(status, "@ƒƒOƒCƒ“Ï‚İ");
+			appendLoginStatus(status, "ã€€ãƒ­ã‚°ã‚¤ãƒ³æ¸ˆã¿");
 			file.delete();
 			loader.getIsHtml5();
 			return;
 		}
-		appendLoginStatus(status, "@ƒƒOƒCƒ“‚µ‚Ä‚¢‚Ü‚¹‚ñ");
+		appendLoginStatus(status, "ã€€ãƒ­ã‚°ã‚¤ãƒ³ã—ã¦ã„ã¾ã›ã‚“");
 	}
 
 	private void sendLoginStatus(final JLabel label, final String mes, final boolean is_append){
@@ -3404,7 +3404,7 @@ public class MainFrame extends JFrame {
 			managementControl.setLayout(new GridBagLayout());
 			managementControl.setBorder(BorderFactory.createTitledBorder(
 					CREATE_ETCHED_BORDER,
-					"ŠÇ—§Œä", TitledBorder.LEADING, TitledBorder.TOP,
+					"ç®¡ç†åˆ¶å¾¡", TitledBorder.LEADING, TitledBorder.TOP,
 					getFont(), Color.red));
 			GridBagConstraints grid400 = new GridBagConstraints();
 			grid400.gridx = 0;
@@ -3415,7 +3415,7 @@ public class MainFrame extends JFrame {
 			grid400.anchor = GridBagConstraints.WEST;
 			grid400.fill = GridBagConstraints.HORIZONTAL;
 			grid400.insets = INSETS_0_0_0_0;
-			managementControl.add(new JLabel("“¯•ÏŠ·"),grid400);
+			managementControl.add(new JLabel("åŒæ™‚å¤‰æ›"),grid400);
 			GridBagConstraints grid401 = new GridBagConstraints();
 			grid401.gridx = 1;
 			grid401.gridy = 0;
@@ -3463,8 +3463,8 @@ public class MainFrame extends JFrame {
 			grid402.anchor = GridBagConstraints.NORTH;
 			grid402.fill = GridBagConstraints.HORIZONTAL;
 			grid402.insets = INSETS_0_5_0_0;
-			PendingModeCheckbox = new JCheckBox("ŠJn•Û—¯", false);
-			PendingModeCheckbox.setToolTipText("•ÏŠ·ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚É•Û—¯‚É‚·‚éAŒÂ•Êƒ{ƒ^ƒ“‚Å•ÏŠ·ŠJn");
+			PendingModeCheckbox = new JCheckBox("é–‹å§‹ä¿ç•™", false);
+			PendingModeCheckbox.setToolTipText("å¤‰æ›ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸæ™‚ã«ä¿ç•™ã«ã™ã‚‹ã€å€‹åˆ¥ãƒœã‚¿ãƒ³ã§å¤‰æ›é–‹å§‹");
 			managementControl.add(PendingModeCheckbox, grid402);
 			GridBagConstraints grid415 = new GridBagConstraints();
 			grid415.gridx = 12;
@@ -3475,8 +3475,8 @@ public class MainFrame extends JFrame {
 			grid415.anchor = GridBagConstraints.NORTH;
 			grid415.fill = GridBagConstraints.HORIZONTAL;
 			grid415.insets = INSETS_0_0_0_0;
-			OneLineCheckbox = new JCheckBox("‚Ps•\¦", false);
-			OneLineCheckbox.setToolTipText("1“®‰æ‚²‚Æ‚É‚Ps‚Å•\¦");
+			OneLineCheckbox = new JCheckBox("ï¼‘è¡Œè¡¨ç¤º", false);
+			OneLineCheckbox.setToolTipText("1å‹•ç”»ã”ã¨ã«ï¼‘è¡Œã§è¡¨ç¤º");
 			managementControl.add(OneLineCheckbox, grid415);
 
 			GridBagConstraints grid410 = new GridBagConstraints();
@@ -3488,7 +3488,7 @@ public class MainFrame extends JFrame {
 			grid410.anchor = GridBagConstraints.WEST;
 			grid410.fill = GridBagConstraints.BOTH;
 			grid410.insets = INSETS_0_0_0_0;
-			managementControl.add(new JLabel("‘S§Œä@"), grid410);
+			managementControl.add(new JLabel("å…¨åˆ¶å¾¡ã€€"), grid410);
 
 			GridBagConstraints grid411 = new GridBagConstraints();
 			grid411.gridx = 1;
@@ -3499,9 +3499,9 @@ public class MainFrame extends JFrame {
 			grid411.anchor = GridBagConstraints.WEST;
 			grid411.fill = GridBagConstraints.HORIZONTAL;
 			grid411.insets = INSETS_0_0_0_0;
-			AllExecButton = new JButton("•ÏŠ·");
+			AllExecButton = new JButton("å¤‰æ›");
 			AllExecButton.setForeground(Color.blue);
-			AllExecButton.setToolTipText("•ÏŠ·‚ğŠJn‚µ‚Ü‚·");
+			AllExecButton.setToolTipText("å¤‰æ›ã‚’é–‹å§‹ã—ã¾ã™");
 			AllExecButton.setEnabled(false);
 			managementControl.add(AllExecButton, grid411);
 
@@ -3514,8 +3514,8 @@ public class MainFrame extends JFrame {
 			grid412.anchor = GridBagConstraints.WEST;
 			grid412.fill = GridBagConstraints.HORIZONTAL;
 			grid412.insets = INSETS_0_0_0_0;
-			AllCancelButton = new JButton("’â~");
-			AllCancelButton.setToolTipText("‘S‚Ä‚ÌƒŠƒNƒGƒXƒg‚ğæ‚èÁ‚µA‘S•ÏŠ·‚ğ’â~‚µ‚Ü‚·");
+			AllCancelButton = new JButton("åœæ­¢");
+			AllCancelButton.setToolTipText("å…¨ã¦ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆã‚’å–ã‚Šæ¶ˆã—ã€å…¨å¤‰æ›ã‚’åœæ­¢ã—ã¾ã™");
 			AllCancelButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -3533,9 +3533,9 @@ public class MainFrame extends JFrame {
 			grid413.anchor = GridBagConstraints.WEST;
 			grid413.fill = GridBagConstraints.HORIZONTAL;
 			grid413.insets = INSETS_0_0_0_0;
-			AllDeleteButton = new JButton("Á‹");
+			AllDeleteButton = new JButton("æ¶ˆå»");
 			AllDeleteButton.setForeground(Color.red);
-			AllDeleteButton.setToolTipText("‘S‚Ä’â~‚µ‚Ä‘S•ÏŠ·•\¦‚ğÁ‹‚µ‚Ü‚·");
+			AllDeleteButton.setToolTipText("å…¨ã¦åœæ­¢ã—ã¦å…¨å¤‰æ›è¡¨ç¤ºã‚’æ¶ˆå»ã—ã¾ã™");
 			AllDeleteButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -3553,23 +3553,23 @@ public class MainFrame extends JFrame {
 			grid414.anchor = GridBagConstraints.WEST;
 			grid414.fill = GridBagConstraints.HORIZONTAL;
 			grid414.insets = INSETS_0_0_0_5;
-			AllSaveButton = new JButton("•Û‘¶");
+			AllSaveButton = new JButton("ä¿å­˜");
 			AllSaveButton.setForeground(Color.BLACK);
-			AllSaveButton.setToolTipText("•ÏŠ·—\–ñ—š—ğ‚ğ•Û‘¶‚µ‚Ü‚·");
+			AllSaveButton.setToolTipText("å¤‰æ›äºˆç´„å±¥æ­´ã‚’ä¿å­˜ã—ã¾ã™");
 			AllSaveButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Path reqlistSave = new Path("“®‰æID"+WayBackDate.formatNow()+".txt");
+					Path reqlistSave = new Path("å‹•ç”»ID"+WayBackDate.formatNow()+".txt");
 					String text = requestHistory.getText();
 					try {
 						PrintWriter pw = new PrintWriter(reqlistSave);
 						pw.print(text);
 						pw.flush();
 						pw.close();
-						statusBar.setText("—\–ñ—š—ğ‚ğ•Û‘¶‚µ‚Ü‚µ‚½");
+						statusBar.setText("äºˆç´„å±¥æ­´ã‚’ä¿å­˜ã—ã¾ã—ãŸ");
 					} catch (FileNotFoundException e1) {
 						e1.printStackTrace();
-						statusBar.setText("—\–ñ—š—ğ•Û‘¶¸”s");
+						statusBar.setText("äºˆç´„å±¥æ­´ä¿å­˜å¤±æ•—");
 					}
 				}
 			});
@@ -3584,7 +3584,7 @@ public class MainFrame extends JFrame {
 			grid416.anchor = GridBagConstraints.WEST;
 			grid416.fill = GridBagConstraints.HORIZONTAL;
 			grid416.insets = INSETS_0_0_0_0;
-			showIconThumbnailCheckBox.setText("ƒTƒ€ƒl•\¦");
+			showIconThumbnailCheckBox.setText("ã‚µãƒ ãƒè¡¨ç¤º");
 			managementControl.add(showIconThumbnailCheckBox,grid416);
 			managementControl.add(new JPanel(),
 				new GridBagConstraints(14, 1, 1, 1, 1.0, 1, GridBagConstraints.WEST,
@@ -3618,7 +3618,7 @@ public class MainFrame extends JFrame {
 			ecoUrlLabel = new JLabel(" ");
 			errorUrlLabel.setForeground(Color.red);
 			errorControl = new ErrorControl(errorUrlLabel,ecoUrlLabel);
-			errorResetUrlButton = new JButton("Ä“o˜^");
+			errorResetUrlButton = new JButton("å†ç™»éŒ²");
 			errorResetUrlButton.setForeground(Color.BLUE);
 			errorResetUrlButton.addActionListener(new ActionListener() {
 
@@ -3637,7 +3637,7 @@ public class MainFrame extends JFrame {
 					}
 				}
 			});
-			errorListDeleteButton = new JButton("Á‹");
+			errorListDeleteButton = new JButton("æ¶ˆå»");
 			errorListDeleteButton.setForeground(Color.RED);
 			errorListDeleteButton.addActionListener(new ActionListener() {
 
@@ -3647,16 +3647,16 @@ public class MainFrame extends JFrame {
 					convertManager.clearError();
 				}
 			});
-			errorListSaveButton = new JButton("•Û‘¶");
+			errorListSaveButton = new JButton("ä¿å­˜");
 			errorListSaveButton.setForeground(Color.BLACK);
 			errorListSaveButton.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if(errorControl.save())
-						sendtext("ƒGƒ‰[ƒŠƒXƒg‚ğ•Û‘¶‚µ‚Ü‚µ‚½");
+						sendtext("ã‚¨ãƒ©ãƒ¼ãƒªã‚¹ãƒˆã‚’ä¿å­˜ã—ã¾ã—ãŸ");
 					else
-						sendtext("ƒGƒ‰[ƒŠƒXƒg•Û‘¶¸”s");
+						sendtext("ã‚¨ãƒ©ãƒ¼ãƒªã‚¹ãƒˆä¿å­˜å¤±æ•—");
 				}
 
 			});
@@ -3673,7 +3673,7 @@ public class MainFrame extends JFrame {
  			errorUrlPanel.add(ecoUrlLabel, BorderLayout.SOUTH);
 			errorStatusPanel.setLayout(new BorderLayout());
 			errorStatusPanel.add(
-				new JLabel("<html><font color=blue>ƒGƒ‰[ID  <br><font color=gray>ƒGƒR¬Œ÷  </html>"),
+				new JLabel("<html><font color=blue>ã‚¨ãƒ©ãƒ¼ID  <br><font color=gray>ã‚¨ã‚³æˆåŠŸ  </html>"),
 				BorderLayout.WEST);
 			errorStatusPanel.add(errorUrlPanel, BorderLayout.CENTER);
 			errorStatusPanel.add(errorButtonPanel, BorderLayout.EAST);
@@ -3688,7 +3688,7 @@ public class MainFrame extends JFrame {
 			managementPanel.add(errorStatusPanel, grid42);
 
 			playVideoLabel = new JLabel(" ");
-			playVideoBackButton = new JButton("–ß");
+			playVideoBackButton = new JButton("æˆ»");
 			playVideoBackButton.addActionListener(new ActionListener() {
 
 				@Override
@@ -3696,7 +3696,7 @@ public class MainFrame extends JFrame {
 					autoPlay.setBack();
 				}
 			});
-			playVideoNextButton = new JButton("Ÿ");
+			playVideoNextButton = new JButton("æ¬¡");
 			playVideoNextButton.addActionListener(new ActionListener() {
 
 				@Override
@@ -3704,7 +3704,7 @@ public class MainFrame extends JFrame {
 					autoPlay.setNext();
 				}
 			});
-			playVideoPlayButton = new JButton("Ä¶");
+			playVideoPlayButton = new JButton("å†ç”Ÿ");
 			playVideoPlayButton.setForeground(Color.BLUE);
 			playVideoPlayButton.addActionListener(new ActionListener() {
 
@@ -3755,11 +3755,11 @@ public class MainFrame extends JFrame {
 		}
 		convertManager.cancelAllRequest();
 		convertManager.queueCheckAndGo();
-		//buttonTable ‚Ì‘Sƒ{ƒ^ƒ“‚ğdisable
+		//buttonTable ã®å…¨ãƒœã‚¿ãƒ³ã‚’disable
 		for(JButton button:buttonTable.keySet()){
 			button.setEnabled(false);
 		}
-		// buttonTable‘S—v‘fíœ
+		// buttonTableå…¨è¦ç´ å‰Šé™¤
 		buttonTable.clear();
 	}
 
@@ -3999,7 +3999,7 @@ public class MainFrame extends JFrame {
 			numThread = 1;
 		}
 		autoPlay.setCheckBox(autoPlayCheckBox);
-		// ‰^‰cƒRƒƒ“ƒgİ’èƒ`ƒFƒbƒN
+		// é‹å–¶ã‚³ãƒ¡ãƒ³ãƒˆè¨­å®šãƒã‚§ãƒƒã‚¯
 		String duration = liveOperationDurationTextField.getText();
 		int live_op_duration = 0;
 		try {
@@ -4012,7 +4012,7 @@ public class MainFrame extends JFrame {
 			//log.printStackTrace(e);
 			duration = "";
 		}
-		// duration -> setting‚Ö
+		// duration -> settingã¸
 		String vposshift = liveCommentVposShiftTextField.getText();
 		double vpos_shift_sec = 0.0;
 		if(!vposshift.isEmpty()){
@@ -4021,7 +4021,7 @@ public class MainFrame extends JFrame {
 				vposshift = Double.toString(vpos_shift_sec);
 			} catch(NumberFormatException e){
 				vposshift = "";
-				log.println("VPOSƒVƒtƒg’l‚ª•s³");
+				log.println("VPOSã‚·ãƒ•ãƒˆå€¤ãŒä¸æ­£");
 			}
 		}
 		String last_history = VideoID_TextField.getText();
@@ -4275,7 +4275,7 @@ public class MainFrame extends JFrame {
 		}
 		NGWordTextField.setText(setting.getNG_Word());
 		NGIDTextField.setText(setting.getNG_ID());
-		// ƒvƒƒLƒVŠÖ˜A
+		// ãƒ—ãƒ­ã‚­ã‚·é–¢é€£
 		UseProxyCheckBox.setSelected(setting.useProxy());
 		ProxyTextField.setText(setting.getProxy());
 		int proxy_port = setting.getProxyPort();
@@ -4429,7 +4429,7 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
-	 * [ƒtƒ@ƒCƒ‹|I—¹] ƒAƒNƒVƒ‡ƒ“‚ªÀs‚³‚ê‚Ü‚µ‚½B
+	 * [ãƒ•ã‚¡ã‚¤ãƒ«|çµ‚äº†] ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãŒå®Ÿè¡Œã•ã‚Œã¾ã—ãŸã€‚
 	 *
 	 * @param actionEvent
 	 *            ActionEvent
@@ -4446,7 +4446,7 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
-	 * [ƒwƒ‹ƒv|ƒo[ƒWƒ‡ƒ“î•ñ] ƒAƒNƒVƒ‡ƒ“‚ªÀs‚³‚ê‚Ü‚µ‚½B
+	 * [ãƒ˜ãƒ«ãƒ—|ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±] ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãŒå®Ÿè¡Œã•ã‚Œã¾ã—ãŸã€‚
 	 *
 	 * @param actionEvent
 	 *            ActionEvent
@@ -4458,7 +4458,7 @@ public class MainFrame extends JFrame {
 		dlg.setVisible(true);
 	}
 
-	/* •ÏŠ·E•Û‘¶‚·‚é */
+	/* å¤‰æ›ãƒ»ä¿å­˜ã™ã‚‹ */
 	ConvertWorker converter = null;
 
 	JTextField CommandLineInOptionField = new JTextField();
@@ -4563,10 +4563,10 @@ public class MainFrame extends JFrame {
 	}
 
 	public void myListGetterDone(StringBuffer vList, boolean pending, Logger log) {
-		// mylist“Ç‚İ‚İI—¹@Œ‹‰Ê‚ğó‚¯æ‚é
+		// mylistèª­ã¿è¾¼ã¿çµ‚äº†ã€€çµæœã‚’å—ã‘å–ã‚‹
 		if(vList==null){
-			log.println("ƒ}ƒCƒŠƒXƒgŒ‹‰Êó‚¯æ‚è¸”s@ƒoƒO?");
-			sendtext("ƒ}ƒCƒŠƒXƒgŒ‹‰Êó‚¯æ‚è¸”s@ƒoƒO?");
+			log.println("ãƒã‚¤ãƒªã‚¹ãƒˆçµæœå—ã‘å–ã‚Šå¤±æ•—ã€€ãƒã‚°?");
+			sendtext("ãƒã‚¤ãƒªã‚¹ãƒˆçµæœå—ã‘å–ã‚Šå¤±æ•—ã€€ãƒã‚°?");
 			return;
 		}
 		String str = vList.substring(0);
@@ -4575,19 +4575,19 @@ public class MainFrame extends JFrame {
 		String[] lists = str.split("\n");
 		for(String id_title:lists){
 			if(id_title.isEmpty()) continue;
-			log.println("“o˜^\t"+id_title);
+			log.println("ç™»éŒ²\t"+id_title);
 			String[] ss = id_title.split("\t");
 			String vid = ss[0];
 			String title = ss.length>1 ? ss[1] : "";
 			//String watchinfo = ss.length>2 ?ss[2] : "";
-			// id‚ğ“o˜^
+			// idã‚’ç™»éŒ²
 			url = vid;
 			OneLineMode = getSetting().isOneLineMode();
 			requestHistory.add(url);
 			int indexNow = convNo++;
 			JButton stopButton = new JButton();
 			ConvertStopFlag stopFlag =
-				new ConvertStopFlag(stopButton,"’â","‘Ò","I", "•Ï", pending);
+				new ConvertStopFlag(stopButton,"åœ","å¾…","çµ‚", "å¤‰", pending);
 			ListInfo listInfo = new ListInfo(vid+"_"+title,OneLineMode,indexNow,
 				stopButton, stopFlag);
 			activities.add(listInfo);
@@ -4598,12 +4598,12 @@ public class MainFrame extends JFrame {
 					stopButton_actionPerformed(e);
 				}
 			});
-			//log.println(">"+indexNow+"ŒÂ–Ú‚Ì—v‹: "+vid);
-			sendtext(">"+indexNow+"ŒÂ–Ú‚Ì—v‹: "+vid);
+			//log.println(">"+indexNow+"å€‹ç›®ã®è¦æ±‚: "+vid);
+			sendtext(">"+indexNow+"å€‹ç›®ã®è¦æ±‚: "+vid);
 			listInfo.resetVid();
 			buttonTable.put(stopButton, stopFlag);
 			ConvertingSetting setting1 = getSetting();
-			// ConverManagerˆ—‚ğ—v‹
+			// ConverManagerå‡¦ç†ã‚’è¦æ±‚
 			convertManager.request(
 				indexNow,
 				numThread,
@@ -4622,20 +4622,20 @@ public class MainFrame extends JFrame {
 
 	}
 
-	//‘S•ÏŠ·ƒ{ƒ^ƒ“
+	//å…¨å¤‰æ›ãƒœã‚¿ãƒ³
 	private void AllExecButton_handler(ActionEvent e) {
 		for(ConvertStopFlag flag:buttonTable.values()){
 			convertManager.gotoRequest(flag);
 		}
 
 	}
-	//•ÏŠ·/’â~ƒ{ƒ^ƒ“
+	//å¤‰æ›/åœæ­¢ãƒœã‚¿ãƒ³
 	public void stopButton_actionPerformed(ActionEvent e){
 		Object obj = e.getSource();
 		if(obj instanceof JButton){
 			ConvertStopFlag flag = buttonTable.get((JButton)obj);
 			if(flag==null){
-				log.println("stopButton ‚ª“o˜^‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
+				log.println("stopButton ãŒç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“");
 				return;
 			}
 			convertManager.buttonPushed(flag);
@@ -4664,14 +4664,14 @@ public class MainFrame extends JFrame {
 			// so new video or new mylist will be converted
 			url = VideoID_TextField.getText();
 			if(url==null || url.isEmpty()){
-				sendtext("URL/ID‚ª“ü—Í‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
-				log.println("•ÏŠ·ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ªURL/ID—“‚ª“ü—Í‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
+				sendtext("URL/IDãŒå…¥åŠ›ã•ã‚Œã¦ã„ã¾ã›ã‚“");
+				log.println("å¤‰æ›ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸãŒURL/IDæ¬„ãŒå…¥åŠ›ã•ã‚Œã¦ã„ã¾ã›ã‚“");
 				return;
 			}
 			input_url = url;
 			requestHistory.add(url);
 			/*
-			 * URL‰ğÍ
+			 * URLè§£æ
 			 */
 			boolean isLocal = checkLocal(url);
 			if(isLocal){
@@ -4680,7 +4680,7 @@ public class MainFrame extends JFrame {
 				return;
 			}
 			boolean isMylist = parseUrlMylist();
-			// “ü—Íƒf[ƒ^‚Í ?ˆÈ~‚ª watchinfo ‚»‚êˆÈ‘O‚ª url‚É Tag‚Í urlÅŒã‚Ì/‚æ‚èŒã
+			// å…¥åŠ›ãƒ‡ãƒ¼ã‚¿ã¯ ?ä»¥é™ãŒ watchinfo ãã‚Œä»¥å‰ãŒ urlã« Tagã¯ urlæœ€å¾Œã®/ã‚ˆã‚Šå¾Œ
 			String vid = isMylist? url : Tag;
 			log.println("url="+url+", watchinfo="+watchInfo+", Tag="+Tag);
 			managementPanel.addNotify();
@@ -4688,7 +4688,7 @@ public class MainFrame extends JFrame {
 			int indexNow = convNo++;
 			JButton stopButton = new JButton();
 			ConvertStopFlag stopFlag =
-				new ConvertStopFlag(stopButton,"’â","‘Ò","I", "•Ï", PendingMode);
+				new ConvertStopFlag(stopButton,"åœ","å¾…","çµ‚", "å¤‰", PendingMode);
 			ListInfo listInfo = new ListInfo(vid,OneLineMode,indexNow,stopButton,stopFlag);
 			activities.add(listInfo);
 			VideoID_TextField.setText("");
@@ -4699,14 +4699,14 @@ public class MainFrame extends JFrame {
 					stopButton_actionPerformed(e);
 				}
 			});
-			//log.println(">"+indexNow+"ŒÂ–Ú‚Ì—v‹: "+vid);
-			sendtext(">"+indexNow+"ŒÂ–Ú‚Ì—v‹: "+vid);
+			//log.println(">"+indexNow+"å€‹ç›®ã®è¦æ±‚: "+vid);
+			sendtext(">"+indexNow+"å€‹ç›®ã®è¦æ±‚: "+vid);
 			listInfo.resetVid();
 			buttonTable.put(stopButton, stopFlag);
 			ConvertingSetting setting1 = getSetting();
 			if (isMylist){
-				//ƒ}ƒCƒŠƒXƒgƒy[ƒW“®‰æID‰ğÍ
-				// url = "https://www/nicovideo.jp/mylist/1234567?watch_harmful=1" ‚È‚Ç
+				//ãƒã‚¤ãƒªã‚¹ãƒˆãƒšãƒ¼ã‚¸å‹•ç”»IDè§£æ
+				// url = "https://www/nicovideo.jp/mylist/1234567?watch_harmful=1" ãªã©
 				mylistHistory.add(input_url);
 				movieList = new StringBuffer();
 				mylistGetter = new MylistGetter(
@@ -4720,18 +4720,18 @@ public class MainFrame extends JFrame {
 					movieList,
 					log);
 				mylistGetter.execute();
-				stopFlag.go();		//mylistGetter‚Í–³ğŒ‚ÉÀs
-				// MylistGetterÀs
+				stopFlag.go();		//mylistGetterã¯ç„¡æ¡ä»¶ã«å®Ÿè¡Œ
+				// MylistGetterå®Ÿè¡Œ
 				// return to dispatch
 			}else
 			{
-				//’Êí•ÏŠ·
+				//é€šå¸¸å¤‰æ›
 				// Shall fileQueue for playing video be cleared or truncated to 1 file?
 				// Now it will be cleared only change mylist to video, temporally.
-				// url = "sm1234567?req=mylist" ‚È‚Ç
-				// url = "1234567" ƒ}ƒCƒƒ‚ƒŠ[‚±‚Á‚¿
-				sendtext(">“¯•ÏŠ·”@"+numThread+" "+indexNow);
-				log.println(">“¯•ÏŠ·”@"+numThread+" "+url);
+				// url = "sm1234567?req=mylist" ãªã©
+				// url = "1234567" ãƒã‚¤ãƒ¡ãƒ¢ãƒªãƒ¼ã“ã£ã¡
+				sendtext(">åŒæ™‚å¤‰æ›æ•°ã€€"+numThread+" "+indexNow);
+				log.println(">åŒæ™‚å¤‰æ›æ•°ã€€"+numThread+" "+url);
 				log.println(">"+indexNow+" "+url);
 				StringBuffer sbret = new StringBuffer();
 				convertManager.request(
@@ -4747,7 +4747,7 @@ public class MainFrame extends JFrame {
 					errorControl,
 					sbret,
 					log);
-				// ConverManagerˆ—‚ğ—v‹
+				// ConverManagerå‡¦ç†ã‚’è¦æ±‚
 				// return to dispatch
 			}
 		}catch(Exception ex){
@@ -4947,13 +4947,13 @@ public class MainFrame extends JFrame {
 		statusBar.setText(text);
 	}
 
-	/* FFmpeg versionƒ`ƒFƒbƒNÀs */
+	/* FFmpeg versionãƒã‚§ãƒƒã‚¯å®Ÿè¡Œ */
 	public void FFVersionButton_actionPerformed(ActionEvent e){
 		//JTextArea textout = TextFFmpegOutput;
 		JTextArea textout = null;
 		try{
 			textout = new TextView(
-				this,"FFmpegƒo[ƒWƒ‡ƒ“î•ñ").getTextArea();
+				this,"FFmpegãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±").getTextArea();
 			textout.setText(null);
 			ArrayList<String> list = execFFmpeg("-version");
 			for(String line:list){
@@ -4961,7 +4961,7 @@ public class MainFrame extends JFrame {
 			}
 			textout.setCaretPosition(0);
 		} catch(NullPointerException ex){
-			sendtext("(LÍM)ƒ‚Ê‚é‚Û\nƒKƒb\n");
+			sendtext("(Â´âˆ€ï½€)ï¼œã¬ã‚‹ã½\nã‚¬ãƒƒ\n");
 			ex.printStackTrace();
 		} catch (FileNotFoundException ex) {
 			textout.setText(ex.getMessage());
@@ -4969,12 +4969,12 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	/* FFmpeg help •\¦ */
+	/* FFmpeg help è¡¨ç¤º */
 	public void FFhelp_actionPerformed(String s){
 		JTextArea textout = null;
 		try{
 			textout = new TextView(
-				this,"FFmpegƒwƒ‹ƒvî•ñ").getTextArea();
+				this,"FFmpegãƒ˜ãƒ«ãƒ—æƒ…å ±").getTextArea();
 			textout.setText(null);
 			ArrayList<String> list = execFFmpeg(s);
 			for(String line:list){
@@ -4982,7 +4982,7 @@ public class MainFrame extends JFrame {
 			}
 			textout.setCaretPosition(0);
 		} catch(NullPointerException ex){
-			sendtext("(LÍM)ƒ‚Ê‚é‚Û\nƒKƒb\n");
+			sendtext("(Â´âˆ€ï½€)ï¼œã¬ã‚‹ã½\nã‚¬ãƒƒ\n");
 			ex.printStackTrace();
 		} catch (FileNotFoundException ex) {
 			textout.setText(ex.getMessage());
@@ -4990,43 +4990,43 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	/* ƒ_ƒEƒ“ƒ[ƒhƒŠƒXƒg•\¦ */
+	/* ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ãƒªã‚¹ãƒˆè¡¨ç¤º */
 	public void showDownloadList_actionPerformed(ActionEvent s){
 		JTextArea textout = null;
 		textout = new TextView(
-			this, "ƒ_ƒEƒ“ƒ[ƒhƒŠƒXƒg").getTextArea();
+			this, "ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ãƒªã‚¹ãƒˆ").getTextArea();
 		textout.setText(resultHistory.toString());
 	//	textout.setCaretPosition(0);
 	}
 
-	/* readme•\¦ */
+	/* readmeè¡¨ç¤º */
 	public void showReadme_actionPerformed(String readmePath, String encoding){
 		HtmlView hv;
-		String text = "ƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ.";
+		String text = "ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“.";
 		try{
 			String docfile = new File("doc"+File.separator+readmePath).getPath();
 			text = Path.readAllText(docfile, encoding);
-			hv = new HtmlView(this, "readme•\¦", "");
+			hv = new HtmlView(this, "readmeè¡¨ç¤º", "");
 			hv.setText(HtmlView.markupHtml(text));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
 
-	/* “®‰æî•ñ •\¦ */
+	/* å‹•ç”»æƒ…å ± è¡¨ç¤º */
 	public void CheckDownloadVideoButton_actionPerformed(ActionEvent e){
 	//	boolean needStop = true;
 	//	JTextArea textout = TextFFmpegOutput;
 		JTextArea textout = null;
 		try {
 			textout = new TextView(this,
-				"ƒ_ƒEƒ“ƒ[ƒh“®‰æî•ñ").getTextArea();
+				"ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰å‹•ç”»æƒ…å ±").getTextArea();
 			File inputVideo = null;
 			ConvertingSetting setting = getSetting();
 			url = VideoID_TextField.getText();
 			if(url==null || url.isEmpty()){
-				sendtext("URL/ID‚ª“ü—Í‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
-				log.println("•ÏŠ·ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ªURL/ID—“‚ª“ü—Í‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
+				sendtext("URL/IDãŒå…¥åŠ›ã•ã‚Œã¦ã„ã¾ã›ã‚“");
+				log.println("å¤‰æ›ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸãŒURL/IDæ¬„ãŒå…¥åŠ›ã•ã‚Œã¦ã„ã¾ã›ã‚“");
 				return;
 			}
 			ConvertWorker conv = new ConvertWorker(
@@ -5046,7 +5046,7 @@ public class MainFrame extends JFrame {
 				File folder = setting.getVideoFixFileNameFolder();
 				String path = conv.detectTitleFromVideo(folder);
 				if (path == null || path.isEmpty()){
-					textout.setText("ŒŸõ‚µ‚Ü‚µ‚½‚ª“®‰æ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+					textout.setText("æ¤œç´¢ã—ã¾ã—ãŸãŒå‹•ç”»ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
 					return;
 				}
 				inputVideo = new File(folder, path);
@@ -5054,7 +5054,7 @@ public class MainFrame extends JFrame {
 				inputVideo = setting.getVideoFile();
 			}
 			if (inputVideo == null || !inputVideo.canRead()){
-				textout.setText("ƒ_ƒEƒ“ƒ[ƒh“®‰æ‚ª‚ ‚è‚Ü‚¹‚ñB");
+				textout.setText("ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰å‹•ç”»ãŒã‚ã‚Šã¾ã›ã‚“ã€‚");
 				return;
 			}
 			textout.setText(inputVideo.getName() + "\n");
@@ -5069,7 +5069,7 @@ public class MainFrame extends JFrame {
 			}
 			textout.setCaretPosition(0);
 		} catch(NullPointerException ex){
-			sendtext("(LÍM)ƒ‚Ê‚é‚Û\nƒKƒb");
+			sendtext("(Â´âˆ€ï½€)ï¼œã¬ã‚‹ã½\nã‚¬ãƒƒ");
 			ex.printStackTrace();
 		} catch (FileNotFoundException ex) {
 			textout.setText(ex.getMessage());
@@ -5090,7 +5090,7 @@ public class MainFrame extends JFrame {
 		}
 		String path = getSetting().getFFmpegPath();
 		if (!new File(path).canRead()) {
-			throw new FileNotFoundException("FFmpeg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
+			throw new FileNotFoundException("FFmpegãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“");
 		}
 		FFmpeg ffmpeg = new FFmpeg(path);
 		ffmpeg.setCmd(parameter);
@@ -5105,63 +5105,63 @@ public class MainFrame extends JFrame {
 		return output;
 	}
 
-	/* ƒrƒfƒIEƒZ[ƒuƒ_ƒCƒAƒƒO */
+	/* ãƒ“ãƒ‡ã‚ªãƒ»ã‚»ãƒ¼ãƒ–ãƒ€ã‚¤ã‚¢ãƒ­ã‚° */
 	public void ShowSavingVideoDialogButton_actionPerformed(ActionEvent e) {
-		showSaveDialog("“®‰æ‚Ì•Û‘¶æ(ƒtƒ@ƒCƒ‹)", VideoSavedFileField, true, false);
+		showSaveDialog("å‹•ç”»ã®ä¿å­˜å…ˆ(ãƒ•ã‚¡ã‚¤ãƒ«)", VideoSavedFileField, true, false);
 	}
 
-	/* ƒRƒƒ“ƒgEƒZ[ƒuƒ_ƒCƒAƒƒO */
+	/* ã‚³ãƒ¡ãƒ³ãƒˆãƒ»ã‚»ãƒ¼ãƒ–ãƒ€ã‚¤ã‚¢ãƒ­ã‚° */
 	public void ShowSavingCommentDialogButton_actionPerformed(ActionEvent e) {
-		showSaveDialog("ƒRƒƒ“ƒg‚Ì•Û‘¶æ(ƒtƒ@ƒCƒ‹)", CommentSavedFileField, true, false);
+		showSaveDialog("ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜å…ˆ(ãƒ•ã‚¡ã‚¤ãƒ«)", CommentSavedFileField, true, false);
 	}
 
-	/* ƒRƒƒ“ƒg•t‚«ƒrƒfƒIEƒZ[ƒuƒ_ƒCƒAƒƒO */
+	/* ã‚³ãƒ¡ãƒ³ãƒˆä»˜ããƒ“ãƒ‡ã‚ªãƒ»ã‚»ãƒ¼ãƒ–ãƒ€ã‚¤ã‚¢ãƒ­ã‚° */
 	public void ShowSavingConvertedVideoDialogButton_actionPerformed(ActionEvent e) {
-		showSaveDialog("ƒRƒƒ“ƒg•t‚«“®‰æ‚Ì•Û‘¶æ(ƒtƒ@ƒCƒ‹)", ConvertedVideoSavedFileField,
+		showSaveDialog("ã‚³ãƒ¡ãƒ³ãƒˆä»˜ãå‹•ç”»ã®ä¿å­˜å…ˆ(ãƒ•ã‚¡ã‚¤ãƒ«)", ConvertedVideoSavedFileField,
 				true, false);
 	}
 
-	/* FFmpeg‚Ö‚ÌƒpƒX */
+	/* FFmpegã¸ã®ãƒ‘ã‚¹ */
 	public void SettingFFmpegPathButton_actionPerformed(ActionEvent e) {
-		showSaveDialog("FFmpeg‚Ö‚ÌƒpƒX", FFmpegPathField, false, false);
+		showSaveDialog("FFmpegã¸ã®ãƒ‘ã‚¹", FFmpegPathField, false, false);
 	}
 
 	public void SettingOptionPathButton_actionPerformed(ActionEvent e) {
-		showSaveDialog("ƒIƒvƒVƒ‡ƒ“ƒtƒHƒ‹ƒ_", OptionPathField, true, true);
+		showSaveDialog("ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚©ãƒ«ãƒ€", OptionPathField, true, true);
 		FFmpegOptionModel.setOptionFolder(OptionPathField.getText());
 		WideFFmpegOptionModel.setOptionFolder(OptionPathField.getText());
 		zqFFmpegOptionModel.setOptionFolder(OptionPathField.getText());
 	}
 
 	public void SettingVhookPathButton_actionPerformed(ActionEvent e) {
-		showSaveDialog("Šg’£vhookƒ‰ƒCƒuƒ‰ƒŠ‚Ö‚ÌƒpƒX", VhookPathField, false, false);
+		showSaveDialog("æ‹¡å¼µvhookãƒ©ã‚¤ãƒ–ãƒ©ãƒªã¸ã®ãƒ‘ã‚¹", VhookPathField, false, false);
 	}
 
 	public void SettingVhookWidePathButton_actionPerformed(ActionEvent e) {
-		showSaveDialog("Šg’£vhookƒƒCƒh‚Ö‚ÌƒpƒX", VhookWidePathField, false, false);
+		showSaveDialog("æ‹¡å¼µvhookãƒ¯ã‚¤ãƒ‰ã¸ã®ãƒ‘ã‚¹", VhookWidePathField, false, false);
 	}
 
 	public void SettingVhookZqPathButton_actionPerformed(ActionEvent e) {
-		showSaveDialog("QŠg’£vhookƒ‰ƒCƒuƒ‰ƒŠ‚Ö‚ÌƒpƒX", zqVhookPathField, false, false);
+		showSaveDialog("Qæ‹¡å¼µvhookãƒ©ã‚¤ãƒ–ãƒ©ãƒªã¸ã®ãƒ‘ã‚¹", zqVhookPathField, false, false);
 	}
 
 	public void SettingFontPathButton_actionPerformed(ActionEvent e) {
-		showSaveDialog("ƒtƒHƒ“ƒg‚Ö‚ÌƒpƒX", FontPathField, false, false);
+		showSaveDialog("ãƒ•ã‚©ãƒ³ãƒˆã¸ã®ãƒ‘ã‚¹", FontPathField, false, false);
 	}
 
 	public void ShowSavingConvertedVideoFolderDialogButton_actionPerformed(ActionEvent e) {
-		/* ƒtƒHƒ‹ƒ_ */
-		showSaveDialog("ƒRƒƒ“ƒg•t‚«“®‰æ‚Ì•Û‘¶æ(ƒtƒHƒ‹ƒ_)", ConvertedVideoSavedFolderField,
+		/* ãƒ•ã‚©ãƒ«ãƒ€ */
+		showSaveDialog("ã‚³ãƒ¡ãƒ³ãƒˆä»˜ãå‹•ç”»ã®ä¿å­˜å…ˆ(ãƒ•ã‚©ãƒ«ãƒ€)", ConvertedVideoSavedFolderField,
 				true, true);
 	}
 
 	public void ShowSavingCommentFolderDialogButton_actionPerformed(
 			ActionEvent e) {
-		showSaveDialog("ƒRƒƒ“ƒg‚Ì•Û‘¶æ(ƒtƒHƒ‹ƒ_)", CommentSavedFolderField, true, true);
+		showSaveDialog("ã‚³ãƒ¡ãƒ³ãƒˆã®ä¿å­˜å…ˆ(ãƒ•ã‚©ãƒ«ãƒ€)", CommentSavedFolderField, true, true);
 	}
 
 	public void ShowSavingVideoFolderDialogButton_actionPerformed(ActionEvent e) {
-		showSaveDialog("“®‰æ‚Ì•Û‘¶æ(ƒtƒHƒ‹ƒ_)", VideoSavedFolderField, true, true);
+		showSaveDialog("å‹•ç”»ã®ä¿å­˜å…ˆ(ãƒ•ã‚©ãƒ«ãƒ€)", VideoSavedFolderField, true, true);
 	}
 
 	/**
@@ -5239,10 +5239,10 @@ s	 * @return javax.swing.JPanel
 
 			sharedNgPanel = new JPanel();
 			sharedNgPanel.setLayout(new GridBagLayout());
-			sharedNgHighRadioButton.setText("‹­");
-			sharedNgMediumRadioButton.setText("’†");
-			sharedNgLowRadioButton.setText("ã");
-			sharedNgNoneRadioButton.setText("–³‚µ");
+			sharedNgHighRadioButton.setText("å¼·");
+			sharedNgMediumRadioButton.setText("ä¸­");
+			sharedNgLowRadioButton.setText("å¼±");
+			sharedNgNoneRadioButton.setText("ç„¡ã—");
 			sharedNgPanel.add(sharedNgHighRadioButton, gridy4_x1_13);
 			sharedNgPanel.add(sharedNgMediumRadioButton, gridy4_x2_14);
 			sharedNgPanel.add(sharedNgLowRadioButton, gridy4_x3_15);
@@ -5348,10 +5348,10 @@ s	 * @return javax.swing.JPanel
 			NGWordSettingPanel.setLayout(new GridBagLayout());
 			NGWordSettingPanel.setBorder(BorderFactory.createTitledBorder(
 					CREATE_ETCHED_BORDER,
-					"NGƒ[ƒhEIDİ’è"));
-			NGWordSettingPanel.add(new JLabel("NGƒ[ƒh"), grid_x0_y0_2);
+					"NGãƒ¯ãƒ¼ãƒ‰ãƒ»IDè¨­å®š"));
+			NGWordSettingPanel.add(new JLabel("NGãƒ¯ãƒ¼ãƒ‰"), grid_x0_y0_2);
 			NGWordSettingPanel.add(NGWordTextField, grid_x1_y0_3);
-			ngEnableMultilinesCheckBox.setText("•¡");
+			ngEnableMultilinesCheckBox.setText("è¤‡");
 			ngEnableMultilinesCheckBox.setToolTipText(ngEnableMLToolchipTexts[0]);
 			ngEnableMultilinesCheckBox.addActionListener(new ActionListener() {
 				@Override
@@ -5366,27 +5366,27 @@ s	 * @return javax.swing.JPanel
 			NGWordSettingPanel.add(ngEnableMultilinesCheckBox, grid_x5_y0_4);
 			NGWordSettingPanel.add(new JLabel("NG ID"), grid_x0_y1_5);
 			NGWordSettingPanel.add(NGIDTextField, grid_x1_y1_7);
-			ngCommandLabel.setText("NGƒRƒ}ƒ“ƒh");
+			ngCommandLabel.setText("NGã‚³ãƒãƒ³ãƒ‰");
 			ngCommandLabel.setForeground(Color.blue);
 			NGWordSettingPanel.add(ngCommandLabel, grid_x0_y3_8);
 			ngCommandField = new JTextField();
 			ngCommandField.setForeground(Color.blue);
 			NGWordSettingPanel.add(ngCommandField, grid_x1_y3_9);
-			sharedNgLabel.setText("NG‹¤—LƒŒƒxƒ‹ ");
+			sharedNgLabel.setText("NGå…±æœ‰ãƒ¬ãƒ™ãƒ« ");
 			sharedNgLabel.setForeground(Color.blue);
 			NGWordSettingPanel.add(sharedNgLabel, grid_x0_y5_17);
 			NGWordSettingPanel.add(sharedNgPanel, grid_x1_y5_17b);
-			commentOffCheckbox = new JCheckBox("ƒRƒƒ“ƒgƒIƒtƒGƒŠƒA");
+			commentOffCheckbox = new JCheckBox("ã‚³ãƒ¡ãƒ³ãƒˆã‚ªãƒ•ã‚¨ãƒªã‚¢");
 			commentOffCheckbox.setForeground(Color.blue);
-			commentOffCheckbox.setToolTipText("ƒTƒCƒY ã‚©‚ç+,‰º‚©‚ç-Bpixel”‚©“®‰æƒTƒCƒY‚Ì%’l‚©ƒRƒƒ“ƒgs”(b,m,s+”š)Bn•t‚«‚ÍnakaƒRƒƒ“ƒg‚Ì‚İ");
+			commentOffCheckbox.setToolTipText("ã‚µã‚¤ã‚º ä¸Šã‹ã‚‰+,ä¸‹ã‹ã‚‰-ã€‚pixelæ•°ã‹å‹•ç”»ã‚µã‚¤ã‚ºã®%å€¤ã‹ã‚³ãƒ¡ãƒ³ãƒˆè¡Œæ•°(b,m,s+æ•°å­—)ã€‚nä»˜ãã¯nakaã‚³ãƒ¡ãƒ³ãƒˆã®ã¿");
 			NGWordSettingPanel.add(commentOffCheckbox, grid_x0_y6_18);
 			commentOffField = new JTextField("");
-			commentOffField.setToolTipText("—á:-b3n (‰º‚©‚çbigƒTƒCƒY3s•ª‚ÍƒRƒƒ“ƒgƒIƒt,nakaƒRƒƒ“ƒg‚Ì‚İ)");
+			commentOffField.setToolTipText("ä¾‹:-b3n (ä¸‹ã‹ã‚‰bigã‚µã‚¤ã‚º3è¡Œåˆ†ã¯ã‚³ãƒ¡ãƒ³ãƒˆã‚ªãƒ•,nakaã‚³ãƒ¡ãƒ³ãƒˆã®ã¿)");
 			NGWordSettingPanel.add(commentOffField, grid_x2_y6_19);
-			layerControlCheckBox = new JCheckBox("ƒŒ");
+			layerControlCheckBox = new JCheckBox("ãƒ¬");
 			NGWordSettingPanel.add(layerControlCheckBox, grid_x4_y6_20);
-			layerControlCheckBox.setToolTipText("ƒŒƒCƒ„[‡:ue shitaƒRƒ}ƒ“ƒh‚ğè‘O‘¤‚É•\¦‚·‚é");
-			NGWordSettingPanel.add(new JLabel("ƒCƒ„[‡"), grid_x5_y6_21);
+			layerControlCheckBox.setToolTipText("ãƒ¬ã‚¤ãƒ¤ãƒ¼é †:ue shitaã‚³ãƒãƒ³ãƒ‰ã‚’æ‰‹å‰å´ã«è¡¨ç¤ºã™ã‚‹");
+			NGWordSettingPanel.add(new JLabel("ã‚¤ãƒ¤ãƒ¼é †"), grid_x5_y6_21);
 		}
 		return NGWordSettingPanel;
 	}
@@ -5427,12 +5427,12 @@ s	 * @return javax.swing.JPanel
 			grid_x0_y1_8.fill = GridBagConstraints.NONE;
 			grid_x0_y1_8.anchor = GridBagConstraints.WEST;
 			grid_x0_y1_8.gridy = 0;
-			ProxyInfoPanel = new JPanelHideable("ProxyInfo","ƒvƒƒLƒVİ’è",Color.black);
-			ProxyInfoPanel.add(new JLabel("ƒvƒƒLƒV"), grid_x0_y1_8);
+			ProxyInfoPanel = new JPanelHideable("ProxyInfo","ãƒ—ãƒ­ã‚­ã‚·è¨­å®š",Color.black);
+			ProxyInfoPanel.add(new JLabel("ãƒ—ãƒ­ã‚­ã‚·"), grid_x0_y1_8);
 			ProxyInfoPanel.add(ProxyTextField, grid_x1_y1_9);
-			ProxyInfoPanel.add(new JLabel("ƒ|[ƒg”Ô†"), grid_x0_y2_10);
+			ProxyInfoPanel.add(new JLabel("ãƒãƒ¼ãƒˆç•ªå·"), grid_x0_y2_10);
 			ProxyInfoPanel.add(ProxyPortTextField, grid_x1_y2_12);
-			UseProxyCheckBox.setText("ƒvƒƒLƒV‚ğg‚¤");
+			UseProxyCheckBox.setText("ãƒ—ãƒ­ã‚­ã‚·ã‚’ä½¿ã†");
 			ProxyInfoPanel.add(UseProxyCheckBox, grid_x0_y0_13);
 			GridBagConstraints c = new GridBagConstraints();
 			c.gridy = 1;
@@ -5510,7 +5510,7 @@ s	 * @return javax.swing.JPanel
 			VideoSaveInfoPanel.setLayout(new GridBagLayout());
 			VideoSaveInfoPanel.setBorder(BorderFactory.createTitledBorder(
 					CREATE_ETCHED_BORDER,
-					"“®‰æ•Û‘¶İ’è"
+					"å‹•ç”»ä¿å­˜è¨­å®š"
 				));
 			JPanel savingVideoSubPanel = new JPanel();
 			savingVideoSubPanel.setLayout(new GridBagLayout());
@@ -5521,9 +5521,9 @@ s	 * @return javax.swing.JPanel
 			JPanel extraDownloadPanel0 = new JPanel();
 			extraDownloadPanel0.setLayout(new BorderLayout());
 			JLabel extraDownloadLabel = new JLabel();
-			extraDownloadLabel.setText("Šg’£ƒ_ƒEƒ“ƒ[ƒhİ’è(dmc)");
+			extraDownloadLabel.setText("æ‹¡å¼µãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰è¨­å®š(dmc)");
 			extraDownloadLabel.setForeground(Color.blue);
-			extraDownloadLabel.setToolTipText("ƒy[ƒWî•ñİ’èƒ^ƒu‚ÉˆÚ“®‚µ‚Ü‚µ‚½");
+			extraDownloadLabel.setToolTipText("ãƒšãƒ¼ã‚¸æƒ…å ±è¨­å®šã‚¿ãƒ–ã«ç§»å‹•ã—ã¾ã—ãŸ");
 			extraDownloadPanel0.add(extraDownloadLabel, BorderLayout.CENTER);
 			BasicArrowButton extraDownloadArrow = new BasicArrowButton(SwingConstants.SOUTH);
 			extraDownloadArrow.addActionListener(new ActionListener() {
@@ -5539,7 +5539,7 @@ s	 * @return javax.swing.JPanel
 			grid000_last.fill = GridBagConstraints.NONE;
 			savingVideoSubPanel.add(extraDownloadPanel0, grid000_last);
 
-			DelVideoCheckBox.setText("•ÏŠ·Œã‚É“®‰æíœ");
+			DelVideoCheckBox.setText("å¤‰æ›å¾Œã«å‹•ç”»å‰Šé™¤");
 			VideoSaveInfoPanel.add(DelVideoCheckBox, grid_x0_y1_15);
 			VideoSaveInfoPanel.add(Video_SaveFolderRadioButton,
 					grid_x0_y2_27);
@@ -5566,11 +5566,11 @@ s	 * @return javax.swing.JPanel
 	private JTabbedPane getSaveInfoTabPaneEach() {
 		if (SaveInfoTabPaneEach == null) {
 			SaveInfoTabPaneEach = new JTabbedPane();
-			SaveInfoTabPaneEach.addTab("“®‰æEƒRƒƒ“ƒg", null,
+			SaveInfoTabPaneEach.addTab("å‹•ç”»ãƒ»ã‚³ãƒ¡ãƒ³ãƒˆ", null,
 					getVideoSavingTabbedPanel(), null);
-			SaveInfoTabPaneEach.addTab("ƒRƒƒ“ƒg•t‚«“®‰æ", null,
+			SaveInfoTabPaneEach.addTab("ã‚³ãƒ¡ãƒ³ãƒˆä»˜ãå‹•ç”»", null,
 					getConvertedVideoSavingTabbedPanel(), null);
-			SaveInfoTabPaneEach.addTab("ƒy[ƒWî•ñ", null,
+			SaveInfoTabPaneEach.addTab("ãƒšãƒ¼ã‚¸æƒ…å ±", null,
 					getWatchPageSavingTabbedPanel(), null);
 		}
 		return SaveInfoTabPaneEach;
@@ -5650,10 +5650,10 @@ s	 * @return javax.swing.JPanel
 			grid_x_y__.weighty = 0.0;
 			ConvertedVideoSavingTabbedPanel.add(OptionalThreadInfoPanel, grid_x_y__);
 
-			liveConvertInfoPanel = new JPanelHideable("liveConvert","¶•ú‘—•ÏŠ·İ’è", Color.red);
-			liveOperationCheckBox.setText("‰^‰cƒRƒŠÈˆÕ•ÏX");
+			liveConvertInfoPanel = new JPanelHideable("liveConvert","ç”Ÿæ”¾é€å¤‰æ›è¨­å®š", Color.red);
+			liveOperationCheckBox.setText("é‹å–¶ã‚³ãƒ¡ç°¡æ˜“å¤‰æ›´");
 			liveOperationCheckBox.setForeground(Color.blue);
-			liveOperationCheckBox.setToolTipText("‰^‰cƒRƒƒ“ƒg‚ÌƒRƒ}ƒ“ƒh‚ğ­‚µ•ÏX‚µ‚Ü‚·(ƒjƒR¶‚Æ“¯‚¶‚Å‚Í‚ ‚è‚Ü‚¹‚ñ)");
+			liveOperationCheckBox.setToolTipText("é‹å–¶ã‚³ãƒ¡ãƒ³ãƒˆã®ã‚³ãƒãƒ³ãƒ‰ã‚’å°‘ã—å¤‰æ›´ã—ã¾ã™(ãƒ‹ã‚³ç”Ÿã¨åŒã˜ã§ã¯ã‚ã‚Šã¾ã›ã‚“)");
 			GridBagConstraints grid14_x0_y1 = new GridBagConstraints();
 			grid14_x0_y1.gridx = 0;
 			grid14_x0_y1.gridy = 1;
@@ -5663,7 +5663,7 @@ s	 * @return javax.swing.JPanel
 			grid14_x0_y1.fill = GridBagConstraints.HORIZONTAL;
 			grid14_x0_y1.insets = INSETS_0_5_0_5;
 			liveConvertInfoPanel.add(liveOperationCheckBox, grid14_x0_y1);
-			liveOparationDurationChangeCheckBox.setText("‰^‰cƒRƒƒ“ƒg‚Ì•b”‚ğ©•ª‚Åİ’è‚·‚é");
+			liveOparationDurationChangeCheckBox.setText("é‹å–¶ã‚³ãƒ¡ãƒ³ãƒˆã®ç§’æ•°ã‚’è‡ªåˆ†ã§è¨­å®šã™ã‚‹");
 			liveOparationDurationChangeCheckBox.setForeground(Color.blue);
 			GridBagConstraints grid14_x0_y3 = new GridBagConstraints();
 			grid14_x0_y3.gridx = 0;
@@ -5682,9 +5682,9 @@ s	 * @return javax.swing.JPanel
 			grid14_x0_y4.weightx = 1.0;
 			grid14_x0_y4.insets = INSETS_0_5_0_5;
 			liveConvertInfoPanel.add(liveOperationDurationTextField, grid14_x0_y4);
-			liveCommentModeCheckBox.setText("¶ƒRƒ‹­§@“®‰æ‚Å‚à‹­§“I‚ÉƒjƒR¶ƒRƒƒ“ƒgd—l");
+			liveCommentModeCheckBox.setText("ç”Ÿã‚³ãƒ¡å¼·åˆ¶ã€€å‹•ç”»ã§ã‚‚å¼·åˆ¶çš„ã«ãƒ‹ã‚³ç”Ÿã‚³ãƒ¡ãƒ³ãƒˆä»•æ§˜");
 			liveCommentModeCheckBox.setForeground(Color.blue);
-			liveCommentModeCheckBox.setToolTipText("’Êí‚Í©“®”»’è,nakaƒRƒ1•b’x‰„,blue2‚ÌF•ÏX“™");
+			liveCommentModeCheckBox.setToolTipText("é€šå¸¸ã¯è‡ªå‹•åˆ¤å®š,nakaã‚³ãƒ¡1ç§’é…å»¶,blue2ã®è‰²å¤‰æ›´ç­‰");
 			GridBagConstraints grid14_x0_y6 = new GridBagConstraints();
 			grid14_x0_y6.gridx = 0;
 			grid14_x0_y6.gridy = 6;
@@ -5694,9 +5694,9 @@ s	 * @return javax.swing.JPanel
 			grid14_x0_y6.fill = GridBagConstraints.HORIZONTAL;
 			grid14_x0_y6.insets = INSETS_0_5_0_5;
 			liveConvertInfoPanel.add(liveCommentModeCheckBox, grid14_x0_y6);
-			liveCommentVposShiftCheckBox.setText("ƒRƒƒ“ƒg‚ğ’x‚ç‚¹‚é(•b)(ƒ}ƒCƒiƒX’l‚Í‘‚ß‚é)");
+			liveCommentVposShiftCheckBox.setText("ã‚³ãƒ¡ãƒ³ãƒˆã‚’é…ã‚‰ã›ã‚‹(ç§’)(ãƒã‚¤ãƒŠã‚¹å€¤ã¯æ—©ã‚ã‚‹)");
 			liveCommentVposShiftCheckBox.setForeground(Color.blue);
-			liveCommentVposShiftCheckBox.setToolTipText("ƒRƒƒ“ƒg‚ÌVPOS’l()‚ğ•b’PˆÊ(¬”“_’l‰Â”\)‚Å•ÏX‚µ‚Ü‚·Bitsoffset‚Æ‚Í‹t‚ÌŒø‰Ê");
+			liveCommentVposShiftCheckBox.setToolTipText("ã‚³ãƒ¡ãƒ³ãƒˆã®VPOSå€¤(æ™‚åˆ»)ã‚’ç§’å˜ä½(å°æ•°ç‚¹å€¤å¯èƒ½)ã§å¤‰æ›´ã—ã¾ã™ã€‚itsoffsetã¨ã¯é€†ã®åŠ¹æœ");
 			GridBagConstraints grid14_x0_y7 = new GridBagConstraints();
 			grid14_x0_y7.gridx = 0;
 			grid14_x0_y7.gridy = 7;
@@ -5715,9 +5715,9 @@ s	 * @return javax.swing.JPanel
 			grid14_x2_y7.fill = GridBagConstraints.HORIZONTAL;
 			grid14_x2_y7.insets = INSETS_0_5_0_5;
 			liveConvertInfoPanel.add(liveCommentVposShiftTextField,grid14_x2_y7);
-			liveCommentMinVposCheckBox.setText("ª“K—pŒã‚ÌƒRƒƒ“ƒg•\¦Å¬VPOS()(•b)");
+			liveCommentMinVposCheckBox.setText("â†‘é©ç”¨å¾Œã®ã‚³ãƒ¡ãƒ³ãƒˆè¡¨ç¤ºæœ€å°VPOS(æ™‚åˆ»)(ç§’)");
 			liveCommentMinVposCheckBox.setForeground(Color.blue);
-			liveCommentMinVposCheckBox.setToolTipText("ƒRƒƒ“ƒg’x‰„•â³Œã,Å¬’l‚æ‚èiVPOSj‚Ì‘‚¢ƒRƒƒ“ƒg‚ğ•\¦‚µ‚Ü‚¹‚ñB(ƒ}ƒCƒiƒX‰Â)");
+			liveCommentMinVposCheckBox.setToolTipText("ã‚³ãƒ¡ãƒ³ãƒˆé…å»¶è£œæ­£å¾Œ,æœ€å°å€¤ã‚ˆã‚Šæ™‚åˆ»ï¼ˆVPOSï¼‰ã®æ—©ã„ã‚³ãƒ¡ãƒ³ãƒˆã‚’è¡¨ç¤ºã—ã¾ã›ã‚“ã€‚(ãƒã‚¤ãƒŠã‚¹å¯)");
 			GridBagConstraints grid14_x0_y8 = new GridBagConstraints();
 			grid14_x0_y8.gridx = 0;
 			grid14_x0_y8.gridy = 8;
@@ -5809,8 +5809,8 @@ s	 * @return javax.swing.JPanel
 	 * @return watchPageSavingTabbedPanel
 	 */
 	private JPanel getWatchPageSavingInfoPanel() {
-		watchPageSavingInfoPanel = new JPanelHideable("PageSavingInfo","î•ñ•Û‘¶İ’è", Color.black);
-		saveThumbInfoCheckBox.setText("“®‰æî•ñ‚ğ•Û‘¶‚·‚éiVideo‚Æ“¯‚¶ƒtƒHƒ‹ƒ_j");
+		watchPageSavingInfoPanel = new JPanelHideable("PageSavingInfo","æƒ…å ±ä¿å­˜è¨­å®š", Color.black);
+		saveThumbInfoCheckBox.setText("å‹•ç”»æƒ…å ±ã‚’ä¿å­˜ã™ã‚‹ï¼ˆVideoã¨åŒã˜ãƒ•ã‚©ãƒ«ãƒ€ï¼‰");
 		saveThumbInfoCheckBox.setSelected(true);
 		GridBagConstraints grid_x0_y0 = new GridBagConstraints();
 		grid_x0_y0.gridx = 0;
@@ -5823,7 +5823,7 @@ s	 * @return javax.swing.JPanel
 		grid_x0_y0.gridwidth = 2;
 		watchPageSavingInfoPanel.add(saveThumbInfoCheckBox, grid_x0_y0);
 
-		saveThumbInfoExtTxtRadioButton.setText("Šg’£q.txt");
+		saveThumbInfoExtTxtRadioButton.setText("æ‹¡å¼µå­.txt");
 		saveThumbInfoExtTxtRadioButton.setSelected(true);
 		GridBagConstraints grid_x0_y1 = new GridBagConstraints();
 		grid_x0_y1.gridx = 0;
@@ -5835,7 +5835,7 @@ s	 * @return javax.swing.JPanel
 		grid_x0_y1.weighty = 1.0;
 		watchPageSavingInfoPanel.add(saveThumbInfoExtTxtRadioButton, grid_x0_y1);
 
-		saveThumbInfoExtXmlRadioButton.setText("Šg’£q.xml");
+		saveThumbInfoExtXmlRadioButton.setText("æ‹¡å¼µå­.xml");
 		saveThumbInfoExtXmlRadioButton.setSelected(false);
 		GridBagConstraints grid_x1_y1 = new GridBagConstraints();
 		grid_x1_y1.gridx = 1;
@@ -5847,7 +5847,7 @@ s	 * @return javax.swing.JPanel
 		grid_x1_y1.weighty = 1.0;
 		watchPageSavingInfoPanel.add(saveThumbInfoExtXmlRadioButton, grid_x1_y1);
 
-		saveThumbUserCheckBox.setText("“ŠeÒ–¼‚ğ•Û‘¶‚·‚é(ã‚Ì“®‰æî•ñƒtƒ@ƒCƒ‹)");
+		saveThumbUserCheckBox.setText("æŠ•ç¨¿è€…åã‚’ä¿å­˜ã™ã‚‹(ä¸Šã®å‹•ç”»æƒ…å ±ãƒ•ã‚¡ã‚¤ãƒ«)");
 		GridBagConstraints grid_x0_y2 = new GridBagConstraints();
 		grid_x0_y2.gridx = 0;
 		grid_x0_y2.gridy = 2;
@@ -5859,7 +5859,7 @@ s	 * @return javax.swing.JPanel
 		grid_x0_y2.gridwidth = 2;
 		watchPageSavingInfoPanel.add(saveThumbUserCheckBox, grid_x0_y2);
 
-		userFolderLabel.setText("ƒ†[ƒU[ƒtƒHƒ‹ƒ_");
+		userFolderLabel.setText("ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ•ã‚©ãƒ«ãƒ€");
 		GridBagConstraints grid_x0_y3 = new GridBagConstraints();
 		grid_x0_y3.gridx = 0;
 		grid_x0_y3.gridy = 3;
@@ -5881,7 +5881,7 @@ s	 * @return javax.swing.JPanel
 		grid_x1_y3.weighty = 1.0;
 		watchPageSavingInfoPanel.add(userFolderTextField, grid_x1_y3);
 
-		saveThumbnailJpgCheckBox.setText("ƒTƒ€ƒlƒCƒ‹‰æ‘œ‚ğ•Û‘¶‚·‚é(video‚Æ“¯‚¶ƒtƒHƒ‹ƒ_)");
+		saveThumbnailJpgCheckBox.setText("ã‚µãƒ ãƒã‚¤ãƒ«ç”»åƒã‚’ä¿å­˜ã™ã‚‹(videoã¨åŒã˜ãƒ•ã‚©ãƒ«ãƒ€)");
 		GridBagConstraints grid_x0_y4 = new GridBagConstraints();
 		grid_x0_y4.gridx = 0;
 		grid_x0_y4.gridy = 4;
@@ -5893,7 +5893,7 @@ s	 * @return javax.swing.JPanel
 		grid_x0_y4.gridwidth = 2;
 		watchPageSavingInfoPanel.add(saveThumbnailJpgCheckBox, grid_x0_y4);
 
-		saveWatchPageInfoCheckBox.setText("watchƒy[ƒW‚ğhtmlƒtƒ@ƒCƒ‹‚É•Û‘¶‚·‚éi.\\temp‰ºj");
+		saveWatchPageInfoCheckBox.setText("watchãƒšãƒ¼ã‚¸ã‚’htmlãƒ•ã‚¡ã‚¤ãƒ«ã«ä¿å­˜ã™ã‚‹ï¼ˆ.\\tempä¸‹ï¼‰");
 		GridBagConstraints grid_x0_y9 = new GridBagConstraints();
 		grid_x0_y9.gridx = 0;
 		grid_x0_y9.gridy = 9;
@@ -5905,7 +5905,7 @@ s	 * @return javax.swing.JPanel
 		grid_x0_y9.gridwidth = 2;
 		watchPageSavingInfoPanel.add(saveWatchPageInfoCheckBox, grid_x0_y9);
 
-		saveAutoListCheckBox.setText("ƒ}ƒCƒŠƒXƒg©“®•ÏŠ·—p‚Ìautolist.batƒtƒ@ƒCƒ‹‚ğ•Û‘¶‚·‚é");
+		saveAutoListCheckBox.setText("ãƒã‚¤ãƒªã‚¹ãƒˆè‡ªå‹•å¤‰æ›ç”¨ã®autolist.batãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜ã™ã‚‹");
 		GridBagConstraints grid_x0_y10 = new GridBagConstraints();
 		grid_x0_y10.gridx = 0;
 		grid_x0_y10.gridy = 10;
@@ -5929,10 +5929,10 @@ s	 * @return javax.swing.JPanel
 	 * @return
 	 */
 	private JPanel getFileNameInfoPanel(){
-		fileNameInfoPanel = new JPanelHideable("fileNameInfo","•Û‘¶ƒtƒ@ƒCƒ‹–¼İ’èi“Áêj", Color.red);
+		fileNameInfoPanel = new JPanelHideable("fileNameInfo","ä¿å­˜ãƒ•ã‚¡ã‚¤ãƒ«åè¨­å®šï¼ˆç‰¹æ®Šï¼‰", Color.red);
 		GridBagConstraints gridbagc = new GridBagConstraints();
 		JLabel fileNameInfoLabel = new JLabel();
-		fileNameInfoLabel.setText("‚±‚Ìİ’è‚ğs‚¤‚Æ©“®‚Å•ÏŠ·‚Å‚«‚È‚¢ê‡‚ª‚ ‚è‚Ü‚·");
+		fileNameInfoLabel.setText("ã“ã®è¨­å®šã‚’è¡Œã†ã¨è‡ªå‹•ã§å¤‰æ›ã§ããªã„å ´åˆãŒã‚ã‚Šã¾ã™");
 		fileNameInfoLabel.setForeground(Color.red);
 		fileNameInfoLabel.setFont(new Font(Font.SERIF,Font.BOLD,new Font(null).getSize()+1));
 		gridbagc.gridx = 0;
@@ -5943,7 +5943,7 @@ s	 * @return javax.swing.JPanel
 		gridbagc.weightx = 1.0;
 		fileNameInfoPanel.add(fileNameInfoLabel, gridbagc);
 
-		changeMp4ExtCheckBox.setText("mp4•Û‘¶“®‰æ‚ÌŠg’£q‚ğ.mp4‚É‚·‚éiŠù’è‚Í.flvj");
+		changeMp4ExtCheckBox.setText("mp4ä¿å­˜å‹•ç”»ã®æ‹¡å¼µå­ã‚’.mp4ã«ã™ã‚‹ï¼ˆæ—¢å®šã¯.flvï¼‰");
 		gridbagc = new GridBagConstraints();
 		gridbagc.gridx = 0;
 		gridbagc.gridy = 1;
@@ -5953,7 +5953,7 @@ s	 * @return javax.swing.JPanel
 		gridbagc.weightx = 1.0;
 		fileNameInfoPanel.add(changeMp4ExtCheckBox, gridbagc);
 
-		changeTitleIdCheckBox.setText("•Û‘¶“®‰æ‚ÌID‚ğƒ^ƒCƒgƒ‹‚ÌŒã‚ë‚É‚Â‚¯‚éiŠù’è‚Íƒ^ƒCƒgƒ‹‚Ì‘Oj");
+		changeTitleIdCheckBox.setText("ä¿å­˜å‹•ç”»ã®IDã‚’ã‚¿ã‚¤ãƒˆãƒ«ã®å¾Œã‚ã«ã¤ã‘ã‚‹ï¼ˆæ—¢å®šã¯ã‚¿ã‚¤ãƒˆãƒ«ã®å‰ï¼‰");
 		gridbagc = new GridBagConstraints();
 		gridbagc.gridx = 0;
 		gridbagc.gridy = 2;
@@ -5975,7 +5975,7 @@ s	 * @return javax.swing.JPanel
 	 * @return extraDownloadInfoPanel
 	 */
 	private JPanel getExtraDownloadInfoPanel(){
-		extraDownloadInfoPanel = new JPanelHideable("extraDownload","Šg’£ƒ_ƒEƒ“ƒ[ƒhİ’è(dmc)", Color.blue);
+		extraDownloadInfoPanel = new JPanelHideable("extraDownload","æ‹¡å¼µãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰è¨­å®š(dmc)", Color.blue);
 
 		GridBagConstraints gridbagc = new GridBagConstraints();
 		gridbagc.gridx = 0;
@@ -5984,9 +5984,9 @@ s	 * @return javax.swing.JPanel
 		gridbagc.fill = GridBagConstraints.HORIZONTAL;
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
-		preferSmileCheckBox.setText("smileƒT[ƒo‹­§ƒ_ƒEƒ“ƒ[ƒh");
+		preferSmileCheckBox.setText("smileã‚µãƒ¼ãƒå¼·åˆ¶ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰");
 		preferSmileCheckBox.setForeground(Color.blue);
-		preferSmileCheckBox.setToolTipText("dmcƒT[ƒo‚É—L‚Á‚Ä‚àsmileƒT[ƒo‚©‚ç“Ç‚İ‚Ü‚·B");
+		preferSmileCheckBox.setToolTipText("dmcã‚µãƒ¼ãƒã«æœ‰ã£ã¦ã‚‚smileã‚µãƒ¼ãƒã‹ã‚‰èª­ã¿ã¾ã™ã€‚");
 		preferSmileCheckBox.setEnabled(false);
 		extraDownloadInfoPanel.add(preferSmileCheckBox, gridbagc);
 
@@ -5997,9 +5997,9 @@ s	 * @return javax.swing.JPanel
 		gridbagc.fill = GridBagConstraints.HORIZONTAL;
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
-		forceDmcDlCheckBox.setText("dmcƒT[ƒo‹­§ƒ_ƒEƒ“ƒ[ƒh");
+		forceDmcDlCheckBox.setText("dmcã‚µãƒ¼ãƒå¼·åˆ¶ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰");
 		forceDmcDlCheckBox.setForeground(Color.blue);
-		forceDmcDlCheckBox.setToolTipText("dmcƒT[ƒo“®‰æ‚ªƒTƒCƒY‚ª¬‚³‚­‚Ä‚àƒ_ƒEƒ“ƒ[ƒh‚µ‚Ü‚·B•ÏŠ·‚Ég‚¤‚Ì‚ÍƒTƒCƒY‚Ì‘å‚«‚¢•ûB");
+		forceDmcDlCheckBox.setToolTipText("dmcã‚µãƒ¼ãƒå‹•ç”»ãŒã‚µã‚¤ã‚ºãŒå°ã•ãã¦ã‚‚ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã—ã¾ã™ã€‚å¤‰æ›ã«ä½¿ã†ã®ã¯ã‚µã‚¤ã‚ºã®å¤§ãã„æ–¹ã€‚");
 		extraDownloadInfoPanel.add(forceDmcDlCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
@@ -6009,9 +6009,9 @@ s	 * @return javax.swing.JPanel
 		gridbagc.fill = GridBagConstraints.HORIZONTAL;
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
-		enableRangeCheckBox.setText("dmc(R)ƒ_ƒEƒ“ƒ[ƒh(“¯Ú‘±”2@”ñ„§B•ªŠ„ƒ_ƒEƒ“ƒ[ƒh)");
+		enableRangeCheckBox.setText("dmc(R)ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰(åŒæ™‚æ¥ç¶šæ•°2ã€€éæ¨å¥¨ã€‚åˆ†å‰²ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰)");
 	//	enableRangeCheckBox.setForeground(Color.blue);
-		enableRangeCheckBox.setToolTipText("‰Â”\‚È‚çHTTP/1.1 Rangeƒwƒbƒ_[‚ğg—p‚·‚é(“¯Ú‘±”2)");
+		enableRangeCheckBox.setToolTipText("å¯èƒ½ãªã‚‰HTTP/1.1 Rangeãƒ˜ãƒƒãƒ€ãƒ¼ã‚’ä½¿ç”¨ã™ã‚‹(åŒæ™‚æ¥ç¶šæ•°2)");
 		extraDownloadInfoPanel.add(enableRangeCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
@@ -6021,9 +6021,9 @@ s	 * @return javax.swing.JPanel
 		gridbagc.fill = GridBagConstraints.HORIZONTAL;
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
-		enableSeqResumeCheckBox.setText("dmc(S)ƒ_ƒEƒ“ƒ[ƒh(“¯Ú‘±”1 resume•t‚«B‚‘¬ )");
+		enableSeqResumeCheckBox.setText("dmc(S)ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰(åŒæ™‚æ¥ç¶šæ•°1 resumeä»˜ãã€‚é«˜é€Ÿ )");
 		enableSeqResumeCheckBox.setForeground(Color.blue);
-		enableSeqResumeCheckBox.setToolTipText("‰Â”\‚È‚çSequentialResume‚ğs‚¤(“¯Ú‘±”1)");
+		enableSeqResumeCheckBox.setToolTipText("å¯èƒ½ãªã‚‰SequentialResumeã‚’è¡Œã†(åŒæ™‚æ¥ç¶šæ•°1)");
 		extraDownloadInfoPanel.add(enableSeqResumeCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
@@ -6033,9 +6033,9 @@ s	 * @return javax.swing.JPanel
 		gridbagc.fill = GridBagConstraints.HORIZONTAL;
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
-		inhibitSmallCheckBox.setText("Large‹­§");
+		inhibitSmallCheckBox.setText("Largeå¼·åˆ¶");
 		inhibitSmallCheckBox.setForeground(Color.blue);
-		inhibitSmallCheckBox.setToolTipText("ƒTƒCƒY‚Ì¬‚³‚¢“®‰æ‚Íƒ_ƒEƒ“ƒ[ƒh‚µ‚Ü‚¹‚ñB‘¼‚æ‚è’á—Dæ");
+		inhibitSmallCheckBox.setToolTipText("ã‚µã‚¤ã‚ºã®å°ã•ã„å‹•ç”»ã¯ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã—ã¾ã›ã‚“ã€‚ä»–ã‚ˆã‚Šä½å„ªå…ˆ");
 		extraDownloadInfoPanel.add(inhibitSmallCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
@@ -6045,10 +6045,10 @@ s	 * @return javax.swing.JPanel
 		gridbagc.fill = GridBagConstraints.HORIZONTAL;
 		gridbagc.insets = INSETS_0_0_0_5;
 		gridbagc.weightx = 1.0;
-		autoFlvToMp4CheckBox.setText("dmc‚ÍƒfƒtƒHƒ‹ƒg‚Åmp4‚É(Šg’£q‚Íflv‚Ì‚Ü‚Ü)ª‚Ìmp4İ’è•¹—p‰Â");
+		autoFlvToMp4CheckBox.setText("dmcã¯ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§mp4ã«(æ‹¡å¼µå­ã¯flvã®ã¾ã¾)â†‘ã®mp4è¨­å®šä½µç”¨å¯");
 		autoFlvToMp4CheckBox.setForeground(Color.blue);
 		autoFlvToMp4CheckBox.setToolTipText(
-			"dmc“®‰æ‚Ímp4ƒRƒ“ƒeƒi‚Åƒ_ƒEƒ“ƒ[ƒh‚Å‚«‚½‚Ì‚Åİ’è•s—vBŠg’£q‚Íflv‚Ì‚Ü‚ÜBª‚Ìİ’è‚Æ•¹—p‚·‚ê‚ÎŠg’£q‚àmp4‚É‚È‚è‚Ü‚·B");
+			"dmcå‹•ç”»ã¯mp4ã‚³ãƒ³ãƒ†ãƒŠã§ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã§ããŸã®ã§è¨­å®šä¸è¦ã€‚æ‹¡å¼µå­ã¯flvã®ã¾ã¾ã€‚â†‘ã®è¨­å®šã¨ä½µç”¨ã™ã‚Œã°æ‹¡å¼µå­ã‚‚mp4ã«ãªã‚Šã¾ã™ã€‚");
 		autoFlvToMp4CheckBox.setEnabled(false);
 		extraDownloadInfoPanel.add(autoFlvToMp4CheckBox, gridbagc);
 
@@ -6086,13 +6086,13 @@ s	 * @return javax.swing.JPanel
 					.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							if (FFmpegOptionModel.isFile()) {// ƒtƒ@ƒCƒ‹
+							if (FFmpegOptionModel.isFile()) {// ãƒ•ã‚¡ã‚¤ãƒ«
 								Properties prop = new Properties();
 								try {
 									prop.loadFromXML(new FileInputStream(
 										FFmpegOptionModel.getSelectedFile()));
 								} catch (IOException ex) {
-									sendtext("İ’è2‚ÌƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ª•\¦‚Å‚«‚Ü‚¹‚ñB");
+									sendtext("è¨­å®š2ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¡¨ç¤ºã§ãã¾ã›ã‚“ã€‚");
 									ex.printStackTrace();
 								}
 								ExtOptionField.setText(prop.getProperty("EXT", ""));
@@ -6103,7 +6103,7 @@ s	 * @return javax.swing.JPanel
 								MainOptionField.setEnabled(false);
 								CommandLineInOptionField.setEnabled(false);
 								CommandLineOutOptionField.setEnabled(false);
-							} else {// ƒtƒ@ƒCƒ‹‚Å‚È‚¢
+							} else {// ãƒ•ã‚¡ã‚¤ãƒ«ã§ãªã„
 								ExtOptionField.setEnabled(true);
 								MainOptionField.setEnabled(true);
 								CommandLineInOptionField.setEnabled(true);
@@ -6125,13 +6125,13 @@ s	 * @return javax.swing.JPanel
 					.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							if (WideFFmpegOptionModel.isFile()) {// ƒtƒ@ƒCƒ‹
+							if (WideFFmpegOptionModel.isFile()) {// ãƒ•ã‚¡ã‚¤ãƒ«
 								Properties prop = new Properties();
 								try {
 									prop.loadFromXML(new FileInputStream(
 										WideFFmpegOptionModel.getSelectedFile()));
 								} catch (IOException ex) {
-									sendtext("İ’è2‚ÌƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ª•\¦‚Å‚«‚Ü‚¹‚ñB");
+									sendtext("è¨­å®š2ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¡¨ç¤ºã§ãã¾ã›ã‚“ã€‚");
 									ex.printStackTrace();
 								}
 								wideExtOptionField.setText(prop.getProperty("EXT", ""));
@@ -6143,7 +6143,7 @@ s	 * @return javax.swing.JPanel
 								wideCommandLineInOptionField.setEnabled(false);
 								wideCommandLineOutOptionField.setEnabled(false);
 								return;
-							} else {// ƒtƒ@ƒCƒ‹‚Å‚È‚¢
+							} else {// ãƒ•ã‚¡ã‚¤ãƒ«ã§ãªã„
 								wideExtOptionField.setEnabled(true);
 								wideMainOptionField.setEnabled(true);
 								wideCommandLineInOptionField.setEnabled(true);
@@ -6166,7 +6166,7 @@ s	 * @return javax.swing.JPanel
 					.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							if (zqFFmpegOptionModel.isFile()) {// ƒtƒ@ƒCƒ‹
+							if (zqFFmpegOptionModel.isFile()) {// ãƒ•ã‚¡ã‚¤ãƒ«
 								File optionXml = null;
 								Properties prop = new Properties();
 								String descr = "";
@@ -6179,7 +6179,7 @@ s	 * @return javax.swing.JPanel
 									else
 										descr = "";
 								} catch (IOException ex) {
-									sendtext("Qwatch‚ÌƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ª•\¦‚Å‚«‚Ü‚¹‚ñB");
+									sendtext("Qwatchã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¡¨ç¤ºã§ãã¾ã›ã‚“ã€‚");
 									ex.printStackTrace();
 								}
 								zqExtOptionField.setText(prop.getProperty("EXT", ""));
@@ -6214,7 +6214,7 @@ s	 * @return javax.swing.JPanel
 								zqCommandLineOutOptionField.setEnabled(false);
 								zqOptionFileDescription.setEnabled(false);
 								return;
-							} else {// ƒtƒ@ƒCƒ‹‚Å‚È‚¢
+							} else {// ãƒ•ã‚¡ã‚¤ãƒ«ã§ãªã„
 								zqExtOptionField.setEnabled(true);
 								zqMainOptionField.setEnabled(true);
 								zqCommandLineInOptionField.setEnabled(true);
@@ -6238,7 +6238,7 @@ s	 * @return javax.swing.JPanel
 	private JButton getFFmpegOptionReloadButton() {
 		if (FFmpegOptionReloadButton == null) {
 			FFmpegOptionReloadButton = new JButton();
-			FFmpegOptionReloadButton.setText("XV");
+			FFmpegOptionReloadButton.setText("æ›´æ–°");
 			FFmpegOptionReloadButton.addActionListener(
 				new ActionListener() {
 					@Override
@@ -6251,12 +6251,12 @@ s	 * @return javax.swing.JPanel
 	}
 	void FFmpegOptionReload(){
 		FFmpegOptionModel.reload();
-		if (!FFmpegOptionModel.isFile()) {// ƒtƒ@ƒCƒ‹‚Å‚È‚¢
+		if (!FFmpegOptionModel.isFile()) {// ãƒ•ã‚¡ã‚¤ãƒ«ã§ãªã„
 			Properties prop = new Properties();
 			try {
 				prop.loadFromXML(new FileInputStream(ConvertingSetting.PROP_FILE));
 			} catch (IOException ex) {
-				sendtext("İ’è1‚ÌƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ªXV‚Å‚«‚Ü‚¹‚ñB");
+				sendtext("è¨­å®š1ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ãŒæ›´æ–°ã§ãã¾ã›ã‚“ã€‚");
 				ex.printStackTrace();
 				return;
 			}
@@ -6274,7 +6274,7 @@ s	 * @return javax.swing.JPanel
 	private JButton getWideFFmpegOptionReloadButton() {
 		if (WideFFmpegOptionReloadButton == null) {
 			WideFFmpegOptionReloadButton = new JButton();
-			WideFFmpegOptionReloadButton.setText("XV");
+			WideFFmpegOptionReloadButton.setText("æ›´æ–°");
 			WideFFmpegOptionReloadButton.setForeground(Color.blue);
 			WideFFmpegOptionReloadButton.addActionListener(
 				new ActionListener() {
@@ -6288,13 +6288,13 @@ s	 * @return javax.swing.JPanel
 	}
 	void WideFFmpegOptionReload(){
 		WideFFmpegOptionModel.reload();
-		if (!WideFFmpegOptionModel.isFile()) {// ƒtƒ@ƒCƒ‹‚Å‚È‚¢
+		if (!WideFFmpegOptionModel.isFile()) {// ãƒ•ã‚¡ã‚¤ãƒ«ã§ãªã„
 			Properties prop = new Properties();
 			try {
 				prop.loadFromXML(new FileInputStream(
 					ConvertingSetting.PROP_FILE));
 			} catch (IOException ex) {
-				sendtext("İ’è2‚ÌƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ªXV‚Å‚«‚Ü‚¹‚ñB");
+				sendtext("è¨­å®š2ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ãŒæ›´æ–°ã§ãã¾ã›ã‚“ã€‚");
 				ex.printStackTrace();
 				return;
 			}
@@ -6312,7 +6312,7 @@ s	 * @return javax.swing.JPanel
 	private JButton getZqFFmpegOptionReloadButton() {
 		if (zqFFmpegOptionReloadButton == null) {
 			zqFFmpegOptionReloadButton = new JButton();
-			zqFFmpegOptionReloadButton.setText("XV");
+			zqFFmpegOptionReloadButton.setText("æ›´æ–°");
 			zqFFmpegOptionReloadButton.setForeground(Color.blue);
 			zqFFmpegOptionReloadButton.addActionListener(
 				new ActionListener() {
@@ -6326,7 +6326,7 @@ s	 * @return javax.swing.JPanel
 	}
 	void zqFFmpegOptionReload(){
 		zqFFmpegOptionModel.reload();
-		if (!zqFFmpegOptionModel.isFile()) {// ƒtƒ@ƒCƒ‹‚Å‚È‚¢
+		if (!zqFFmpegOptionModel.isFile()) {// ãƒ•ã‚¡ã‚¤ãƒ«ã§ãªã„
 			Properties prop = new Properties();
 			String optionXml = null;
 			String descr = "";
@@ -6339,7 +6339,7 @@ s	 * @return javax.swing.JPanel
 				else
 					descr = "";
 			} catch (IOException ex) {
-				sendtext("Qwatch‚ÌƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ªXV‚Å‚«‚Ü‚¹‚ñB");
+				sendtext("Qwatchã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ãŒæ›´æ–°ã§ãã¾ã›ã‚“ã€‚");
 				ex.printStackTrace();
 				return;
 			}
@@ -6427,8 +6427,8 @@ s	 * @return javax.swing.JPanel
 
 	private JComboBox<String> commentEraseTypeComboBox;
 	String[] CommentEraseTypeArray= {
-		"0:]—ˆ’Ê‚è(•\¦”‚ğ‰z‚¦‚é‚ÆŒÃ‚¢ƒRƒƒ“ƒg‚ğÁ‹)",
-		"1:•\¦”‚ğ‰z‚¦‚½V‹KƒRƒƒ“ƒg‚ğ–³‹",
+		"0:å¾“æ¥é€šã‚Š(è¡¨ç¤ºæ•°ã‚’è¶Šãˆã‚‹ã¨å¤ã„ã‚³ãƒ¡ãƒ³ãƒˆã‚’æ¶ˆå»)",
+		"1:è¡¨ç¤ºæ•°ã‚’è¶ŠãˆãŸæ–°è¦ã‚³ãƒ¡ãƒ³ãƒˆã‚’ç„¡è¦–",
 	};;
 
 	private File getFile(String path){
@@ -6461,11 +6461,11 @@ s	 * @return javax.swing.JPanel
 		int ret = -1;
 		try {
 			for(String arg: args){
-				if((arg.contains("@") && !arg.contains(" "))
+				if((arg.contains("ã€€") && !arg.contains(" "))
 					&& !arg.startsWith("\"")){
 					arg = "\"" + arg + "\"";
 				}
-				arg = arg.replaceAll("([\\(\\)\\^&;, @])","^$1");
+				arg = arg.replaceAll("([\\(\\)\\^&;, ã€€])","^$1");
 				cmd.add(arg);
 			}
 			pb = new ProcessBuilder(cmd);
@@ -6552,16 +6552,16 @@ class MainFrame_noticePop implements ActionListener {
 		}
 		int rc = 0;
 		if(src.isSelected() && !showed){
-			String[] opt = {"YES(ˆÈŒã’ˆÓ‚µ‚È‚¢)","YES","NO"};
+			String[] opt = {"YES(ä»¥å¾Œæ³¨æ„ã—ãªã„)","YES","NO"};
 			rc = JOptionPane.showOptionDialog(
 				adaptee,
-				 "’Ç‰Áƒ‚[ƒh‚Íw’èƒtƒ@ƒCƒ‹‚ÉƒRƒƒ“ƒg‚ğ’Ç‰Á•Û‘¶‚µ‚Ü‚·B\n"
-				+"“ú•t‰Á‚ ‚è‚Å’Ç‰Áƒ‚[ƒh‚É‚·‚é‚Æ•ÏŠ·‚ÉƒtƒHƒ‹ƒ_‡¬‚µ‚Ü‚¹‚ñB\n"
-				+"‰º‚Ìu•ÏŠ·Œã‚ÉƒRƒƒ“ƒgƒtƒ@ƒCƒ‹‚ğíœ‚·‚év‚Éƒ`ƒFƒbƒN‚ğ“ü‚ê‚é‚Æ\n"
-				+"•ÏŠ·Às‚Ì¬Œ÷ŒãAw’è‚µ‚½ƒtƒ@ƒCƒ‹‚Ì’Ç‰Á‚³‚ê‚½ƒRƒƒ“ƒg‚ğŠÜ‚Ş\n"
-				+"‘S‚Ä‚ÌƒRƒƒ“ƒg‚ªíœ‚³‚ê‚Ü‚·B\n\n"
-				+"’Ç‰Áƒ‚[ƒh‚É‚µ‚Ü‚·‚©H",
-				"’ˆÓ ’Ç‰Áƒ‚[ƒh",
+				 "è¿½åŠ ãƒ¢ãƒ¼ãƒ‰ã¯æŒ‡å®šãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚³ãƒ¡ãƒ³ãƒˆã‚’è¿½åŠ ä¿å­˜ã—ã¾ã™ã€‚\n"
+				+"æ—¥æ™‚ä»˜åŠ ã‚ã‚Šã§è¿½åŠ ãƒ¢ãƒ¼ãƒ‰ã«ã™ã‚‹ã¨å¤‰æ›æ™‚ã«ãƒ•ã‚©ãƒ«ãƒ€åˆæˆã—ã¾ã›ã‚“ã€‚\n"
+				+"ä¸‹ã®ã€Œå¤‰æ›å¾Œã«ã‚³ãƒ¡ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤ã™ã‚‹ã€ã«ãƒã‚§ãƒƒã‚¯ã‚’å…¥ã‚Œã‚‹ã¨\n"
+				+"å¤‰æ›å®Ÿè¡Œã®æˆåŠŸå¾Œã€æŒ‡å®šã—ãŸãƒ•ã‚¡ã‚¤ãƒ«ã®è¿½åŠ ã•ã‚ŒãŸã‚³ãƒ¡ãƒ³ãƒˆã‚’å«ã‚€\n"
+				+"å…¨ã¦ã®ã‚³ãƒ¡ãƒ³ãƒˆãŒå‰Šé™¤ã•ã‚Œã¾ã™ã€‚\n\n"
+				+"è¿½åŠ ãƒ¢ãƒ¼ãƒ‰ã«ã—ã¾ã™ã‹ï¼Ÿ",
+				"æ³¨æ„ è¿½åŠ ãƒ¢ãƒ¼ãƒ‰",
 				JOptionPane.DEFAULT_OPTION,
 				JOptionPane.WARNING_MESSAGE,
 				null, opt, 0
@@ -6605,17 +6605,17 @@ class AprilFool_Dioalog extends JDialog {
 	}
 
 	public void init(){
-		setTitle("ƒGƒCƒvƒŠƒ‹ƒt[ƒ‹‹@”\‚Ìİ’è");
+		setTitle("ã‚¨ã‚¤ãƒ—ãƒªãƒ«ãƒ•ãƒ¼ãƒ«æ©Ÿèƒ½ã®è¨­å®š");
 		try {
 			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
 		panel1 = new JPanel(new GridLayout(4, 1));
-		buttonOff = new JRadioButton("ƒIƒt@’Êí‚Ìİ’è");
-		button2008 = new JRadioButton("ƒjƒRƒjƒR“®‰æ2.0(Î) 2008ƒGƒCƒvƒŠƒ‹ƒt[ƒ‹");
-		button2009 = new JRadioButton("ƒjƒRƒjƒR“®‰æ(ƒÀƒÀƒÀ)@2009”NƒGƒCƒvƒŠƒ‹ƒt[ƒ‹");
-		button2010 = new JRadioButton("ƒjƒRƒjƒR“®‰æ•š‰»@ 2010ƒGƒCƒvƒŠƒ‹ƒt[ƒ‹");
+		buttonOff = new JRadioButton("ã‚ªãƒ•ã€€é€šå¸¸ã®è¨­å®š");
+		button2008 = new JRadioButton("ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»2.0(ç¬‘) 2008ã‚¨ã‚¤ãƒ—ãƒªãƒ«ãƒ•ãƒ¼ãƒ«");
+		button2009 = new JRadioButton("ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»(Î²Î²Î²)ã€€2009å¹´ã‚¨ã‚¤ãƒ—ãƒªãƒ«ãƒ•ãƒ¼ãƒ«");
+		button2010 = new JRadioButton("ãƒ‹ã‚³ãƒ‹ã‚³å‹•ç”»é»’å­—åŒ–ã€€ 2010ã‚¨ã‚¤ãƒ—ãƒªãƒ«ãƒ•ãƒ¼ãƒ«");
 		panel1.add(buttonOff);
 		panel1.add(button2008);
 		panel1.add(button2009);
@@ -6628,7 +6628,7 @@ class AprilFool_Dioalog extends JDialog {
 		extra = parent.extraModeField.getText();
 		showSelectedYear();
 		panel2 = new JPanel(new GridLayout(1, 2, 5, 5));
-		okButton = new JButton("İ’è");
+		okButton = new JButton("è¨­å®š");
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -6636,7 +6636,7 @@ class AprilFool_Dioalog extends JDialog {
 				dispose();
 			}
 		});
-		cancelButton = new JButton("æ‚èÁ‚µ");
+		cancelButton = new JButton("å–ã‚Šæ¶ˆã—");
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -6686,11 +6686,11 @@ class AprilFool_Dioalog extends JDialog {
 	}
 
 	private void setSelectedYear(){
-		//İ’è
-		//Œ³‚Ìİ’è’l‚ğíœ
+		//è¨­å®š
+		//å…ƒã®è¨­å®šå€¤ã‚’å‰Šé™¤
 		extra = extra.replace(aprilopt, "").trim();
 		String year = getSelectedYear();
-		//ƒGƒCƒvƒŠƒ‹ƒt[ƒ‹İ’è
+		//ã‚¨ã‚¤ãƒ—ãƒªãƒ«ãƒ•ãƒ¼ãƒ«è¨­å®š
 		if(year!=null && !year.isEmpty()){
 			parent.extraModeField.setText((extra + " " + APRIL_OPT + year));
 		}else{
@@ -6734,12 +6734,12 @@ class MainFrame_LoadViewHistory implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		JLabel status = mainFrame.statusBar;
 		JLabel watch = mainFrame.elapsedTimeBar;
-		status.setText("‹’®—š—ğ‚Ìƒ[ƒh");
+		status.setText("è¦–è´å±¥æ­´ã®ãƒ­ãƒ¼ãƒ‰");
 		Loader loader = new Loader(mainFrame.getSetting(), status, watch);
 		Path file = new Path("myhistory.html");
 		String url = "https://www.nicovideo.jp/my/history";
 		if (loader.load(url, file)){
-			status.setText("‹’®—š—ğ‚ğƒ[ƒh‚µ‚Ü‚µ‚½F" + file.getRelativePath());
+			status.setText("è¦–è´å±¥æ­´ã‚’ãƒ­ãƒ¼ãƒ‰ã—ã¾ã—ãŸï¼š" + file.getRelativePath());
 		}
 	}
 }

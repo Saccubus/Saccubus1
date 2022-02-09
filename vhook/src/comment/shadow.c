@@ -2,17 +2,17 @@
 #include "surf_util.h"
 #include "shadow.h"
 
-/*‰e‚È‚µ*/
+/*å½±ãªã—*/
 SDL_Surface* noShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	return surf;
 }
-/*‰E‰º*/
+/*å³ä¸‹*/
 #define SHADOW_SIZE 2
 #define SHADOW2_SIZE 2
 
 SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	int is_fix_size = data->fontsize_fix;
-	/*ƒXƒ‰ƒCƒh•‚ÌŠm’è*/
+	/*ã‚¹ãƒ©ã‚¤ãƒ‰å¹…ã®ç¢ºå®š*/
 	int slide = SHADOW_SIZE;
 	int slide2 = SHADOW2_SIZE;
 	int gmax = 0xff;
@@ -62,7 +62,7 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	SDL_SetAlpha(surf,0,0xff);
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
 	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
-	if(is_black==1){//•‚Å‚ ‚ê‚ÎAŽü‚è‚ð‚µ‚ë‚ÅˆÍ‚Þ
+	if(is_black==1){//é»’ã§ã‚ã‚Œã°ã€å‘¨ã‚Šã‚’ã—ã‚ã§å›²ã‚€
 		setRGB(shadow,0xffffffff);
 	}else if(is_black==0){
 		setRGB(shadow,0);
@@ -85,7 +85,7 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	Uint32 Aloss = shadow->format->Aloss;
 	SDL_LockSurface(shadow);
 	SDL_LockSurface(shadow2);
-	//‚±‚±‚Í‹ô”‚É‚·‚é‚±‚ÆB
+	//ã“ã“ã¯å¶æ•°ã«ã™ã‚‹ã“ã¨ã€‚
 	int zmax = 10;
 	if(is_fix_size){
 		zmax = 16;
@@ -128,7 +128,7 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 
 SDL_Surface* likeNicoNico2(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	int is_fix_size = data->fontsize_fix;
-	/*ƒXƒ‰ƒCƒh•‚ÌŠm’è*/
+	/*ã‚¹ãƒ©ã‚¤ãƒ‰å¹…ã®ç¢ºå®š*/
 	int slide = SHADOW_SIZE;
 	int slide2 = SHADOW2_SIZE;
 	if(data->shadow_data.slide>0){
@@ -150,11 +150,11 @@ SDL_Surface* likeNicoNico2(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data
 	return  ret;
 }
 
-/*‰E‰º*/
+/*å³ä¸‹*/
 #define SHADOW_SLIDE 2
 SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	int is_fix_size = data->fontsize_fix;
-	/*ƒXƒ‰ƒCƒh•‚ÌŠm’è*/
+	/*ã‚¹ãƒ©ã‚¤ãƒ‰å¹…ã®ç¢ºå®š*/
 	int slide = SHADOW_SLIDE;
 	double gmax = 0.6f;
 	if(data->shadow_data.slide>0){
@@ -164,7 +164,7 @@ SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	if(is_fix_size && data->shadow_data.autoresize){
 		slide <<= 1;
 	}
-	/*•‚Ì—pˆÓ*/
+	/*é»’ã®ç”¨æ„*/
 	SDL_Surface* black = SDL_CreateRGBSurface(	SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
 												surf->w+slide,
 												surf->h+slide,
@@ -182,10 +182,10 @@ SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 												#endif
 												);
 	SDL_Rect rect = {slide,slide};
-	SDL_SetAlpha(surf,0,0xff);//ˆê‰ñalpha‡¬‚ðØ‚é
+	SDL_SetAlpha(surf,0,0xff);//ä¸€å›žalphaåˆæˆã‚’åˆ‡ã‚‹
 	SDL_BlitSurface(surf,NULL,black,&rect);
 	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
-	if(is_black==1){//•‚Å‚ ‚ê‚ÎAŽü‚è‚ð‚µ‚ë‚ÅˆÍ‚Þ
+	if(is_black==1){//é»’ã§ã‚ã‚Œã°ã€å‘¨ã‚Šã‚’ã—ã‚ã§å›²ã‚€
 		setRGB(black,0xffffffff);
 	}else if(is_black==0){
 		setRGB(black,0);
@@ -198,10 +198,10 @@ SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	return black;
 }
 
-//ŽU‚ç‚·‚Ì‚Å‚Í‚È‚­AˆÍ‚Á‚Ä‚µ‚Ü‚¤B
+//æ•£ã‚‰ã™ã®ã§ã¯ãªãã€å›²ã£ã¦ã—ã¾ã†ã€‚
 SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	int is_fix_size = data->fontsize_fix;
-	/*ƒXƒ‰ƒCƒh•‚ÌŠm’è*/
+	/*ã‚¹ãƒ©ã‚¤ãƒ‰å¹…ã®ç¢ºå®š*/
 	int slide = SHADOW_SIZE;
 	int gmax = 0xff;
 	if(data->shadow_data.slide>0){
@@ -249,7 +249,7 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	SDL_SetAlpha(surf,0,0xff);
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
 	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
-	if(is_black==1){//•‚Å‚ ‚ê‚ÎAŽü‚è‚ð‚µ‚ë‚ÅˆÍ‚Þ
+	if(is_black==1){//é»’ã§ã‚ã‚Œã°ã€å‘¨ã‚Šã‚’ã—ã‚ã§å›²ã‚€
 		setRGB(shadow,0xffffffff);
 	}else if(is_black==0){
 		setRGB(shadow,0);
@@ -289,7 +289,7 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 				int up = (y==0) ? 0 : *(int*)((((char*)pix)-pitch));
 				int down = (y==nh-1) ? 0 : *(int*)((((char*)pix)+pitch));
 				int my = *pix2;
-				//Žü‚è‚ª‹ó”’‚Å‚È‚¢
+				//å‘¨ã‚ŠãŒç©ºç™½ã§ãªã„
 				if(((right | left | up | down | my) & Amask) != 0){
 					*pix2 &= Mask;
 					*pix2 |= (((0xff/(z+1)) >> Aloss) << Ashift) & Amask;
@@ -312,10 +312,10 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 
 #define SHADOW_S2NEW 1
 #define SHADOW_SACCUBUS2 2
-//Saccubus2“¯—l?
+//Saccubus2åŒæ§˜?
 SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data,int zmax_select){
 	int is_fix_size = data->fontsize_fix;
-	/*ƒXƒ‰ƒCƒh•‚ÌŠm’è*/
+	/*ã‚¹ãƒ©ã‚¤ãƒ‰å¹…ã®ç¢ºå®š*/
 	int slide = SHADOW_SACCUBUS2;
 	int gmax = 0xff;
 	if(data->shadow_data.slide>0){
@@ -359,20 +359,20 @@ SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,SDL_Color c,DATA* dat
 												    0xff000000
 												#endif
 											);
-	SDL_Rect rect = {slide,slide};	//¶ãÀ•W
-	SDL_SetAlpha(surf,0,0xff);		//ƒ¿‚ðØ‚é
-	SDL_BlitSurface(surf,NULL,shadow,&rect);	//surf¨shadowƒRƒs[
-	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);		//ƒ¿‚ð“ü‚ê‚é
-	if(is_black==1){//•‚Å‚ ‚ê‚ÎAŽü‚è‚ð‚µ‚ë‚ÅˆÍ‚Þ
-		setRGB(shadow,0xffffffff);		//‰e‚ÌF‚Å“h‚è‚Â‚Ô‚·
+	SDL_Rect rect = {slide,slide};	//å·¦ä¸Šåº§æ¨™
+	SDL_SetAlpha(surf,0,0xff);		//Î±ã‚’åˆ‡ã‚‹
+	SDL_BlitSurface(surf,NULL,shadow,&rect);	//surfâ†’shadowã‚³ãƒ”ãƒ¼
+	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);		//Î±ã‚’å…¥ã‚Œã‚‹
+	if(is_black==1){//é»’ã§ã‚ã‚Œã°ã€å‘¨ã‚Šã‚’ã—ã‚ã§å›²ã‚€
+		setRGB(shadow,0xffffffff);		//å½±ã®è‰²ã§å¡—ã‚Šã¤ã¶ã™
 	}else if(is_black==0){
 		setRGB(shadow,0);
 	}else{
 		setRGB(shadow,SDL_MapRGB(surf->format,c.r,c.g,c.b));
 	}
-	SDL_SetAlpha(shadow,0,0xff);		//ƒ¿‚ðØ‚é
-	SDL_BlitSurface(shadow,NULL,shadow2,NULL);	//shadow¨shadow2ƒRƒs[
-	SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);		//ƒ¿‚ð“ü‚ê‚é
+	SDL_SetAlpha(shadow,0,0xff);		//Î±ã‚’åˆ‡ã‚‹
+	SDL_BlitSurface(shadow,NULL,shadow2,NULL);	//shadowâ†’shadow2ã‚³ãƒ”ãƒ¼
+	SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);		//Î±ã‚’å…¥ã‚Œã‚‹
 	int x,y,z;
 	int nw = shadow->w;
 	int nh = shadow->h;
@@ -407,7 +407,7 @@ SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,SDL_Color c,DATA* dat
 				int downr = (y==nh-1||x==nw-1) ? 0 : *(int*)((((char*)pix)+pitch+bps));
 				int downl = (y==nh-1||x==0) ? 0 : *(int*)((((char*)pix)+pitch-bps));
 				int my = *pix2;
-				//Žü‚è‚ª‹ó”’‚Å‚È‚¢
+				//å‘¨ã‚ŠãŒç©ºç™½ã§ãªã„
 				if(((right | left | up | down | my | upl | upr | downl | downr) & Amask) != 0){
 					*pix2 &= Mask;
 					*pix2 |= ((gmax >> Aloss) << Ashift) & Amask;
@@ -438,7 +438,7 @@ SDL_Surface* likeSaccubus2new(SDL_Surface* surf,int is_black,SDL_Color c,DATA* d
 
 #define HTML5_SHADOW_SIZE 1
 SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
-	/*ƒXƒ‰ƒCƒh•‚ÌŠm’è*/
+	/*ã‚¹ãƒ©ã‚¤ãƒ‰å¹…ã®ç¢ºå®š*/
 	int is_fix_size = data->fontsize_fix;
 	int slide = HTML5_SHADOW_SIZE;
 	int gmax = 0xc0;
@@ -487,7 +487,7 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	SDL_SetAlpha(surf,0,0xff);
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
 	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
-	if(is_black==1){//•‚Å‚ ‚ê‚ÎAŽü‚è‚ð‚µ‚ë‚ÅˆÍ‚Þ
+	if(is_black==1){//é»’ã§ã‚ã‚Œã°ã€å‘¨ã‚Šã‚’ã—ã‚ã§å›²ã‚€
 		setRGB(shadow,0xffffffff);
 	}else if(is_black==0){
 		setRGB(shadow,0);
@@ -528,7 +528,7 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 				int downr = (y==nh-1||x==nw-1) ? 0 : *(int*)((((char*)pix)+pitch+bps));
 				int downl = (y==nh-1||x==0) ? 0 : *(int*)((((char*)pix)+pitch-bps));
 				int my = *pix2;
-				//Žü‚è‚ª‹ó”’‚Å‚È‚¢
+				//å‘¨ã‚ŠãŒç©ºç™½ã§ãªã„
 				if(((right | left | up | down | my | upl | upr | downl | downr) & Amask) != 0){
 					*pix2 &= Mask;
 					*pix2 |= ((gmax >> Aloss) << Ashift) & Amask;
@@ -551,7 +551,7 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 
 SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	int is_fix_size = data->fontsize_fix;
-	/*ƒXƒ‰ƒCƒh•‚ÌŠm’è*/
+	/*ã‚¹ãƒ©ã‚¤ãƒ‰å¹…ã®ç¢ºå®š*/
 	struct_shadow_data shd = data->shadow_data;
 	int slide = shd.slide;
 	if(is_fix_size && shd.autoresize){
@@ -595,7 +595,7 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	SDL_SetAlpha(surf,0,0xff);
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
 	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
-	if(is_black==1){//•‚Å‚ ‚ê‚ÎAŽü‚è‚ð‚µ‚ë‚ÅˆÍ‚Þ
+	if(is_black==1){//é»’ã§ã‚ã‚Œã°ã€å‘¨ã‚Šã‚’ã—ã‚ã§å›²ã‚€
 		setRGB(shadow,0xffffffff);
 	}else if(is_black==0){
 		setRGB(shadow,0);
@@ -650,7 +650,7 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 				int downr = (!f_downr||y==nh-1||x==nw-1) ? 0 : *(int*)((((char*)pix)+pitch+bps));
 				int downl = (!f_downl||y==nh-1||x==0) ? 0 : *(int*)((((char*)pix)+pitch-bps));
 				int my = *pix2;
-				//Žü‚è‚ª‹ó”’‚Å‚È‚¢
+				//å‘¨ã‚ŠãŒç©ºç™½ã§ãªã„
 				if(((right | left | up | down | my | upl | upr | downl | downr) & Amask) != 0){
 					*pix2 &= Mask;
 					*pix2 |= ((((int)(max_grad * (1.0 - grad * z))) >> Aloss) << Ashift) & Amask;
@@ -677,7 +677,7 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	return  ret;
 }
 
-//’è‹`
+//å®šç¾©
 
 SDL_Surface* (*ShadowFunc[SHADOW_MAX+1])(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data) = {
 	noShadow,
@@ -691,17 +691,17 @@ SDL_Surface* (*ShadowFunc[SHADOW_MAX+1])(SDL_Surface* surf,int is_black,SDL_Colo
 	customShadow,
 };
 
-//ƒJƒXƒ^ƒ€‰eÝ’è
+//ã‚«ã‚¹ã‚¿ãƒ å½±è¨­å®š
 void setting_shadow(const char* datastr, DATA* data){
-	// ƒf[ƒ^5‘g ƒJƒ“ƒ}(,)‚Å‹æØ‚é Œã‚ë‚ÍÈ—ª‰Â”\B
-	// 0:‰e‚Ìƒrƒbƒg•=slide(0~15)
-	// 1:Ž©“®’²®Žž‚É”{—¦‚ðŠ|‚¯ŽZ‚·‚é‚©‚µ‚È‚¢‚©:1(‚·‚é)/0(‚µ‚È‚¢)(È—ªŽž1‚·‚é)
-	// 2:‰e‚Ì•ûŒü=¶ã,ã,‰Eã,‰E,‰E‰º,‰º,¶‰º,¶‚Ì8ƒpƒ^[ƒ“‚ð—L‚è1,–³‚µ0‚Ì8•¶Žš‘g‚Ý‡‚í‚¹
-	//    16i”2•¶Žš‚ÉƒGƒ“ƒR[ƒh‚µ‚Ä‚à‚æ‚¢B‘SŽüˆÍ=FF,ã‰º¶‰E=55(È—ª’l55),‰E‰º‚Ì‚Ý=08
-	// 3:‰e‚ÌƒOƒ‰ƒf[ƒVƒ‡ƒ“ƒrƒbƒg•=”’l‚Ü‚½‚Íƒp[ƒZƒ“ƒg’l(0%~200%)(0‚ÍƒOƒ‰ƒf[ƒVƒ‡ƒ“–³‚µ)(È—ª’l0)
-	// 4:‰e‚ÌƒOƒ‰ƒf[ƒVƒ‡ƒ“max=(ƒp[ƒZƒ“ƒg’l)->0%~100% (ƒOƒ‰ƒf[ƒVƒ‡ƒ“–³‚µ‚È‚ç‰e‚Ì”Z‚³)(È—ª’l100%)
-	// 5:‰e‚ÌƒOƒ‰ƒf[ƒVƒ‡ƒ“min=(ƒp[ƒZƒ“ƒg’l)->0%~100% (0‚Í‚Ý•Å¬’l‚É‚·‚éÈ—ª’l)
-	// 6:ƒtƒHƒ“ƒg‚Ì×Žš‰»‚µ‚È‚¢‚©‚·‚é‚©:0(‚µ‚È‚¢)/1(‚·‚é)(È—ª’l0‚µ‚È‚¢)
+	// ãƒ‡ãƒ¼ã‚¿5çµ„ ã‚«ãƒ³ãƒž(,)ã§åŒºåˆ‡ã‚‹ å¾Œã‚ã¯çœç•¥å¯èƒ½ã€‚
+	// 0:å½±ã®ãƒ“ãƒƒãƒˆå¹…=slide(0~15)
+	// 1:è‡ªå‹•èª¿æ•´æ™‚ã«å€çŽ‡ã‚’æŽ›ã‘ç®—ã™ã‚‹ã‹ã—ãªã„ã‹:1(ã™ã‚‹)/0(ã—ãªã„)(çœç•¥æ™‚1ã™ã‚‹)
+	// 2:å½±ã®æ–¹å‘=å·¦ä¸Š,ä¸Š,å³ä¸Š,å³,å³ä¸‹,ä¸‹,å·¦ä¸‹,å·¦ã®8ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’æœ‰ã‚Š1,ç„¡ã—0ã®8æ–‡å­—çµ„ã¿åˆã‚ã›
+	//    16é€²æ•°2æ–‡å­—ã«ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã—ã¦ã‚‚ã‚ˆã„ã€‚å…¨å‘¨å›²=FF,ä¸Šä¸‹å·¦å³=55(çœç•¥å€¤55),å³ä¸‹ã®ã¿=08
+	// 3:å½±ã®ã‚°ãƒ©ãƒ‡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ“ãƒƒãƒˆå¹…=æ•°å€¤ã¾ãŸã¯ãƒ‘ãƒ¼ã‚»ãƒ³ãƒˆå€¤(0%~200%)(0ã¯ã‚°ãƒ©ãƒ‡ãƒ¼ã‚·ãƒ§ãƒ³ç„¡ã—)(çœç•¥å€¤0)
+	// 4:å½±ã®ã‚°ãƒ©ãƒ‡ãƒ¼ã‚·ãƒ§ãƒ³max=(ãƒ‘ãƒ¼ã‚»ãƒ³ãƒˆå€¤)->0%~100% (ã‚°ãƒ©ãƒ‡ãƒ¼ã‚·ãƒ§ãƒ³ç„¡ã—ãªã‚‰å½±ã®æ¿ƒã•)(çœç•¥å€¤100%)
+	// 5:å½±ã®ã‚°ãƒ©ãƒ‡ãƒ¼ã‚·ãƒ§ãƒ³min=(ãƒ‘ãƒ¼ã‚»ãƒ³ãƒˆå€¤)->0%~100% (0ã¯åˆ»ã¿å¹…æœ€å°å€¤ã«ã™ã‚‹ï¼çœç•¥å€¤)
+	// 6:ãƒ•ã‚©ãƒ³ãƒˆã®ç´°å­—åŒ–ã—ãªã„ã‹ã™ã‚‹ã‹:0(ã—ãªã„)/1(ã™ã‚‹)(çœç•¥å€¤0ã—ãªã„)
 	struct_shadow_data shd = {
 		.slide = 0,
 		.autoresize = 0,
@@ -737,9 +737,9 @@ void setting_shadow(const char* datastr, DATA* data){
 		return;
 	unsigned pattern = 0x55;
 	if(ptr[2]==','||ptr[2]=='\0')
-		pattern = strtol(ptr,&ptr,16);	//16i”ƒpƒ^[ƒ“
+		pattern = strtol(ptr,&ptr,16);	//16é€²æ•°ãƒ‘ã‚¿ãƒ¼ãƒ³
 	else if(ptr[8]==','||ptr[8]=='\0')
-		pattern = strtol(ptr,&ptr,2);	//2i”ƒpƒ^[ƒ“
+		pattern = strtol(ptr,&ptr,2);	//2é€²æ•°ãƒ‘ã‚¿ãƒ¼ãƒ³
 	else
 		return;
 	data->shadow_data.pattern = pattern;

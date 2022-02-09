@@ -41,7 +41,7 @@ public class CommentReplace {
 	}
 
 	private boolean toBoolean(String str){
-		//decode‚ ‚è
+		//decodeã‚ã‚Š
 		if(str==null)
 			return false;
 		else
@@ -64,21 +64,21 @@ public class CommentReplace {
 
 	private String replace(String com){
 		if(partial){
-			//•”•ªˆê’v
+			//éƒ¨åˆ†ä¸€è‡´
 			if(!fill)
-				//•”•ª’uŠ·
+				//éƒ¨åˆ†ç½®æ›
 				return com.replace(src, dest);
 			else if(com.contains(src))
-				//‘S‚Ä‚ğ’uŠ·
+				//å…¨ã¦ã‚’ç½®æ›
 				return dest;
 			else
-				//ˆê’v‚¹‚¸
+				//ä¸€è‡´ã›ãš
 				return com;
 		}else if (src.equals(com)){
-			//‘S‘Ìˆê’v‚µ‚½
+			//å…¨ä½“ä¸€è‡´ã—ãŸ
 			return dest;
 		}else
-			//ˆê’v‚¹‚¸
+			//ä¸€è‡´ã›ãš
 			return com;
 	}
 
@@ -92,13 +92,13 @@ public class CommentReplace {
 		if(enabled && (vpos < chat.getVpos() && chat.getVpos() <= vend)){
 			if(!chat.isOwner()){
 				if(replace_user){
-				//ƒ†[ƒU[ƒRƒƒ“ƒg
+				//ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚³ãƒ¡ãƒ³ãƒˆ
 					chat.process(rcolor, rsize, rlocation, replace(comment));
 				}
 			}else {
 				if(!chat.isScript()){
 					if(replace_owner){
-						//ƒXƒNƒŠƒvƒgˆÈŠOƒI[ƒi[ƒRƒƒ“ƒg
+						//ã‚¹ã‚¯ãƒªãƒ—ãƒˆä»¥å¤–ã‚ªãƒ¼ãƒŠãƒ¼ã‚³ãƒ¡ãƒ³ãƒˆ
 						chat.process(rcolor, rsize, rlocation, replace(comment));
 					}
 				}

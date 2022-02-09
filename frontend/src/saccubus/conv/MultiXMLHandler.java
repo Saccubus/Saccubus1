@@ -38,7 +38,7 @@ public class MultiXMLHandler extends DefaultHandler {
 		if (qName.toLowerCase().equals("chat")) {
 			chat = new ChatSave("chat");
 			chat_kicked = false;
-			//ƒ}ƒCƒƒ‚ƒŠíœ‘ÎÛ
+			//ãƒã‚¤ãƒ¡ãƒ¢ãƒªå‰Šé™¤å¯¾è±¡
 			String deleted = attributes.getValue("deleted");
 			if(deleted != null && deleted.equals("1")){
 				chat_kicked = true;

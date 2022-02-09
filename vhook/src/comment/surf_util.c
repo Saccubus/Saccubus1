@@ -94,11 +94,11 @@ h_Surface* connectSurface(h_Surface* top,h_Surface* bottom, int height){
 	int w = bottom->w;
 	int dh = (height-(y+h))>>1 ;
 	if(dh>=0){
-		// ŠÛ‚²‚ÆBlit‚µ‚Ä‚æ‚¢B
+		// ä¸¸ã”ã¨Blitã—ã¦ã‚ˆã„ã€‚
 		SDL_Rect rect = {0,y,w,h};
 		h_BlitSurface(bottom,NULL,ret,&rect);
 	}else{
-		// dh•ª‚¾‚¯í‚éB(dh < 0)
+		// dhåˆ†ã ã‘å‰Šã‚‹ã€‚(dh < 0)
 		SDL_Rect srcrect = {0, -dh, w, h+dh};
 		SDL_Rect dstrect = {0,y+dh,w,h+dh};
 		h_BlitSurface(bottom,&srcrect,ret,&dstrect);
@@ -135,14 +135,14 @@ void setAlpha(SDL_Surface* surf,double alpha_t){
 	Uint8* pixels;
 	Uint32* pix;
 	SDL_PixelFormat* format = surf->format;
-	/*•Ï”‚Ìİ’è*/
+	/*å¤‰æ•°ã®è¨­å®š*/
 	mask = format->Amask;
 	shift = format->Ashift;
 	loss = format->Aloss;
 	bytesp = format->BytesPerPixel;
 	pitch = surf->pitch;
 	pixels = surf->pixels;
-	SDL_LockSurface(surf);//ƒT[ƒtƒFƒCƒX‚ğƒƒbƒN
+	SDL_LockSurface(surf);//ã‚µãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’ãƒ­ãƒƒã‚¯
 	for(y=0;y<h;y++){
 		for(x=0;x<w;x++){
 			pix = (Uint32*)(&pixels[y*pitch + x*bytesp]);
@@ -152,18 +152,18 @@ void setAlpha(SDL_Surface* surf,double alpha_t){
 			(*pix) |= (alpha >> loss) << shift;
 		}
 	}
-	SDL_UnlockSurface(surf);//ƒAƒ“ƒƒbƒN
+	SDL_UnlockSurface(surf);//ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 }
 
 /**
- * src‚Ì•s“§–¾“x‚ğã‘‚«‚µ‚Ä‚µ‚Ü‚¤B
- * src‚Ì•û‚ª•s“§–¾‚È‚çA‚»‚ê‚ğã‘‚«B
+ * srcã®ä¸é€æ˜åº¦ã‚’ä¸Šæ›¸ãã—ã¦ã—ã¾ã†ã€‚
+ * srcã®æ–¹ãŒä¸é€æ˜ãªã‚‰ã€ãã‚Œã‚’ä¸Šæ›¸ãã€‚
  */
 
 void overrideAlpha(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect){
-	SDL_LockSurface(src);//ƒT[ƒtƒFƒCƒX‚ğƒƒbƒN
-	SDL_LockSurface(dst);//ƒT[ƒtƒFƒCƒX‚ğƒƒbƒN
-	//”ÍˆÍ‚ÌŠm’è
+	SDL_LockSurface(src);//ã‚µãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’ãƒ­ãƒƒã‚¯
+	SDL_LockSurface(dst);//ã‚µãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’ãƒ­ãƒƒã‚¯
+	//ç¯„å›²ã®ç¢ºå®š
 	int sw = src->w;
 	int sh = src->h;
 	int sx = 0;
@@ -190,7 +190,7 @@ void overrideAlpha(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Re
 		dw = MIN(dw-dx,dstrect->w);
 		dh = MIN(dh-dy,dstrect->h);
 	}
-	//¬‚³‚¢‚Ù‚¤‚É‚ ‚í‚¹‚é
+	//å°ã•ã„ã»ã†ã«ã‚ã‚ã›ã‚‹
 	if(dw > sw){
 		dw = sw;
 	}else{
@@ -201,7 +201,7 @@ void overrideAlpha(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Re
 	}else{
 		sh = dh;
 	}
-	//‚â‚Á‚Æ‚±‚³•`‰æBB
+	//ã‚„ã£ã¨ã“ã•æç”»ã€‚ã€‚
 	int sbytesp = src->format->BytesPerPixel;
 	int dbytesp = dst->format->BytesPerPixel;
 	int spitch = src->pitch;
@@ -231,8 +231,8 @@ void overrideAlpha(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Re
 			}
 		}
 	}
-	SDL_UnlockSurface(dst);//ƒAƒ“ƒƒbƒN
-	SDL_UnlockSurface(src);//ƒAƒ“ƒƒbƒN
+	SDL_UnlockSurface(dst);//ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
+	SDL_UnlockSurface(src);//ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 }
 
 void inline shadowBlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect){
@@ -250,7 +250,7 @@ void setRGB(SDL_Surface* surf,Uint32 color){
 	color &= surf->format->Rmask | surf->format->Gmask | surf->format->Bmask;
 	Uint8* pix = (Uint8*)surf->pixels;
 	Uint32* pt;
-	SDL_LockSurface(surf);//ƒT[ƒtƒFƒCƒX‚ğƒƒbƒN
+	SDL_LockSurface(surf);//ã‚µãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’ãƒ­ãƒƒã‚¯
 	for(y=0;y<h;y++){
 		for(x=0;x<w;x++){
 			pt = (Uint32*)(&pix[y*pitch + x*bytesp]);
@@ -258,7 +258,7 @@ void setRGB(SDL_Surface* surf,Uint32 color){
 			*pt |= color;
 		}
 	}
-	SDL_UnlockSurface(surf);//ƒT[ƒtƒFƒCƒX‚ğƒAƒ“ƒƒbƒN
+	SDL_UnlockSurface(surf);//ã‚µãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
 }
 
 void getRGBA(SDL_Surface* surf,int x,int y,char* r,char* g,char* b,char* a){
