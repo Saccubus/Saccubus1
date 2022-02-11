@@ -1,12 +1,12 @@
 /*
- * �g��Vhook�t�B���^
- * copyright (c) 2008 �Ձi�v�T�C�j
+ * 拡張Vhookフィルタ
+ * copyright (c) 2008 ψ（プサイ）
  *
- * ������΂��p�Ɋg�����ꂽVhook���C�u������
- * �쓮�����邽�߂̃t�B���^�ł��B
+ * さきゅばす用に拡張されたVhookライブラリを
+ * 駆動させるためのフィルタです。
  *
- * ���̃t�@�C���́u������΂��v�̈ꕔ�ł���A
- * ���̃\�[�X�R�[�h��GPL���C�Z���X�Ŕz�z����܂��ł��B
+ * このファイルは「さきゅばす」の一部であり、
+ * このソースコードはGPLライセンスで配布されますです。
  */
 #include "libavutil/opt.h"
 #include "avfilter.h"
@@ -19,7 +19,7 @@
 #if HAVE_DLFCN_H
 #include <dlfcn.h>
 #else
-//dlfcn.h�̖���Windows Mingw���p
+//dlfcn.hの無いWindows Mingw環境用
 #include <windows.h>
 #define dlopen(a,b) ((void*)LoadLibrary(a))
 #define dlsym(a,b) ((void*)GetProcAddress((HMODULE)(a),(b)))
@@ -28,75 +28,75 @@
 #define RTLD_NOW 0
 #endif
 
-//�f���~�^�BMEncoder���Ƃ͓����ɂ��Ƃ��������悳�����B
+//デリミタ。MEncoder側とは同じにしといた方がよさそう。
 #define VHEXT_DELIM '|'
 
 typedef struct{
 	const AVClass *class;
-	//�����͂��Ƃ��Ǝg���̂Ŋm�ہB
+	//引数はあとあと使うので確保。
 	char* vhextargs;
 	char* args;
 	char** argv;
 	int argc;
-	//�_�C�i�~�b�N���C�u�����ւ̃|�C���^
+	//ダイナミックライブラリへのポインタ
 	void* Dynamic;
-	//�֐��ւ̃|�C���^
+	//関数へのポインタ
 	FrameHookExtConfigureFn ExtConfigure;
 	FrameHookExtProcessFn ExtProcess;
 	FrameHookExtReleaseFn ExtRelease;
-	//FrameHook�̎g���|�C���^
+	//FrameHookの使うポインタ
 	void* Context;
 } Context;
 
 /*
- * ���̒��ł����g���֐���`
+ * この中でだけ使う関数定義
  */
 
 char** split(char* str,int str_len,int* argc,char delim);
 int decode(char* s,int len);
 
 /*
- *  AVFilter�\���̂Ɋi�[�����֐��Q
+ *  AVFilter構造体に格納される関数群
  */
 
 static av_cold int init(AVFilterContext *ctx){
-    //Context���Ƃ肠�����m��
+    //Contextをとりあえず確保
     Context* const context= ctx->priv;
     int code;
     char* const args = context->vhextargs;
     int const arg_len = strlen(args);
     av_log(ctx, AV_LOG_INFO, "called with args = %s.\n",args);
 
-    //������NULL�Ȃ̂͂�������
+    //引数がNULLなのはおかしい
     if(!args) {
         av_log(ctx, AV_LOG_ERROR, "Invalid arguments.\n");
         return -1;
     }
-    //�����̃R�s�[
+    //引数のコピー
     context->args = (char*)av_malloc(arg_len+1);
     if(!context->args){
         av_log(ctx, AV_LOG_ERROR, "Failed to malloc memory for args.\n");
         return -1;
     }
     memcpy(context->args,args,arg_len);
-    context->args[arg_len]='\0';//NULL�ōŌ�𖄂߂�B
+    context->args[arg_len]='\0';//NULLで最後を埋める。
 
-	//�f�R�[�h
+	//デコード
 	decode(context->args,arg_len);
-	//�����̓W�J
+	//引数の展開
 	context->argv = split(context->args,arg_len,&context->argc,VHEXT_DELIM);
 	if(!context->argv){
             av_log(ctx, AV_LOG_ERROR, "Failed to split args.\n");
             return -1;
 	}
 
-    //DLL�ǂݍ���
+    //DLL読み込み
     context->Dynamic = dlopen(context->argv[0], RTLD_NOW);
     if (!context->Dynamic) {
         av_log(ctx, AV_LOG_ERROR, "Failed to open lib: %s\nMSG:%s\n",context->argv[0],context->argv[0], dlerror());
         return -1;
     }
-	//�e�֐����擾
+	//各関数を取得
 	context->ExtConfigure = dlsym(context->Dynamic, "ExtConfigure");
 	context->ExtProcess = dlsym(context->Dynamic, "ExtProcess");
 	context->ExtRelease = dlsym(context->Dynamic, "ExtRelease");
@@ -113,7 +113,7 @@ static av_cold int init(AVFilterContext *ctx){
         return -1;
 	}
 
-	//Configure���Ăяo��
+	//Configureを呼び出す
 	if((code = context->ExtConfigure(&context->Context,context->argc,context->argv))){
         av_log(ctx, AV_LOG_ERROR, "Failed to configure.Code:%d\n",code);
         return -1;
@@ -122,23 +122,23 @@ static av_cold int init(AVFilterContext *ctx){
 }
 
 static void uninit(AVFilterContext *ctx){
-    //Context���Ƃ肠�����m��
+    //Contextをとりあえず確保
     Context *context= ctx->priv;
-    //�J������B
+    //開放する。
     context->ExtRelease(context->Context);
-    //�������J������B
+    //引数も開放する。
     if(!context->args){
         av_free(context->args);
     }
     if(!context->argv){
         av_free(context->argv);
     }
-    //DLL������
+    //DLLも閉じる
     dlclose(context->Dynamic);
 }
 
 static int query_formats(AVFilterContext *ctx){
-	//SDL�Ŏg���₷�����邽�߂�RGB24�t�H�[�}�b�g��v������B
+	//SDLで使いやすくするためにRGB24フォーマットを要求する。
     static const enum AVPixelFormat pix_fmts[] = { AV_PIX_FMT_RGB24, AV_PIX_FMT_NONE };
 
     ff_set_common_formats(ctx, ff_make_format_list(pix_fmts));
@@ -146,23 +146,23 @@ static int query_formats(AVFilterContext *ctx){
 }
 
 /*
- * AVFilterPad��Input���ɌĂ΂��֐�
+ * AVFilterPadのInput側に呼ばれる関数
  */
 
 static int filter_frame(AVFilterLink *inlink, AVFrame *frame)
 {
-    //�|�C���^�͊�{
+    //ポインタは基本
     AVFilterContext* const ctx = inlink->dst;
     AVFilterLink* const outlink = ctx->outputs[0];
     Context* const context = (Context*)ctx->priv;
-    //�Ǝ��\���̂ɑ��
+    //独自構造体に代入
     vhext_frame vframe;
     vframe.data = frame->data[0];
     vframe.linesize = frame->linesize[0];
     vframe.w = inlink->w;
     vframe.h = inlink->h;
     vframe.pts = inlink->current_pts_us / (double)AV_TIME_BASE;
-    //���C�u�������Ăяo���B
+    //ライブラリを呼び出す。
     context->ExtProcess(context->Context,&vframe);
 
     return ff_filter_frame(outlink, frame);
@@ -216,26 +216,26 @@ AVFilter ff_vf_vhext=
 };
 
 /*
- * ���̒��ł̂ݎg����֐�
+ * この中でのみ使われる関数
  */
 
-//����������̕����ɂ���ĕ����܂��B
+//文字列を特定の文字によって分けます。
 char** split(char* str,int str_len,int* argc,char delim){
-	//�`�F�b�N
+	//チェック
 	if(!str || delim=='\0' || str_len < 0){
 		return 0;
 	}
-	//�m��
+	//確保
 	char** argv = av_malloc(sizeof(char*));
 	if(!argv){
 		return 0;
 	}
-	//���[�v�J�n
+	//ループ開始
 	int last = 0;
 	int i;
 	int arg_cnt = 0;
 	for(i=0;i<str_len;i++){
-		if(str[i] == delim){//�f���~�^�ɒB����
+		if(str[i] == delim){//デリミタに達した
 			str[i] = '\0';
 			argv[arg_cnt] = &str[last];
 			arg_cnt++;
@@ -248,7 +248,7 @@ char** split(char* str,int str_len,int* argc,char delim){
 	return argv;
 }
 
-//UR�G���R�[�h�L�@���g���܂��B
+//URエンコード記法が使えます。
 int decode(char* s,int len){
         int i,j;
         char buf,*s1;

@@ -1,21 +1,21 @@
 # Makefile ( n source file 1 execute file version )
 # 2002/12/ 4
 
-# ���{��̃R�����g�����ɏ]���ďC�����ĉ������B
-# $(HOGEHOGE) �Ƃ����̂̓}�N���i���̕ϐ��j�ŁA
-# HOGEHOGE=... �Œ�`���ꂽ���e�ɓW�J���ĉ��߂���܂��B
-# �s���̃^�u�ɂ͈Ӗ�������܂��̂ŁA�X�y�[�X�ɕϊ����Ȃ��ŉ������B
-# �ł���΁A�ŏI�I�ɓ��{��R�����g�͍폜���ĉ������B
+# 日本語のコメント部分に従って修正して下さい。
+# $(HOGEHOGE) というのはマクロ（一種の変数）で、
+# HOGEHOGE=... で定義された内容に展開して解釈されます。
+# 行頭のタブには意味がありますので、スペースに変換しないで下さい。
+# できれば、最終的に日本語コメントは削除して下さい。
 
-#	 ���p�b�P�[�W�������s�t�@�C�����ɏ���������
+#	 ↓パッケージ名かつ実行ファイル名に書き換える
 PACKAGE	= Saccubus
-#	 ���\�[�X�t�@�C�����������ׂ�
+#	 ↓ソースファイルを書き並べる
 SRCS	= Launcher.c
-#	 ���w�b�_�t�@�C�����������ׂ�
+#	 ↓ヘッダファイルを書き並べる
 HEADS	= 
 OBJS	= $(SRCS:.c=.o) $(PACKAGE)_res.o
 
-#	 ���p�b�P�[�W�Ɋ܂߂�t�@�C�������������ׂ�
+#	 ↓パッケージに含めるファイル名を書き並べる
 FILES	= Makefile $(HEADS) $(SRCS)
 VER	= `date +%Y%m%d`
 
@@ -101,7 +101,7 @@ prof: run
 	$(PROF) $(PACKAGE) | less
 
 run: all
-#	 ���T���v���f�[�^�Ŏ��s����悤�ɏ�������
-#	    $(PACKAGE) �͎��s�t�@�C�����ɓW�J�����
-#	    �s���̓^�u�i�X�y�[�X�ł͂Ȃ��j
+#	 ↓サンプルデータで実行するように書き直す
+#	    $(PACKAGE) は実行ファイル名に展開される
+#	    行頭はタブ（スペースではない）
 	./$(PACKAGE) < sample-data | less

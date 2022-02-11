@@ -1,99 +1,99 @@
-������΂�1.xx�łŃ��[�J���ɓ���ƃR�����g������������@
+さきゅばす1.xx版でローカルに動画とコメントを合成する方法
 
-���@A.����ID���g���ꍇ�E�E�Eflv�g���q(���g��flv�ł�mp4�ł���)
-1.�u�ۑ��ݒ�v�^�u�̐ݒ�
-�@1a.�u����E�R�����g�v�^�u�́u������_�E�����[�h����v�u�R�����g���_�E�����[�h����v�̃`�F�b�N���O��
-�@1b.�u�R�����g�t������v�^�u�́u�����ϊ�����v�u�R�����g��t������v�Ƀ`�F�b�N������B
-�@�@���e�҃R�����g��t�����Ȃ��ꍇ�́u���e�҃R�����g��t������v�̃`�F�b�N���O���B
-�@�@�i���R��xml�t�@�C�����Ȃ��ꍇ�͂��Ă��Ă�OK�j
-�@1c.�u�y�[�W���v�^�u�́u�������ۑ�����v�̃`�F�b�N���O���B
-2.flv�̖��O���@[sm0]����̖��O.flv�@�ɂ��āA[out]video�t�H���_�̒��ɓ����B
-3.xml�̖��O���@[sm0]����̖��O.xml�@�ɂ��āA[out]comment�t�H���_�̒��ɓ����B
-4.����A�R�����g���Ɂu�ۑ�����t�H���_���w�肵�A�t�@�C�����͎����Ō��肷��v��L���ɂ���B
-5.�K�v�ȏꍇ��ffmpeg�̐ݒ���s���B�iPC�ōĐ�����Ȃ�f�t�H���g�̐ݒ�̂܂܂ŉj
-6.����ID�� sm0 �܂��� http://www.nicovideo.jp/watch/sm0 �����āu�ϊ��v�{�^���������B
-�@�_�E�����[�h�����ɕϊ����n�܂�A�I���B
-�@flv��xml�̖��O�̍ŏ���[sm0]�Ȃǂ̋��ʂ�ID�����Ă��āA������΂��̓���ID��
-�@����ID������΂����B�t�@�C�����Ɋ���[]�͕K�{
+方法A.動画IDを使う場合・・・flv拡張子(中身はflvでもmp4でも可)
+1.「保存設定」タブの設定
+　1a.「動画・コメント」タブの「動画をダウンロードする」「コメントをダウンロードする」のチェックを外す
+　1b.「コメント付き動画」タブの「動画を変換する」「コメントを付加する」にチェックを入れる。
+　　投稿者コメントを付加しない場合は「投稿者コメントを付加する」のチェックを外す。
+　　（投コメxmlファイルがない場合はつけていてもOK）
+　1c.「ページ情報」タブの「動画情報を保存する」のチェックを外す。
+2.flvの名前を　[sm0]動画の名前.flv　にして、[out]videoフォルダの中に入れる。
+3.xmlの名前を　[sm0]動画の名前.xml　にして、[out]commentフォルダの中に入れる。
+4.動画、コメント共に「保存するフォルダを指定し、ファイル名は自動で決定する」を有効にする。
+5.必要な場合はffmpegの設定を行う。（PCで再生するならデフォルトの設定のままで可）
+6.動画IDに sm0 または http://www.nicovideo.jp/watch/sm0 を入れて「変換」ボタンを押す。
+　ダウンロードせずに変換が始まり、終了。
+　flvとxmlの名前の最初に[sm0]などの共通のIDがついていて、さきゅばすの動画IDに
+　同じIDを入れればいい。ファイル名に括弧[]は必須
 
-���@B.����t�@�C�������g���ꍇ�E�E�E�g���qmp4 avi���\
-1.�u�ۑ��ݒ�v�^�u�̐ݒ�
-�@1a.�u����E�R�����g�v�^�u�́u������_�E�����[�h����v�u�R�����g���_�E�����[�h����v�̃`�F�b�N���O��
-�@1b.�u�R�����g�t������v�^�u�́u�����ϊ�����v�u�R�����g��t������v�Ƀ`�F�b�N������B
-�@�@���e�҃R�����g��t�����Ȃ��ꍇ�́u���e�҃R�����g��t������v�̃`�F�b�N���O���B
-�@�@�i���R��xml�t�@�C�����Ȃ��ꍇ�͂��Ă��Ă�OK�j
-�@1c.�u�y�[�W���v�^�u�́u�������ۑ�����v�̃`�F�b�N���O���B
-2.�u�ۑ��ݒ�v�u����E�R�����g�v�^�u�œ���ۑ��ݒ�́u�ۑ�����t�@�C�������w�肷��v�Ƀ`�F�b�N������
-�@�Q�ƃ{�^�����瓮��t�@�C����I������B�t�@�C���̏ꏊ�E�t�@�C������g���q�ɐ����͂Ȃ��B
-3.�R�����gxml�̖��O���@[sm0]����̖��O.xml�@�ɂ��āA[out]comment�t�H���_�̒��ɓ����B
-4.����ID�� sm0 �����āu�ϊ��v�{�^���������B
-�@�_�E�����[�h�����ɕϊ����n�܂�A�I���B
+方法B.動画ファイル名を使う場合・・・拡張子mp4 aviも可能
+1.「保存設定」タブの設定
+　1a.「動画・コメント」タブの「動画をダウンロードする」「コメントをダウンロードする」のチェックを外す
+　1b.「コメント付き動画」タブの「動画を変換する」「コメントを付加する」にチェックを入れる。
+　　投稿者コメントを付加しない場合は「投稿者コメントを付加する」のチェックを外す。
+　　（投コメxmlファイルがない場合はつけていてもOK）
+　1c.「ページ情報」タブの「動画情報を保存する」のチェックを外す。
+2.「保存設定」「動画・コメント」タブで動画保存設定の「保存するファイル名を指定する」にチェックを入れて
+　参照ボタンから動画ファイルを選択する。ファイルの場所・ファイル名や拡張子に制限はない。
+3.コメントxmlの名前を　[sm0]動画の名前.xml　にして、[out]commentフォルダの中に入れる。
+4.動画IDに sm0 を入れて「変換」ボタンを押す。
+　ダウンロードせずに変換が始まり、終了。
 
-���@C.SaccubusConvList���g���ꍇ
-�@�ȉ�����_�E�����[�h����readme�̒ʂ�ɐݒ肵���[�J���ϊ��{�^���������B
-�@��������΂��ϊ����X�g(URL���X�g�A���ϊ�)�@by ������܂���
-�@�@http://www.ne.jp/asahi/mochiyama/my/file/SaccubusConvList.zip
+方法C.SaccubusConvListを使う場合
+　以下からダウンロードしてreadmeの通りに設定しローカル変換ボタンを押す。
+　■さきゅばす変換リスト(URLリスト連続変換)　by もちやまさん
+　　http://www.ne.jp/asahi/mochiyama/my/file/SaccubusConvList.zip
 
-���@D.�h���b�O�A���h�h���b�v(ver1.65.2.8�ȍ~)
-1. [�Ǘ�]�^�u���J���܂��B
-2. ���[�J���t�@�C�����h���b�O�A���h�h���b�v����ƁAURL/ID���Ƀt�@�C���p�X�����͂���܂��B
-�@�@����t�@�C�����ɓ���ID [smID] �͗L���Ă��Ȃ��Ă��\���܂���B�Ȃ��ꍇ��sm0�Ƃ��܂��B
-3. �ϊ��{�^���������ƕۑ��ݒ�^�u���J���܂��B�i���̎��_�ł͕ϊ��J�n���܂���B�j
-�@�@URL/ID���ɂ�sm0(�܂���sm����ID)�������ݒ肳��܂��B
-�@�@����t�@�C����������ID([sm9]�Ȃ�)���܂ޏꍇ�͂���[]�������ݒ肳��܂��B
-�@�@������TS�̏ꍇ�� sm0_lv99999 �ȂǂƐݒ肳��܂��̂ł��̂܂܂�ok�ł���
-�@�@lv�Ŏn�܂��Ă���ꍇ�͕ύX���ĉ������B
-�@�@�u������_�E�����[�h����v�̓I�t�ɂȂ�u�ۑ�����t�@�C�������w�肷��v�Ƀp�X���������͂���܂��B
-�@�@����t�H���_�ɓ�����XML�t�@�C��������ꍇ�̓R�����g�ۑ��t�@�C�����������ݒ肳��܂��B
-�@�@��������TS�Ȃǂŕ�����������XML�ȂǂɂȂ��Ă���ƌ�ݒ肳���̂Œ��ӂ��ĉ������B
-4. �R�����g�t�@�C�����ʃt�H���_�ɂ���ꍇ��
-�@�@�R�����g�t�@�C�����u�ۑ��t�@�C�������w�肷��v���Ƀh���b�O�A���h�h���b�v���܂��B
-�@�@�u�R�����g���_�E�����[�h�v���I�t�A�u�ۑ��t�@�C�������w�肷��v���I���ɂ��ĉ������B
-5. [�y�[�W���]�́u�������ۑ�����v���I�t�ɂȂ��Ă��邱�Ƃ��m�F���ĉ������B
-�@�@[�R�����g�t������]�́u�t�@�C�����ɓ���ID��t�����Ȃ��v�̐ݒ���m�F
-6. [����ݒ�][�ϊ��ݒ�]�^�u��K�؂ɐݒ肵�ĉ������B(�ŏ��͂��̂܂܂Ŏ����Ă��\���܂���)
-7. URL/ID���� ID���ݒ肳��Ă���̂��m�F���ĉ������B
-8. �ϊ��{�^���������ƕϊ����J�n���܂��B(URL/ID�������[�J���t�@�C�����ǂ������J�n�����ł��B)
+方法D.ドラッグアンドドロップ(ver1.65.2.8以降)
+1. [管理]タブを開きます。
+2. ローカルファイルをドラッグアンドドロップすると、URL/ID欄にファイルパスが入力されます。
+　　動画ファイル名に動画ID [smID] は有ってもなくても構いません。ない場合はsm0とします。
+3. 変換ボタンを押すと保存設定タブが開きます。（この時点では変換開始しません。）
+　　URL/ID欄にはsm0(またはsm動画ID)が自動設定されます。
+　　動画ファイル名が動画ID([sm9]など)を含む場合はその[]内部が設定されます。
+　　生放送TSの場合は sm0_lv99999 などと設定されますのでそのままでokですが
+　　lvで始まっている場合は変更して下さい。
+　　「動画をダウンロードする」はオフになり「保存するファイル名を指定する」にパスが自動入力されます。
+　　同一フォルダに同名のXMLファイルがある場合はコメント保存ファイル名も自動設定されます。
+　　※生放送TSなどで放送説明文がXMLなどになっていると誤設定されるので注意して下さい。
+4. コメントファイルが別フォルダにある場合は
+　　コメントファイルを「保存ファイル名を指定する」欄にドラッグアンドドロップします。
+　　「コメントをダウンロード」をオフ、「保存ファイル名を指定する」をオンにして下さい。
+5. [ページ情報]の「動画情報を保存する」がオフになっていることを確認して下さい。
+　　[コメント付き動画]の「ファイル名に動画IDを付加しない」の設定も確認
+6. [動画設定][変換設定]タブを適切に設定して下さい。(最初はそのままで試しても構いません)
+7. URL/ID欄に IDが設定されているのを確認して下さい。
+8. 変換ボタンを押すと変換が開始します。(URL/ID欄がローカルファイルかどうかが開始判定基準です。)
 
-���[�J���ϊ��ł�1.46r�ȍ~�̐V�@�\�̓I�t�ɂ���������������
-�P�DNM�Ή�
-�@NM����(SWF)�ȊO�͊֌W�Ȃ��ł����O�ׂ̈�
-�@SWF�����[�J���ϊ��Ȃ炳����΂����ʃ\�t�g��
-�@flv/avi/mp4���ɕϊ������������m(Newgrounds swivel�Ƃ�)
-�Q�Dfps�ύX
-�@�ϊ����Ԃ������Ȃ�B�܂�fps�l���ςł���(�Î~�敔�������铙)�ꍇ
-�@fps�ŏ��l�`�F�b�N���������ł��Ȃ��B
-�R�D�f���Ȃ�����
-�@�f���X�g���[�����F���ł��Ȃ��ꍇ�A������Ɖf���Ȃ��ŕϊ����Ă��܂�
-�@�f������̕ϊ����Ӑ}���Ă����ꍇ�͎��Ԃ����ʂɂȂ�B
+ローカル変換では1.46r以降の新機能はオフにした方がいいかも
+１．NM対応
+　NM動画(SWF)以外は関係ないですが念の為に
+　SWFもローカル変換ならさきゅばすより別ソフトで
+　flv/avi/mp4等に変換した方が正確(Newgrounds swivelとか)
+２．fps変更
+　変換時間が長くなる。またfps値が可変である(静止画部分がある等)場合
+　fps最小値チェックが正しくできない。
+３．映像なし許可
+　映像ストリームが認識できない場合、許可すると映像なしで変換してしまい
+　映像ありの変換を意図していた場合は時間が無駄になる。
 
 
-���[�J���ϊ��ł̃I�v�V�����ݒ�⑫
+ローカル変換でのオプション設定補足
 
-�o�̓I�v�V����
- -ss hh:mm:ss.SSS�@�܂���sssss.SSS
-�@hh=�� mm=�� ss=�b SSS=�~���b�@(.�~���b�͏ȗ���)
-�@sssss.SSS=�b���Z���� 60�ȏ�̕b���w���
-�@�o�͂̊J�n�������w�肷��B�o�͂̓����J�b�g����
+出力オプション
+ -ss hh:mm:ss.SSS　またはsssss.SSS
+　hh=時 mm=分 ss=秒 SSS=ミリ秒　(.ミリ秒は省略可)
+　sssss.SSS=秒換算して 60以上の秒を指定可
+　出力の開始時刻を指定する。出力の頭をカットする
 
-�o�̓I�v�V����
- -t hh:mm:ss.SSS�@�܂���sssss.SSS
-�@�o�͂̒������w�肷��B�o�͂̌����J�b�g����B
-�@�������w��l�̓J�b�g���钷���ł͂Ȃ��ďo�͎���
-�i���ݒ�Ȃǂ��e�X�g����ꍇ�� -t 60 ��1���Ԃ����e�X�g����
-�@�@�Ɨǂ������j
+出力オプション
+ -t hh:mm:ss.SSS　またはsssss.SSS
+　出力の長さを指定する。出力の後ろをカットする。
+　ただし指定値はカットする長さではなくて出力時間
+（※設定などをテストする場合は -t 60 で1分間だけテストする
+　　と良いかも）
 
-���̓I�v�V����
- -itsoffset hh:mm:ss.SSS�@�܂���sssss.SSS
-�@�����x�点��i�����timestamp�ɃI�t�Z�b�g�w��l�����Z����B�j
-�@�R�����g���x���ꍇ�ɃR�����g�𑁂߂�悤�Ɏg����B
-�@�}�C�i�X�l���w�肷��Ɠ���𑁂߂�i�R�����g��x�点��j
-�@���Ȃ��o�͂Ƃ��Ă�timestamp=0����n�܂邽�߉f���Ȃ�(�܂��͐擪�t���[��)��
-�@�@�X�g���[�������ɒǉ�����Ă���悤�Ɍ�����i�v���X�̏ꍇ�j�̂�
-�@�@�o�̓I�v�V������-ss�i�O�q�j���w�肵�ăJ�b�g���鎖���ł���
+入力オプション
+ -itsoffset hh:mm:ss.SSS　またはsssss.SSS
+　動画を遅らせる（動画のtimestampにオフセット指定値を加算する。）
+　コメントが遅れる場合にコメントを早めるように使える。
+　マイナス値を指定すると動画を早める（コメントを遅らせる）
+　※なお出力としてはtimestamp=0から始まるため映像なし(または先頭フレーム)の
+　　ストリームが頭に追加されているように見える（プラスの場合）ので
+　　出力オプションに-ss（前述）を指定してカットする事ができる
 
-���ʏ�͓��͂�-itsoffset�Əo�͂�-ss�ɓ����l���w�肵�Ďg���̂��֗�
-�@�ύX���邱�Ƃ��ł��邪�A�����͌v�Z�ʂ�ɍs���Ȃ��ꍇ������B
+※通常は入力の-itsoffsetと出力の-ssに同じ値を指定して使うのが便利
+　変更することもできるが、調整は計算通りに行かない場合がある。
 
 
 

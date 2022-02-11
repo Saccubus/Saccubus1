@@ -1,43 +1,43 @@
-yƒjƒRƒjƒRzƒRƒƒ“ƒg•t“®‰æì¬ƒc[ƒ‹ ‚³‚«‚ã‚Î‚·ƒXƒŒ‚Ì243Ž‚Ì‚à‚ÌC³‚µ‚Ü‚µ‚½B
+ã€ãƒ‹ã‚³ãƒ‹ã‚³ã€‘ã‚³ãƒ¡ãƒ³ãƒˆä»˜å‹•ç”»ä½œæˆãƒ„ãƒ¼ãƒ« ã•ãã‚…ã°ã™ã‚¹ãƒ¬ã®243æ°ã®ã‚‚ã®ä¿®æ­£ã—ã¾ã—ãŸã€‚
 
-@E1.22r3(2010/05/15)
-@@EAPI•ÏXB
+ã€€ãƒ»1.22r3(2010/05/15)
+ã€€ã€€ãƒ»APIå¤‰æ›´ã€‚
 
-ˆÈ‰ºA1.22r2‚ÌŒ´•¶
+ä»¥ä¸‹ã€1.22r2ã®åŽŸæ–‡
 ------------------------------------------------------------------------------------------------------------------------------
 
-‚±‚Ìreadme‚Í2ch‚³‚«‚ã‚Î‚·ƒXƒŒ(http://pc12.2ch.net/test/read.cgi/software/1235626069/)‚Ì—LŽu‚É‚æ‚Á‚ÄC³‚³‚ê‚½1.22r2‚Å’Ç‰Á‚³‚ê‚½î•ñ‚ÉŠÖ‚·‚éà–¾‚Å‚·B
-‚±‚Ìƒ\ƒtƒg‚ÌŽg‚¢•û‚È‚Ç‚ÉŠÖ‚µ‚Ä‚ÍƒIƒŠƒWƒiƒ‹‚Ì‚³‚«‚ã‚Î‚·‚Ìreadme.txt‚ð‚²——‚­‚¾‚³‚¢B
+ã“ã®readmeã¯2chã•ãã‚…ã°ã™ã‚¹ãƒ¬(http://pc12.2ch.net/test/read.cgi/software/1235626069/)ã®æœ‰å¿—ã«ã‚ˆã£ã¦ä¿®æ­£ã•ã‚ŒãŸ1.22r2ã§è¿½åŠ ã•ã‚ŒãŸæƒ…å ±ã«é–¢ã™ã‚‹èª¬æ˜Žã§ã™ã€‚
+ã“ã®ã‚½ãƒ•ãƒˆã®ä½¿ã„æ–¹ãªã©ã«é–¢ã—ã¦ã¯ã‚ªãƒªã‚¸ãƒŠãƒ«ã®ã•ãã‚…ã°ã™ã®readme.txtã‚’ã”è¦§ãã ã•ã„ã€‚
 
-E“®ìŠÂ‹«@XP/Vista/7i‚¨‚»‚ç‚­A98/2000‚à“®‚­‚Í‚¸Bme‚Í’m‚ç‚ñBj
+ãƒ»å‹•ä½œç’°å¢ƒã€€XP/Vista/7ï¼ˆãŠãã‚‰ãã€98/2000ã‚‚å‹•ãã¯ãšã€‚meã¯çŸ¥ã‚‰ã‚“ã€‚ï¼‰
 
-EƒCƒ“ƒXƒg[ƒ‹•û–@
-@EbinƒtƒHƒ‹ƒ_‚ÆoptionƒtƒHƒ‹ƒ_‚¨‚æ‚ÑSaccubus.jar‚ð1.22r‚Ì‚à‚Ì‚Æ·‚µ‘Ö‚¦‚Ä‚­‚¾‚³‚¢B
+ãƒ»ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«æ–¹æ³•
+ã€€ãƒ»binãƒ•ã‚©ãƒ«ãƒ€ã¨optionãƒ•ã‚©ãƒ«ãƒ€ãŠã‚ˆã³Saccubus.jarã‚’1.22rã®ã‚‚ã®ã¨å·®ã—æ›¿ãˆã¦ãã ã•ã„ã€‚
 
-EH.264(libx264)•ÏŠ·‚ÉŠÖ‚·‚é’ˆÓ
-‚±‚ÌVer.‚ÅŽû˜^‚³‚ê‚Ä‚¢‚éffmpeg‚Í]—ˆ‚Ì•û–@‚Å‚ÍA•ÏŠ·‚ª³í‚És‚í‚ê‚È‚¢‰Â”\«‚ª‚ ‚è‚Ü‚·B
-Ú‚µ‚­‚Íhttp://blog.k-tai-douga.com/article/34604396.html‚ðŽQÆ‚µ‚Ä‚­‚¾‚³‚¢B
+ãƒ»H.264(libx264)å¤‰æ›ã«é–¢ã™ã‚‹æ³¨æ„
+ã“ã®Ver.ã§åŽéŒ²ã•ã‚Œã¦ã„ã‚‹ffmpegã¯å¾“æ¥ã®æ–¹æ³•ã§ã¯ã€å¤‰æ›ãŒæ­£å¸¸ã«è¡Œã‚ã‚Œãªã„å¯èƒ½æ€§ãŒã‚ã‚Šã¾ã™ã€‚
+è©³ã—ãã¯http://blog.k-tai-douga.com/article/34604396.htmlã‚’å‚ç…§ã—ã¦ãã ã•ã„ã€‚
 
-EXVî•ñ
-@E1.22ra(>>57E2009/05/07)
-@@EVista‚¨‚æ‚Ñ7‚É‘Î‰ž
+ãƒ»æ›´æ–°æƒ…å ±
+ã€€ãƒ»1.22ra(>>57ãƒ»2009/05/07)
+ã€€ã€€ãƒ»VistaãŠã‚ˆã³7ã«å¯¾å¿œ
 
-@E1.22raC³”Å(>>195E2010/01/18)
-@@ElameƒGƒ“ƒR[ƒhƒGƒ‰[‚ÉŠÖ‚·‚éC³
+ã€€ãƒ»1.22raä¿®æ­£ç‰ˆ(>>195ãƒ»2010/01/18)
+ã€€ã€€ãƒ»lameã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã‚¨ãƒ©ãƒ¼ã«é–¢ã™ã‚‹ä¿®æ­£
 
-@E1.22raC³”Å(>>200E2010/01/24)
-@@EXviD(libxvid)•ÏŠ·‚ªo—ˆ‚È‚¢•s‹ï‡‚ðC³
+ã€€ãƒ»1.22raä¿®æ­£ç‰ˆ(>>200ãƒ»2010/01/24)
+ã€€ã€€ãƒ»XviD(libxvid)å¤‰æ›ãŒå‡ºæ¥ãªã„ä¸å…·åˆã‚’ä¿®æ­£
 
-@E1.22r2(2010/03/09)
-@@EƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹ƒAƒbƒvƒ[ƒ_‚É‚¤‚‚³‚ê‚Ä‚¢‚½ƒtƒ@ƒCƒ‹‚Ì‚¤‚¿A2,4,5,8-11‚Ìƒtƒ@ƒCƒ‹‚ð’Ç‰Á‚µ‚½B
+ã€€ãƒ»1.22r2(2010/03/09)
+ã€€ã€€ãƒ»ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ€ã«ã†ï½ã•ã‚Œã¦ã„ãŸãƒ•ã‚¡ã‚¤ãƒ«ã®ã†ã¡ã€2,4,5,8-11ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’è¿½åŠ ã—ãŸã€‚
 
-E•Ö—˜‚Èƒc[ƒ‹
-@E‚³‚«‚ã‚Î‚·‚ÌNicoBrowserŠg’£iìŽÒFá‰HŽj
-@@Ehttp://feather.cocolog-nifty.com/weblog/2009/12/nicobrowser-20b.htmlB
-@@“ŠƒRƒ‚É‘Î‰ž‚µ‚Ä‚¢‚éBbinƒtƒHƒ‹ƒ_‚Ì’†g‚ð‚±‚Ìr2‚ÌbinƒtƒHƒ‹ƒ_‚É·‚µ‘Ö‚¦‚½‚Ù‚¤‚ª‚æ‚¢‚©‚àB
-@E‚³‚«‚ã‚Î‚·•ÏŠ·ƒŠƒXƒgiìŽÒF‚à‚¿‚â‚ÜŽj
-@@Ehttp://www.ne.jp/asahi/mochiyama/my/file/SaccubusConvList.zipB
-@@u‚³‚«‚ã‚Î‚·‚ðŽg‚Á‚½˜A‘±ƒ_ƒEƒ“ƒ[ƒhA•ÏŠ·‚Ìƒ\ƒtƒgv‚Å‚·B
+ãƒ»ä¾¿åˆ©ãªãƒ„ãƒ¼ãƒ«
+ã€€ãƒ»ã•ãã‚…ã°ã™ã®NicoBrowseræ‹¡å¼µï¼ˆä½œè€…ï¼šé›ªç¾½æ°ï¼‰
+ã€€ã€€ãƒ»http://feather.cocolog-nifty.com/weblog/2009/12/nicobrowser-20b.htmlã€‚
+ã€€ã€€æŠ•ã‚³ãƒ¡ã«å¯¾å¿œã—ã¦ã„ã‚‹ã€‚binãƒ•ã‚©ãƒ«ãƒ€ã®ä¸­èº«ã‚’ã“ã®r2ã®binãƒ•ã‚©ãƒ«ãƒ€ã«å·®ã—æ›¿ãˆãŸã»ã†ãŒã‚ˆã„ã‹ã‚‚ã€‚
+ã€€ãƒ»ã•ãã‚…ã°ã™å¤‰æ›ãƒªã‚¹ãƒˆï¼ˆä½œè€…ï¼šã‚‚ã¡ã‚„ã¾æ°ï¼‰
+ã€€ã€€ãƒ»http://www.ne.jp/asahi/mochiyama/my/file/SaccubusConvList.zipã€‚
+ã€€ã€€ã€Œã•ãã‚…ã°ã™ã‚’ä½¿ã£ãŸé€£ç¶šãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã€å¤‰æ›ã®ã‚½ãƒ•ãƒˆã€ã§ã™ã€‚
 
-E‚»‚Ì‘¼
-@EŽû˜^‚³‚ê‚Ä‚¢‚éƒ\[ƒXƒR[ƒh‚ÍA1.22ra‚Ì‚à‚Ì‚Å‚·B
+ãƒ»ãã®ä»–
+ã€€ãƒ»åŽéŒ²ã•ã‚Œã¦ã„ã‚‹ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ã¯ã€1.22raã®ã‚‚ã®ã§ã™ã€‚

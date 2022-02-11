@@ -1,35 +1,35 @@
-Windows7 ��java.exe�ւ̃p�X���ݒ肳��Ă��Ȃ��ꍇ
-SaccubusConvList.exe���쓮���Ȃ����Ƃ�����܂��B
-�i���̏ꍇ�� debug.bat ���N�����Ȃ��j
-���̏ꍇ�͎��̎菇�Ńp�X��ݒ肵�ĉ������B
-�Q�l�FWindows 7 �Ƀp�X(Path)��ݒ肷��
-�@http://blog.cnu.jp/2009/11/06/windows-7-path/
-�@http://blog.cnu.jp/2010/11/10/shortcut-environment/
+Windows7 でjava.exeへのパスが設定されていない場合
+SaccubusConvList.exeが作動しないことがあります。
+（その場合は debug.bat も起動しない）
+その場合は次の手順でパスを設定して下さい。
+参考：Windows 7 にパス(Path)を設定する
+　http://blog.cnu.jp/2009/11/06/windows-7-path/
+　http://blog.cnu.jp/2010/11/10/shortcut-environment/
 
-�P�D�X�^�[�g���v���O�����ƃt�@�C���̌�����
-�@���ϐ��@�Ɠ��͂�����
-�@���ϐ���ҏW�@���N���b�N�@
+１．スタート→プログラムとファイルの検索に
+　環境変数　と入力し検索
+　環境変数を編集　をクリック　
 
-2�D���ϐ��_�C�A���O
-�@�㑤�̃��[�U�[���ϐ��́u�V�K�v���N���b�N
-�@�V�������[�U�[�ϐ��_�C�A���O
-�@�ϐ����Ɂ@PATH�@�����
+2．環境変数ダイアログ
+　上側のユーザー環境変数の「新規」をクリック
+　新しいユーザー変数ダイアログ
+　変数名に　PATH　を入力
 
-�R�D�X�^�[�g���v���O�����ƃt�@�C���̌�����
-�@java.exe�@�Ɠ��͂�����
-�@�v���O��������java.exe���E�N���b�N
-�@���t�@�C���̏ꏊ���J��
+３．スタート→プログラムとファイルの検索に
+　java.exe　と入力し検索
+　プログラム欄のjava.exeを右クリック
+　→ファイルの場所を開く
 
-�S�D�G�N�X�v���[���[
-�@��ԏ�̑��ŉ��O�p�����Q��N���b�N
-�@�t�H���_�p�X�̔w�i�F���ς��̂ŉE�N���b�N���R�s�[
+４．エクスプローラー
+　一番上の窓で下三角▼を２回クリック
+　フォルダパスの背景色が変わるので右クリック→コピー
 
-�T�D�Q�̐V�������[�U�[�ϐ��_�C���O��
-�@�ϐ��l�ɉE�N���b�N���\��t��
-�@OK��OK
+５．２の新しいユーザー変数ダイログで
+　変数値に右クリック→貼り付け
+　OK→OK
 
-�U�D���O�A�E�g�����O�C��
-�@�܂��͍ċN��
+６．ログアウト→ログイン
+　または再起動
 
-�V�Ddebug.bat���_�u���N���b�N���Ă�����΂��N�����m�F
-�@�I��
+７．debug.batをダブルクリックしてさきゅばす起動を確認
+　終了

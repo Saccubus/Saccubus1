@@ -1,11 +1,11 @@
 /*
- * Windows�p�v���O���������`��
- * copyright (c) 2008 �Ձi�v�T�C�j
+ * Windows用プログラムランチャ
+ * copyright (c) 2008 ψ（プサイ）
  *
- * �u������΂��v�{�̂�exe�o�R�œ��������߂̃����`���ł��B
+ * 「さきゅばす」本体をexe経由で動かすためのランチャです。
  *
- * ���̃t�@�C���́u������΂��v�̈ꕔ�ł���A
- * ���̃\�[�X�R�[�h��GPL���C�Z���X�Ŕz�z����܂��ł��B
+ * このファイルは「さきゅばす」の一部であり、
+ * このソースコードはGPLライセンスで配布されますです。
  */
 #include <stdlib.h>
 #include <stdio.h>
@@ -24,32 +24,32 @@ int WINAPI WinMain (HINSTANCE hInstance,
 			int ret;
 			if(doCmd(CMD_CHECK,FALSE,NULL) == 0){
 				if(szCmdLine && strlen(szCmdLine) > 0){
-					/*����������ꍇ�́A�A�����Ď��s�B*/
+					/*引数がある場合は、連結して実行。*/
 
-					//�f�[�^�����W�B
+					//データを収集。
 					const char* cmd_base = CMD_RUN;
 					int cmd_base_length = strlen(cmd_base);
 					const char* cmd_add = szCmdLine;
 					int cmd_add_length = strlen(cmd_add);
-					//�������m��
+					//メモリ確保
 					char* call_cmd_line = (char *)malloc(cmd_base_length+cmd_add_length+2);
-					//Java�p�̕������R�s�[�Bstrcat�Ƃ��͂���܂�g�������Ȃ��B
+					//Java用の部分をコピー。strcatとかはあんまり使いたくない。
 					memcpy(call_cmd_line,cmd_base,cmd_base_length);
-					//�󔒂�ǉ�
+					//空白を追加
 					call_cmd_line[cmd_base_length] = ' ';
-					//������ǉ�
+					//引数を追加
 					memcpy(call_cmd_line+cmd_base_length+1,cmd_add,cmd_add_length);
-					//�Ō��\0��Y�ꂸ�ɁB
+					//最後の\0を忘れずに。
 					call_cmd_line[cmd_base_length+cmd_add_length+1] = '\0';
-					//�R�}���h���s�B
+					//コマンド実行。
 					ret = doCmd(call_cmd_line,TRUE,CMD_LOG);
-					//�Y�ꂸ�ɊJ���B
+					//忘れずに開放。
 					free(call_cmd_line);
-				}else{/*�����������ꍇ�͕��ʂɎ��s*/
+				}else{/*引数が無い場合は普通に実行*/
 					ret = doCmd(CMD_RUN,TRUE,CMD_LOG);
 				}
 			}else{
-				MessageBoxA(NULL,"Java���C���X�g�[������Ă��Ȃ��悤�ł��B","�G���[",MB_OK | MB_ICONERROR);
+				MessageBoxA(NULL,"Javaがインストールされていないようです。","エラー",MB_OK | MB_ICONERROR);
 				ret = -1;
 			}
 			return ret;
@@ -89,46 +89,46 @@ int doCmd(char* command,int show_msg,const char* log_name){
 		}
 	}
 	code = CreateProcessA(
-	    NULL,						// ���s�t�@�C����
-	    command,					// �R�}���h���C���p�����[�^
-	    NULL,						// �v���Z�X�̕ی쑮��
-	    NULL,						// �X���b�h�̕ی쑮��
-	    TRUE,						// �I�u�W�F�N�g�n���h���p���̃t���O
+	    NULL,						// 実行ファイル名
+	    command,					// コマンドラインパラメータ
+	    NULL,						// プロセスの保護属性
+	    NULL,						// スレッドの保護属性
+	    TRUE,						// オブジェクトハンドル継承のフラグ
 	    DETACHED_PROCESS | 
 		CREATE_NEW_PROCESS_GROUP | 
 		NORMAL_PRIORITY_CLASS |
-		CREATE_NO_WINDOW,		// �����t���O
-	    NULL,						// ���ϐ����ւ̃|�C���^
-	    NULL,						// �N�����J�����g�f�B���N�g��
-	    &startup_info,				// �E�B���h�E�\���ݒ�
-	    &process_info				// �v���Z�X�E�X���b�h�̏��
+		CREATE_NO_WINDOW,		// 属性フラグ
+	    NULL,						// 環境変数情報へのポインタ
+	    NULL,						// 起動時カレントディレクトリ
+	    &startup_info,				// ウィンドウ表示設定
+	    &process_info				// プロセス・スレッドの情報
 	);
 	if(code == 0){
 		ret = -1;
 		if(show_msg){
 			char *msg;
 			int error_code = FormatMessageA(
-				FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,	// ����t���O
-				0,																// ���b�Z�[�W��`�ʒu
-				GetLastError(),													// ���b�Z�[�WID
-				LANG_USER_DEFAULT,												// ����ID
-				(LPSTR)&msg,													// �o�b�t�@�̃A�h���X
-				0,																// �o�b�t�@�̃T�C�Y
-				0																// �}����̔z��̃A�h���X
+				FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,	// 動作フラグ
+				0,																// メッセージ定義位置
+				GetLastError(),													// メッセージID
+				LANG_USER_DEFAULT,												// 言語ID
+				(LPSTR)&msg,													// バッファのアドレス
+				0,																// バッファのサイズ
+				0																// 挿入句の配列のアドレス
 			);
 			if(error_code == 0){
-				MessageBoxA(NULL,"���炩�̃G���[���������܂����B","�G���[",MB_OK | MB_ICONERROR);
+				MessageBoxA(NULL,"何らかのエラーが発生しました。","エラー",MB_OK | MB_ICONERROR);
 			}else{
-				MessageBoxA(NULL,msg, "�G���[", MB_ICONERROR|MB_OK);
+				MessageBoxA(NULL,msg, "エラー", MB_ICONERROR|MB_OK);
 			}
 			LocalFree(msg);
 		}
 	}else{
 		/* 
-		//�߂�l���擾����ꍇ�̓R�����g�A�E�g����
-		// �I������܂ő҂�
+		//戻り値を取得する場合はコメントアウト解除
+		// 終了するまで待つ
 		WaitForSingleObject(process_info.hProcess,INFINITE);
-		//�߂�l���擾
+		//戻り値を取得
 		DWORD exit_code;
 		GetExitCodeProcess(process_info.hProcess, &exit_code);
 		ret = exit_code;

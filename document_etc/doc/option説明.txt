@@ -1,54 +1,54 @@
-saccubus1.60�t����ffmpeg70404f�ɂ�libx265�������Ă���
-�f�R�[�h�����łȂ��G���R�[�h���o���܂��B
-�����Ă݂������̂��߂� x265�G���R�[�h�p��PC�p�I�v�V���������삵�܂����B
-(H.265�ɂ��ā@wikipedia http://ja.wikipedia.org/wiki/H.265�j
-���j�Ƃ��Ă�H.264�Ɠ��掿�̏ȃT�C�Y�ɂ��܂���
-���v�Ȃ͂��ł����n�[�h�̏�OS�j�����܂ߎ��ȐӔC�ł��肢���܂��B
+saccubus1.60付属のffmpeg70404fにはlibx265が入っており
+デコードだけでなくエンコードも出来ます。
+試してみたい方のために x265エンコード用のPC用オプションを試作しました。
+(H.265について　wikipedia http://ja.wikipedia.org/wiki/H.265）
+方針としてはH.264と同画質の省サイズにしました
+大丈夫なはずですがハード故障OS破損も含め自己責任でお願いします。
 
-saccus1.60�ݒ���@
-�@���݂̐ݒ���u�t�@�C�������O�����ĕۑ��v�ŕۑ����Ă����ĉ������B
-�@(�O�̂���)
-�@option�t�H���_���ƁA������΂��t�H���_���ɃR�s�[����
-�@����ݒ聨�ϊ��I�v�V�����ݒ�(����)���I�v�V�����t�H���_�ʒu�̐ݒ��
-�@./optionH265�@�@�@�i���ꂼ��̃t�H���_���j
-�@�Ɛݒ肵�܂��B�Q�ƃ{�^���Őݒ肷��΃X�y���~�X���Ȃ��ł��傤
-�@���̌㋤��FFmpeg�̐ݒ�́u�X�V�v�{�^�����N���b�N��
-�@���̈ꗗ����I�v�V������I�����ĉ������B
-�@(�ŏ��́@PC640x360�A�X�䋤��_mp4�@�ŗǂ��ł��傤)
+saccus1.60設定方法
+　現在の設定を「ファイル→名前をつけて保存」で保存しておいて下さい。
+　(念のため)
+　optionフォルダごと、さきゅばすフォルダ下にコピーして
+　動画設定→変換オプション設定(共通)→オプションフォルダ位置の設定に
+　./optionH265　　　（それぞれのフォルダ名）
+　と設定します。参照ボタンで設定すればスペルミスがないでしょう
+　その後共通FFmpegの設定の「更新」ボタンをクリックし
+　左の一覧からオプションを選択して下さい。
+　(最初は　PC640x360アス比共通_mp4　で良いでしょう)
 
-optionH265�t�H���_�@PC�p�e�X�g
-�@libx264�� libx265�Ɂ@crf23��crf28�ɕύX
-optionH265Acopy�t�H���_�@PC�p�����ԗp
-�@��ɉ��� acodec libvo_aacenc�� acodec copy�ɕύX
-�@(vo_aacenc��he he2�ɑΉ����Ȃ����ߒ����ԓ���̓T�C�Y���傫���Ȃ邩��)
-optionFFAAC�@x265�p�ł͂Ȃ��ł������łɃe�X�g�p�I�v�V����
-�@vo_aacenc��aac -strict experimental(ffmpeg����AAC�G���R�[�_�[)�ɕύX
-�@(������r�e�X�g�p�@������ł͕ϊ��Đ��m�F�������܂���)
+optionH265フォルダ　PC用テスト
+　libx264を libx265に　crf23をcrf28に変更
+optionH265Acopyフォルダ　PC用長時間用
+　上に加え acodec libvo_aacencを acodec copyに変更
+　(vo_aacencはhe he2に対応しないため長時間動画はサイズが大きくなるから)
+optionFFAAC　x265用ではないですがついでにテスト用オプション
+　vo_aacencをaac -strict experimental(ffmpeg内蔵AACエンコーダー)に変更
+　(音質比較テスト用　こちらでは変換再生確認だけしました)
 
-saccubus1.60�p�̃f�R�[�h�G���R�[�h�̓I�v�V�����ύX�����ŏo���܂���
-�o�͓���̍Đ��ɂ�H.265�̍Đ��\�ȃv���C���[���ʓr�K�v�ł��B
+saccubus1.60用のデコードエンコードはオプション変更だけで出来ますが
+出力動画の再生にはH.265の再生可能なプレイヤーが別途必要です。
 
-�������H.265�Đ��m�F��������
-�EOS
-�@�@windows8.1 home premium 64bit
-�@�@windows7 home premium 64bit
-�Eplayer(�f�X�N�g�b�v�@win7 win8.1)
-�@�@MPC-HC 64bit  https://mpc-hc.org/
-�Eplayer(win8�X�g�A�A�v��)
-�@�@Media Player Lite (����)
-�Ecodec pack(Win7)
-�@�@k-Lite codec pack + Windows Media Player
-����
-�@��L�͎g�p�𐄏�����̂̂ł͂���܂���B
-�@���D���ȃ\�t�g��A�v�������R�Ɏ����Ē����č\���܂���B
-�@�V�����\�t�g��codec pack���C���X�g�[�����鎞��
-�@�}���E�F�A��A�h�E�F�A�Ɋe���Œ��ӂ��ĉ������B
+こちらでH.265再生確認したもの
+・OS
+　　windows8.1 home premium 64bit
+　　windows7 home premium 64bit
+・player(デスクトップ　win7 win8.1)
+　　MPC-HC 64bit  https://mpc-hc.org/
+・player(win8ストアアプリ)
+　　Media Player Lite (無料)
+・codec pack(Win7)
+　　k-Lite codec pack + Windows Media Player
+注意
+　上記は使用を推奨するののではありません。
+　お好きなソフトやアプリを自由に試して頂いて構いません。
+　新しくソフトやcodec packをインストールする時は
+　マルウェアやアドウェアに各自で注意して下さい。
 
-������ōĐ��o���Ȃ���������
-�EiTunes 11.4 (win7 win8.1)
-�Ecodec�Ȃ��f�t�H���g��Windows Media Player(win7 win8.1)
-�Ecodec�Ȃ��f�t�H���gWin8.1�̃r�f�I�A�v��
-�Eflashplayer�iwin8.1 firefox�u���E�U�Đ��j
+こちらで再生出来なかったもの
+・iTunes 11.4 (win7 win8.1)
+・codecなしデフォルトのWindows Media Player(win7 win8.1)
+・codecなしデフォルトWin8.1のビデオアプリ
+・flashplayer（win8.1 firefoxブラウザ再生）
 
 
 
