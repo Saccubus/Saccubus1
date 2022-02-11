@@ -3,7 +3,7 @@
 
 #define SHADOW_MAX 8
 #define SHADOW_DEFAULT 1
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 //汎用シャドウ
 // データ5組 カンマ(,)で区切る 後ろは省略可能。

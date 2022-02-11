@@ -6,7 +6,7 @@
 #include "../nicodef.h"
 #include "../util.h"
 #include "../comment/surf_util.h"
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>

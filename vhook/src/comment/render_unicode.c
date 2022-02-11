@@ -4,7 +4,7 @@
  *  Created on: 2012/02/12
  *      Author: orz
  */
-#include <SDL/SDL_rotozoom.h>
+#include <SDL2/SDL_rotozoom.h>
 #include "surf_util.h"
 #include "render_unicode.h"
 #include "com_surface.h"

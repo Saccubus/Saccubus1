@@ -1,6 +1,6 @@
 #ifndef SURF_UTIL_H_
 #define SURF_UTIL_H_
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 typedef struct h_Surface {
 	SDL_Surface *s;

@@ -1,6 +1,6 @@
 #ifndef PROCESS_CHAT_H_
 #define PROCESS_CHAT_H_
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "chat.h"
 #include "chat_slot.h"
 #include "../main.h"

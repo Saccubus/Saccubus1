@@ -21,7 +21,7 @@ THANKS for Comment Artisan! A.K.A. SHOKUNIN!
   (resized?)  7    10n+3   17n+5
   (resized)   > 8  10n+3    9n+3
  */
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "surf_util.h"
 #include "../main.h"
 

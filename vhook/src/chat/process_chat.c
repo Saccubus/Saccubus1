@@ -1,4 +1,4 @@
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include <math.h>
 #include "chat.h"
 #include "chat_slot.h"

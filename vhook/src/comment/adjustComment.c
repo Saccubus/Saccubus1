@@ -4,7 +4,7 @@
  *  Created on: 2011/12/26
  *      Author: orz
  */
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "adjustComment.h"
 #include "../nicodef.h"
 #include "../main.h"

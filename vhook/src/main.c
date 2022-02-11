@@ -1,6 +1,6 @@
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include "main.h"
 #include "mydef.h"
@@ -11,7 +11,7 @@
 #include "wakuiro.h"
 #include "comment/com_surface.h"
 #include "comment/adjustComment.h"
-#include "SDL/SDL_rotozoom.h"
+#include "SDL2/SDL_rotozoom.h"
 
 int initCommentData(DATA* data, CDATA* cdata, FILE* log, const char* path, int max_slot, int cid, const char* com_type);
 int isPathRelative(const char* path);

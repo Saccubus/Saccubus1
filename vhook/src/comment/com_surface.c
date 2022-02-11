@@ -1,6 +1,6 @@
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
-#include <SDL/SDL_rotozoom.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_rotozoom.h>
 #include <stdio.h>
 #include "com_surface.h"
 #include "../chat/chat.h"

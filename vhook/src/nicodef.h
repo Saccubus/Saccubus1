@@ -1,6 +1,6 @@
 #ifndef NICODEF_H_
 #define NICODEF_H_
-#include <SDL/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 
 //定義
 #define NICO_WIDTH		512

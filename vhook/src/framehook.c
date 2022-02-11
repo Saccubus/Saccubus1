@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "common/framehook_ext_old.h"
 #include "framehook.h"
 #include "main.h"

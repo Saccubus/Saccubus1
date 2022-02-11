@@ -1,6 +1,6 @@
 #ifndef COM_SURFACE_H_
 #define COM_SURFACE_H_
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "surf_util.h"
 #include "../chat/chat.h"
 #include "../chat/chat_slot.h"

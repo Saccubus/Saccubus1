@@ -1,4 +1,4 @@
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "com_surface.h"
 #include "surf_util.h"
 #include "../mydef.h"

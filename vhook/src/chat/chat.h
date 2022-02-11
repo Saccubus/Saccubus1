@@ -1,7 +1,7 @@
 #ifndef CHAT_H_
 #define CHAT_H_
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "../struct_define.h"
 
 //ニコスクリプトでのキー ワードUnicode定義

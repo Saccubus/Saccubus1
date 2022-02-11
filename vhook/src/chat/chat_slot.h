@@ -3,7 +3,7 @@
 
 #include "../struct_define.h"
 #include "chat.h"
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 struct CHAT_SLOT_ITEM{
 	int used;
