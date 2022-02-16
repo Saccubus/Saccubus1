@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <string.h>
 #include "surf_util.h"
 #include "shadow.h"
 
@@ -26,7 +27,7 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	}
 	int w = surf->w;
 	int h = surf->h;
-	SDL_Surface* shadow = SDL_CreateRGBSurface(		SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+	SDL_Surface* shadow = SDL_CreateRGBSurface(	0,
 												w+(slide+slide2),
 												h+(slide+slide2),
 												32,
@@ -42,7 +43,7 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 												    0xff000000
 												#endif
 											);
-	SDL_Surface* shadow2 = SDL_CreateRGBSurface(	SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+	SDL_Surface* shadow2 = SDL_CreateRGBSurface(0,
 												w+(slide+slide2),
 												h+(slide+slide2),
 												32,
@@ -59,9 +60,12 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 												#endif
 											);
 	SDL_Rect rect = {slide,slide};
-	SDL_SetAlpha(surf,0,0xff);
+	//SDL_SetAlpha(surf,0,0xff);
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_NONE);
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
-	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
+	//SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_BLEND);
+	SDL_SetSurfaceAlphaMod(surf,0xff);
 	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(shadow,0xffffffff);
 	}else if(is_black==0){
@@ -69,9 +73,12 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	}else{
 		setRGB(shadow,SDL_MapRGB(surf->format,c.r,c.g,c.b));
 	}
-	SDL_SetAlpha(shadow,0,0xff);
+	//SDL_SetAlpha(shadow,0,0xff);
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);
 	SDL_BlitSurface(shadow,NULL,shadow2,NULL);
-	SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);
+	//SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_BLEND);
+	SDL_SetSurfaceAlphaMod(shadow,0xff);
 	int x,y,z;
 	int nw = shadow->w;
 	int nh = shadow->h;
@@ -144,7 +151,8 @@ SDL_Surface* likeNicoNico2(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data
 	SDL_Rect srcrect = {slide,slide,w,h};
 	SDL_Surface *ret = nullSurface(w, h);
 	if(ret==NULL) return NULL;
-	SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);		//not use alpha
+	//SDL_SetAlpha(surf,SDL_RLEACCEL,0xff);		//not use alpha
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_NONE);		//not use alpha
 	SDL_BlitSurface(surf,&srcrect,ret,NULL);
 	SDL_FreeSurface(surf);
 	return  ret;
@@ -165,7 +173,7 @@ SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 		slide <<= 1;
 	}
 	/*黒の用意*/
-	SDL_Surface* black = SDL_CreateRGBSurface(	SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+	SDL_Surface* black = SDL_CreateRGBSurface(	0,
 												surf->w+slide,
 												surf->h+slide,
 												32,
@@ -182,9 +190,12 @@ SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 												#endif
 												);
 	SDL_Rect rect = {slide,slide};
-	SDL_SetAlpha(surf,0,0xff);//一回alpha合成を切る
+	//SDL_SetAlpha(surf,0,0xff);//一回alpha合成を切る
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_NONE);//一回alpha合成を切る
 	SDL_BlitSurface(surf,NULL,black,&rect);
-	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
+	//SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_BLEND);
+	SDL_SetSurfaceAlphaMod(surf,0xff);
 	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(black,0xffffffff);
 	}else if(is_black==0){
@@ -213,7 +224,7 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	}
 	int w = surf->w;
 	int h = surf->h;
-	SDL_Surface* shadow = SDL_CreateRGBSurface(		SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+	SDL_Surface* shadow = SDL_CreateRGBSurface(	0,
 												w+(slide<<1),
 												h+(slide<<1),
 												32,
@@ -229,7 +240,7 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 												    0xff000000
 												#endif
 											);
-	SDL_Surface* shadow2 = SDL_CreateRGBSurface(	SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+	SDL_Surface* shadow2 = SDL_CreateRGBSurface(0,
 												w+(slide<<1),
 												h+(slide<<1),
 												32,
@@ -246,9 +257,12 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 												#endif
 											);
 	SDL_Rect rect = {slide,slide};
-	SDL_SetAlpha(surf,0,0xff);
+	//SDL_SetAlpha(surf,0,0xff);
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_NONE);
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
-	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
+	//SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_BLEND);
+	SDL_SetSurfaceAlphaMod(surf,0xff);
 	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(shadow,0xffffffff);
 	}else if(is_black==0){
@@ -256,9 +270,12 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	}else{
 		setRGB(shadow,SDL_MapRGB(surf->format,c.r,c.g,c.b));
 	}
-	SDL_SetAlpha(shadow,0,0xff);
+	//SDL_SetAlpha(shadow,0,0xff);
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);
 	SDL_BlitSurface(shadow,NULL,shadow2,NULL);
-	SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);
+	//SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_BLEND);
+	SDL_SetSurfaceAlphaMod(shadow,0xff);
 	int x,y,z;
 	int nw = shadow->w;
 	int nh = shadow->h;
@@ -327,7 +344,7 @@ SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,SDL_Color c,DATA* dat
 	}
 	int w = surf->w;
 	int h = surf->h;
-	SDL_Surface* shadow = SDL_CreateRGBSurface(		SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+	SDL_Surface* shadow = SDL_CreateRGBSurface(	0,
 												w+(slide<<1),
 												h+(slide<<1),
 												32,
@@ -343,7 +360,7 @@ SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,SDL_Color c,DATA* dat
 												    0xff000000
 												#endif
 											);
-	SDL_Surface* shadow2 = SDL_CreateRGBSurface(	SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+	SDL_Surface* shadow2 = SDL_CreateRGBSurface(0,
 												w+(slide<<1),
 												h+(slide<<1),
 												32,
@@ -360,9 +377,12 @@ SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,SDL_Color c,DATA* dat
 												#endif
 											);
 	SDL_Rect rect = {slide,slide};	//左上座標
-	SDL_SetAlpha(surf,0,0xff);		//αを切る
+	//SDL_SetAlpha(surf,0,0xff);		//αを切る
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_NONE);		//αを切る
 	SDL_BlitSurface(surf,NULL,shadow,&rect);	//surf→shadowコピー
-	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);		//αを入れる
+	//SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);		//αを入れる
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_BLEND);		//αを入れる
+	SDL_SetSurfaceAlphaMod(surf,0xff);
 	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(shadow,0xffffffff);		//影の色で塗りつぶす
 	}else if(is_black==0){
@@ -370,9 +390,12 @@ SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,SDL_Color c,DATA* dat
 	}else{
 		setRGB(shadow,SDL_MapRGB(surf->format,c.r,c.g,c.b));
 	}
-	SDL_SetAlpha(shadow,0,0xff);		//αを切る
+	//SDL_SetAlpha(shadow,0,0xff);		//αを切る
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);		//αを切る
 	SDL_BlitSurface(shadow,NULL,shadow2,NULL);	//shadow→shadow2コピー
-	SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);		//αを入れる
+	//SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);		//αを入れる
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_BLEND);		//αを入れる
+	SDL_SetSurfaceAlphaMod(shadow,0xff);
 	int x,y,z;
 	int nw = shadow->w;
 	int nh = shadow->h;
@@ -451,7 +474,7 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	}
 	int w = surf->w;
 	int h = surf->h;
-	SDL_Surface* shadow = SDL_CreateRGBSurface(		SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+	SDL_Surface* shadow = SDL_CreateRGBSurface(	0,
 												w+(slide<<1),
 												h+(slide<<1),
 												32,
@@ -467,7 +490,7 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 												    0xff000000
 												#endif
 											);
-	SDL_Surface* shadow2 = SDL_CreateRGBSurface(	SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+	SDL_Surface* shadow2 = SDL_CreateRGBSurface(0,
 												w+(slide<<1),
 												h+(slide<<1),
 												32,
@@ -484,9 +507,12 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 												#endif
 											);
 	SDL_Rect rect = {slide,slide};
-	SDL_SetAlpha(surf,0,0xff);
+	//SDL_SetAlpha(surf,0,0xff);
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_NONE);
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
-	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
+	//SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_BLEND);
+	SDL_SetSurfaceAlphaMod(surf,0xff);
 	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(shadow,0xffffffff);
 	}else if(is_black==0){
@@ -494,9 +520,12 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	}else{
 		setRGB(shadow,SDL_MapRGB(surf->format,c.r,c.g,c.b));
 	}
-	SDL_SetAlpha(shadow,0,0xff);
+	//SDL_SetAlpha(shadow,0,0xff);
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);
 	SDL_BlitSurface(shadow,NULL,shadow2,NULL);
-	SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);
+	//SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_BLEND);
+	SDL_SetSurfaceAlphaMod(shadow,0xff);
 	int x,y,z;
 	int nw = shadow->w;
 	int nh = shadow->h;
@@ -559,7 +588,7 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	}
 	int w = surf->w;
 	int h = surf->h;
-	SDL_Surface* shadow = SDL_CreateRGBSurface(		SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+	SDL_Surface* shadow = SDL_CreateRGBSurface(	0,
 												w+(slide<<1),
 												h+(slide<<1),
 												32,
@@ -575,7 +604,7 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 												    0xff000000
 												#endif
 											);
-	SDL_Surface* shadow2 = SDL_CreateRGBSurface(	SDL_SRCALPHA | SDL_HWSURFACE | SDL_HWACCEL,
+	SDL_Surface* shadow2 = SDL_CreateRGBSurface(0,
 												w+(slide<<1),
 												h+(slide<<1),
 												32,
@@ -592,9 +621,12 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 												#endif
 											);
 	SDL_Rect rect = {slide,slide};
-	SDL_SetAlpha(surf,0,0xff);
+	//SDL_SetAlpha(surf,0,0xff);
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_NONE);
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
-	SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
+	//SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_BLEND);
+	SDL_SetSurfaceAlphaMod(surf,0xff);
 	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(shadow,0xffffffff);
 	}else if(is_black==0){
@@ -602,9 +634,12 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	}else{
 		setRGB(shadow,SDL_MapRGB(surf->format,c.r,c.g,c.b));
 	}
-	SDL_SetAlpha(shadow,0,0xff);
+	//SDL_SetAlpha(shadow,0,0xff);
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);
 	SDL_BlitSurface(shadow,NULL,shadow2,NULL);
-	SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);
+	//SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_BLEND);
+	SDL_SetSurfaceAlphaMod(shadow,0xff);
 	int x,y,z;
 	int nw = shadow->w;
 	int nh = shadow->h;
@@ -671,7 +706,8 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	SDL_Rect srcrect = {slide,slide,w,h};
 	SDL_Surface *ret = nullSurface(w, h);
 	if(ret==NULL) return shadow;
-	SDL_SetAlpha(shadow,SDL_RLEACCEL,0xff);		//not use alpha
+	//SDL_SetAlpha(shadow,SDL_RLEACCEL,0xff);		//not use alpha
+	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_NONE);		//not use alpha
 	SDL_BlitSurface(shadow,&srcrect,ret,NULL);
 	SDL_FreeSurface(shadow);
 	return  ret;

@@ -5,6 +5,7 @@
  *      Author: orz
  */
 
+#include <string.h>
 #include "april_fool.h"
 
 void set_aprilfool(SETTING* setting,DATA* data){

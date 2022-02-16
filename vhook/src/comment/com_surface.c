@@ -2,6 +2,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL2_rotozoom.h>
 #include <stdio.h>
+#include <string.h>
 #include "com_surface.h"
 #include "../chat/chat.h"
 #include "../chat/chat_slot.h"
@@ -1244,7 +1245,7 @@ h_Surface* drawText4(DATA* data,int size,SDL_Color SdlColor,TTF_Font* font,Uint1
 	if(debug)
 		fprintf(log,"[comsurface/drawText4]line feed size=%d\n",fontpixsize);
 	//高さ補正
-	h_SetAlpha(surf,SDL_RLEACCEL,0xff);	//not use alpha
+	h_SetSurfaceBlendMode(surf,SDL_BLENDMODE_NONE);	//not use alpha
 	int difh = fontpixsize - surf->h;
 	if(difh==0){
 		return surf;
@@ -1370,7 +1371,7 @@ SDL_Surface* getErrFont(DATA* data){
 	h_Surface* ret = NULL;
 	if(ef!=NULL){
 		ret = drawNullSurface(ef->w,ef->h);
-		h_SetAlpha(ret,SDL_RLEACCEL,0xff);	//not use alpha
+		h_SetSurfaceBlendMode(ret,SDL_BLENDMODE_NONE);	//not use alpha
 		h_BlitSurface(ef,NULL,ret,NULL);
 	}
 	return ret->s;	//copied ErrFont

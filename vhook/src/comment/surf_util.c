@@ -4,8 +4,19 @@
 #include "../mydef.h"
 #include "adjustComment.h"
 
+//廃止
 int h_SetAlpha(h_Surface *surface, Uint32 flag, Uint8 alpha){
 	return SDL_SetAlpha(surface->s,flag,alpha);
+}
+//コピー時のα値の修正値を設定する
+int h_SetSurfaceAlphaMod(h_Surface *surface, Uint8 alpha){
+	return SDL_SetSurfaceAlphaMod(surface->s,alpha);
+}
+//コピー時のブレンドモードを設定する
+// h_SetSurfaceBlendMode SDL_BLENDMODE_NONE
+// h_SetSurfaceBlendMode SDL_BLENDMODE_BLEND
+int h_SetSurfaceBlendMode(h_Surface *surface, SDL_BlendMode blendMode){
+	return SDL_SetSurfaceBlendMode(surface->s,blendMode);
 }
 int h_BlitSurface(h_Surface *src, SDL_Rect *srcrect, h_Surface *dst, SDL_Rect *dstrect){
 	return SDL_BlitSurface(src->s,srcrect,dst->s,dstrect);
@@ -28,7 +39,7 @@ h_Surface* newSurface(SDL_Surface* surf){
 }
 SDL_Surface* h_SDLSurf(h_Surface* surf){
 	SDL_Surface* sdlret = nullSurface(surf->w, surf->h);
-	h_SetAlpha(surf,SDL_RLEACCEL,0xff);		//not use alpha
+	h_SetSurfaceBlendMode(surf,SDL_BLENDMODE_NONE);		//not use alpha
 	SDL_BlitSurface(surf->s,NULL,sdlret,NULL);
 	h_FreeSurface(surf);
 	return sdlret;
@@ -39,13 +50,13 @@ int h_FillRect(h_Surface *dst, SDL_Rect *dstrect, Uint32 color){
 int h_SetClipRect(h_Surface *surface, const SDL_Rect *rect){
 	return SDL_SetClipRect(surface->s, rect)==SDL_TRUE;
 }
+//カラーキー: SDL_SetColorKey()の引数に, SDL_TRUEをSDL_SRCCOLORKEYの代わりに渡すこと.
 int h_SetColorKey(h_Surface *surface, Uint32 flag, Uint32 key){
 	return SDL_SetColorKey(surface->s, flag, key);
 }
 SDL_Surface* nullSurface(int w,int h){
 	//not make nor use alpha
-	return SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_HWACCEL,
-	                             w,h,32,
+	return SDL_CreateRGBSurface(0,w,h,32,
 	                        #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	                             0xff000000,
 	                             0x00ff0000,
@@ -88,8 +99,10 @@ h_Surface* connectSurface(h_Surface* top,h_Surface* bottom, int height){
 		height = y + h;
 	ret = drawNullSurface(MAX(top->w,bottom->w), height);
 	if(ret == NULL) return NULL;	//for Error
-	h_SetAlpha(top,SDL_RLEACCEL,0xff);	//not use alpha
-	h_SetAlpha(bottom,SDL_RLEACCEL,0xff);	//not use alpha
+	//h_SetAlpha(top,SDL_RLEACCEL,0xff);	//not use alpha
+	h_SetSurfaceBlendMode(top,SDL_BLENDMODE_NONE);		//not use alpha
+	//h_SetAlpha(bottom,SDL_RLEACCEL,0xff);	//not use alpha
+	h_SetSurfaceBlendMode(bottom,SDL_BLENDMODE_NONE);		//not use alpha
 	h_BlitSurface(top,NULL,ret,NULL);
 	int w = bottom->w;
 	int dh = (height-(y+h))>>1 ;
@@ -116,8 +129,10 @@ h_Surface* arrangeSurface(h_Surface* left,h_Surface* right){
 		return left;
 	h_Surface* ret = drawNullSurface(left->w+right->w, MAX(left->h,right->h));
 	if(ret == NULL) return NULL;	//for Error
-	h_SetAlpha(left,SDL_RLEACCEL,0xff);	//not use alpha
-	h_SetAlpha(right,SDL_RLEACCEL,0xff);	//not use alpha
+	//h_SetAlpha(left,SDL_RLEACCEL,0xff);	//not use alpha
+	h_SetSurfaceBlendMode(left,SDL_BLENDMODE_NONE);		//not use alpha
+	//h_SetAlpha(right,SDL_RLEACCEL,0xff);	//not use alpha
+	h_SetSurfaceBlendMode(right,SDL_BLENDMODE_NONE);		//not use alpha
 	h_BlitSurface(left,NULL,ret,NULL);
 	SDL_Rect rect = {left->w,0,ret->w,ret->h};		//use only x y
 	h_BlitSurface(right,NULL,ret,&rect);

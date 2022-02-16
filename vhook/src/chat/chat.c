@@ -302,7 +302,8 @@ SDL_Color convColor24(int c){
 	sc.r = (c & 0x00ff0000) >> 16;
 	sc.g = (c & 0x0000ff00) >> 8;
 	sc.b = (c & 0x000000ff) >> 0;
-	sc.unused = 0;
+	//sc.unused = 0;
+	sc.a = 0;
 	return sc;
 }
 //check & convColor24
