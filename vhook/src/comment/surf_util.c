@@ -5,9 +5,9 @@
 #include "adjustComment.h"
 
 //廃止
-int h_SetAlpha(h_Surface *surface, Uint32 flag, Uint8 alpha){
-	return SDL_SetAlpha(surface->s,flag,alpha);
-}
+//int h_SetAlpha(h_Surface *surface, Uint32 flag, Uint8 alpha){
+//	return SDL_SetAlpha(surface->s,flag,alpha);
+//}
 //コピー時のα値の修正値を設定する
 int h_SetSurfaceAlphaMod(h_Surface *surface, Uint8 alpha){
 	return SDL_SetSurfaceAlphaMod(surface->s,alpha);

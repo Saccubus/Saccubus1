@@ -1,4 +1,3 @@
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <stdio.h>
@@ -696,6 +695,7 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 	int zoomed_height = 144;
 	zoomy = (double)zoomed_height / (double)data->vout_height;
 	zoomed_width = (int)(data->vout_width * zoomy);
+	SDL_Window* window;
 
 	if(!data->process_first_called){
 		// 弾幕モードの高さの設定　16:9でオリジナルリサイズでない場合は上下にはみ出す
@@ -731,27 +731,42 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 		SDL_Event event;
 		if(!data->process_first_called){
 			const char *title;
-			SDL_Surface *icon;
+			//SDL_Surface *icon;
 			/* Set the icon -- this must be done before the first mode set */
-			icon = SDL_LoadBMP("bin/icon32.bmp");
-			if ( icon != NULL ) {
-				SDL_WM_SetIcon(icon, NULL);
-			}
+			//icon = SDL_LoadBMP("bin/icon32.bmp");
+			//if ( icon != NULL ) {
+			//	SDL_WM_SetIcon(icon, NULL);
+			//}
 			title = data->data_title;
 			fprintf(log,"[main/process]Window Title: %s\n", title);
-			SDL_WM_SetCaption(title, NULL);
+			//SDL_WM_SetCaption(title, NULL);
 			/* See if it's really set */
 			title = NULL;
-			SDL_WM_GetCaption((char **)&title, (char **)NULL);
+			//SDL_WM_GetCaption((char **)&title, (char **)NULL);
 			if ( title!=NULL )
 				fprintf(log,"[main/process]Title was set to: %s\n", title);
 			else
 				fprintf(log,"[main/process]No window title was set!\n");
 
-			if(data->show_thumbnail_size)
-				data->screen = SDL_SetVideoMode(zoomed_width, zoomed_height, 24, SDL_HWSURFACE | SDL_DOUBLEBUF);
-			else
-				data->screen = SDL_SetVideoMode(surf->w, surf->h, 24, SDL_HWSURFACE | SDL_DOUBLEBUF);
+			if(data->show_thumbnail_size) {
+				//data->screen = SDL_SetVideoMode(zoomed_width, zoomed_height, 24, SDL_HWSURFACE | SDL_DOUBLEBUF);
+				window = SDL_CreateWindow(title,
+								SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+								zoomed_width, zoomed_height,
+								SDL_WINDOW_OPENGL);
+			}else {
+				//data->screen = SDL_SetVideoMode(surf->w, surf->h, 24, SDL_HWSURFACE | SDL_DOUBLEBUF);
+				window = SDL_CreateWindow(title,
+								SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+								surf->w, surf->h,
+								SDL_WINDOW_OPENGL);
+			}
+			data->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+			data->screen = SDL_GetWindowSurface(window);
+			data->texture = SDL_CreateTexture(data->renderer,
+                                                SDL_PIXELFORMAT_ARGB8888,
+                                                SDL_TEXTUREACCESS_STREAMING,
+                                                surf->w, surf->h);
 			if(data->screen == NULL){
 				fputs("[main/process]failed to initialize screen.\n",log);
 				fflush(log);
@@ -763,13 +778,21 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 			zoomed = zoomSurface(surf,zoomy,zoomy,SMOOTHING_OFF);
 			if(zoomed!=null){
 				SDL_BlitSurface(zoomed,NULL,data->screen,NULL);
-				SDL_Flip(data->screen);
+				//SDL_Flip(data->screen);
+				SDL_UpdateTexture(data->texture, NULL, (data->screen)->pixels, (data->screen)->pitch);
+				SDL_RenderClear(data->renderer);
+				SDL_RenderCopy(data->renderer, data->texture, NULL, NULL);
+				SDL_RenderPresent(data->renderer);
 				while(SDL_PollEvent(&event)){}
 				SDL_FreeSurface(zoomed);
 			}
 		}else{
 			SDL_BlitSurface(surf,NULL,data->screen,NULL);
-			SDL_Flip(data->screen);
+			//SDL_Flip(data->screen);
+			SDL_UpdateTexture(data->texture, NULL, (data->screen)->pixels, (data->screen)->pitch);
+			SDL_RenderClear(data->renderer);
+			SDL_RenderCopy(data->renderer, data->texture, NULL, NULL);
+			SDL_RenderPresent(data->renderer);
 			while(SDL_PollEvent(&event)){}
 		}
 	}

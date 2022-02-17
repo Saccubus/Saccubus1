@@ -35,15 +35,17 @@ __declspec(dllexport) int ExtConfigure(void **ctxp, void* dummy, int argc, char 
 	//ログ
 	FILE* log = fopen("[log]vhext.txt", "w+");
 	char linebuf[128];
-	char *ver="1.67.8.06";
+	char *ver="1.68.1.01";
 	snprintf(linebuf,63,"%s\nBuild %s %s\n",ver,__DATE__,__TIME__);
 	if(log == NULL){
 		puts(linebuf);
+		puts("Use SDL2/SDL2_tff/SDL2_gfx.\n");
 		puts("[framehook/init]failed to open logfile.\n");
 		fflush(log);
 		return -1;
 	}else{
 		fputs(linebuf,log);
+		fputs("Use SDL2/SDL2_tff/SDL2_gfx.\n",log);
 		fputs("[framehook/init]initializing..\n",log);
 		fflush(log);
 	}

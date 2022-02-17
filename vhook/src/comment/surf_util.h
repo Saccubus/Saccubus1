@@ -8,7 +8,7 @@ typedef struct h_Surface {
 	int h;
 } h_Surface;
 
-int h_SetAlpha(h_Surface *surface, Uint32 flag, Uint8 alpha);
+//int h_SetAlpha(h_Surface *surface, Uint32 flag, Uint8 alpha);
 int h_SetSurfaceAlphaMod(h_Surface *surface, Uint8 alpha);
 int h_SetSurfaceBlendMode(h_Surface *surface, SDL_BlendMode blendMode);
 int h_BlitSurface(h_Surface *src, SDL_Rect *srcrect, h_Surface *dst, SDL_Rect *dstrect);

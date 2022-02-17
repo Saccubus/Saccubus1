@@ -22,6 +22,9 @@ struct DATA{
 	FILE* log;
 	TTF_Font* font[CMD_FONT_MAX];
 	SDL_Surface* screen;
+	//SDL_Window* window;		//SDL2.0
+	SDL_Texture* texture;		//SDL2.0
+	SDL_Renderer* renderer;		//SDL2.0
 	/*それぞれのコメントに応じたデータ*/
 	//ユーザコメント
 	CDATA user;

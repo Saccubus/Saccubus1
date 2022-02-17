@@ -4,6 +4,7 @@
  *  Created on: 2012/08/24
  *      Author: orz
  */
+#include <string.h>
 #include "wakuiro.h"
 
 void set_wakuiro(const char* str,DATA* data){
