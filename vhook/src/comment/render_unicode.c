@@ -12,27 +12,10 @@
 #include "../unicode/uniutil.h"
 #include "../wakuiro.h"
 
-static Uint16 buffer[400];
 h_Surface* pointsConv(DATA* data,h_Surface* surf,Uint16* str,int size,int fontsel);
 h_Surface* widthFixConv(DATA *data,h_Surface* surf,Uint16 *str,int size,int fontsel);
-h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str1,SDL_Color fg,int size,int fontsel,int fill_bg){
+h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int size,int fontsel,int fill_bg){
 	//SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
-	//2022/02/04 異体字セレクタのみ削除する
-	int limit = 380;
-	Uint16* str = buffer;
-	while(*str1!='\0' && --limit>0){
-		if ((*str1 >= (Uint16)0xfe00) && (*str1 <= (Uint16)0xfe0f)) {
-			str1++;
-			continue;
-		}
-		*str++ = *str1++;
-	}
-	*str = '\0';
-	if(buffer[0] =='\0'){
-		buffer[0] = (Uint16)0x3000;
-		buffer[1] = '\0';
-	}
-	str = buffer;
 	h_Surface* ret;
 	const char* mode=data->extra_mode;
 	if(strstr(mode,"-font")==NULL && !fill_bg){
