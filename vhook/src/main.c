@@ -731,23 +731,9 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 		SDL_Event event;
 		if(!data->process_first_called){
 			const char *title;
-			//SDL_Surface *icon;
-			/* Set the icon -- this must be done before the first mode set */
-			//icon = SDL_LoadBMP("bin/icon32.bmp");
-			//if ( icon != NULL ) {
-			//	SDL_WM_SetIcon(icon, NULL);
-			//}
+			SDL_Surface *icon;
 			title = data->data_title;
 			fprintf(log,"[main/process]Window Title: %s\n", title);
-			//SDL_WM_SetCaption(title, NULL);
-			/* See if it's really set */
-			title = NULL;
-			//SDL_WM_GetCaption((char **)&title, (char **)NULL);
-			if ( title!=NULL )
-				fprintf(log,"[main/process]Title was set to: %s\n", title);
-			else
-				fprintf(log,"[main/process]No window title was set!\n");
-
 			if(data->show_thumbnail_size) {
 				//data->screen = SDL_SetVideoMode(zoomed_width, zoomed_height, 24, SDL_HWSURFACE | SDL_DOUBLEBUF);
 				window = SDL_CreateWindow(title,
@@ -761,16 +747,34 @@ int main_process(DATA* data,SDL_Surface* surf,int now_vpos){
 								surf->w, surf->h,
 								SDL_WINDOW_OPENGL);
 			}
+			if(window == NULL){
+				fputs("[main/process]failed to initialize window.\n",log);
+				fflush(log);
+				return FALSE;
+			}
+			/* Set the icon -- this must be done before the first mode set */
+			icon = SDL_LoadBMP("bin/icon32.bmp");
+			if ( icon != NULL ) {
+				SDL_SetWindowIcon(window, icon); 
+				SDL_FreeSurface(icon);
+			}
 			data->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 			data->screen = SDL_GetWindowSurface(window);
-			data->texture = SDL_CreateTexture(data->renderer,
-                                                SDL_PIXELFORMAT_ARGB8888,
-                                                SDL_TEXTUREACCESS_STREAMING,
-                                                surf->w, surf->h);
 			if(data->screen == NULL){
 				fputs("[main/process]failed to initialize screen.\n",log);
 				fflush(log);
 				return FALSE;
+			}
+			if(data->show_thumbnail_size) {
+				data->texture = SDL_CreateTexture(data->renderer,
+                                                SDL_PIXELFORMAT_ARGB8888,
+                                                SDL_TEXTUREACCESS_STREAMING,
+                                                zoomed_width, zoomed_height);
+			}else {
+				data->texture = SDL_CreateTexture(data->renderer,
+                                                SDL_PIXELFORMAT_ARGB8888,
+                                                SDL_TEXTUREACCESS_STREAMING,
+                                                surf->w, surf->h);
 			}
 		}
 		//映像表示
