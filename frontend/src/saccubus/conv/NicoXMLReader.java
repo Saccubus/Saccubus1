@@ -627,6 +627,7 @@ public class NicoXMLReader extends DefaultHandler {
 					else if(list[0].equals("/emotion")) {
 						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF3B, "ひまわり");
 						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF40, "クローバー");
+						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF38, "さくら");
 						item.setMail("shita middle @2");
 						item_fork = true;
 					}
