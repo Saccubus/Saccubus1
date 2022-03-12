@@ -26,12 +26,15 @@ public class Util {
 	//サロゲートペア＆(結合文字) 検出＆文字除去
 	public static String DelEmoji(String str, String t)
 	{
-		if (!IsSurrogatePair(str)) return str;
+		if (str.length() <= 0) return str;
 
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < str.length(); i++) {
 			char c = str.charAt(i);
-			if (Character.isHighSurrogate(c)) {
+			if (c >= (char)0xFE00 && c <= (char)0xFE0F) {
+				continue;
+			}
+			else if (Character.isHighSurrogate(c)) {
 				sb.append(t);
 				++i;
 			}
@@ -60,9 +63,6 @@ public class Util {
 					sb.append(ch);
 					sb.append(cl);
 				}
-			}
-			else if (ch == hs) {
-				sb.append(t);
 			}
 			else {
 				sb.append(ch);
