@@ -61,9 +61,6 @@ public class Util {
 					sb.append(cl);
 				}
 			}
-			else if (ch == hs) {
-				sb.append(t);
-			}
 			else {
 				sb.append(ch);
 			}
