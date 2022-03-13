@@ -202,6 +202,34 @@ int getFirstFont(Uint16* up,int basefont){
 }
 
 /*
+サロゲートペア(代用対)は16ビットUnicodeの領域1024文字分を2つ使い
+（前半 U+D800 〜 U+DBFF、後半 U+DC00 〜 U+DFFF）、
+各々1個ずつからなるペアで1024 × 1024 = 1,048,576文字を表す。
+*/
+int isHighSurrogate(Uint16 u){
+	return (0xD800 <= u && u <= 0xDBFF);
+}
+
+int isLowSurrogate(Uint16 u){
+	return (0xDC00 <= u && u <= 0xDFFF);
+}
+
+// UTF16のサロゲートペアをUNICODEに変換
+Uint32 convUTF16toUNICODE(Uint16 hs, Uint16 ls){
+	Uint32 unicode = 0x10000;
+	unicode += ((hs - 0xD800) << 10) + (ls - 0xDC00);
+	return unicode;
+}
+
+Uint32 convUTF16toUNICODE2(Uint16* up){
+	Uint32 unicode = 0x10000;
+	Uint16 hs = *up++;
+	Uint16 ls = *up;
+	unicode += ((hs - 0xD800) << 10) + (ls - 0xDC00);
+	return unicode;
+}
+
+/*
 Uint16 replaceSpace(Uint16 u){
 	if(u == 0x02cb){
 		return 0x02cb;

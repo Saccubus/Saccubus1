@@ -12,14 +12,32 @@
 #include "../unicode/uniutil.h"
 #include "../wakuiro.h"
 
+static int TTF_byteswapped = 0;
+static size_t UTF16_to_UTF8_len(const Uint16 *text);
+static void UTF16_to_UTF8(const Uint16 *src, Uint8 *dst);
+
 h_Surface* pointsConv(DATA* data,h_Surface* surf,Uint16* str,int size,int fontsel);
 h_Surface* widthFixConv(DATA *data,h_Surface* surf,Uint16 *str,int size,int fontsel);
 h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int size,int fontsel,int fill_bg){
 	//SDL_Surface* surf = TTF_RenderUNICODE_Blended(font,str,SdlColor);
 	h_Surface* ret;
 	const char* mode=data->extra_mode;
+
+	Uint8 *utf8_alloc = NULL;
+	char *text_cpy;
+
+	//convert UTF-16 to UTF-8
+	utf8_alloc = SDL_stack_alloc(Uint8, UTF16_to_UTF8_len(str));
+	if (utf8_alloc == NULL) {
+		SDL_OutOfMemory();
+		return NULL;
+	}
+	UTF16_to_UTF8(str, utf8_alloc);
+	text_cpy = (char *)utf8_alloc;
+	/* */
 	if(strstr(mode,"-font")==NULL && !fill_bg){
-		ret = newSurface(TTF_RenderUNICODE_Blended(font,str,fg));	//default original mode
+		//ret = newSurface(TTF_RenderUNICODE_Blended(font,str,fg));	//default original mode
+		ret = newSurface(TTF_RenderUTF8_Blended(font,text_cpy,fg));	//default original mode
 		if(ret==NULL){
 			fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]TTF_RenderUNICODE_Blended : %s\n",TTF_GetError());
 			fflush(data->log);
@@ -50,7 +68,8 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int
 		}
 		Uint32 colkey;
 		SDL_Color black = COMMENT_COLOR[CMD_COLOR_BLACK];
-		h_Surface* surf = newSurface(TTF_RenderUNICODE_Shaded(font,str,fg,black));
+		//h_Surface* surf = newSurface(TTF_RenderUNICODE_Shaded(font,str,fg,black));
+		h_Surface* surf = newSurface(TTF_RenderUTF8_Shaded(font,text_cpy,fg,black));
 		if(surf==NULL){
 			fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]TTF_RenderUNICODE_Shaded : %s\n",TTF_GetError());
 			fflush(data->log);
@@ -86,6 +105,10 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int
 	}else if(strstr(mode,"-old")==NULL){
 		ret = widthFixConv(data,ret,str,size,fontsel);
 	}
+
+	if (utf8_alloc)
+		SDL_stack_free(utf8_alloc);
+
 	return ret;
 }
 
@@ -348,4 +371,96 @@ h_Surface* drawButton(DATA* data,h_Surface* surf,SDL_Color col,int is_owner)
 		return drawOwnerButton(data,surf,col);
 	else
 		return drawUserButton(data,surf);
+}
+
+/*
+  SDL_ttf:  A companion library to SDL for working with TrueType (tm) fonts
+  Copyright (C) 2001-2022 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+*/
+
+/* Gets the number of bytes needed to convert a UTF16 string to UTF-8 */
+static size_t UTF16_to_UTF8_len(const Uint16 *text)
+{
+    size_t bytes = 1;
+    while (*text) {
+        Uint16 ch = *text++;
+        if (ch <= 0x7F) {
+            bytes += 1;
+        } else if (ch <= 0x7FF) {
+            bytes += 2;
+        } else if (isHighSurrogate(ch)) {
+            if (*text)
+                text++;
+            bytes += 4;
+        } else {
+            bytes += 3;
+        }
+    }
+    return bytes;
+}
+
+/* Convert a UTF-16 string to a UTF-8 string */
+static void UTF16_to_UTF8(const Uint16 *src, Uint8 *dst)
+{
+    SDL_bool swapped = TTF_byteswapped;
+    while (*src) {
+        Uint16 ch16 = *src++;
+        if (ch16 == UNICODE_BOM_NATIVE) {
+            swapped = SDL_FALSE;
+            continue;
+        }
+        if (ch16 == UNICODE_BOM_SWAPPED) {
+            swapped = SDL_TRUE;
+            continue;
+        }
+        if (swapped) {
+            ch16 = SDL_Swap16(ch16);
+        }
+        Uint32 ch = (Uint32) ch16;
+        if (isHighSurrogate(ch16)) {
+            ch = (Uint32) 0xFFFD; //error code
+            if (*src) {
+                Uint16 chl = *src;
+                if (swapped) {
+                    chl = SDL_Swap16(chl);
+                }
+                if (isLowSurrogate(chl)) {
+                    ch = convUTF16toUNICODE(ch16, chl);
+                    src++;
+                }
+            }
+        }
+        if (ch <= 0x7F) {
+            *dst++ = (Uint8) ch;
+        } else if (ch <= 0x7FF) {
+            *dst++ = 0xC0 | (Uint8) ((ch >> 6) & 0x1F);
+            *dst++ = 0x80 | (Uint8) (ch & 0x3F);
+        } else if (ch <= 0xFFFF) {
+            *dst++ = 0xE0 | (Uint8) ((ch >> 12) & 0x0F);
+            *dst++ = 0x80 | (Uint8) ((ch >> 6) & 0x3F);
+            *dst++ = 0x80 | (Uint8) (ch & 0x3F);
+        } else if (ch <= 0x1FFFFF) {
+            *dst++ = 0xF0 | (Uint8) ((ch >> 18) & 0x07);
+            *dst++ = 0x80 | (Uint8) ((ch >> 12) & 0x3F);
+            *dst++ = 0x80 | (Uint8) ((ch >> 6) & 0x3F);
+            *dst++ = 0x80 | (Uint8) (ch & 0x3F);
+        }
+    }
+    *dst = '\0';
 }
