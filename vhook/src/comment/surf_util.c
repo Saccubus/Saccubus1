@@ -8,16 +8,24 @@
 //int h_SetAlpha(h_Surface *surface, Uint32 flag, Uint8 alpha){
 //	return SDL_SetAlpha(surface->s,flag,alpha);
 //}
+
 //コピー時のα値の修正値を設定する
 int h_SetSurfaceAlphaMod(h_Surface *surface, Uint8 alpha){
 	return SDL_SetSurfaceAlphaMod(surface->s,alpha);
 }
+
 //コピー時のブレンドモードを設定する
 // h_SetSurfaceBlendMode SDL_BLENDMODE_NONE
 // h_SetSurfaceBlendMode SDL_BLENDMODE_BLEND
 int h_SetSurfaceBlendMode(h_Surface *surface, SDL_BlendMode blendMode){
 	return SDL_SetSurfaceBlendMode(surface->s,blendMode);
 }
+
+//コピー時の各色成分に乗算される値を設定する
+int h_SetSurfaceColorMod(h_Surface *surface, Uint8 r, Uint8 g, Uint8 b){
+	return SDL_SetSurfaceColorMod(surface->s,r,g,b);
+}
+
 int h_BlitSurface(h_Surface *src, SDL_Rect *srcrect, h_Surface *dst, SDL_Rect *dstrect){
 	return SDL_BlitSurface(src->s,srcrect,dst->s,dstrect);
 }

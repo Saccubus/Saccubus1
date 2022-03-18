@@ -30,7 +30,9 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int
 	utf8_alloc = SDL_stack_alloc(Uint8, UTF16_to_UTF8_len(str));
 	if (utf8_alloc == NULL) {
 		SDL_OutOfMemory();
-		return NULL;
+		fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]SDL_stack_alloc : OutOfMemory\n");
+		fflush(data->log);
+		goto failure;
 	}
 	UTF16_to_UTF8(str, utf8_alloc);
 	text_cpy = (char *)utf8_alloc;
@@ -41,7 +43,7 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int
 		if(ret==NULL){
 			fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]TTF_RenderUNICODE_Blended : %s\n",TTF_GetError());
 			fflush(data->log);
-			return NULL;
+			goto failure;
 		}
 	}else{
 		SDL_Color bg = {0,0,0,0};
@@ -52,13 +54,14 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int
 			fontfg = FALSE;
 		}else{
 			switch(fontsel){
-			case GOTHIC_FONT:	bg.r = 0xff; break;	//red
-			case SIMSUN_FONT:	bg.g = 0xff; break;	//green
-			case GULIM_FONT:	bg.b = 0xff; break;	//blue
-			case MINGLIU_FONT:	bg.g = bg.b = 0xff;	break;	//cyan
+			case GOTHIC_FONT:		bg.r = 0xff; break;	//red
+			case SIMSUN_FONT:		bg.g = 0xff; break;	//green
+			case GULIM_FONT:		bg.b = 0xff; break;	//blue
+			case MINGLIU_FONT:		bg.g = bg.b = 0xff;	break;	//cyan
+			case SEGOEUI_SYM_FONT:	bg.r = bg.b = 0xff;	break;	//magenta
 			case UNDEFINED_FONT:
-			case ARIAL_FONT:	bg.r = bg.g = 0xff;	break;	//yellow
-			default:			bg.r = bg.g = bg.b = 0x80; break;	//gray
+			case ARIAL_FONT:		bg.r = bg.g = 0xff;	break;	//yellow
+			default:				bg.r = bg.g = bg.b = 0x80; break;	//gray
 			}
 			if(strstr(mode,"-fg")!=NULL){	//use whith -font, -font-fg
 				fg = bg;
@@ -73,14 +76,14 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int
 		if(surf==NULL){
 			fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]TTF_RenderUNICODE_Shaded : %s\n",TTF_GetError());
 			fflush(data->log);
-			return NULL;
+			goto failure;
 		}
 		colkey = 0;		//it must be black
 		h_Surface* tmp = drawNullSurface(surf->w,surf->h);	//surface for background
 		if(tmp==NULL){
 			fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]drawNullSurface/SDL_CreateRGBSurface: %s\n",SDL_GetError());
 			fflush(data->log);
-			return NULL;
+			goto failure;
 		}
 		if (!fontfg){
 			if(cmpSDLColor(fg,bg)){
@@ -98,6 +101,10 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int
 		h_SetColorKey(tmp,SDL_FALSE,0xff);	//reset color key
 		ret = tmp;
 	}
+
+	if (utf8_alloc)
+		SDL_stack_free(utf8_alloc);
+
 	if(data->original_resize||data->html5comment)
 		return ret;
 	if(strstr(mode,"-point")!=NULL || strstr(mode,"-tune")!=NULL){
@@ -110,6 +117,12 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int
 		SDL_stack_free(utf8_alloc);
 
 	return ret;
+
+failure:
+	if (utf8_alloc)
+		SDL_stack_free(utf8_alloc);
+
+	return NULL;
 }
 
 h_Surface* pointsConv(DATA *data,h_Surface* surf,Uint16 *str,int size,int fontsel){
