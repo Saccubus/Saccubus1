@@ -113,9 +113,6 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int
 		ret = widthFixConv(data,ret,str,size,fontsel);
 	}
 
-	if (utf8_alloc)
-		SDL_stack_free(utf8_alloc);
-
 	return ret;
 
 failure:

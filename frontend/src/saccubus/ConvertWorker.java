@@ -132,6 +132,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private static final String TMP_COMBINED_XML5 = "_tmp_easy.xml";
 	private static final String TMP_COMBINED_XML6 = "_tmp_easy2.xml";
 
+	private static final String FONT_SEGUISYM = "seguisym.ttf";
+	private static final String FONT_SEGUIEMJ = "seguiemj.ttf";
+
 	static final String TMP_LOG_FRONTEND = "frontend.txt";
 	private static final String THUMB_INFO = "_thumb_info";
 	private String OtherVideo;
@@ -693,7 +696,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					log.println("CA用フォント" + teluguFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					teluguFont = arialUnicodeFont;
 				}
-				segoeuisymFont = new File(fontDir, "seguisym.ttf");
+				segoeuisymFont = new File(fontDir, FONT_SEGUISYM);
 				if (!segoeuisymFont.canRead()) {
 					segoeuisymFont = nirmalaFont;
 				}
