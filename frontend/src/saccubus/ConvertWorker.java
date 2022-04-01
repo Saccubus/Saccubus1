@@ -696,7 +696,17 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					log.println("CA用フォント" + teluguFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					teluguFont = arialUnicodeFont;
 				}
-				segoeuisymFont = new File(fontDir, FONT_SEGUISYM);
+				if (Setting.isUseColorEmoji()) {
+					segoeuisymFont = new File(fontDir, FONT_SEGUIEMJ);
+					if (!segoeuisymFont.canRead()) {
+						sendtext("警告　CA用フォントが見つかりません。" + segoeuisymFont.getPath());
+						log.println("CA用フォント" + segoeuisymFont.getPath() + "を" + FONT_SEGUISYM + "で代替します。");
+						segoeuisymFont = new File(fontDir, FONT_SEGUISYM);
+					}
+										
+				} else {
+					segoeuisymFont = new File(fontDir, FONT_SEGUISYM);
+				}
 				if (!segoeuisymFont.canRead()) {
 					segoeuisymFont = nirmalaFont;
 				}
@@ -2635,8 +2645,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			isOptionalTranslucent = false;
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile, CommentReplaceList,
-				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit(),
-				live_op, Setting.isPremiumColorCheck(), duration, log, isDebugNet, html5)){
+				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit(), live_op,
+				Setting.getCommentLen(), Setting.isCommentLenTotal(),
+				Setting.isPremiumColorCheck(), duration, log, isDebugNet, html5)){
 			return false;
 		}
 		//コメント数が0の時削除する

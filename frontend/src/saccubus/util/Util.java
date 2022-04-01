@@ -3,6 +3,8 @@ package saccubus.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
 
 public class Util {
 	/*
@@ -23,15 +25,44 @@ public class Util {
 		return num;
 	}
 
+	//文字列の長さチェック
+	public static boolean isCommentLength(String str, int leng, boolean is_total)
+	{
+		boolean result = false;
+		
+		int ll = str.length();
+		if (ll <= 0 || leng <= 0) return result;
+
+		if (is_total) {
+			result = str.codePointCount(0, ll) > leng; 
+		} else {
+			//splitして1行ごとの行数チェック
+			List<String> ddd = Arrays.asList(str.split("(?<=\\n)"));
+			for (String tt : ddd) {
+				ll = tt.length();
+				if (ll > 0) {
+					if (tt.codePointCount(0, ll) > leng) {
+						result = true;
+						break;
+					}
+				}
+			}
+		}
+		return result;
+	}
+	
 	//サロゲートペア＆(結合文字) 検出＆文字除去
 	public static String DelEmoji(String str, String t)
 	{
-		if (!IsSurrogatePair(str)) return str;
+		if (str.length() <= 0) return str;
 
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < str.length(); i++) {
 			char c = str.charAt(i);
-			if (Character.isHighSurrogate(c)) {
+			if (c >= (char)0xFE00 && c <= (char)0xFE0F) {
+				continue;
+			}
+			else if (Character.isHighSurrogate(c)) {
 				sb.append(t);
 				++i;
 			}

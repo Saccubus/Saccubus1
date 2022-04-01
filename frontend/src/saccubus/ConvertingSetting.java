@@ -244,7 +244,10 @@ public class ConvertingSetting {
 	private boolean showThumbnail;
 	private boolean videoShowThumbnailSize;
 	private boolean enableUnicode;
-
+	private boolean useColorEmoji;
+	private int commentLen;
+	private boolean commentLenTotal;
+	
 	// NONE,MSIE,FireFox,Chrome,Opera,Chromium,Other
 	private boolean[] useBrowser = new boolean[BrowserInfo.NUM_BROWSER];
 
@@ -509,7 +512,10 @@ public class ConvertingSetting {
 			String livecomment_minimum,
 			boolean show_thumbnail,
 			boolean video_show_thumbnail,
-			boolean enable_unicode
+			boolean enable_unicode,
+			boolean use_color_emoji,
+			int commment_len,
+			boolean comment_len_total
 		)
 	{
 		this(	mailaddress,
@@ -690,6 +696,9 @@ public class ConvertingSetting {
 		showThumbnail = show_thumbnail;
 		videoShowThumbnailSize = video_show_thumbnail;
 		enableUnicode = enable_unicode;
+		useColorEmoji = use_color_emoji;
+		commentLen = commment_len;
+		commentLenTotal = comment_len_total;
 	}
 
 	public Map<String,String> getReplaceOptions(){
@@ -1199,6 +1208,16 @@ public class ConvertingSetting {
 	public boolean isEnableUnicode(){
 		return enableUnicode;
 	}
+	public boolean isUseColorEmoji() {
+		return useColorEmoji;
+	}
+	public int getCommentLen() {
+		return commentLen;
+	}
+	public boolean isCommentLenTotal() {
+		return commentLenTotal;
+	}
+	
 	//
 	public static String getDefOptsFpsUp(){
 		return defOptsFpsUp;
@@ -1408,6 +1427,10 @@ public class ConvertingSetting {
 	static final String PROP_SHOW_THUMBNAIL = "ShowThumbnail";
 	static final String PROP_VIDEO_SHOW_THUMBNAIL_SIZE = "VideoShowThumbnailSize";
 	static final String PROP_ENABLE_UNICODE = "EnableUnicode";
+	static final String PROP_USE_COLOR_EMOJI = "UseColorEmoji";
+	static final String PROP_COMMENT_LEN = "CommentLen";
+	static final String PROP_COMMENT_LEN_TOTAL = "CommentLenTotal";
+
 	// 保存するがGUIでは変更しない
 	public static final String PROP_OPTS_FPSUP = "OutOptionFpsUp";
 	public static final String PROP_OPTS_SWF_JPEG = "OutOptionSwfJpeg";
@@ -1662,6 +1685,10 @@ public class ConvertingSetting {
 		prop.setProperty(PROP_SHOW_THUMBNAIL, Boolean.toString(setting.isShowThumbnail()));
 		prop.setProperty(PROP_VIDEO_SHOW_THUMBNAIL_SIZE, Boolean.toString(setting.isVideoThumbnailSize()));
 		prop.setProperty(PROP_ENABLE_UNICODE, Boolean.toString(setting.isEnableUnicode()));
+		prop.setProperty(PROP_USE_COLOR_EMOJI, Boolean.toString(setting.isUseColorEmoji()));
+		prop.setProperty(PROP_COMMENT_LEN, Integer.toString(setting.getCommentLen()));
+		prop.setProperty(PROP_COMMENT_LEN_TOTAL, Boolean.toString(setting.isCommentLenTotal()));
+
 		//GUIなし ini初期値あり
 		prop.setProperty(PROP_OPTS_FPSUP, defOptsFpsUp);
 		prop.setProperty(PROP_OPTS_JPEG_MP4, defOptsJpegMp4);
@@ -2004,7 +2031,10 @@ public class ConvertingSetting {
 			prop.getProperty(PROP_LIVECOMMENT_MINIMUM_VPOS, "0.0"),
 			Boolean.parseBoolean(prop.getProperty(PROP_SHOW_THUMBNAIL, "false")),
 			Boolean.parseBoolean(prop.getProperty(PROP_VIDEO_SHOW_THUMBNAIL_SIZE, "false")),
-			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_UNICODE, "false"))
+			Boolean.parseBoolean(prop.getProperty(PROP_ENABLE_UNICODE, "false")),
+			Boolean.parseBoolean(prop.getProperty(PROP_USE_COLOR_EMOJI, "false")),
+			Integer.parseInt(prop.getProperty(PROP_COMMENT_LEN, "500")),
+			Boolean.parseBoolean(prop.getProperty(PROP_COMMENT_LEN_TOTAL, "false"))
 		);
 	}
 

@@ -13,6 +13,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import saccubus.SharedNgScore;
 import saccubus.util.Logger;
+import saccubus.util.Util;
 
 /**
  * <p>
@@ -73,11 +74,14 @@ public class NicoXMLReader extends DefaultHandler {
 	private Logger log;
 	private String duration = "";
 
+	private int comment_len = 500;
+	private boolean comment_len_total = false;
+	
 	private boolean isLiveConversionDone;
 	private boolean html5comment;
 
 	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd,
-		int scoreLimit, boolean liveOp, boolean prem_color_check, String duration, Logger logger, boolean html5){
+		int scoreLimit, boolean liveOp, int commentLen, boolean commentLenTotal, boolean prem_color_check, String duration, Logger logger, boolean html5){
 		this.packet = packet;
 		NG_Word = ngWordPat;
 		NG_ID = ngIdPat;
@@ -87,6 +91,8 @@ public class NicoXMLReader extends DefaultHandler {
 		premium = "";
 		liveConversion = liveOp;
 		// ニコスコメントは premium "2" or "3"みたいなのでニコスコメントの時は運営コメント変換しないようにする
+		comment_len = commentLen;
+		comment_len_total = commentLenTotal;
 		premiumColorCheck = prem_color_check;
 		liveOpDuration = duration;
 		log = logger;
@@ -840,7 +846,14 @@ public class NicoXMLReader extends DefaultHandler {
 				countNG_Word++;
 				return;
 			}
-			//
+			//コメントの長さチェック 2022/04/08
+			if (!com.startsWith("/")) {
+			// コメントの長さが設定以上なら
+				if (Util.isCommentLength(com, comment_len, comment_len_total)) {
+					item_kicked = true;
+					return;
+				}
+			}
 			if (isLiveConversionDone && com.startsWith("/")) {
 				if (!com.startsWith("/vote ")) {
 					com = com.substring(com.indexOf(' ')+1);

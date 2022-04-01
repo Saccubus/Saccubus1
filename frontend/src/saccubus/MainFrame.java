@@ -155,6 +155,7 @@ public class MainFrame extends JFrame {
 	JCheckBoxMenuItem jMenuClearErrorAtEnd = new JCheckBoxMenuItem(); 
 	JMenuItem jMenuSelfTerminate = new JMenuItem();
 	JCheckBoxMenuItem jMenuEnableUnicode = new JCheckBoxMenuItem();
+	JCheckBoxMenuItem jMenuUseColorEmoji = new JCheckBoxMenuItem();
 	JMenu jMenuAction = new JMenu();
 	JMenuItem jMenuLogview = new JCheckBoxMenuItem();
 	JMenuItem jMenuLatestCheck = new JMenuItem();
@@ -344,6 +345,8 @@ public class MainFrame extends JFrame {
 			"オフ：複数行・運営コメ簡易変更後にはNG適用しない",
 			"オン：複数行・運営コメ簡易変更後にもNG適用する",
 	};
+	private JTextField commentLen = new JTextField();
+	private JCheckBox commentLenTotal = new JCheckBox();
 	final String DEBUG_NET_FLAG = "debug/";
 	final String DEBUG_COMMENT_FLAG = "-debug";
 	private String debug_port = "80";
@@ -1098,9 +1101,12 @@ public class MainFrame extends JFrame {
 		selfTerminateSetting = new SelfTerminate(log, this);
 		jMenuSelfTerminate = selfTerminateSetting.initMenu(getTerminateTimeout());
 		jRestTimeMenu = selfTerminateSetting.getRestTimeMenu();
-		jMenuEnableUnicode.setText("Unicode表示を有効にする。(従来はshift-jis)");
+		jMenuEnableUnicode.setText("Unicode表示を有効にする(従来はshift-jis)");
 		jMenuEnableUnicode.setForeground(Color.blue);
 		jMenuEnableUnicode.setToolTipText("ファイルタイトルやログ表示でUnicodeのままにする。");
+		jMenuUseColorEmoji.setText("カラー絵文字を表示する");
+		jMenuUseColorEmoji.setForeground(Color.blue);
+		jMenuUseColorEmoji.setToolTipText("カラー絵文字はWindows8.1以降のみ対応。");
 		jMenuOpen.setText("開く(Open)...");
 		jMenuOpen.setForeground(Color.blue);
 		jMenuOpen.addActionListener(new ActionListener() {
@@ -1752,6 +1758,7 @@ public class MainFrame extends JFrame {
 		jMenuDetail.add(jMenuClearErrorAtEnd);
 		jMenuDetail.add(jMenuSelfTerminate);
 		jMenuDetail.add(jMenuEnableUnicode);
+		jMenuDetail.add(jMenuUseColorEmoji);
 		jMenuBar1.add(jMenuAction);
 		jMenuAction.add(jMenuLogview);
 		jMenuAction.add(jMenuLatestCheck);
@@ -4015,6 +4022,7 @@ public class MainFrame extends JFrame {
 		// duration -> settingへ
 		String vposshift = liveCommentVposShiftTextField.getText();
 		double vpos_shift_sec = 0.0;
+
 		if(!vposshift.isEmpty()){
 			try {
 				vpos_shift_sec = Double.valueOf(vposshift);
@@ -4029,6 +4037,12 @@ public class MainFrame extends JFrame {
 			last_history = requestHistory.getLast();
 		if(last_history==null)
 			last_history = "";
+		int comment_len;
+		try {
+			comment_len = Integer.parseInt(commentLen.getText());
+		} catch(NumberFormatException e){
+			comment_len = 500;
+		}
 		return new ConvertingSetting(
 			MailAddrField.getText(),
 			new String(PasswordField.getPassword()),
@@ -4192,8 +4206,11 @@ public class MainFrame extends JFrame {
 			liveCommentMinVposTextField.getText(),
 			showIconThumbnailCheckBox.isSelected(),
 			videoThumbnailSizeCheckBox.isSelected(),
-			jMenuEnableUnicode.isSelected()
-		);
+			jMenuEnableUnicode.isSelected(),
+			jMenuUseColorEmoji.isSelected(),
+			comment_len,
+			commentLenTotal.isSelected()
+			);
 	}
 
 	/*
@@ -4424,6 +4441,9 @@ public class MainFrame extends JFrame {
 		setHtml5AutoDefault();
 		terminateTimeout = setting.getTerminateTimeout();
 		jMenuEnableUnicode.setSelected(setting.isEnableUnicode());
+		jMenuUseColorEmoji.setSelected(setting.isUseColorEmoji());
+		commentLen.setText(Integer.toString(setting.getCommentLen()));
+		commentLenTotal.setSelected(setting.isCommentLenTotal());
 		if(isDebugModeSet())
 			jMenuDebug.setSelected(true);
 	}
