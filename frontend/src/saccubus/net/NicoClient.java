@@ -179,13 +179,6 @@ public class NicoClient {
 					String this_session = "user_session=" + session;
 					Cookie = new NicoCookie();
 					Cookie.setSession(this_session);
-					if(isHtml5){
-						Cookie.addNormalCookie("watch_html5=1");
-						Cookie.addNormalCookie("watch_flash=0");
-					}else{
-						Cookie.addNormalCookie("watch_html5=0");
-						Cookie.addNormalCookie("watch_flash=1");
-					}
 					if(loginCheck()){
 						setLoggedIn(true);	// ログイン済みのハズ
 						setExtraError("");
@@ -306,13 +299,6 @@ public class NicoClient {
 			if(cookieProp == null){
 				cookieProp = new NicoCookie();
 			}
-			if(isHtml5){
-				cookieProp.addNormalCookie("watch_html5=1");
-				cookieProp.addNormalCookie("watch_flash=0");
-			}else{
-				cookieProp.addNormalCookie("watch_html5=0");
-				cookieProp.addNormalCookie("watch_flash=1");
-			}
 			if (cookieProp != null)
 				con.addRequestProperty("Cookie", cookieProp.get(url));
  		//	con.setRequestProperty("Host", "nmsg.nicovideo.jp");
@@ -401,6 +387,26 @@ public class NicoClient {
 		return "";
 	}
 
+	// count行まで読み込んでStringを返す
+	private String read2Connection(HttpURLConnection con, int count){
+		try {
+			//Stopwatch.show();
+			BufferedReader br = new BufferedReader(
+					new InputStreamReader(con.getInputStream()));
+			StringBuilder sb = new StringBuilder();
+			String str;
+			while ((str = br.readLine()) != null && count-- > 0) {
+				sb.append(str+System.getProperty("line.separator"));
+			}
+			br.close();
+			con.disconnect();
+			debug("■readLines:\n" + sb.toString());
+			return sb.toString();
+		} catch(IOException ex){
+			log.printStackTrace(ex);
+		}
+		return "";
+	}
 	private NicoCookie detectCookie(HttpURLConnection con){
 		nicomap.putConnection(con, (Debug? log:null));
 		NicoCookie cookie = new NicoCookie();
@@ -2240,11 +2246,18 @@ public class NicoClient {
 			log.print(" new_cookie isEmpty. ");
 			// but continue
 		}
-		String auth = nicomap.get("x-niconico-authflag");
-		if(auth==null || auth.isEmpty() || auth.equals("0")){
-			log.println("ng. Not logged in. "+browserInfo.getName()+" authflag=" + auth);
-			log.println("last_user_session="+BrowserInfo.getLastUsersession());
+		String ret = read2Connection(con, 70);
+		if (ret == null || ret.isEmpty()){
+			log.println("ng.\nCan't read TopPage at loginCheck:");
 			con.disconnect();
+			BrowserInfo.resetLastUserSession();
+			return false;
+		}
+		// コンテンツを読んで以下の文字列がなければログインされていない
+		if(!ret.contains("user.login_status = 'login';")){
+			log.println("ng. Not logged in. "+browserInfo.getName());
+			log.println("last_user_session="+BrowserInfo.getLastUsersession());
+			//con.disconnect();
 			BrowserInfo.resetLastUserSession();
 			return false;
 		}
