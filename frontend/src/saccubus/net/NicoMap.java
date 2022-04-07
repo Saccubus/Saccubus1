@@ -176,9 +176,9 @@ public class NicoMap {
 			} catch(NumberFormatException ex){
 				age = -1;
 			}
-			if(age < 0){
+			if(age <= 0 || nm.containsKey("deleted")){
 				this.add2(DELETE_COOKIE, value);	//4
-			} else if(nm.containsKey("Secure")){
+			} else if(nm.containsKey("user_session_secure")){
 				this.put(SECURE_COOKIE, value);	//1
 			} else if(!nm.containsKey("user_session")) {
 				this.add2(NORMAL_COOKIE, value);	//2
