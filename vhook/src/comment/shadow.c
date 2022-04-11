@@ -130,6 +130,7 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	shadowBlitSurface(surf,NULL,shadow,&rect);
 	SDL_FreeSurface(surf);
 	SDL_FreeSurface(shadow2);
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);
 	return shadow;
 }
 
@@ -206,6 +207,7 @@ SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	setAlpha(black,gmax);
 	shadowBlitSurface(surf,NULL,black,NULL);
 	SDL_FreeSurface(surf);
+	SDL_SetSurfaceBlendMode(black,SDL_BLENDMODE_NONE);
 	return black;
 }
 
@@ -324,6 +326,7 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	shadowBlitSurface(surf,NULL,shadow,&rect);
 	SDL_FreeSurface(surf);
 	SDL_FreeSurface(shadow2);
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);
 	return shadow;
 }
 
@@ -448,6 +451,7 @@ SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,SDL_Color c,DATA* dat
 	shadowBlitSurface(surf,NULL,shadow,&rect);
 	SDL_FreeSurface(surf);
 	SDL_FreeSurface(shadow2);
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);
 	return shadow;
 }
 
@@ -575,6 +579,7 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	shadowBlitSurface(surf,NULL,shadow,&rect);
 	SDL_FreeSurface(surf);
 	SDL_FreeSurface(shadow2);
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);
 	return shadow;
 }
 
@@ -707,9 +712,10 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	SDL_Surface *ret = nullSurface(w, h);
 	if(ret==NULL) return shadow;
 	//SDL_SetAlpha(shadow,SDL_RLEACCEL,0xff);		//not use alpha
-	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_NONE);		//not use alpha
+	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);		//not use alpha
 	SDL_BlitSurface(shadow,&srcrect,ret,NULL);
 	SDL_FreeSurface(shadow);
+	SDL_SetSurfaceBlendMode(ret,SDL_BLENDMODE_NONE);
 	return  ret;
 }
 
