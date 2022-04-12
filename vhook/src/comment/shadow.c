@@ -710,7 +710,10 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	SDL_FreeSurface(shadow2);
 	SDL_Rect srcrect = {slide,slide,w,h};
 	SDL_Surface *ret = nullSurface(w, h);
-	if(ret==NULL) return shadow;
+	if(ret==NULL){
+		SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);		//not use alpha
+		return shadow;
+	}
 	//SDL_SetAlpha(shadow,SDL_RLEACCEL,0xff);		//not use alpha
 	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);		//not use alpha
 	SDL_BlitSurface(shadow,&srcrect,ret,NULL);
