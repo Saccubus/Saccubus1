@@ -21,9 +21,10 @@ int isHANKAKU(Uint16* u);
 int isZeroWidthP(Uint16* u);
 #define isMatchExtra(u, extra) isMatchKanji(u, extra)
 int getDetailType(int u);
+int getDetailType2(int u,DATA* data);
 FontType getFontType2(Uint16* u,int fonttype,DATA* data,int stable);
 FontType getFontType(Uint16* u,int fonttype,DATA* data,int stable);
-FontType getFirstFont(Uint16* u,int fonttype);
+FontType getFirstFont(Uint16* u,int fonttype,DATA* data);
 int isHighSurrogate(Uint16 u);
 int isLowSurrogate(Uint16 u);
 Uint32 convUTF16toUNICODE(Uint16 hs, Uint16 ls);

@@ -31,6 +31,15 @@ int getDetailType(int u){
 	return UNITABLE[u];
 }
 
+int getDetailType2(int u,DATA *data){
+	int type = UNITABLE[u];
+	if(isGlyphExist(data,SEGOEUI_SYM_FONT,(Uint16)u)){
+		if(type!=ARIAL_CHAR)
+			type = SEGOEUI_SYM_CHAR;
+	}
+	return type;
+}
+
 int isGlyphExist(DATA* data,int fonttype,Uint16 u){
 	TTF_Font* font = data->CAfont[fonttype][CMD_FONT_DEF];
 	return (font!=NULL && TTF_GlyphIsProvided(font,u));
@@ -103,7 +112,7 @@ FontType getFontType2(Uint16* up,int basefont,DATA* data,int stable){
 	}
 	if(stable && cjka(u))
 		return basefont;
-	switch(getDetailType(u)){
+	switch(getDetailType2(u, data)){
 		case STRONG_SIMSUN_CHAR:
 			//case UNDEF_OR_SIMSUN:	//最終的にはXP,Vista,Win7共通時にSIMSUNに
 			if(0xE758<=u && u<=0xE864){	//Simsun
@@ -171,7 +180,7 @@ FontType getFontType(Uint16* up,int basefont,DATA* data,int stable){
 		return getFontType2(up,basefont,data,stable);
 }
 
-int getFirstFont(Uint16* up,int basefont){
+int getFirstFont(Uint16* up,int basefont,DATA* data){
 	if(up==NULL || *up == '\0'){
 		return basefont;
 	}
@@ -181,7 +190,7 @@ int getFirstFont(Uint16* up,int basefont){
 			foundBase = TRUE;
 		else if(foundBase)
 			return basefont;
-		switch (getDetailType(*up)) {
+		switch (getDetailType2(*up, data)) {
 			case MINGLIU_CHAR:
 				return MINGLIU_FONT;
 			case STRONG_SIMSUN_CHAR:

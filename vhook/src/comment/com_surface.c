@@ -897,7 +897,7 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 	if(html5)
 		basefont = HTML5_CA_FONT[fontcmd];
 	else
-		basefont = getFirstFont(last,UNDEFINED_FONT);	//第一基準フォント
+		basefont = getFirstFont(last,UNDEFINED_FONT,data);	//第一基準フォント
 	int secondBase = UNDEFINED_FONT;
 	if(html5)
 		secondBase = basefont;
@@ -949,7 +949,7 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 		if(secondBase==UNDEFINED_FONT){
 			if((foundAscii && !wasAscii && basefont<=GOTHIC_FONT)||
 				(basefont==GOTHIC_FONT &&(newfont==SIMSUN_FONT || newfont==GULIM_FONT || newfont==MINGLIU_FONT))){
-				secondBase = getFirstFont(index,basefont);
+				secondBase = getFirstFont(index,basefont,data);
 				if(secondBase==basefont || secondBase==GOTHIC_FONT){
 					secondBase = UNDEFINED_FONT;
 				}
@@ -966,7 +966,7 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 		else
 		if(foundAscii && !wasAscii){	//when HANKAKU showed first
 			int tryfont = basefont;
-			tryfont = getFirstFont(last,tryfont);
+			tryfont = getFirstFont(last,tryfont,data);
 			if(tryfont!=UNDEFINED_FONT){
 				//Case Win7,Vista; secondBase is stronger than check
 				if(secondBase!=UNDEFINED_FONT && tryfont>GOTHIC_FONT){
@@ -977,7 +977,7 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 				nextfont = GOTHIC_FONT;
 			}
 		}else if(newfont!=nextfont){
-			int typechar = getDetailType(*index);
+			int typechar = getDetailType2(*index, data);
 			switch (newfont) {
 			case MINGLIU_FONT:
 				if(typechar==MINGLIU_CHAR){
