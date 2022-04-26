@@ -53,7 +53,7 @@ public class CombineXML {
 					sb.append(text.substring(1));
 				else
 					sb.append(text);
-				String rexp = "^\s*<(chat|thread) ";
+				String rexp = "^\\s*<(chat|thread) ";
 				Pattern p = Pattern.compile(rexp, Pattern.DOTALL);
 				Matcher m = p.matcher(sb.toString());
 				if (m.find()) {
