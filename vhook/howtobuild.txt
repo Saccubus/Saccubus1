@@ -1,7 +1,6 @@
-nicovideoE.dll のコンパイル手順
+■nicovideoE.dll のコンパイル手順(SDL)
 
-やったこと
-・Eclipse はJAVAとCの開発ができるアルティメット版
+・Eclipse はJAVAとCの開発ができるアルティメット版(非常に重いのでおすすめしない)
 ・MinGW をインストール
 ・Eclipse で vhook をインポート
 ・適当なところに MinGW用のSDL関連のライブラリーとインクルードファイルを作成
@@ -15,4 +14,30 @@ nicovideoE.dll のコンパイル手順
    C/C++一般→パスおよびシンボル
      インクルードにSDLのインクルードディレクトリーを追加
      ライブラリーパスにSDLのライブラリーディレクトリーを追加
+
+
+■nicovideoE.dll のコンパイル手順(SDL2)
+
+以下を展開してどこかに１つにまとめておいておく (D:\home\sdl2 など)
+・SDL2-devel-2.0.20-mingw.tar.gz
+・SDL2_ttf-devel-2.0.18-mingw.tar.gz
+make install-package arch=i686-w64-mingw32 prefix=/d/home/sdl2
+
+・SDL2_gfx-1.0.4.tar.gz
+ソースからコンパイルする
+Makefile はSDL用のSDL_gfx-2.0.26.tar.gzで作ったMakefileをSDL2用にPATHとかライブラリーを変更
+ SDL -> SDL2 、SDL_gfxBlitFunc.o は存在しないので削除
+make all  make install
+
+ReleaseディレクトリーのMakefile、subdir.mkの中のインクルード、ライブラリーを変更
+oblects.mk の sdl を sdl2 に修正
+
+■MSYS2を使う
+
+・MSYS2 installerを起動してMSYS2をインストール
+・pacman -Su
+・pacman -S mingw-w64-i686-toolchain  ※i686(32bit版をインストールする)
+・pacman -S make
+
+ReleaseディレクトリーのMakefile、subdir.mkの中のインクルード、ライブラリーを変更
 
