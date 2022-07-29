@@ -1,0 +1,64 @@
+CC = gcc
+AR=ar rc
+RANLIB=ranlib
+
+prefix=/d/home/sdl2
+bin_dir=$(prefix)/bin
+include_dir=$(prefix)/include
+lib_dir=$(prefix)/lib
+
+CFLAGS = -O3 -march=athlon-xp -mmmx -msse -m3dnow -DBUILD_DLL -DWIN32 -I/d/home/sdl2/include/SDL2
+LIBS = -L/d/home/sdl2/lib -lSDL2
+
+OBJS = SDL2_framerate.o SDL2_gfxPrimitives.o SDL2_imageFilter.o SDL2_rotozoom.o
+
+STATIC_LIB=libSDL2_gfx.a
+IMPORT_LIB=libSDL2_gfx.dll.a
+SHARED_LIB=SDL2_gfx.dll
+
+all: $(STATIC_LIB) $(SHARED_LIB)
+
+$(STATIC_LIB): $(OBJS)
+	$(AR) $@ $^
+	$(RANLIB) $@
+
+$(SHARED_LIB): $(OBJS)
+	gcc -s -shared -o $@ $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(IMPORT_LIB) $(LIBS)
+
+test: $(SHARED_LIB) $(STATIC_LIB) Test/TestFramerate.exe Test/TestFonts.exe Test/TestGfxPrimitives.exe Test/TestImageFilter.exe Test/TestRotozoom.exe
+
+Test/TestFramerate.exe: Test/TestFramerate.c
+	gcc -c $^ -o Test/TestFramerate.o -O3 -march=athlon-xp -mmmx -msse -m3dnow -DWIN32 -Ic:/dev/local/include/SDL
+	gcc -o $@ Test/TestFramerate.o $(CFLAGS) -L../ -Lc:/dev/local/lib -lmingw32 -lSDLmain $(SHARED_LIB) -lSDL
+
+Test/TestFonts.exe: Test/TestFonts.c
+	gcc -c $^ -o Test/TestFonts.o -O3 -march=athlon-xp -mmmx -msse -m3dnow -DWIN32 -Ic:/dev/local/include/SDL
+	gcc -o $@ Test/TestFonts.o $(CFLAGS) -L../ -Lc:/dev/local/lib -lmingw32 -lSDLmain $(SHARED_LIB) -lSDL
+
+Test/TestGfxPrimitives.exe: Test/TestGfxPrimitives.c
+	gcc -c $^ -o Test/TestGfxPrimitives.o -O3 -march=athlon-xp -mmmx -msse -m3dnow -DWIN32 -Ic:/dev/local/include/SDL
+	gcc -o $@ Test/TestGfxPrimitives.o $(CFLAGS) -L../ -Lc:/dev/local/lib -lmingw32 -lSDLmain $(SHARED_LIB) -lSDL
+
+Test/TestImageFilter.exe: Test/TestImageFilter.c
+	gcc -c $^ -o Test/TestImageFilter.o -O3 -march=athlon-xp -mmmx -msse -m3dnow -DWIN32 -Ic:/dev/local/include/SDL
+	gcc -o $@ Test/TestImageFilter.o $(CFLAGS) -L../ -Lc:/dev/local/lib -lmingw32 -lSDLmain $(SHARED_LIB) -lSDL
+
+Test/TestRotozoom.exe: Test/TestRotozoom.c
+	gcc -c $^ -o Test/TestRotozoom.o -O3 -march=athlon-xp -mmmx -msse -m3dnow -DWIN32 -Ic:/dev/local/include/SDL
+	gcc -o $@ Test/TestRotozoom.o $(CFLAGS) -L../ -Lc:/dev/local/lib -lmingw32 -lSDLmain $(SHARED_LIB) -lSDL
+
+install: $(STATIC_LIB) $(SHARED_LIB)
+	cp $(STATIC_LIB) $(SHARED_LIB) $(IMPORT_LIB) $(lib_dir)
+	cp SDL2_framerate.h SDL2_gfxPrimitives.h SDL2_imageFilter.h SDL2_rotozoom.h $(include_dir)/SDL2
+uninstall:
+	rm -f $(lib_dir)/$(STATIC_LIB)
+	rm -f $(lib_dir)/$(SHARED_LIB)
+	rm -f $(lib_dir)/$(IMPORT_LIB)
+	rm -f $(include_dir)/SDL2/SDL2_framerate.h
+	rm -f $(include_dir)/SDL2/SDL2_gfxPrimitives.h
+	rm -f $(include_dir)/SDL2/SDL2_imageFilter.h
+	rm -f $(include_dir)/SDL2/SDL2_rotozoom.h
+
+clean:
+	rm -f *.o *.a *.dll
+	rm -f Test/*.o Test/*.exe
