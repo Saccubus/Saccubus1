@@ -814,6 +814,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						isEcoVideo = true;
 					}
 				}
+				if (client.isVideoEncrypt()) {
+					sendtext("暗号化されている動画なのでダウンロード中止します");
+					result = "4A";
+					return false;
+				}
+				if (client.isVideoHlsOnly()) {
+					sendtext("HLSのみの動画なのでダウンロード中止します");
+					result = "49";
+					return false;
+				}
 				if (isVideoFixFileName()) {
 					if (folder.mkdir()) {
 						log.println("Folder created: " + folder.getPath());

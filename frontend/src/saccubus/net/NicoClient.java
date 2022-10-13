@@ -753,6 +753,8 @@ public class NicoClient {
 	private String nicosID = "";
 	private boolean economy = false;
 	private String ownerFilter;			// video owner filter（replace）
+	private boolean encryption = false;
+	private boolean hlsonly = false;
 	public boolean getVideoInfo(String tag, String watchInfo, String time, boolean saveWatchPage) {
 		if(videoTag==null)
 			videoTag = tag;
@@ -2866,6 +2868,14 @@ public class NicoClient {
 		return economy;
 	}
 
+	public boolean isVideoEncrypt() {
+		return encryption;
+	}
+
+	public boolean isVideoHlsOnly() {
+		return hlsonly;
+	}
+
 	private String thumbInfoData;
 	private String watchApiJson;
 	private String flvInfo;
@@ -3218,6 +3228,13 @@ public class NicoClient {
 				//
 				setFromSessionApi(m_sessionApi);
 				debug("\n");
+				Mson m_protocol = m_sessionApi.get("protocols");
+				hlsonly = m_protocol.toString().indexOf("http") > -1 ? false : true;
+				debug("Video Protocols: "+m_protocol.toString()+"\n");
+				debug("Video IsHLSOnly: "+hlsonly+"\n");
+				Mson m_encryption = dataApiMson.get("encryption");
+				encryption = m_encryption.isNull() ? false : true;
+				debug("Video Encryption: "+encryption+"\n");
 			}
 			//comments
 			Mson m_ids = dataApiMson.get("threads");
