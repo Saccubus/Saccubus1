@@ -609,7 +609,8 @@ public class BrowserInfo {
             if (!ret.isEmpty() && !filename.isEmpty()){
                 if(!us.contains(ret) && !faultUserSessionSet.contains(ret)){
                 	log.println("Cookie found: " + filename+" "+ret.substring(ret.length()- 4));
-                    us.add(ret);
+                	if(ret.indexOf("user_session_secure") < 0)
+                		us.add(ret);
                 }
             }
         }

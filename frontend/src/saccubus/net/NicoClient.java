@@ -12,6 +12,9 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -116,6 +119,9 @@ public class NicoClient {
 		ConProxy = conProxy(proxy, proxy_port);
 		isHtml5 = is_html5;
 		browserInfo = browser;
+		Manager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+		CookieHandler.setDefault(Manager);
+
 		// ログイン
 		login();
 		setLoggedIn(loginCheck());
@@ -168,6 +174,8 @@ public class NicoClient {
 		nicomap = new NicoMap();
 		isHtml5 = is_html5;
 		ConProxy = conProxy(proxy, proxy_port);
+		Manager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+		CookieHandler.setDefault(Manager);
 		String user_session = browserInfo.getLastBrowserValue();
 		if (user_session == null || user_session.isEmpty()){
 			log.println("Invalid user session" + browserInfo.getName());
@@ -224,6 +232,7 @@ public class NicoClient {
 		}
 	}
 	private NicoCookie Cookie = null;
+	CookieManager Manager = new CookieManager();
 
 	HttpURLConnection urlConnectGET(String url){
 		return urlConnect(url, "GET");
@@ -408,6 +417,7 @@ public class NicoClient {
 		return "";
 	}
 	private NicoCookie detectCookie(HttpURLConnection con){
+		nicomap.putConnection(Manager, (Debug? log:null));
 		nicomap.putConnection(con, (Debug? log:null));
 		NicoCookie cookie = new NicoCookie();
 		nicomap.setCookie(cookie);
@@ -418,7 +428,7 @@ public class NicoClient {
 	private boolean login() {
 		try {
 			log.print("Trying login...");
-			String url = "https://account.nicovideo.jp/api/v1/login";
+			String url = "https://account.nicovideo.jp/login/redirector?show_button_twitter=1&site=niconico&show_button_facebook=1&next_url=%2F";
 			debug("\n■HTTPS<" + url + ">\n");
 			HttpURLConnection con = (HttpsURLConnection) (new URL(url))
 				.openConnection(ConProxy);
@@ -427,15 +437,17 @@ public class NicoClient {
 			HttpURLConnection.setFollowRedirects(false);
 			con.setInstanceFollowRedirects(false);
 			con.setRequestMethod("POST");
-			con.addRequestProperty("Connection", "close");
-			debug("■Connect: POST,DoOutput,Connection close\n");
+			con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
+			con.setRequestProperty("Referer", "https://account.nicovideo.jp/login");
+			con.setRequestProperty("Origin", "https://account.nicovideo.jp/");
+			//con.addRequestProperty("Connection", "close");
+			debug("■Connect: POST,DoOutput\n");
 			connect(con);
 			StringBuffer sb = new StringBuffer(4096);
 			sb.append("mail_tel=");
-			sb.append(URLEncoder.encode(User, "Shift_JIS"));
+			sb.append(URLEncoder.encode(User, "UTF-8"));
 			sb.append("&password=");
-			sb.append(URLEncoder.encode(Pass, "Shift_JIS"));
-			sb.append("&submit.x=103&submit.y=16");
+			sb.append(URLEncoder.encode(Pass, "UTF-8"));
 			String sbstr = sb.toString();
 			debug("■write:" + sbstr + "\n");
 			OutputStream os = con.getOutputStream();
@@ -448,6 +460,40 @@ public class NicoClient {
 			debug("■Response:" + Integer.toString(code) + " " + mes + "\n");
 			if (code < HttpURLConnection.HTTP_OK || code >= HttpURLConnection.HTTP_BAD_REQUEST) { // must 200 <= <400
 				log.println("Can't login:" + mes);
+				return false;
+			}
+			if (nicomap.findConnection(con, "Location", "https://account.nicovideo.jp/mfa", log).length() > 0) {
+				//２段階認証処理
+				String loc = con.getHeaderField("location");
+				debug("■Location:" + loc + "\n");
+				con = (HttpsURLConnection) (new URL(loc))
+						.openConnection(ConProxy);
+				con.setRequestMethod("GET");
+				//con.addRequestProperty("Cookie", Cookie.get("https://www.nicovideo.jp"));
+				con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
+				con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+				con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
+				con.setRequestProperty("Content-Type", "text/html; charset=UTF-8");
+				con.setRequestProperty("Referer", "https://account.nicovideo.jp/login");
+				con.setRequestProperty("Origin", "https://account.nicovideo.jp");
+				connect(con);
+				code = con.getResponseCode();
+				mes = con.getResponseMessage();
+				debug("■Response:" + Integer.toString(code) + " " + mes + "\n");
+				String ret = read2Connection(con, 50);
+				if (ret == null || ret.isEmpty()){
+					log.println("ng.\nCan't read MFA Page at login:");
+					con.disconnect();
+					return false;
+				}
+				// コンテンツを読んで以下の文字列がなければログインされていない
+				//if(!ret.contains("user.login_status = 'login';")){
+				//	log.println("ng. Not logged in. "+browserInfo.getName());
+				//	log.println("last_user_session="+BrowserInfo.getLastUsersession());
+				//	//con.disconnect();
+				//	return false;
+				//}
+				log.println("Can't login: ２段階認証ログイン");
 				return false;
 			}
 			Cookie = detectCookie(con);
@@ -2248,15 +2294,9 @@ public class NicoClient {
 			log.print(" new_cookie isEmpty. ");
 			// but continue
 		}
-		String ret = read2Connection(con, 70);
-		if (ret == null || ret.isEmpty()){
-			log.println("ng.\nCan't read TopPage at loginCheck:");
-			con.disconnect();
-			BrowserInfo.resetLastUserSession();
-			return false;
-		}
-		// コンテンツを読んで以下の文字列がなければログインされていない
-		if(!ret.contains("user.login_status = 'login';")){
+		String authflag = nicomap.findConnection(con, "x-niconico-authflag", "", (Debug? log:null));
+		debug("loginCheck(con) x-niconico-authflag: " + authflag + "\n");
+		if(authflag.length() <= 0 || Integer.parseInt(authflag) < 1) {
 			log.println("ng. Not logged in. "+browserInfo.getName());
 			log.println("last_user_session="+BrowserInfo.getLastUsersession());
 			//con.disconnect();
@@ -2271,6 +2311,7 @@ public class NicoClient {
 		setExtraError("");
 		return true;
 	}
+
 	public String getBackCommentFromLength(String def) {
 		if (VideoLength < 0) {
 			return def;
