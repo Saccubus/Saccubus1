@@ -3357,8 +3357,8 @@ public class MainFrame extends JFrame {
 	private void mainFrame_loginCheck(JLabel status) {
 		sendLoginStatus(status, "ログインチェック中");
 		BrowserInfo.resetBrowserInfo();
-		Path file = Path.mkTemp("mytop");
-		String url = "https://www.nicovideo.jp/my/top";
+		Path file = Path.mkTemp("top");
+		String url = "https://www.nicovideo.jp";
 		Loader loader = new Loader(getSetting(),
 			new JLabel[]{status, elapsedTimeBar, new JLabel()},log,html5CheckBox.isSelected());
 		if (loader.load(url, file) || loader.isLoggedIn()){

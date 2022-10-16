@@ -4,9 +4,13 @@
 package saccubus.net;
 
 import java.io.UnsupportedEncodingException;
+import java.net.CookieManager;
+import java.net.CookieStore;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import saccubus.util.Logger;
@@ -212,6 +216,50 @@ public class NicoMap {
 			this.add(key, value);
 			debugOut(log,key,value);
 		}
+	}
+	/**
+	 * CookieMamagerのcookieを全部addし outがnullでないならprintlnする。
+	 * @param manager　cookiemanager
+	 */
+	public void putConnection(CookieManager manager, Logger log){
+		String value;
+		CookieStore store = manager.getCookieStore();
+		List<HttpCookie> cookies = store.getCookies();
+		for (int i = 0; i < cookies.size(); i++) {
+			HttpCookie cookie = cookies.get(i);
+			//log.println("Cookie[" + i + "]: " + cookie);
+			value = cookie.toString();
+			this.add(SET_COOKIE, value);
+			debugOut(log,SET_COOKIE,value);
+		}
+	}
+	/**
+	 * HttpURLConnectionのヘッダーから指定したkey,valueに一致するヘッダーのvalueを返す
+	 * @param con　connect後のHttpURLConnection
+	 */
+	public String findConnection(HttpURLConnection con, String fkey, String fvalue, Logger log){
+		String key;
+		String value;
+		key = con.getHeaderFieldKey(0);
+		value = con.getHeaderField(0);
+		if (key != null && key.length() > 0){
+			if (key.startsWith(fkey)) {
+				if (fvalue.length() <= 0 || value.startsWith(fvalue)) {
+					debugOut(log,key,value);
+					return value;
+				}
+			}
+		}
+		for (int i = 1; (key = con.getHeaderFieldKey(i)) != null; i++){
+			value = con.getHeaderField(i);
+			if (key.startsWith(fkey)) {
+				if (fvalue.length() <= 0 || value.startsWith(fvalue)) {
+					debugOut(log,key,value);
+					return value;
+				}
+			}
+		}
+		return "";
 	}
 	/**
 	 * 文字列を&で区切って分割しURLDecodeしたのちputする<br/>
