@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import saccubus.ConvertManager;
@@ -409,7 +410,7 @@ public class NicoClient {
 			}
 			br.close();
 			con.disconnect();
-			debug("■readLines:\n" + sb.toString());
+		//	debug("■readLines:\n" + sb.toString());
 			return sb.toString();
 		} catch(IOException ex){
 			log.printStackTrace(ex);
@@ -440,7 +441,7 @@ public class NicoClient {
 			con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
 			con.setRequestProperty("Referer", "https://account.nicovideo.jp/login");
 			con.setRequestProperty("Origin", "https://account.nicovideo.jp/");
-			//con.addRequestProperty("Connection", "close");
+			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			debug("■Connect: POST,DoOutput\n");
 			connect(con);
 			StringBuffer sb = new StringBuffer(4096);
@@ -464,15 +465,15 @@ public class NicoClient {
 			}
 			if (nicomap.findConnection(con, "Location", "https://account.nicovideo.jp/mfa", log).length() > 0) {
 				//２段階認証処理
+				String otp = null;
 				String loc = con.getHeaderField("location");
 				debug("■Location:" + loc + "\n");
 				con = (HttpsURLConnection) (new URL(loc))
 						.openConnection(ConProxy);
 				con.setRequestMethod("GET");
-				//con.addRequestProperty("Cookie", Cookie.get("https://www.nicovideo.jp"));
 				con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
-				con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-				con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
+				//con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+				//con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
 				con.setRequestProperty("Content-Type", "text/html; charset=UTF-8");
 				con.setRequestProperty("Referer", "https://account.nicovideo.jp/login");
 				con.setRequestProperty("Origin", "https://account.nicovideo.jp");
@@ -480,21 +481,89 @@ public class NicoClient {
 				code = con.getResponseCode();
 				mes = con.getResponseMessage();
 				debug("■Response:" + Integer.toString(code) + " " + mes + "\n");
-				String ret = read2Connection(con, 50);
+				String ret = read2Connection(con, 150);
 				if (ret == null || ret.isEmpty()){
 					log.println("ng.\nCan't read MFA Page at login:");
 					con.disconnect();
 					return false;
 				}
-				// コンテンツを読んで以下の文字列がなければログインされていない
-				//if(!ret.contains("user.login_status = 'login';")){
-				//	log.println("ng. Not logged in. "+browserInfo.getName());
-				//	log.println("last_user_session="+BrowserInfo.getLastUsersession());
-				//	//con.disconnect();
-				//	return false;
-				//}
-				log.println("Can't login: ２段階認証ログイン");
-				return false;
+				// action="..." からURIを取得 -> loc
+				if(!ret.contains("/mfa?site=niconico")){
+					log.println("ng.\nCan't read MFA Page at login:");
+					con.disconnect();
+					return false;
+				}
+				Pattern p = Pattern.compile("form action=\"([^\"]+)\"");
+				Matcher m = p.matcher(ret);
+				if (m.find())	loc = "https://account.nicovideo.jp" + m.group(1);
+				debug("■mfa post:" + loc + "\n");
+				// GUI Formから6桁の数字を入力
+				p = Pattern.compile("^[0-9]{6}$");
+				int retry = 3;
+				while (retry-- > 0) {
+					otp = JOptionPane.showInputDialog(null, "Enter 6 digits code", "MFA(2FA)", JOptionPane.PLAIN_MESSAGE);
+					if (otp == null || otp.isEmpty()) {
+						log.println("ng.\nCancel MFA login:");
+						con.disconnect();
+						return false;
+					}
+					m = p.matcher(otp);
+					if (m.find()) {
+						retry = 99;
+						break;
+					}
+				}
+				if (retry <= 0) {
+					log.println("ng.\nWrong digits code MFA login:");
+					con.disconnect();
+					return false;
+				}
+				con = (HttpsURLConnection) (new URL(loc))
+						.openConnection(ConProxy);
+				con.setDoOutput(true);
+				HttpURLConnection.setFollowRedirects(false);
+				con.setInstanceFollowRedirects(false);
+				con.setRequestMethod("POST");
+				con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
+				//con.setRequestProperty("Referer", "https://account.nicovideo.jp/login");
+				//con.setRequestProperty("Origin", "https://account.nicovideo.jp");
+				con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+				connect(con);
+				sb = new StringBuffer(4096);
+				sb.append("otp=");
+				sb.append(URLEncoder.encode(otp, "UTF-8"));
+				sb.append("&loginBtn=");
+				sb.append(URLEncoder.encode("ログイン", "UTF-8"));
+				sbstr = sb.toString();
+				debug("■write:" + sbstr + "\n");
+				os = con.getOutputStream();
+				os.write(sbstr.getBytes());
+				os.flush();
+				os.close();
+				code = con.getResponseCode();
+				mes = con.getResponseMessage();
+				debug("■Response:" + Integer.toString(code) + " " + mes + "\n");
+				// 302以外の場合はotpが間違ってる
+				loc = con.getHeaderField("location");
+				if (loc == null || loc.isEmpty()) {
+					log.println("ng.\nWrong digits code MFA login:");
+					con.disconnect();
+					return false;
+				}
+				debug("■Location:" + loc + "\n");
+				con = (HttpsURLConnection) (new URL(loc))
+						.openConnection(ConProxy);
+				con.setRequestMethod("GET");
+				con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
+				//con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+				//con.setRequestProperty("Accept-Language", "ja,en-US;q=0.7,en;q=0.3");
+				con.setRequestProperty("Content-Type", "text/html; charset=UTF-8");
+				con.setRequestProperty("Referer", "https://account.nicovideo.jp/login");
+				con.setRequestProperty("Origin", "https://account.nicovideo.jp");
+				connect(con);
+				code = con.getResponseCode();
+				mes = con.getResponseMessage();
+				debug("■Response:" + Integer.toString(code) + " " + mes + "\n");
 			}
 			Cookie = detectCookie(con);
 			con.disconnect();
