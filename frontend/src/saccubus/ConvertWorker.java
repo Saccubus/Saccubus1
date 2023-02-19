@@ -696,19 +696,11 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					log.println("CA用フォント" + teluguFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					teluguFont = arialUnicodeFont;
 				}
-				if (Setting.isUseColorEmoji()) {
-					segoeuisymFont = new File(fontDir, FONT_SEGUIEMJ);
-					if (!segoeuisymFont.canRead()) {
-						sendtext("警告　CA用フォントが見つかりません。" + segoeuisymFont.getPath());
-						log.println("CA用フォント" + segoeuisymFont.getPath() + "を" + FONT_SEGUISYM + "で代替します。");
-						segoeuisymFont = new File(fontDir, FONT_SEGUISYM);
-					}
-										
-				} else {
-					segoeuisymFont = new File(fontDir, FONT_SEGUISYM);
-				}
+				segoeuisymFont = new File(fontDir, FONT_SEGUIEMJ);
 				if (!segoeuisymFont.canRead()) {
-					segoeuisymFont = nirmalaFont;
+					sendtext("警告　CA用フォントが見つかりません。" + segoeuisymFont.getPath());
+					log.println("CA用フォント" + segoeuisymFont.getPath() + "を" + FONT_SEGUISYM + "で代替します。");
+					segoeuisymFont = new File(fontDir, FONT_SEGUISYM);
 				}
 				if (!segoeuisymFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + segoeuisymFont.getPath());
