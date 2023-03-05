@@ -2250,7 +2250,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return false;
 			}
 			CommentMiddleFile = mkTemp(TMP_COMMENT);
-			if(!convertToCommentMiddle(CombinedCommentFile, CommentMiddleFile, isNicos)){
+			if(!convertToCommentMiddle(CombinedCommentFile, CommentMiddleFile, isNicos, 1)){
 				sendtext("コメント変換に失敗");
 				CommentMiddleFile = null;
 				result = "76";
@@ -2283,6 +2283,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private boolean convertOprionalThread(){
 		sendtext("オプショナルスレッドの中間ファイルへの変換中");
 		log.println(gettext());
+		boolean live_op = Setting.isLiveOperationConversion();
 		File folder = Setting.getCommentFixFileNameFolder();
 		ArrayList<File> filelist = new ArrayList<File>();
 		String optext;
@@ -2346,17 +2347,30 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							// ニコスコメントでリトライ
 							optext = NICOS_EXT;
 							filename = detectTitleFromOptionalThread(folder, optext);
-							if(filename == null || filename.isEmpty()){
-								sendtext(Tag + ": ニコスコメントがフォルダに存在しません。");
-								log.println(gettext());
-								log.println("No optional thread.");
-								OptionalThreadFile = null;
-								return true;
+							if (!live_op) {
+								if(filename == null || filename.isEmpty()){
+									sendtext(Tag + ": ニコスコメントがフォルダに存在しません。");
+									log.println(gettext());
+									log.println("No optional thread.");
+									OptionalThreadFile = null;
+									return true;
+								}
+								isNicos=true;
+								OptionalThreadFile = new File(folder, filename);
+							} else {
+								//通常コメント読み込み
+								filename = detectTitleFromComment(folder);
+								if(filename == null || filename.isEmpty()){
+									sendtext(Tag + ": コメントファイルがフォルダに存在しません。");
+									log.println(gettext());
+									log.println("No optional thread.");
+									OptionalThreadFile = null;
+									return true;
+								}
+								OptionalThreadFile = new File(folder, filename);
 							}
-							isNicos=true;
 							isOptionalTranslucent = false;
 						}
-						OptionalThreadFile = new File(folder, filename);
 					}
 					if (dateUserFirst.isEmpty()) {
 						//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
@@ -2383,14 +2397,25 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						// ニコスコメントでリトライ
 						optext = NICOS_EXT;
 						OptionalThreadFile = Path.getReplacedExtFile(CommentFile, optext);
-						if(!OptionalThreadFile.exists()){
-							sendtext("ニコスコメントが存在しません。");
-							log.println(gettext());
-							log.println("No optional thread.");
-							OptionalThreadFile = null;
-							return true;
+						if (!live_op) {
+							if(!OptionalThreadFile.exists()){
+								sendtext("ニコスコメントが存在しません。");
+								log.println(gettext());
+								log.println("No optional thread.");
+								OptionalThreadFile = null;
+								return true;
+							}
+							isNicos=true;
+						} else {
+							OptionalThreadFile = CommentFile;
+							if(!OptionalThreadFile.exists()){
+								sendtext("コメントファイルが存在しません。");
+								log.println(gettext());
+								log.println("No optional thread.");
+								OptionalThreadFile = null;
+								return true;
+							}
 						}
-						isNicos=true;
 						isOptionalTranslucent = false;
 					}
 				}
@@ -2418,7 +2443,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return true;
 			}
 			OptionalMiddleFile = mkTemp(TMP_OPTIONALTHREAD);
-			if(!convertToCommentMiddle(CombinedOptionalFile, OptionalMiddleFile, isNicos)){
+			if(!convertToCommentMiddle(CombinedOptionalFile, OptionalMiddleFile, isNicos, 2)){
 				sendtext("オプショナルスレッド変換に失敗");
 				log.println(gettext());
 				OptionalMiddleFile = null;
@@ -2539,7 +2564,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				return true;
 			}
 			CommentMiddleFile = mkTemp(TMP_COMMENT);
-			if(!convertToCommentMiddle(CombinedEasyFile, CommentMiddleFile, isNicos)){
+			if(!convertToCommentMiddle(CombinedEasyFile, CommentMiddleFile, isNicos, 1)){
 				sendtext("コメント変換に失敗");
 				CommentMiddleFile = null;
 				result = "76";
@@ -2555,18 +2580,31 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 	private boolean convertOwnerComment(){
 		sendtext("投稿者コメントの中間ファイルへの変換中");
+		boolean live_op = Setting.isLiveOperationConversion();
 		File folder = Setting.getCommentFixFileNameFolder();
 		if (isConvertWithOwnerComment()){
 			if (!isSaveOwnerComment()) {
 				if (isCommentFixFileName()) {
 					String ownerfilename = detectTitleFromOwnerComment(folder);
 					if(ownerfilename == null){
-						sendtext("投稿者コメントファイルがフォルダに存在しません。");
-					//	retValue = "80";
-					//	return false;
-						log.println("投稿者コメントファイルがフォルダに存在しません。");
-						OwnerCommentFile = null;
-						return true;
+						if (!live_op) {
+							sendtext("投稿者コメントファイルがフォルダに存在しません。");
+							//	retValue = "80";
+							//	return false;
+							log.println("投稿者コメントファイルがフォルダに存在しません。");
+							OwnerCommentFile = null;
+							return true;
+						} else {
+							ownerfilename = detectTitleFromComment(folder);
+							if(ownerfilename == null){
+								sendtext("コメントファイルがフォルダに存在しません。");
+								//	retValue = "80";
+								//	return false;
+								log.println("コメントファイルがフォルダに存在しません。");
+								OwnerCommentFile = null;
+								return true;
+							}
+						}
 					}
 					// VideoTitle は見つかった。
 					OwnerCommentFile = new File(folder, ownerfilename);
@@ -2578,12 +2616,24 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				} else {
 					OwnerCommentFile = Setting.getOwnerCommentFile();
 					if (!OwnerCommentFile.exists()) {
-						sendtext("投稿者コメントファイルが存在しません。");
-					//	retValue = "82";
-					//	return false;
-						log.println("投稿者コメントファイルが存在しません。");
-						OwnerCommentFile = null;
-						return true;
+						if (!live_op) {
+							sendtext("投稿者コメントファイルが存在しません。");
+							//	retValue = "82";
+							//	return false;
+							log.println("投稿者コメントファイルが存在しません。");
+							OwnerCommentFile = null;
+							return true;
+						} else {
+							OwnerCommentFile = CommentFile;
+							if (!OwnerCommentFile.exists()) {
+								sendtext("コメントファイルが存在しません。");
+								//	retValue = "82";
+								//	return false;
+								log.println("コメントファイルが存在しません。");
+								OwnerCommentFile = null;
+								return true;
+							}
+						}
 					}
 				}
 			}
@@ -2595,7 +2645,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			//ここで commentReplaceが作られる
 			log.println("投稿者コメント変換");
 			if(OwnerCommentFile!=null && OwnerCommentFile.canRead()){
-				if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile, isNicos)){
+				if (!convertToCommentMiddle(OwnerCommentFile, OwnerMiddleFile, isNicos, 0)){
 					sendtext("投稿者コメント変換に失敗");
 					OwnerMiddleFile = null;
 					result = "83";
@@ -2636,7 +2686,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 	}
 
-	private boolean convertToCommentMiddle(File commentfile, File middlefile, boolean is_nicos) {
+	private boolean convertToCommentMiddle(File commentfile, File middlefile, boolean is_nicos, int comment_kind) {
 		String duration = "";
 		if(Setting.changedLiveOperationDuration())
 			duration = Setting.getLiveOperationDuration();
@@ -2648,7 +2698,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(!ConvertToVideoHook.convert(
 				commentfile, middlefile, CommentReplaceList,
 				ngIDPat, ngWordPat, ngCmd, Setting.getScoreLimit(), live_op,
-				Setting.getCommentLen(), Setting.isCommentLenTotal(),
+				comment_kind, Setting.getCommentLen(), Setting.isCommentLenTotal(),
 				Setting.isPremiumColorCheck(), duration, log, isDebugNet, html5)){
 			return false;
 		}
