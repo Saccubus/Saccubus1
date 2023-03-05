@@ -1,37 +1,5 @@
 ■nicovideoE.dll のコンパイル手順(SDL)
 
-・Eclipse はJAVAとCの開発ができるアルティメット版(非常に重いのでおすすめしない)
-・MinGW をインストール
-・Eclipse で vhook をインポート
-・適当なところに MinGW用のSDL関連のライブラリーとインクルードファイルを作成
-   SDL-devel-1.2.15-mingw32.tar.gz
-   SDL_ttf-2.0.11-win32.zip
-   ※includeファイルは SDL_ttf-devel-2.0.11-VC.zip の中の物を使用
-   SDL_gfx-2.0.26.tar.gz (これはソースからコンパイルしてライブラリーを作る)
-   freetype-2.3.5-1-lib.zip (とりあえずこれ、ちゃんとやるならソースからコンパイル)
-・Eclipse のプロジェクトvhook右クリック→プロパティ
-   C/C++ビルド→環境 MINGW_HOME、MSYS_HOMEを修正
-   C/C++一般→パスおよびシンボル
-     インクルードにSDLのインクルードディレクトリーを追加
-     ライブラリーパスにSDLのライブラリーディレクトリーを追加
-
-
-■nicovideoE.dll のコンパイル手順(SDL2)
-
-以下を展開してどこかに１つにまとめておいておく (D:\home\sdl2 など)
-・SDL2-devel-2.0.20-mingw.tar.gz
-・SDL2_ttf-devel-2.0.18-mingw.tar.gz
-make install-package arch=i686-w64-mingw32 prefix=/d/home/sdl2
-
-・SDL2_gfx-1.0.4.tar.gz
-ソースからコンパイルする
-Makefile はSDL用のSDL_gfx-2.0.26.tar.gzで作ったMakefileをSDL2用にPATHとかライブラリーを変更
- SDL -> SDL2 、SDL_gfxBlitFunc.o は存在しないので削除
-make all  make install
-
-ReleaseディレクトリーのMakefile、subdir.mkの中のインクルード、ライブラリーを変更
-oblects.mk の sdl を sdl2 に修正
-
 ■MSYS2を使う
 
 ・MSYS2 installerを起動してMSYS2をインストール
@@ -39,5 +7,25 @@ oblects.mk の sdl を sdl2 に修正
 ・pacman -S mingw-w64-i686-toolchain  ※i686(32bit版をインストールする)
 ・pacman -S make
 
-ReleaseディレクトリーのMakefile、subdir.mkの中のインクルード、ライブラリーを変更
+・適当なところに MinGW用のSDL関連のライブラリーとインクルードファイルを作成
+  (今回は D:\home\workspace\SDL に展開してます)
+   SDL-devel-1.2.15-mingw32.tar.gz
+   SDL_ttf-2.0.11-win32.zip
+   ※includeファイルは SDL_ttf-devel-2.0.11-VC.zip の中の物を使用
+・ SDL_gfx-2.0.26.tar.gz (これはソースからコンパイルしてライブラリーを作る)
+Makefileは makefile/SDL_gfx_Makefile をSDL_gfxのあるディレクトリーにコピーして使ってください
+SDLをインストールしたPATHとかライブラリーが/d/home/workspace/SDLでなければMakefileを変更してください
+
+・Eclipse はJAVAとCの開発ができるアルティメット版(非常に重いのでおすすめしない)
+・Eclipse で vhook をインポート
+・Eclipse のプロジェクトvhook右クリック→プロパティ
+   C/C++ビルド→環境 MINGW_HOME、MSYS_HOMEを修正
+   C/C++一般→パスおよびシンボル
+     インクルードにSDLのインクルードディレクトリーを追加
+     ライブラリーパスにSDLのライブラリーディレクトリーを追加
+・Eclipse でビルドするとvhook/Release ができMakefileやsubdir.mkが作成されます。
+・これ以降はEclipseで開発しないでMSYS2のターミナルを起動してコマンドラインで作業した方が早いです。
+・Eclipse もJAVA版をインストールし直した方が速いです。
+    - vhook/Release に移動する
+    - make clean or make all
 
