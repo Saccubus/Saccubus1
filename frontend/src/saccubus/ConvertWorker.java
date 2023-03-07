@@ -286,6 +286,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File thaanaFont = null;
 	private File malayalamFont = null;
 	private File teluguFont = null;
+	private File segoeuiemjFont = null;
 	private File segoeuisymFont = null;
 	private File nirmalaFont = null;
 	private Pattern ngWordPat;
@@ -696,12 +697,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					log.println("CA用フォント" + teluguFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
 					teluguFont = arialUnicodeFont;
 				}
-				segoeuisymFont = new File(fontDir, FONT_SEGUIEMJ);
-				if (!segoeuisymFont.canRead()) {
-					sendtext("警告　CA用フォントが見つかりません。" + segoeuisymFont.getPath());
-					log.println("CA用フォント" + segoeuisymFont.getPath() + "を" + FONT_SEGUISYM + "で代替します。");
+				segoeuiemjFont = new File(fontDir, FONT_SEGUIEMJ);
+				if (!segoeuiemjFont.canRead()) {
+					sendtext("警告　CA用フォントが見つかりません。" + segoeuiemjFont.getPath());
+					log.println("CA用フォント" + segoeuiemjFont.getPath() + "を" + FONT_SEGUISYM + "で代替します。");
 					segoeuisymFont = new File(fontDir, FONT_SEGUISYM);
 				}
+				if (!segoeuiemjFont.canRead()) {
+					sendtext("警告　CA用フォントが見つかりません。" + segoeuiemjFont.getPath());
+					//retValue = "29";
+					//return false;
+					log.println("CA用フォント" + segoeuiemjFont.getPath() + "を" + arialUnicodeFont.getName() + "で代替します。");
+					segoeuiemjFont = arialUnicodeFont;
+				}
+				segoeuisymFont = new File(fontDir, FONT_SEGUISYM);
 				if (!segoeuisymFont.canRead()) {
 					sendtext("警告　CA用フォントが見つかりません。" + segoeuisymFont.getPath());
 					//retValue = "29";
@@ -4778,6 +4787,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				ffmpeg.addCmd("+19:");
 				ffmpeg.addCmd(getFontUrl(teluguFont, encoding));
 				ffmpeg.addCmd("+20:");
+				ffmpeg.addCmd(getFontUrl(segoeuiemjFont, encoding));
+				ffmpeg.addCmd("+21:");
 				ffmpeg.addCmd(getFontUrl(segoeuisymFont, encoding));
 				if(Setting.isUseLineSkip()){
 					ffmpeg.addCmd("|--use-lineskip-as-fontsize");
