@@ -22,6 +22,7 @@ int isZeroWidthP(Uint16* u);
 #define isMatchExtra(u, extra) isMatchKanji(u, extra)
 int getDetailType(int u);
 int getDetailType2(int u,DATA* data);
+int getDetailType32(Uint32 u,DATA* data);
 FontType getFontType2(Uint16* u,int fonttype,DATA* data,int stable);
 FontType getFontType(Uint16* u,int fonttype,DATA* data,int stable);
 FontType getFirstFont(Uint16* u,int fonttype,DATA* data);
@@ -42,4 +43,5 @@ int indexOf(Uint16* src, Uint16 key);
 //void moveUint16(Uint16* from, Uint16* to);
 
 int isGlyphExist(DATA* data,int fonttype,Uint16 u);
+int isGlyphExist32(DATA* data,int fonttype,Uint32 u);
 #endif /* UTIL_H_ */

@@ -39,8 +39,7 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int
 	/* */
 	if(strstr(mode,"-font")==NULL && !fill_bg){
 		//ret = newSurface(TTF_RenderUNICODE_Blended(font,str,fg));	//default original mode
-		//ret = newSurface(TTF_RenderUTF8_Blended(font,text_cpy,fg));	//default original mode
-		ret = newSurface(TTF_RenderUTF8_Solid(font,text_cpy,fg));	//default original mode
+		ret = newSurface(TTF_RenderUTF8_Blended(font,text_cpy,fg));	//default original mode
 		if(ret==NULL){
 			fprintf(data->log,"***ERROR*** [ttf_unicode/render_unicode]TTF_RenderUNICODE_Blended : %s\n",TTF_GetError());
 			fflush(data->log);

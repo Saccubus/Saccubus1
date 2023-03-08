@@ -33,9 +33,22 @@ int getDetailType(int u){
 
 int getDetailType2(int u,DATA *data){
 	int type = UNITABLE[u];
-	if(isGlyphExist(data,SEGOEUI_SYM_FONT,(Uint16)u)){
+	if(type==SURROGATE_PAIR_CHAR) return type;
+	if(isGlyphExist(data,SEGOEUI_EMJ_FONT,(Uint16)u)) {
+		if(type!=ARIAL_CHAR)
+			type = SEGOEUI_EMJ_CHAR;
+	}else if(isGlyphExist(data,SEGOEUI_SYM_FONT,(Uint16)u)) {
 		if(type!=ARIAL_CHAR)
 			type = SEGOEUI_SYM_CHAR;
+	}
+	return type;
+}
+int getDetailType32(Uint32 u,DATA *data){
+	int type = UNITABLE[u];
+	if(isGlyphExist32(data,SEGOEUI_EMJ_FONT,u)){
+		type = SEGOEUI_EMJ_CHAR;
+	}else if(isGlyphExist32(data,SEGOEUI_SYM_FONT,u)){
+		type = SEGOEUI_SYM_CHAR;
 	}
 	return type;
 }
@@ -45,10 +58,24 @@ int isGlyphExist(DATA* data,int fonttype,Uint16 u){
 	return (font!=NULL && TTF_GlyphIsProvided(font,u));
 }
 
+int isGlyphExist32(DATA* data,int fonttype,Uint32 u){
+	TTF_Font* font = data->CAfont[fonttype][CMD_FONT_DEF];
+	return (font!=NULL && TTF_GlyphIsProvided32(font,u));
+}
+
 int getGlyphExist(DATA* data,Uint16 u){
 	int f;
 	for(f=0;f<CA_FONT_MAX;f++){
 		if(isGlyphExist(data,f,u))
+			return f;
+	}
+	return UNDEFINED_FONT;
+}
+
+int getGlyphExist32(DATA* data,Uint32 u){
+	int f;
+	for(f=0;f<CA_FONT_MAX;f++){
+		if(isGlyphExist32(data,f,u))
 			return f;
 	}
 	return UNDEFINED_FONT;
@@ -86,6 +113,8 @@ FontType getFontType2(Uint16* up,int basefont,DATA* data,int stable){
 	if(up==NULL || (u = *up) == '\0'){
 		return NULL_FONT;
 	}
+	if(isLowSurrogate(u))
+		return NULL_FONT;
 /*
 	if(*u==0x0020){	//Ascii space -> fix fontsize w,h
 		return ARIAL_FONT|CA_TYPE_SPACE_0020;	//0020-> 00200003
@@ -162,8 +191,24 @@ FontType getFontType2(Uint16* up,int basefont,DATA* data,int stable){
 			return LAOO_FONT;
 		case GURMUKHI_CHAR:
 			return GURMUKHI_FONT;
+		case SEGOEUI_EMJ_CHAR:
+			return SEGOEUI_EMJ_FONT;
 		case SEGOEUI_SYM_CHAR:
 			return SEGOEUI_SYM_FONT;
+		case SURROGATE_PAIR_CHAR:
+			//サロゲートペア文字の処理
+			Uint32 u32 = convUTF16toUNICODE2(up);
+			switch (getDetailType32(u32,data)) {
+				case SEGOEUI_EMJ_CHAR:
+					return SEGOEUI_EMJ_FONT;
+				case SEGOEUI_SYM_CHAR:
+					return SEGOEUI_SYM_FONT;
+				default:
+					if (isGlyphExist32(data,basefont,u32))
+						return basefont;
+					else
+						return getGlyphExist32(data,u32);
+			}
 		default:
 		//include UNDEFINED_CHAR
 			if(isGlyphExist(data,basefont,u))
@@ -182,6 +227,9 @@ FontType getFontType(Uint16* up,int basefont,DATA* data,int stable){
 
 int getFirstFont(Uint16* up,int basefont,DATA* data){
 	if(up==NULL || *up == '\0'){
+		return basefont;
+	}
+	if(isLowSurrogate(*up)){
 		return basefont;
 	}
 	int foundBase = FALSE;

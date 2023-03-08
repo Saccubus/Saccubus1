@@ -921,6 +921,11 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 		if(debug)
 			fprintf(log,"[comsurface/drawText2]str[%d] U+%04hX try %s (base %s)",
 				index-str,*index,getfontname(nextfont),getfontname(basefont));
+		//サロゲートペアの下位文字の場合は飛ばす
+		if(isLowSurrogate(*index)) {
+			index++;
+			continue;
+		}
 		//get FontType and spaced code
 		newfont = getFontType(index,nextfont,data,stable_font);
 		wasAscii = foundAscii;
