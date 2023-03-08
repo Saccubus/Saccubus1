@@ -33,9 +33,11 @@
  k KANNADA_FONT		(tunga.ttf)カナラ
  h THAANA_FONT		(mvboli.ttf)ターナ
  i MALAYALAM_FONT	(kartika.ttf)マラヤラム
- I TELUGU_CHAR		(gautami.ttf)テルグ
- K SEGOEUI_SYM		(segoeuisym.ttf)Segoe UI Symbol(シーゴー) 2022/01/22追加
+ I TELUGU_FONT		(gautami.ttf)テルグ
+ P SEGOEUI_EMJ_FONT	(seguiemj.ttf)Segoe UI Emoji(シーゴー) 2023/03/07追加
+ Q SEGOEUI_SYM_FONT	(seguisym.ttf)Segoe UI Symbol(シーゴー) 2022/01/22追加
  Z ZERO_WIDTH     	(200b-200f)2000series 2028-202f (No Font Griph)
+ K SURROGATE_PAIR_CHAR サロゲートペア文字(上位、下位含めて)を表す
 
  参考資料（Windows Vistaに基づく）
  http://haraise.web.fc2.com/hyou.htm
@@ -73,8 +75,10 @@
 #define THAANA_CHAR 'h'
 #define MALAYALAM_CHAR 'i'
 #define TELUGU_CHAR 'I'
-#define SEGOEUI_SYM_CHAR 'K'
+#define SEGOEUI_EMJ_CHAR 'P'
+#define SEGOEUI_SYM_CHAR 'Q'
 #define ZERO_WIDTH_CHAR 'Z'
+#define SURROGATE_PAIR_CHAR 'K'
 
 /* コメントアウトは参考資料による定義 */
 static const Uint8 UNITABLE[] =
@@ -462,8 +466,9 @@ ffe0-ffff 特殊文字
 #define THAANA_FONT	17
 #define MALAYALAM_FONT 18
 #define TELUGU_FONT 19
-#define SEGOEUI_SYM_FONT	20
-#define EXTRA_FONT 21
+#define SEGOEUI_EMJ_FONT	20
+#define SEGOEUI_SYM_FONT	21
+#define EXTRA_FONT 22
 #define UNDEFINED_FONT	(EXTRA_FONT+1)
 #define NULL_FONT	(EXTRA_FONT+2)
 #define CA_FONT_MAX	(EXTRA_FONT+1)
@@ -492,6 +497,7 @@ static char* const CA_FONT_NAME[] = {
 	"THAANA",
 	"MALAYALAM",
 	"TELUGU",
+	"SEGOEUI_EMJ",
 	"SEGOEUI_SYM",
 	"EXTRA",
 	//--end of font type---//
@@ -510,6 +516,8 @@ static int const HTML5_CA_FONT[] = {
 	UNDEFINED_FONT,
 	SIMSUN_FONT,
 	GULIM_FONT,
+	SEGOEUI_EMJ_FONT,
+	SEGOEUI_SYM_FONT,
 };
 
 static const int CA_FONT_SIZE_FIX[][CMD_FONT_MAX] = {
@@ -534,6 +542,7 @@ static const int CA_FONT_SIZE_FIX[][CMD_FONT_MAX] = {
 	{0,0,0,0},	//thaana
 	{0,0,0,0},	//malayalam
 	{0,0,0,0},	//telugu
+	{0,0,0,0},	//Segoe UI Emoji
 	{0,0,0,0},	//Segoe UI Symbol
 	{0,0,0,0},	//extra
 };
