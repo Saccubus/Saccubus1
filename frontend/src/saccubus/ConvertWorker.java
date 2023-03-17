@@ -1453,6 +1453,192 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		}
 		return true;
 	}
+
+	private boolean saveNvComment(NicoClient client) {
+		sendtext("コメントの保存(nvcomment)");
+		ArrayList<File> filelist = new ArrayList<>();
+		boolean backup = false;
+		if (isSaveComment()) {
+			// ファイル名設定
+			if(!setupCommentFile(client)){
+				return false;
+			}
+			sendtext("コメントのダウンロード開始中");
+			// 前処理
+			appendCommentFile = mkTemp("_"+tid+TMP_APPEND_EXT);
+			if(CommentFile.exists()){
+				backup = Path.fileCopy(CommentFile,appendCommentFile);
+			}
+			File target = null;
+			if(Setting.enableCommentJson() || target == null){
+				// JSONは一般コメント・オプショナルスレッド共通(同時DL)
+				commentJson = client.getNvCommentJson(commentJson, Status, back_comment, Time, StopFlag,
+						Setting.getCommentIndex());
+				if(commentJson == null)
+					sendtext("コメントJSONのダウンロードに失敗 " + client.getExtraError());
+			}
+			if(target == null && commentJson!=null){
+				if(getJsonParser().commentJson2xml(commentJson, CommentFile, "user", isAppendComment()))
+					target = CommentFile;
+				log.println("変換 userコメントJSON: "+getJsonParser().getChatCount());
+			}
+			if(target == null){
+				sendtext("コメントの取得に失敗 " + client.getExtraError());
+				if(backup)
+					Path.move(appendCommentFile, CommentFile);
+				result = "53";
+				return false;
+			}
+			// ファイル内ダブリを整理
+			backup = Path.fileCopy(CommentFile,appendCommentFile);
+			filelist.add(CommentFile);
+			sendtext("コメントファイル整理中");
+			if (!CombineXML.combineXML(filelist, CommentFile, log)){
+				sendtext("コメントファイルが整理出来ませんでした");
+				if(backup)
+					Path.move(appendCommentFile, CommentFile);	// 失敗したらバックアップを戻す
+				result = "5A";
+				return false;
+			}
+			//コメントファイルの最初のdate="integer"を探して dateUserFirst にセット
+			dateUserFirst = getDateUserFirst(CommentFile);
+			sendtext("コメントのダウンロード終了");
+
+			sendtext("かんたんコメントの保存");
+			if (CommentFile!=null){
+				EasyCommentFile = Path.getReplacedExtFile(CommentFile, EASY_EXT);
+				backup = false;
+				appendEasyFile = mkTemp(TMP_APPEND_EASY_EXT);
+				// 前処理
+				if(EasyCommentFile.exists()){
+					backup = Path.fileCopy(EasyCommentFile, appendEasyFile);
+				}
+				target = null;
+				// commentJsonはダウンロード済み
+				if(target == null && commentJson != null){
+					if(getJsonParser().commentJson2xml(commentJson, EasyCommentFile, "easy", isAppendComment()))
+						target = EasyCommentFile;
+					log.println("変換 easyコメントJSON: "+getJsonParser().getChatCount());
+				}
+				if(target == null){
+					sendtext("かんたんコメントの取得に失敗 " + client.getExtraError());
+					if(backup)
+						Path.move(appendEasyFile, EasyCommentFile);
+					result = "55";
+					return false;
+				}
+				backup = Path.fileCopy(EasyCommentFile, appendEasyFile);
+				filelist.clear();
+				filelist.add(EasyCommentFile);
+				sendtext("かんたんコメント整理中");
+				if (!CombineXML.combineXML(filelist, EasyCommentFile, log)){
+					sendtext("かんたんコメントが整理出来ませんでした");
+					if(backup)
+						Path.move(appendEasyFile, EasyCommentFile);
+					result = "5B";
+					return false;
+				}
+				if (dateUserFirst.isEmpty()) {
+					//ファイルの最初のdate="integer"を探して dateUserFirst にセット
+					dateUserFirst = getDateUserFirst(EasyCommentFile);
+				}
+				sendtext("かんたんコメントの保存終了");
+			}
+
+			optionalThreadID = client.getOptionalThreadID();
+			sendtext("オプショナルスレッドの保存");
+			if (optionalThreadID != null && !optionalThreadID.isEmpty() && CommentFile!=null ){
+				OptionalThreadFile = Path.getReplacedExtFile(CommentFile, OPTIONAL_EXT);
+				backup = false;
+				appendOptionalFile = mkTemp(TMP_APPEND_OPTIONAL_EXT);
+				// 前処理
+				if(OptionalThreadFile.exists()){
+					backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
+				}
+				target = null;
+				// commentJsonはダウンロード済み
+				if(target == null && commentJson != null){
+					if(getJsonParser().commentJson2xml(commentJson, OptionalThreadFile, "optional", isAppendComment()))
+						target = OptionalThreadFile;
+					log.println("変換 optional thread JSON: "+getJsonParser().getChatCount());
+				}
+				if(target == null){
+					sendtext("オプショナルスレッドの取得に失敗 " + client.getExtraError());
+					if(backup)
+						Path.move(appendOptionalFile, OptionalThreadFile);
+					result = "55";
+					return false;
+				}
+				backup = Path.fileCopy(OptionalThreadFile, appendOptionalFile);
+				filelist.clear();
+				filelist.add(OptionalThreadFile);
+				sendtext("オプショナルスレッド整理中");
+				if (!CombineXML.combineXML(filelist, OptionalThreadFile, log)){
+					sendtext("オプショナルスレッドが整理出来ませんでした");
+					if(backup)
+						Path.move(appendOptionalFile, OptionalThreadFile);
+					result = "5B";
+					return false;
+				}
+				if (dateUserFirst.isEmpty()) {
+					//ファイルの最初のdate="integer"を探して dateUserFirst にセット
+					dateUserFirst = getDateUserFirst(OptionalThreadFile);
+				}
+				sendtext("オプショナルスレッドの保存終了");
+			}
+			//ニコスコメント
+			sendtext("ニコスコメントの保存");
+			if(nicos_id!=null && !nicos_id.isEmpty() && CommentFile!=null){
+				isNicos = true;
+				nicosCommentFile = Path.getReplacedExtFile(CommentFile, NICOS_EXT);
+				// 前処理
+				backup = false;
+				File appendNicosFile = mkTemp(TMP_APPEND_NICOS_EXT);
+				if(nicosCommentFile.exists()){
+					backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
+				}
+				target = null;
+				File nicosCommentJson = null;
+				if(Setting.enableCommentJson() || target == null){
+					nicosCommentJson = Path.getReplacedExtFile(nicosCommentFile, JSON_EXT);
+					nicosCommentJson = client.getNicosCommentJson(nicosCommentJson, Status, back_comment,
+							Time, StopFlag, Setting.getCommentIndex());
+					if(nicosCommentJson == null)
+						sendtext("ニコスコメントJSONのダウンロードに失敗 " + client.getExtraError());
+				}
+				if(target == null && nicosCommentJson != null){
+					if(getJsonParser().commentJson2xml(nicosCommentJson, nicosCommentFile, "nicos", isAppendComment()))
+						target = nicosCommentFile;
+					log.println("変換 nicos JSON: "+getJsonParser().getChatCount());
+				}
+				if(target == null){
+					sendtext("ニコスコメントの取得に失敗 " + client.getExtraError());
+					if(backup)
+						Path.move(appendNicosFile, nicosCommentFile);
+					result = "55";
+					return false;
+				}
+				// ダブリ整理
+				backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
+				filelist.clear();
+				filelist.add(nicosCommentFile);
+				sendtext("ニコスコメント整理中");
+				if (!CombineXML.combineXML(filelist, nicosCommentFile, log)){
+					sendtext("ニコスコメントが整理出来ませんでした");
+					if(backup)
+						Path.move(appendNicosFile, nicosCommentFile);
+					result = "5B";
+					return false;
+				}
+				sendtext("ニコスコメントの保存終了");
+			}
+			resultBuffer.append("comment: "+CommentFile.getName()+"\n");
+		}
+		sendtext("コメントの保存終了");
+		return true;
+	}
+
+/*	
 	private boolean saveComment(NicoClient client) {
 		sendtext("コメントの保存");
 		ArrayList<File> filelist = new ArrayList<>();
@@ -1690,6 +1876,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		sendtext("コメントの保存終了");
 		return true;
 	}
+*/
 
 //	private File getOptionalThreadFile(File file) {
 //		if (file == null || file.getPath() == null) {
@@ -1764,6 +1951,44 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			if(Setting.enableCommentJson() || target == null){
 				commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag,
+						Setting.getCommentIndex());
+				if(commentJson == null)
+					sendtext("コメントJSONのダウンロードに失敗 " + client.getExtraError());
+			}
+			if(target == null && commentJson != null){
+				if(getJsonParser().commentJson2xml(commentJson, OwnerCommentFile, "owner", false))
+					target = OwnerCommentFile;
+				log.println("変換 ownerコメントJSON: "+getJsonParser().getChatCount());
+			}
+			if(target == null || !target.canRead()){
+				sendtext("投稿者コメントの取得に失敗 " + client.getExtraError());
+				//result = "63";
+				return true;
+			}
+			client.applyOwnerFilter(OwnerCommentFile);
+			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
+				optionalThreadID = client.getOptionalThreadID();
+			}
+			if (nicos_id == null || nicos_id.isEmpty())
+				nicos_id = client.getNicosID();
+		}
+		sendtext("投稿者コメントの保存終了");
+		return true;
+	}
+
+	private boolean saveOwnerNvComment(NicoClient client){
+		sendtext("投稿者コメントの保存");
+		if (isSaveOwnerComment()) {
+			// ファイル名の設定
+			if(!setupCommentFile(client)){
+				return false;
+			}
+			String basename = CommentFile.getPath().replace(prefix, "");
+			OwnerCommentFile = Path.getReplacedExtFile(new File(basename), OWNER_EXT);
+			sendtext("投稿者コメントのダウンロード開始中");
+			File target = null;
+			if(Setting.enableCommentJson() || target == null){
+				commentJson = client.getNvCommentJson(commentJson, Status, back_comment, Time, StopFlag,
 						Setting.getCommentIndex());
 				if(commentJson == null)
 					sendtext("コメントJSONのダウンロードに失敗 " + client.getExtraError());
@@ -3094,7 +3319,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			//stopwatch.show();
 			success = false;
 			do{
-				success = saveOwnerComment(client);
+				//success = saveOwnerComment(client);
+				success = saveOwnerNvComment(client);
 			}while (!stopFlagReturn() && !success && canRetry(client, gate));
 			if(!success) return result;
 			gate.resetError();
@@ -3102,7 +3328,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			//stopwatch.show();
 			success = false;
 			do{
-				success = saveComment(client);
+				//success = saveComment(client);
+				success = saveNvComment(client);
 			}while (!stopFlagReturn() && !success && canRetry(client, gate));
 			if(!success) return result;
 			gate.resetError();

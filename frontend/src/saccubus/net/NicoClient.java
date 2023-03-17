@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -19,7 +18,6 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,7 +71,7 @@ public class NicoClient {
 	private static final String HTTP_WWW_NICOVIDEO_JP = "https://www.nicovideo.jp/";
 	private static final String HTTP_WWW_NICOVIDEO_WATCH = HTTP_WWW_NICOVIDEO_JP + "watch/";
 	private static final String HTTP_WWW_NICOVIDEO_USER = HTTP_WWW_NICOVIDEO_JP + "user/";
-	private static final String HTTP_FLAPI_GETFLV = "https://flapi.nicovideo.jp/api/getflv/";
+	//private static final String HTTP_FLAPI_GETFLV = "https://flapi.nicovideo.jp/api/getflv/";
 	private static final String HTTP_FLAPI_GETTHREADKEY = "https://flapi.nicovideo.jp/api/getthreadkey?thread=";
 	private static final String HTTP_FLAPI_GETWAYBACKKEY = "https://flapi.nicovideo.jp/api/getwaybackkey?thread=";
 	private static final String HTTP_EXT_THUMBINFO = "https://ext.nicovideo.jp/api/getthumbinfo/";
@@ -865,6 +863,9 @@ public class NicoClient {
 	private boolean NeedsKey = false;
 	private String Premium = "";
 	private String optionalThreadID = "";	// normal Comment ID when Community DOUGA
+	private String ownerThreadID = "";	// 
+	private String nvThreadKey = "";
+	private String nvParams = "";
 	private String nicosID = "";
 	private boolean economy = false;
 	private String ownerFilter;			// video owner filter（replace）
@@ -879,125 +880,6 @@ public class NicoClient {
 		if(isHtml5Ok)
 			return true;
 
-		String url = null;
-		HttpURLConnection con;
-		try {
-			if(!nicomap.containsKey("flvInfo")){
-				// flvinfo is same as FLAPI_GETFLV response
-				url = HTTP_FLAPI_GETFLV + tag;
-				if (!getWatchThread().isEmpty()){
-					url = HTTP_FLAPI_GETFLV + getWatchThread();
-					log.println("\ntry url="+url);
-				}
-				if (tag.startsWith("nm")) {
-					url += "?as3=1";
-				}
-				if (url.contains("?") && !watchInfo.isEmpty()){
-					watchInfo = "&" + watchInfo.substring(1);
-				}
-				log.print("Getting video informations...");
-				con = urlConnectGET(url + watchInfo);
-				if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-					log.println("ng.\nCan't getVideoInfo:" + url + watchInfo);
-					if(con == null || !loginCheck(con)){
-						log.println("Can't login.");
-						return false;
-					}
-				}
-				String encoding = con.getContentEncoding();
-				if (encoding == null){
-					encoding = "UTF-8";
-				}
-				String ret = readConnection(con);
-				if (ret == null || ret.isEmpty()){
-					log.println("ng.\nCan't getVideoInfo: null respense.");
-					return false;
-				}
-				nicomap.put("flvInfo", ret);
-				nicomap.putArrayURLDecode(ret, encoding);
-				// flvinfo end
-			}
-			if (Debug){
-				nicomap.printAll(log);
-			}
-			ThreadID = nicomap.get("thread_id");
-			VideoUrl = nicomap.get("url");
-			MsgUrl = nicomap.get("ms");
-			if(MsgUrl!=null && MsgUrl.contains("_nmsg_")){
-				MsgUrl = nicomap.get("ms_sub");
-				log.println("reset MsgUrl: "+MsgUrl);
-			}
-			UserID = nicomap.get("user_id");
-			userKey = nicomap.get("userkey");
-			if (optionalThreadID.isEmpty() && nicomap.containsKey("optional_thread_id")){
-				optionalThreadID = nicomap.get("optional_thread_id");
-				if(videoTag.equals(optionalThreadID)){
-					// html5の場合逆になっているようだ
-					// ThreadKey が引けるのは メインthreadの方だけ
-					// chanelの場合 メイン=チャンネル=threadKey optionalは何もない
-					// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
-					optionalThreadID = ThreadID;
-					ThreadID = videoTag;
-					log.println("reset ThreadID: "+ThreadID);
-				}
-				log.println("OptionalThreadID: "+optionalThreadID);
-			}
-			if (nicosID.isEmpty() && nicomap.containsKey("nicos_id")){
-				nicosID = nicomap.get("nicos_id");
-			}
-			if (nicomap.containsKey("needs_key")) {
-				NeedsKey = true;
-			}
-			Premium = nicomap.get("is_premium");
-			try {
-				VideoLength = Integer.parseInt(nicomap.get("l"));
-			} catch (NumberFormatException e) {
-				VideoLength = -1;
-			}
-			ownerFilter = nicomap.get("ng_up");
-			if (ThreadID == null || VideoUrl == null
-				|| MsgUrl == null || UserID == null
-				|| ThreadID.isEmpty() || VideoUrl.isEmpty()
-				|| MsgUrl.isEmpty() || UserID.isEmpty()) {
-				log.println("ng.\nCan't get video information keys.");
-				if(VideoUrl==null){
-					log.println("Video url is null. maybe Forbidden or Paid");
-					return false;
-				}
-				try {
-					con = urlConnectGET(url + watchInfo);
-					if(!loginCheck(con)){
-						log.println("Can't logged In.");
-					}
-				}catch(NullPointerException e){
-					log.println("Can't logged In.");
-				}
-				return false;
-			}
-			//economy  = VideoUrl.toLowerCase().contains("low");
-			log.println("videoinfo ok.");
-			if(serverIsDmc()){
-				log.println("Video:<" + apiSessionUrl + ">;");
-			}
-			log.println("Video:<" + VideoUrl + ">; Comment:<" + MsgUrl
-					+ (NeedsKey ? ">; needs_key=1" : ">"));
-			economy = VideoUrl.toLowerCase().contains("low");
-			if(size_video_thumbinfo==null)
-				size_video_thumbinfo = economy? size_low : size_high;
-			log.println("size_video: "+size_video_thumbinfo);
-			log.println("Video time length: " + VideoLength + "sec");
-			log.println("ThreadID:<" + ThreadID + "> Maybe uploaded on "
-					+ WayBackDate.format(ThreadID));
-			if (optionalThreadID!=null && !optionalThreadID.isEmpty()){
-				log.println("OptionalThreadID:<" + optionalThreadID + ">");
-			}
-			if (nicosID!=null && !nicosID.isEmpty()){
-				log.println("nicosID:<" + nicosID + ">");
-			}
-		} catch (IOException ex) {
-			log.printStackTrace(ex);
-			return false;
-		}
 		return true;
 	}
 
@@ -1922,6 +1804,21 @@ public class NicoClient {
 		}
 		return true;
 	}
+
+	public File getNvCommentJson(final File file, final JLabel status, final String back_comment,
+			final String time, final ConvertStopFlag flag, int comment_mode){
+		{
+			String comjson = downloadNvCommentJson(file, status, flag, back_comment, time, comment_mode);
+			if(comjson==null || comjson.isEmpty()){
+				log.println("\n["+videoTag+"]can't download comment json.");
+				return null;
+			}
+			Path.writeAllText(file, comjson, "UTF-8");
+			debug("write comment json to "+file);
+		}
+		return file;
+	}
+
 	public File getCommentJson(final File file, final JLabel status, final String back_comment,
 			final String time, final ConvertStopFlag flag, int comment_mode){
 		{
@@ -2395,6 +2292,20 @@ public class NicoClient {
 		}
 	}
 
+	private String nvCommentJsonPost(String params, String threadkey, String time) {
+		StringBuilder sb = new StringBuilder();
+		String thread = "";
+		//if(isWayback(time, thread)){
+		//}else{
+			sb.append("{\"params\":");
+			sb.append(params + ",");
+			sb.append("\"threadKey\":");
+			sb.append("\"" + threadkey + "\",");
+			sb.append("\"additionals\": {}}");
+		//}
+		return sb.substring(0);
+	}
+
 	private String commentJsonPost2009(String thread, String optional, String threadkey,
 			String time) {
 		StringBuilder sb = new StringBuilder();
@@ -2792,19 +2703,31 @@ public class NicoClient {
 			String back_comment, String postdata){
 		log.print("Getting JSON...");
 		//String url = "https://nmsg.nicovideo.jp/api.json/";
-		String url = MsgUrl + "/api.json";	//2021.12.05
+		//String url = MsgUrl + "/api.json";	//2021.12.05
+		String url = MsgUrl + "/v1/threads";	//新API
+		HttpURLConnection con = null;
 		InputStream is = null;
 		OutputStream os = null;
-		HttpURLConnection con = null;
 		FileOutputStream fosb = null;
 		String retComment = null;
 		backcomment = back_comment;
 		try {
 			fosb = new FileOutputStream(file);
+			con = (HttpsURLConnection) (new URL(url))
+					.openConnection(ConProxy);
+			debug("\n■HTTPS<" + url + ">\n");
+			con.setDoOutput(true);
+			con.setRequestMethod("POST");
+			con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
+			con.setRequestProperty("x-frontend-id", "6");
+			con.setRequestProperty("x-frontend-version", "0");
+			con.setRequestProperty("Content-Type", "application/json");
+			debug("■Connect: POST,DoOutput\n");
 			long start0 = Stopwatch.getElapsedTime(0);
-			con = urlConnect(url, "POST", Cookie, true, true, "keep-alive", true);
+			connect(con);
+			//con = urlConnect(url, "POST", Cookie, true, true, "keep-alive", true);
 			os = con.getOutputStream();
-			debug("\n■write:" + postdata + "\n");
+			debug("■write:" + postdata + "\n");
 			os.write(postdata.getBytes());
 			os.flush();
 			os.close();
@@ -2873,6 +2796,21 @@ public class NicoClient {
 			postdata = commentJsonPost2009(ThreadID, optionalThreadID, threadKey, time);
 		else
 			postdata = commentJsonPost2006(ThreadID, optionalThreadID, threadKey, time);
+		return downloadCommonCommentJson(file, status, flag, back_comment, postdata);
+	}
+	private String downloadNvCommentJson(File file, JLabel status, ConvertStopFlag flag, String back_comment,
+			String time, int comment_mode){
+		String postdata;
+		boolean useNewComment = true;
+		isWayback(time, ThreadID);	//get waybackkey
+		if(comment_mode == 2 || comment_mode == 0 && !hasNewCommentBegun){
+			useNewComment = false;
+		}
+		backcomment = back_comment;
+		if(useNewComment)
+			postdata = nvCommentJsonPost(nvParams, nvThreadKey, time);
+		else
+			postdata = nvCommentJsonPost(nvParams, nvThreadKey, time);
 		return downloadCommonCommentJson(file, status, flag, back_comment, postdata);
 	}
 	private String downloadNicosCommentJson(File file, JLabel status, ConvertStopFlag flag, String back_comment,
@@ -2966,6 +2904,10 @@ public class NicoClient {
 		return optionalThreadID;
 	}
 
+	public String getOwnerThreadID() {
+		return ownerThreadID;
+	}
+
 	public String getNicosID() {
 		return nicosID;
 	}
@@ -2987,7 +2929,7 @@ public class NicoClient {
 	}
 
 	private String thumbInfoData;
-	private String watchApiJson;
+	private String watchApiJson = null;
 	private String flvInfo;
 	private String flvInfoArrays;
 	private String isDmc;
@@ -3163,70 +3105,6 @@ public class NicoClient {
 					sb.append("</thumb>\n");
 					sb.append("</nicovideo_thumb_response>\n");
 					s = sb.substring(0);
-				}else{
-					// flash page
-					Mson m_watchApi = watchApiMson;
-					if(m_watchApi==null){
-						m_watchApi = Mson.parse(getWatchApiJson());
-					}
-					String description = m_watchApi.getAsString("description");
-					if(description==null)
-						description = "";
-					else
-						description = description.replace("&quot;", "”")
-							.replace("&lt;", "(").replace("&gt;", ")")
-							.replaceAll("\\(br ?/?\\)","\n");
-					sb.append(makeNewElement("description",description));
-					String thumbUrl = m_watchApi.getAsString("thumbnail");
-					if(thumbUrl==null)
-						thumbUrl = m_watchApi.getAsString("thumbImage");
-					if(thumbUrl==null) thumbUrl="";
-					sb.append(makeNewElement("thumbnail_url",thumbUrl));
-					if(ContentType==null)
-						ContentType = m_watchApi.getAsString("movie_type");
-					sb.append(makeNewElement("movie_type",ContentType));
-					if(altTag.isEmpty())
-						altTag = m_watchApi.getAsString("watch_url");
-					if(altTag.isEmpty())
-						altTag = tag;
-					sb.append(makeNewElement("watch_url",HTTP_WWW_NICOVIDEO_WATCH +altTag));
-					sb.append(makeNewElement("thumb_type","video"));
-					String tag_list = m_watchApi.getAsString("tagList");
-					debug("\ntag_list="+tag_list);
-					Mson m_tagList = m_watchApi.get("tagList");
-					if(m_tagList.getSize()>0){
-						sb.append("<tags domain=\"jp\">\n");
-						debug("\ntags.length="+m_tagList.getSize());
-						for(int i = 0; i < m_tagList.getSize(); i++){
-							Mson m_hash = m_tagList.get(i);
-							debug("\ntagitem="+m_hash);
-							// hash = {"id":"120343647","tag":"ニコニコ技術部","cat":true,"dic":true,"lck":"1"}
-							String t = m_hash.getAsString("tag");
-							String cat = m_hash.getAsString("cat");
-							String lck = m_hash.getAsString("lck");
-							if(t!=null && !t.isEmpty()){
-								debug("\ntag="+t);
-								sb.append("<tag");
-								if("true".equals(cat)) sb.append(" category=\"1\"");
-								if("1".equals(lck)) sb.append(" lock=\"1\"");
-								sb.append(">"+t+"</tag>\n");
-							}
-						}
-						sb.append("</tags>\n");
-					}
-					String user_id = m_watchApi.getAsString("user_id");
-					if(user_id==null || user_id.isEmpty())
-						user_id = m_watchApi.getAsString("videoUserId");
-					if(user_id==null)
-						user_id = "";
-					sb.append(makeNewElement("user_id",user_id));
-					String nickname = m_watchApi.getAsString("user_nickname");
-					if(nickname!=null)
-						sb.append(makeNewElement("user_nickname",nickname));
-					sb.append(makeNewElement("user_icon_url",m_watchApi.getAsString("user_icon_url")));
-					sb.append("</thumb>\n");
-					sb.append("</nicovideo_thumb_response>\n");
-					s = sb.substring(0);
 				}
 			}
 			PrintWriter pw = new PrintWriter(thumbXml, encoding);
@@ -3346,35 +3224,30 @@ public class NicoClient {
 				encryption = m_encryption.isNull() ? false : true;
 				debug("Video Encryption: "+encryption+"\n");
 			}
-			//comments
-			Mson m_ids = dataApiMson.get("threads");
-			//log.println("label(1): "+m_ids.get(1).getAsString("label"));
-			ThreadID = m_ids.get(1).getAsString("id");
-			log.println("ThreadID: "+ThreadID);
-			Mson m_community = m_ids.get(2);
-			//log.println("label(2): "+m_ids.get(2).getAsString("label"));
-			if(!m_community.isNull() && m_ids.get(2).getAsString("label").equals("community")){
-				optionalThreadID = m_community.getAsString("id");
-				if(videoTag.equals(optionalThreadID)){
-					// html5の場合逆になっているようだ
-					// ThreadKey が引けるのは メインthreadの方だけ
-					// chanelの場合 メイン=チャンネル=threadKey optionalは何もない
-					// communityの場合 メイン=コミュニティ=threadKey optionalはsm動画のコメント
-					optionalThreadID = ThreadID;
-					ThreadID = videoTag;
-					log.println("reset ThreadID: "+ThreadID);
-				}
-				log.println("OptionalThreadID: "+optionalThreadID);
-				NeedsKey = true;
+
+			//comments for New Comment Server
+			Mson m_nvc = dataApiMson.get("nvComment");
+			Mson m_targets = m_nvc.get("targets");
+			log.println("fork(0): "+m_targets.get(0).getAsString("fork"));
+			ownerThreadID = m_targets.get(0).getAsString("id");
+			ThreadID = m_targets.get(1).getAsString("id");
+			Mson m_community = m_targets.get(2);
+			log.println("fork(2): "+m_targets.get(2).getAsString("fork"));
+			if(!m_community.isNull() && m_targets.get(2).getAsString("fork").equals("main")){
+				optionalThreadID =  ThreadID;;
+				ThreadID =  m_community.getAsString("id");
 			}
-			//Mson m_nicos = m_ids.get("nicos");
-			//if(!m_nicos.isNull()){
-			//	nicosID = m_nicos.getAsString("id");
-			//	log.println("nicosID: "+nicosID);
-			//}
-			MsgUrl = m_ids.getAsString("server");
+			log.println("ThreadID: "+ThreadID);
+			log.println("optionalThreadID: "+optionalThreadID);
+			log.println("ownerThreadID: "+ownerThreadID);
+			Mson m_params = m_nvc.get("params");
+			nvParams = m_params.toString();
+			log.println("m_params: "+nvParams);
+			MsgUrl = m_nvc.getAsString("server");
+			nvThreadKey = m_nvc.getAsString("threadKey");
 			log.println("MsgUrl: "+MsgUrl);
-			log.println("NeedsKey: "+NeedsKey);
+			//log.println("NeedsKey: "+NeedsKey);
+			log.println("threadKey: "+nvThreadKey);
 
 			Mson m_viewer = dataApiMson.get2("viewer");
 			UserID = m_viewer.getAsString("id");
@@ -3501,7 +3374,7 @@ public class NicoClient {
 		}
 		return text;
 	}
-
+/*
 	private String extractWatchApiJson(String html, String encoding, String url){
 		// flash
 		url = safeFileName(url);
@@ -3521,6 +3394,8 @@ public class NicoClient {
 		extractWatchApiJson(html, encoding, "getWatchApiJson");
 		return watchApiJson;
 	}
+*/
+/*
 	private void extractJson(String text, String encoding) {
 		//Json解析	flash
 		if(text==null)
@@ -3584,6 +3459,7 @@ public class NicoClient {
 		}
 		return;
 	}
+*/
 
 	private void setFromSessionApi(Mson m_sessionApi){
 		// flash html5 common
@@ -3714,6 +3590,7 @@ public class NicoClient {
 		return s;
 	}
 
+/*
 	private String getWatchApiData(String text, String encoding, String comment) {
 		// 動画ページのJSONを取り出す flash
 		text = getXmlElement1(text, "body");	//body
@@ -3733,6 +3610,7 @@ public class NicoClient {
 		text = unquote(text);
 		return text;
 	}
+*/
 	void saveApiJson(String json, String encoding, String comment){
 		Path file = Path.mkTemp(videoTag+"_watchJson.txt");
 		log.println("file: "+file.getPath()+" is <"+comment+"> Json");
