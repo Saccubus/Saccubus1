@@ -3,6 +3,10 @@ package saccubus.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -105,4 +109,20 @@ public class Util {
 		if (ll < 1) return false;
 		return str.codePointCount(0, ll) < ll;
 	}
+
+	// UTCオフセット付時刻(yyyy/MM/ddTHH:mm:ss+0:00)をUnixtimeに変換
+	public static String OffsetDateTime2UnixTime(String offset_datetime) {
+		OffsetDateTime odt = OffsetDateTime.parse(offset_datetime);
+		long unixtime = odt.toEpochSecond();
+		return String.valueOf(unixtime);
+	}
+
+	// ローカルタイムの時刻(yyyy/MM/dd HH:mm:ss)をUnixtimeに変換
+	public static String LocalDateTime2UnixTime(String datetime) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+		LocalDateTime ldt = LocalDateTime.parse(datetime, dtf);
+		long unixtime = ldt.atZone(ZoneId.systemDefault()).toEpochSecond();
+		return String.valueOf(unixtime);
+	}
+
 }

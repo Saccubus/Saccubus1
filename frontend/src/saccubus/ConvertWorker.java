@@ -1492,7 +1492,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("コメントJSONのダウンロードに失敗 " + client.getExtraError());
 			}
 			if(target == null && commentJson!=null){
-				if(getJsonParser().commentJson2xml(commentJson, CommentFile, "user", isAppendComment()))
+				if(getJsonParser().nvcommentJson2xml(commentJson, CommentFile, "user", isAppendComment()))
 					target = CommentFile;
 				log.println("変換 userコメントJSON: "+getJsonParser().getChatCount());
 			}
@@ -1530,7 +1530,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				target = null;
 				// commentJsonはダウンロード済み
 				if(target == null && commentJson != null){
-					if(getJsonParser().commentJson2xml(commentJson, EasyCommentFile, "easy", isAppendComment()))
+					if(getJsonParser().nvcommentJson2xml(commentJson, EasyCommentFile, "easy", isAppendComment()))
 						target = EasyCommentFile;
 					log.println("変換 easyコメントJSON: "+getJsonParser().getChatCount());
 				}
@@ -1572,7 +1572,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				target = null;
 				// commentJsonはダウンロード済み
 				if(target == null && commentJson != null){
-					if(getJsonParser().commentJson2xml(commentJson, OptionalThreadFile, "optional", isAppendComment()))
+					if(getJsonParser().nvcommentJson2xml(commentJson, OptionalThreadFile, "optional", isAppendComment()))
 						target = OptionalThreadFile;
 					log.println("変換 optional thread JSON: "+getJsonParser().getChatCount());
 				}
@@ -1621,7 +1621,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						sendtext("ニコスコメントJSONのダウンロードに失敗 " + client.getExtraError());
 				}
 				if(target == null && nicosCommentJson != null){
-					if(getJsonParser().commentJson2xml(nicosCommentJson, nicosCommentFile, "nicos", isAppendComment()))
+					if(getJsonParser().nvcommentJson2xml(nicosCommentJson, nicosCommentFile, "nicos", isAppendComment()))
 						target = nicosCommentFile;
 					log.println("変換 nicos JSON: "+getJsonParser().getChatCount());
 				}
@@ -1939,6 +1939,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return getRexpFromChats(getLastChat(file),"no=\"([0-9]+)\"", 1);
 	}
 
+/*
 	private boolean saveOwnerComment(NicoClient client){
 		sendtext("投稿者コメントの保存");
 		if (isSaveOwnerComment()) {
@@ -1989,7 +1990,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		sendtext("投稿者コメントの保存終了");
 		return true;
 	}
-
+*/
 	private boolean saveOwnerNvComment(NicoClient client){
 		sendtext("投稿者コメントの保存");
 		if (isSaveOwnerComment()) {
@@ -2008,7 +2009,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					sendtext("コメントJSONのダウンロードに失敗 " + client.getExtraError());
 			}
 			if(target == null && commentJson != null){
-				if(getJsonParser().commentJson2xml(commentJson, OwnerCommentFile, "owner", false))
+				if(getJsonParser().nvcommentJson2xml(commentJson, OwnerCommentFile, "owner", false))
 					target = OwnerCommentFile;
 				log.println("変換 ownerコメントJSON: "+getJsonParser().getChatCount());
 			}

@@ -10,12 +10,15 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 import saccubus.conv.ChatAttribute;
 import saccubus.conv.ChatSave;
 import saccubus.net.Path;
 import saccubus.util.Logger;
+import saccubus.util.Util;
+
 //Response Data =
 //[
 //	{"ping": {"content": "rs:0"}},
@@ -135,6 +138,9 @@ public class NicoJsonParser {
 	public boolean commentJson2xml(File json, File xml, String kind, boolean append){
 		return commentJson2xml(json, xml, kind, append, false);
 	}
+	public boolean nvcommentJson2xml(File json, File xml, String kind, boolean append){
+		return nvcommentJson2xml(json, xml, kind, append, false);
+	}
 	public boolean commentJson2xml(File json, File xml, String kind, boolean append, boolean localconv) {
 		// json 入力コメントJsonテキストファイル
 		// xml 出力コメントxmlファイル
@@ -163,6 +169,236 @@ public class NicoJsonParser {
 		return false;
 	}
 
+	//2022.06ぐらいから？のニコ動新サーバー(nvcomment)のJSON→XML変換
+	public boolean nvcommentJson2xml(File json, File xml, String kind, boolean append, boolean localconv) {
+		// json 入力コメントJsonテキストファイル(nvcomment)
+		// xml 出力コメントxmlファイル
+		String jsonText = Path.readAllText(json, ENCODING);
+		Mson mson = Mson.parse(jsonText);
+		//mson.prettyPrint(log);
+		FileOutputStream fos = null;
+		OutputStreamWriter ow = null;
+		try {
+			String xmlString = makeNvCommentXml(mson, kind, localconv);
+			if(xmlString!=null){
+				fos = new FileOutputStream(xml, append);
+				ow = new OutputStreamWriter(fos, ENCODING);
+				ow.write(xmlString);
+				ow.flush();
+				ow.close();
+				log.println(kind+"コメントJSONをXMLに変換しました: "+xml.getPath());
+				return true;
+			}
+		} catch (IOException e) {
+			log.printStackTrace(e);
+		} finally {
+			if(ow!=null) try {ow.close();}catch(IOException e){};
+			if(fos!=null) try {fos.close();}catch(IOException e){};
+		}
+		return false;
+	}
+
+	//2022.06ぐらいから？のニコ動新サーバー(nvcomment)のJSON→XML変換
+	private String makeNvCommentXml(Mson mson, String kind, boolean localconv){
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		chatCount = 0;
+		// ヘッダ
+		pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		// パケット開始
+		pw.println("<packet>");
+		//{"meta":{"status":200}でなければnullを返す
+		Mson m_status = mson.get("status");
+		if (m_status == null || !m_status.toString().equals("200")) {
+			return null;
+		}
+		log.println("\nJSON status: "+m_status.toString());
+		boolean outflag = true;
+		int p = 0;
+		Mson m_threads = mson.get("threads");
+		Mson m_global = mson.get("globalComments");
+		// kind と threads() の数とthreads().fork でどの threads() からデーターを取得するか決める
+		if(kind.equals("owner")){
+			p = 0;
+			if(outflag) log.println(kind+"_comment p="+p);
+		}else if(kind.equals("user")){
+			p = 1;
+			if (m_threads.getSize() > 3)
+				p = 2;
+			if(outflag) log.println(kind+"_comment p="+p);
+		}else if(kind.equals("easy")){
+			p = 2;
+			if (m_threads.getSize() > 3)
+				p = 3;
+			if(outflag) log.println(kind+"_comment p="+p);
+		}else if(kind.equals("optional")){
+			p = 1;
+			if (m_threads.getSize() > 3)
+				p = 1;
+			if(outflag) log.println(kind+"_comment p="+p);
+		}else{
+			p = 1;
+			if (m_threads.getSize() > 3)
+				p = 2;
+			if(outflag) log.println(kind+"_comment p="+p);
+		}
+		// threads.get(p) からデーター読み込み
+		Mson m_data = m_threads.get(p);
+		int num_res = 0;
+		try {
+			num_res = Integer.parseInt(m_global.get("count").toString());
+			if (m_threads.getSize() > 3) {
+				for (int i = 0; i < m_threads.getSize(); i++) {
+					num_res += Integer.parseInt(m_threads.get(i).get("commentCount").toString());
+				}
+			}
+		}catch (NumberFormatException ex){
+			ex.printStackTrace();
+		}
+		String s;
+		log.println("*** id = "+m_data.getAsString("id"));
+		log.println("*** fork = "+m_data.getAsString("fork"));
+		log.println("*** commentCount = "+m_data.get("commentCount"));
+		if(outflag) {
+			s = "<thread thread=\"" + m_data.getAsString("id") + "\" />";
+			pw.println(s);
+			s = "<global_num_res thread=\"" + m_global.getAsString("id")
+			  + "\" num_res=\"" +  num_res + "\"/>";
+			pw.println(s);
+			s = "<leaf thread=\"" + m_data.getAsString("id")
+			  + "\" count=\"" + m_data.get("commentCount").toString() + "\"/>";
+			pw.println(s);
+		}
+		// threads.comments() からデーター読み込み
+		Mson m_comments = m_data.get("comments");
+		log.println("*** comments = "+m_comments.getSize());
+		String key = null;
+		JsonElement value = null;
+		String vpos;
+		JsonArray commands;
+		Mson elem = null;
+		for (int i = 0; i < m_comments.getSize(); i++) {
+			//chat処理
+			elem = m_comments.get(i);
+			s = "<chat thread=\"" + m_data.getAsString("id") + "\"";
+			for(Entry<String, JsonElement> e:elem.entrySet()){
+				key = e.getKey();
+				value = e.getValue();
+				if (key.equals("no")) {
+					s += " no=\"" + value.toString() + "\"";
+				}else if (key.equals("vposMs")) {
+					vpos = elem.get("vposMs").toString();
+					if (vpos.length() > 1)
+						vpos = vpos.substring(0, vpos.length()-1);
+					else
+						vpos = "0";
+					s += " vpos=\"" + vpos + "\"";
+				}else if (key.equals("postedAt")) {
+					s += " date=\"" + Util.OffsetDateTime2UnixTime(value.getAsString()) + "\""
+					  + " date_usec=\"0\"";
+				}else if (key.equals("nicoruCount")) {
+					if (!(value.toString()).equals("0"))
+						s += " nicoru=\"" + value.toString() + "\"";
+				}else if (key.equals("userId")) {
+					if (value.getAsString().startsWith("nvc:"))
+						s += " anonymity=\"1\"";
+					s += " user_id=\"" + value.getAsString() + "\"";
+				}else if (key.equals("isPremium")) {
+					if (value.getAsBoolean())
+						s += " premium=\"1\"";
+				}else if (key.equals("commands")) {
+					commands = value.getAsJsonArray();
+					if (commands.size() > 0) {
+						s += " mail=\"";
+						for (int j = 0; j < commands.size(); j++) {
+							s += commands.get(j).getAsString();
+							if (j < commands.size() - 1)
+								s += " ";
+						}
+						s += "\"";
+					}
+				}else if (key.equals("score")) {
+					s += " score=\"" + value.toString() + "\"";
+				//}else if (key.equals("id")) {
+				//	s += " id=\"" + value.getAsString() + "\"";
+				}else if (key.equals("source")) {
+					s += " source=\"" + value.getAsString() + "\"";
+				}
+			}
+			s += ">" + elem.getAsString("body")
+			  + "</chat>";
+			if(outflag) {
+				pw.println(s);
+				chatCount++;
+			}
+		}
+		/*
+		for(int i = 0; i < comments.getSize(); i++){
+			Mson elem = mson.get(i);
+			String key = null;
+			JsonElement value = null;
+				if(elem.isObject()){
+					if(elem.entrySet().size()==1){
+						for(Entry<String, JsonElement> e:elem.entrySet()){
+							key = e.getKey();
+							value = e.getValue();
+						}
+					}else{
+						//ハッシュは一つ
+						return null;
+					}
+				}else{
+					//配列の中身がArrayやprimitiveやNullはエラー
+					return null;
+				}
+				// key: value
+				if(key==null){
+					return null;
+				}
+				Mson m = new Mson(value);
+				String contents;
+					//chat処理
+					s = "<chat"
+						+xmlAttributeValue(m, "thread")
+						+xmlAttributeValue(m, "fork")
+						+xmlAttributeValue(m, "no")
+						+xmlAttributeValue(m, "vpos")
+						+xmlAttributeValue(m, "leaf")
+						+xmlAttributeValue(m, "date")
+						+xmlAttributeValue(m, "date_usec")
+						+xmlAttributeValue(m, "score")
+						+xmlAttributeValue(m, "nicoru")
+						+xmlAttributeValue(m, "premium")
+						+xmlAttributeValue(m, "anonymity")
+						+xmlAttributeValue(m, "user_id")
+						+xmlAttributeValue(m, "mail")
+						+xmlAttributeValue(m, "filter")
+						+xmlAttributeValue(m, "locale")
+						+xmlAttributeValue(m, "deleted")
+						+">"+xmlContents(m)+"</chat>";
+					if(outflag) {
+						pw.println(s);
+						chatCount++;
+					}
+					continue;
+				}
+				// その他
+				{
+					s = "<"+key
+						+xmlAttributeValue(m, "thread")
+						+">"+xmlContents(m)+"</"+key+">";
+					if(outflag) pw.println(s);
+				}
+			}
+		}
+		// パケット終了
+ */
+		pw.println("</packet>");
+		pw.close();
+		return sw.toString();
+	}
+
+	//ニコ動旧サーバー(legacy)のJSON→XML変換
 	private String makeCommentXml(Mson mson, String kind, boolean localconv){
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
