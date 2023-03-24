@@ -46,6 +46,7 @@ import saccubus.conv.ChatSave;
 import saccubus.json.Mson;
 import saccubus.util.Logger;
 import saccubus.util.Stopwatch;
+import saccubus.util.Util;
 
 /**
  * <p>
@@ -72,8 +73,8 @@ public class NicoClient {
 	private static final String HTTP_WWW_NICOVIDEO_WATCH = HTTP_WWW_NICOVIDEO_JP + "watch/";
 	private static final String HTTP_WWW_NICOVIDEO_USER = HTTP_WWW_NICOVIDEO_JP + "user/";
 	//private static final String HTTP_FLAPI_GETFLV = "https://flapi.nicovideo.jp/api/getflv/";
-	private static final String HTTP_FLAPI_GETTHREADKEY = "https://flapi.nicovideo.jp/api/getthreadkey?thread=";
-	private static final String HTTP_FLAPI_GETWAYBACKKEY = "https://flapi.nicovideo.jp/api/getwaybackkey?thread=";
+	//private static final String HTTP_FLAPI_GETTHREADKEY = "https://flapi.nicovideo.jp/api/getthreadkey?thread=";
+	//private static final String HTTP_FLAPI_GETWAYBACKKEY = "https://flapi.nicovideo.jp/api/getwaybackkey?thread=";
 	private static final String HTTP_EXT_THUMBINFO = "https://ext.nicovideo.jp/api/getthumbinfo/";
 	private static final String HTTP_EXT_THUMBUSER = "https://ext.nicovideo.jp/thumb_user/";
 	private final String User;
@@ -863,7 +864,6 @@ public class NicoClient {
 	private boolean NeedsKey = false;
 	private String Premium = "";
 	private String optionalThreadID = "";	// normal Comment ID when Community DOUGA
-	private String ownerThreadID = "";	// 
 	private String nvThreadKey = "";
 	private String nvParams = "";
 	private String nicosID = "";
@@ -2122,9 +2122,14 @@ public class NicoClient {
 	private String succeededKeyThread;
 
 	private boolean getOfficialOption(String threadId) {
-		String url = HTTP_FLAPI_GETTHREADKEY+threadId;
+		//String url = HTTP_FLAPI_GETTHREADKEY+threadId;
+		String url = null;
 		log.print("\nGetting Official options (threadkey)...");
 		try {
+			if (url == null) {
+				log.println("But this function no need.");
+				return true;
+			}
 			if (force184 != null && threadKey != null){
 				log.println("ok. But this call twice, not necessary.");
 				return true;
@@ -2192,6 +2197,7 @@ public class NicoClient {
 	 * @param time
 	 * @return
 	 */
+/*
 	private boolean getWayBackKey(String time, String thread_id) {
 		log.print("Setting wayback time...");
 		try {
@@ -2240,6 +2246,41 @@ public class NicoClient {
 			log.printStackTrace(e);
 		}
 		return false;
+	}
+*/
+	private boolean getWayBackKey(String time, String thread_id) {
+		log.print("Setting wayback time...");
+			if(!"0".equals(WayBackKey)){
+				log.println("ok. But this call twice, not necessary.");
+				hasNewCommentBegun = true;
+				return true;
+			}
+			WayBackDate wayback = new WayBackDate(time);
+			if (!wayback.isValid()){
+				log.println("ng.\nCannot parse time.\"" + time + S_QUOTE2);
+				setExtraError("過去ログ指定文字列が違います");
+				return false;
+			}
+			String waybacktime = wayback.getWayBackTime();
+			log.println("ok. [" + wayback.format() + "]: " + waybacktime);
+			log.print("*** Getting wayback key...");
+			// time -> unixtime に変換
+			String waybackkey = Util.LocalDateTime2UnixTime(time);
+			if (waybackkey == null || waybackkey.isEmpty()) {
+				log.println("ng.\nCannot get wayback key. it's invalid");
+				//if ("0".equals(Premium)){
+				//	setExtraError("一般会員は過去ログ不可です");
+				//}
+				//return false;
+			}
+			log.println("ok.  Wayback key: " + waybackkey);
+			WayBackTime = waybacktime;
+			WayBackKey = waybackkey;
+			WayBackThread = thread_id;
+			log.println("Wayback thread: " + WayBackThread);
+			hasNewCommentBegun = wayback.getSecond() > NEW_COMMENT_BEGIN_SECOND;
+
+		return true;
 	}
 
 	public boolean loginCheck() {
@@ -2294,15 +2335,16 @@ public class NicoClient {
 
 	private String nvCommentJsonPost(String params, String threadkey, String time) {
 		StringBuilder sb = new StringBuilder();
-		String thread = "";
-		//if(isWayback(time, thread)){
-		//}else{
-			sb.append("{\"params\":");
-			sb.append(params + ",");
-			sb.append("\"threadKey\":");
-			sb.append("\"" + threadkey + "\",");
-			sb.append("\"additionals\": {}}");
-		//}
+		sb.append("{\"params\":");
+		sb.append(params + ",");
+		sb.append("\"threadKey\":");
+		sb.append("\"" + threadkey + "\",");
+		sb.append("\"additionals\": {");
+		if (isWayback(time, "")) {
+			String waybackkey = WayBackKey;
+			sb.append("\"when\": " + waybackkey);
+		}
+		sb.append("}}");
 		return sb.substring(0);
 	}
 
@@ -2811,6 +2853,7 @@ public class NicoClient {
 			postdata = nvCommentJsonPost(nvParams, nvThreadKey, time);
 		else
 			postdata = nvCommentJsonPost(nvParams, nvThreadKey, time);
+		log.println("*** "+postdata+" ***\n");
 		return downloadCommonCommentJson(file, status, flag, back_comment, postdata);
 	}
 	private String downloadNicosCommentJson(File file, JLabel status, ConvertStopFlag flag, String back_comment,
@@ -2902,10 +2945,6 @@ public class NicoClient {
 
 	public String getOptionalThreadID() {
 		return optionalThreadID;
-	}
-
-	public String getOwnerThreadID() {
-		return ownerThreadID;
 	}
 
 	public String getNicosID() {
@@ -3228,18 +3267,14 @@ public class NicoClient {
 			//comments for New Comment Server
 			Mson m_nvc = dataApiMson.get("nvComment");
 			Mson m_targets = m_nvc.get("targets");
-			log.println("fork(0): "+m_targets.get(0).getAsString("fork"));
-			ownerThreadID = m_targets.get(0).getAsString("id");
+			log.println("targets: "+m_targets.getSize());
 			ThreadID = m_targets.get(1).getAsString("id");
-			Mson m_community = m_targets.get(2);
-			log.println("fork(2): "+m_targets.get(2).getAsString("fork"));
-			if(!m_community.isNull() && m_targets.get(2).getAsString("fork").equals("main")){
+			if (m_targets.getSize() > 3) {
 				optionalThreadID =  ThreadID;;
-				ThreadID =  m_community.getAsString("id");
+				ThreadID =  m_targets.get(3).getAsString("id");
 			}
 			log.println("ThreadID: "+ThreadID);
 			log.println("optionalThreadID: "+optionalThreadID);
-			log.println("ownerThreadID: "+ownerThreadID);
 			Mson m_params = m_nvc.get("params");
 			nvParams = m_params.toString();
 			log.println("m_params: "+nvParams);
