@@ -3714,7 +3714,8 @@ public class NicoClient {
 	}
 
 	public Path getThumbUserFile(String userID, File userFolder){
-		String url = HTTP_EXT_THUMBUSER + userID;
+		//String url = HTTP_EXT_THUMBUSER + userID;
+		String url = "";
 		log.print("Getting thumb User...");
 		Path userHtml = null;
 		try {
