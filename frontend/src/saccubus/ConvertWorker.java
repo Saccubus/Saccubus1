@@ -1470,7 +1470,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				backup = Path.fileCopy(CommentFile,appendCommentFile);
 			}
 			File target = null;
-			if(Setting.enableCommentJson() || target == null){
+			if((Setting.enableCommentJson() || target == null) && !isSaveOwnerComment()){
 				// JSONは一般コメント・オプショナルスレッド共通(同時DL)
 				commentJson = client.getNvCommentJson(commentJson, Status, back_comment, Time, StopFlag,
 						Setting.getCommentIndex());
