@@ -325,74 +325,13 @@ public class NicoJsonParser {
 					s += " source=\"" + value.getAsString() + "\"";
 				}
 			}
-			s += ">" + elem.getAsString("body")
+			s += ">" + xmlContents(elem, "body")
 			  + "</chat>";
 			if(outflag) {
 				pw.println(s);
 				chatCount++;
 			}
 		}
-		/*
-		for(int i = 0; i < comments.getSize(); i++){
-			Mson elem = mson.get(i);
-			String key = null;
-			JsonElement value = null;
-				if(elem.isObject()){
-					if(elem.entrySet().size()==1){
-						for(Entry<String, JsonElement> e:elem.entrySet()){
-							key = e.getKey();
-							value = e.getValue();
-						}
-					}else{
-						//ハッシュは一つ
-						return null;
-					}
-				}else{
-					//配列の中身がArrayやprimitiveやNullはエラー
-					return null;
-				}
-				// key: value
-				if(key==null){
-					return null;
-				}
-				Mson m = new Mson(value);
-				String contents;
-					//chat処理
-					s = "<chat"
-						+xmlAttributeValue(m, "thread")
-						+xmlAttributeValue(m, "fork")
-						+xmlAttributeValue(m, "no")
-						+xmlAttributeValue(m, "vpos")
-						+xmlAttributeValue(m, "leaf")
-						+xmlAttributeValue(m, "date")
-						+xmlAttributeValue(m, "date_usec")
-						+xmlAttributeValue(m, "score")
-						+xmlAttributeValue(m, "nicoru")
-						+xmlAttributeValue(m, "premium")
-						+xmlAttributeValue(m, "anonymity")
-						+xmlAttributeValue(m, "user_id")
-						+xmlAttributeValue(m, "mail")
-						+xmlAttributeValue(m, "filter")
-						+xmlAttributeValue(m, "locale")
-						+xmlAttributeValue(m, "deleted")
-						+">"+xmlContents(m)+"</chat>";
-					if(outflag) {
-						pw.println(s);
-						chatCount++;
-					}
-					continue;
-				}
-				// その他
-				{
-					s = "<"+key
-						+xmlAttributeValue(m, "thread")
-						+">"+xmlContents(m)+"</"+key+">";
-					if(outflag) pw.println(s);
-				}
-			}
-		}
-		// パケット終了
- */
 		pw.println("</packet>");
 		pw.close();
 		return sw.toString();
@@ -443,7 +382,7 @@ public class NicoJsonParser {
 				// kind :"easy" かんたんコメント抽出(p=2.3のみ, fork==2のみ)
 				if(key.equals("ping")){
 					// コンテンツ区切り
-					contents = xmlContents(m);
+					contents = xmlContents(m, "content");
 					if(contents.contains("ps:")){
 						p = contents.charAt(contents.indexOf(":")+1);
 						// contents: "ps:n" n番目 pスタート
@@ -544,7 +483,7 @@ public class NicoJsonParser {
 						+xmlAttributeValue(m, "filter")
 						+xmlAttributeValue(m, "locale")
 						+xmlAttributeValue(m, "deleted")
-						+">"+xmlContents(m)+"</chat>";
+						+">"+xmlContents(m,"content")+"</chat>";
 					if(outflag) {
 						pw.println(s);
 						chatCount++;
@@ -555,7 +494,7 @@ public class NicoJsonParser {
 				{
 					s = "<"+key
 						+xmlAttributeValue(m, "thread")
-						+">"+xmlContents(m)+"</"+key+">";
+						+">"+xmlContents(m, key)+"</"+key+">";
 					if(outflag) pw.println(s);
 				}
 			}
@@ -577,9 +516,9 @@ public class NicoJsonParser {
 			val = " "+key+"=\""+ChatAttribute.safeReference(val)+"\"";
 		return val;
 	}
-	private static String xmlContents(Mson m){
+	private static String xmlContents(Mson m, String key){
 		// return empty string when value is null or empty
-		String val = m.getAsString("content");
+		String val = m.getAsString(key);
 		if(val==null || val.isEmpty()){
 			val = "";
 		}else{
