@@ -2045,7 +2045,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			result = "A2";
 			return false;
 		}
-		thumbInfo = client.getThumbInfoFile(vtag);
+		thumbInfo = client.getThumbInfoFile(vtag, "", false);
 		if (stopFlagReturn()) {
 			result = "A3";
 			return false;

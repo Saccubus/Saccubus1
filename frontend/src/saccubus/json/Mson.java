@@ -133,9 +133,14 @@ public class Mson {
 		return MSON_NULL;
 	}
 	public Mson get2(String key) { // 最初の1階層だけ調べる
-		if(isObject()) {
-			if (json.getAsJsonObject().has(key))
-				return new Mson(json.getAsJsonObject().get(key));
+		if(isObject()){
+			for(Entry<String, JsonElement> ent:entrySet()){
+				String k = ent.getKey();
+				Mson sj = new Mson(ent.getValue());
+				if(key.equals(k))
+					return sj;
+			}
+			return MSON_NULL;
 		}
 		return MSON_NULL;
 	}
