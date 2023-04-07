@@ -209,10 +209,13 @@ public class NicoJsonParser {
 		pw.println("<packet>");
 		//{"meta":{"status":200}でなければnullを返す
 		Mson m_status = mson.get("status");
-		if (m_status == null || !m_status.toString().equals("200")) {
+		if (m_status == null) {
+			log.println("\nJSON status: null");
+			return null;
+		} else if (!m_status.toString().equals("200")) {
+			log.println("\nJSON status: "+m_status.toString());
 			return null;
 		}
-		log.println("\nJSON status: "+m_status.toString());
 		boolean outflag = true;
 		int p = 0;
 		Mson m_threads = mson.get("threads");
@@ -255,10 +258,13 @@ public class NicoJsonParser {
 		}catch (NumberFormatException ex){
 			ex.printStackTrace();
 		}
+		if (outflag) {
+			log.print("id: "+m_data.getAsString("id"));
+			log.print(" fork: "+m_data.getAsString("fork"));
+			log.print(" commentCount: "+m_data.get("commentCount"));
+			log.print("\n");
+		}
 		String s;
-		log.println("*** id = "+m_data.getAsString("id"));
-		log.println("*** fork = "+m_data.getAsString("fork"));
-		log.println("*** commentCount = "+m_data.get("commentCount"));
 		if(outflag) {
 			s = "<thread thread=\"" + m_data.getAsString("id") + "\" />";
 			pw.println(s);
@@ -271,7 +277,9 @@ public class NicoJsonParser {
 		}
 		// threads.comments() からデーター読み込み
 		Mson m_comments = m_data.get("comments");
-		log.println("*** comments = "+m_comments.getSize());
+		if(outflag) {
+			log.print("comments: "+m_comments.getSize()+"\n");
+		}
 		String key = null;
 		JsonElement value = null;
 		String vpos;
