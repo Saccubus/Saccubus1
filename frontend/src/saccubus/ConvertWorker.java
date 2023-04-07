@@ -814,15 +814,20 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						isEcoVideo = true;
 					}
 				}
+				if (client.getVideoLength() <= 0) {
+					sendtext("動画が読み込めないのでダウンロードスキップします");
+					result = "4B";
+					return true;
+				}
 				if (client.isVideoEncrypt()) {
-					sendtext("暗号化されている動画なのでダウンロード中止します");
+					sendtext("暗号化されている動画なのでダウンロードスキップします");
 					result = "4A";
-					return false;
+					return true;
 				}
 				if (client.isVideoHlsOnly()) {
-					sendtext("HLSのみの動画なのでダウンロード中止します");
+					sendtext("HLSのみの動画なのでダウンロードスキップします");
 					result = "49";
-					return false;
+					return true;
 				}
 				if (isVideoFixFileName()) {
 					if (folder.mkdir()) {

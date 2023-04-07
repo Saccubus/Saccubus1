@@ -785,7 +785,7 @@ public class NicoClient {
 			try{
 				dataApiMson = Mson.parse(dataApiJson);
 			}catch(Exception e){
-				log.println("Mson: parse error(getVideoHistoryAndTitle1)");
+				log.println("\nMson: parse error(getVideoHistoryAndTitle1)");
 				return false;
 			}
 			Mson m_video = dataApiMson.get2("video");
@@ -803,12 +803,13 @@ public class NicoClient {
 			//Json解析
 			if(ss.contains(JSON_START2)){
 				if (extractDataApiDataJson(ss, encoding, url) != null){
-					log.println("video history html5 ok.");
+					log.println("extractDataApiDataJson ok.");
 				} else {
-					log.println("video history html5 ok.");
+					log.println("extractDataApiDataJson ng.");
+					return false;
 				}
 			} else {
-				log.println("video history ng.");
+				log.println("video history JSON_START2 ng.");
 				return false;
 			}
 			log.println("video history ok.");
@@ -992,6 +993,9 @@ public class NicoClient {
 		dataApiJson = null;
 		dataApiMson = null;
 		thumbInfoData = null;
+		isDmc = "1";
+		size_video_thumbinfo = null;
+		size_low = size_high = "1";
 
 		return true;
 	}
@@ -1001,6 +1005,9 @@ public class NicoClient {
 		if (!getVideoHistoryAndTitle(tag, watchInfo, saveWatchPage)) {
 			return false;
 		}
+		//if(getThumbInfoFile(tag) == null) {
+		//	return false;
+		//}
 		return true;
 	}
 
@@ -3095,7 +3102,7 @@ public class NicoClient {
 //	private String watchApiJson = null;
 //	private String flvInfo;
 //	private String flvInfoArrays;
-	private String isDmc;
+	private String isDmc = "1";
 	private String dmcInfo;
 //	private String dmcInfoDec;
 	private String dmcToken;
@@ -3128,7 +3135,7 @@ public class NicoClient {
 		return "1".equals(isDmc);
 	}
 	public Path getThumbInfoFile(String tag) {
-		log.println("Getting thumb Info...");
+		log.println("\nGetting thumb Info...");
 		String encoding = "UTF-8";
 		Path thumbXml = null;
 		String s = null;
@@ -3249,6 +3256,7 @@ public class NicoClient {
 			log.println("thumInfo data ok.");
 			thumbInfoData = s;
 
+/*			
 			if(size_high==null && thumbInfoData!=null && !thumbInfoData.isEmpty()){
 				//size_high = getXmlElement(thumbInfoData, "size_high");
 				//size_low = getXmlElement(thumbInfoData, "size_low");
@@ -3282,6 +3290,7 @@ public class NicoClient {
 					}
 				}
 			}
+*/
 			return thumbXml;
 		} catch (IOException ex) {
 			log.printStackTrace(ex);
@@ -3488,10 +3497,12 @@ public class NicoClient {
 		}
 	}
 */
+/*
 	private static String safeTag(String s){
 		if(s==null) return "null";
 		return safeFileName(s);
 	}
+*/
 	private String extractDataApiDataJson(String text, String encoding, String url) {
 		// HTML5 watchpage
 		url = safeFileName(url);
@@ -3501,7 +3512,6 @@ public class NicoClient {
 		extractDataJson(dataApiJson, encoding);
 		return dataApiJson;
 	}
-
 	private void extractDataJson(String json, String encoding) {
 		//Json解析	html5
 		debug("\n■{");
@@ -3515,16 +3525,16 @@ public class NicoClient {
 				log.println("\nMson: parse error(dataApiJson)");
 				return;
 			}
-			isDmc = "0";
+			isDmc = "1";
+			VideoLength = dmcVideoLength = -1;
 			Mson m_dmcInfo = dataApiMson.get("urls");
 			if(!m_dmcInfo.isNull()){
 				debugPrettyPrint("■m_dmcInfo: ",m_dmcInfo+"\n");
 				dmcInfo = m_dmcInfo.getAsString();
 				debug("■dmcInfo: "+dmcInfo+"\n");
-				isDmc = "1";
 			}
 			log.println("isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc());
-			if(serverIsDmc()){
+			if(serverIsDmc() && !m_dmcInfo.isNull()){
 				Mson m_video = dataApiMson.get2("video");
 				String l = m_video.getAsString("duration");
 				try {
@@ -3659,7 +3669,7 @@ public class NicoClient {
 			e.printStackTrace();
 		}
 	}
-
+/*
 	private String getDataApiJson(){
 		if(dataApiJson!=null)
 			return dataApiJson;
@@ -3670,6 +3680,7 @@ public class NicoClient {
 		extractDataApiDataJson(html, encoding, "getDataApiJson");
 		return dataApiJson;
 	}
+*/
 	private String getDataApiData(String text, String encoding, String comment){
 		// 動画ページのJSONを取り出す
 		text = getXmlElement1(text, "body");	//body
