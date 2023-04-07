@@ -2045,7 +2045,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			result = "A2";
 			return false;
 		}
-		thumbInfo = client.getThumbInfoFile(vtag, "", false);
+		thumbInfo = client.getThumbInfoFile(vtag);
 		if (stopFlagReturn()) {
 			result = "A3";
 			return false;
@@ -3250,6 +3250,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					return result;
 				}
 			//	Gate.resetLimit();
+				client.initVideoInfo();	// 変数の初期化
 				do{
 					success = client.getVideoInfo(Tag, WatchInfo, Time, Setting.isSaveWatchPage());
 				}while (!success && canRetry(client, gate));
@@ -3312,14 +3313,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			//stopwatch.show();
 			success = false;
 			do{
-				success = saveVideo(client);
-			}while (!stopFlagReturn() && !success && canRetry(client, gate));
-			if(!success) return result;
-			gate.resetError();
-
-			//stopwatch.show();
-			success = false;
-			do{
 				//success = saveOwnerComment(client);
 				success = saveOwnerNvComment(client);
 			}while (!stopFlagReturn() && !success && canRetry(client, gate));
@@ -3331,6 +3324,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			do{
 				//success = saveComment(client);
 				success = saveNvComment(client);
+			}while (!stopFlagReturn() && !success && canRetry(client, gate));
+			if(!success) return result;
+			gate.resetError();
+
+			//stopwatch.show();
+			success = false;
+			do{
+				success = saveVideo(client);
 			}while (!stopFlagReturn() && !success && canRetry(client, gate));
 			if(!success) return result;
 			gate.resetError();

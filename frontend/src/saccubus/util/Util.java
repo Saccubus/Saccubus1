@@ -97,4 +97,33 @@ public class Util {
 		return String.valueOf(unixtime);
 	}
 
+	// 秒で表示される文字列を HH:MM/dd 型式に変換
+	public static String Seconds2Hms(String seconds) {
+		String result = "";
+		if (seconds == null)
+			return null;
+		try {
+			int secs = Integer.parseInt(seconds);
+			String ttt;
+			if (secs >= 3600) {
+				result = (secs / 3600) + ":";
+				ttt = "000" +((secs % 3600) / 60);
+				result += ttt.substring(ttt.length()-2) + ":";
+				ttt = "000" + (secs % 60);
+				result += ttt.substring(ttt.length()-2);
+			}
+			else if (secs >= 60) {
+				result = ((secs % 3600) / 60) + ":";
+				ttt = "000" + (secs % 60);
+				result += ttt.substring(ttt.length()-2);
+			}
+			else {
+				ttt = "000" + (secs % 60);
+				result = "0:" + ttt.substring(ttt.length()-2);
+			}
+		} catch (NumberFormatException nfex) {
+			return null;
+		}
+		return result;
+	}
 }
