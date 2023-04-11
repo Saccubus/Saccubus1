@@ -2949,7 +2949,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		sendtext("動画の変換を開始");
 		video_vhext = Path.mkTemp(Tag+"[log]vhext.txt");
 		stopwatch.start();
-		if(!VideoFile.canRead()){
+		if(VideoFile == null || !VideoFile.canRead()){
 			sendtext("動画が読み込めません");
 			result = "90";
 			return false;
@@ -3370,7 +3370,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 			gate.exit(result);
 			//manager.sendTimeInfo();
-			if (!isSaveConverted()) {
+			if (!isSaveConverted() || (client != null && client.getVideoLength() <= 0)) {
 				sendtext("動画・コメントを保存し、変換は行いませんでした。");
 				result = "0";
 				return result;
