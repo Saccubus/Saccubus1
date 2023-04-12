@@ -52,8 +52,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.70.0.04";
-	private static final String modefied = " (2023/03/10)";
+	public static final String rev = "1.70.0.05";
+	private static final String modefied = " (2023/04/13)";
 
 	String productHTML =
 		"<html>" +
@@ -81,7 +81,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 		"<p>関連リンク<br/>" +
 		"さきゅばす <a href=\'http://osdn.jp/projects/saccubus/\'>osdn.jp/projects/saccubus</a><br/>" +
 		"coroid いんきゅばす<a href=\'http://osdn.jp/projects/coroid/\'>osdn.jp/projects/coroid</a>  雪羽氏<br/>" +
-		"<a href=\'https://egg.5ch.net/test/read.cgi/software/1554556329/l50\'>5chさきゅばすスレ 最新50</a>" +
+		"<a href=\'https://egg.5ch.net/test/read.cgi/software/1675234536/l50\'>5chさきゅばすスレ 最新50</a>" +
 		"</p></html>";
 
 	JPanel panel1 = new JPanel();
