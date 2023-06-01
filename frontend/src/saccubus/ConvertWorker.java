@@ -824,11 +824,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					result = "4A";
 					return true;
 				}
-				if (client.isVideoHlsOnly()) {
-					sendtext("HLSのみの動画なのでダウンロードスキップします");
-					result = "49";
-					return true;
-				}
 				if (isVideoFixFileName()) {
 					if (folder.mkdir()) {
 						log.println("Folder created: " + folder.getPath());
@@ -838,7 +833,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						result = "40";
 						return false;
 					}
-					String name = getVideoBaseName() + ".flv";
+					String name = getVideoBaseName() + ".ts";
 					VideoFile = new File(folder, name);
 					if(isEcoVideo){
 						lowVideoFile = new File(folder, name.replace(VideoID, lowVideoID));
@@ -846,7 +841,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						dmcLowVideoFile = new File(folder, name.replace(VideoID, dmcVideoID+LOW_PREFIX));
 					}
 					dmcVideoFile = new File(folder, name.replace(VideoID, dmcVideoID));
-					resumeDmcFile = Path.getReplacedExtFile(dmcVideoFile, ".flv_dmc");	// suspended video
+					resumeDmcFile = Path.getReplacedExtFile(dmcVideoFile, ".ts_dmc");	// suspended video
 				} else {
 					File file = Setting.getVideoFile();	//置換前
 					//%LOW%以外の置換
@@ -873,7 +868,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						dmcLowVideoFile = new File(dir,lowVideoFile.getName().replace(LOW_PREFIX, DMC_PREFIX+LOW_PREFIX));
 					}
 					dmcVideoFile = replaceFilenamePattern(file, isEcoVideo, true);
-					resumeDmcFile = Path.getReplacedExtFile(dmcVideoFile, ".flv_dmc");
+					resumeDmcFile = Path.getReplacedExtFile(dmcVideoFile, ".ts_dmc");
 				}
 				int size_smile = 0;
 				int size_smile_high = 0;
@@ -904,7 +899,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					else
 						log.println("bug? can't get smile size");
 					int size_dmc = client.getSizeDmc();
-					if(existVideoFile(VideoFile, ".flv", ".mp4")){
+					if(existVideoFile(VideoFile, ".ts", ".mp4")){
 						sendtext("エコノミーモードで通常動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
 							|| (size_smile_high>0 && existVideo.length()==size_smile_high)
@@ -917,7 +912,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						log.println("通常動画のサイズが一致しません。");
 						log.println("smile="+size_smile_high+"bytes, exist="+existVideo.length()+"bytes.");
 					}
-					if(existVideoFile(dmcVideoFile, ".flv", ".mp4")){
+					if(existVideoFile(dmcVideoFile, ".ts", ".mp4")){
 						sendtext("エコノミーモードでdmc動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
 						 || (size_dmc>0 && existVideo.length()==size_dmc)){
@@ -930,7 +925,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						log.println("dmc動画のサイズが一致しません。");
 						log.println("dmc="+size_dmc+"bytes, exist="+existVideo.length()+"bytes.");
 					}
-					if(existVideoFile(lowVideoFile,".flv",".mp4")){
+					if(existVideoFile(lowVideoFile,".ts",".mp4")){
 						sendtext("エコノミーモードでエコ動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
 							|| (size_smile_low>0 && existVideo.length()==size_smile_low)
@@ -963,7 +958,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 //							size_smile = client.getSizeVideo();
 					}
 					// 通常サーバ
-					if(existVideoFile(VideoFile,".flv",".mp4")){
+					if(existVideoFile(VideoFile,".ts",".mp4")){
 						sendtext("動画は既に存在します");
 						if(!Setting.isEnableCheckSize()
 							|| (size_smile_high>0 && existVideo.length()==size_smile_high)){
@@ -1016,7 +1011,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						log.println("smile size: "+(long_size_smile>>20)+"MiB");
 					else
 						log.println("bug? can't get smile size");
-					if(existVideoFile(VideoFile, ".flv", ".mp4")){
+					if(existVideoFile(VideoFile, ".ts", ".mp4")){
 						if(!Setting.isEnableCheckSize()){
 							sendtext("動画は既に存在します");
 							log.println("動画は既に存在します。");
@@ -1049,7 +1044,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					long size_exist = 0;
 					File video_exist = null;
 					File dmcVideoFileTmp = null;
-					if(existVideoFile(dmcVideoFile, ".flv", ".mp4")){
+					if(existVideoFile(dmcVideoFile, ".ts", ".mp4")){
 						sendtext("dmc動画は既に存在します");
 						if(!Setting.isEnableCheckSize()){
 							log.println("dmc動画は既に存在します。ダウンロードをスキップします");
@@ -1259,7 +1254,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									sendtext("dmc動画のダウンロードに失敗" + ecode);
 								}
 							}
-							if(dmcVideoFile!=null && existVideoFile(dmcVideoFile, ".flv", ".mp4")){
+							if(dmcVideoFile!=null && existVideoFile(dmcVideoFile, ".ts", ".mp4")){
 								log.println("dmc download "+dmcVideoFile.length()+"bytes");
 								videoLength = client.getDmcVideoLength();
 								videoContentType = client.getVideoContentType();
@@ -1351,7 +1346,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								sendtext("動画ファイルがフォルダに存在しません。");
 								result = "45";
 							} else {
-								sendtext("動画ファイルが.flvや.mp4でありません：" + OtherVideo);
+								sendtext("動画ファイルが.tsや.mp4でありません：" + OtherVideo);
 								result = "46";
 							}
 							return false;
@@ -1366,9 +1361,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						dmcVideoFile = replaceFilenamePattern(VideoFile,false,true);
 					}
 					setVideoTitleIfNull(VideoFile.getName());
-					if (!existVideoFile(VideoFile, ".flv", ".mp4")
-					 && !existVideoFile(lowVideoFile, ".flv", ".mp4")
-					 && !existVideoFile(dmcVideoFile, ".flv", ".mp4")) {
+					if (!existVideoFile(VideoFile, ".ts", ".mp4")
+					 && !existVideoFile(lowVideoFile, ".ts", ".mp4")
+					 && !existVideoFile(dmcVideoFile, ".ts", ".mp4")) {
 						sendtext("動画ファイルが存在しません。");
 						result = "47";
 						return false;
