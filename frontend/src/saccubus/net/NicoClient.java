@@ -1,6 +1,9 @@
 package saccubus.net;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -1278,6 +1281,7 @@ public class NicoClient {
 			log.println("Refer dmc responseXml <"+responseXml.getPath()+">");
 		//動画サーバ
 			contentUri = getXmlElement(responseXmlData, "content_uri");
+			log.println("contentUri "+contentUri);
 			if(contentUri==null){
 				String resStatus = getXmlElement(responseXmlData, "object");
 				log.println("\nDmcHttpResponse: "+resStatus);
@@ -1435,10 +1439,12 @@ public class NicoClient {
 					log.println("Error:test download(dmc) failed.");
 					return null;
 				}
+				/*
 				if(dummyfile.length() != SPLIT_TEST_SIZE){
 					log.println("Error:test download(dmc) size("+dummyfile.length()+")mismatch.");
 					return null;
 				}
+				*/
 			} catch(Exception e){
 				log.printStackTrace(e);
 			} finally {
@@ -1460,6 +1466,204 @@ public class NicoClient {
 			timer = new Timer("リトライ分間隔タイマー");
 			timer.schedule(task, 10000, 10000);	// 10 seconds
 			log.println("heartbeat thread will start in "+10+" seconds.");
+			if (contentUri.contains("master.m3u8")) {
+				
+				video = Path.getReplacedExtFile(video,".ts");
+
+				if (video.exists()) {
+					video.delete();
+				}
+				
+				long starttime = Stopwatch.getStartTime();
+				int resumed = 0;
+
+				String masterUrl = contentUri;
+				String masterBaseUrl = masterUrl.substring(0, masterUrl.lastIndexOf("/") + 1);
+				String playlistUrl = null;
+				{
+					
+					  URL urlMaster = new URL(masterUrl);
+				      HttpURLConnection conn =
+				          (HttpURLConnection) urlMaster.openConnection();
+				      conn.setAllowUserInteraction(false);
+				      conn.setInstanceFollowRedirects(true);
+				      conn.setRequestMethod("GET");
+				      conn.connect();
+
+				      int httpStatusCode = conn.getResponseCode();
+				      if (httpStatusCode != HttpURLConnection.HTTP_OK) {
+							log.println("HTTP Status " + httpStatusCode);
+				    	  return null;
+				      }
+
+				      // Input Stream
+				      DataInputStream dataInStream
+				          = new DataInputStream(
+				          conn.getInputStream());
+
+				      BufferedReader brMaster	= new BufferedReader(new InputStreamReader(dataInStream));
+				   
+					  StringBuilder sb = new StringBuilder();
+					   
+					  String line;
+					   
+					  while ((line = brMaster.readLine()) != null) {
+					      sb.append(line);
+					      sb.append("\n");
+					  }
+					  
+					  String str = sb.toString();
+					   
+					  br.close();
+					  
+					  for (String s : str.split("\n")) {
+						  if (s.contains("playlist.m3u8")) {
+							  playlistUrl = masterBaseUrl + s;
+							  break;
+						  }
+					  }
+					  
+				}
+
+				String playListBaseUrl = playlistUrl.substring(0, playlistUrl.lastIndexOf("/") + 1);
+				List<String> tsUrlList = new ArrayList<String>();
+				{
+					
+					  URL urlPlaylist = new URL(playlistUrl);
+				      HttpURLConnection conn =
+				          (HttpURLConnection) urlPlaylist.openConnection();
+				      conn.setAllowUserInteraction(false);
+				      conn.setInstanceFollowRedirects(true);
+				      conn.setRequestMethod("GET");
+				      conn.connect();
+
+				      int httpStatusCode = conn.getResponseCode();
+				      if (httpStatusCode != HttpURLConnection.HTTP_OK) {
+							log.println("HTTP Status " + httpStatusCode);
+				    	  return null;
+				      }
+
+				      // Input Stream
+				      DataInputStream dataInStream
+				          = new DataInputStream(
+				          conn.getInputStream());
+
+				      BufferedReader brPlaylist	= new BufferedReader(new InputStreamReader(dataInStream));
+				   
+					  StringBuilder sb = new StringBuilder();
+					   
+					  String line;
+					   
+					  while ((line = brPlaylist.readLine()) != null) {
+					      sb.append(line);
+					      sb.append("\n");
+					  }
+					  
+					  String str = sb.toString();
+					   
+					  br.close();
+					  
+					  for (String s : str.split("\n")) {
+						  if (s.contains("ht2_nicovideo")) {
+							  String tsUrl = playListBaseUrl + s;
+							  tsUrlList.add(tsUrl);
+						  }
+					  }
+					  
+				}
+				
+				{
+					max_size = tsUrlList.size();
+					for (String tsUrl : tsUrlList) {
+						
+						  URL urlTs = new URL(tsUrl);
+					      HttpURLConnection conn =
+					          (HttpURLConnection) urlTs.openConnection();
+					      conn.setAllowUserInteraction(false);
+					      conn.setInstanceFollowRedirects(true);
+					      conn.setRequestMethod("GET");
+					      conn.connect();
+
+					      int httpStatusCode = conn.getResponseCode();
+					      if (httpStatusCode != HttpURLConnection.HTTP_OK) {
+								log.println("HTTP Status " + httpStatusCode);
+					    	  return null;
+					      }
+
+					      // Input Stream
+					      DataInputStream dataInStream
+					          = new DataInputStream(
+					          conn.getInputStream());
+
+					      // Output Stream
+					      DataOutputStream dataOutStream
+					          = new DataOutputStream(
+					          new BufferedOutputStream(
+					              new FileOutputStream(video.getAbsolutePath(), true)));
+
+					      // Read Data
+					      byte[] b = new byte[4096];
+					      int readByte = 0;
+					      
+					      while (-1 != (readByte = dataInStream.read(b))) {
+					        dataOutStream.write(b, 0, readByte);
+					        
+							if (flag.needStop()) {
+								log.println("Stopped.");
+								timer.cancel();
+								log.println("heartbeat thread stopped.");
+								is.close();
+								os.flush();
+								os.close();
+								con.disconnect();
+								// stopped video won't be delete
+								
+							      // Close Stream
+							      dataInStream.close();
+							      dataOutStream.close();
+
+								return null;
+							}
+
+					      }
+
+					      // Close Stream
+					      dataInStream.close();
+					      dataOutStream.close();
+					      
+					      resumed++;
+					      
+					      sendStatus(status, "dmc動画(hls)", max_size, resumed, starttime);
+
+					}
+				}
+				log.println("Download finished.");
+				timer.cancel();
+				log.println("heartbeat thread stopped.");
+				is.close();
+				os.flush();
+				os.close();
+				con.disconnect();
+				log.println("resume ok.");
+				if(!Debug){
+					// delete work files
+					log.print("delete workfiles...");
+					if(sessionXml!=null && sessionXml.delete())
+						log.print(sessionXml+", ");
+					if(crossdomain!=null && crossdomain.delete())
+						log.print(crossdomain+", ");
+					if(hbxml!=null && hbxml.delete())
+						log.print(hbxml+", ");
+					if(responseXml.delete())
+						log.print(responseXml+", ");
+					log.println();
+				}
+
+				limits[1] = video.length();
+				
+				return video;
+				
+			}
 			if(tryResume || resume_size > 0){
 			//	シーケンシャルリジューム
 				debugsInit((int)video.length());
@@ -3863,11 +4067,18 @@ public class NicoClient {
 		sb.append("    <name>http</name>\n");
 		sb.append("    <parameters>\n");
 		sb.append("      <http_parameters>\n");
-		sb.append("        <method>GET</method>\n");
+		//sb.append("        <method>GET</method>\n");
 		sb.append("        <parameters>\n");
+		/*
 		sb.append("          <http_output_download_parameters>\n");
 		sb.append("            "+makeNewElement("file_extension",file_extension));
 		sb.append("          </http_output_download_parameters>\n");
+		*/
+		sb.append("          <hls_parameters>\n");
+		sb.append("            <use_well_known_port>yes</use_well_known_port>\n");
+		sb.append("            <use_ssl>yes</use_ssl>\n");
+		sb.append("            <transfer_preset></transfer_preset>\n");
+		sb.append("          </hls_parameters>\n");
 		sb.append("        </parameters>\n");
 		sb.append("      </http_parameters>\n");
 		sb.append("    </parameters>\n");
