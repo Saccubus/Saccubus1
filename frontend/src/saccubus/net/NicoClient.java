@@ -1635,6 +1635,10 @@ public class NicoClient {
 					      
 					      sendStatus(status, "dmc動画(hls)", max_size, resumed, starttime);
 
+					      try {
+					    	  Thread.sleep(200);
+					      } catch (InterruptedException e) {
+					      }
 					}
 				}
 				log.println("Download finished.");
