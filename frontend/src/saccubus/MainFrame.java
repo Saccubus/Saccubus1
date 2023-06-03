@@ -6000,6 +6000,7 @@ s	 * @return javax.swing.JPanel
 		forceDmcDlCheckBox.setText("dmcサーバ強制ダウンロード");
 		forceDmcDlCheckBox.setForeground(Color.blue);
 		forceDmcDlCheckBox.setToolTipText("dmcサーバ動画がサイズが小さくてもダウンロードします。変換に使うのはサイズの大きい方。");
+		forceDmcDlCheckBox.setEnabled(false);
 		extraDownloadInfoPanel.add(forceDmcDlCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
@@ -6012,6 +6013,7 @@ s	 * @return javax.swing.JPanel
 		enableRangeCheckBox.setText("dmc(R)ダウンロード(同時接続数2　非推奨。分割ダウンロード)");
 	//	enableRangeCheckBox.setForeground(Color.blue);
 		enableRangeCheckBox.setToolTipText("可能ならHTTP/1.1 Rangeヘッダーを使用する(同時接続数2)");
+		enableRangeCheckBox.setEnabled(false);
 		extraDownloadInfoPanel.add(enableRangeCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
@@ -6024,6 +6026,7 @@ s	 * @return javax.swing.JPanel
 		enableSeqResumeCheckBox.setText("dmc(S)ダウンロード(同時接続数1 resume付き。高速 )");
 		enableSeqResumeCheckBox.setForeground(Color.blue);
 		enableSeqResumeCheckBox.setToolTipText("可能ならSequentialResumeを行う(同時接続数1)");
+		enableSeqResumeCheckBox.setEnabled(false);
 		extraDownloadInfoPanel.add(enableSeqResumeCheckBox, gridbagc);
 
 		gridbagc = new GridBagConstraints();
