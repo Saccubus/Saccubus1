@@ -52,8 +52,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.70.0.05";
-	private static final String modefied = " (2023/04/13)";
+	public static final String rev = "1.70.0.06";
+	private static final String modefied = " (2023/06/08)";
 
 	String productHTML =
 		"<html>" +
@@ -73,6 +73,7 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 		"<tr><td><td>2007-2008 2012-2015(FFmpeg) PSI"+
 		"<tr><td><td>2011-2017 orz"+
 		"<tr><td><td>2021- nnn-revo2012" +
+		"<tr><td><td>2023- ID:GmLhzFSe0 on the 5ch's saccubus forum" +
 		"</table>" +
 		"ニコニコ動画の動画をコメントつきで保存</p>" +
 		"<p>本プログラムは<br/>" +
