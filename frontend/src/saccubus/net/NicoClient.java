@@ -72,10 +72,6 @@ public class NicoClient {
 	private static final String HTTP_WWW_NICOVIDEO_JP = "https://www.nicovideo.jp/";
 	private static final String HTTP_WWW_NICOVIDEO_WATCH = HTTP_WWW_NICOVIDEO_JP + "watch/";
 	private static final String HTTP_WWW_NICOVIDEO_USER = HTTP_WWW_NICOVIDEO_JP + "user/";
-	//private static final String HTTP_FLAPI_GETFLV = "https://flapi.nicovideo.jp/api/getflv/";
-	//private static final String HTTP_FLAPI_GETTHREADKEY = "https://flapi.nicovideo.jp/api/getthreadkey?thread=";
-	//private static final String HTTP_FLAPI_GETWAYBACKKEY = "https://flapi.nicovideo.jp/api/getwaybackkey?thread=";
-	//private static final String HTTP_EXT_THUMBINFO = "https://ext.nicovideo.jp/api/getthumbinfo/";
 	private static final String HTTP_EXT_THUMBUSER = "https://ext.nicovideo.jp/thumb_user/";
 	private final String User;
 	private final String Pass;
@@ -96,8 +92,6 @@ public class NicoClient {
 	static final char C_QUOTE2 = '"';
 	static final String S_ESCAPE = "\\";
 	static final char C_ESCAPE = '\\';
-	//static final String JSON_START = "{&quot;flashvars&quot;:";
-	//static final String JSON_START2 = "{&quot;video&quot;:";	// HTML5(beta) 2016.11.12
 	static final String JSON_START2 = "{&quot;ads&quot;:";	// HTML5 2021.12.02
 
 	/**
@@ -822,145 +816,7 @@ public class NicoClient {
 		}
 		return true;
 	}
-/*
-	public boolean getVideoHistoryAndTitle1(String tag, String watchInfo, boolean saveWatchPage) {
-		String thumbTitle = getVideoTitle();
-		VideoTitle = null;
-		boolean found = false;
-		String url = HTTP_WWW_NICOVIDEO_WATCH + tag + watchInfo;
-		String tag1 = tag;
-		if(!tag1.contains(watchInfo))
-			tag1 += watchInfo;
-		log.print("Getting video history...");
-		boolean zero_title = false;
-		try {
-			HttpURLConnection con = urlConnectGET(url);
-			while (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-				log.println("ng.\nCan't getVideoHistory:" + url);
-				if(con == null) return false;
-				Cookie.update(detectCookie(con));
-				String location = nicomap.get("Location");
-				if(location==null || url.equals(location))
-					return false;
-				url = location;
-				log.println("Redirect to "+url);
-				con = urlConnectGET(url);
-			}
-			Cookie.update(detectCookie(con));
-			BrowserInfo.setLastUsersession(Cookie.getUsersession());
-			if(getWatchThread().isEmpty())
-				watchThread = getThread(url);
-			String encoding = con.getContentEncoding();
-			if (encoding == null){
-				encoding = "UTF-8";
-			}
-			BufferedReader br = new BufferedReader(new InputStreamReader(con
-					.getInputStream(), encoding));
-			log.print("ok.\nChecking VideoTitle...");
-			debug("\n");
-			String ret;
-			int index = -1;
-			StringBuilder sb = new StringBuilder();
-			while ((ret = br.readLine()) != null) {
-				//Stopwatch.show();
-				sb.append(ret + "\n");
-				if(found) continue;
-				if(ret.contains(TITLE_ZERO_DUMMY) || ret.contains(TITLE_GINZA_DIV) || ret.contains(TITLE_GINZA_DUMMY)){
-					zero_title = true;
-					continue;
-				}
-				if(ret.contains(TITLE_ZERO_DIV)){
-					zero_title = true;
-				}
-				if(zero_title){
-					ret = getXmlElement(ret, "h2");
-					if(ret==null){
-						continue;
-					}
-					String tmp = ret;
-					if (tmp.contains("span"))
-						ret = getXmlElement2(tmp, "span");
-					if(ret==null){
-						ret = tmp;
-					}
-					found = true;
-					zero_title = false;
-					if(getVideoTitle()==null){
-						VideoTitle = safeFileName(ret);
-					}
-					log.print("<" + VideoTitle + ">...");
-					continue;
-				}
-				if (ret.contains(TITLE_PARSE_STR_START)) {
-					ret = getXmlElement(ret, "title");
-					if(ret==null)
-						continue;
-					found = true;
-					index = 0;
-					String title1 = ret;
-					int index2 = ret.lastIndexOf(TITLE_END);
-					if (index2 < 0)
-						index2 = ret.lastIndexOf(TITLE_END2);
-					if (index2 >= 0){
-						title1 = title1.substring(index,index2);
-					}else{
-						String re = "[‐-]\\h*ニコニコ動画\\h*(:\\h*[\\w]+)?$";
-						title1 = title1.replaceAll(re, "").trim();
-					}
-					if(getVideoTitle()==null){
-						VideoTitle = safeFileName(title1);
-					}
-					log.print("<" + VideoTitle + ">...");
-					continue;
-				}
-			}
-			br.close();
-			con.disconnect();
-			found = getVideoTitle()!=null;
-			if(!found){
-				VideoTitle = thumbTitle;
-				found = getVideoTitle()!=null;
-			}
-			String ss = sb.substring(0);
-			if(altTag.isEmpty())
-				altTag = getAltTag(ss);
 
-			PrintWriter pw;
-			if(!found || saveWatchPage){
-				titleHtml = Path.mkTemp(tag + "watch.htm");
-				pw = new PrintWriter(titleHtml, encoding);
-				pw.write(ss);
-				pw.flush();
-				pw.close();
-				if(!found)
-					log.print(" Title not found.");
-				log.println(" <" + Path.toUnixPath(titleHtml) + "> saved.");
-			}
-			//Json解析
-			if(ss.contains(JSON_START2)){
-				if(extractDataApiDataJson(ss, encoding, url)!=null){
-					log.println("video history html5 ok.");
-					isHtml5Ok = true;
-				} else {
-					log.println("video history html5 NG.");
-					isHtml5Ok = false;
-				}
-			}
-//			if(VideoUrl==null || VideoUrl.isEmpty()){
-//				log.println("video URL ["+VideoUrl+"] is invalid. ");
-//				nicomap.printAll(log);
-//				return false;
-//			}
-		} catch (IOException ex) {
-			log.printStackTrace(ex);
-			return false;
-		} catch (Exception e) {
-			log.printStackTrace(e);
-			return false;
-		}
-		return true;
-	}
-*/
 	private String getAltTag(String text) {
 		Pattern p = Pattern.compile("/allegation/([a-zA-Z]+[0-9]+)");
 		Matcher m = p.matcher(text);
@@ -2250,65 +2106,6 @@ public class NicoClient {
 	private String succeededKeyThread = null;
 
 	private boolean getOfficialOption(String threadId) {
-/*
-		//String url = HTTP_FLAPI_GETTHREADKEY+threadId;
-		String url = null;
-		log.print("\nGetting Official options (threadkey)...");
-		try {
-			if (url == null) {
-				log.println("But this function no need.");
-				return true;
-			}
-			if (force184 != null && threadKey != null){
-				log.println("ok. But this call twice, not necessary.");
-				return true;
-			}
-			HttpURLConnection con = urlConnectGET(url);
-			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-					log.println("ng.\nCan't get Oficial option:" + url);
-					return false;
-			}
-			String ret = readConnection(con);
-			if (ret == null || ret.isEmpty()){
-				log.println("ng.\nNull response. retry with community thread");
-				Official = "";
-				if(!retry_threadkey){
-					retry_threadkey  = true;
-				 	threadKey = null;
-				 	force184 = null;
-				} else {
-					retry_threadkey = false;
-				}
-				return false;
-			}
-			nicomap.splitAndPut(ret, "&");
-			threadKey = nicomap.get("threadkey");
-			force184 = nicomap.get("force_184");
-			if (threadKey == null || force184 == null) {
-				log.println("ng.\nCan't get Oficial option.");
-				log.println("ret: " + ret);
-				return false;
-			}
-			if(threadKey.isEmpty()){
-				log.println("ng.\nCan't get threadkey. retry with community thread");
-				Official = "";
-				if(!retry_threadkey){
-					retry_threadkey  = true;
-				 	threadKey = null;
-				 	force184 = null;
-				} else {
-					retry_threadkey = false;
-				}
-				return false;
-			}
-			log.println("ok.  Thread Key: " + threadKey);
-			succeededKeyThread = threadId;
-			return true;
-		} catch (IOException e) {
-			log.printStackTrace(e);
-		}
-		return false;
-*/
 		return true;
 	}
 
@@ -2328,57 +2125,6 @@ public class NicoClient {
 	 * @param time
 	 * @return
 	 */
-/*
-	private boolean getWayBackKey(String time, String thread_id) {
-		log.print("Setting wayback time...");
-		try {
-			if(!"0".equals(WayBackKey)){
-				log.println("ok. But this call twice, not necessary.");
-				hasNewCommentBegun = true;
-				return true;
-			}
-			WayBackDate wayback = new WayBackDate(time);
-			if (!wayback.isValid()){
-				log.println("ng.\nCannot parse time.\"" + time + S_QUOTE2);
-				setExtraError("過去ログ指定文字列が違います");
-				return false;
-			}
-			String waybacktime = wayback.getWayBackTime();
-			log.println("ok. [" + wayback.format() + "]: " + waybacktime);
-			log.print("Getting wayback key...");
-			String url = HTTP_FLAPI_GETWAYBACKKEY + thread_id;
-			HttpURLConnection con = urlConnectGET(url);
-			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-				log.println("ng.\nCan't open connection: " + url);
-				return false;
-			}
-			String ret = readConnection(con);
-			if (ret == null) {
-				log.println("ng.\nCannot find waybackkey from response.");
-				return false;
-			}
-			nicomap.splitAndPut(ret, "&");
-			String waybackkey = nicomap.get("waybackkey");
-			if (waybackkey == null || waybackkey.isEmpty()) {
-				log.println("ng.\nCannot get wayback key. it's invalid");
-				if ("0".equals(Premium)){
-					setExtraError("一般会員は過去ログ不可です");
-				}
-				return false;
-			}
-			log.println("ok.  Wayback key: " + waybackkey);
-			WayBackTime = waybacktime;
-			WayBackKey = waybackkey;
-			WayBackThread = thread_id;
-			log.println("Wayback thread: " + WayBackThread);
-			hasNewCommentBegun = wayback.getSecond() > NEW_COMMENT_BEGIN_SECOND;
-			return true;
-		} catch (IOException e) {
-			log.printStackTrace(e);
-		}
-		return false;
-	}
-*/
 	private boolean getWayBackKey(String time, String thread_id) {
 		log.print("Setting wayback time...");
 			if(!"0".equals(WayBackKey)){
@@ -3256,41 +3002,6 @@ public class NicoClient {
 			log.println("thumInfo data ok.");
 			thumbInfoData = s;
 
-/*			
-			if(size_high==null && thumbInfoData!=null && !thumbInfoData.isEmpty()){
-				//size_high = getXmlElement(thumbInfoData, "size_high");
-				//size_low = getXmlElement(thumbInfoData, "size_low");
-				size_high = size_low = "1";
-				log.println("size_high="+size_high+", size_low="+size_low);
-			}
-			if(size_video_thumbinfo==null && VideoUrl!=null){
-				size_video_thumbinfo = isEco()? size_low : size_high;
-				if(size_video_thumbinfo!=null)
-					log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
-			}
-			if(nicoTaglist.isEmpty() && thumbInfoData!=null && !thumbInfoData.isEmpty()){
-				String nico_tags = getXmlElement1(thumbInfoData, "tags");
-				if(nico_tags!=null){
-					nico_tags = nico_tags.trim();
-					debug("\n(NicoClient)nico_tags: "+nico_tags);
-					if(!nico_tags.isEmpty()){
-						nicoCat = getXmlElement2(nico_tags,"tag category=\"1\" lock=\"1\"");
-						nicoCat = safeTag(nicoCat);
-						debug("\n(NicoClient)nicoCat: "+nicoCat);
-						String[] tagarray = nico_tags.split("\n");
-						if(tagarray!=null && tagarray.length>0){
-							for(int i = 0; i < tagarray.length; i++){
-								String tl = tagarray[i];
-								String t = safeTag(getXmlElement1(tl,"tag"));
-								nicoTaglist.add(i, t);
-								debug("\n(NicoClient)tag["+i+"]: "+t);
-							}
-						}
-						debug("\n(NicoClient)nicoTaglist: "+nicoTaglist.toString()+"\n");
-					}
-				}
-			}
-*/
 			return thumbXml;
 		} catch (IOException ex) {
 			log.printStackTrace(ex);
@@ -3300,203 +3011,6 @@ public class NicoClient {
 			return null;
 		}
 	}
-/*
-	public Path getThumbInfoFile(String tag){
-		String url = HTTP_EXT_THUMBINFO + tag;
-		if(videoTag==null)
-			videoTag = tag;
-		log.print("Getting thumb Info...");
-		Path thumbXml = null;
-		try {
-			HttpURLConnection con = urlConnectGET(url);
-			if (con == null || con.getResponseCode() != HttpURLConnection.HTTP_OK){
-				log.println("ng.\nCan't getThumbInfo:" + url);
-				return null;
-			}
-		//	Cookie.update(detectCookie(con));
-
-			String encoding = con.getContentEncoding();
-			if (encoding == null){
-				encoding = "UTF-8";
-			}
-			BufferedReader br = new BufferedReader(new InputStreamReader(con
-					.getInputStream(), encoding));
-			log.print("ok.\nSaving thumb Info...");
-			String ret;
-			StringBuilder sb = new StringBuilder();
-			while ((ret = br.readLine()) != null) {
-				//Stopwatch.show();
-				sb.append(ret + "\n");
-			}
-			br.close();
-			con.disconnect();
-			String s = sb.substring(0);
-			String title = getVideoTitle();
-			if(title==null){
-				if(s!=null && s.contains("title")){
-					title = safeFileName(getXmlElement(s, "title"));
-				}
-				if(title==null){
-					boolean saveHtml = titleHtml==null || !titleHtml.canRead();
-					if(getVideoHistoryAndTitle1(tag, "?watch_harmful=1", saveHtml))
-						title = getVideoTitle();
-					else
-						title = VideoTitle;
-				} else if(!title.isEmpty()
-						&& (VideoTitle==null || VideoTitle.equals("null"))){
-					VideoTitle = title;
-					thumbInfoData = s;
-				}
-			}
-			if(ContentType==null){
-				ContentType = getXmlElement(s, "movie_type");
-			}
-			if(getWatchThread().isEmpty())
-				watchThread = getThread(getXmlElement(s, "watch_url"));
-			thumbXml  = Path.mkTemp(tag + "_" + title + ".xml");
-			if(titleHtml!=null){
-				log.println("checking saved titlepage JSON... ");
-				if(watchApiJson!=null){
-					log.println("flash ok.");
-				} else if(dataApiJson!=null){
-					log.println("html5 ok.");
-					isHtml5Ok = true;
-				}else{
-					log.println("NG.");
-					isHtml5Ok = false;
-				}
-			}
-			if(s.indexOf("status=\"ok\"") < 0 && titleHtml!=null){
-				if(!altTag.isEmpty() && !altTag.equals(tag)){
-					Path path = getThumbInfoFile(altTag);
-					if(path==null) return null;
-					s = Path.readAllText(path, encoding);
-					if(s.indexOf("status=\"ok\"") >= 0 || titleHtml==null){
-						return path;
-					}
-				}
-				// 可能ならthumbXmlをtitleHtmlから構成する
-				sb = new StringBuilder();
-				sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-				sb.append("<nicovideo_thumb_response status=\"ok\">\n");
-				sb.append("<thumb>\n");
-				sb.append(makeNewXmlElement(s,"code"));
-				sb.append(makeNewElement("video_id",tag));
-				sb.append(makeNewElement("title",title));
-				if(isHtml5Ok){
-					Mson m_dataApi = dataApiMson;
-					if(m_dataApi==null){
-						m_dataApi = Mson.parse(getDataApiJson());
-					}
-					Mson m_video = m_dataApi.get("video");
-					String description = m_video.getAsString("description");
-					if(description==null)
-						description = "";
-					description = description.replace("&quot;", "”")
-						.replace("&lt;", "(").replace("&gt;", ")")
-						.replaceAll("\\(br ?/?\\)","\n");
-					sb.append(makeNewElement("description", description));
-					String thumbnailURL = m_video.getAsString("thumbnailURL");
-					if(thumbnailURL==null)
-						thumbnailURL="";
-					sb.append(makeNewElement("thumbnail_url",thumbnailURL));
-					if(ContentType==null)
-						ContentType = m_video.getAsString("movieType");
-					sb.append(makeNewElement("movie_type",ContentType));
-					if(altTag.isEmpty())
-						altTag = m_video.getAsString("id");
-					if(altTag.isEmpty())
-						altTag = tag;
-					sb.append(makeNewElement("watch_url",HTTP_WWW_NICOVIDEO_WATCH +altTag));
-					sb.append(makeNewElement("thumb_type","video"));
-					Mson m_tags = m_dataApi.get("tags");
-					if(m_tags.getSize()>0){
-						sb.append("<tags domain=\"jp\">\n");
-						debug("\ntags.length="+m_tags.getSize());
-						for(int i=0; i< m_tags.getSize(); i++){
-							Mson m_hash = m_tags.get(i);
-							debug("\nhash="+m_hash);
-					// hash = {"name":"ニコニコ技術部","isCategory":true,"isDictionaryExists":true,"isLocked":true}
-							String t = m_hash.getAsString("name");
-							String cat = m_hash.getAsString("isCategory");
-							String lck = m_hash.getAsString("isLocked");
-							if(t!=null){
-								debug("\ntag="+t);
-								sb.append("<tag");
-								if("true".equals(cat)) sb.append(" category=\"1\"");
-								if("true".equals(lck)) sb.append(" lock=\"1\"");
-								sb.append(">"+t+"</tag>\n");
-							}
-						}
-						sb.append("</tags>\n");
-					}
-					Mson m_owner = m_dataApi.get("owner");
-					String user_id = m_owner.getAsString("id");
-					if(user_id==null)
-						user_id = "";
-					sb.append(makeNewElement("user_id",user_id));
-					String nickname = m_owner.getAsString("nickname");
-					if(nickname!=null)
-						sb.append(makeNewElement("user_nickname",nickname));
-					sb.append(makeNewElement("user_icon_url",m_owner.getAsString("iconURL")));
-					sb.append("</thumb>\n");
-					sb.append("</nicovideo_thumb_response>\n");
-					s = sb.substring(0);
-				}
-			}
-			PrintWriter pw = new PrintWriter(thumbXml, encoding);
-			pw.write(s);
-			pw.flush();
-			pw.close();
-			if(s==null || s.indexOf("status=\"ok\"") < 0)
-				log.println("ng.\nSee file:" + thumbXml);
-			else {
-				log.println("thumInfo data ok.");
-				thumbInfoData = s;
-			}
-			if(size_high==null && thumbInfoData!=null && !thumbInfoData.isEmpty()){
-				//size_high = getXmlElement(thumbInfoData, "size_high");
-				//size_low = getXmlElement(thumbInfoData, "size_low");
-				size_high = size_low = "1";
-				log.println("size_high="+size_high+", size_low="+size_low);
-			}
-			if(size_video_thumbinfo==null && VideoUrl!=null){
-				size_video_thumbinfo = isEco()? size_low : size_high;
-				if(size_video_thumbinfo!=null)
-					log.println("video size(html5): "+size_video_thumbinfo +" bytes.");
-			}
-			if(nicoTaglist.isEmpty() && thumbInfoData!=null && !thumbInfoData.isEmpty()){
-				String nico_tags = getXmlElement1(thumbInfoData, "tags");
-				if(nico_tags!=null){
-					nico_tags = nico_tags.trim();
-					debug("\n(NicoClient)nico_tags: "+nico_tags);
-					if(!nico_tags.isEmpty()){
-						nicoCat = getXmlElement2(nico_tags,"tag category=\"1\" lock=\"1\"");
-						nicoCat = safeTag(nicoCat);
-						debug("\n(NicoClient)nicoCat: "+nicoCat);
-						String[] tagarray = nico_tags.split("\n");
-						if(tagarray!=null && tagarray.length>0){
-							for(int i = 0; i < tagarray.length; i++){
-								String tl = tagarray[i];
-								String t = safeTag(getXmlElement1(tl,"tag"));
-								nicoTaglist.add(i, t);
-								debug("\n(NicoClient)tag["+i+"]: "+t);
-							}
-						}
-						debug("\n(NicoClient)nicoTaglist: "+nicoTaglist.toString());
-					}
-				}
-			}
-			return thumbXml;
-		} catch (IOException ex) {
-			log.printStackTrace(ex);
-			return null;
-		} catch (Exception e) {
-			log.printStackTrace(e);
-			return null;
-		}
-	}
-*/
 /*
 	private static String safeTag(String s){
 		if(s==null) return "null";
@@ -3643,8 +3157,9 @@ public class NicoClient {
 			//プレミア会員なら常にeconomy=false
 			//一般会員ならisPeakTimeで判定
 			//ただし例外があるので注意(以下)
-			//- 最高画質が360pの動画
-			//- エコノミータイムでも最高画質取得できる動画
+			//2023/06/09修正 エコノミータイムの動画は360p、64kに制限される
+			//- 最高画質が360p、64kの動画（ほとんど古い動画の場合）
+			//- エコノミータイムでも最高画質、128kで取得できる動画（あるかどうか不明）
 			log.println("isPeakTime: "+dataApiMson.get("isPeakTime"));
 			Mson m_delivery = dataApiMson.get("delivery");
 			if ("1".equals(Premium)) {
@@ -3655,7 +3170,8 @@ public class NicoClient {
 				if (economy) {
 					if (!m_delivery.isNull()) {
 						Mson m_videos = m_delivery.get("videos");
-						economy = m_videos.get(0).get("isAvailable").getAsBoolean() ? false : true;
+						Mson m_audios = m_delivery.get("audios");
+						economy = (m_videos.get(0).get("isAvailable").getAsBoolean() && m_audios.get(0).get("isAvailable").getAsBoolean())? false : true;
 					}
 				}
 			}
@@ -3710,92 +3226,6 @@ public class NicoClient {
 		}
 		return text;
 	}
-/*
-	private String extractWatchApiJson(String html, String encoding, String url){
-		// flash
-		url = safeFileName(url);
-		watchApiJson = getWatchApiData(html, encoding, url);
-		saveApiJson(watchApiJson, encoding, url);
-		if(watchApiJson==null) return null;
-		extractJson(watchApiJson, encoding);
-		return watchApiJson;
-	}
-	private String getWatchApiJson(){
-		if(watchApiJson!=null)
-			return watchApiJson;
-		String encoding = "UTF-8";
-		if(titleHtml==null)
-			return null;
-		String html = Path.readAllText(titleHtml, encoding);
-		extractWatchApiJson(html, encoding, "getWatchApiJson");
-		return watchApiJson;
-	}
-*/
-/*
-	private void extractJson(String text, String encoding) {
-		//Json解析	flash
-		if(text==null)
-			return;
-		try {
-			watchApiMson = Mson.parse(text);
-		//	debugPrettyPrint("watchApi:\n ",watchApiMson);
-			// flvInfo
-			if(!nicomap.containsKey("flvInfo")){
-				if(nicomap.containsKey("url")){
-					debug("Ooops. this is duplicated url "+nicomap.get("url"));
-				}
-				flvInfo = watchApiMson.getAsString("flvInfo");
-				debug("\n■flvInfo:\n "+flvInfo);
-				nicomap.put("flvInfo", flvInfo);
-				flvInfoArrays = URLDecoder.decode(flvInfo, encoding);
-				nicomap.putArrayURLDecode(flvInfoArrays, encoding);
-				VideoUrl = nicomap.get("url");
-				if(VideoUrl==null || VideoUrl.isEmpty()){
-					debug("Ooops. url not found.");
-					return;
-				}
-				if(size_video_thumbinfo==null){
-					economy = VideoUrl.toLowerCase().contains("low");
-					size_video_thumbinfo = economy? size_low : size_high;
-					if(size_video_thumbinfo!=null)
-						log.println("video size): "+size_video_thumbinfo +" bytes.");
-				}
-			}
-			// dmcInfo
-			isDmc = watchApiMson.getAsString("isDmc");
-			log.println("isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc());
-			if(serverIsDmc()){
-				dmcInfo = watchApiMson.getAsString("dmcInfo");
-				dmcInfoDec = URLDecoder.decode(unquote(dmcInfo), encoding);
-				Mson m_dmcInfo = Mson.parse(dmcInfoDec);
-				debugPrettyPrint("\n■m_dmcInfo:\n ",m_dmcInfo);
-				if(dmcInfoDec!=null){
-					String l = m_dmcInfo.getAsString("length_seconds");
-					try {
-						dmcVideoLength = Integer.decode(l);
-					} catch(NumberFormatException e){
-						dmcVideoLength = 0;
-					};
-					debug("\n■dmcVideoLength: "+dmcVideoLength);
-					dmcToken = m_dmcInfo.getAsString("token");
-					dmcTokenUnEscape = dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
-					debug("\n■dmcTokenUnEscape:\n "+dmcTokenUnEscape);
-
-					Mson m_sessionApi = m_dmcInfo.get("session_api");
-					sessionApi = m_sessionApi.getAsString();
-					debug("\n■session_api:\n "+sessionApi);
-					setFromSessionApi(m_sessionApi);
-					debug("\n");
-				}
-			}
-		} catch (UnsupportedEncodingException e1) {
-			log.printStackTrace(e1);
-		}finally{
-
-		}
-		return;
-	}
-*/
 
 	private void setFromSessionApi(Mson m_sessionApi){
 		// flash html5 common

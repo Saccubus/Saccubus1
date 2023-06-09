@@ -1118,10 +1118,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									Setting.canRangeRequest(), true, resume_size);
 								if (stopFlagReturn()) {
 									result = "43";
-									if(dmcVideoFile.canRead()){
-										if(dmcVideoFile.renameTo(resumeDmcFile))
-											log.println("dmcVideo renamed to "+resumeDmcFile);
-									}
+									dmclowFile.delete();
 									return false;
 								}
 								dmc_high = limits[1];
@@ -1139,14 +1136,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 									} else {
 										log.println("dmc動画サーバからの(S)ダウンロードに失敗しました。");
 										sendtext("dmc動画の(S)ダウンロードに失敗。" + ecode);
-										if(dmcVideoFile.canRead()){
-											if(Setting.isEnableCheckSize()){
-												dmcVideoFile.delete();
-											}else{
-												if(dmcVideoFile.renameTo(resumeDmcFile))
-													log.println("dmcVideo renamed to "+resumeDmcFile);
-											}
-										}
+										dmclowFile.delete();
 										if(ecode.contains("98")){
 											result = "98";	// suspended, retry next
 											return false;
@@ -1944,58 +1934,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		return getRexpFromChats(getLastChat(file),"no=\"([0-9]+)\"", 1);
 	}
 
-/*
-	private boolean saveOwnerComment(NicoClient client){
-		sendtext("投稿者コメントの保存");
-		if (isSaveOwnerComment()) {
-			// ファイル名の設定
-			if(!setupCommentFile(client)){
-				return false;
-			}
-			String basename = CommentFile.getPath().replace(prefix, "");
-			OwnerCommentFile = Path.getReplacedExtFile(new File(basename), OWNER_EXT);
-			sendtext("投稿者コメントのダウンロード開始中");
-			File target = null;
-			if(Setting.enableCommentXml()){
-				target = client.getOwnerComment(OwnerCommentFile, Status, StopFlag);
-				if (stopFlagReturn()) {
-					result = "62";
-					return false;
-				}
-				if (target == null) {
-					sendtext("投稿者コメントのダウンロードに失敗");
-					log.println("投稿者コメントのダウンロードに失敗");
-					//result = "63";
-					//return true;
-				}
-			}
-			if(Setting.enableCommentJson() || target == null){
-				commentJson = client.getCommentJson(commentJson, Status, back_comment, Time, StopFlag,
-						Setting.getCommentIndex());
-				if(commentJson == null)
-					sendtext("コメントJSONのダウンロードに失敗 " + client.getExtraError());
-			}
-			if(target == null && commentJson != null){
-				if(getJsonParser().commentJson2xml(commentJson, OwnerCommentFile, "owner", false))
-					target = OwnerCommentFile;
-				log.println("変換 ownerコメントJSON: "+getJsonParser().getChatCount());
-			}
-			if(target == null || !target.canRead()){
-				sendtext("投稿者コメントの取得に失敗 " + client.getExtraError());
-				//result = "63";
-				return true;
-			}
-			client.applyOwnerFilter(OwnerCommentFile);
-			if (optionalThreadID == null || optionalThreadID.isEmpty()) {
-				optionalThreadID = client.getOptionalThreadID();
-			}
-			if (nicos_id == null || nicos_id.isEmpty())
-				nicos_id = client.getNicosID();
-		}
-		sendtext("投稿者コメントの保存終了");
-		return true;
-	}
-*/
 	private boolean saveOwnerNvComment(NicoClient client){
 		sendtext("投稿者コメントの保存");
 		if (isSaveOwnerComment()) {
