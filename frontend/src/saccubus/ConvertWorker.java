@@ -1373,7 +1373,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						return false;
 					}
 					VideoFile = existVideo;
-					setVidTitile(tid, Tag, VideoTitle, client.isEco());
+					if (client != null) {
+						setVidTitile(tid, Tag, VideoTitle, client.isEco());	
+					}
 				}
 			}
 			sendtext("動画の保存を終了");
@@ -2599,7 +2601,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			//combine ファイル内ダブリも削除
 			filelist.clear();
-			if(!OptionalThreadFile.canRead()||OptionalThreadFile.length()==0){
+			if(OptionalThreadFile == null||!OptionalThreadFile.canRead()||OptionalThreadFile.length()==0){
 				OptionalMiddleFile = null;
 				// But OK!
 				return true;
@@ -2721,7 +2723,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			}
 			//combine ファイル内ダブリも削除
 			filelist.clear();
-			if(!EasyCommentFile.canRead()||EasyCommentFile.length()==0){
+			if(EasyCommentFile == null||!EasyCommentFile.canRead()||EasyCommentFile.length()==0){
 				// But OK!
 				return true;
 			}
