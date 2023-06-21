@@ -77,6 +77,33 @@ public class Util {
 		return sb.toString();
 	}
 
+	//サロゲートペア＆(結合文字) 検出＆文字除去
+	//特定の異体字セレクタ U+E0100〜U+E01EF のみ削除
+	//U+E0100
+	//UTF-8 Encoding:	0xF3 0xA0 0x84 0x80
+	//UTF-16 Encoding:	0xDB40 0xDD00
+	//U+E01EF
+	//UTF-8 Encoding:	0xF3 0xA0 0x87 0xAF
+	//UTF-16 Encoding:	0xDB40 0xDDEF
+	public static String DelEmoji2(String str)
+	{
+		if (str.length() <= 0) return str;
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+			if (Character.isHighSurrogate(c) && (c == (char)0xdb40)) {
+				char cc = str.charAt(i+1);
+				if (cc >= (char)0xdd00 && cc <= (char)0xddef) {
+					++i;
+					continue;
+				}
+			}
+			sb.append(c);
+		}
+		return sb.toString();
+	}
+
 	//サロゲートペア＆(結合文字) 文字置き換え
 	public static String ReplaceEmoji(String str, char hs, char ls, String t)
 	{
