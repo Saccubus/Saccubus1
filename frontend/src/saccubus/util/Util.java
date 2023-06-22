@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
 
 public class Util {
 	/*
@@ -27,7 +29,35 @@ public class Util {
 		return num;
 	}
 
+	//文字列の長さチェック
+	public static boolean isCommentLength(String str, int leng, boolean is_total)
+	{
+		boolean result = false;
+		
+		int ll = str.length();
+		if (ll <= 0 || leng <= 0) return result;
+
+		if (is_total) {
+			result = str.codePointCount(0, ll) > leng; 
+		} else {
+			//splitして1行ごとの行数チェック
+			List<String> ddd = Arrays.asList(str.split("(?<=\\n)"));
+			for (String tt : ddd) {
+				ll = tt.length();
+				if (ll > 0) {
+					if (tt.codePointCount(0, ll) > leng) {
+						result = true;
+						break;
+					}
+				}
+			}
+		}
+		return result;
+	}
+
 	//サロゲートペア＆(結合文字) 検出＆文字除去
+	//異体字セレクタ U+FE00～U+FE0F、U+E0100〜U+E01EF は削除
+	//サロゲートペア文字は t で置換
 	public static String DelEmoji(String str, String t)
 	{
 		if (str.length() <= 0) return str;
@@ -39,12 +69,42 @@ public class Util {
 				continue;
 			}
 			else if (Character.isHighSurrogate(c)) {
+				if (c == (char)0xdb40) {
+					char cc = str.charAt(i+1);
+					if (cc >= (char)0xdd00 && cc <= (char)0xddef) {
+						++i;
+						continue;
+					}
+				}
 				sb.append(t);
 				++i;
 			}
 			else {
 				sb.append(c);
 			}
+		}
+		return sb.toString();
+	}
+
+	//サロゲートペア＆(結合文字) 検出＆文字除去
+	//特定の異体字セレクタ U+E0100〜U+E01EF のみ削除
+	//U+E0100 UTF-16 Encoding:	0xDB40 0xDD00
+	//U+E01EF UTF-16 Encoding:	0xDB40 0xDDEF
+	public static String DelEmoji2(String str)
+	{
+		if (str.length() <= 0) return str;
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+			if (Character.isHighSurrogate(c) && (c == (char)0xdb40)) {
+				char cc = str.charAt(i+1);
+				if (cc >= (char)0xdd00 && cc <= (char)0xddef) {
+					++i;
+					continue;
+				}
+			}
+			sb.append(c);
 		}
 		return sb.toString();
 	}
