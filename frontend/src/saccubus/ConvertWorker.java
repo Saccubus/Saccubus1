@@ -3320,7 +3320,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 
 			gate.exit(result);
 			//manager.sendTimeInfo();
-			if (!isSaveConverted() || (client != null && client.getVideoLength() <= 0)) {
+			if (!isSaveConverted() ||
+				(client != null && client.getVideoLength() <= 0) ||
+				(client != null && client.isVideoEncrypt())) {
 				sendtext("動画・コメントを保存し、変換は行いませんでした。");
 				result = "0";
 				return result;

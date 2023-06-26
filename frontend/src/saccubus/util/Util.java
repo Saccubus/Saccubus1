@@ -54,8 +54,10 @@ public class Util {
 		}
 		return result;
 	}
-	
+
 	//サロゲートペア＆(結合文字) 検出＆文字除去
+	//異体字セレクタ U+FE00～U+FE0F、U+E0100〜U+E01EF は削除
+	//サロゲートペア文字は t で置換
 	public static String DelEmoji(String str, String t)
 	{
 		if (str.length() <= 0) return str;
@@ -67,6 +69,13 @@ public class Util {
 				continue;
 			}
 			else if (Character.isHighSurrogate(c)) {
+				if (c == (char)0xdb40) {
+					char cc = str.charAt(i+1);
+					if (cc >= (char)0xdd00 && cc <= (char)0xddef) {
+						++i;
+						continue;
+					}
+				}
 				sb.append(t);
 				++i;
 			}
@@ -79,12 +88,8 @@ public class Util {
 
 	//サロゲートペア＆(結合文字) 検出＆文字除去
 	//特定の異体字セレクタ U+E0100〜U+E01EF のみ削除
-	//U+E0100
-	//UTF-8 Encoding:	0xF3 0xA0 0x84 0x80
-	//UTF-16 Encoding:	0xDB40 0xDD00
-	//U+E01EF
-	//UTF-8 Encoding:	0xF3 0xA0 0x87 0xAF
-	//UTF-16 Encoding:	0xDB40 0xDDEF
+	//U+E0100 UTF-16 Encoding:	0xDB40 0xDD00
+	//U+E01EF UTF-16 Encoding:	0xDB40 0xDDEF
 	public static String DelEmoji2(String str)
 	{
 		if (str.length() <= 0) return str;
