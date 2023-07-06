@@ -97,7 +97,6 @@ public class NicoClient {
 	static final char C_ESCAPE = '\\';
 	static final String JSON_START2 = "{&quot;ads&quot;:";	// HTML5 2021.12.02
 
-	private static final int SEGMENT_WAIT_TIME = 3000;
 	/**
 	 * ブラウザ共有しないでログイン
 	 * @param user
@@ -1493,11 +1492,7 @@ public class NicoClient {
 					      resumed++;
 					      sendStatus2(status, "dmc動画(hls)", max_size, resumed, (int)end_time);
 					      try {
-					    	  if (end_time <= (long)SEGMENT_WAIT_TIME) {
-					    		  Thread.sleep(SEGMENT_WAIT_TIME-(int)end_time);
-					    	  } else {
-					    		  Thread.sleep(500);
-					    	  }
+				    		  Thread.sleep(200);
 					      } catch (InterruptedException e) {
 					      }
 					}
