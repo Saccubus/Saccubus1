@@ -221,27 +221,35 @@ public class NicoJsonParser {
 		Mson m_threads = mson.get("threads");
 		Mson m_global = mson.get("globalComments");
 		// kind と threads() の数とthreads().fork でどの threads() からデーターを取得するか決める
+		int ctype = 0; // 0:ユーザー動画 1:公式動画 2:ニコスクリプトありユーザー動画
+		if (m_threads.getSize() > 3) {
+			if (m_threads.get(2).getAsString("fork").equals("main"))
+				ctype = 1;
+			else if (m_threads.get(2).getAsString("fork").equals("easy"))
+				ctype = 2;
+		}
 		if(kind.equals("owner")){
 			p = 0;
 			if(outflag) log.println(kind+"_comment p="+p);
 		}else if(kind.equals("user")){
 			p = 1;
-			if (m_threads.getSize() > 3)
+			if (ctype == 1)
 				p = 2;
 			if(outflag) log.println(kind+"_comment p="+p);
 		}else if(kind.equals("easy")){
 			p = 2;
-			if (m_threads.getSize() > 3)
+			if (ctype == 1)
 				p = 3;
 			if(outflag) log.println(kind+"_comment p="+p);
 		}else if(kind.equals("optional")){
 			p = 1;
-			if (m_threads.getSize() > 3)
-				p = 1;
+			if(outflag) log.println(kind+"_comment p="+p);
+		}else if(kind.equals("nicos")){
+			p = 3;
 			if(outflag) log.println(kind+"_comment p="+p);
 		}else{
 			p = 1;
-			if (m_threads.getSize() > 3)
+			if (ctype == 1)
 				p = 2;
 			if(outflag) log.println(kind+"_comment p="+p);
 		}
