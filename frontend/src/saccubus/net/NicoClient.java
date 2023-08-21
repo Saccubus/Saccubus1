@@ -3301,12 +3301,19 @@ public class NicoClient {
 			Mson m_targets = m_nvc.get("targets");
 			log.println("targets: "+m_targets.getSize());
 			ThreadID = m_targets.get(1).getAsString("id");
+			//ニコスクリプトがある場合の処理追加
 			if (m_targets.getSize() > 3) {
-				optionalThreadID =  ThreadID;;
-				ThreadID =  m_targets.get(3).getAsString("id");
+				if (m_targets.get(2).getAsString("fork").equals("main")) {
+					optionalThreadID =  ThreadID;;
+					ThreadID =  m_targets.get(2).getAsString("id");
+				}
+				else if (m_targets.get(2).getAsString("fork").equals("easy")) {
+					nicosID = m_targets.get(3).getAsString("id");
+				}
 			}
 			log.println("ThreadID: "+ThreadID);
 			log.println("optionalThreadID: "+optionalThreadID);
+			log.println("nicosID: "+nicosID);
 			Mson m_params = m_nvc.get("params");
 			nvParams = m_params.toString();
 			log.println("m_params: "+nvParams);
