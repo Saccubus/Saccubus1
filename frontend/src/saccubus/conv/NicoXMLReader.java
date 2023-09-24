@@ -94,6 +94,7 @@ public class NicoXMLReader extends DefaultHandler {
 		liveConversion = liveOp;
 		// ニコスコメントは premium "2" or "3"みたいなのでニコスコメントの時は運営コメント変換しないようにする
 		come_kind = comeKind;
+		come_kind_this = comeKind;
 		comment_len = commentLen;
 		comment_len_total = commentLenTotal;
 		premiumColorCheck = prem_color_check;
@@ -241,7 +242,6 @@ public class NicoXMLReader extends DefaultHandler {
 			item_kicked = false;
 			item_fork = false;
 			is_button = false;
-			come_kind_this = 1;
 			isLiveConversionDone = false;
 			premium = "";
 			sb = new StringBuffer();
