@@ -2335,35 +2335,22 @@ public class NicoClient {
 	 */
 	private boolean getWayBackKey(String time, String thread_id) {
 		log.print("Setting wayback time...");
-			if(!"0".equals(WayBackKey)){
-				log.println("ok. But this call twice, not necessary.");
-				hasNewCommentBegun = true;
-				return true;
-			}
-			WayBackDate wayback = new WayBackDate(time);
-			if (!wayback.isValid()){
-				log.println("ng.\nCannot parse time.\"" + time + S_QUOTE2);
-				setExtraError("過去ログ指定文字列が違います");
-				return false;
-			}
-			String waybacktime = wayback.getWayBackTime();
-			log.println("ok. [" + wayback.format() + "]: " + waybacktime);
-			log.print("*** Getting wayback key...");
-			// time -> unixtime に変換
-			String waybackkey = Util.LocalDateTime2UnixTime(time);
-			if (waybackkey == null || waybackkey.isEmpty()) {
-				log.println("ng.\nCannot get wayback key. it's invalid");
-				//if ("0".equals(Premium)){
-				//	setExtraError("一般会員は過去ログ不可です");
-				//}
-				//return false;
-			}
-			log.println("ok.  Wayback key: " + waybackkey);
-			WayBackTime = waybacktime;
-			WayBackKey = waybackkey;
-			WayBackThread = thread_id;
-			log.println("Wayback thread: " + WayBackThread);
-			hasNewCommentBegun = wayback.getSecond() > NEW_COMMENT_BEGIN_SECOND;
+		if(!"0".equals(WayBackKey)){
+			log.println("ok. But this call twice, not necessary.");
+			hasNewCommentBegun = true;
+			return true;
+		}
+		WayBackDate wayback = new WayBackDate(time);
+		if (!wayback.isValid()){
+			log.println("ng.\nCannot parse time.\"" + time + S_QUOTE2);
+			setExtraError("過去ログ指定文字列が違います");
+			return false;
+		}
+		String waybacktime = wayback.getWayBackTime();
+		log.println("ok. [" + wayback.format() + "]: " + waybacktime);
+		WayBackTime = waybacktime;
+		WayBackKey = waybacktime;
+		hasNewCommentBegun = wayback.getSecond() > NEW_COMMENT_BEGIN_SECOND;
 
 		return true;
 	}
