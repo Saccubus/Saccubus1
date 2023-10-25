@@ -14,7 +14,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
@@ -116,8 +115,9 @@ public class NicoClient {
 		ConProxy = conProxy(proxy, proxy_port);
 		isHtml5 = is_html5;
 		browserInfo = browser;
+		Manager = new CookieManager();
 		Manager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-		CookieHandler.setDefault(Manager);
+		//CookieHandler.setDefault(Manager);
 
 		// ログイン
 		login();
@@ -171,8 +171,9 @@ public class NicoClient {
 		nicomap = new NicoMap();
 		isHtml5 = is_html5;
 		ConProxy = conProxy(proxy, proxy_port);
-		Manager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-		CookieHandler.setDefault(Manager);
+		//Manager = new CookieManager();
+		//Manager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+		//CookieHandler.setDefault(Manager);
 		String user_session = browserInfo.getLastBrowserValue();
 		if (user_session == null || user_session.isEmpty()){
 			log.println("Invalid user session" + browserInfo.getName());
@@ -229,7 +230,7 @@ public class NicoClient {
 		}
 	}
 	private NicoCookie Cookie = null;
-	CookieManager Manager = new CookieManager();
+	private CookieManager Manager = null;
 
 	HttpURLConnection urlConnectGET(String url){
 		return urlConnect(url, "GET");
@@ -414,7 +415,8 @@ public class NicoClient {
 		return "";
 	}
 	private NicoCookie detectCookie(HttpURLConnection con){
-		nicomap.putConnection(Manager, (Debug? log:null));
+		if (Manager != null)
+			nicomap.putConnection(Manager, (Debug? log:null));
 		nicomap.putConnection(con, (Debug? log:null));
 		NicoCookie cookie = new NicoCookie();
 		nicomap.setCookie(cookie);
