@@ -73,14 +73,12 @@ public class NicoXMLReader extends DefaultHandler {
 	private String liveOpDuration = "";	// 0以上なら適用
 	private Logger log;
 	private String duration = "";
-	private int come_kind = 1;
-	private int come_kind_this = 1;
-	
+
 	private boolean isLiveConversionDone;
 	private boolean html5comment;
 
 	public NicoXMLReader(Packet packet, Pattern ngIdPat, Pattern ngWordPat, CommandReplace cmd,
-		int scoreLimit, boolean liveOp, int comeKind, boolean prem_color_check, String duration, Logger logger, boolean html5){
+		int scoreLimit, boolean liveOp, boolean prem_color_check, String duration, Logger logger, boolean html5){
 		this.packet = packet;
 		NG_Word = ngWordPat;
 		NG_ID = ngIdPat;
@@ -90,8 +88,6 @@ public class NicoXMLReader extends DefaultHandler {
 		premium = "";
 		liveConversion = liveOp;
 		// ニコスコメントは premium "2" or "3"みたいなのでニコスコメントの時は運営コメント変換しないようにする
-		come_kind = comeKind;
-		come_kind_this = comeKind;
 		premiumColorCheck = prem_color_check;
 		liveOpDuration = duration;
 		log = logger;
@@ -511,10 +507,6 @@ public class NicoXMLReader extends DefaultHandler {
 			}
 			//運営コメント
 			if(liveConversion && !premium.isEmpty() && (Integer.parseInt(premium) > 1 && Integer.parseInt(premium) < 8)){
-				if (come_kind == 1) {
-					item_kicked = true;
-					return;
-				}
 				if(com.startsWith("/")){
 					//運営コマンド premium="3" or "6" only? not check
 					String[] list;
@@ -527,7 +519,6 @@ public class NicoXMLReader extends DefaultHandler {
 						if(duration.isEmpty())
 							duration = "10";
 						item.setMail("ue ender @"+duration);
-						come_kind_this = 0;	// Ownerと同じレイヤー
 					}
 					else if(list[0].equals("/vote")){
 						String VOTECMD = "ue white ender full";
@@ -557,7 +548,6 @@ public class NicoXMLReader extends DefaultHandler {
 							item.setScript();
 							item_fork = true;
 							script = true;
-							come_kind_this = 0;	// Ownerと同じレイヤー
 						}
 						else if(list.length>1 && list[1].equals("showresult")){
 							///vote showresult per  602 181 60 47 108 0 0 0 0 0
@@ -603,7 +593,6 @@ public class NicoXMLReader extends DefaultHandler {
 							item.setScript();
 							item_fork = true;
 							script = true;
-							come_kind_this = 0;	// Ownerと同じレイヤー
 						}
 						else if(list.length>1 && list[1].equals("stop")){
 							com = "/vote stop";
@@ -611,7 +600,6 @@ public class NicoXMLReader extends DefaultHandler {
 							item.setScript();
 							item_fork = true;
 							script = true;
-							come_kind_this = 0;	// Ownerと同じレイヤー
 						}
 						else {
 							// /vote その他
@@ -624,7 +612,6 @@ public class NicoXMLReader extends DefaultHandler {
 							item.setScript();
 							item_fork = true;
 							script = true;
-							come_kind_this = 0;	// Ownerと同じレイヤー
 						}
 					}
 					else if(list[0].equals("/gift")) {
@@ -636,7 +623,6 @@ public class NicoXMLReader extends DefaultHandler {
 								+ "(+" + m.group(2) + ")";
 						item.setMail("shita middle @3");
 						item_fork = true;
-						come_kind_this = 2;	// Optionalと同じレイヤー
 					}
 					else if(list[0].equals("/emotion")) {
 						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF3B, "ひまわり");
@@ -644,7 +630,6 @@ public class NicoXMLReader extends DefaultHandler {
 						com = Util.ReplaceEmoji(com, (char )0xD83C, (char )0xDF38, "さくら");
 						item.setMail("shita middle @2");
 						item_fork = true;
-						come_kind_this = 2;	// Optionalと同じレイヤー
 					}
 					else if(list[0].equals("/nicoad")) {
 						Pattern ptn = Pattern.compile(",\"message\":\"([^\"]+)\",");
@@ -653,7 +638,6 @@ public class NicoXMLReader extends DefaultHandler {
 							com = "/nicoad "+ m.group(1);
 						item.setMail("shita small @3");
 						item_fork = true;
-						come_kind_this = 2;	// Optionalと同じレイヤー
 					}
 					else if(list[0].equals("/cruise")) {
 						Pattern ptn = Pattern.compile(" \"([^\"]+)\"$");
@@ -662,7 +646,6 @@ public class NicoXMLReader extends DefaultHandler {
 							com = "/cruise " + m.group(1);
 						item.setMail("shita small @3");
 						item_fork = true;
-						come_kind_this = 2;	// Optionalと同じレイヤー
 					}
 					else if(list[0].equals("/quote")) {
 						Pattern ptn = Pattern.compile(" \"([^\"]+)\"$");
@@ -671,7 +654,6 @@ public class NicoXMLReader extends DefaultHandler {
 							com = "/quote " + m.group(1);
 						item.setMail("shita small @3");
 						item_fork = true;
-						come_kind_this = 2;	// Optionalと同じレイヤー
 					}
 					else if(list[0].equals("/info")) {
 						Pattern ptn = Pattern.compile(" (\\d+) (.+)$");
@@ -680,7 +662,6 @@ public class NicoXMLReader extends DefaultHandler {
 							com = "/info " + m.group(2);
 						item.setMail("shita small @3");
 						item_fork = true;
-						come_kind_this = 2;	// Optionalと同じレイヤー
 					}
 					else if(list[0].equals("/spi")) {
 						Pattern ptn = Pattern.compile(" \"([^\"]+)\"$");
@@ -689,7 +670,6 @@ public class NicoXMLReader extends DefaultHandler {
 							com = "/spi " + m.group(1);
 						item.setMail("shita small @3");
 						item_fork = true;
-						come_kind_this = 2;	// Optionalと同じレイヤー
 					}
 					else {
 						//運営コマンド該当無し
@@ -702,7 +682,6 @@ public class NicoXMLReader extends DefaultHandler {
 							com = "@ボタン 「["+com.replaceAll("「", "『").replaceAll("」", "』")+"]」";
 						else
 							com = "@ボタン 「["+com+"]」";
-						come_kind_this = 2;	// Optionalと同じレイヤー
 					}
 				}
 				else if(!premium.isEmpty() && (Integer.parseInt(premium) > 1 && Integer.parseInt(premium) < 8)){
@@ -712,7 +691,6 @@ public class NicoXMLReader extends DefaultHandler {
 						duration = "12";
 					item.setMail("ue ender @"+duration);	//4秒でいい？
 					item_fork = true;
-					come_kind_this = 0;	// Ownerと同じレイヤー
 					if(com.contains("」"))
 						com = "@ボタン 「["+com.replaceAll("「", "『").replaceAll("」", "』")+"]」";
 					else
@@ -879,10 +857,6 @@ public class NicoXMLReader extends DefaultHandler {
 				if(item.isPremumColor()){
 					item.setDefColor();
 				}
-			}
-			if (come_kind != come_kind_this) {
-				item_kicked = true;
-				return;
 			}
 			item.setComment(com);
 			// log.println("\tpreimum="+premium+"| item="+item.toString()+" |");
