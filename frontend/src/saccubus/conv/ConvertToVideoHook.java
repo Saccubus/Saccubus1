@@ -37,7 +37,7 @@ import saccubus.util.Logger;
 public class ConvertToVideoHook {
 	public static boolean convert(File file, File out, ArrayList<CommentReplace> list, Pattern ng_id,
 			Pattern ng_word, CommandReplace ng_cmd, int score_limit, boolean live_op,
-			int comment_kind, int comment_len, boolean comment_len_total, boolean premium_color_check, 
+			int comment_len, boolean comment_len_total, boolean premium_color_check, 
 			String duration, Logger log, boolean is_debug, boolean is_html5comment) {
 		try {
 			Packet packet = new Packet(list, log, is_debug);
@@ -49,7 +49,7 @@ public class ConvertToVideoHook {
 			NicoXMLReader nico_reader = null;
 			try {
 				nico_reader = new NicoXMLReader(packet, ng_id, ng_word, ng_cmd, score_limit, live_op,
-						comment_kind, comment_len, comment_len_total,premium_color_check, duration, log, is_html5comment);
+						comment_len, comment_len_total,premium_color_check, duration, log, is_html5comment);
 			} catch (java.util.regex.PatternSyntaxException e) {
 				e.printStackTrace();
 				return false;
