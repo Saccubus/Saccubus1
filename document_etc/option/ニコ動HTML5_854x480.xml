@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment>settings-Tue Oct 31 03:31:48 JST 2023-Rev1.67.8.18</comment>
+<comment>settings-Tue Oct 31 00:54:21 JST 2023-Rev1.67.8.18</comment>
 <entry key="ShareBrowserIE">false</entry>
 <entry key="UseCookiePath">false</entry>
 <entry key="ZqSizeMin"/>
 <entry key="ForceLiveComment">false</entry>
-<entry key="OpaqueComment">true</entry>
+<entry key="OpaqueComment">false</entry>
 <entry key="AddOptionToConvertedVideo">false</entry>
 <entry key="ErrorList"/>
 <entry key="ShadowDefault"/>
@@ -34,7 +34,7 @@
 <entry key="CommentOffEnable">false</entry>
 <entry key="EnableCommentXml">false</entry>
 <entry key="SaveConvertedFile">true</entry>
-<entry key="SaveCommentFile">false</entry>
+<entry key="SaveCommentFile">true</entry>
 <entry key="NGCommand"/>
 <entry key="AddTimeStamp">false</entry>
 <entry key="AppendComment">false</entry>
@@ -69,11 +69,11 @@
 <entry key="ShareChrome">false</entry>
 <entry key="OptionFolder">./optionFFAAC</entry>
 <entry key="FontIndex">0</entry>
-<entry key="QOptionFile">.\optionFFAAC\ニコ生_1280x720@30fpsアス比共通_mp4.xml</entry>
+<entry key="QOptionFile">.\optionFFAAC\PC_854x480アス比共通_mp4.xml</entry>
 <entry key="ConvFixFileNameFolder">.\[out]converted</entry>
 <entry key="AddComment">true</entry>
-<entry key="FpsMin">30.0</entry>
-<entry key="ShowCommentNum">1000</entry>
+<entry key="FpsMin">23.0</entry>
+<entry key="ShowCommentNum">100</entry>
 <entry key="EconimyList"/>
 <entry key="FontPath">C:\Windows\Fonts/meiryob.ttc</entry>
 <entry key="CMD_OUT">-threads 0 -s 512x384 -acodec aac -ab 128k -ar 44100 -ac 2 -vcodec libx264 -aspect 4:3 -crf 23 -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 17 -qmax 51 -qdiff 4 -bf 3 -refs 3 -direct-pred auto -trellis 1 -weightp 1 -mixed-refs 1 -8x8dct 1 -fast-pskip 1 -pix_fmt yuv420p</entry>
@@ -111,7 +111,7 @@
 <entry key="MaxNumberOfDownload">0</entry>
 <entry key="ZqSizeMax"/>
 <entry key="LiveOperationDuration"/>
-<entry key="SaveVideoFile">false</entry>
+<entry key="SaveVideoFile">true</entry>
 <entry key="UseProxy">false</entry>
 <entry key="TCFileName">.\comment[Owner].xml</entry>
 <entry key="QCMD_EXT">mp4</entry>
@@ -139,9 +139,9 @@
 <entry key="UseFolder">.\user</entry>
 <entry key="VideoFile">.\video.flv</entry>
 <entry key="OutOptionJpegMp4"> -an -vcodec libx264 -qp 0 -f mp4 </entry>
-<entry key="QCMD_OUT">-threads 0 -s 1280x720 -acodec aac -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 18 -async 1 -aspect 16:9 -samx -pix_fmt yuv420p -vf fps=30</entry>
+<entry key="QCMD_OUT">-threads 0 -s 854x480 -acodec aac -ab 128k -ar 44100 -ac 2 -vcodec libx264 -crf 23 -b 1400k -bt 2000k -maxrate 2000k -bufsize 2000k -async 1 -coder 1 -sws_flags lanczos -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -me_method umh -subq 8 -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 2 -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -bf 3 -refs 3 -direct-pred auto -trellis 1 -weightp 1 -mixed-refs 1 -8x8dct 1 -fast-pskip 1 -samx -pix_fmt yuv420p -aacp</entry>
 <entry key="LiveOperationComment">true</entry>
-<entry key="FpsUp">30.0</entry>
+<entry key="FpsUp">25.0</entry>
 <entry key="ShareOpera">false</entry>
 <entry key="ExtraMode"/>
 <entry key="UseFpsFilter">true</entry>
@@ -161,7 +161,7 @@
 <entry key="SetCommentSpeed">false</entry>
 <entry key="SaveThumbnailJpg">false</entry>
 <entry key="NG_ID"/>
-<entry key="FpsIntegralMultiple">true</entry>
+<entry key="FpsIntegralMultiple">false</entry>
 <entry key="SoundOnly">true</entry>
 <entry key="ProxyPort">-1</entry>
 <entry key="SaveAutoList">false</entry>
