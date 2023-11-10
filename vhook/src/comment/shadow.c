@@ -65,7 +65,6 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
 	//SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
 	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_BLEND);
-	SDL_SetSurfaceAlphaMod(surf,0xff);
 	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(shadow,0xffffffff);
 	}else if(is_black==0){
@@ -78,7 +77,6 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	SDL_BlitSurface(shadow,NULL,shadow2,NULL);
 	//SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);
 	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_BLEND);
-	SDL_SetSurfaceAlphaMod(shadow,0xff);
 	int x,y,z;
 	int nw = shadow->w;
 	int nh = shadow->h;
@@ -130,7 +128,6 @@ SDL_Surface* likeNicoNico(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	shadowBlitSurface(surf,NULL,shadow,&rect);
 	SDL_FreeSurface(surf);
 	SDL_FreeSurface(shadow2);
-	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);
 	return shadow;
 }
 
@@ -196,7 +193,6 @@ SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	SDL_BlitSurface(surf,NULL,black,&rect);
 	//SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
 	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_BLEND);
-	SDL_SetSurfaceAlphaMod(surf,0xff);
 	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(black,0xffffffff);
 	}else if(is_black==0){
@@ -207,7 +203,6 @@ SDL_Surface* likeNovel(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	setAlpha(black,gmax);
 	shadowBlitSurface(surf,NULL,black,NULL);
 	SDL_FreeSurface(surf);
-	SDL_SetSurfaceBlendMode(black,SDL_BLENDMODE_NONE);
 	return black;
 }
 
@@ -264,7 +259,6 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
 	//SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
 	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_BLEND);
-	SDL_SetSurfaceAlphaMod(surf,0xff);
 	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(shadow,0xffffffff);
 	}else if(is_black==0){
@@ -277,7 +271,6 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	SDL_BlitSurface(shadow,NULL,shadow2,NULL);
 	//SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);
 	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_BLEND);
-	SDL_SetSurfaceAlphaMod(shadow,0xff);
 	int x,y,z;
 	int nw = shadow->w;
 	int nh = shadow->h;
@@ -326,7 +319,6 @@ SDL_Surface* likeOld(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	shadowBlitSurface(surf,NULL,shadow,&rect);
 	SDL_FreeSurface(surf);
 	SDL_FreeSurface(shadow2);
-	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);
 	return shadow;
 }
 
@@ -385,7 +377,6 @@ SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,SDL_Color c,DATA* dat
 	SDL_BlitSurface(surf,NULL,shadow,&rect);	//surf→shadowコピー
 	//SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);		//αを入れる
 	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_BLEND);		//αを入れる
-	SDL_SetSurfaceAlphaMod(surf,0xff);
 	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(shadow,0xffffffff);		//影の色で塗りつぶす
 	}else if(is_black==0){
@@ -398,7 +389,6 @@ SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,SDL_Color c,DATA* dat
 	SDL_BlitSurface(shadow,NULL,shadow2,NULL);	//shadow→shadow2コピー
 	//SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);		//αを入れる
 	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_BLEND);		//αを入れる
-	SDL_SetSurfaceAlphaMod(shadow,0xff);
 	int x,y,z;
 	int nw = shadow->w;
 	int nh = shadow->h;
@@ -451,7 +441,6 @@ SDL_Surface* likeSaccubus2a(SDL_Surface* surf,int is_black,SDL_Color c,DATA* dat
 	shadowBlitSurface(surf,NULL,shadow,&rect);
 	SDL_FreeSurface(surf);
 	SDL_FreeSurface(shadow2);
-	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);
 	return shadow;
 }
 
@@ -516,7 +505,6 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
 	//SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
 	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_BLEND);
-	SDL_SetSurfaceAlphaMod(surf,0xff);
 	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(shadow,0xffffffff);
 	}else if(is_black==0){
@@ -529,7 +517,6 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	SDL_BlitSurface(shadow,NULL,shadow2,NULL);
 	//SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);
 	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_BLEND);
-	SDL_SetSurfaceAlphaMod(shadow,0xff);
 	int x,y,z;
 	int nw = shadow->w;
 	int nh = shadow->h;
@@ -579,7 +566,6 @@ SDL_Surface* likeHtml5(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data){
 	shadowBlitSurface(surf,NULL,shadow,&rect);
 	SDL_FreeSurface(surf);
 	SDL_FreeSurface(shadow2);
-	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);
 	return shadow;
 }
 
@@ -631,7 +617,6 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	SDL_BlitSurface(surf,NULL,shadow,&rect);
 	//SDL_SetAlpha(surf,SDL_SRCALPHA,0xff);
 	SDL_SetSurfaceBlendMode(surf,SDL_BLENDMODE_BLEND);
-	SDL_SetSurfaceAlphaMod(surf,0xff);
 	if(is_black==1){//黒であれば、周りをしろで囲む
 		setRGB(shadow,0xffffffff);
 	}else if(is_black==0){
@@ -644,7 +629,6 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	SDL_BlitSurface(shadow,NULL,shadow2,NULL);
 	//SDL_SetAlpha(shadow,SDL_SRCALPHA,0xff);
 	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_BLEND);
-	SDL_SetSurfaceAlphaMod(shadow,0xff);
 	int x,y,z;
 	int nw = shadow->w;
 	int nh = shadow->h;
@@ -718,7 +702,6 @@ SDL_Surface* customShadow(SDL_Surface* surf,int is_black,SDL_Color c,DATA* data)
 	SDL_SetSurfaceBlendMode(shadow,SDL_BLENDMODE_NONE);		//not use alpha
 	SDL_BlitSurface(shadow,&srcrect,ret,NULL);
 	SDL_FreeSurface(shadow);
-	SDL_SetSurfaceBlendMode(ret,SDL_BLENDMODE_NONE);
 	return  ret;
 }
 

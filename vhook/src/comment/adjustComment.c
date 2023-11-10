@@ -87,6 +87,7 @@ h_Surface* adjustComment2(h_Surface* surf,int height){
 	SDL_Rect dstrect = {0, dsty, width, height};
 	//not make nor use alpha
 	h_SetSurfaceRLE(surf, 0xff);	//not use alpha
+	h_SetSurfaceBlendMode(surf, SDL_BLENDMODE_NONE);
 	h_BlitSurface(surf,&srcrect,ret,&dstrect);
 	h_FreeSurface(surf);
 	return ret;
@@ -126,6 +127,7 @@ h_Surface* adjustCommentSize(h_Surface* surf,int width,int height){
 	SDL_Rect dstrect = {dstx, dsty, width, height};
 	//not make nor use alpha
 	h_SetSurfaceRLE(surf, 0xff);	//not use alpha
+	h_SetSurfaceBlendMode(surf, SDL_BLENDMODE_NONE);
 	h_BlitSurface(surf,&srcrect,ret,&dstrect);
 	h_FreeSurface(surf);
 	return ret;

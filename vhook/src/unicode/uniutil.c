@@ -113,8 +113,15 @@ FontType getFontType2(Uint16* up,int basefont,DATA* data,int stable){
 	if(up==NULL || (u = *up) == '\0'){
 		return NULL_FONT;
 	}
-	if(isLowSurrogate(u))
-		return NULL_FONT;
+	if(isLowSurrogate(u)){
+		return basefont;
+	}
+	if(isVariant(u)){
+		return basefont;
+	}
+	if(isVariantSurrogate(up)){
+		return basefont;
+	}
 /*
 	if(*u==0x0020){	//Ascii space -> fix fontsize w,h
 		return ARIAL_FONT|CA_TYPE_SPACE_0020;	//0020-> 00200003
@@ -229,11 +236,20 @@ int getFirstFont(Uint16* up,int basefont,DATA* data){
 	if(up==NULL || *up == '\0'){
 		return basefont;
 	}
-	if(isLowSurrogate(*up)){
-		return basefont;
-	}
 	int foundBase = FALSE;
 	while(*up!='\0'){
+		if(isLowSurrogate(*up)){
+	 		up++;
+			continue;
+		}
+		if(isVariant(*up)){
+	 		up++;
+			continue;
+		}
+		if(isVariantSurrogate(up)){
+	 		up++;
+			continue;
+		}
 		if(!isAscii(up))
 			foundBase = TRUE;
 		else if(foundBase)
@@ -284,6 +300,37 @@ Uint32 convUTF16toUNICODE2(Uint16* up){
 	Uint16 ls = *up;
 	unicode += ((hs - 0xD800) << 10) + (ls - 0xDC00);
 	return unicode;
+}
+
+//サロゲートペア 異体字セレクタ U+E0100-U+E01EF
+//U+E0100 UTF-16 Encoding:	0xDB40 0xDD00
+//U+E01EF UTF-16 Encoding:	0xDB40 0xDDEF
+int isHighVariant(Uint16 u){
+	return (0xDB40 == u);
+}
+int isLowVariant(Uint16 u){
+	return (0xDD00 <= u && u <= 0xDDEF);
+}
+int isVariantSurrogate(Uint16* up){
+	Uint16 hs = *up++;
+	Uint16 ls = *up;
+	return (isHighVariant(hs) && isLowVariant(ls));
+}
+
+//異体字セレクタ U+E0100-U+E01EF
+int isVariant(Uint16 u){
+	return (0xFE00 <= u && u <= 0xFE0F);
+}
+
+//サロゲートペア&異体字セレクタを考慮した文字数
+int uint16len2(Uint16* u){
+	if(u==NULL)
+		return 0;
+	int l=0;
+	while(*u++!='\0')
+		if(!isVariantSurrogate(u)&&!isLowSurrogate(*u)&&!isVariant(*u))
+			l++;
+	return l;
 }
 
 /*

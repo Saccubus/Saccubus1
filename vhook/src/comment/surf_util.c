@@ -53,6 +53,7 @@ h_Surface* newSurface(SDL_Surface* surf){
 SDL_Surface* h_SDLSurf(h_Surface* surf){
 	SDL_Surface* sdlret = nullSurface(surf->w, surf->h);
 	h_SetSurfaceRLE(surf, 0xff);	//not use alpha
+	h_SetSurfaceBlendMode(surf, SDL_BLENDMODE_NONE);
 	SDL_BlitSurface(surf->s,NULL,sdlret,NULL);
 	h_FreeSurface(surf);
 	return sdlret;
@@ -114,8 +115,10 @@ h_Surface* connectSurface(h_Surface* top,h_Surface* bottom, int height){
 	if(ret == NULL) return NULL;	//for Error
 	//h_SetAlpha(top,SDL_RLEACCEL,0xff);	//not use alpha
 	h_SetSurfaceRLE(top, 0xff);	//not use alpha
+	h_SetSurfaceBlendMode(top, SDL_BLENDMODE_NONE);
 	//h_SetAlpha(bottom,SDL_RLEACCEL,0xff);	//not use alpha
 	h_SetSurfaceRLE(bottom, 0xff);	//not use alpha
+	h_SetSurfaceBlendMode(bottom, SDL_BLENDMODE_NONE);
 	h_BlitSurface(top,NULL,ret,NULL);
 	int w = bottom->w;
 	int dh = (height-(y+h))>>1 ;
@@ -144,8 +147,10 @@ h_Surface* arrangeSurface(h_Surface* left,h_Surface* right){
 	if(ret == NULL) return NULL;	//for Error
 	//h_SetAlpha(left,SDL_RLEACCEL,0xff);	//not use alpha
 	h_SetSurfaceRLE(left, 0xff);	//not use alpha
+	h_SetSurfaceBlendMode(left, SDL_BLENDMODE_NONE);
 	//h_SetAlpha(right,SDL_RLEACCEL,0xff);	//not use alpha
 	h_SetSurfaceRLE(right, 0xff);	//not use alpha
+	h_SetSurfaceBlendMode(right, SDL_BLENDMODE_NONE);
 	h_BlitSurface(left,NULL,ret,NULL);
 	SDL_Rect rect = {left->w,0,ret->w,ret->h};		//use only x y
 	h_BlitSurface(right,NULL,ret,&rect);

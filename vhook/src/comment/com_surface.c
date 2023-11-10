@@ -915,29 +915,55 @@ h_Surface* drawText2(DATA* data,int size,SDL_Color SdlColor,Uint16* str,int fill
 	int wasAscii = FALSE;
 	int isKanji = FALSE;
 	int wasKanji = FALSE;
+	int isSkip = FALSE;	//文字がサロゲートペア下位、異体字の場合は TRUE
 	while(*index != '\0'){
 		if(nextfont==UNDEFINED_FONT)
 			nextfont = GOTHIC_FONT;
 		if(debug)
 			fprintf(log,"[comsurface/drawText2]str[%d] U+%04hX try %s (base %s)",
 				index-str,*index,getfontname(nextfont),getfontname(basefont));
-		//サロゲートペアの下位文字の場合は飛ばす
-		if(isLowSurrogate(*index)) {
-			index++;
-			continue;
+		if(isVariantSurrogate(index)) {
+			if(debug)
+				fprintf(log," VariantSurrogate");
+			isSkip = TRUE;
+		}
+		else if(isVariant(*index)) {
+			if(debug)
+				fprintf(log," Variant");
+			isSkip = TRUE;
+		}
+		else if(isHighSurrogate(*index)) {
+			if(debug)
+				fprintf(log," HighSurrogate");
+			isSkip = FALSE;
+		}
+		else if(isLowSurrogate(*index)) {
+			if(debug)
+				fprintf(log," LowSurrogate");
+			isSkip = TRUE;
 		}
 		//get FontType and spaced code
-		newfont = getFontType(index,nextfont,data,stable_font);
-		wasAscii = foundAscii;
-		foundAscii = isAscii(index);
-		wasKanji = isKanji;
-		isKanji = isKanjiWidth(index);
-		if(newfont==UNDEFINED_FONT||newfont==NULL_FONT)
-			newfont = nextfont;
+		if (!isSkip) {
+			//if(debug)
+			//	fprintf(log," *getFontType*");
+			newfont = getFontType(index,nextfont,data,stable_font);
+			wasAscii = foundAscii;
+			foundAscii = isAscii(index);
+			wasKanji = isKanji;
+			isKanji = isKanjiWidth(index);
+			if(newfont==UNDEFINED_FONT||newfont==NULL_FONT)
+				newfont = nextfont;
+		}
 		if(debug)
-			fprintf(log," -->0x%08x,%s%s%s%s%s\n",(unsigned)newfont,getfontname(newfont),
+			fprintf(log," -->0x%08x,%s%s%s%s%s%s\n",(unsigned)newfont,getfontname(newfont),
+				isSkip?" Skip":"",
 				foundAscii?" found_Ascii":"",wasAscii?" was_Ascii":"",
 				isKanji?" Kanji":"",isKanji!=wasKanji?" change_Kanji_width":"");
+		if (isSkip) {
+			index++;
+			isSkip = FALSE;
+			continue;
+		}
 		if((newfont != fonttype)
 			|| (fonttype!=SIMSUN_FONT && isKanji != wasKanji))
 		{	//別のフォント出現、又は漢字幅チェック変化
@@ -1379,6 +1405,7 @@ SDL_Surface* getErrFont(DATA* data){
 	if(ef!=NULL){
 		ret = drawNullSurface(ef->w,ef->h);
 		h_SetSurfaceRLE(ret, 0xff);	//not use alpha
+		h_SetSurfaceBlendMode(ret, SDL_BLENDMODE_NONE);
 		h_BlitSurface(ef,NULL,ret,NULL);
 	}
 	return ret->s;	//copied ErrFont
