@@ -418,7 +418,6 @@ public class NicoXMLReader extends DefaultHandler {
 	public void endElement(String uri, String localName, String qName) {
 		if (qName.toLowerCase().equals("chat")) {
 			String com = sb.substring(0);
-			com = Util.DelEmoji2(sb.substring(0));	//異体字セレクタU+E0100〜U+E01EFのみ削除
 			// log.println("\t| "+com+" |");
 			boolean script = false;
 			//ニワン語処理
