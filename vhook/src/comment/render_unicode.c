@@ -11,6 +11,7 @@
 #include "../unicode/uniutil.h"
 #include "../wakuiro.h"
 
+int checkMSPGOTHIC(TTF_Font* font);	//main.c
 h_Surface* pointsConv(DATA* data,h_Surface* surf,Uint16* str,int size,int fontsel);
 h_Surface* widthFixConv(DATA *data,h_Surface* surf,Uint16 *str,int size,int fontsel);
 h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int size,int fontsel,int fill_bg){
@@ -79,9 +80,14 @@ h_Surface* render_unicode(DATA* data,TTF_Font* font,Uint16* str,SDL_Color fg,int
 	}
 	if(data->original_resize||data->html5comment)
 		return ret;
+	if(data->debug)
+		fprintf(data->log,"[ttf_unicode/render_unicode]checkMSPGOTHIC():%s\n",checkMSPGOTHIC(font)?"TRUE":"FALSE");
 	if(strstr(mode,"-point")!=NULL || strstr(mode,"-tune")!=NULL){
 		ret = pointsConv(data,ret,str,size,fontsel);
-	}else if(strstr(mode,"-old")==NULL){
+	//SDL1の場合はフォントがMS PGothicの時だけwidthFixConv()を呼ぶ
+	}else if(checkMSPGOTHIC(font) || strstr(mode,"-old")!=NULL){
+	//SDL2の時はMS PGothicでも呼ばない
+	//}else if(strstr(mode,"-old")!=NULL){
 		ret = widthFixConv(data,ret,str,size,fontsel);
 	}
 	return ret;
