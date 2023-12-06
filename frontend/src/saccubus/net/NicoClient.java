@@ -96,7 +96,6 @@ public class NicoClient {
 	static final char C_ESCAPE = '\\';
 	static final String JSON_START2 = "{&quot;ads&quot;:";	// HTML5 2021.12.02
 
-	private static final int SEGMENT_WAIT_TIME = 3000;
 	/**
 	 * ブラウザ共有しないでログイン
 	 * @param user
@@ -1333,10 +1332,8 @@ public class NicoClient {
 					video.delete();
 				}
 				
-				//long starttime = Stopwatch.getStartTime();
+				long starttime = Stopwatch.getStartTime();
 				int resumed = 0;
-				long begin_time = 0;
-				long end_time = 0;
 
 				String masterUrl = contentUri;
 				String masterBaseUrl = masterUrl.substring(0, masterUrl.lastIndexOf("/") + 1);
@@ -1436,7 +1433,7 @@ public class NicoClient {
 				{
 					max_size = tsUrlList.size();
 					for (String tsUrl : tsUrlList) {
-						  begin_time = System.currentTimeMillis();
+						
 						  URL urlTs = new URL(tsUrl);
 					      HttpURLConnection conn =
 					          (HttpURLConnection) urlTs.openConnection();
@@ -1491,15 +1488,13 @@ public class NicoClient {
 					      // Close Stream
 					      dataInStream.close();
 					      dataOutStream.close();
-						  end_time = System.currentTimeMillis() - begin_time;
+					      
 					      resumed++;
-					      sendStatus2(status, "dmc動画(hls)", max_size, resumed, (int)end_time);
+					      
+					      sendStatus(status, "dmc動画(hls)", max_size, resumed, starttime);
+
 					      try {
-					    	  if (end_time <= (long)SEGMENT_WAIT_TIME) {
-					    		  Thread.sleep(SEGMENT_WAIT_TIME-(int)end_time);
-					    	  } else {
-					    		  Thread.sleep(500);
-					    	  }
+					    	  Thread.sleep(200);
 					      } catch (InterruptedException e) {
 					      }
 					}
@@ -3011,16 +3006,6 @@ public class NicoClient {
 		long milisec = Stopwatch.getElapsedTime(start_mili);
 		if(milisec<=0) milisec=1;
 		str += String.format(", %dKbps", (size - resume_start)/milisec*8);
-		sendtext(status, msg+"ダウンロード：" + str);
-	}
-
-	private synchronized void sendStatus2(JLabel status, String msg,
-			int max_size, int size, int start_mili){
-		String str = "";
-		if (max_size > 0) {
-			str = String.format(" %d/%d ", size, max_size);
-		}
-		str += String.format("%dms", start_mili);
 		sendtext(status, msg+"ダウンロード：" + str);
 	}
 
