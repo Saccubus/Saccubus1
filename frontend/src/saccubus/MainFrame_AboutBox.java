@@ -52,8 +52,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 
 //	String version = "ver1.22r(2008/04/27)";
 
-	public static final String rev = "1.70.0.08";
-	private static final String modefied = " (2023/06/22)";
+	public static final String rev = "1.70.0.14";
+	private static final String modefied = " (2023/12/07)";
 
 	String productHTML =
 		"<html>" +
@@ -80,9 +80,8 @@ public class MainFrame_AboutBox extends JDialog implements ActionListener {
 		" <a href=\'http://osdn.jp/projects/coroid/wiki/Inqubus\'>"	+
 		"いんきゅばす</a>/inqubus1.7.2.zip<br/>を参考にしています。</p>" +
 		"<p>関連リンク<br/>" +
-		"さきゅばす <a href=\'http://osdn.jp/projects/saccubus/\'>osdn.jp/projects/saccubus</a><br/>" +
-		"coroid いんきゅばす<a href=\'http://osdn.jp/projects/coroid/\'>osdn.jp/projects/coroid</a>  雪羽氏<br/>" +
-		"<a href=\'https://egg.5ch.net/test/read.cgi/software/1675234536/l50\'>5chさきゅばすスレ 最新50</a>" +
+		"さきゅばす <a href=\'https://github.com/Saccubus/Saccubus1\'>github.com/Saccubus/Saccubus1</a><br/>" +
+		"<a href=\'https://egg.5ch.net/test/read.cgi/software/1700762232/l50\'>5chさきゅばすスレ 最新50</a>" +
 		"</p></html>";
 
 	JPanel panel1 = new JPanel();
