@@ -2,11 +2,12 @@
 
 変更内容
 1.70.0.09(2023/07/06)
+- saccubus.jarをSaccubus.exeに統合
+　通常のさきゅばす起動方法は今までと変わりません
+　バッチファイルなどで java -jar Saccubus.jar [Option]としてる場合は Saccubus.exe [Option]
+　に変更してください
 - 暗号化された動画をDLする際以下の表示のまま停止するのを修正
 「オプショナルスレッドの中間ファイルへの変換中」
-- 動画ダウンロード時に「(DLしたセグメント)/(総セグメント) (セグメントをDLした時間)」
-  のように表記するよう修正
-- 動画ダウンロード時のセグメント間のWAIT_TIMEを調整
 - Util.javaを1.67.8.15と同一ソースに修正
 
 ※さきゅばすWiki(https://github.com/Saccubus/Saccubus1/wiki )に
