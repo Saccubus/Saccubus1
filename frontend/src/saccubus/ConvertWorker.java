@@ -838,7 +838,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						result = "40";
 						return false;
 					}
-					String name = getVideoBaseName() + ".flv";
+					String name = getVideoBaseName() + ".mp4";
 					VideoFile = new File(folder, name);
 					if(isEcoVideo){
 						lowVideoFile = new File(folder, name.replace(VideoID, lowVideoID));
@@ -1049,7 +1049,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					long size_exist = 0;
 					File video_exist = null;
 					File dmcVideoFileTmp = null;
-					if(existVideoFile(dmcVideoFile, ".flv", ".mp4")){
+					if(existVideoFile(dmcVideoFile, ".flv", ".mp4")||existVideoFile(VideoFile, ".flv", ".mp4")){
 						sendtext("dmc動画は既に存在します");
 						if(!Setting.isEnableCheckSize()){
 							log.println("dmc動画は既に存在します。ダウンロードをスキップします");
@@ -1312,6 +1312,14 @@ public class ConvertWorker extends SwingWorker<String, String> {
 								dmcLowVideoFile = null;
 							}
 						}
+					}else {
+						// [id]dmc_を[id]にrename
+						if(dmcVideoFile!=null && dmcVideoFile.canRead()){
+							VideoFile.delete();
+							dmcVideoFile.renameTo(VideoFile);
+							dmcVideoFile = VideoFile;
+							dmc_size = dmcVideoFile.length();
+						}
 					}
 					if(dmc_size!=0)
 						log.println("dmc size: "+(dmc_size>>20)+"MiB");
@@ -1399,6 +1407,9 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if(existVideo.isFile() && existVideo.canRead())
 			return true;
 		existVideo = Path.getReplacedExtFile(file, ext2);
+		if(existVideo.isFile() && existVideo.canRead())
+			return true;
+		existVideo = Path.getReplacedExtFile(file, ".ts");
 		if(existVideo.isFile() && existVideo.canRead())
 			return true;
 		return false;
