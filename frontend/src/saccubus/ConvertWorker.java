@@ -1328,7 +1328,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						}
 					}else {
 						// [id]dmc_を[id]にrename
-						if(dmcVideoFile!=null && dmcVideoFile.canRead()){
+						if(!skip && dmcVideoFile!=null && dmcVideoFile.canRead()){
 							VideoFile.delete();
 							dmcVideoFile.renameTo(VideoFile);
 							dmcVideoFile = VideoFile;
