@@ -300,6 +300,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private File appendCommentFile;
 	private File appendOptionalFile;
 	private File appendEasyFile;
+	private File appendNicosFile;
 	//private File lowVideoFile;
 	//private File dmcVideoFile;
 	private File resumeDmcFile;
@@ -711,17 +712,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					result = "30";
 					return false;
 				}
-			}
-		} else {
-			if (isDeleteVideoAfterConverting()) {
-				sendtext("変換しないのに、動画削除しちゃって良いんですか？");
-				result = "31";
-				return false;
-			}
-			if (isDeleteCommentAfterConverting()) {
-				sendtext("変換しないのに、コメント削除しちゃって良いんですか？");
-				result = "32";
-				return false;
 			}
 		}
 		proxy = Setting.getProxy();
@@ -1601,7 +1591,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				nicosCommentFile = Path.getReplacedExtFile(CommentFile, NICOS_EXT);
 				// 前処理
 				backup = false;
-				File appendNicosFile = mkTemp(TMP_APPEND_NICOS_EXT);
+				appendNicosFile = mkTemp(TMP_APPEND_NICOS_EXT);
 				if(nicosCommentFile.exists()){
 					backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
 				}
@@ -2066,7 +2056,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 						nicosCommentFile.delete();
 					else{
 						backup = false;
-						File appendNicosFile = mkTemp(TMP_APPEND_NICOS_EXT);
+						appendNicosFile = mkTemp(TMP_APPEND_NICOS_EXT);
 						backup = Path.fileCopy(nicosCommentFile, appendNicosFile);
 						filelist.clear();
 						filelist.add(nicosCommentFile);
@@ -2561,7 +2551,16 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		if (OptionalThreadFile != null && OptionalThreadFile.delete()){
 			log.println("Deleted: " + OptionalThreadFile.getPath());
 		}
+		if (EasyCommentFile != null && EasyCommentFile.delete()){
+			log.println("Deleted: " + EasyCommentFile.getPath());
+		}
+		if (nicosCommentFile != null && nicosCommentFile.delete()){
+			log.println("Deleted: " + nicosCommentFile.getPath());
+		}
 		deleteList(listOfCommentFile);
+		if (commentJson != null && commentJson.delete()){
+			log.println("Deleted: " + commentJson.getPath());
+		}
 		if (OwnerCommentFile != null && OwnerCommentFile.delete()) {
 			log.println("Deleted: " + OwnerCommentFile.getPath());
 		}
@@ -3098,6 +3097,10 @@ public class ConvertWorker extends SwingWorker<String, String> {
 				deleteFile(CombinedCommentFile);
 				deleteFile(CombinedEasyFile);
 				deleteFile(CombinedOptionalFile);
+				deleteFile(appendCommentFile);
+				deleteFile(appendEasyFile);
+				deleteFile(appendOptionalFile);
+				deleteFile(appendNicosFile);
 				return result;
 			}
 		} catch (IOException ex) {
