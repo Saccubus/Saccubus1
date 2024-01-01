@@ -2951,9 +2951,8 @@ public class NicoClient {
 			if (!m_genre.isNull()) {
 				sb.append(makeNewElement("genre",m_genre.getAsString("label")));
 			}
-			Mson m_owner = dataApiMson.get2("owner");
-			if (m_owner.isNull()) {
-				m_owner = dataApiMson.get2("channel");
+			Mson m_owner = dataApiMson.get2("channel");
+			if (!m_owner.isNull()) {
 				String user_id = m_owner.getAsString("id");
 				if(user_id==null)
 					user_id = "";
@@ -2967,18 +2966,26 @@ public class NicoClient {
 					thumbnail = "";
 				sb.append(makeNewElement("ch_icon_url",thumbnail));
 			} else {
-				String user_id = m_owner.getAsString("id");
-				if(user_id==null)
-					user_id = "";
-				sb.append(makeNewElement("user_id",user_id));
-				String nickname = m_owner.getAsString("nickname");
-				if(nickname==null)
-					nickname = "";
-				sb.append(makeNewElement("user_nickname",ChatSave.safeReference(nickname)));
-				String thumbnail = m_owner.getAsString("iconUrl");
-				if(thumbnail==null)
-					thumbnail = "";
-				sb.append(makeNewElement("user_icon_url",thumbnail));
+				m_owner = dataApiMson.get2("owner");
+				if (!m_owner.isNull()) {
+					String user_id = m_owner.getAsString("id");
+					if(user_id==null)
+						user_id = "";
+					sb.append(makeNewElement("user_id",user_id));
+					String nickname = m_owner.getAsString("nickname");
+					if(nickname==null)
+						nickname = "";
+					sb.append(makeNewElement("user_nickname",ChatSave.safeReference(nickname)));
+					String thumbnail = m_owner.getAsString("iconUrl");
+					if(thumbnail==null)
+						thumbnail = "";
+					sb.append(makeNewElement("user_icon_url",thumbnail));
+				}
+				else {
+					sb.append(makeNewElement("user_id",""));
+					sb.append(makeNewElement("user_nickname",""));
+					sb.append(makeNewElement("user_icon_url",""));
+				}
 			}
 			sb.append("</thumb>\n");
 			sb.append("</nicovideo_thumb_response>\n");

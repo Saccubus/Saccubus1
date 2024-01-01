@@ -1813,7 +1813,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if(userID==null || userID.isEmpty() || userID.equals("none")){
 				sendtext("投稿者の情報がありません");
 				result = "A5";
-				return false;
+				return true;
 			}
 			log.println("投稿者:"+userID);
 			File userFolder = new File(Setting.getUserFolder());
