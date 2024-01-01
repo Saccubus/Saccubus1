@@ -1,6 +1,8 @@
 package saccubus.conv;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -74,7 +76,16 @@ public class CombineXML {
 				String linecount = text.replaceAll("[^\n]", "");
 				Path.writeAllText(file, text, "UTF-8");
 				log.println("\nLines: "+linecount.length()+", File:"+file.getPath());
-				saxparser.parse(file, xmlhandler);
+				//saxparser.parse(file, xmlhandler);
+				try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(file));){
+					saxparser.parse(is, xmlhandler);
+				}catch (IOException ex) {
+					ex.printStackTrace();
+				} catch (SAXException ex) {
+					ex.printStackTrace();
+				} catch (PatternSyntaxException ex) {
+					ex.printStackTrace();
+				}
 			}
 			// 変換結果の書き込み
 			chatArray.writeXML(output);

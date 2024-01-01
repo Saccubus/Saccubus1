@@ -1,10 +1,13 @@
 package saccubus.conv;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -55,7 +58,16 @@ public class ConvertToVideoHook {
 				return false;
 			}
 			if (nico_reader != null) {
-				parser.parse(file, nico_reader);
+				//parser.parse(file, nico_reader);
+				try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(file));){
+					parser.parse(is, nico_reader);
+				}catch (IOException ex) {
+					ex.printStackTrace();
+				} catch (SAXException ex) {
+					ex.printStackTrace();
+				} catch (PatternSyntaxException ex) {
+					ex.printStackTrace();
+				}
 			}
 			// 変換結果の書き込み
 			FileOutputStream fos = new FileOutputStream(out);
