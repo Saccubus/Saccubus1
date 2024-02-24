@@ -307,7 +307,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 	private boolean isConverting = false;
 	private boolean isDebugNet = false;
 	private boolean isLive = false;
-
+	private boolean isSkipVideo = false;
 	public File getVideoFile() {
 		return VideoFile;
 	}
@@ -787,6 +787,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 		sendtext("動画の保存");
 		/*動画の保存*/
 		try {
+			isSkipVideo = false;
 			if (isSaveVideo()) {
 				if (client == null){
 					sendtext("ログインしてないのに動画の保存になりました");
@@ -803,21 +804,6 @@ public class ConvertWorker extends SwingWorker<String, String> {
 					}else{
 						isEcoVideo = true;
 					}
-				}
-				if (client.getVideoLength() <= 0) {
-					sendtext("動画が読み込めないのでダウンロードスキップします");
-					result = "4B";
-					return true;
-				}
-				if (client.isVideoEncrypt()) {
-					sendtext("暗号化されている動画なのでダウンロードスキップします");
-					result = "4A";
-					return true;
-				}
-				if (client.isVideoHlsOnly()) {
-					sendtext("HLSのみの動画なのでダウンロードスキップします");
-					result = "49";
-					return true;
 				}
 				if (isVideoFixFileName()) {
 					if (folder.mkdir()) {
@@ -1064,6 +1050,19 @@ public class ConvertWorker extends SwingWorker<String, String> {
 							}
 						}
 					} 
+
+					if (client!=null && !client.isDmcInfo()){
+						sendtext("動画が読み込めないのでダウンロードスキップします");
+						result = "4B";
+						isSkipVideo = true;
+						return true;
+					}
+					if (client!=null && client.isVideoEncrypt()) {
+						sendtext("暗号化されている動画なのでダウンロードスキップします");
+						result = "4A";
+						isSkipVideo = true;
+						return true;
+					}
 					if(!skip){
 						long min_size = Math.max(Math.max(video_size, long_size_smile),size_exist);
 						long[] limits = {min_size, 0, 0};	// limits[1] is return value
@@ -3026,7 +3025,7 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			//manager.sendTimeInfo();
 			if (!isSaveConverted() ||
 				(client != null && client.getVideoLength() <= 0) ||
-				(client != null && client.isVideoEncrypt())) {
+				isSkipVideo) {
 				sendtext("動画・コメントを保存し、変換は行いませんでした。");
 				result = "0";
 				return result;

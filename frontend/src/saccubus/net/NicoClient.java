@@ -841,7 +841,8 @@ public class NicoClient {
 	private boolean economy = false;
 	private String ownerFilter;			// video owner filter（replace）
 	private boolean encryption = false;
-	private boolean hlsonly = false;
+ 	private boolean hlsonly = false;
+	private boolean isdmcinfo = false;
 	public boolean initVideoInfo() {
 		// 各変数の初期化
 		VideoUrl = null;
@@ -852,6 +853,7 @@ public class NicoClient {
 		dataApiMson = null;
 		thumbInfoData = null;
 		isDmc = "1";
+		isdmcinfo = false;
 		size_video_thumbinfo = null;
 		size_low = size_high = "1";
 
@@ -2833,6 +2835,10 @@ public class NicoClient {
 		return hlsonly;
 	}
 
+	public boolean isDmcInfo() {
+		return isdmcinfo;
+	}
+
 	private String thumbInfoData;
 //	private String watchApiJson = null;
 //	private String flvInfo;
@@ -3037,14 +3043,19 @@ public class NicoClient {
 			}
 			isDmc = "1";
 			VideoLength = dmcVideoLength = -1;
+			isdmcinfo = false;
+			encryption = false;
 			Mson m_dmcInfo = dataApiMson.get("urls");
 			if(!m_dmcInfo.isNull()){
+				log.println("DMC Server");
 				debugPrettyPrint("■m_dmcInfo: ",m_dmcInfo+"\n");
 				dmcInfo = m_dmcInfo.getAsString();
+				isdmcinfo = true;
 				debug("■dmcInfo: "+dmcInfo+"\n");
+			}else{
+				log.println("DMS Server");
 			}
-			log.println("isDmc: "+isDmc+", serverIsDmc(): " + serverIsDmc());
-			if(serverIsDmc() && !m_dmcInfo.isNull()){
+			if(serverIsDmc()) {
 				Mson m_video = dataApiMson.get2("video");
 				String l = m_video.getAsString("duration");
 				try {
@@ -3054,24 +3065,26 @@ public class NicoClient {
 				};
 				dmcVideoLength = VideoLength;
 				log.println("dmcVideoLength: "+dmcVideoLength);
-				Mson m_sessionApi = dataApiMson.get("session");
-				sessionApi = m_sessionApi.getAsString("url");
-				log.println("sessionApi: "+sessionApi);
-				dmcToken = m_sessionApi.getAsString("token");
-				log.println("dmcToken: "+dmcToken);
-				dmcTokenUnEscape =
-					dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
-				debug("■dmcTokenUnEscape:\n "+dmcTokenUnEscape+"\n");
-				//
-				setFromSessionApi(m_sessionApi);
-				debug("\n");
-				Mson m_protocol = m_sessionApi.get("protocols");
-				hlsonly = m_protocol.toString().indexOf("http") > -1 ? false : true;
-				debug("Video Protocols: "+m_protocol.toString()+"\n");
-				debug("Video IsHLSOnly: "+hlsonly+"\n");
-				Mson m_encryption = dataApiMson.get("encryption");
-				encryption = m_encryption.isNull() ? false : true;
-				debug("Video Encryption: "+encryption+"\n");
+				if (!m_dmcInfo.isNull()){
+					Mson m_sessionApi = dataApiMson.get("session");
+					sessionApi = m_sessionApi.getAsString("url");
+					log.println("sessionApi: "+sessionApi);
+					dmcToken = m_sessionApi.getAsString("token");
+					log.println("dmcToken: "+dmcToken);
+					dmcTokenUnEscape =
+							dmcToken.replace("\\/", "/").replace("\\\"", S_QUOTE2).replace("\\\\", S_ESCAPE);
+					debug("■dmcTokenUnEscape:\n "+dmcTokenUnEscape+"\n");
+					//
+					setFromSessionApi(m_sessionApi);
+					debug("\n");
+					Mson m_protocol = m_sessionApi.get("protocols");
+					hlsonly = m_protocol.toString().indexOf("http") > -1 ? false : true;
+					debug("Video Protocols: "+m_protocol.toString()+"\n");
+					debug("Video IsHLSOnly: "+hlsonly+"\n");
+					Mson m_encryption = dataApiMson.get("encryption");
+					encryption = m_encryption.isNull() ? false : true;
+					debug("Video Encryption: "+encryption+"\n");
+				}
 			}
 
 			//comments for New Comment Server
