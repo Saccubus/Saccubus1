@@ -3176,7 +3176,10 @@ public class NicoClient {
 			//2023/06/09修正 エコノミータイムの動画は360p、64kに制限される
 			//- 最高画質が360p、64kの動画（ほとんど古い動画の場合）
 			//- エコノミータイムでも最高画質、128kで取得できる動画（あるかどうか不明）
+			//2024/03/01 エコノミータイム廃止により常にfalseに変更
 			log.println("isPeakTime: "+dataApiMson.get("isPeakTime"));
+			economy = false;
+			/*
 			Mson m_delivery = dataApiMson.get("delivery");
 			if ("1".equals(Premium)) {
 				economy = false;
@@ -3191,6 +3194,7 @@ public class NicoClient {
 					}
 				}
 			}
+			 */
 			log.println("economy: "+economy +" ,isEco(): "+ isEco());
 			if(size_video_thumbinfo==null){
 				size_video_thumbinfo = economy? size_low : size_high;
