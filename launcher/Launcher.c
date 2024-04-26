@@ -11,8 +11,8 @@
 #include <stdio.h>
 #include <windows.h>
 
-#define CMD_CHECK "java.exe"
-#define CMD_RUN "java -jar Saccubus.jar"
+#define CMD_CHECK "javaw.exe"
+#define CMD_RUN "javaw -jar Saccubus.jar"
 #define CMD_LOG "[log]frontend.txt"
 
 int doCmd(char* command,int show_msg,const char* log_name);
