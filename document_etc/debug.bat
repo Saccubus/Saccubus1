@@ -9,15 +9,15 @@ set log=log.txt
 PATH %~dp0;%PATH%
 PATH
 :default
-for %%I in (java.exe) do @set java="%%~$PATH:I"
+for %%I in (javaw.exe) do @set java="%%~$PATH:I"
 if not %java% == "" goto :javago
 :Java8
 set jhome=\Program Files\Java\jre8\bin;\Program Files (x86)\Java\jre8\bin;C:\Program Files\Java\jre8\bin;C:\Program Files (x86)\Java\jre8\bin
-for %%I in (java.exe) do @set java="%%~$jhome:I"
+for %%I in (javaw.exe) do @set java="%%~$jhome:I"
 if not %java% == "" goto :javago
 :Java7
 set jhome=\Program Files\Java\jre7\bin;\Program Files (x86)\Java\jre7\bin;C:\Program Files\Java\jre7\bin;C:\Program Files (x86)\Java\jre7\bin
-for %%I in (java.exe) do @set java="%%~$jhome:I"
+for %%I in (javaw.exe) do @set java="%%~$jhome:I"
 if not %java% == "" goto :javago
 goto :error
 
@@ -30,10 +30,10 @@ echo %java% >%log% 2>&1
 %java% -jar Saccubus.jar 2>&1 | %java% -cp Bin.jar Tee -a %log%
 goto :eof
 :error
-echo java.exeが見つかりません。
+echo javaw.exeが見つかりません。
 echo readmeNew.txtを参照してJavaをインストールしてパスを設定したください。
 echo.
-echo java.exeが見つかりません。>>%log%
+echo javaw.exeが見つかりません。>>%log%
 echo readmeNew.txtを参照してJavaをインストールしてパスを設定したください。>>%log%
 echo.
 pause
