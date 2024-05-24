@@ -1470,18 +1470,20 @@ public class NicoClient {
 					os.write(buf, 0, read);
 					sendStatus(status, "dmc動画", max_size, size, starttime);
 					//Stopwatch.show();
-					if (flag.needStop()) {
-						log.println("\nStopped.");
-						timer.cancel();
-						is.close();
-						os.flush();
-						os.close();
-						con.disconnect();
-						if (video.delete()){
-							log.println("video deleted.");
-						}
-						return null;
+					if (flag.needStop())
+						break;
+				}
+				if (flag.needStop()) {
+					log.println("\nStopped.");
+					timer.cancel();
+					is.close();
+					os.flush();
+					os.close();
+					con.disconnect();
+					if (video.delete()){
+						log.println("video deleted.");
 					}
+					return null;
 				}
 				debugsOut("\n■read+write statistics(bytes) ");
 				timer.cancel();
