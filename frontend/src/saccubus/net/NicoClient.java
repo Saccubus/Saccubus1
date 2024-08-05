@@ -3221,13 +3221,10 @@ public class NicoClient {
 */
 	private String getDataApiData(String text, String encoding, String comment){
 		// 動画ページのJSONを取り出す
-		text = getXmlElement1(text, "body");	//body
-		if(text==null)
-			return null;
-		text = getXmlAttribute(text, "data-api-data");
-			//div id="js-initial-watch-data" data-api-data="{
+		//text = getXmlAttribute(text, "data-api-data");
+		text = getXmlAttribute(text, "server-response");	//2024.8.5
 		if(text==null){
-			log.println("error: not found data-api-data");
+			log.println("error: not found server-response");
 			return null;
 		}
 		int start = text.indexOf(JSON_START2);
@@ -3239,7 +3236,7 @@ public class NicoClient {
 		int end = (text+json_end).indexOf(json_end, start);	// end of JSON
 		text = (text+json_end).substring(start, end);
 		if(text==null || text.isEmpty()){
-			log.println("error: not found dataApi JSON2");
+			log.println("error: not found server-response JSON2");
 			return null;
 		}
 		text = text.replace("&quot;", S_QUOTE2);
@@ -3460,8 +3457,9 @@ public class NicoClient {
 		return null;
 	}
 
-	private String getXmlAttribute(String input, String atribname){
-		Pattern p = Pattern.compile("<[^>]*"+atribname+"=\"([^\"]+)\"[^>]*>",Pattern.DOTALL);
+	private String getXmlAttribute(String input, String key){
+		Pattern p = Pattern.compile("\""+key+"\" content=\"([^\"]+)\"",Pattern.DOTALL);
+		log.print(p.toString());
 		Matcher m = p.matcher(input);
 		if(m.find())
 			return m.group(1);
