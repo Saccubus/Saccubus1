@@ -16,7 +16,7 @@ import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -278,7 +278,7 @@ public class NicoClient {
 				setExtraError("HOSTが取得できません。");
 				return null;
 			}
-			HttpURLConnection con = (HttpURLConnection) (new URL(url))
+			HttpURLConnection con = (HttpURLConnection) (URI.create(url).toURL())
 					.openConnection(ConProxy);
 			/* リクエストの設定 */
 	// this is a successfull request header from waterfox to nmsg.nicovideo.jp/api/
@@ -426,7 +426,7 @@ public class NicoClient {
 			log.print("Trying login...");
 			String url = "https://account.nicovideo.jp/login/redirector?show_button_twitter=1&site=niconico&show_button_facebook=1&next_url=%2F";
 			debug("\n■HTTPS<" + url + ">\n");
-			HttpURLConnection con = (HttpsURLConnection) (new URL(url))
+			HttpURLConnection con = (HttpsURLConnection) (URI.create(url).toURL())
 				.openConnection(ConProxy);
 			/* 出力のみ */
 			con.setDoOutput(true);
@@ -463,7 +463,7 @@ public class NicoClient {
 				String otp = null;
 				String loc = con.getHeaderField("location");
 				debug("■Location:" + loc + "\n");
-				con = (HttpsURLConnection) (new URL(loc))
+				con = (HttpsURLConnection) (URI.create(loc).toURL())
 						.openConnection(ConProxy);
 				con.setRequestMethod("GET");
 				con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
@@ -513,7 +513,7 @@ public class NicoClient {
 					con.disconnect();
 					return false;
 				}
-				con = (HttpsURLConnection) (new URL(loc))
+				con = (HttpsURLConnection) (URI.create(loc).toURL())
 						.openConnection(ConProxy);
 				con.setDoOutput(true);
 				HttpURLConnection.setFollowRedirects(false);
@@ -546,7 +546,7 @@ public class NicoClient {
 					return false;
 				}
 				debug("■Location:" + loc + "\n");
-				con = (HttpsURLConnection) (new URL(loc))
+				con = (HttpsURLConnection) (URI.create(loc).toURL())
 						.openConnection(ConProxy);
 				con.setRequestMethod("GET");
 				con.setRequestProperty("User-Agent", "Java/Saccubus-"+MainFrame_AboutBox.rev);
@@ -1093,7 +1093,7 @@ public class NicoClient {
 			url = apiSessionUrl + "?suppress_response_codes=true&_format=xml";
 			debug("\n■URL<" + url + ">\n");
 			//	con = urlConnect(url, "POST", null, true, true, "keep-alive", false);
-			con = (HttpURLConnection) (new URL(url)).openConnection(ConProxy);
+			con = (HttpURLConnection) (URI.create(url).toURL()).openConnection(ConProxy);
 			con.setDoOutput(true);
 			HttpURLConnection.setFollowRedirects(false);
 			con.setInstanceFollowRedirects(false);
@@ -2625,7 +2625,7 @@ public class NicoClient {
 		backcomment = back_comment;
 		try {
 			fosb = new FileOutputStream(file);
-			con = (HttpsURLConnection) (new URL(url))
+			con = (HttpsURLConnection) (URI.create(url).toURL())
 					.openConnection(ConProxy);
 			debug("\n■HTTPS<" + url + ">\n");
 			con.setDoOutput(true);
@@ -3624,7 +3624,7 @@ public class NicoClient {
 				debug("\n");
 				debug("■heartbeat URL<" + url + ">\n");
 				//	con = urlConnect(url, "POST", null, true, true, "keep-alive", false);
-				con = (HttpURLConnection)(new URL(url)).openConnection(ConProxy);
+				con = (HttpURLConnection)(URI.create(url).toURL()).openConnection(ConProxy);
 				con.setDoOutput(true);
 				HttpURLConnection.setFollowRedirects(false);
 				con.setInstanceFollowRedirects(false);

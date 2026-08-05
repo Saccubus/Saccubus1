@@ -14,7 +14,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
-import java.net.URL;
+import java.net.URI;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JLabel;
@@ -187,7 +187,7 @@ public class Loader {
 		NicoMap map = new NicoMap();
 		try {
 			debug("\n▼HTTPS<" + url + ">\n");
-			HttpURLConnection con = (HttpsURLConnection)(new URL(url)).openConnection(Proxy.NO_PROXY);
+			HttpURLConnection con = (HttpsURLConnection)(URI.create(url).toURL()).openConnection(Proxy.NO_PROXY);
 			con.setDoInput(true);
 			con.setInstanceFollowRedirects(false);
 			con.setRequestMethod("GET");
