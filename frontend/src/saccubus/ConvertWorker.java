@@ -738,9 +738,8 @@ public class ConvertWorker extends SwingWorker<String, String> {
 			if (!BrowserInfo.isBrowser(Setting)){
 				mailAddress = Setting.getMailAddress();
 				password = Setting.getPassword();
-				if (mailAddress == null || mailAddress.isEmpty()
-					|| password == null || password.isEmpty()) {
-					sendtext("ログインセッション無し、メールアドレスかパスワードが空白です。");
+				if (password == null || password.isEmpty()) {
+					sendtext("セッションにcookie(user_session)を指定してください。");
 					result = "33";
 					return false;
 				}

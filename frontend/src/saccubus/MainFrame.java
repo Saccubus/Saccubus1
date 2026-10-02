@@ -51,7 +51,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
@@ -200,7 +199,7 @@ public class MainFrame extends JFrame {
 	JLabel MailAddrLabel = new JLabel();
 	JTextField MailAddrField = new JTextField();
 	JLabel PasswordLabel = new JLabel();
-	JPasswordField PasswordField = new JPasswordField();
+	JTextField PasswordField = new JTextField();
 	JPanel CommentSaveInfoPanel = new JPanel();
 //	JPanel OwnerCommentInfoPanel = new JPanel();
 	JPanelHideable OldCommentModePanel;
@@ -1231,7 +1230,7 @@ public class MainFrame extends JFrame {
 				String pswd = null;
 				try {
 					mlad = MailAddrField.getText();
-					pswd = new String(PasswordField.getPassword());
+					pswd = PasswordField.getText();
 				}catch(NullPointerException ex){
 					//e.printStackTrace();
 					mlad = null;
@@ -1382,8 +1381,11 @@ public class MainFrame extends JFrame {
 		UserInfoPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
 				.createEtchedBorder(), "ユーザ設定"));
 		UserInfoPanel.setLayout(gridBagLayout3);
-		MailAddrLabel.setText("メールアドレス");
-		PasswordLabel.setText("パスワード");
+		MailAddrLabel.setText("　");
+		MailAddrField.setEditable(false);
+		MailAddrField.setEnabled(false);
+		PasswordLabel.setText("セッション");
+		PasswordLabel.setToolTipText("ブラウザのcookie(user_session)を直接指定してください");
 		GridBagLayout gridBagLayout13 = new GridBagLayout();
 		BrowserInfoPanel.setLayout(gridBagLayout13);
 		BrowserInfoPanel.setBorder(BorderFactory.createTitledBorder(
@@ -1404,6 +1406,7 @@ public class MainFrame extends JFrame {
 		BrowserInfoPanel.add(BrowserInfoLabel, grid13_x0_y0_96);
 		BrowserIECheckBox.setText("Interner Eplorer (IE7/IE8/IE9～11)");
 		BrowserIECheckBox.setForeground(Color.blue);
+		BrowserIECheckBox.setEnabled(false);
 		GridBagConstraints grid13_x0_y1_97 = new GridBagConstraints();
 		grid13_x0_y1_97.gridx = 0;
 		grid13_x0_y1_97.gridy = 1;
@@ -1426,6 +1429,7 @@ public class MainFrame extends JFrame {
 		BrowserInfoPanel.add(BrowserFFCheckBox, grid13_x0_y2_98);
 		BrowserChromeCheckBox.setText("Google Chrome(ver 33.0.x.x以降は暗号化のため不可)");
 		BrowserChromeCheckBox.setForeground(Color.blue);
+		BrowserChromeCheckBox.setEnabled(false);
 		GridBagConstraints grid13_x0_y3_99 = new GridBagConstraints();
 		grid13_x0_y3_99.gridx = 0;
 		grid13_x0_y3_99.gridy = 3;
@@ -1437,6 +1441,7 @@ public class MainFrame extends JFrame {
 		BrowserInfoPanel.add(BrowserChromeCheckBox, grid13_x0_y3_99);
 		BrowserOperaCheckBox.setText("Opera(ver 20.0以降は暗号化のため不可)");
 		BrowserOperaCheckBox.setForeground(Color.blue);
+		BrowserOperaCheckBox.setEnabled(false);
 		GridBagConstraints grid13_x0_y4_100 = new GridBagConstraints();
 		grid13_x0_y4_100.gridx = 0;
 		grid13_x0_y4_100.gridy = 4;
@@ -1448,6 +1453,7 @@ public class MainFrame extends JFrame {
 		BrowserInfoPanel.add(BrowserOperaCheckBox, grid13_x0_y4_100);
 		BrowserChromiumCheckBox.setText("Chromium派生 (SRware Ironなど)");
 		BrowserChromiumCheckBox.setForeground(Color.blue);
+		BrowserChromiumCheckBox.setEnabled(false);
 		GridBagConstraints grid13_x0_y5_101 = new GridBagConstraints();
 		grid13_x0_y5_101.gridx = 0;
 		grid13_x0_y5_101.gridy = 5;
@@ -4044,8 +4050,9 @@ public class MainFrame extends JFrame {
 			comment_len = 500;
 		}
 		return new ConvertingSetting(
-			MailAddrField.getText(),
-			new String(PasswordField.getPassword()),
+//				MailAddrField.getText(),
+			"",
+			PasswordField.getText(),
 			SavingVideoCheckBox.isSelected(),
 			VideoSavedFileField.getText(),
 			SavingCommentCheckBox.isSelected(),
@@ -4237,7 +4244,7 @@ public class MainFrame extends JFrame {
 		}
 	}
 	private void doSetSetting(ConvertingSetting setting) {
-		MailAddrField.setText(setting.getMailAddress());
+		MailAddrField.setText("");
 		PasswordField.setText(setting.getPassword());
 		SavingVideoCheckBox.setSelected(setting.isSaveVideo());
 		VideoSavedFileField.setText(setting.getVideoFile().getPath());

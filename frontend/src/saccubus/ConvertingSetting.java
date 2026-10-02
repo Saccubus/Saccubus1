@@ -1461,7 +1461,7 @@ public class ConvertingSetting {
 		if(user == null) user = "";
 		if(password == null) password = "";
 		if(encrypt_pass == null) encrypt_pass = "";
-		if (!user.isEmpty() && !password.isEmpty() && encrypt_pass.isEmpty()){
+		if (!password.isEmpty() && encrypt_pass.isEmpty()){
 			// パスワードを暗号化する
 			Key skey = Encryption.makeKey(128,user);
 			String try_encryption = Encryption.encode(password, skey);
@@ -1473,8 +1473,6 @@ public class ConvertingSetting {
 			} else {
 				System.out.println("パスワード暗号化失敗");
 			}
-		}else if(encrypt_pass.isEmpty()) {
-			System.out.println("メールアドレスが無効なため、パスワードを暗号化しません");
 		}
 		prop.setProperty(PROP_MAILADDR, user);
 		prop.setProperty(PROP_PASSWORD, password);
@@ -1794,7 +1792,7 @@ public class ConvertingSetting {
 		String encrypt_pass = prop.getProperty(PROP_ENCRYPT_PASS, "");
 		if (password == null) {
 			password = prop.getProperty(PROP_PASSWORD, "");
-			if (!user.isEmpty() && password.startsWith("#")){
+			if (password.startsWith("#")){
 				//encrypt_pass = prop.getProperty(PROP_ENCRYPT_PASS, "");
 				if (encrypt_pass.startsWith("_")){
 					// 暗号化パスワードを復号する

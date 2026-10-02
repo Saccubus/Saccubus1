@@ -37,8 +37,6 @@ public class Loader {
 	private String password;
 	private String proxy;
 	private int proxyPort;
-	//private String userSession;
-	//private BrowserCookieKind browserKind;
 	private BrowserInfo browserInfo;
 	private Logger log;
 	private boolean Debug = false;
@@ -95,9 +93,8 @@ public class Loader {
 		if (!BrowserInfo.isBrowser(setting)){
 			mailAddress = setting.getMailAddress();
 			password = setting.getPassword();
-			if (mailAddress == null || mailAddress.isEmpty()
-				|| password == null || password.isEmpty()) {
-				sendtext("メールアドレスかパスワードが空白です。");
+			if (password == null || password.isEmpty()) {
+				sendtext("セッションにcookie(user_session)を指定してください。");
 				return false;
 			}
 		} else if (!browserInfo.isValid()){
@@ -127,6 +124,7 @@ public class Loader {
 			// セッション共有、ログイン済みのNicoClientをclientに返す
 			client = new NicoClient(browserInfo, proxy, proxyPort, stopwatch, log, isHtml5);
 		} else {
+			// passwordにセッションを指定し、ログイン済みのNicoClientをclientに返す
 			client = new NicoClient(mailAddress, password, browserInfo, proxy, proxyPort, stopwatch, log, isHtml5);
 		}
 		if (!client.isLoggedIn()) {

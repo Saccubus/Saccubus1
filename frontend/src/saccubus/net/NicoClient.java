@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.CookieManager;
-import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -94,6 +93,47 @@ public class NicoClient {
 	static final String JSON_START2 = "{&quot;ads&quot;:";	// HTML5 2021.12.02
 
 	/**
+	 * cookie(ユーザーセッション)を指定してニコニコ動画にアクセスする<br/>
+	 * ユーザーセッションは元パスワード欄に指定する<br/>
+	 * @param user
+	 * @param pass
+	 * @param browser 
+	 * @param proxy : String
+	 * @param proxy_port : int
+	 * @param watch_html5
+	 */
+	public NicoClient(final String user, final String pass, BrowserInfo browser,
+			final String proxy, final int proxy_port, final Stopwatch stopwatch,
+			Logger logger, boolean is_html5) {
+		browserInfo = browser;
+		log = logger;
+		User = "";
+		Pass = "";
+		Stopwatch = stopwatch;
+		nicomap = new NicoMap();
+		isHtml5 = is_html5;
+		ConProxy = conProxy(proxy, proxy_port);
+		String user_session = pass;
+		if (!isUserSession(user_session)){
+			log.println("Invalid user session");
+			setExtraError("セッションが無効です");
+		} else {
+			String this_session = "user_session=" + user_session;
+			Cookie = new NicoCookie();
+			Cookie.setSession(this_session);
+			if(loginCheck()){
+				setLoggedIn(true);	// ログイン済みのハズ
+				setExtraError("");
+			} else {
+				Cookie = new NicoCookie();
+				log.println("Fault user session");
+				setExtraError("セッションが無効です");
+				setLoggedIn(false);
+			}
+		}
+	}
+	
+	/**
 	 * ブラウザ共有しないでログイン
 	 * @param user
 	 * @param pass
@@ -101,6 +141,7 @@ public class NicoClient {
 	 * @param proxy
 	 * @param proxy_port
 	 */
+/*
 	public NicoClient(final String user, final String pass, BrowserInfo browser,
 			final String proxy, final int proxy_port, final Stopwatch stopwatch,
 			Logger logger, boolean is_html5) {
@@ -120,7 +161,7 @@ public class NicoClient {
 		login();
 		setLoggedIn(loginCheck());
 	}
-
+*/
 	private Proxy conProxy(String proxy, final int proxy_port){
 		Proxy tmpProxy;
 		if (proxy != null && proxy.startsWith(DEBUG_PROXY)){
@@ -168,9 +209,6 @@ public class NicoClient {
 		nicomap = new NicoMap();
 		isHtml5 = is_html5;
 		ConProxy = conProxy(proxy, proxy_port);
-		//Manager = new CookieManager();
-		//Manager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-		//CookieHandler.setDefault(Manager);
 		String user_session = browserInfo.getLastBrowserValue();
 		if (user_session == null || user_session.isEmpty()){
 			log.println("Invalid user session" + browserInfo.getName());
@@ -178,7 +216,7 @@ public class NicoClient {
 		} else {
 			String[] sessions = user_session.split(" ");	// "user_session_12345..."+" "+...
 			for(String session: sessions){
-				if (session != null && !session.isEmpty()){
+				if (isUserSession(session)) {
 					String this_session = "user_session=" + session;
 					Cookie = new NicoCookie();
 					Cookie.setSession(this_session);
@@ -195,6 +233,15 @@ public class NicoClient {
 			}
 			setLoggedIn(false);
 		}
+	}
+
+	private static boolean isUserSession(final String user_session) {
+	    if (user_session == null ||
+	        user_session.isEmpty() ||
+	        !user_session.matches("^user_session_\\d+.*$")) {
+	        return false;
+	    }
+	    return true;
 	}
 
 	public static void setEnableUnicode(boolean b){
