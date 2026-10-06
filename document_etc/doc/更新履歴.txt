@@ -1,5 +1,17 @@
 変更履歴・修正・改変点
 
+1.70.1.01(2026/10/03)
+ニコニコのログイン仕様変更対応
+- ID/PASSによるログインを廃止
+- user_session指定によるログイン機能を新規作成
+- 元パスワード欄にuser_sessionを指定する
+- ログイン済みブラウザーからセッションを取得で以下をチェックできないように修正
+　（セッション取得不可のため）
+　- Internet Explorer
+　- Chromium系(Chrome、Opera含む)
+- JAVA21からjava.net.URLのコンストラクタがdeprecatedになったので
+　java.net.URI.toURL()に修正
+
 1.70.0.19(2024/08/06)
 ニコ動視聴ページリニューアル(2024/08/05)対応
  - 各種情報が data-api-data からserver-response に移動したので修正
