@@ -90,7 +90,8 @@ public class NicoClient {
 	static final char C_QUOTE2 = '"';
 	static final String S_ESCAPE = "\\";
 	static final char C_ESCAPE = '\\';
-	static final String JSON_START2 = "{&quot;ads&quot;:";	// HTML5 2021.12.02
+//	static final String JSON_START2 = "{&quot;ads&quot;:";	// HTML5 2021.12.02
+	static final String JSON_START2 = "{&quot;responseType&quot;:"	;	// HTML5 2026.10.20
 
 	/**
 	 * cookie(ユーザーセッション)を指定してニコニコ動画にアクセスする<br/>
@@ -2962,7 +2963,7 @@ public class NicoClient {
 				.replace("&lt;", "(").replace("&gt;", ")")
 				.replaceAll("\\(br ?/?\\)","\n");
 			sb.append(makeNewElement("description", description));
-			String thumbnailURL = m_video.get("thumbnail").getAsString("url");
+			String thumbnailURL = m_video.get("thumbnail").getAsString("normal");
 			if(thumbnailURL==null)
 				thumbnailURL="";
 			sb.append(makeNewElement("thumbnail_url",thumbnailURL));
@@ -2981,7 +2982,7 @@ public class NicoClient {
 				altTag = tag;
 			sb.append(makeNewElement("watch_url",HTTP_WWW_NICOVIDEO_WATCH +altTag));
 			sb.append(makeNewElement("thumb_type","video"));
-			Mson m_tags = dataApiMson.get2("tag").get("items");
+			Mson m_tags = dataApiMson.get2("tags").get("items");
 			if(m_tags.getSize()>0){
 				sb.append("<tags domain=\"jp\">\n");
 				debug("\ntags.length="+m_tags.getSize());
@@ -3006,28 +3007,28 @@ public class NicoClient {
 			if (!m_genre.isNull()) {
 				sb.append(makeNewElement("genre",m_genre.getAsString("label")));
 			}
-			Mson m_owner = dataApiMson.get2("channel");
+			Mson m_owner = dataApiMson.get2("metadata");
 			if (!m_owner.isNull()) {
-				String user_id = m_owner.getAsString("id");
-				if(user_id==null)
-					user_id = "";
-				sb.append(makeNewElement("ch_id",user_id));
-				String nickname = m_owner.getAsString("name");
-				if(nickname==null)
-					nickname = "";
-				sb.append(makeNewElement("ch_name",ChatSave.safeReference(nickname)));
-				String thumbnail = m_owner.get("thumbnail").getAsString("smallUrl");
-				if(thumbnail==null)
-					thumbnail = "";
-				sb.append(makeNewElement("ch_icon_url",thumbnail));
-			} else {
-				m_owner = dataApiMson.get2("owner");
-				if (!m_owner.isNull()) {
+				String user_t = m_owner.getAsString("type");
+				if (user_t.equals("channel")) {
+					String user_id = m_owner.getAsString("id");
+					if(user_id==null)
+						user_id = "";
+					sb.append(makeNewElement("ch_id",user_id));
+					String nickname = m_owner.getAsString("name");
+					if(nickname==null)
+						nickname = "";
+					sb.append(makeNewElement("ch_name",ChatSave.safeReference(nickname)));
+					String thumbnail = m_owner.getAsString("iconUrl");
+					if(thumbnail==null)
+						thumbnail = "";
+					sb.append(makeNewElement("ch_icon_url",thumbnail));
+				} else {
 					String user_id = m_owner.getAsString("id");
 					if(user_id==null)
 						user_id = "";
 					sb.append(makeNewElement("user_id",user_id));
-					String nickname = m_owner.getAsString("nickname");
+					String nickname = m_owner.getAsString("name");
 					if(nickname==null)
 						nickname = "";
 					sb.append(makeNewElement("user_nickname",ChatSave.safeReference(nickname)));
@@ -3036,11 +3037,10 @@ public class NicoClient {
 						thumbnail = "";
 					sb.append(makeNewElement("user_icon_url",thumbnail));
 				}
-				else {
-					sb.append(makeNewElement("user_id",""));
-					sb.append(makeNewElement("user_nickname",""));
-					sb.append(makeNewElement("user_icon_url",""));
-				}
+			} else {
+				sb.append(makeNewElement("user_id",""));
+				sb.append(makeNewElement("user_nickname",""));
+				sb.append(makeNewElement("user_icon_url",""));
 			}
 			sb.append("</thumb>\n");
 			sb.append("</nicovideo_thumb_response>\n");
