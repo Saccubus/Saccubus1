@@ -2,17 +2,12 @@
 
 変更内容
 
-1.70.1.01(2026/10/03)
-ニコニコのログイン仕様変更対応
-- ID/PASSによるログインを廃止
-- user_session指定によるログイン機能を新規作成
-- 元パスワード欄にuser_sessionを指定する
-- ログイン済みブラウザーからセッションを取得で以下をチェックできないように修正
-　（セッション取得不可のため）
-　- Internet Explorer
-　- Chromium系(Chrome、Opera含む)
-- JAVA21からjava.net.URLのコンストラクタがdeprecatedになったので
-　java.net.URI.toURL()に修正
+1.70.1.02(2026/10/21)
+ニコ動動画ページ仕様変更対応
+- 動画情報(server-response)でデーター開始位置検索条件を修正
+- thumb_info.xmlの途中でエラー終了になるのを修正
+- thumb_info.xmlの動画情報を仕様変更に合わせて修正
+- thumbnailが保存されなかったのを修正
 
 ※さきゅばすWiki(https://github.com/Saccubus/Saccubus1/wiki )に
 【2022年版】さきゅばすのインストールと設定を作成しました。ご参照ください。
